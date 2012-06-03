@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.Internals.Atomics.Counters;
+with Matreshka.Atomics.Counters;
 
 package Matreshka.XML.DOM_Nodes is
 
@@ -60,7 +60,7 @@ package Matreshka.XML.DOM_Nodes is
    --  zero.
 
    type Node is tagged limited record
-      Counter  : aliased Matreshka.Internals.Atomics.Counters.Counter;
+      Counter  : aliased Matreshka.Atomics.Counters.Counter;
       Owner    : Node_Access;
       Previous : Node_Access;
       Next     : Node_Access;

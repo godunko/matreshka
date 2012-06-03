@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -55,9 +55,7 @@ package body Matreshka.XML.DOM_Nodes is
         new Ada.Unchecked_Deallocation (Node'Class, Node_Access);
 
    begin
-      if Matreshka.Internals.Atomics.Counters.Decrement
-          (Self.Counter'Access)
-      then
+      if Matreshka.Atomics.Counters.Decrement (Self.Counter) then
          Self.Finalize;
          Free (Self);
 
@@ -81,7 +79,7 @@ package body Matreshka.XML.DOM_Nodes is
 
    procedure Reference (Self : not null Node_Access) is
    begin
-      Matreshka.Internals.Atomics.Counters.Increment (Self.Counter'Access);
+      Matreshka.Atomics.Counters.Increment (Self.Counter);
    end Reference;
 
 end Matreshka.XML.DOM_Nodes;
