@@ -55,6 +55,11 @@ package Web_Services.SOAP.Message_Handlers is
    type SOAP_Message_Handler is
      new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
 
+   function Success (Self : SOAP_Message_Handler'Class) return Boolean;
+
+   function Fault
+    (Self : SOAP_Message_Handler'Class) return League.Strings.Universal_String;
+
 private
 
    type States is
@@ -69,7 +74,24 @@ private
       Decoder        : Web_Services.SOAP.Decoders.SOAP_Decoder_Access;
       Body_Depth     : Natural := 0;
       Ignore_Element : Natural := 0;
+      Fault          : League.Strings.Universal_String;
+      Diagnosis      : League.Strings.Universal_String;
    end record;
+
+--   not overriding procedure Error
+--    (Self       : in out SAX_Error_Handler;
+--     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+--     Success    : in out Boolean) is null;
+--
+--   not overriding procedure Fatal_Error
+--    (Self       : in out SAX_Error_Handler;
+--     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+--     Success    : in out Boolean) is null;
+--
+--   not overriding procedure Warning
+--    (Self       : in out SAX_Error_Handler;
+--     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+--     Success    : in out Boolean) is null;
 
    overriding procedure End_Element
     (Self           : in out SOAP_Message_Handler;

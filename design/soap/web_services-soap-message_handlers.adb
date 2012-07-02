@@ -98,8 +98,19 @@ package body Web_Services.SOAP.Message_Handlers is
    overriding function Error_String
     (Self : SOAP_Message_Handler) return League.Strings.Universal_String is
    begin
-      return League.Strings.Empty_Universal_String;
+      return Self.Diagnosis;
    end Error_String;
+
+   -----------
+   -- Fault --
+   -----------
+
+   function Fault
+    (Self : SOAP_Message_Handler'Class)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Fault;
+   end Fault;
 
    ----------------------------
    -- Processing_Instruction --
@@ -111,7 +122,20 @@ package body Web_Services.SOAP.Message_Handlers is
      Data    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      raise Program_Error;
+      --  [SOAP12]  5. SOAP Message Construct
+      --
+      --  "SOAP messages sent by initial SOAP senders MUST NOT contain
+      --  processing instruction information items. SOAP intermediaries MUST
+      --  NOT insert processing instruction information items in SOAP messages
+      --  they relay. SOAP receivers receiving a SOAP message containing a
+      --  processing instruction information item SHOULD generate a SOAP fault
+      --  with the Value of Code set to "env:Sender"."
+
+      Self.Diagnosis :=
+        League.Strings.To_Universal_String
+         ("SOAP message must not contain processing instruction");
+      Self.Fault := League.Strings.To_Universal_String ("env:Sender");
+      Success := False;
    end Processing_Instruction;
 
    -------------------
@@ -184,5 +208,15 @@ package body Web_Services.SOAP.Message_Handlers is
              & Local_Name.To_Wide_Wide_String);
       end if;
    end Start_Element;
+
+   -------------
+   -- Success --
+   -------------
+
+   not overriding function Success
+    (Self : SOAP_Message_Handler) return Boolean is
+   begin
+      return Self.Diagnosis.Is_Empty;
+   end Success;
 
 end Web_Services.SOAP.Message_Handlers;
