@@ -91,6 +91,16 @@ package body Web_Services.SOAP.Message_Handlers is
       end if;
    end End_Element;
 
+   -----------
+   -- Error --
+   -----------
+
+   overriding procedure Error
+    (Self       : in out SOAP_Message_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+     Success    : in out Boolean)
+       renames Fatal_Error;
+
    ------------------
    -- Error_String --
    ------------------
@@ -100,6 +110,19 @@ package body Web_Services.SOAP.Message_Handlers is
    begin
       return Self.Diagnosis;
    end Error_String;
+
+   -----------------
+   -- Fatal_Error --
+   -----------------
+
+   overriding procedure Fatal_Error
+    (Self       : in out SOAP_Message_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+     Success    : in out Boolean) is
+   begin
+      Self.Diagnosis := Occurrence.Message;
+      Success := False;
+   end Fatal_Error;
 
    -----------
    -- Fault --
@@ -213,8 +236,7 @@ package body Web_Services.SOAP.Message_Handlers is
    -- Success --
    -------------
 
-   not overriding function Success
-    (Self : SOAP_Message_Handler) return Boolean is
+   function Success (Self : SOAP_Message_Handler'Class) return Boolean is
    begin
       return Self.Diagnosis.Is_Empty;
    end Success;
