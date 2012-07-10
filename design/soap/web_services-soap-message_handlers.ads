@@ -50,6 +50,7 @@ with XML.SAX.Error_Handlers;
 with XML.SAX.Parse_Exceptions;
 
 private with Web_Services.SOAP.Body_Decoders;
+with Web_Services.SOAP.Messages;
 
 package Web_Services.SOAP.Message_Handlers is
 
@@ -61,6 +62,10 @@ package Web_Services.SOAP.Message_Handlers is
 
    function Fault
     (Self : SOAP_Message_Handler'Class) return League.Strings.Universal_String;
+
+   function Message
+    (Self : SOAP_Message_Handler'Class)
+       return not null Web_Services.SOAP.Messages.SOAP_Message_Access;
 
 private
 
@@ -76,6 +81,7 @@ private
       State          : States := Initial;
       Decoder        :
         Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
+      Message        : Web_Services.SOAP.Messages.SOAP_Message_Access;
       Body_Depth     : Natural := 0;
       Ignore_Element : Natural := 0;
       Fault          : League.Strings.Universal_String;

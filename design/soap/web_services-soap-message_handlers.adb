@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
+with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Decoder_Registry;
 
@@ -59,6 +60,11 @@ package body Web_Services.SOAP.Message_Handlers is
    Header_Name       : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Header");
 
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class,
+           Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access);
+
    ----------------
    -- Characters --
    ----------------
@@ -68,7 +74,9 @@ package body Web_Services.SOAP.Message_Handlers is
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      if Self.State = SOAP_Body_Element then
+      if Self.State = SOAP_Body_Element
+        and then Self.Body_Depth /= 0
+      then
          Self.Decoder.Characters (Text, Success);
       end if;
    end Characters;
@@ -102,6 +110,12 @@ package body Web_Services.SOAP.Message_Handlers is
          --  Redirect processing to decoder.
 
          Self.Decoder.End_Element (Namespace_URI, Local_Name, Success);
+
+         if Self.Body_Depth = 0 then
+            Self.Message := Self.Decoder.Message;
+
+            Free (Self.Decoder);
+         end if;
       end if;
    end End_Element;
 
@@ -148,6 +162,17 @@ package body Web_Services.SOAP.Message_Handlers is
    begin
       return Self.Fault;
    end Fault;
+
+   -------------
+   -- Message --
+   -------------
+
+   function Message
+    (Self : SOAP_Message_Handler'Class)
+       return not null Web_Services.SOAP.Messages.SOAP_Message_Access is
+   begin
+      return Self.Message;
+   end Message;
 
    ----------------------------
    -- Processing_Instruction --
