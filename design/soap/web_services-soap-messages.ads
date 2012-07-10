@@ -48,4 +48,6 @@ package Web_Services.SOAP.Messages is
 
    type Abstract_SOAP_Message is abstract tagged limited null record;
 
+   type SOAP_Message_Access is access all Abstract_SOAP_Message'Class;
+
 end Web_Services.SOAP.Messages;

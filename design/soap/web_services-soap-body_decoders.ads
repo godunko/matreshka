@@ -41,32 +41,49 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Interface of decoder of SOAP Body child element.
+--  Interface of decoder of SOAP Body's child element.
 ------------------------------------------------------------------------------
 with League.Strings;
 with XML.SAX.Attributes;
 
-package Web_Services.SOAP.Decoders is
+with Web_Services.SOAP.Messages;
 
-   type SOAP_Decoder is limited interface;
+package Web_Services.SOAP.Body_Decoders is
 
-   type SOAP_Decoder_Access is access all SOAP_Decoder'Class;
+   pragma Preelaborate;
+
+   type SOAP_Body_Decoder is limited interface;
+
+   type SOAP_Body_Decoder_Access is access all SOAP_Body_Decoder'Class;
 
    not overriding function Create
     (URI : not null access League.Strings.Universal_String)
-       return SOAP_Decoder is abstract;
+       return SOAP_Body_Decoder is abstract;
+   --  This subprogram is used by dispatching constructor to create instance of
+   --  the decoder.
+
+   not overriding function Message
+    (Self : SOAP_Body_Decoder)
+       return not null Web_Services.SOAP.Messages.SOAP_Message_Access
+         is abstract;
+   --  Returns constructed SOAP message.
+
+   not overriding procedure Characters
+    (Self    : in out SOAP_Body_Decoder;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean) is null;
 
    not overriding procedure End_Element
-    (Self           : in out SOAP_Decoder;
+    (Self           : in out SOAP_Body_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Success        : in out Boolean) is null;
 
    not overriding procedure Start_Element
-    (Self           : in out SOAP_Decoder;
+    (Self           : in out SOAP_Body_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean) is null;
 
-end Web_Services.SOAP.Decoders;
+end Web_Services.SOAP.Body_Decoders;

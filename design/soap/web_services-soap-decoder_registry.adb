@@ -51,9 +51,9 @@ package body Web_Services.SOAP.Decoder_Registry is
 
    function Create is
      new Ada.Tags.Generic_Dispatching_Constructor
-          (Web_Services.SOAP.Decoders.SOAP_Decoder,
+          (Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder,
            League.Strings.Universal_String,
-           Web_Services.SOAP.Decoders.Create);
+           Web_Services.SOAP.Body_Decoders.Create);
 
    package String_Tag_Maps is
      new Ada.Containers.Hashed_Maps
@@ -83,14 +83,14 @@ package body Web_Services.SOAP.Decoder_Registry is
 
    function Resolve
     (URI : League.Strings.Universal_String)
-       return not null Web_Services.SOAP.Decoders.SOAP_Decoder_Access
+       return not null Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access
    is
       Aux : aliased League.Strings.Universal_String := URI;
 
    begin
       Put_Line ("Lookup for decoder of '" & URI.To_Wide_Wide_String & ''');
       return
-        new Web_Services.SOAP.Decoders.SOAP_Decoder'Class'
+        new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class'
              (Create (Registry.Element (URI), Aux'Access));
    end Resolve;
 

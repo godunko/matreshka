@@ -59,6 +59,20 @@ package body Web_Services.SOAP.Message_Handlers is
    Header_Name       : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Header");
 
+   ----------------
+   -- Characters --
+   ----------------
+
+   overriding procedure Characters
+    (Self    : in out SOAP_Message_Handler;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean) is
+   begin
+      if Self.State = SOAP_Body_Element then
+         Self.Decoder.Characters (Text, Success);
+      end if;
+   end Characters;
+
    -----------------
    -- End_Element --
    -----------------
@@ -205,7 +219,7 @@ package body Web_Services.SOAP.Message_Handlers is
          Self.Decoder :=
            Web_Services.SOAP.Decoder_Registry.Resolve (Namespace_URI);
          Self.State := SOAP_Body_Element;
-         Self.Body_Depth := 0;
+         Self.Body_Depth := 1;
 
          --  Redirect handling of current XML element to decoder.
 

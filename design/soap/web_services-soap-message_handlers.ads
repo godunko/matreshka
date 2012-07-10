@@ -49,7 +49,7 @@ with XML.SAX.Content_Handlers;
 with XML.SAX.Error_Handlers;
 with XML.SAX.Parse_Exceptions;
 
-private with Web_Services.SOAP.Decoders;
+private with Web_Services.SOAP.Body_Decoders;
 
 package Web_Services.SOAP.Message_Handlers is
 
@@ -74,12 +74,18 @@ private
        and XML.SAX.Error_Handlers.SAX_Error_Handler with
    record
       State          : States := Initial;
-      Decoder        : Web_Services.SOAP.Decoders.SOAP_Decoder_Access;
+      Decoder        :
+        Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
       Body_Depth     : Natural := 0;
       Ignore_Element : Natural := 0;
       Fault          : League.Strings.Universal_String;
       Diagnosis      : League.Strings.Universal_String;
    end record;
+
+   overriding procedure Characters
+    (Self    : in out SOAP_Message_Handler;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean);
 
    overriding procedure End_Element
     (Self           : in out SOAP_Message_Handler;

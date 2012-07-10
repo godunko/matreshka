@@ -47,7 +47,7 @@
 with Ada.Tags;
 
 with League.Strings;
-with Web_Services.SOAP.Decoders;
+with Web_Services.SOAP.Body_Decoders;
 
 package Web_Services.SOAP.Decoder_Registry is
 
@@ -57,6 +57,7 @@ package Web_Services.SOAP.Decoder_Registry is
 
    function Resolve
     (URI : League.Strings.Universal_String)
-       return not null Web_Services.SOAP.Decoders.SOAP_Decoder_Access;
+       return
+         not null Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
 
 end Web_Services.SOAP.Decoder_Registry;
