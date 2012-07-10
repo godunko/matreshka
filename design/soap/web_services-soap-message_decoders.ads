@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  SOAP message handler process events from SAX parser.
+--  SOAP message decoder process events from SAX parser.
 ------------------------------------------------------------------------------
 with League.Strings;
 with XML.SAX.Attributes;
@@ -52,19 +52,19 @@ with XML.SAX.Parse_Exceptions;
 private with Web_Services.SOAP.Body_Decoders;
 with Web_Services.SOAP.Messages;
 
-package Web_Services.SOAP.Message_Handlers is
+package Web_Services.SOAP.Message_Decoders is
 
-   type SOAP_Message_Handler is
+   type SOAP_Message_Decoder is
      new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Error_Handlers.SAX_Error_Handler with private;
 
-   function Success (Self : SOAP_Message_Handler'Class) return Boolean;
+   function Success (Self : SOAP_Message_Decoder'Class) return Boolean;
 
    function Fault
-    (Self : SOAP_Message_Handler'Class) return League.Strings.Universal_String;
+    (Self : SOAP_Message_Decoder'Class) return League.Strings.Universal_String;
 
    function Message
-    (Self : SOAP_Message_Handler'Class)
+    (Self : SOAP_Message_Decoder'Class)
        return not null Web_Services.SOAP.Messages.SOAP_Message_Access;
 
 private
@@ -74,7 +74,7 @@ private
      SOAP_Body,           --  SOAP Body element has beed processed.
      SOAP_Body_Element);  --  SOAP Body child element has been processed.
 
-   type SOAP_Message_Handler is
+   type SOAP_Message_Decoder is
      new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Error_Handlers.SAX_Error_Handler with
    record
@@ -89,35 +89,35 @@ private
    end record;
 
    overriding procedure Characters
-    (Self    : in out SOAP_Message_Handler;
+    (Self    : in out SOAP_Message_Decoder;
      Text    : League.Strings.Universal_String;
      Success : in out Boolean);
 
    overriding procedure End_Element
-    (Self           : in out SOAP_Message_Handler;
+    (Self           : in out SOAP_Message_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean);
 
    overriding procedure Error
-    (Self       : in out SOAP_Message_Handler;
+    (Self       : in out SOAP_Message_Decoder;
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean);
    --  Stops processing of the message.
 
    overriding function Error_String
-    (Self : SOAP_Message_Handler) return League.Strings.Universal_String;
+    (Self : SOAP_Message_Decoder) return League.Strings.Universal_String;
    --  Returns error information as string.
 
    overriding procedure Fatal_Error
-    (Self       : in out SOAP_Message_Handler;
+    (Self       : in out SOAP_Message_Decoder;
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean);
    --  Stops processing of the message.
 
    overriding procedure Processing_Instruction
-    (Self    : in out SOAP_Message_Handler;
+    (Self    : in out SOAP_Message_Decoder;
      Target  : League.Strings.Universal_String;
      Data    : League.Strings.Universal_String;
      Success : in out Boolean);
@@ -126,11 +126,11 @@ private
    --  False.
 
    overriding procedure Start_Element
-    (Self           : in out SOAP_Message_Handler;
+    (Self           : in out SOAP_Message_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean);
 
-end Web_Services.SOAP.Message_Handlers;
+end Web_Services.SOAP.Message_Decoders;

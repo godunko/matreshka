@@ -46,7 +46,7 @@ with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Decoder_Registry;
 
-package body Web_Services.SOAP.Message_Handlers is
+package body Web_Services.SOAP.Message_Decoders is
 
    use type League.Strings.Universal_String;
 
@@ -70,7 +70,7 @@ package body Web_Services.SOAP.Message_Handlers is
    ----------------
 
    overriding procedure Characters
-    (Self    : in out SOAP_Message_Handler;
+    (Self    : in out SOAP_Message_Decoder;
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
@@ -86,7 +86,7 @@ package body Web_Services.SOAP.Message_Handlers is
    -----------------
 
    overriding procedure End_Element
-    (Self           : in out SOAP_Message_Handler;
+    (Self           : in out SOAP_Message_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
@@ -124,7 +124,7 @@ package body Web_Services.SOAP.Message_Handlers is
    -----------
 
    overriding procedure Error
-    (Self       : in out SOAP_Message_Handler;
+    (Self       : in out SOAP_Message_Decoder;
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean)
        renames Fatal_Error;
@@ -134,7 +134,7 @@ package body Web_Services.SOAP.Message_Handlers is
    ------------------
 
    overriding function Error_String
-    (Self : SOAP_Message_Handler) return League.Strings.Universal_String is
+    (Self : SOAP_Message_Decoder) return League.Strings.Universal_String is
    begin
       return Self.Diagnosis;
    end Error_String;
@@ -144,7 +144,7 @@ package body Web_Services.SOAP.Message_Handlers is
    -----------------
 
    overriding procedure Fatal_Error
-    (Self       : in out SOAP_Message_Handler;
+    (Self       : in out SOAP_Message_Decoder;
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean) is
    begin
@@ -157,7 +157,7 @@ package body Web_Services.SOAP.Message_Handlers is
    -----------
 
    function Fault
-    (Self : SOAP_Message_Handler'Class)
+    (Self : SOAP_Message_Decoder'Class)
        return League.Strings.Universal_String is
    begin
       return Self.Fault;
@@ -168,7 +168,7 @@ package body Web_Services.SOAP.Message_Handlers is
    -------------
 
    function Message
-    (Self : SOAP_Message_Handler'Class)
+    (Self : SOAP_Message_Decoder'Class)
        return not null Web_Services.SOAP.Messages.SOAP_Message_Access is
    begin
       return Self.Message;
@@ -179,7 +179,7 @@ package body Web_Services.SOAP.Message_Handlers is
    ----------------------------
 
    overriding procedure Processing_Instruction
-    (Self    : in out SOAP_Message_Handler;
+    (Self    : in out SOAP_Message_Decoder;
      Target  : League.Strings.Universal_String;
      Data    : League.Strings.Universal_String;
      Success : in out Boolean) is
@@ -205,7 +205,7 @@ package body Web_Services.SOAP.Message_Handlers is
    -------------------
 
    overriding procedure Start_Element
-    (Self           : in out SOAP_Message_Handler;
+    (Self           : in out SOAP_Message_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
@@ -275,9 +275,9 @@ package body Web_Services.SOAP.Message_Handlers is
    -- Success --
    -------------
 
-   function Success (Self : SOAP_Message_Handler'Class) return Boolean is
+   function Success (Self : SOAP_Message_Decoder'Class) return Boolean is
    begin
       return Self.Diagnosis.Is_Empty;
    end Success;
 
-end Web_Services.SOAP.Message_Handlers;
+end Web_Services.SOAP.Message_Decoders;
