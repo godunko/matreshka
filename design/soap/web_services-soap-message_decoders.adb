@@ -44,21 +44,13 @@
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with Ada.Unchecked_Deallocation;
 
+with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Decoder_Registry;
 
 package body Web_Services.SOAP.Message_Decoders is
 
+   use Web_Services.SOAP.Constants;
    use type League.Strings.Universal_String;
-
-   SOAP_Envelope_URI : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-         ("http://www.w3.org/2003/05/soap-envelope");
-   Body_Name         : constant League.Strings.Universal_String
-        := League.Strings.To_Universal_String ("Body");
-   Envelope_Name     : constant League.Strings.Universal_String
-        := League.Strings.To_Universal_String ("Envelope");
-   Header_Name       : constant League.Strings.Universal_String
-        := League.Strings.To_Universal_String ("Header");
 
    procedure Free is
      new Ada.Unchecked_Deallocation
@@ -98,7 +90,7 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Ignore_Element := Self.Ignore_Element - 1;
 
       elsif Namespace_URI = SOAP_Envelope_URI then
-         if Local_Name = Body_Name then
+         if Local_Name = SOAP_Body_Name then
             Self.State := Initial;
          end if;
 
@@ -219,15 +211,15 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Ignore_Element := Self.Ignore_Element + 1;
 
       elsif Namespace_URI = SOAP_Envelope_URI then
-         if Local_Name = Envelope_Name then
+         if Local_Name = SOAP_Envelope_Name then
             null;
 
-         elsif Local_Name = Header_Name then
+         elsif Local_Name = SOAP_Header_Name then
             --  "Header" element is not processed now.
 
             Self.Ignore_Element := 1;
 
-         elsif Local_Name = Body_Name then
+         elsif Local_Name = SOAP_Body_Name then
             --  Switch state to process content of SOAP Body element.
 
             Self.State := SOAP_Body;

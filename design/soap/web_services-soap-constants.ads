@@ -58,18 +58,26 @@ package Web_Services.SOAP.Constants is
 
    --  SOAP Envelope namespace URI and names of elements in this namespace.
 
-   SOAP_Envelope_URI : constant League.Strings.Universal_String
+   SOAP_Envelope_URI    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/2003/05/soap-envelope");
-   SOAP_Code_Name    : constant League.Strings.Universal_String
+   SOAP_Envelope_Prefix : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("env");
+   SOAP_Body_Name       : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("Body");
+   SOAP_Code_Name       : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Code");
-   SOAP_Fault_Name   : constant League.Strings.Universal_String
+   SOAP_Envelope_Name   : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("Envelope");
+   SOAP_Fault_Name      : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Fault");
-   SOAP_Reason_Name  : constant League.Strings.Universal_String
+   SOAP_Header_Name     : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("Header");
+   SOAP_Reason_Name     : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Reason");
-   SOAP_Text_Name    : constant League.Strings.Universal_String
+   SOAP_Text_Name       : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Text");
-   SOAP_Value_Name   : constant League.Strings.Universal_String
+   SOAP_Value_Name      : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Value");
 
 end Web_Services.SOAP.Constants;

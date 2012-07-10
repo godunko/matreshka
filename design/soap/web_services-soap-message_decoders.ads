@@ -55,7 +55,7 @@ with Web_Services.SOAP.Messages;
 package Web_Services.SOAP.Message_Decoders is
 
    type SOAP_Message_Decoder is
-     new XML.SAX.Content_Handlers.SAX_Content_Handler
+     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Error_Handlers.SAX_Error_Handler with private;
 
    function Success (Self : SOAP_Message_Decoder'Class) return Boolean;
@@ -75,7 +75,7 @@ private
      SOAP_Body_Element);  --  SOAP Body child element has been processed.
 
    type SOAP_Message_Decoder is
-     new XML.SAX.Content_Handlers.SAX_Content_Handler
+     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Error_Handlers.SAX_Error_Handler with
    record
       State          : States := Initial;
