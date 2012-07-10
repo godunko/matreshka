@@ -41,22 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Abstract interface of SOAP Body encoder. Application specific encoders must
---  be derived from this interface type.
-------------------------------------------------------------------------------
-with XML.SAX.Writers;
+with League.Stream_Element_Vectors;
 
 with Web_Services.SOAP.Messages;
 
-package Web_Services.SOAP.Encoders is
+package Web_Services.SOAP.Message_Encoders is
 
---   pragma Preelaborate;
+   type SOAP_Message_Encoder is tagged limited private;
 
-   type Abstract_SOAP_Encoder is limited interface;
+   function Encode
+    (Self    : in out SOAP_Message_Encoder'Class;
+     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class)
+       return League.Stream_Element_Vectors.Stream_Element_Vector;
 
-   not overriding procedure Encode
-    (Self    : Abstract_SOAP_Encoder;
-     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class;
-     Writer  : in out XML.SAX.Writers.SAX_Writer'Class) is abstract;
+private
 
-end Web_Services.SOAP.Encoders;
+   type SOAP_Message_Encoder is tagged limited null record;
+
+end Web_Services.SOAP.Message_Encoders;
