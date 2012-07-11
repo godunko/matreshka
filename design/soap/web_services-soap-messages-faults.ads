@@ -64,6 +64,10 @@ package Web_Services.SOAP.Messages.Faults is
     (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
        is abstract;
 
+   not overriding function Code_Prefix
+    (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
+       is abstract;
+
    not overriding function Code_Local_Name
     (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
        is abstract;

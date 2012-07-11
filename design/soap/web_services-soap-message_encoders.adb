@@ -43,14 +43,21 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 with League.Text_Codecs;
+with XML.SAX.Attributes;
 with XML.SAX.Pretty_Writers;
+with XML.SAX.Writers;
 
 with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Encoder_Registry;
+with Web_Services.SOAP.Messages.Faults;
 
 package body Web_Services.SOAP.Message_Encoders is
 
    use Web_Services.SOAP.Constants;
+
+   procedure Encode_Fault
+    (Fault  : Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class;
+     Writer : in out XML.SAX.Writers.SAX_Writer'Class);
 
    ------------
    -- Encode --
@@ -78,10 +85,24 @@ package body Web_Services.SOAP.Message_Encoders is
 
       Writer.Start_Element (SOAP_Envelope_URI, SOAP_Body_Name);
 
-      --  Lookup for SOAP Body encoder.
+      --  Encode SOAP Body.
 
-      Web_Services.SOAP.Encoder_Registry.Resolve
-       (Message'Tag).Encode (Message, Writer);
+      if Message
+           not in Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class
+      then
+         --  Lookup for SOAP Body encoder.
+
+         Web_Services.SOAP.Encoder_Registry.Resolve
+          (Message'Tag).Encode (Message, Writer);
+
+      else
+         --  Encode SOAP Fault.
+
+         Encode_Fault
+          (Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class
+            (Message),
+           Writer);
+      end if;
 
       --  End env:Body and env:Envelope elements.
 
@@ -90,5 +111,82 @@ package body Web_Services.SOAP.Message_Encoders is
 
       return Codec.Encode (Writer.Text);
    end Encode;
+
+   ------------------
+   -- Encode_Fault --
+   ------------------
+
+   procedure Encode_Fault
+    (Fault  : Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class;
+     Writer : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+      Reason     : Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map
+        := Fault.Reason;
+      Position   :
+        Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Cursor
+          := Reason.First;
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
+
+   begin
+      Writer.Start_Element (SOAP_Envelope_URI, SOAP_Fault_Name);
+
+      --  Serialize mandatory 'Code' element. 'Value' element is mandatory,
+      --  while 'Subcode' elements are optional.
+
+      Writer.Start_Element (SOAP_Envelope_URI, SOAP_Code_Name);
+
+      Writer.Start_Element (SOAP_Envelope_URI, SOAP_Value_Name);
+      Writer.Characters (Fault.Code_Prefix);
+      --  XXX Namespace URI to prefix mapping resolution must to be implemented
+      --  here.
+      Writer.Characters (League.Strings.To_Universal_String (":"));
+--      Writer.Characters (':');
+      Writer.Characters (Fault.Code_Local_Name);
+      Writer.End_Element (SOAP_Envelope_URI, SOAP_Value_Name);
+
+--      Abstract_SOAP_Fault_Encoder'Class (Self).Encode_Code_Subcode
+--       (Fault, Writer);
+
+      Writer.End_Element (SOAP_Envelope_URI, SOAP_Code_Name);
+
+      --  Serialize mandatory 'Reason' element.
+
+      Writer.Start_Element (SOAP_Envelope_URI, SOAP_Reason_Name);
+
+      while
+        Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Has_Element
+         (Position)
+      loop
+         Attributes.Clear;
+         Attributes.Set_Value
+          (XML_URI,
+           XML_Lang_Name,
+           Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Key
+            (Position));
+         Writer.Start_Element
+          (SOAP_Envelope_URI, SOAP_Text_Name, Attributes => Attributes);
+         Writer.Characters
+          (Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Element
+            (Position));
+         Writer.End_Element (SOAP_Envelope_URI, SOAP_Text_Name);
+         Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Next (Position);
+      end loop;
+
+      Writer.End_Element (SOAP_Envelope_URI, SOAP_Reason_Name);
+
+--      --  Serialize optional 'Node' attribute.
+--
+--      Abstract_SOAP_Fault_Encoder'Class (Self).Encode_Node (Fault, Writer);
+--
+--      --  Serialize optional 'Role' attribute.
+--
+--      Abstract_SOAP_Fault_Encoder'Class (Self).Encode_Role (Fault, Writer);
+--
+--      --  Serialize optional 'Detail' attribute.
+--
+--      Abstract_SOAP_Fault_Encoder'Class (Self).Encode_Detail (Fault, Writer);
+
+      Writer.End_Element (SOAP_Envelope_URI, SOAP_Fault_Name);
+   end Encode_Fault;
 
 end Web_Services.SOAP.Message_Encoders;
