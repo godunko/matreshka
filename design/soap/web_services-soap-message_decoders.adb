@@ -46,6 +46,7 @@ with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Decoder_Registry;
+with Web_Services.SOAP.Messages.Faults.Simple;
 
 package body Web_Services.SOAP.Message_Decoders is
 
@@ -56,6 +57,11 @@ package body Web_Services.SOAP.Message_Decoders is
      new Ada.Unchecked_Deallocation
           (Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class,
            Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access);
+
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class,
+           Web_Services.SOAP.Messages.SOAP_Message_Access);
 
    ----------------
    -- Characters --
@@ -105,7 +111,6 @@ package body Web_Services.SOAP.Message_Decoders is
 
          if Self.Body_Depth = 0 then
             Self.Message := Self.Decoder.Message;
-
             Free (Self.Decoder);
          end if;
       end if;
@@ -140,20 +145,19 @@ package body Web_Services.SOAP.Message_Decoders is
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean) is
    begin
-      Self.Diagnosis := Occurrence.Message;
+      --  Deallocate decoded SOAP message if any.
+
+      Free (Self.Message);
+
+      Self.Success := False;
+      Self.Diagnosis := "XML error: " & Occurrence.Message;
+      Self.Message :=
+        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
+         (League.Strings.To_Universal_String ("Sender"),
+          League.Strings.To_Universal_String ("en"),
+          Self.Diagnosis);
       Success := False;
    end Fatal_Error;
-
-   -----------
-   -- Fault --
-   -----------
-
-   function Fault
-    (Self : SOAP_Message_Decoder'Class)
-       return League.Strings.Universal_String is
-   begin
-      return Self.Fault;
-   end Fault;
 
    -------------
    -- Message --
@@ -161,7 +165,7 @@ package body Web_Services.SOAP.Message_Decoders is
 
    function Message
     (Self : SOAP_Message_Decoder'Class)
-       return not null Web_Services.SOAP.Messages.SOAP_Message_Access is
+       return Web_Services.SOAP.Messages.SOAP_Message_Access is
    begin
       return Self.Message;
    end Message;
@@ -185,10 +189,15 @@ package body Web_Services.SOAP.Message_Decoders is
       --  processing instruction information item SHOULD generate a SOAP fault
       --  with the Value of Code set to "env:Sender"."
 
+      Self.Success := False;
       Self.Diagnosis :=
         League.Strings.To_Universal_String
          ("SOAP message must not contain processing instruction");
-      Self.Fault := League.Strings.To_Universal_String ("env:Sender");
+      Self.Message :=
+        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
+         (League.Strings.To_Universal_String ("Sender"),
+          League.Strings.To_Universal_String ("en"),
+          Self.Diagnosis);
       Success := False;
    end Processing_Instruction;
 
@@ -269,7 +278,7 @@ package body Web_Services.SOAP.Message_Decoders is
 
    function Success (Self : SOAP_Message_Decoder'Class) return Boolean is
    begin
-      return Self.Diagnosis.Is_Empty;
+      return Self.Success;
    end Success;
 
 end Web_Services.SOAP.Message_Decoders;

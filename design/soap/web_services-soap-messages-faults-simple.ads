@@ -41,93 +41,49 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  SOAP message decoder process events from SAX parser.
-------------------------------------------------------------------------------
 with League.Strings;
-with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
-with XML.SAX.Error_Handlers;
-with XML.SAX.Parse_Exceptions;
+with Web_Services.SOAP.Messages.Faults;
 
-private with Web_Services.SOAP.Body_Decoders;
-with Web_Services.SOAP.Messages;
+package Web_Services.SOAP.Messages.Faults.Simple is
 
-package Web_Services.SOAP.Message_Decoders is
+   type Simple_Fault is
+     new Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault with private;
 
-   type SOAP_Message_Decoder is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
-       and XML.SAX.Error_Handlers.SAX_Error_Handler with private;
+   function Create
+    (Code_Prefix        : League.Strings.Universal_String;
+     Code_Namespace_URI : League.Strings.Universal_String;
+     Code_Local_Name    : League.Strings.Universal_String;
+     Reason_Language    : League.Strings.Universal_String;
+     Reason_Text        : League.Strings.Universal_String)
+       return Web_Services.SOAP.Messages.SOAP_Message_Access;
 
-   function Success (Self : SOAP_Message_Decoder'Class) return Boolean;
-
-   function Message
-    (Self : SOAP_Message_Decoder'Class)
+   function Create_SOAP_Fault
+    (Code_Local_Name    : League.Strings.Universal_String;
+     Reason_Language    : League.Strings.Universal_String;
+     Reason_Text        : League.Strings.Universal_String)
        return Web_Services.SOAP.Messages.SOAP_Message_Access;
 
 private
 
-   type States is
-    (Initial,             --  Initial state.
-     SOAP_Body,           --  SOAP Body element has beed processed.
-     SOAP_Body_Element);  --  SOAP Body child element has been processed.
-
-   type SOAP_Message_Decoder is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
-       and XML.SAX.Error_Handlers.SAX_Error_Handler with
-   record
-      State          : States := Initial;
-      Decoder        :
-        Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
-      Message        : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Body_Depth     : Natural := 0;
-      Ignore_Element : Natural := 0;
-      Diagnosis      : League.Strings.Universal_String;
-      Success        : Boolean := True;
+   type Simple_Fault is
+     new Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault with record
+      Namespace_URI : League.Strings.Universal_String;
+      Prefix        : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+      Reason        : Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map;
    end record;
 
-   overriding procedure Characters
-    (Self    : in out SOAP_Message_Decoder;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean);
+   overriding function Code_Namespace_URI
+    (Self : Simple_Fault) return League.Strings.Universal_String;
 
-   overriding procedure End_Element
-    (Self           : in out SOAP_Message_Decoder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
+   overriding function Code_Prefix
+    (Self : Simple_Fault) return League.Strings.Universal_String;
 
-   overriding procedure Error
-    (Self       : in out SOAP_Message_Decoder;
-     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
-     Success    : in out Boolean);
-   --  Stops processing of the message.
+   overriding function Code_Local_Name
+    (Self : Simple_Fault) return League.Strings.Universal_String;
 
-   overriding function Error_String
-    (Self : SOAP_Message_Decoder) return League.Strings.Universal_String;
-   --  Returns error information as string.
+   overriding function Reason
+    (Self : Simple_Fault)
+       return Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map;
 
-   overriding procedure Fatal_Error
-    (Self       : in out SOAP_Message_Decoder;
-     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
-     Success    : in out Boolean);
-   --  Stops processing of the message.
-
-   overriding procedure Processing_Instruction
-    (Self    : in out SOAP_Message_Decoder;
-     Target  : League.Strings.Universal_String;
-     Data    : League.Strings.Universal_String;
-     Success : in out Boolean);
-   --  Handles processing instructions in XML stream. Processing instructions
-   --  are prohibited in SOAP messages, this subprogram always sets Success to
-   --  False.
-
-   overriding procedure Start_Element
-    (Self           : in out SOAP_Message_Decoder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
-
-end Web_Services.SOAP.Message_Decoders;
+end Web_Services.SOAP.Messages.Faults.Simple;
