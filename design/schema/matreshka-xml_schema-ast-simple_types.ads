@@ -42,15 +42,79 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package Matreshka.XML_Schema.AST is
+package Matreshka.XML_Schema.AST.Simple_Types is
 
-   pragma Pure;
+   pragma Preelaborate;
 
-   type Abstract_Node is abstract tagged limited null record;
+   type Simple_Type_Definition_Node is new Abstract_Node with record
+      --  Properties:
+      --
+      --  {annotations}
+      --  A sequence of Annotation components.
+      --
+      --  {name}
+      --  An xs:NCName value. Optional.
+      --
+      --  {target namespace}
+      --  An xs:anyURI value. Optional.
 
-   type Type_Derivation_Control is (Extension, Restriction, List, Union);
+      Final : Matreshka.XML_Schema.AST.Derivation_Set;
+      --  {final}
+      --  A subset of {extension, restriction, list, union}.
 
-   type Derivation_Set is array (Type_Derivation_Control) of Boolean;
-   pragma Pack (Derivation_Set);
+      --  {context}
+      --  Required if {name} is ·absent·, otherwise must be ·absent·.
+      --
+      --  Either an Attribute Declaration, an Element Declaration, a Complex
+      --  Type Definition, or a Simple Type Definition.
+      --
+      --  {base type definition}
+      --  A Type Definition component. Required.
+      --
+      --  With one exception, the {base type definition} of any Simple Type
+      --  Definition is a Simple Type Definition. The exception is
+      --  ·xs:anySimpleType·, which has ·xs:anyType·, a Complex Type
+      --  Definition, as its {base type definition}.
+      --
+      --  {facets}
+      --  A set of Constraining Facet components.
+      --
+      --  {fundamental facets}
+      --  A set of Fundamental Facet components.
+      --
+      --  {variety}
+      --  One of {atomic, list, union}. Required for all Simple Type
+      --  Definitions except ·xs:anySimpleType·, in which it is ·absent·.
+      --
+      --  {primitive type definition}
+      --  A Simple Type Definition component. With one exception, required if
+      --  {variety} is atomic, otherwise must be ·absent·. The exception is
+      --  ·xs:anyAtomicType·, whose {primitive type definition} is ·absent·.
+      --
+      --  If non-·absent·, must be a primitive definition.
+      --
+      --  {item type definition}
+      --  A Simple Type Definition component. Required if {variety} is list,
+      --  otherwise must be ·absent·.
+      --
+      --  The value of this property must be a primitive or ordinary simple
+      --  type definition with {variety} = atomic, or an ordinary simple type
+      --  definition with {variety} = union whose basic members are all atomic;
+      --  the value must not itself be a list type (have {variety} = list) or
+      --  have any basic members which are list types.
+      --
+      --  {member type definitions}
+      --  A sequence of primitive or ordinary Simple Type Definition
+      --  components.
+      --
+      --  Must be present (but may be empty) if {variety} is union, otherwise
+      --  must be ·absent·.
+      --
+      --  The sequence may contain any primitive or ordinary simple type
+      --  definition, but must not contain any special type definitions.
+   end record;
 
-end Matreshka.XML_Schema.AST;
+   type Simple_Type_Definition_Access is
+     access all Simple_Type_Definition_Node'Class;
+
+end Matreshka.XML_Schema.AST.Simple_Types;

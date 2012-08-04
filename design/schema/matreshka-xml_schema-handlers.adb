@@ -41,13 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.String_Vectors;
+with Matreshka.XML_Schema.AST.Simple_Types;
 
 package body Matreshka.XML_Schema.Handlers is
 
+   use type League.Strings.Universal_String;
+
    XML_Schema_Namespace_URI          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http:///");
+
    Schema_Element_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schema");
+   Simple_Type_Element_Name          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("simpleType");
+
    Attribute_Form_Default_Attribute_Name :
      constant League.Strings.Universal_String
        := League.Strings.To_Universal_String ("attributeFormDefault");
@@ -58,6 +66,8 @@ package body Matreshka.XML_Schema.Handlers is
    Element_Form_Default_Attribute_Name :
      constant League.Strings.Universal_String
        := League.Strings.To_Universal_String ("elementFormDefault");
+   Final_Attribute_Name              : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("final");
    Final_Default_Attribute_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("finalDefault");
    Id_Attribute_Name                 : constant League.Strings.Universal_String
@@ -70,11 +80,24 @@ package body Matreshka.XML_Schema.Handlers is
      constant League.Strings.Universal_String
        := League.Strings.To_Universal_String ("xpathDefaultNamespace");
 
+   function To_Derivation_Set
+    (Image : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Derivation_Set;
+   --  Converts textual representation of fullDerivationSet datatype into
+   --  internal representation. It assumes that textual representation is
+   --  normalized according to XML rules.
+
    procedure Start_Schema_Element
     (Self       : in out XML_Schema_Handler;
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean);
    --  Process start of 'schema' element.
+
+   procedure Start_Simple_Type_Element
+    (Self       : in out XML_Schema_Handler;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean);
+   --  Process start of 'simpleType' element.
 
    -----------------
    -- End_Element --
@@ -110,14 +133,14 @@ package body Matreshka.XML_Schema.Handlers is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean)
-   is
-      use type League.Strings.Universal_String;
-
+     Success        : in out Boolean) is
    begin
       if Namespace_URI = XML_Schema_Namespace_URI then
          if Local_Name = Schema_Element_Name then
             Start_Schema_Element (Self, Attributes, Success);
+
+         elsif Local_Name = Simple_Type_Element_Name then
+            Start_Simple_Type_Element (Self, Attributes, Success);
 
          else
             raise Program_Error;
@@ -146,7 +169,12 @@ package body Matreshka.XML_Schema.Handlers is
       --  XXX  blockDefault
       --  XXX  defaultAttributes
       --  XXX  elementFormDefault
-      --  XXX  finalDefault
+
+      --  finalDefault
+
+      Self.Schema.Final_Default :=
+        To_Derivation_Set (Attributes.Value (Final_Default_Attribute_Name));
+
       --  XXX  id
 
       --  targetNamespace
@@ -169,5 +197,118 @@ package body Matreshka.XML_Schema.Handlers is
       --  XXX  xml:lang
 
    end Start_Schema_Element;
+
+   -------------------------------
+   -- Start_Simple_Type_Element --
+   -------------------------------
+
+   procedure Start_Simple_Type_Element
+    (Self       : in out XML_Schema_Handler;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean)
+   is
+      Index : Natural;
+      Node  :
+        Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Access;
+
+   begin
+      Node :=
+         new Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Node;
+
+      --  {final}
+      --
+      --  A subset of {restriction, extension, list, union}, determined as
+      --  follows. [Definition:]  Let FS be the ·actual value· of the final
+      --  [attribute], if present, otherwise the ·actual value· of the
+      --  finalDefault [attribute] of the ancestor schema element, if present,
+      --  otherwise the empty string. Then the property value is the
+      --  appropriate case among the following:
+      --
+      --  1 If ·FS· is the empty string, then the empty set;
+      --
+      --  2 If ·FS· is "#all", then {restriction, extension, list, union};
+      --
+      --  3 otherwise Consider ·FS· as a space-separated list, and include
+      --  restriction if "restriction" is in that list, and similarly for
+      --  extension, list and union.
+      --
+      --  Note: 'final' attribute of 'simpleType' element doesn't have default
+      --  value and is prohibited for local types.
+
+      Index := Attributes.Index (Final_Attribute_Name);
+
+      if Index /= 0 then
+         Node.Final := To_Derivation_Set (Attributes.Value (Index));
+
+      else
+         --  Non-local type definition.
+
+         Node.Final := Self.Schema.Final_Default;
+
+--      else
+--         --  Local type definition.
+--         Node.Final := (others => False);
+      end if;
+
+      --  XXX id
+      --  XXX name
+
+   end Start_Simple_Type_Element;
+
+   All_Literal_Image         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("#all");
+   Restriction_Literal_Image : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("restriction");
+   Extension_Literal_Image   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("extension");
+   List_Literal_Image        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("list");
+   Union_Literal_Image       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("union");
+
+   -----------------------
+   -- To_Derivation_Set --
+   -----------------------
+
+   function To_Derivation_Set
+    (Image : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Derivation_Set is
+   begin
+      --  Check for '#all' literal.
+
+      if Image = All_Literal_Image then
+         return (others => True);
+      end if;
+
+      --  Check for set of 'restriction', 'extension', 'list' and 'union'
+      --  literals.
+
+      declare
+         Items   : constant League.String_Vectors.Universal_String_Vector
+           := Image.Split (' ');
+         Result  : Matreshka.XML_Schema.AST.Derivation_Set := (others => False);
+         Element : League.Strings.Universal_String;
+
+      begin
+         for J in 1 .. Items.Length loop
+            Element := Items.Element (J);
+
+            if Element = Restriction_Literal_Image then
+               Result (Matreshka.XML_Schema.AST.Restriction) := True;
+
+            elsif Element = Extension_Literal_Image then
+               Result (Matreshka.XML_Schema.AST.Extension) := True;
+
+            elsif Element = List_Literal_Image then
+               Result (Matreshka.XML_Schema.AST.List) := True;
+
+            elsif Element = Union_Literal_Image then
+               Result (Matreshka.XML_Schema.AST.Union) := True;
+            end if;
+         end loop;
+
+         return Result;
+      end;
+   end To_Derivation_Set;
 
 end Matreshka.XML_Schema.Handlers;

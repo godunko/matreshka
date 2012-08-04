@@ -48,6 +48,36 @@ package Matreshka.XML_Schema.AST.Schemas is
    pragma Preelaborate;
 
    type Schema_Node is new Abstract_Node with record
+      --  Properties:
+      --
+      --  {annotations}
+      --  A sequence of Annotation components.
+      --
+      --  {type definitions}
+      --  A set of Type Definition components.
+      --
+      --  {attribute declarations}
+      --  A set of Attribute Declaration components.
+      --
+      --  {element declarations}
+      --  A set of Element Declaration components.
+      --
+      --  {attribute group definitions}
+      --  A set of Attribute Group Definition components.
+      --
+      --  {model group definitions}
+      --  A set of Model Group Definition components.
+      --
+      --  {notation declarations}
+      --  A set of Notation Declaration components.
+      --
+      --  {identity-constraint definitions}
+      --  A set of Identity-Constraint Definition components.
+
+      --  Internal data.
+
+      Final_Default            : Matreshka.XML_Schema.AST.Derivation_Set;
+
       Target_Namespace         : League.Strings.Universal_String;
       Target_Namespace_Defined : Boolean;
    end record;
