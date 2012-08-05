@@ -51,6 +51,8 @@ package body Matreshka.XML_Schema.Handlers is
    XML_Schema_Namespace_URI          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http:///");
 
+   Annotation_Element_Name           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("annotation");
    Schema_Element_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schema");
    Simple_Type_Element_Name          : constant League.Strings.Universal_String
@@ -110,7 +112,9 @@ package body Matreshka.XML_Schema.Handlers is
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean) is
    begin
-      null;
+      if Self.Ignore_Depth /= 0 then
+         Self.Ignore_Depth := Self.Ignore_Depth - 1;
+      end if;
    end End_Element;
 
    ------------------
@@ -135,8 +139,16 @@ package body Matreshka.XML_Schema.Handlers is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean) is
    begin
-      if Namespace_URI = XML_Schema_Namespace_URI then
-         if Local_Name = Schema_Element_Name then
+      if Self.Ignore_Depth /= 0 then
+         Self.Ignore_Depth := Self.Ignore_Depth + 1;
+
+      elsif Namespace_URI = XML_Schema_Namespace_URI then
+         if Local_Name = Annotation_Element_Name then
+            --  'annotation' elements and their children are ignored.
+
+            Self.Ignore_Depth := 1;
+
+         elsif Local_Name = Schema_Element_Name then
             Start_Schema_Element (Self, Attributes, Success);
 
          elsif Local_Name = Simple_Type_Element_Name then

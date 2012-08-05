@@ -62,7 +62,8 @@ private
 
    type XML_Schema_Handler is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Schema : Matreshka.XML_Schema.AST.Schemas.Schema_Access;
+      Schema       : Matreshka.XML_Schema.AST.Schemas.Schema_Access;
+      Ignore_Depth : Natural := 0;
    end record;
 
    overriding procedure End_Element
