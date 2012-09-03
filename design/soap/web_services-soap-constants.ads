@@ -56,28 +56,36 @@ package Web_Services.SOAP.Constants is
    XML_Lang_Name : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("lang");
 
-   --  SOAP Envelope namespace URI and names of elements in this namespace.
+   --  SOAP Envelope namespace URI, names of elements and attributes in this
+   --  namespace.
 
-   SOAP_Envelope_URI    : constant League.Strings.Universal_String
+   SOAP_Envelope_URI         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/2003/05/soap-envelope");
-   SOAP_Envelope_Prefix : constant League.Strings.Universal_String
+   SOAP_Envelope_Prefix      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("env");
-   SOAP_Body_Name       : constant League.Strings.Universal_String
+   SOAP_Body_Name            : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Body");
-   SOAP_Code_Name       : constant League.Strings.Universal_String
+   SOAP_Code_Name            : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Code");
-   SOAP_Envelope_Name   : constant League.Strings.Universal_String
+   SOAP_Envelope_Name        : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Envelope");
-   SOAP_Fault_Name      : constant League.Strings.Universal_String
+   SOAP_Fault_Name           : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Fault");
-   SOAP_Header_Name     : constant League.Strings.Universal_String
+   SOAP_Header_Name          : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Header");
-   SOAP_Reason_Name     : constant League.Strings.Universal_String
+   SOAP_Reason_Name          : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Reason");
-   SOAP_Text_Name       : constant League.Strings.Universal_String
+   SOAP_Text_Name            : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Text");
-   SOAP_Value_Name      : constant League.Strings.Universal_String
+   SOAP_Value_Name           : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("Value");
+   SOAP_Must_Understand_Name : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("mustUnderstand");
+
+   --  Some literals for values of attributes.
+
+   SOAP_True_Literal : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("true");
 
 end Web_Services.SOAP.Constants;

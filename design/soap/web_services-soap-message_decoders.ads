@@ -68,6 +68,7 @@ private
 
    type States is
     (Initial,             --  Initial state.
+     SOAP_Header,         --  SOAP Header element has been processed.
      SOAP_Body,           --  SOAP Body element has beed processed.
      SOAP_Body_Element);  --  SOAP Body child element has been processed.
 

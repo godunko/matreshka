@@ -96,7 +96,10 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Ignore_Element := Self.Ignore_Element - 1;
 
       elsif Namespace_URI = SOAP_Envelope_URI then
-         if Local_Name = SOAP_Body_Name then
+         if Local_Name = SOAP_Header_Name then
+            Self.State := Initial;
+
+         elsif Local_Name = SOAP_Body_Name then
             Self.State := Initial;
          end if;
 
@@ -145,18 +148,22 @@ package body Web_Services.SOAP.Message_Decoders is
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean) is
    begin
-      --  Deallocate decoded SOAP message if any.
+      --  Reports only first detected error.
 
-      Free (Self.Message);
+      if Self.Success then
+         --  Deallocate decoded SOAP message if any.
 
-      Self.Success := False;
-      Self.Diagnosis := "XML error: " & Occurrence.Message;
-      Self.Message :=
-        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
-         (League.Strings.To_Universal_String ("Sender"),
-          League.Strings.To_Universal_String ("en"),
-          Self.Diagnosis);
-      Success := False;
+         Free (Self.Message);
+
+         Self.Success := False;
+         Self.Diagnosis := "XML error: " & Occurrence.Message;
+         Self.Message :=
+           Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
+            (League.Strings.To_Universal_String ("Sender"),
+             League.Strings.To_Universal_String ("en"),
+             Self.Diagnosis);
+         Success := False;
+      end if;
    end Fatal_Error;
 
    -------------
@@ -226,7 +233,7 @@ package body Web_Services.SOAP.Message_Decoders is
          elsif Local_Name = SOAP_Header_Name then
             --  "Header" element is not processed now.
 
-            Self.Ignore_Element := 1;
+            Self.State := SOAP_Header;
 
          elsif Local_Name = SOAP_Body_Name then
             --  Switch state to process content of SOAP Body element.
@@ -237,6 +244,71 @@ package body Web_Services.SOAP.Message_Decoders is
             Put_Line
              ("Unknown element '" & Local_Name.To_Wide_Wide_String & ''');
          end if;
+
+      elsif Self.State = SOAP_Header then
+         --  SOAP Header element has been processed, currect element is its
+         --  child. Appropriate decoder must be created to continue processing.
+
+         --  [SOAP1.2] 5.2.3 SOAP mustUnderstand Attribute
+         --
+         --  "Omitting this attribute information item is defined as being
+         --  semantically equivalent to including it with a value of "false".
+         --
+         --  SOAP senders SHOULD NOT generate, but SOAP receivers MUST accept,
+         --  the SOAP mustUnderstand attribute information item with a value of
+         --  "false" or "0".
+         --
+         --  If generating a SOAP mustUnderstand attribute information item, a
+         --  SOAP sender SHOULD use the canonical representation "true" of the
+         --  attribute value (see XML Schema [XML Schema Part 2]). A SOAP
+         --  receiver MUST accept any valid lexical representation of the
+         --  attribute value.
+         --
+         --  If relaying the message, a SOAP intermediary MAY substitute "true"
+         --  for the value "1", or "false" for "0". In addition, a SOAP
+         --  intermediary MAY omit a SOAP mustUnderstand attribute information
+         --  item if its value is "false" (see 2.7 Relaying SOAP Messages).
+         --
+         --  A SOAP sender generating a SOAP message SHOULD use the
+         --  mustUnderstand attribute information item only on SOAP header
+         --  blocks. A SOAP receiver MUST ignore this attribute information
+         --  item if it appears on descendants of a SOAP header block or on a
+         --  SOAP body child element information item (or its descendents)."
+
+         --  XXX Correct processing of literal value of evn:mustUnderstand
+         --  attribute must be implemented.
+
+         if Attributes.Is_Specified
+             (SOAP_Envelope_URI, SOAP_Must_Understand_Name)
+           and then Attributes.Value
+                     (SOAP_Envelope_URI, SOAP_Must_Understand_Name)
+                        = SOAP_True_Literal
+         then
+            --  [SOAP1.2] 5.4.8 SOAP mustUnderstand Faults
+            --
+            --  "When a SOAP node generates a fault with a Value of Code set to
+            --  "env:MustUnderstand", it SHOULD provide NotUnderstood SOAP
+            --  header blocks in the generated fault message. The NotUnderstood
+            --  SOAP header blocks, as described below, detail the XML
+            --  qualified names (per XML Schema [XML Schema Part 2]) of the
+            --  particular SOAP header block(s) which were not understood."
+
+            --  XXX Generation of NotUnderstood SOAP header blocks is not
+            --  implemented yet.
+
+            Self.Success := False;
+            Self.Diagnosis :=
+              League.Strings.To_Universal_String
+               ("One or more mandatory SOAP header blocks not understood");
+            Self.Message :=
+              Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
+               (League.Strings.To_Universal_String ("MustUnderstand"),
+                League.Strings.To_Universal_String ("en"),
+                Self.Diagnosis);
+            Success := False;
+         end if;
+
+         Self.Ignore_Element := 1;
 
       elsif Self.State = SOAP_Body then
          --  SOAP Body element has been processed, current element is its
