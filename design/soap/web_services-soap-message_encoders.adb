@@ -48,7 +48,7 @@ with XML.SAX.Pretty_Writers;
 with XML.SAX.Writers;
 
 with Web_Services.SOAP.Constants;
-with Web_Services.SOAP.Encoder_Registry;
+with Web_Services.SOAP.Body_Encoders.Registry;
 with Web_Services.SOAP.Messages.Faults;
 
 package body Web_Services.SOAP.Message_Encoders is
@@ -92,7 +92,7 @@ package body Web_Services.SOAP.Message_Encoders is
       then
          --  Lookup for SOAP Body encoder.
 
-         Web_Services.SOAP.Encoder_Registry.Resolve
+         Web_Services.SOAP.Body_Encoders.Registry.Resolve
           (Message'Tag).Encode (Message, Writer);
 
       else

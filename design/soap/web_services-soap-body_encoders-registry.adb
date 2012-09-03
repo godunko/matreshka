@@ -45,7 +45,7 @@ with Ada.Containers.Hashed_Maps;
 with Ada.Strings.Hash;
 with Ada.Tags.Generic_Dispatching_Constructor;
 
-package body Web_Services.SOAP.Encoder_Registry is
+package body Web_Services.SOAP.Body_Encoders.Registry is
 
    function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type;
 
@@ -102,4 +102,4 @@ package body Web_Services.SOAP.Encoder_Registry is
              (Create (Registry.Element (Message_Tag), Aux'Access));
    end Resolve;
 
-end Web_Services.SOAP.Encoder_Registry;
+end Web_Services.SOAP.Body_Encoders.Registry;
