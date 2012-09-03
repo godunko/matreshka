@@ -41,99 +41,49 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  SOAP message decoder process events from SAX parser.
+--  Interface of decoder of SOAP Body's child element.
 ------------------------------------------------------------------------------
 with League.Strings;
 with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
-with XML.SAX.Error_Handlers;
-with XML.SAX.Parse_Exceptions;
 
-private with Web_Services.SOAP.Body_Decoders;
-private with Web_Services.SOAP.Header_Decoders;
-with Web_Services.SOAP.Messages;
+--with Web_Services.SOAP.Messages;
 
-package Web_Services.SOAP.Message_Decoders is
+package Web_Services.SOAP.Header_Decoders is
 
-   type SOAP_Message_Decoder is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
-       and XML.SAX.Error_Handlers.SAX_Error_Handler with private;
+   pragma Preelaborate;
 
-   function Success (Self : SOAP_Message_Decoder'Class) return Boolean;
+   type SOAP_Header_Decoder is limited interface;
 
-   function Message
-    (Self : SOAP_Message_Decoder'Class)
-       return Web_Services.SOAP.Messages.SOAP_Message_Access;
+   type SOAP_Header_Decoder_Access is access all SOAP_Header_Decoder'Class;
 
-private
+   not overriding function Create
+    (URI : not null access League.Strings.Universal_String)
+       return SOAP_Header_Decoder is abstract;
+   --  This subprogram is used by dispatching constructor to create instance of
+   --  the decoder.
 
-   type States is
-    (Initial,              --  Initial state.
-     SOAP_Header,          --  SOAP Header element has been processed.
-     SOAP_Header_Element,  --  SOAP Header child element has been processed.
-     SOAP_Body,            --  SOAP Body element has beed processed.
-     SOAP_Body_Element);   --  SOAP Body child element has been processed.
+--   not overriding function Message
+--    (Self : SOAP_Header_Decoder)
+--       return not null Web_Services.SOAP.Messages.SOAP_Message_Access
+--         is abstract;
+--   --  Returns constructed SOAP message.
 
-   type SOAP_Message_Decoder is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
-       and XML.SAX.Error_Handlers.SAX_Error_Handler with
-   record
-      State          : States := Initial;
-      Body_Decoder   :
-        Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
-      Body_Depth     : Natural := 0;
-      Header_Decoder :
-        Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
-      Header_Depth   : Natural := 0;
-      Ignore_Element : Natural := 0;
-      Message        : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Diagnosis      : League.Strings.Universal_String;
-      Success        : Boolean := True;
-   end record;
-
-   overriding procedure Characters
-    (Self    : in out SOAP_Message_Decoder;
+   not overriding procedure Characters
+    (Self    : in out SOAP_Header_Decoder;
      Text    : League.Strings.Universal_String;
-     Success : in out Boolean);
+     Success : in out Boolean) is null;
 
-   overriding procedure End_Element
-    (Self           : in out SOAP_Message_Decoder;
+   not overriding procedure End_Element
+    (Self           : in out SOAP_Header_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
+     Success        : in out Boolean) is null;
 
-   overriding procedure Error
-    (Self       : in out SOAP_Message_Decoder;
-     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
-     Success    : in out Boolean);
-   --  Stops processing of the message.
-
-   overriding function Error_String
-    (Self : SOAP_Message_Decoder) return League.Strings.Universal_String;
-   --  Returns error information as string.
-
-   overriding procedure Fatal_Error
-    (Self       : in out SOAP_Message_Decoder;
-     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
-     Success    : in out Boolean);
-   --  Stops processing of the message.
-
-   overriding procedure Processing_Instruction
-    (Self    : in out SOAP_Message_Decoder;
-     Target  : League.Strings.Universal_String;
-     Data    : League.Strings.Universal_String;
-     Success : in out Boolean);
-   --  Handles processing instructions in XML stream. Processing instructions
-   --  are prohibited in SOAP messages, this subprogram always sets Success to
-   --  False.
-
-   overriding procedure Start_Element
-    (Self           : in out SOAP_Message_Decoder;
+   not overriding procedure Start_Element
+    (Self           : in out SOAP_Header_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
+     Success        : in out Boolean) is null;
 
-end Web_Services.SOAP.Message_Decoders;
+end Web_Services.SOAP.Header_Decoders;

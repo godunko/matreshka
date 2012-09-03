@@ -46,6 +46,7 @@ with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Body_Decoders.Registry;
+with Web_Services.SOAP.Header_Decoders.Registry;
 with Web_Services.SOAP.Messages.Faults.Simple;
 
 package body Web_Services.SOAP.Message_Decoders is
@@ -72,10 +73,15 @@ package body Web_Services.SOAP.Message_Decoders is
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      if Self.State = SOAP_Body_Element
+      if Self.State = SOAP_Header_Element
+        and then Self.Header_Depth /= 0
+      then
+         Self.Header_Decoder.Characters (Text, Success);
+
+      elsif Self.State = SOAP_Body_Element
         and then Self.Body_Depth /= 0
       then
-         Self.Decoder.Characters (Text, Success);
+         Self.Body_Decoder.Characters (Text, Success);
       end if;
    end Characters;
 
@@ -99,8 +105,26 @@ package body Web_Services.SOAP.Message_Decoders is
          if Local_Name = SOAP_Header_Name then
             Self.State := Initial;
 
+         elsif Local_Name = SOAP_Header_Name then
+            Self.State := Initial;
+
          elsif Local_Name = SOAP_Body_Name then
             Self.State := Initial;
+         end if;
+
+      elsif Self.State = SOAP_Header_Element then
+         --  Decrement depth of nesting XML elements in Header element.
+
+         Self.Header_Depth := Self.Header_Depth - 1;
+
+         --  Redirect processing to decoder.
+
+         Self.Header_Decoder.End_Element (Namespace_URI, Local_Name, Success);
+
+         --  Obtain decoded data.
+
+         if Self.Header_Depth = 0 then
+            null;
          end if;
 
       elsif Self.State = SOAP_Body_Element then
@@ -110,11 +134,13 @@ package body Web_Services.SOAP.Message_Decoders is
 
          --  Redirect processing to decoder.
 
-         Self.Decoder.End_Element (Namespace_URI, Local_Name, Success);
+         Self.Body_Decoder.End_Element (Namespace_URI, Local_Name, Success);
+
+         --  Obtain decoded data.
 
          if Self.Body_Depth = 0 then
-            Self.Message := Self.Decoder.Message;
-            Free (Self.Decoder);
+            Self.Message := Self.Body_Decoder.Message;
+            Free (Self.Body_Decoder);
          end if;
       end if;
    end End_Element;
@@ -218,8 +244,16 @@ package body Web_Services.SOAP.Message_Decoders is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is
+     Success        : in out Boolean)
+   is
+      use type Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
+
    begin
+
+         Put_Line
+          (Namespace_URI.To_Wide_Wide_String
+             & " : "
+             & Local_Name.To_Wide_Wide_String);
       if Self.Ignore_Element /= 0 then
          --  Each children element of unknown element increments element ignore
          --  counter to proper handling of arbitrary depth of elements.
@@ -249,6 +283,9 @@ package body Web_Services.SOAP.Message_Decoders is
          --  SOAP Header element has been processed, currect element is its
          --  child. Appropriate decoder must be created to continue processing.
 
+         Self.Header_Decoder :=
+           Web_Services.SOAP.Header_Decoders.Registry.Resolve (Namespace_URI);
+
          --  [SOAP1.2] 5.2.3 SOAP mustUnderstand Attribute
          --
          --  "Omitting this attribute information item is defined as being
@@ -275,11 +312,12 @@ package body Web_Services.SOAP.Message_Decoders is
          --  item if it appears on descendants of a SOAP header block or on a
          --  SOAP body child element information item (or its descendents)."
 
-         --  XXX Correct processing of literal value of evn:mustUnderstand
+         --  XXX Correct processing of literal value of env:mustUnderstand
          --  attribute must be implemented.
 
-         if Attributes.Is_Specified
-             (SOAP_Envelope_URI, SOAP_Must_Understand_Name)
+         if Self.Header_Decoder = null
+           and then Attributes.Is_Specified
+                     (SOAP_Envelope_URI, SOAP_Must_Understand_Name)
            and then Attributes.Value
                      (SOAP_Envelope_URI, SOAP_Must_Understand_Name)
                         = SOAP_True_Literal
@@ -306,28 +344,50 @@ package body Web_Services.SOAP.Message_Decoders is
                 League.Strings.To_Universal_String ("en"),
                 Self.Diagnosis);
             Success := False;
+
+         elsif Self.Header_Decoder /= null then
+            --  Decoder has been found, use it to decode header.
+
+            Self.State := SOAP_Header_Element;
+            Self.Header_Depth := 1;
+
+            --  Redirect handling of current XML element to decoder.
+
+            Self.Header_Decoder.Start_Element
+             (Namespace_URI, Local_Name, Attributes, Success);
+
+         else
+            Self.Ignore_Element := 1;
          end if;
 
-         Self.Ignore_Element := 1;
+      elsif Self.State = SOAP_Header_Element then
+         --  Redirect handling of current XML element to decoder.
+
+         Self.Header_Decoder.Start_Element
+          (Namespace_URI, Local_Name, Attributes, Success);
+
+         --  Increment depth of nested XML elements in Body element.
+
+         Self.Header_Depth := Self.Header_Depth + 1;
 
       elsif Self.State = SOAP_Body then
          --  SOAP Body element has been processed, current element is its
          --  child. Appropriate decoder must be created to continue processing.
 
-         Self.Decoder :=
+         Self.Body_Decoder :=
            Web_Services.SOAP.Body_Decoders.Registry.Resolve (Namespace_URI);
          Self.State := SOAP_Body_Element;
          Self.Body_Depth := 1;
 
          --  Redirect handling of current XML element to decoder.
 
-         Self.Decoder.Start_Element
+         Self.Body_Decoder.Start_Element
           (Namespace_URI, Local_Name, Attributes, Success);
 
       elsif Self.State = SOAP_Body_Element then
          --  Redirect handling of current XML element to decoder.
 
-         Self.Decoder.Start_Element
+         Self.Body_Decoder.Start_Element
           (Namespace_URI, Local_Name, Attributes, Success);
 
          --  Increment depth of nested XML elements in Body element.
