@@ -41,57 +41,22 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-with Ada.Tags.Generic_Dispatching_Constructor;
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
+--  This package provides registry of SOAP Body children elements decoders.
+--  Decoders are identified by namespace URI of child element.
+------------------------------------------------------------------------------
+with Ada.Tags;
 
-with League.Strings.Hash;
+with League.Strings;
 
-package body Web_Services.SOAP.Decoder_Registry is
-
-   function Create is
-     new Ada.Tags.Generic_Dispatching_Constructor
-          (Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder,
-           League.Strings.Universal_String,
-           Web_Services.SOAP.Body_Decoders.Create);
-
-   package String_Tag_Maps is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           Ada.Tags.Tag,
-           League.Strings.Hash,
-           League.Strings."=",
-           Ada.Tags."=");
-
-   Registry : String_Tag_Maps.Map;
-
-   --------------
-   -- Register --
-   --------------
+package Web_Services.SOAP.Body_Decoders.Registry is
 
    procedure Register
     (URI : League.Strings.Universal_String;
-     Tag : Ada.Tags.Tag) is
-   begin
-      Put_Line ("Decoder is registered for '" & URI.To_Wide_Wide_String & ''');
-      Registry.Insert (URI, Tag);
-   end Register;
-
-   -------------
-   -- Resolve --
-   -------------
+     Tag : Ada.Tags.Tag);
 
    function Resolve
     (URI : League.Strings.Universal_String)
-       return not null Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access
-   is
-      Aux : aliased League.Strings.Universal_String := URI;
+       return
+         not null Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
 
-   begin
-      Put_Line ("Lookup for decoder of '" & URI.To_Wide_Wide_String & ''');
-      return
-        new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class'
-             (Create (Registry.Element (URI), Aux'Access));
-   end Resolve;
-
-end Web_Services.SOAP.Decoder_Registry;
+end Web_Services.SOAP.Body_Decoders.Registry;

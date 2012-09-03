@@ -45,7 +45,7 @@ with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Constants;
-with Web_Services.SOAP.Decoder_Registry;
+with Web_Services.SOAP.Body_Decoders.Registry;
 with Web_Services.SOAP.Messages.Faults.Simple;
 
 package body Web_Services.SOAP.Message_Decoders is
@@ -315,7 +315,7 @@ package body Web_Services.SOAP.Message_Decoders is
          --  child. Appropriate decoder must be created to continue processing.
 
          Self.Decoder :=
-           Web_Services.SOAP.Decoder_Registry.Resolve (Namespace_URI);
+           Web_Services.SOAP.Body_Decoders.Registry.Resolve (Namespace_URI);
          Self.State := SOAP_Body_Element;
          Self.Body_Depth := 1;
 
