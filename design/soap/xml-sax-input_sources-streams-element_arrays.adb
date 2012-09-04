@@ -55,6 +55,7 @@ package body XML.SAX.Input_Sources.Streams.Element_Arrays is
      End_Of_Data : out Boolean)
    is
       pragma Unreferenced (Self);
+      pragma Warnings (Off, Buffer);
 
    begin
       Last := Buffer'First - 1;

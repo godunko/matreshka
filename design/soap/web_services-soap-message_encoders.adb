@@ -68,7 +68,7 @@ package body Web_Services.SOAP.Message_Encoders is
      Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class)
        return League.Stream_Element_Vectors.Stream_Element_Vector
    is
-      Codec  : League.Text_Codecs.Text_Codec
+      Codec  : constant League.Text_Codecs.Text_Codec
         := League.Text_Codecs.Codec
             (League.Strings.To_Universal_String ("utf-8"));
       Writer : XML.SAX.Pretty_Writers.SAX_Pretty_Writer;
@@ -120,8 +120,9 @@ package body Web_Services.SOAP.Message_Encoders is
     (Fault  : Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class;
      Writer : in out XML.SAX.Writers.SAX_Writer'Class)
    is
-      Reason     : Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map
-        := Fault.Reason;
+      Reason     : constant
+        Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map
+          := Fault.Reason;
       Position   :
         Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Cursor
           := Reason.First;

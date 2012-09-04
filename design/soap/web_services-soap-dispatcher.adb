@@ -105,7 +105,7 @@ package body Web_Services.SOAP.Dispatcher is
             --  SOAP fault.
 
             declare
-               Codec  : League.Text_Codecs.Text_Codec
+               Codec : constant League.Text_Codecs.Text_Codec
                  := League.Text_Codecs.Codec
                      (League.Strings.To_Universal_String ("utf-8"));
 
