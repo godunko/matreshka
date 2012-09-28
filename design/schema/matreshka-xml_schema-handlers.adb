@@ -49,7 +49,8 @@ package body Matreshka.XML_Schema.Handlers is
    use type League.Strings.Universal_String;
 
    XML_Schema_Namespace_URI          : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("http:///");
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/2001/XMLSchema");
 
    Annotation_Element_Name           : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("annotation");
