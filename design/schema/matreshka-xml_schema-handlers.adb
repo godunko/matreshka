@@ -42,7 +42,9 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.String_Vectors;
+
 with Matreshka.XML_Schema.AST.Simple_Types;
+with Matreshka.XML_Schema.AST.Types;
 
 package body Matreshka.XML_Schema.Handlers is
 
@@ -54,6 +56,8 @@ package body Matreshka.XML_Schema.Handlers is
 
    Annotation_Element_Name           : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("annotation");
+   Restriction_Element_Name          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("restriction");
    Schema_Element_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schema");
    Simple_Type_Element_Name          : constant League.Strings.Universal_String
@@ -75,6 +79,8 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("finalDefault");
    Id_Attribute_Name                 : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("id");
+   Name_Attribute_Name               : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("name");
    Target_Namespace_Attribute_Name   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("targetNamespace");
    Version_Attribute_Name            : constant League.Strings.Universal_String
@@ -102,6 +108,15 @@ package body Matreshka.XML_Schema.Handlers is
      Success    : in out Boolean);
    --  Process start of 'simpleType' element.
 
+   -------------
+   -- Current --
+   -------------
+
+   function Current (Self : XML_Schema_Handler'Class) return States is
+   begin
+      return Self.States.Last_Element;
+   end Current;
+
    -----------------
    -- End_Element --
    -----------------
@@ -115,6 +130,26 @@ package body Matreshka.XML_Schema.Handlers is
    begin
       if Self.Ignore_Depth /= 0 then
          Self.Ignore_Depth := Self.Ignore_Depth - 1;
+
+      elsif Namespace_URI = XML_Schema_Namespace_URI then
+         if Local_Name = Annotation_Element_Name then
+            null;
+
+         elsif Local_Name = Restriction_Element_Name then
+            null;
+--            End_Restriction_Element (Self, Success);
+
+         elsif Local_Name = Schema_Element_Name then
+            Self.Pop;
+--            End_Schema_Element (Self, Success);
+
+         elsif Local_Name = Simple_Type_Element_Name then
+            Self.Pop;
+--            End_Simple_Type_Element (Self, Success);
+
+         else
+            raise Program_Error;
+         end if;
       end if;
    end End_Element;
 
@@ -127,6 +162,37 @@ package body Matreshka.XML_Schema.Handlers is
    begin
       return League.Strings.Empty_Universal_String;
    end Error_String;
+
+   ---------
+   -- Pop --
+   ---------
+
+   procedure Pop (Self : in out XML_Schema_Handler'Class) is
+   begin
+      Self.States.Delete_Last;
+   end Pop;
+
+   ----------
+   -- Push --
+   ----------
+
+   procedure Push (Self : in out XML_Schema_Handler'Class; State : States) is
+   begin
+      Self.States.Append (State);
+   end Push;
+
+   --------------------
+   -- Start_Document --
+   --------------------
+
+   overriding procedure Start_Document
+    (Self    : in out XML_Schema_Handler;
+     Success : in out Boolean) is
+   begin
+      --  Initialize initial state.
+
+      Self.Push (Document);
+   end Start_Document;
 
    -------------------
    -- Start_Element --
@@ -148,6 +214,10 @@ package body Matreshka.XML_Schema.Handlers is
             --  'annotation' elements and their children are ignored.
 
             Self.Ignore_Depth := 1;
+
+         elsif Local_Name = Restriction_Element_Name then
+            null;
+--            Start_Restriction_Element (Self, Attributes, Success);
 
          elsif Local_Name = Schema_Element_Name then
             Start_Schema_Element (Self, Attributes, Success);
@@ -176,6 +246,12 @@ package body Matreshka.XML_Schema.Handlers is
       Index : Natural;
 
    begin
+      if Self.Current /= Document then
+         raise Program_Error;
+      end if;
+
+      Self.Push (Schema);
+
       Self.Schema := new Matreshka.XML_Schema.AST.Schemas.Schema_Node;
 
       --  XXX  attributeFormDefault
@@ -225,6 +301,14 @@ package body Matreshka.XML_Schema.Handlers is
         Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Access;
 
    begin
+      if Self.Current /= Schema then
+         --  XXX Only global type declarations are handled now.
+
+         raise Program_Error;
+      end if;
+
+      Self.Push (Simple_Type);
+
       Node :=
          new Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Node;
 
@@ -264,8 +348,23 @@ package body Matreshka.XML_Schema.Handlers is
       end if;
 
       --  XXX id
-      --  XXX name
 
+      --  {name}
+      --
+      --  The ·actual value· of the name [attribute] if present on the
+      --  <simpleType> element, otherwise ·absent·.
+
+      --  XXX This is valid for 'global' definitions only.
+
+      Index := Attributes.Index (Name_Attribute_Name);
+
+      if Index /= 0 then
+         Node.Name := Attributes.Value (Index);
+      end if;
+
+      Self.Schema.Type_Definitions.Insert
+       (Node.Name,
+        Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node));
    end Start_Simple_Type_Element;
 
    All_Literal_Image         : constant League.Strings.Universal_String

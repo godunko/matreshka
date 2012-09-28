@@ -41,21 +41,34 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with Ada.Containers.Hashed_Maps;
+
+with League.Strings.Hash;
+
+with Matreshka.XML_Schema.AST.Types;
 
 package Matreshka.XML_Schema.AST.Schemas is
 
    pragma Preelaborate;
+
+   package Type_Definition_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Matreshka.XML_Schema.AST.Types.Type_Definition_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           Matreshka.XML_Schema.AST.Types."=");
 
    type Schema_Node is new Abstract_Node with record
       --  Properties:
       --
       --  {annotations}
       --  A sequence of Annotation components.
-      --
+
+      Type_Definitions : Type_Definition_Maps.Map;
       --  {type definitions}
       --  A set of Type Definition components.
-      --
+
       --  {attribute declarations}
       --  A set of Attribute Declaration components.
       --

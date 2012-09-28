@@ -48,6 +48,8 @@
 --  values. This handler can be used as 'subhandler' to process larger XML
 --  documents which include XML Schema part, for example WSDL documents.
 ------------------------------------------------------------------------------
+private with Ada.Containers.Vectors;
+
 private with League.Strings;
 private with Matreshka.XML_Schema.AST.Schemas;
 private with XML.SAX.Attributes;
@@ -60,11 +62,26 @@ package Matreshka.XML_Schema.Handlers is
 
 private
 
+   type States is (Document, Schema, Simple_Type);
+
+   package State_Vectors is
+     new Ada.Containers.Vectors (Positive, States);
+
    type XML_Schema_Handler is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
       Schema       : Matreshka.XML_Schema.AST.Schemas.Schema_Access;
       Ignore_Depth : Natural := 0;
+      States       : State_Vectors.Vector;
    end record;
+
+   procedure Push (Self : in out XML_Schema_Handler'Class; State : States);
+   --  Push the given state into the state stack.
+
+   procedure Pop (Self : in out XML_Schema_Handler'Class);
+   --  Pop state from the state stack.
+
+   function Current (Self : XML_Schema_Handler'Class) return States;
+   --  Returns current state.
 
    overriding procedure End_Element
     (Self           : in out XML_Schema_Handler;
@@ -76,6 +93,10 @@ private
    overriding function Error_String
     (Self : XML_Schema_Handler) return League.Strings.Universal_String;
 
+   overriding procedure Start_Document
+    (Self    : in out XML_Schema_Handler;
+     Success : in out Boolean);
+
    overriding procedure Start_Element
     (Self           : in out XML_Schema_Handler;
      Namespace_URI  : League.Strings.Universal_String;
@@ -83,5 +104,11 @@ private
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean);
+
+--   overriding procedure Start_Prefix_Mapping
+--    (Self          : in out XML_Schema_Handler;
+--     Prefix        : League.Strings.Universal_String;
+--     Namespace_URI : League.Strings.Universal_String;
+--     Success       : in out Boolean);
 
 end Matreshka.XML_Schema.Handlers;
