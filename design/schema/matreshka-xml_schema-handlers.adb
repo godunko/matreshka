@@ -106,11 +106,22 @@ package body Matreshka.XML_Schema.Handlers is
 
       --  This package groups subprograms to handle simple type declaration.
 
-      procedure Start_Simple_Type_Element
+      procedure Start_Restriction_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean);
-      --  Process start of 'simpleType' element.
+      --  Process start of 'restriction' element.
+
+      procedure End_Restriction_Element
+       (Self    : in out XML_Schema_Handler;
+        Success : in out Boolean);
+      --  Process end of 'restriction' element.
+
+      procedure Start_Top_Level_Simple_Type_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+      --  Process start of top-level 'simpleType' element.
 
       procedure End_Simple_Type_Element
        (Self    : in out XML_Schema_Handler;
@@ -147,15 +158,21 @@ package body Matreshka.XML_Schema.Handlers is
             null;
 
          elsif Local_Name = Restriction_Element_Name then
-            null;
---            End_Restriction_Element (Self, Success);
+            if Self.Current = Simple_Type_Restriction then
+               Simple_Types.End_Restriction_Element (Self, Success);
+               Self.Pop;
+
+            else
+               raise Program_Error;
+            end if;
 
          elsif Local_Name = Schema_Element_Name then
-            Self.Pop;
 --            End_Schema_Element (Self, Success);
+            Self.Pop;
 
          elsif Local_Name = Simple_Type_Element_Name then
             Simple_Types.End_Simple_Type_Element (Self, Success);
+            Self.Pop;
 
          else
             raise Program_Error;
@@ -198,6 +215,17 @@ package body Matreshka.XML_Schema.Handlers is
    package body Simple_Types is
 
       -----------------------------
+      -- End_Restriction_Element --
+      -----------------------------
+
+      procedure End_Restriction_Element
+       (Self    : in out XML_Schema_Handler;
+        Success : in out Boolean) is
+      begin
+         null;
+      end End_Restriction_Element;
+
+      -----------------------------
       -- End_Simple_Type_Element --
       -----------------------------
 
@@ -205,14 +233,26 @@ package body Matreshka.XML_Schema.Handlers is
        (Self    : in out XML_Schema_Handler;
         Success : in out Boolean) is
       begin
-         Self.Pop;
+         null;
       end End_Simple_Type_Element;
 
       -------------------------------
-      -- Start_Simple_Type_Element --
+      -- Start_Restriction_Element --
       -------------------------------
 
-      procedure Start_Simple_Type_Element
+      procedure Start_Restriction_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean) is
+      begin
+         null;
+      end Start_Restriction_Element;
+
+      -----------------------------------------
+      -- Start_Top_Level_Simple_Type_Element --
+      -----------------------------------------
+
+      procedure Start_Top_Level_Simple_Type_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
@@ -222,14 +262,6 @@ package body Matreshka.XML_Schema.Handlers is
            Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Access;
 
       begin
-         if Self.Current /= Schema then
-            --  XXX Only global type declarations are handled now.
-
-            raise Program_Error;
-         end if;
-
-         Self.Push (Simple_Type);
-
          Node :=
            new
              Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Node;
@@ -276,18 +308,20 @@ package body Matreshka.XML_Schema.Handlers is
          --  The ·actual value· of the name [attribute] if present on the
          --  <simpleType> element, otherwise ·absent·.
 
-         --  XXX This is valid for 'global' definitions only.
-
          Index := Attributes.Index (Name_Attribute_Name);
 
-         if Index /= 0 then
-            Node.Name := Attributes.Value (Index);
+         if Index = 0 then
+            raise Program_Error
+              with "'name' attribute is required for top-level simple type"
+                     & " definition";
          end if;
+
+         Node.Name := Attributes.Value (Index);
 
          Self.Schema.Type_Definitions.Insert
           (Node.Name,
            Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node));
-      end Start_Simple_Type_Element;
+      end Start_Top_Level_Simple_Type_Element;
 
    end Simple_Types;
 
@@ -322,18 +356,39 @@ package body Matreshka.XML_Schema.Handlers is
       elsif Namespace_URI = XML_Schema_Namespace_URI then
          if Local_Name = Annotation_Element_Name then
             --  'annotation' elements and their children are ignored.
+            --
+            --  XXX Check for actual state must be added.
 
             Self.Ignore_Depth := 1;
 
          elsif Local_Name = Restriction_Element_Name then
-            null;
---            Start_Restriction_Element (Self, Attributes, Success);
+            if Self.Current = Simple_Type then
+               Self.Push (Simple_Type_Restriction);
+               Simple_Types.Start_Restriction_Element
+                (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
 
          elsif Local_Name = Schema_Element_Name then
-            Start_Schema_Element (Self, Attributes, Success);
+            if Self.Current = Document then
+               Self.Push (Schema);
+               Start_Schema_Element (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
 
          elsif Local_Name = Simple_Type_Element_Name then
-            Simple_Types.Start_Simple_Type_Element (Self, Attributes, Success);
+            if Self.Current = Schema then
+               Self.Push (Simple_Type);
+               Simple_Types.Start_Top_Level_Simple_Type_Element
+                (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
 
          else
             raise Program_Error;
@@ -356,12 +411,6 @@ package body Matreshka.XML_Schema.Handlers is
       Index : Natural;
 
    begin
-      if Self.Current /= Document then
-         raise Program_Error;
-      end if;
-
-      Self.Push (Schema);
-
       Self.Schema := new Matreshka.XML_Schema.AST.Schemas.Schema_Node;
 
       --  XXX  attributeFormDefault

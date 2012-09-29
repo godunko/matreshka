@@ -62,7 +62,11 @@ package Matreshka.XML_Schema.Handlers is
 
 private
 
-   type States is (Document, Schema, Simple_Type);
+   type States is
+    (Document,
+     Schema,
+     Simple_Type,
+     Simple_Type_Restriction);
 
    package State_Vectors is
      new Ada.Containers.Vectors (Positive, States);
