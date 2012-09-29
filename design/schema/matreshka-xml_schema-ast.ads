@@ -53,4 +53,6 @@ package Matreshka.XML_Schema.AST is
    type Derivation_Set is array (Type_Derivation_Control) of Boolean;
    pragma Pack (Derivation_Set);
 
+   type Simple_Type_Variety is (Absent, Atomic, List, Union);
+
 end Matreshka.XML_Schema.AST;
