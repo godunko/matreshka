@@ -42,7 +42,6 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with WSDL.AST.Components;
-limited with WSDL.AST.Descriptions;
 
 package WSDL.AST.Types is
 
