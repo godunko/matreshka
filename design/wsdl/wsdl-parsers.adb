@@ -56,8 +56,12 @@ package body WSDL.Parsers is
      := League.Strings.To_Universal_String ("description");
    Documentation_Element : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("documentation");
+   Include_Element       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("include");
    Interface_Element     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("interface");
+   Import_Element        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("import");
    Service_Element       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("service");
    Types_Element         : constant League.Strings.Universal_String
@@ -274,6 +278,23 @@ package body WSDL.Parsers is
                raise Program_Error;
             end if;
 
+         elsif Local_Name = Include_Element then
+            if Self.Current_State.Kind = Description then
+               if Self.Current_State.Last_Child_Kind > Include_Import then
+                  --  Description-1005: Invalid order of children elements of
+                  --  'description' element.
+
+                  raise Program_Error;
+
+               else
+                  Self.Current_State.Last_Child_Kind := Include_Import;
+                  Self.Ignore_Depth := 1;
+               end if;
+
+            else
+               raise Program_Error;
+            end if;
+
          elsif Local_Name = Interface_Element then
             if Self.Current_State.Kind = Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
@@ -281,6 +302,23 @@ package body WSDL.Parsers is
                --  XXX all children elements are ignored for now.
 
                Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = Import_Element then
+            if Self.Current_State.Kind = Description then
+               if Self.Current_State.Last_Child_Kind > Include_Import then
+                  --  Description-1005: Invalid order of children elements of
+                  --  'description' element.
+
+                  raise Program_Error;
+
+               else
+                  Self.Current_State.Last_Child_Kind := Include_Import;
+                  Self.Ignore_Depth := 1;
+               end if;
 
             else
                raise Program_Error;
