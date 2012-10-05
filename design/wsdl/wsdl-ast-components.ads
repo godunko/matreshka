@@ -41,20 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Root package for AST of WSDL.
+--  Components are direct children of 'description' element.
 ------------------------------------------------------------------------------
+limited with WSDL.AST.Descriptions;
 
-package WSDL.AST is
+package WSDL.AST.Components is
 
-   pragma Pure;
+   pragma Preelaborate;
 
---   type Node_Access;
+   type Description_Access is
+     access all WSDL.AST.Descriptions.Description_Node'Class;
 
-   type Abstract_Node is abstract tagged record
-      null;
---      Parent           : Node_Access;
---      Next_Sibling     : Node_Access;
---      Previous_Sibling : Node_Access;
+   type Component_Node is abstract new Abstract_Node with record
+      Description : Description_Access;
    end record;
 
-end WSDL.AST;
+end WSDL.AST.Components;

@@ -41,12 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with WSDL.AST.Components;
+limited with WSDL.AST.Descriptions;
 
 package WSDL.AST.Types is
 
    pragma Preelaborate;
 
-   type Types_Node is new Abstract_Node with null record;
+   type Types_Node is new WSDL.AST.Components.Component_Node with record
+      null;
+   end record;
 
    type Types_Access is access all Types_Node'Class;
 

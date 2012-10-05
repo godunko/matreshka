@@ -52,6 +52,9 @@ package WSDL.AST.Descriptions is
    type Description_Node is new Abstract_Node with record
       Target_Namespace : League.Strings.Universal_String;
       --  Value of 'targetNamespace' attribute.
+
+      Types            : WSDL.AST.Types.Types_Access;
+      --  Types section of description.
    end record;
 
    type Description_Access is access all Description_Node'Class;

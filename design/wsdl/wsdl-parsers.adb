@@ -43,6 +43,9 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
+with WSDL.AST.Components;
+with WSDL.AST.Types;
+
 package body WSDL.Parsers is
 
    use type League.Strings.Universal_String;
@@ -83,6 +86,11 @@ package body WSDL.Parsers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean);
    --  Handles start of 'description' element.
+
+   procedure Start_Types_Element
+    (Description : WSDL.AST.Descriptions.Description_Access;
+     Success     : in out Boolean);
+   --  Handles start of 'types' element.
 
 --   procedure Check_WSDL_Attributes
 --    (Attributes : XML.SAX.Attributes.SAX_Attributes;
@@ -145,6 +153,9 @@ package body WSDL.Parsers is
 
       elsif Namespace_URI = WSDL_Namespace then
          if Local_Name = Description_Element then
+            Self.Pop;
+
+         elsif Local_Name = Types_Element then
             Self.Pop;
          end if;
       end if;
@@ -346,10 +357,8 @@ package body WSDL.Parsers is
 
                else
                   Self.Current_State.Last_Child_Kind := Types;
-
-                  --  XXX all children elements are ignored for now.
-
-                  Self.Ignore_Depth := 1;
+                  Self.Push (Types);
+                  Start_Types_Element (Self.Description, Success);
                end if;
 
             else
@@ -379,10 +388,28 @@ package body WSDL.Parsers is
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
             end if;
 
+         elsif Self.Current_State.Kind = Types then
+            --  XXX all children elements are ignored for now.
+
+            Self.Ignore_Depth := 1;
+
          else
             raise Program_Error;
          end if;
       end if;
    end Start_Element;
+
+   -------------------------
+   -- Start_Types_Element --
+   -------------------------
+
+   procedure Start_Types_Element
+    (Description : WSDL.AST.Descriptions.Description_Access;
+     Success     : in out Boolean) is
+   begin
+      Description.Types := new WSDL.AST.Types.Types_Node;
+      Description.Types.Description :=
+        WSDL.AST.Components.Description_Access (Description);
+   end Start_Types_Element;
 
 end WSDL.Parsers;
