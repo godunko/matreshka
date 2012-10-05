@@ -41,13 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with Ada.Containers.Hashed_Maps;
 
+with League.Strings.Hash;
+
+with WSDL.AST.Interfaces;
 with WSDL.AST.Types;
 
 package WSDL.AST.Descriptions is
 
    pragma Preelaborate;
+
+   package Interface_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           WSDL.AST.Interfaces.Interface_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           WSDL.AST.Interfaces."=");
 
    type Description_Node is new Abstract_Node with record
       Target_Namespace : League.Strings.Universal_String;
@@ -55,6 +66,10 @@ package WSDL.AST.Descriptions is
 
       Types            : WSDL.AST.Types.Types_Access;
       --  Types section of description.
+
+      Interfaces       : Interface_Maps.Map;
+      --  Set of interface components represented as children elements of this
+      --  description element.
    end record;
 
    type Description_Access is access all Description_Node'Class;

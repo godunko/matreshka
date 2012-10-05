@@ -41,108 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Hashed_Maps;
-private with Ada.Containers.Vectors;
+with League.Strings.Hash;
 
-private with League.Strings.Hash;
-private with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
+package body WSDL.AST.Interfaces is
 
-private with WSDL.AST.Descriptions;
+   ----------
+   -- Hash --
+   ----------
 
-package WSDL.Parsers is
+   function Hash
+    (Item : Namespace_Name_Pair) return Ada.Containers.Hash_Type
+   is
+      use type League.Strings.Universal_String;
 
-   type WSDL_Parser is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+   begin
+      return League.Strings.Hash (Item.Namespace_URI & Item.Local_Name);
+   end Hash;
 
-private
-
-   package Namespace_Maps is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           League.Strings.Universal_String,
-           League.Strings.Hash,
-           League.Strings."=",
-           League.Strings."=");
-
-   type Description_Child_Kind is
-    (None,
-     Documentation,
-     Include_Import,
-     Types,
-     Interface_Binding_Service);
-
-   type Parser_State_Kind is
-    (None,
-     Document,
-     WSDL_Description,
-     WSDL_Interface,
-     WSDL_Types);
-
-   type Parser_State (Kind : Parser_State_Kind := None) is record
-      case Kind is
-         when WSDL_Description =>
-            Last_Child_Kind : Description_Child_Kind := None;
-            --  Kind of last processed child of 'description' element. This
-            --  member is used to track order of children elements of
-            --  'description' element.
-
-         when others =>
-            null;
-      end case;
-   end record;
-
-   package State_Vectors is
-     new Ada.Containers.Vectors (Positive, Parser_State);
-
-   type WSDL_Parser is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with
-   record
-      Description    : WSDL.AST.Descriptions.Description_Access;
-      --  Root element of AST for the processed file.
-
-      Current_State  : Parser_State;
-      --  Current state of the parser.
-
-      Previous_State : Parser_State;
-      --  Previous state of the parser.
-
-      State_Stack    : State_Vectors.Vector;
-      --  Stack of parser's state.
-
-      Ignore_Depth   : Natural := 0;
-      --  Counter of the depth of ignored elements.
-
-      Namespaces     : Namespace_Maps.Map;
-      --  Mapping from prefix to namespace URI.
-   end record;
-
-   overriding function Error_String
-    (Self : WSDL_Parser) return League.Strings.Universal_String;
-
-   overriding procedure Start_Document
-    (Self    : in out WSDL_Parser;
-     Success : in out Boolean);
-
-   overriding procedure Start_Prefix_Mapping
-    (Self          : in out WSDL_Parser;
-     Prefix        : League.Strings.Universal_String;
-     Namespace_URI : League.Strings.Universal_String;
-     Success       : in out Boolean);
-
-   overriding procedure Start_Element
-    (Self           : in out WSDL_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
-
-   overriding procedure End_Element
-    (Self           : in out WSDL_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
-
-end WSDL.Parsers;
+end WSDL.AST.Interfaces;

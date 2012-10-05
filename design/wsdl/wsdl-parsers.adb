@@ -43,7 +43,10 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
+with League.String_Vectors;
+
 with WSDL.AST.Components;
+with WSDL.AST.Interfaces;
 with WSDL.AST.Types;
 
 package body WSDL.Parsers is
@@ -59,17 +62,27 @@ package body WSDL.Parsers is
      := League.Strings.To_Universal_String ("description");
    Documentation_Element : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("documentation");
+   Fault_Element         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("fault");
    Include_Element       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("include");
    Interface_Element     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("interface");
    Import_Element        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("import");
+   Operation_Element     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("operation");
    Service_Element       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("service");
    Types_Element         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("types");
 
+   Extends_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("extends");
+   Name_Attribute             : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("name");
+   Style_Default_Attribute    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("styleDefault");
    Target_Namespace_Attribute : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("targetNamespace");
 
@@ -91,6 +104,13 @@ package body WSDL.Parsers is
     (Description : WSDL.AST.Descriptions.Description_Access;
      Success     : in out Boolean);
    --  Handles start of 'types' element.
+
+   procedure Start_Interface_Element
+    (Attributes  : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces  : Namespace_Maps.Map;
+     Description : WSDL.AST.Descriptions.Description_Access;
+     Success     : in out Boolean);
+   --  Handles start of 'interface' element.
 
 --   procedure Check_WSDL_Attributes
 --    (Attributes : XML.SAX.Attributes.SAX_Attributes;
@@ -153,6 +173,9 @@ package body WSDL.Parsers is
 
       elsif Namespace_URI = WSDL_Namespace then
          if Local_Name = Description_Element then
+            Self.Pop;
+
+         elsif Local_Name = Interface_Element then
             Self.Pop;
 
          elsif Local_Name = Types_Element then
@@ -252,7 +275,7 @@ package body WSDL.Parsers is
          Put_Line ("Start_Element '" & Qualified_Name.To_Wide_Wide_String & "'");
 
          if Local_Name = Binding_Element then
-            if Self.Current_State.Kind = Description then
+            if Self.Current_State.Kind = WSDL_Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
 
                --  XXX all children elements are ignored for now.
@@ -265,7 +288,7 @@ package body WSDL.Parsers is
 
          elsif Local_Name = Description_Element then
             if Self.Current_State.Kind = Document then
-               Self.Push (Description);
+               Self.Push (WSDL_Description);
                Self.Start_Description_Element (Attributes, Success);
 
             else
@@ -273,7 +296,7 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Documentation_Element then
-            if Self.Current_State.Kind = Description then
+            if Self.Current_State.Kind = WSDL_Description then
                if Self.Current_State.Last_Child_Kind > Documentation then
                   --  Description-1005: Invalid order of children elements of
                   --  'description' element.
@@ -285,12 +308,25 @@ package body WSDL.Parsers is
                   Self.Ignore_Depth := 1;
                end if;
 
+            elsif Self.Current_State.Kind = WSDL_Interface then
+               Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = Fault_Element then
+            if Self.Current_State.Kind = WSDL_Interface then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
             else
                raise Program_Error;
             end if;
 
          elsif Local_Name = Include_Element then
-            if Self.Current_State.Kind = Description then
+            if Self.Current_State.Kind = WSDL_Description then
                if Self.Current_State.Last_Child_Kind > Include_Import then
                   --  Description-1005: Invalid order of children elements of
                   --  'description' element.
@@ -307,19 +343,18 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Interface_Element then
-            if Self.Current_State.Kind = Description then
+            if Self.Current_State.Kind = WSDL_Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
-
-               --  XXX all children elements are ignored for now.
-
-               Self.Ignore_Depth := 1;
+               Self.Push (WSDL_Interface);
+               Start_Interface_Element
+                 (Attributes, Self.Namespaces, Self.Description, Success);
 
             else
                raise Program_Error;
             end if;
 
          elsif Local_Name = Import_Element then
-            if Self.Current_State.Kind = Description then
+            if Self.Current_State.Kind = WSDL_Description then
                if Self.Current_State.Last_Child_Kind > Include_Import then
                   --  Description-1005: Invalid order of children elements of
                   --  'description' element.
@@ -335,8 +370,18 @@ package body WSDL.Parsers is
                raise Program_Error;
             end if;
 
+         elsif Local_Name = Operation_Element then
+            if Self.Current_State.Kind = WSDL_Interface then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
          elsif Local_Name = Service_Element then
-            if Self.Current_State.Kind = Description then
+            if Self.Current_State.Kind = WSDL_Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
 
                --  XXX all children elements are ignored for now.
@@ -348,7 +393,7 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Types_Element then
-            if Self.Current_State.Kind = Description then
+            if Self.Current_State.Kind = WSDL_Description then
                if Self.Current_State.Last_Child_Kind > Types then
                   --  Description-1005: Invalid order of children elements of
                   --  'description' element.
@@ -357,7 +402,7 @@ package body WSDL.Parsers is
 
                else
                   Self.Current_State.Last_Child_Kind := Types;
-                  Self.Push (Types);
+                  Self.Push (WSDL_Types);
                   Start_Types_Element (Self.Description, Success);
                end if;
 
@@ -370,7 +415,7 @@ package body WSDL.Parsers is
          end if;
 
       else
-         if Self.Current_State.Kind = Description then
+         if Self.Current_State.Kind = WSDL_Description then
             --  Extension element can appair in two places of children of
             --  'description' element:
             --
@@ -388,7 +433,12 @@ package body WSDL.Parsers is
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
             end if;
 
-         elsif Self.Current_State.Kind = Types then
+         elsif Self.Current_State.Kind = WSDL_Interface then
+            --  Ignore unknown extensions of interface component.
+
+            Self.Ignore_Depth := 1;
+
+         elsif Self.Current_State.Kind = WSDL_Types then
             --  XXX all children elements are ignored for now.
 
             Self.Ignore_Depth := 1;
@@ -398,6 +448,100 @@ package body WSDL.Parsers is
          end if;
       end if;
    end Start_Element;
+
+   -----------------------------
+   -- Start_Interface_Element --
+   -----------------------------
+
+   procedure Start_Interface_Element
+    (Attributes  : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces  : Namespace_Maps.Map;
+     Description : WSDL.AST.Descriptions.Description_Access;
+     Success     : in out Boolean)
+   is
+      Name : constant League.Strings.Universal_String
+        := Attributes.Value (Name_Attribute);
+      Node : constant WSDL.AST.Interfaces.Interface_Access
+        := new WSDL.AST.Interfaces.Interface_Node;
+
+   begin
+      --  Interface-1010: For each Interface component in the {interfaces}
+      --  property of a Description component, the {name} property MUST be
+      --  unique.
+      --
+      --  Check whether name of the interface component is not used by another
+      --  component.
+
+      if Description.Interfaces.Contains (Name) then
+         raise Program_Error;
+      end if;
+
+      Node.Description :=
+        WSDL.AST.Components.Description_Access (Description);
+      Node.Name := Name;
+      Description.Interfaces.Insert (Node.Name, Node);
+
+      --  Analyze 'extends' attribute when specified.
+
+      if Attributes.Is_Specified (Extends_Attribute) then
+         declare
+            Values : constant League.String_Vectors.Universal_String_Vector
+              := Attributes.Value (Extends_Attribute).Split
+                  (' ', League.Strings.Skip_Empty);
+            Value  : League.Strings.Universal_String;
+            Index  : Natural;
+            Item   : WSDL.AST.Interfaces.Namespace_Name_Pair;
+
+         begin
+            for J in 1 .. Values.Length loop
+               Value := Values.Element (J);
+               Index := Value.Index (':');
+               Item :=
+                (Namespaces.Element (Value.Slice (1, Index - 1)),
+                 Value.Slice (Index + 1, Value.Length));
+
+               --  Interface-1011: The list of xs:QName in an extends attribute
+               --  information item MUST NOT contain duplicates.
+               --
+               --  Check whether this namespace/name pair is not in the set
+               --  already.
+
+               if Node.Extends.Contains (Item) then
+                  raise Program_Error;
+               end if;
+
+               Node.Extends.Insert (Item);
+            end loop;
+         end;
+      end if;
+
+      --  Analyze 'styleDefault' attribute when specified.
+
+      if Attributes.Is_Specified (Style_Default_Attribute) then
+         Node.Style_Default :=
+           Attributes.Value (Style_Default_Attribute).Split
+            (' ', League.Strings.Skip_Empty);
+
+         --  Interface-2012: The type of the styleDefault attribute information
+         --  item is list of xs:anyURI. Its value, if present, MUST contain
+         --  absolute IRIs (see [IETF RFC 3987]).
+         --
+         --  XXX This check is not implemented.
+      end if;
+   end Start_Interface_Element;
+
+   --------------------------
+   -- Start_Prefix_Mapping --
+   --------------------------
+
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out WSDL_Parser;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean) is
+   begin
+      Self.Namespaces.Insert (Prefix, Namespace_URI);
+   end Start_Prefix_Mapping;
 
    -------------------------
    -- Start_Types_Element --

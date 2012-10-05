@@ -41,108 +41,38 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Hashed_Maps;
-private with Ada.Containers.Vectors;
+with Ada.Containers.Hashed_Sets;
 
-private with League.Strings.Hash;
-private with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
+with League.Strings;
+with League.String_Vectors;
 
-private with WSDL.AST.Descriptions;
+with WSDL.AST.Components;
 
-package WSDL.Parsers is
+package WSDL.AST.Interfaces is
 
-   type WSDL_Parser is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+   pragma Preelaborate;
 
-private
-
-   package Namespace_Maps is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           League.Strings.Universal_String,
-           League.Strings.Hash,
-           League.Strings."=",
-           League.Strings."=");
-
-   type Description_Child_Kind is
-    (None,
-     Documentation,
-     Include_Import,
-     Types,
-     Interface_Binding_Service);
-
-   type Parser_State_Kind is
-    (None,
-     Document,
-     WSDL_Description,
-     WSDL_Interface,
-     WSDL_Types);
-
-   type Parser_State (Kind : Parser_State_Kind := None) is record
-      case Kind is
-         when WSDL_Description =>
-            Last_Child_Kind : Description_Child_Kind := None;
-            --  Kind of last processed child of 'description' element. This
-            --  member is used to track order of children elements of
-            --  'description' element.
-
-         when others =>
-            null;
-      end case;
+   type Namespace_Name_Pair is record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
    end record;
 
-   package State_Vectors is
-     new Ada.Containers.Vectors (Positive, Parser_State);
+   function Hash
+    (Item : Namespace_Name_Pair) return Ada.Containers.Hash_Type;
 
-   type WSDL_Parser is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with
-   record
-      Description    : WSDL.AST.Descriptions.Description_Access;
-      --  Root element of AST for the processed file.
+   package Namespace_Name_Pair_Sets is
+     new Ada.Containers.Hashed_Sets (Namespace_Name_Pair, Hash, "=");
 
-      Current_State  : Parser_State;
-      --  Current state of the parser.
+   type Interface_Node is new WSDL.AST.Components.Component_Node with record
+      Name          : League.Strings.Universal_String;
+      --  Name of the interface.
 
-      Previous_State : Parser_State;
-      --  Previous state of the parser.
+      Extends       : Namespace_Name_Pair_Sets.Set;
+      --  Names of interface components that this interface derives from.
 
-      State_Stack    : State_Vectors.Vector;
-      --  Stack of parser's state.
-
-      Ignore_Depth   : Natural := 0;
-      --  Counter of the depth of ignored elements.
-
-      Namespaces     : Namespace_Maps.Map;
-      --  Mapping from prefix to namespace URI.
+      Style_Default : League.String_Vectors.Universal_String_Vector;
    end record;
 
-   overriding function Error_String
-    (Self : WSDL_Parser) return League.Strings.Universal_String;
+   type Interface_Access is access all Interface_Node'Class;
 
-   overriding procedure Start_Document
-    (Self    : in out WSDL_Parser;
-     Success : in out Boolean);
-
-   overriding procedure Start_Prefix_Mapping
-    (Self          : in out WSDL_Parser;
-     Prefix        : League.Strings.Universal_String;
-     Namespace_URI : League.Strings.Universal_String;
-     Success       : in out Boolean);
-
-   overriding procedure Start_Element
-    (Self           : in out WSDL_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
-
-   overriding procedure End_Element
-    (Self           : in out WSDL_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
-
-end WSDL.Parsers;
+end WSDL.AST.Interfaces;
