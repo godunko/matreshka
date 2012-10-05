@@ -43,19 +43,17 @@
 ------------------------------------------------------------------------------
 with League.Strings.Hash;
 
-package body WSDL.AST.Interfaces is
+package body WSDL.AST is
 
    ----------
    -- Hash --
    ----------
 
-   function Hash
-    (Item : Namespace_Name_Pair) return Ada.Containers.Hash_Type
-   is
+   function Hash (Item : Name_Pair) return Ada.Containers.Hash_Type is
       use type League.Strings.Universal_String;
 
    begin
       return League.Strings.Hash (Item.Namespace_URI & Item.Local_Name);
    end Hash;
 
-end WSDL.AST.Interfaces;
+end WSDL.AST;

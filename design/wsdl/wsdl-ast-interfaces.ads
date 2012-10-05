@@ -43,7 +43,6 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Hashed_Sets;
 
-with League.Strings;
 with League.String_Vectors;
 
 with WSDL.AST.Components;
@@ -52,22 +51,14 @@ package WSDL.AST.Interfaces is
 
    pragma Preelaborate;
 
-   type Namespace_Name_Pair is record
-      Namespace_URI : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
-   end record;
-
-   function Hash
-    (Item : Namespace_Name_Pair) return Ada.Containers.Hash_Type;
-
-   package Namespace_Name_Pair_Sets is
-     new Ada.Containers.Hashed_Sets (Namespace_Name_Pair, Hash, "=");
+   package Name_Pair_Sets is
+     new Ada.Containers.Hashed_Sets (Name_Pair, Hash, "=");
 
    type Interface_Node is new WSDL.AST.Components.Component_Node with record
       Local_Name    : League.Strings.Universal_String;
       --  Name of the interface.
 
-      Extends       : Namespace_Name_Pair_Sets.Set;
+      Extends       : Name_Pair_Sets.Set;
       --  Names of interface components that this interface derives from.
 
       Style_Default : League.String_Vectors.Universal_String_Vector;

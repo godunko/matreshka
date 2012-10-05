@@ -43,18 +43,23 @@
 ------------------------------------------------------------------------------
 --  Root package for AST of WSDL.
 ------------------------------------------------------------------------------
+with Ada.Containers;
+
+with League.Strings;
 
 package WSDL.AST is
 
-   pragma Pure;
-
---   type Node_Access;
+   pragma Preelaborate;
 
    type Abstract_Node is abstract tagged record
       null;
---      Parent           : Node_Access;
---      Next_Sibling     : Node_Access;
---      Previous_Sibling : Node_Access;
    end record;
+
+   type Name_Pair is record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   function Hash (Item : Name_Pair) return Ada.Containers.Hash_Type;
 
 end WSDL.AST;

@@ -489,7 +489,7 @@ package body WSDL.Parsers is
                   (' ', League.Strings.Skip_Empty);
             Value  : League.Strings.Universal_String;
             Index  : Natural;
-            Item   : WSDL.AST.Interfaces.Namespace_Name_Pair;
+            Item   : WSDL.AST.Name_Pair;
 
          begin
             for J in 1 .. Values.Length loop
