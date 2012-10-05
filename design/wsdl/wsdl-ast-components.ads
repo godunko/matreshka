@@ -53,7 +53,8 @@ package WSDL.AST.Components is
      access all WSDL.AST.Descriptions.Description_Node'Class;
 
    type Component_Node is abstract new Abstract_Node with record
-      Description : Description_Access;
+      Parent : Description_Access;
+      --  Parent description element.
    end record;
 
 end WSDL.AST.Components;

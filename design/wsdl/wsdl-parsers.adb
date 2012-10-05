@@ -476,8 +476,7 @@ package body WSDL.Parsers is
          raise Program_Error;
       end if;
 
-      Node.Description :=
-        WSDL.AST.Components.Description_Access (Description);
+      Node.Parent := WSDL.AST.Components.Description_Access (Description);
       Node.Name := Name;
       Description.Interfaces.Insert (Node.Name, Node);
 
@@ -552,7 +551,7 @@ package body WSDL.Parsers is
      Success     : in out Boolean) is
    begin
       Description.Types := new WSDL.AST.Types.Types_Node;
-      Description.Types.Description :=
+      Description.Types.Parent :=
         WSDL.AST.Components.Description_Access (Description);
    end Start_Types_Element;
 
