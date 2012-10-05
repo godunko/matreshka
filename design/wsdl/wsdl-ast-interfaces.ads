@@ -64,7 +64,7 @@ package WSDL.AST.Interfaces is
      new Ada.Containers.Hashed_Sets (Namespace_Name_Pair, Hash, "=");
 
    type Interface_Node is new WSDL.AST.Components.Component_Node with record
-      Name          : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
       --  Name of the interface.
 
       Extends       : Namespace_Name_Pair_Sets.Set;

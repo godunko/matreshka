@@ -477,8 +477,8 @@ package body WSDL.Parsers is
       end if;
 
       Node.Parent := WSDL.AST.Components.Description_Access (Description);
-      Node.Name := Name;
-      Description.Interfaces.Insert (Node.Name, Node);
+      Node.Local_Name := Name;
+      Description.Interfaces.Insert (Name, Node);
 
       --  Analyze 'extends' attribute when specified.
 
