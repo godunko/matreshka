@@ -66,4 +66,34 @@ package body WSDL.Iterators.Containment is
       end loop;
    end Visit_Description;
 
+   ---------------------
+   -- Visit_Interface --
+   ---------------------
+
+   overriding procedure Visit_Interface
+    (Self    : in out Containment_Iterator;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Node    : not null WSDL.AST.Interfaces.Interface_Access;
+     Control : in out Traverse_Control) is
+   begin
+      for J of Node.Interface_Operations loop
+         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
+      end loop;
+   end Visit_Interface;
+
+   -------------------------------
+   -- Visit_Interface_Operation --
+   -------------------------------
+
+   overriding procedure Visit_Interface_Operation
+    (Self    : in out Containment_Iterator;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out Traverse_Control) is
+   begin
+      for J of Node.Interface_Message_References loop
+         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
+      end loop;
+   end Visit_Interface_Operation;
+
 end WSDL.Iterators.Containment;

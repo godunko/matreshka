@@ -48,6 +48,9 @@ with XML.SAX.Attributes;
 with XML.SAX.Pretty_Writers;
 
 with WSDL.AST.Interfaces;
+with WSDL.AST.Messages;
+with WSDL.AST.Operations;
+with WSDL.AST.Types;
 with WSDL.Iterators.Containment;
 with WSDL.Visitors;
 
@@ -56,10 +59,18 @@ package body WSDL.Debug is
    WSDL_Namespace_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl");
 
-   Description_Element : constant League.Strings.Universal_String
+   Description_Element   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("description");
+   Input_Element         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("input");
    Interface_Element     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("interface");
+   Operation_Element     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("operation");
+   Output_Element        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("output");
+   Types_Element         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("types");
 
    Name_Attribute             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("name");
@@ -90,6 +101,36 @@ package body WSDL.Debug is
    overriding procedure Leave_Interface
     (Self    : in out WSDL_Printer;
      Node    : not null WSDL.AST.Interfaces.Interface_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Enter_Interface_Message
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Messages.Interface_Message_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Interface_Message
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Messages.Interface_Message_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Enter_Interface_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Interface_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Enter_Types
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Types.Types_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Types
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Types.Types_Access;
      Control : in out WSDL.Iterators.Traverse_Control);
 
    ----------
@@ -144,6 +185,53 @@ package body WSDL.Debug is
        (WSDL_Namespace_URI, Interface_Element, Attributes);
    end Enter_Interface;
 
+   -----------------------------
+   -- Enter_Interface_Message --
+   -----------------------------
+
+   overriding procedure Enter_Interface_Message
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Messages.Interface_Message_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      case Node.Direction is
+         when WSDL.AST.Messages.In_Message =>
+            Self.Writer.Start_Element (WSDL_Namespace_URI, Input_Element);
+
+         when WSDL.AST.Messages.Out_Message =>
+            Self.Writer.Start_Element (WSDL_Namespace_URI, Output_Element);
+      end case;
+   end Enter_Interface_Message;
+
+   -------------------------------
+   -- Enter_Interface_Operation --
+   -------------------------------
+
+   overriding procedure Enter_Interface_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control)
+   is
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
+
+   begin
+      Attributes.Set_Value (Name_Attribute, Node.Local_Name);
+      Self.Writer.Start_Element
+       (WSDL_Namespace_URI, Operation_Element, Attributes);
+   end Enter_Interface_Operation;
+
+   -----------------
+   -- Enter_Types --
+   -----------------
+
+   overriding procedure Enter_Types
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Types.Types_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.Start_Element (WSDL_Namespace_URI, Types_Element);
+   end Enter_Types;
+
    -----------------------
    -- Leave_Description --
    -----------------------
@@ -170,5 +258,47 @@ package body WSDL.Debug is
    begin
       Self.Writer.End_Element (WSDL_Namespace_URI, Interface_Element);
    end Leave_Interface;
+
+   -----------------------------
+   -- Leave_Interface_Message --
+   -----------------------------
+
+   overriding procedure Leave_Interface_Message
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Messages.Interface_Message_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      case Node.Direction is
+         when WSDL.AST.Messages.In_Message =>
+            Self.Writer.End_Element (WSDL_Namespace_URI, Input_Element);
+
+         when WSDL.AST.Messages.Out_Message =>
+            Self.Writer.End_Element (WSDL_Namespace_URI, Output_Element);
+      end case;
+   end Leave_Interface_Message;
+
+   -------------------------------
+   -- Leave_Interface_Operation --
+   -------------------------------
+
+   overriding procedure Leave_Interface_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Operation_Element);
+   end Leave_Interface_Operation;
+
+   -----------------
+   -- Leave_Types --
+   -----------------
+
+   overriding procedure Leave_Types
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Types.Types_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Types_Element);
+   end Leave_Types;
 
 end WSDL.Debug;
