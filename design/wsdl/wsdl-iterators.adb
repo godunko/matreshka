@@ -41,52 +41,28 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-limited with WSDL.AST.Operations;
 
-package WSDL.AST.Messages is
+package body WSDL.Iterators is
 
-   pragma Preelaborate;
+   -----------
+   -- Visit --
+   -----------
 
-   type Interface_Operation_Access is
-     access all WSDL.AST.Operations.Interface_Operation_Node'Class;
-
-   type Message_Directions is (In_Message, Out_Message);
-
-   type Message_Content_Models is (Element, Any, None, Other);
-
-   type Interface_Message_Node is new Abstract_Node with record
-      Parent                : Interface_Operation_Access;
-      --  Value of {parent} property.
-
-      Message_Label         : League.Strings.Universal_String;
-      --  Value of {{message label} property.
-
-      Direction             : Message_Directions;
-      --  Value of {direction} property.
-
-      Message_Content_Model : Message_Content_Models;
-      --  Value of {message content model} property.
-
-      Element               : League.Strings.Universal_String;
-      --  Name of the element which is used as content of the message.
-   end record;
-
-   type Interface_Message_Access is access all Interface_Message_Node'Class;
-
-   overriding procedure Enter
-    (Self    : not null access Interface_Message_Node;
+   procedure Visit
+    (Self    : in out WSDL_Iterator'Class;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
+     Node    : not null WSDL.AST.Node_Access;
+     Control : in out Traverse_Control) is
+   begin
+      Node.Enter (Visitor, Control);
 
-   overriding procedure Leave
-    (Self    : not null access Interface_Message_Node;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
+      if Control = Continue then
+         Node.Visit (Self, Visitor, Control);
+      end if;
 
-   overriding procedure Visit
-    (Self     : not null access Interface_Message_Node;
-     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
-     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control  : in out WSDL.Iterators.Traverse_Control);
+      if Control /= Terminate_Immediately then
+         Node.Leave (Visitor, Control);
+      end if;
+   end Visit;
 
-end WSDL.AST.Messages;
+end WSDL.Iterators;

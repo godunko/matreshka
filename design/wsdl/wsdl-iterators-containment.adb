@@ -41,52 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-limited with WSDL.AST.Operations;
 
-package WSDL.AST.Messages is
+package body WSDL.Iterators.Containment is
 
-   pragma Preelaborate;
+   -----------------------
+   -- Visit_Description --
+   -----------------------
 
-   type Interface_Operation_Access is
-     access all WSDL.AST.Operations.Interface_Operation_Node'Class;
-
-   type Message_Directions is (In_Message, Out_Message);
-
-   type Message_Content_Models is (Element, Any, None, Other);
-
-   type Interface_Message_Node is new Abstract_Node with record
-      Parent                : Interface_Operation_Access;
-      --  Value of {parent} property.
-
-      Message_Label         : League.Strings.Universal_String;
-      --  Value of {{message label} property.
-
-      Direction             : Message_Directions;
-      --  Value of {direction} property.
-
-      Message_Content_Model : Message_Content_Models;
-      --  Value of {message content model} property.
-
-      Element               : League.Strings.Universal_String;
-      --  Name of the element which is used as content of the message.
-   end record;
-
-   type Interface_Message_Access is access all Interface_Message_Node'Class;
-
-   overriding procedure Enter
-    (Self    : not null access Interface_Message_Node;
+   overriding procedure Visit_Description
+    (Self    : in out Containment_Iterator;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
+     Node    : not null WSDL.AST.Descriptions.Description_Access;
+     Control : in out Traverse_Control)
+   is
+      use type WSDL.AST.Types.Types_Access;
 
-   overriding procedure Leave
-    (Self    : not null access Interface_Message_Node;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
+   begin
+      if Node.Types /= null then
+         Self.Visit (Visitor, WSDL.AST.Node_Access (Node.Types), Control);
+      end if;
 
-   overriding procedure Visit
-    (Self     : not null access Interface_Message_Node;
-     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
-     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control  : in out WSDL.Iterators.Traverse_Control);
+      for J of Node.Interfaces loop
+         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
+      end loop;
+   end Visit_Description;
 
-end WSDL.AST.Messages;
+end WSDL.Iterators.Containment;

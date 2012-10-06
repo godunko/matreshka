@@ -47,6 +47,10 @@ with League.Strings;
 with XML.SAX.Attributes;
 with XML.SAX.Pretty_Writers;
 
+with WSDL.AST.Interfaces;
+with WSDL.Iterators.Containment;
+with WSDL.Visitors;
+
 package body WSDL.Debug is
 
    WSDL_Namespace_URI : constant League.Strings.Universal_String
@@ -62,36 +66,109 @@ package body WSDL.Debug is
    Target_Namespace_Attribute : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("targetNamespace");
 
+   type WSDL_Printer is
+     limited new WSDL.Visitors.WSDL_Visitor with
+   record
+      Writer : XML.SAX.Pretty_Writers.SAX_Pretty_Writer;
+   end record;
+
+   overriding procedure Enter_Description
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Descriptions.Description_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Description
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Descriptions.Description_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Enter_Interface
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Interfaces.Interface_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Interface
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Interfaces.Interface_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
    ----------
    -- Dump --
    ----------
 
    procedure Dump (Description : WSDL.AST.Descriptions.Description_Access) is
-      Attributes : XML.SAX.Attributes.SAX_Attributes;
-      Writer     : XML.SAX.Pretty_Writers.SAX_Pretty_Writer;
+      Printer  : WSDL_Printer;
+      Iterator : WSDL.Iterators.Containment.Containment_Iterator;
+      Control  : WSDL.Iterators.Traverse_Control := WSDL.Iterators.Continue;
 
    begin
-      Writer.Set_Offset (2);
-      Writer.Start_Document;
-      Writer.Start_Prefix_Mapping
+      Iterator.Visit (Printer, WSDL.AST.Node_Access (Description), Control);
+   end Dump;
+
+   -----------------------
+   -- Enter_Description --
+   -----------------------
+
+   overriding procedure Enter_Description
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Descriptions.Description_Access;
+     Control : in out WSDL.Iterators.Traverse_Control)
+   is
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
+
+   begin
+      Self.Writer.Set_Offset (2);
+      Self.Writer.Start_Document;
+      Self.Writer.Start_Prefix_Mapping
        (League.Strings.To_Universal_String ("wsdl"), WSDL_Namespace_URI);
       Attributes.Set_Value
-       (Target_Namespace_Attribute, Description.Target_Namespace);
-      Writer.Start_Element
+       (Target_Namespace_Attribute, Node.Target_Namespace);
+      Self.Writer.Start_Element
        (WSDL_Namespace_URI, Description_Element, Attributes);
+   end Enter_Description;
 
-      for J of Description.Interfaces loop
-         Attributes.Clear;
-         Attributes.Set_Value (Name_Attribute, J.Local_Name);
-         Writer.Start_Element
-          (WSDL_Namespace_URI, Interface_Element, Attributes);
-         Writer.End_Element (WSDL_Namespace_URI, Interface_Element);
-      end loop;
+   ---------------------
+   -- Enter_Interface --
+   ---------------------
 
-      Writer.End_Element (WSDL_Namespace_URI, Description_Element);
-      Writer.End_Document;
+   overriding procedure Enter_Interface
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Interfaces.Interface_Access;
+     Control : in out WSDL.Iterators.Traverse_Control)
+   is
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
 
-      Ada.Wide_Wide_Text_IO.Put_Line (Writer.Text.To_Wide_Wide_String);
-   end Dump;
+   begin
+      Attributes.Set_Value (Name_Attribute, Node.Local_Name);
+      Self.Writer.Start_Element
+       (WSDL_Namespace_URI, Interface_Element, Attributes);
+   end Enter_Interface;
+
+   -----------------------
+   -- Leave_Description --
+   -----------------------
+
+   overriding procedure Leave_Description
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Descriptions.Description_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Description_Element);
+      Self.Writer.End_Document;
+
+      Ada.Wide_Wide_Text_IO.Put_Line (Self.Writer.Text.To_Wide_Wide_String);
+   end Leave_Description;
+
+   ---------------------
+   -- Leave_Interface --
+   ---------------------
+
+   overriding procedure Leave_Interface
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Interfaces.Interface_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Interface_Element);
+   end Leave_Interface;
 
 end WSDL.Debug;

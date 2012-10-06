@@ -47,13 +47,12 @@ with Ada.Containers;
 
 with League.Strings;
 
+limited with WSDL.Iterators;
+limited with WSDL.Visitors;
+
 package WSDL.AST is
 
    pragma Preelaborate;
-
-   type Abstract_Node is abstract tagged record
-      null;
-   end record;
 
    type Name_Pair is record
       Namespace_URI : League.Strings.Universal_String;
@@ -61,5 +60,27 @@ package WSDL.AST is
    end record;
 
    function Hash (Item : Name_Pair) return Ada.Containers.Hash_Type;
+
+   type Abstract_Node is abstract tagged record
+      null;
+   end record;
+
+   type Node_Access is access all Abstract_Node'Class;
+
+   not overriding procedure Enter
+    (Self    : not null access Abstract_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control) is abstract;
+
+   not overriding procedure Leave
+    (Self    : not null access Abstract_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control) is abstract;
+
+   not overriding procedure Visit
+    (Self     : not null access Abstract_Node;
+     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
+     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control  : in out WSDL.Iterators.Traverse_Control) is abstract;
 
 end WSDL.AST;

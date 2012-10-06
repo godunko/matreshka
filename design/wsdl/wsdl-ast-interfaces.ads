@@ -81,4 +81,20 @@ package WSDL.AST.Interfaces is
 
    type Interface_Access is access all Interface_Node'Class;
 
+   overriding procedure Enter
+    (Self    : not null access Interface_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave
+    (Self    : not null access Interface_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Visit
+    (Self     : not null access Interface_Node;
+     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
+     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control  : in out WSDL.Iterators.Traverse_Control);
+
 end WSDL.AST.Interfaces;
