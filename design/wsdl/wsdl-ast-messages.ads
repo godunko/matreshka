@@ -41,45 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Vectors;
+limited with WSDL.AST.Operations;
 
-with League.String_Vectors;
-
-limited with WSDL.AST.Interfaces;
-with WSDL.AST.Messages;
-
-package WSDL.AST.Operations is
+package WSDL.AST.Messages is
 
    pragma Preelaborate;
 
-   package Interface_Message_Vectors is
-     new Ada.Containers.Vectors
-          (Positive,
-           WSDL.AST.Messages.Interface_Message_Access,
-           WSDL.AST.Messages."=");
+   type Interface_Operation_Access is
+     access all WSDL.AST.Operations.Interface_Operation_Node'Class;
 
-   type Interface_Access is
-     access all WSDL.AST.Interfaces.Interface_Node'Class;
+   type Message_Directions is (In_Message, Out_Message);
 
-   type Interface_Operation_Node is new Abstract_Node with record
-      Local_Name                   : League.Strings.Universal_String;
-      --  Local name part of the name of the operation.
+   type Message_Content_Models is (Element, Any, None, Other);
 
-      Parent                       : Interface_Access;
+   type Interface_Message_Node is new Abstract_Node with record
+      Parent                : Interface_Operation_Access;
       --  Value of {parent} property.
 
-      Message_Exchange_Pattern     : League.Strings.Universal_String;
-      --  Value of {message exchange pattern} property.
+      Message_Label         : League.Strings.Universal_String;
+      --  Value of {{message label} property.
 
-      Style                        :
-        League.String_Vectors.Universal_String_Vector;
-      --  Value of {style} property.
+      Direction             : Message_Directions;
+      --  Value of {direction} property.
 
-      Interface_Message_References : Interface_Message_Vectors.Vector;
-      --  Value of {interface message references} property.
+      Message_Content_Model : Message_Content_Models;
+      --  Value of {message content model} property.
+
+      Element               : League.Strings.Universal_String;
+      --  Name of the element which is used as content of the message.
    end record;
 
-   type Interface_Operation_Access is
-     access all Interface_Operation_Node'Class;
+   type Interface_Message_Access is access all Interface_Message_Node'Class;
 
-end WSDL.AST.Operations;
+end WSDL.AST.Messages;

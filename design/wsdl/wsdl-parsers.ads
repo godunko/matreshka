@@ -50,6 +50,7 @@ with XML.SAX.Content_Handlers;
 
 with WSDL.AST.Descriptions;
 private with WSDL.AST.Interfaces;
+private with WSDL.AST.Operations;
 
 package WSDL.Parsers is
 
@@ -80,8 +81,10 @@ private
     (None,
      Document,
      WSDL_Description,
+     WSDL_Input,
      WSDL_Interface,
      WSDL_Operation,
+     WSDL_Output,
      WSDL_Types);
 
    type Parser_State (Kind : Parser_State_Kind := None) is record
@@ -123,6 +126,9 @@ private
 
       Current_Interface : WSDL.AST.Interfaces.Interface_Access;
       --  Currently processed interface component.
+
+      Current_Operation : WSDL.AST.Operations.Interface_Operation_Access;
+      --  Currently processed operation component.
    end record;
 
    overriding function Error_String
