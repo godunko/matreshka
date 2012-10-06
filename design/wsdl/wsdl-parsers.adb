@@ -46,7 +46,7 @@ with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with League.String_Vectors;
 
 with WSDL.AST.Components;
-with WSDL.AST.Interfaces;
+with WSDL.AST.Interface_Operations;
 with WSDL.AST.Types;
 
 package body WSDL.Parsers is
@@ -64,14 +64,22 @@ package body WSDL.Parsers is
      := League.Strings.To_Universal_String ("documentation");
    Fault_Element         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("fault");
+   Infault_Element       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("infault");
    Include_Element       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("include");
+   Input_Element         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("input");
    Interface_Element     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("interface");
    Import_Element        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("import");
    Operation_Element     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("operation");
+   Outfault_Element      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("outfault");
+   Output_Element        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("output");
    Service_Element       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("service");
    Types_Element         : constant League.Strings.Universal_String
@@ -81,10 +89,18 @@ package body WSDL.Parsers is
      := League.Strings.To_Universal_String ("extends");
    Name_Attribute             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("name");
+   Pattern_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("pattern");
+   Style_Attribute            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("style");
    Style_Default_Attribute    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("styleDefault");
    Target_Namespace_Attribute : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("targetNamespace");
+
+   Pattern_Default : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/in-out");
 
    type Universal_String_Array is
      array (Positive range <>) of League.Strings.Universal_String;
@@ -109,8 +125,15 @@ package body WSDL.Parsers is
     (Attributes  : XML.SAX.Attributes.SAX_Attributes;
      Namespaces  : Namespace_Maps.Map;
      Description : WSDL.AST.Descriptions.Description_Access;
+     Node        : out WSDL.AST.Interfaces.Interface_Access;
      Success     : in out Boolean);
    --  Handles start of 'interface' element.
+
+   procedure Start_Interface_Operation_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Parent     : WSDL.AST.Interfaces.Interface_Access;
+     Success    : in out Boolean);
+   --  Handles start of 'operation' element as child of 'interface' element.
 
 --   procedure Check_WSDL_Attributes
 --    (Attributes : XML.SAX.Attributes.SAX_Attributes;
@@ -176,6 +199,9 @@ package body WSDL.Parsers is
             Self.Pop;
 
          elsif Local_Name = Interface_Element then
+            Self.Pop;
+
+         elsif Local_Name = Operation_Element then
             Self.Pop;
 
          elsif Local_Name = Types_Element then
@@ -308,7 +334,9 @@ package body WSDL.Parsers is
                   Self.Ignore_Depth := 1;
                end if;
 
-            elsif Self.Current_State.Kind = WSDL_Interface then
+            elsif Self.Current_State.Kind = WSDL_Interface
+              or Self.Current_State.Kind = WSDL_Operation
+            then
                Self.Ignore_Depth := 1;
 
             else
@@ -342,12 +370,36 @@ package body WSDL.Parsers is
                raise Program_Error;
             end if;
 
+         elsif Local_Name = Infault_Element then
+            if Self.Current_State.Kind = WSDL_Operation then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = Input_Element then
+            if Self.Current_State.Kind = WSDL_Operation then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
          elsif Local_Name = Interface_Element then
             if Self.Current_State.Kind = WSDL_Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
                Self.Push (WSDL_Interface);
                Start_Interface_Element
-                 (Attributes, Self.Namespaces, Self.Description, Success);
+                (Attributes,
+                 Self.Namespaces,
+                 Self.Description,
+                 Self.Current_Interface,
+                 Success);
 
             else
                raise Program_Error;
@@ -372,9 +424,9 @@ package body WSDL.Parsers is
 
          elsif Local_Name = Operation_Element then
             if Self.Current_State.Kind = WSDL_Interface then
-               --  XXX all children elements are ignored for now.
-
-               Self.Ignore_Depth := 1;
+               Self.Push (WSDL_Operation);
+               Start_Interface_Operation_Element
+                (Attributes, Self.Current_Interface, Success);
 
             else
                raise Program_Error;
@@ -384,6 +436,26 @@ package body WSDL.Parsers is
             if Self.Current_State.Kind = WSDL_Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
 
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = Outfault_Element then
+            if Self.Current_State.Kind = WSDL_Operation then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = Output_Element then
+            if Self.Current_State.Kind = WSDL_Operation then
                --  XXX all children elements are ignored for now.
 
                Self.Ignore_Depth := 1;
@@ -433,7 +505,9 @@ package body WSDL.Parsers is
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
             end if;
 
-         elsif Self.Current_State.Kind = WSDL_Interface then
+         elsif Self.Current_State.Kind = WSDL_Interface
+           or Self.Current_State.Kind = WSDL_Operation
+         then
             --  Ignore unknown extensions of interface component.
 
             Self.Ignore_Depth := 1;
@@ -457,12 +531,11 @@ package body WSDL.Parsers is
     (Attributes  : XML.SAX.Attributes.SAX_Attributes;
      Namespaces  : Namespace_Maps.Map;
      Description : WSDL.AST.Descriptions.Description_Access;
+     Node        : out WSDL.AST.Interfaces.Interface_Access;
      Success     : in out Boolean)
    is
       Name : constant League.Strings.Universal_String
         := Attributes.Value (Name_Attribute);
-      Node : constant WSDL.AST.Interfaces.Interface_Access
-        := new WSDL.AST.Interfaces.Interface_Node;
 
    begin
       --  Interface-1010: For each Interface component in the {interfaces}
@@ -476,6 +549,7 @@ package body WSDL.Parsers is
          raise Program_Error;
       end if;
 
+      Node := new WSDL.AST.Interfaces.Interface_Node;
       Node.Parent := WSDL.AST.Components.Description_Access (Description);
       Node.Local_Name := Name;
       Description.Interfaces.Insert (Name, Node);
@@ -528,6 +602,46 @@ package body WSDL.Parsers is
          --  XXX This check is not implemented.
       end if;
    end Start_Interface_Element;
+
+   ---------------------------------------
+   -- Start_Interface_Operation_Element --
+   ---------------------------------------
+
+   procedure Start_Interface_Operation_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Parent     : WSDL.AST.Interfaces.Interface_Access;
+     Success    : in out Boolean)
+   is
+      Name : constant League.Strings.Universal_String
+        := Attributes.Value (Name_Attribute);
+      Node : constant WSDL.AST.Interface_Operations.Interface_Operation_Access
+        := new WSDL.AST.Interface_Operations.Interface_Operation_Node;
+
+   begin
+      Node.Parent := WSDL.AST.Interface_Operations.Interface_Access (Parent);
+      Node.Local_Name := Name;
+      Parent.Interface_Operations.Insert (Name, Node);
+
+      --  Analyze 'pattern' attribute.
+
+      if Attributes.Is_Specified (Pattern_Attribute) then
+         Node.Message_Exchange_Pattern := Attributes.Value (Pattern_Attribute);
+
+      else
+         Node.Message_Exchange_Pattern := Pattern_Default;
+      end if;
+
+      --  Analyze 'style' attribute.
+
+      if Attributes.Is_Specified (Style_Attribute) then
+         Node.Style :=
+           Attributes.Value (Style_Attribute).Split
+            (' ', League.Strings.Skip_Empty);
+
+      else
+         Node.Style := Node.Parent.Style_Default;
+      end if;
+   end Start_Interface_Operation_Element;
 
    --------------------------
    -- Start_Prefix_Mapping --

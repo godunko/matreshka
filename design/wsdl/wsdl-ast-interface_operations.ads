@@ -41,44 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-with Ada.Containers.Hashed_Sets;
-
 with League.String_Vectors;
-with League.Strings.Hash;
 
-with WSDL.AST.Components;
-with WSDL.AST.Interface_Operations;
+limited with WSDL.AST.Interfaces;
 
-package WSDL.AST.Interfaces is
+package WSDL.AST.Interface_Operations is
 
    pragma Preelaborate;
 
-   package Name_Pair_Sets is
-     new Ada.Containers.Hashed_Sets (Name_Pair, Hash, "=");
+   type Interface_Access is
+     access all WSDL.AST.Interfaces.Interface_Node'Class;
 
-   package Interface_Operation_Maps is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           WSDL.AST.Interface_Operations.Interface_Operation_Access,
-           League.Strings.Hash,
-           League.Strings."=",
-           WSDL.AST.Interface_Operations."=");
+   type Interface_Operation_Node is new Abstract_Node with record
+      Local_Name               : League.Strings.Universal_String;
+      --  Local name part of the name of the operation.
 
-   type Interface_Node is new WSDL.AST.Components.Component_Node with record
-      Local_Name           : League.Strings.Universal_String;
-      --  Name of the interface.
+      Parent                   : Interface_Access;
+      --  Value of {parent} attribute.
 
-      Extends              : Name_Pair_Sets.Set;
-      --  Names of interface components that this interface derives from.
+      Message_Exchange_Pattern : League.Strings.Universal_String;
+      --  Value of {message exchange pattern} attribute.
 
-      Style_Default        : League.String_Vectors.Universal_String_Vector;
-      --  Default value of operation style for all operations of the interface.
-
-      Interface_Operations : Interface_Operation_Maps.Map;
-      --  Value of {interface operations} property of interface component.
+      Style                    : League.String_Vectors.Universal_String_Vector;
+      --  Value of {style} attribute.
    end record;
 
-   type Interface_Access is access all Interface_Node'Class;
+   type Interface_Operation_Access is
+     access all Interface_Operation_Node'Class;
 
-end WSDL.AST.Interfaces;
+end WSDL.AST.Interface_Operations;

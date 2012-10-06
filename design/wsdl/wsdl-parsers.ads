@@ -49,6 +49,7 @@ private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 
 private with WSDL.AST.Descriptions;
+private with WSDL.AST.Interfaces;
 
 package WSDL.Parsers is
 
@@ -77,6 +78,7 @@ private
      Document,
      WSDL_Description,
      WSDL_Interface,
+     WSDL_Operation,
      WSDL_Types);
 
    type Parser_State (Kind : Parser_State_Kind := None) is record
@@ -98,23 +100,26 @@ private
    type WSDL_Parser is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with
    record
-      Description    : WSDL.AST.Descriptions.Description_Access;
+      Description       : WSDL.AST.Descriptions.Description_Access;
       --  Root element of AST for the processed file.
 
-      Current_State  : Parser_State;
+      Current_State     : Parser_State;
       --  Current state of the parser.
 
-      Previous_State : Parser_State;
+      Previous_State    : Parser_State;
       --  Previous state of the parser.
 
-      State_Stack    : State_Vectors.Vector;
+      State_Stack       : State_Vectors.Vector;
       --  Stack of parser's state.
 
-      Ignore_Depth   : Natural := 0;
+      Ignore_Depth      : Natural := 0;
       --  Counter of the depth of ignored elements.
 
-      Namespaces     : Namespace_Maps.Map;
+      Namespaces        : Namespace_Maps.Map;
       --  Mapping from prefix to namespace URI.
+
+      Current_Interface : WSDL.AST.Interfaces.Interface_Access;
+      --  Currently processed interface component.
    end record;
 
    overriding function Error_String
