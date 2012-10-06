@@ -45,7 +45,7 @@ with League.String_Vectors;
 
 limited with WSDL.AST.Interfaces;
 
-package WSDL.AST.Interface_Operations is
+package WSDL.AST.Operations is
 
    pragma Preelaborate;
 
@@ -69,4 +69,4 @@ package WSDL.AST.Interface_Operations is
    type Interface_Operation_Access is
      access all Interface_Operation_Node'Class;
 
-end WSDL.AST.Interface_Operations;
+end WSDL.AST.Operations;

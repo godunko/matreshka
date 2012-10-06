@@ -48,7 +48,7 @@ with League.String_Vectors;
 with League.Strings.Hash;
 
 with WSDL.AST.Components;
-with WSDL.AST.Interface_Operations;
+with WSDL.AST.Operations;
 
 package WSDL.AST.Interfaces is
 
@@ -60,10 +60,10 @@ package WSDL.AST.Interfaces is
    package Interface_Operation_Maps is
      new Ada.Containers.Hashed_Maps
           (League.Strings.Universal_String,
-           WSDL.AST.Interface_Operations.Interface_Operation_Access,
+           WSDL.AST.Operations.Interface_Operation_Access,
            League.Strings.Hash,
            League.Strings."=",
-           WSDL.AST.Interface_Operations."=");
+           WSDL.AST.Operations."=");
 
    type Interface_Node is new WSDL.AST.Components.Component_Node with record
       Local_Name           : League.Strings.Universal_String;

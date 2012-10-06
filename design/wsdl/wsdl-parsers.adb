@@ -46,7 +46,7 @@ with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with League.String_Vectors;
 
 with WSDL.AST.Components;
-with WSDL.AST.Interface_Operations;
+with WSDL.AST.Operations;
 with WSDL.AST.Types;
 
 package body WSDL.Parsers is
@@ -219,6 +219,17 @@ package body WSDL.Parsers is
    begin
       return League.Strings.Empty_Universal_String;
    end Error_String;
+
+   ---------------------
+   -- Get_Description --
+   ---------------------
+
+   function Get_Description
+    (Self : WSDL_Parser'Class)
+       return WSDL.AST.Descriptions.Description_Access is
+   begin
+      return Self.Description;
+   end Get_Description;
 
    ---------
    -- Pop --
@@ -614,11 +625,11 @@ package body WSDL.Parsers is
    is
       Name : constant League.Strings.Universal_String
         := Attributes.Value (Name_Attribute);
-      Node : constant WSDL.AST.Interface_Operations.Interface_Operation_Access
-        := new WSDL.AST.Interface_Operations.Interface_Operation_Node;
+      Node : constant WSDL.AST.Operations.Interface_Operation_Access
+        := new WSDL.AST.Operations.Interface_Operation_Node;
 
    begin
-      Node.Parent := WSDL.AST.Interface_Operations.Interface_Access (Parent);
+      Node.Parent := WSDL.AST.Operations.Interface_Access (Parent);
       Node.Local_Name := Name;
       Parent.Interface_Operations.Insert (Name, Node);
 

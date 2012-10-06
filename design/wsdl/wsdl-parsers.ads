@@ -48,13 +48,16 @@ private with League.Strings.Hash;
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 
-private with WSDL.AST.Descriptions;
+with WSDL.AST.Descriptions;
 private with WSDL.AST.Interfaces;
 
 package WSDL.Parsers is
 
    type WSDL_Parser is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+
+   function Get_Description
+    (Self : WSDL_Parser'Class) return WSDL.AST.Descriptions.Description_Access;
 
 private
 

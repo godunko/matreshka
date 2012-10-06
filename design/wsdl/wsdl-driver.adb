@@ -46,6 +46,7 @@ with League.Application;
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
+with WSDL.Debug;
 with WSDL.Parsers;
 
 procedure WSDL.Driver is
@@ -57,4 +58,6 @@ begin
    Reader.Set_Content_Handler (Handler'Unchecked_Access);
    Source.Open_By_File_Name (League.Application.Arguments.Element (1));
    Reader.Parse (Source'Unchecked_Access);
+
+   WSDL.Debug.Dump (Handler.Get_Description);
 end WSDL.Driver;
