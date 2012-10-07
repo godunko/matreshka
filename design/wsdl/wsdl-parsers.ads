@@ -48,6 +48,7 @@ private with League.Strings.Hash;
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 
+private with WSDL.AST.Bindings;
 with WSDL.AST.Descriptions;
 private with WSDL.AST.Interfaces;
 private with WSDL.AST.Operations;
@@ -81,6 +82,7 @@ private
     (None,
      Document,
      WSDL_Binding,
+     WSDL_Binding_Operation,
      WSDL_Description,
      WSDL_Input,
      WSDL_Interface,
@@ -129,7 +131,10 @@ private
       --  Currently processed interface component.
 
       Current_Operation : WSDL.AST.Operations.Interface_Operation_Access;
-      --  Currently processed operation component.
+      --  Currently processed interface operation component.
+
+      Current_Binding   : WSDL.AST.Bindings.Binding_Access;
+      --  Currently processed binding component.
    end record;
 
    overriding function Error_String

@@ -92,6 +92,8 @@ package WSDL.Constants is
      := League.Strings.To_Universal_String ("name");
    Pattern_Attribute          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("pattern");
+   Ref_Attribute              : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("ref");
    Style_Attribute            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("style");
    Style_Default_Attribute    : constant League.Strings.Universal_String

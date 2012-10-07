@@ -48,6 +48,12 @@ package WSDL.Iterators.Containment is
 
    type Containment_Iterator is limited new WSDL_Iterator with null record;
 
+   overriding procedure Visit_Binding
+    (Self    : in out Containment_Iterator;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out Traverse_Control);
+
    overriding procedure Visit_Description
     (Self    : in out Containment_Iterator;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;

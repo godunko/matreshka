@@ -45,7 +45,6 @@ with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
 with League.String_Vectors;
 
-with WSDL.AST.Bindings;
 with WSDL.AST.Components;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
@@ -107,9 +106,44 @@ package body WSDL.Parsers is
     (Attributes : XML.SAX.Attributes.SAX_Attributes;
      Namespaces : Namespace_Maps.Map;
      Parent     : WSDL.AST.Descriptions.Description_Access;
---     Node       : out WSDL.AST.Interfaces.Interface_Access;
+     Node       : out WSDL.AST.Bindings.Binding_Access;
      Success    : in out Boolean);
    --  Handles start of 'interface' element.
+
+   procedure End_Binding_Element
+    (Node    : WSDL.AST.Bindings.Binding_Access;
+     Success : in out Boolean);
+   --  Handles start of 'interface' element.
+
+   procedure Start_Binding_Operation_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
+     Parent     : WSDL.AST.Bindings.Binding_Access;
+--     Node       : out WSDL.AST.Operations.Interface_Operation_Access;
+     Success    : in out Boolean);
+   --  Handles start of 'operation' element as child of 'binding' element.
+
+   -------------------------
+   -- End_Binding_Element --
+   -------------------------
+
+   procedure End_Binding_Element
+    (Node    : WSDL.AST.Bindings.Binding_Access;
+     Success : in out Boolean) is
+   begin
+      if not Node.Binding_Operations.Is_Empty
+        and Node.Interface_Name.Local_Name.Is_Empty
+      then
+         --  Binding-1044: "If a Binding component specifies any
+         --  operation-specific binding details (by including Binding Operation
+         --  components) or any fault binding details (by including Binding
+         --  Fault components), then it MUST specify an interface the Binding
+         --  component applies to, so as to indicate which interface the
+         --  operations come from."
+
+         raise Program_Error;
+      end if;
+   end End_Binding_Element;
 
    -----------------
    -- End_Element --
@@ -127,6 +161,7 @@ package body WSDL.Parsers is
 
       elsif Namespace_URI = WSDL_Namespace_URI then
          if Local_Name = Binding_Element then
+            End_Binding_Element (Self.Current_Binding, Success);
             Self.Pop;
 
          elsif Local_Name = Description_Element then
@@ -209,16 +244,22 @@ package body WSDL.Parsers is
 
    procedure Start_Binding_Element
     (Attributes : XML.SAX.Attributes.SAX_Attributes;
-     Namespaces  : Namespace_Maps.Map;
+     Namespaces : Namespace_Maps.Map;
      Parent     : WSDL.AST.Descriptions.Description_Access;
---     Node       : out WSDL.AST.Interfaces.Interface_Access;
+     Node       : out WSDL.AST.Bindings.Binding_Access;
      Success    : in out Boolean)
    is
       Name : constant League.Strings.Universal_String
         := Attributes.Value (Name_Attribute);
-      Node : WSDL.AST.Bindings.Binding_Access;
 
    begin
+      --  Binding-1049: "For each Binding component in the {bindings} property
+      --  of a Description component, the {name} property MUST be unique."
+
+      if Parent.Bindings.Contains (Name) then
+         raise Program_Error;
+      end if;
+
       Node := new WSDL.AST.Bindings.Binding_Node;
       Node.Parent := WSDL.AST.Components.Description_Access (Parent);
       Node.Local_Name := Name;
@@ -243,6 +284,38 @@ package body WSDL.Parsers is
 
       Node.Binding_Type := Attributes.Value (Type_Attribute);
    end Start_Binding_Element;
+
+   -------------------------------------
+   -- Start_Binding_Operation_Element --
+   -------------------------------------
+
+   procedure Start_Binding_Operation_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
+     Parent     : WSDL.AST.Bindings.Binding_Access;
+--     Node       : out WSDL.AST.Operations.Interface_Operation_Access;
+     Success    : in out Boolean)
+   is
+      Node : WSDL.AST.Operations.Binding_Operation_Access;
+
+   begin
+      Node := new WSDL.AST.Operations.Binding_Operation_Node;
+      Node.Parent := WSDL.AST.Operations.Binding_Access (Parent);
+      Parent.Binding_Operations.Append (Node);
+
+      --  Analyze 'ref' attribute.
+
+      declare
+         Value : constant League.Strings.Universal_String
+           := Attributes.Value (Ref_Attribute);
+         Index : constant Natural := Value.Index (':');
+
+      begin
+         Node.Ref :=
+          (Namespaces.Element (Value.Slice (1, Index - 1)),
+           Value.Slice (Index + 1, Value.Length));
+      end;
+   end Start_Binding_Operation_Element;
 
    -------------------------------
    -- Start_Description_Element --
@@ -292,7 +365,11 @@ package body WSDL.Parsers is
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
                Self.Push (WSDL_Binding);
                Start_Binding_Element
-                (Attributes, Self.Namespaces, Self.Description, Success);
+                (Attributes,
+                 Self.Namespaces,
+                 Self.Description,
+                 Self.Current_Binding,
+                 Success);
 
             else
                raise Program_Error;
@@ -321,6 +398,7 @@ package body WSDL.Parsers is
                end if;
 
             elsif Self.Current_State.Kind = WSDL_Binding
+              or Self.Current_State.Kind = WSDL_Binding_Operation
               or Self.Current_State.Kind = WSDL_Input
               or Self.Current_State.Kind = WSDL_Interface
               or Self.Current_State.Kind = WSDL_Interface_Operation
@@ -360,7 +438,12 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Infault_Element then
-            if Self.Current_State.Kind = WSDL_Interface_Operation then
+            if Self.Current_State.Kind = WSDL_Binding_Operation then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            elsif Self.Current_State.Kind = WSDL_Interface_Operation then
                --  XXX all children elements are ignored for now.
 
                Self.Ignore_Depth := 1;
@@ -370,7 +453,12 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Input_Element then
-            if Self.Current_State.Kind = WSDL_Interface_Operation then
+            if Self.Current_State.Kind = WSDL_Binding_Operation then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            elsif Self.Current_State.Kind = WSDL_Interface_Operation then
                Self.Push (WSDL_Input);
                Start_Input_Output_Element
                 (Attributes,
@@ -424,16 +512,24 @@ package body WSDL.Parsers is
                  Success);
 
             elsif Self.Current_State.Kind = WSDL_Binding then
-               --  XXX all children elements are ignored for now.
-
-               Self.Ignore_Depth := 1;
+               Self.Push (WSDL_Binding_Operation);
+               Start_Binding_Operation_Element
+                (Attributes,
+                 Self.Namespaces,
+                 Self.Current_Binding,
+                 Success);
 
             else
                raise Program_Error;
             end if;
 
          elsif Local_Name = Outfault_Element then
-            if Self.Current_State.Kind = WSDL_Interface_Operation then
+            if Self.Current_State.Kind = WSDL_Binding_Operation then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            elsif Self.Current_State.Kind = WSDL_Interface_Operation then
                --  XXX all children elements are ignored for now.
 
                Self.Ignore_Depth := 1;
@@ -443,7 +539,12 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Output_Element then
-            if Self.Current_State.Kind = WSDL_Interface_Operation then
+            if Self.Current_State.Kind = WSDL_Binding_Operation then
+               --  XXX all children elements are ignored for now.
+
+               Self.Ignore_Depth := 1;
+
+            elsif Self.Current_State.Kind = WSDL_Interface_Operation then
                Self.Push (WSDL_Output);
                Start_Input_Output_Element
                 (Attributes,
@@ -509,6 +610,7 @@ package body WSDL.Parsers is
             end if;
 
          elsif Self.Current_State.Kind = WSDL_Binding
+           or Self.Current_State.Kind = WSDL_Binding_Operation
            or Self.Current_State.Kind = WSDL_Input
            or Self.Current_State.Kind = WSDL_Interface
            or Self.Current_State.Kind = WSDL_Interface_Operation

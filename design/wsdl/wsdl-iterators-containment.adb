@@ -44,6 +44,21 @@
 
 package body WSDL.Iterators.Containment is
 
+   -------------------
+   -- Visit_Binding --
+   -------------------
+
+   overriding procedure Visit_Binding
+    (Self    : in out Containment_Iterator;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out Traverse_Control) is
+   begin
+      for J of Node.Binding_Operations loop
+         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
+      end loop;
+   end Visit_Binding;
+
    -----------------------
    -- Visit_Description --
    -----------------------

@@ -45,6 +45,7 @@ with Ada.Containers.Vectors;
 
 with League.String_Vectors;
 
+limited with WSDL.AST.Bindings;
 limited with WSDL.AST.Interfaces;
 with WSDL.AST.Messages;
 
@@ -60,6 +61,13 @@ package WSDL.AST.Operations is
 
    type Interface_Access is
      access all WSDL.AST.Interfaces.Interface_Node'Class;
+
+   type Binding_Access is
+     access all WSDL.AST.Bindings.Binding_Node'Class;
+
+   -------------------------
+   -- Interface Operation --
+   -------------------------
 
    type Interface_Operation_Node is new Abstract_Node with record
       Local_Name                   : League.Strings.Universal_String;
@@ -94,6 +102,37 @@ package WSDL.AST.Operations is
 
    overriding procedure Visit
     (Self     : not null access Interface_Operation_Node;
+     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
+     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control  : in out WSDL.Iterators.Traverse_Control);
+
+   -----------------------
+   -- Binding Operation --
+   -----------------------
+
+   type Binding_Operation_Node is new Abstract_Node with record
+      Ref    : Name_Pair;
+      --  Name of the related interface operation.
+
+      Parent : Binding_Access;
+      --  Value of {parent} property.
+   end record;
+
+   type Binding_Operation_Access is
+     access all Binding_Operation_Node'Class;
+
+   overriding procedure Enter
+    (Self    : not null access Binding_Operation_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave
+    (Self    : not null access Binding_Operation_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Visit
+    (Self     : not null access Binding_Operation_Node;
      Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
      Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
      Control  : in out WSDL.Iterators.Traverse_Control);

@@ -41,21 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
+
 with WSDL.AST.Components;
+with WSDL.AST.Operations;
 
 package WSDL.AST.Bindings is
 
    pragma Preelaborate;
 
+   package Binding_Operation_Vectors is
+     new Ada.Containers.Vectors
+          (Positive,
+           WSDL.AST.Operations.Binding_Operation_Access,
+           WSDL.AST.Operations."=");
+
    type Binding_Node is new WSDL.AST.Components.Component_Node with record
-      Local_Name     : League.Strings.Universal_String;
+      Local_Name         : League.Strings.Universal_String;
       --  Name of the binding.
 
-      Interface_Name : Name_Pair;
+      Interface_Name     : Name_Pair;
       --  Name of interface.
 
-      Binding_Type   : League.Strings.Universal_String;
+      Binding_Type       : League.Strings.Universal_String;
       --  Value of {type} property.
+
+      Binding_Operations : Binding_Operation_Vectors.Vector;
    end record;
 
    type Binding_Access is access all Binding_Node'Class;

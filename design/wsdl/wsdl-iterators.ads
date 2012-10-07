@@ -73,6 +73,12 @@ package WSDL.Iterators is
      Node    : not null WSDL.AST.Bindings.Binding_Access;
      Control : in out Traverse_Control) is null;
 
+   not overriding procedure Visit_Binding_Operation
+    (Self    : in out WSDL_Iterator;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Control : in out Traverse_Control) is null;
+
    not overriding procedure Visit_Description
     (Self    : in out WSDL_Iterator;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;

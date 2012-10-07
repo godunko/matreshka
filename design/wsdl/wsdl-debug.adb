@@ -76,6 +76,16 @@ package body WSDL.Debug is
      Node    : not null WSDL.AST.Bindings.Binding_Access;
      Control : in out WSDL.Iterators.Traverse_Control);
 
+   overriding procedure Enter_Binding_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Binding_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
    overriding procedure Enter_Description
     (Self    : in out WSDL_Printer;
      Node    : not null WSDL.AST.Descriptions.Description_Access;
@@ -156,6 +166,18 @@ package body WSDL.Debug is
       Self.Writer.Start_Element
        (WSDL_Namespace_URI, Binding_Element, Attributes);
    end Enter_Binding;
+
+   -----------------------------
+   -- Enter_Binding_Operation --
+   -----------------------------
+
+   overriding procedure Enter_Binding_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.Start_Element (WSDL_Namespace_URI, Operation_Element);
+   end Enter_Binding_Operation;
 
    -----------------------
    -- Enter_Description --
@@ -254,6 +276,18 @@ package body WSDL.Debug is
    begin
       Self.Writer.End_Element (WSDL_Namespace_URI, Binding_Element);
    end Leave_Binding;
+
+   -----------------------------
+   -- Leave_Binding_Operation --
+   -----------------------------
+
+   overriding procedure Leave_Binding_Operation
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Operation_Element);
+   end Leave_Binding_Operation;
 
    -----------------------
    -- Leave_Description --
