@@ -54,12 +54,12 @@ package WSDL.AST is
 
    pragma Preelaborate;
 
-   type Name_Pair is record
+   type Qualified_Name is record
       Namespace_URI : League.Strings.Universal_String;
       Local_Name    : League.Strings.Universal_String;
    end record;
 
-   function Hash (Item : Name_Pair) return Ada.Containers.Hash_Type;
+   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type;
 
    type Abstract_Node is abstract tagged record
       null;

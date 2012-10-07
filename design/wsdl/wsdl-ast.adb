@@ -49,7 +49,7 @@ package body WSDL.AST is
    -- Hash --
    ----------
 
-   function Hash (Item : Name_Pair) return Ada.Containers.Hash_Type is
+   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type is
       use type League.Strings.Universal_String;
 
    begin

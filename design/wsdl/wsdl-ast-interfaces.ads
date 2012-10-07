@@ -55,8 +55,8 @@ package WSDL.AST.Interfaces is
 
    pragma Preelaborate;
 
-   package Name_Pair_Sets is
-     new Ada.Containers.Hashed_Sets (Name_Pair, Hash, "=");
+   package Qualified_Name_Sets is
+     new Ada.Containers.Hashed_Sets (Qualified_Name, Hash, "=");
 
    package Interface_Operation_Maps is
      new Ada.Containers.Hashed_Maps
@@ -77,7 +77,7 @@ package WSDL.AST.Interfaces is
       Local_Name           : League.Strings.Universal_String;
       --  Name of the interface.
 
-      Extends              : Name_Pair_Sets.Set;
+      Extends              : Qualified_Name_Sets.Set;
       --  Names of interface components that this interface derives from.
 
       Extended_Interfaces  : Interface_Vectors.Vector;

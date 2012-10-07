@@ -61,7 +61,7 @@ package WSDL.AST.Bindings is
       Local_Name         : League.Strings.Universal_String;
       --  Name of the binding.
 
-      Interface_Name     : Name_Pair;
+      Interface_Name     : Qualified_Name;
       --  Name of interface.
 
       Interface_Node     : WSDL.AST.Interfaces.Interface_Access;
