@@ -41,8 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
-
 with League.String_Vectors;
 
 with WSDL.AST.Components;
@@ -371,8 +369,6 @@ package body WSDL.Parsers is
          Self.Ignore_Depth := Self.Ignore_Depth + 1;
 
       elsif Namespace_URI = WSDL_Namespace_URI then
-         Put_Line ("Start_Element '" & Qualified_Name.To_Wide_Wide_String & "'");
-
          if Local_Name = Binding_Element then
             if Self.Current_State.Kind = WSDL_Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
