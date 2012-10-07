@@ -84,7 +84,7 @@ private
      WSDL_Description,
      WSDL_Input,
      WSDL_Interface,
-     WSDL_Operation,
+     WSDL_Interface_Operation,
      WSDL_Output,
      WSDL_Types);
 

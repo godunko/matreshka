@@ -323,7 +323,7 @@ package body WSDL.Parsers is
             elsif Self.Current_State.Kind = WSDL_Binding
               or Self.Current_State.Kind = WSDL_Input
               or Self.Current_State.Kind = WSDL_Interface
-              or Self.Current_State.Kind = WSDL_Operation
+              or Self.Current_State.Kind = WSDL_Interface_Operation
               or Self.Current_State.Kind = WSDL_Output
             then
                Self.Ignore_Depth := 1;
@@ -360,7 +360,7 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Infault_Element then
-            if Self.Current_State.Kind = WSDL_Operation then
+            if Self.Current_State.Kind = WSDL_Interface_Operation then
                --  XXX all children elements are ignored for now.
 
                Self.Ignore_Depth := 1;
@@ -370,7 +370,7 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Input_Element then
-            if Self.Current_State.Kind = WSDL_Operation then
+            if Self.Current_State.Kind = WSDL_Interface_Operation then
                Self.Push (WSDL_Input);
                Start_Input_Output_Element
                 (Attributes,
@@ -416,7 +416,7 @@ package body WSDL.Parsers is
 
          elsif Local_Name = Operation_Element then
             if Self.Current_State.Kind = WSDL_Interface then
-               Self.Push (WSDL_Operation);
+               Self.Push (WSDL_Interface_Operation);
                Start_Interface_Operation_Element
                 (Attributes,
                  Self.Current_Interface,
@@ -433,7 +433,7 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Outfault_Element then
-            if Self.Current_State.Kind = WSDL_Operation then
+            if Self.Current_State.Kind = WSDL_Interface_Operation then
                --  XXX all children elements are ignored for now.
 
                Self.Ignore_Depth := 1;
@@ -443,7 +443,7 @@ package body WSDL.Parsers is
             end if;
 
          elsif Local_Name = Output_Element then
-            if Self.Current_State.Kind = WSDL_Operation then
+            if Self.Current_State.Kind = WSDL_Interface_Operation then
                Self.Push (WSDL_Output);
                Start_Input_Output_Element
                 (Attributes,
@@ -511,7 +511,7 @@ package body WSDL.Parsers is
          elsif Self.Current_State.Kind = WSDL_Binding
            or Self.Current_State.Kind = WSDL_Input
            or Self.Current_State.Kind = WSDL_Interface
-           or Self.Current_State.Kind = WSDL_Operation
+           or Self.Current_State.Kind = WSDL_Interface_Operation
            or Self.Current_State.Kind = WSDL_Output
          then
             --  Ignore unknown extensions of interface component.
