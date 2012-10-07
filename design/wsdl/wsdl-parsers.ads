@@ -80,6 +80,7 @@ private
    type Parser_State_Kind is
     (None,
      Document,
+     WSDL_Binding,
      WSDL_Description,
      WSDL_Input,
      WSDL_Interface,

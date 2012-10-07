@@ -47,6 +47,7 @@ with League.Strings;
 with XML.SAX.Attributes;
 with XML.SAX.Pretty_Writers;
 
+with WSDL.AST.Bindings;
 with WSDL.AST.Interfaces;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
@@ -59,6 +60,8 @@ package body WSDL.Debug is
    WSDL_Namespace_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl");
 
+   Binding_Element       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("binding");
    Description_Element   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("description");
    Input_Element         : constant League.Strings.Universal_String
@@ -76,12 +79,24 @@ package body WSDL.Debug is
      := League.Strings.To_Universal_String ("name");
    Target_Namespace_Attribute : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("targetNamespace");
+   Type_Attribute             : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("type");
 
    type WSDL_Printer is
      limited new WSDL.Visitors.WSDL_Visitor with
    record
       Writer : XML.SAX.Pretty_Writers.SAX_Pretty_Writer;
    end record;
+
+   overriding procedure Enter_Binding
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Binding
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
 
    overriding procedure Enter_Description
     (Self    : in out WSDL_Printer;
@@ -145,6 +160,24 @@ package body WSDL.Debug is
    begin
       Iterator.Visit (Printer, WSDL.AST.Node_Access (Description), Control);
    end Dump;
+
+   -------------------
+   -- Enter_Binding --
+   -------------------
+
+   overriding procedure Enter_Binding
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out WSDL.Iterators.Traverse_Control)
+   is
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
+
+   begin
+      Attributes.Set_Value (Name_Attribute, Node.Local_Name);
+      Attributes.Set_Value (Type_Attribute, Node.Binding_Type);
+      Self.Writer.Start_Element
+       (WSDL_Namespace_URI, Binding_Element, Attributes);
+   end Enter_Binding;
 
    -----------------------
    -- Enter_Description --
@@ -231,6 +264,18 @@ package body WSDL.Debug is
    begin
       Self.Writer.Start_Element (WSDL_Namespace_URI, Types_Element);
    end Enter_Types;
+
+   -------------------
+   -- Leave_Binding --
+   -------------------
+
+   overriding procedure Leave_Binding
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Binding_Element);
+   end Leave_Binding;
 
    -----------------------
    -- Leave_Description --

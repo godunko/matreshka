@@ -41,63 +41,39 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with WSDL.AST.Components;
 
-package body WSDL.Iterators.Containment is
+package WSDL.AST.Bindings is
 
-   -----------------------
-   -- Visit_Description --
-   -----------------------
+   pragma Preelaborate;
 
-   overriding procedure Visit_Description
-    (Self    : in out Containment_Iterator;
+   type Binding_Node is new WSDL.AST.Components.Component_Node with record
+      Local_Name     : League.Strings.Universal_String;
+      --  Name of the binding.
+
+      Interface_Name : Name_Pair;
+      --  Name of interface.
+
+      Binding_Type   : League.Strings.Universal_String;
+      --  Value of {type} property.
+   end record;
+
+   type Binding_Access is access all Binding_Node'Class;
+
+   overriding procedure Enter
+    (Self    : not null access Binding_Node;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Descriptions.Description_Access;
-     Control : in out Traverse_Control)
-   is
-      use type WSDL.AST.Types.Types_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
 
-   begin
-      if Node.Types /= null then
-         Self.Visit (Visitor, WSDL.AST.Node_Access (Node.Types), Control);
-      end if;
-
-      for J of Node.Interfaces loop
-         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
-      end loop;
-
-      for J of Node.Bindings loop
-         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
-      end loop;
-   end Visit_Description;
-
-   ---------------------
-   -- Visit_Interface --
-   ---------------------
-
-   overriding procedure Visit_Interface
-    (Self    : in out Containment_Iterator;
+   overriding procedure Leave
+    (Self    : not null access Binding_Node;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Interfaces.Interface_Access;
-     Control : in out Traverse_Control) is
-   begin
-      for J of Node.Interface_Operations loop
-         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
-      end loop;
-   end Visit_Interface;
+     Control : in out WSDL.Iterators.Traverse_Control);
 
-   -------------------------------
-   -- Visit_Interface_Operation --
-   -------------------------------
+   overriding procedure Visit
+    (Self     : not null access Binding_Node;
+     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
+     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control  : in out WSDL.Iterators.Traverse_Control);
 
-   overriding procedure Visit_Interface_Operation
-    (Self    : in out Containment_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
-     Control : in out Traverse_Control) is
-   begin
-      for J of Node.Interface_Message_References loop
-         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
-      end loop;
-   end Visit_Interface_Operation;
-
-end WSDL.Iterators.Containment;
+end WSDL.AST.Bindings;

@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with WSDL.AST.Bindings;
 with WSDL.AST.Descriptions;
 with WSDL.AST.Interfaces;
 with WSDL.AST.Messages;
@@ -53,6 +54,16 @@ package WSDL.Visitors is
    pragma Preelaborate;
 
    type WSDL_Visitor is limited interface;
+
+   not overriding procedure Enter_Binding
+    (Self    : in out WSDL_Visitor;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is null;
+
+   not overriding procedure Leave_Binding
+    (Self    : in out WSDL_Visitor;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is null;
 
    not overriding procedure Enter_Description
     (Self    : in out WSDL_Visitor;

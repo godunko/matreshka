@@ -45,12 +45,21 @@ with Ada.Containers.Hashed_Maps;
 
 with League.Strings.Hash;
 
+with WSDL.AST.Bindings;
 with WSDL.AST.Interfaces;
 with WSDL.AST.Types;
 
 package WSDL.AST.Descriptions is
 
    pragma Preelaborate;
+
+   package Binding_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           WSDL.AST.Bindings.Binding_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           WSDL.AST.Bindings."=");
 
    package Interface_Maps is
      new Ada.Containers.Hashed_Maps
@@ -69,6 +78,10 @@ package WSDL.AST.Descriptions is
 
       Interfaces       : Interface_Maps.Map;
       --  Set of interface components represented as children elements of this
+      --  description element.
+
+      Bindings         : Binding_Maps.Map;
+      --  Set of binding components represented as children element of this
       --  description element.
    end record;
 
