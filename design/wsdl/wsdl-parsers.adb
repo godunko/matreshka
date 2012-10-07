@@ -111,51 +111,6 @@ package body WSDL.Parsers is
      Success    : in out Boolean);
    --  Handles start of 'interface' element.
 
---   procedure Check_WSDL_Attributes
---    (Attributes : XML.SAX.Attributes.SAX_Attributes;
---     Allowed    : Universal_String_Array;
---     Success    : in out Boolean);
---   --  Checks that each attribute without namespace is present in the set of
---   --  allowed attributes; and report error otherwise.
---
---   ---------------------------
---   -- Check_WSDL_Attributes --
---   ---------------------------
---
---   procedure Check_WSDL_Attributes
---    (Attributes : XML.SAX.Attributes.SAX_Attributes;
---     Allowed    : Universal_String_Array;
---     Success    : in out Boolean)
---   is
---      OK : Boolean;
---
---   begin
---      Put_Line (Integer'Wide_Wide_Image (Attributes.Length));
---      for J in 1 .. Attributes.Length loop
---         Put_Line (Attributes.Namespace_URI (J).To_Wide_Wide_String);
---
---         if Attributes.Namespace_URI (J).Is_Empty then
---         Put_Line (Attributes.Namespace_URI (J).To_Wide_Wide_String);
---            OK := False;
---
---            for K in Allowed'Range loop
---               if Attributes.Qualified_Name (J) = Allowed (K) then
---                  OK := True;
---
---                  exit;
---               end if;
---            end loop;
---
---            if not OK then
---               Success := False;
---
---               --  XXX error must be reported here.
---               raise Program_Error;
---            end if;
---         end if;
---      end loop;
---   end Check_WSDL_Attributes;
-
    -----------------
    -- End_Element --
    -----------------
@@ -298,11 +253,6 @@ package body WSDL.Parsers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean) is
    begin
---            Check_WSDL_Attributes
---             (Attributes,
---              (1 => Target_Namespace_Attribute),
---              Success);
-
       Self.Description := new WSDL.AST.Descriptions.Description_Node;
       Self.Description.Target_Namespace :=
         Attributes.Value (Target_Namespace_Attribute);
