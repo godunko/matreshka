@@ -88,6 +88,7 @@ private
      WSDL_Interface,
      WSDL_Interface_Operation,
      WSDL_Output,
+     WSDL_Service,
      WSDL_Types);
 
    type Parser_State (Kind : Parser_State_Kind := None) is record

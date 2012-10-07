@@ -120,6 +120,24 @@ package body WSDL.Name_Resolvers is
       end loop;
    end Enter_Interface;
 
+   -------------------
+   -- Enter_Service --
+   -------------------
+
+   overriding procedure Enter_Service
+    (Self    : in out Name_Resolver;
+     Node    : not null WSDL.AST.Services.Service_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      --  Resolve interface by qualified name.
+
+      Node.Interface_Node :=
+        Resolve_Interface
+         (Self.Root,
+          Node.Interface_Name.Namespace_URI,
+          Node.Interface_Name.Local_Name);
+   end Enter_Service;
+
    -----------------------
    -- Resolve_Interface --
    -----------------------

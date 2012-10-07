@@ -47,6 +47,7 @@ with League.Strings.Hash;
 
 with WSDL.AST.Bindings;
 with WSDL.AST.Interfaces;
+with WSDL.AST.Services;
 with WSDL.AST.Types;
 
 package WSDL.AST.Descriptions is
@@ -69,6 +70,14 @@ package WSDL.AST.Descriptions is
            League.Strings."=",
            WSDL.AST.Interfaces."=");
 
+   package Service_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           WSDL.AST.Services.Service_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           WSDL.AST.Services."=");
+
    type Description_Node is new Abstract_Node with record
       Target_Namespace : League.Strings.Universal_String;
       --  Value of 'targetNamespace' attribute.
@@ -82,6 +91,10 @@ package WSDL.AST.Descriptions is
 
       Bindings         : Binding_Maps.Map;
       --  Set of binding components represented as children element of this
+      --  description element.
+
+      Services         : Service_Maps.Map;
+      --  Set of service components represented as children element of this
       --  description element.
    end record;
 

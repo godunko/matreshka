@@ -57,6 +57,8 @@ package WSDL.Constants is
      := League.Strings.To_Universal_String ("description");
    Documentation_Element : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("documentation");
+   Endpoint_Element : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("endpoint");
    Fault_Element         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("fault");
    Infault_Element       : constant League.Strings.Universal_String

@@ -83,6 +83,10 @@ package body WSDL.Iterators.Containment is
       for J of Node.Bindings loop
          Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
       end loop;
+
+      for J of Node.Services loop
+         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
+      end loop;
    end Visit_Description;
 
    ---------------------

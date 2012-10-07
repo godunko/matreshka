@@ -41,59 +41,46 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides name resolver.
---
---  XXX Note: components can be specified in any order, thus this resolver
---  should do several passes to handle all possible combination correctly. For
---  example, it can be separated onto several visitors, which will be run in
---  appropriate order. For now, following dependencies are not handled
---  correctly in some cases:
---
---   - binding operation to interface operation reference resolution:
---     {extended_interface} property must be resolved already.
-------------------------------------------------------------------------------
-private with WSDL.AST.Bindings;
-with WSDL.AST.Descriptions;
-private with WSDL.AST.Interfaces;
-private with WSDL.AST.Operations;
-private with WSDL.AST.Services;
-private with WSDL.Iterators;
+with WSDL.Iterators;
 with WSDL.Visitors;
 
-package WSDL.Name_Resolvers is
+package body WSDL.AST.Services is
 
-   pragma Preelaborate;
+   -----------
+   -- Enter --
+   -----------
 
-   type Name_Resolver is limited new WSDL.Visitors.WSDL_Visitor with private;
+   overriding procedure Enter
+    (Self    : not null access Service_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Visitor.Enter_Service (Service_Access (Self), Control);
+   end Enter;
 
-   procedure Set_Root
-    (Self : in out Name_Resolver'Class;
-     Root : WSDL.AST.Descriptions.Description_Access);
+   -----------
+   -- Leave --
+   -----------
 
-private
+   overriding procedure Leave
+    (Self    : not null access Service_Node;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Visitor.Leave_Service (Service_Access (Self), Control);
+   end Leave;
 
-   type Name_Resolver is limited new WSDL.Visitors.WSDL_Visitor with record
-      Root : WSDL.AST.Descriptions.Description_Access;
-   end record;
+   -----------
+   -- Visit --
+   -----------
 
-   overriding procedure Enter_Binding
-    (Self    : in out Name_Resolver;
-     Node    : not null WSDL.AST.Bindings.Binding_Access;
-     Control : in out WSDL.Iterators.Traverse_Control);
+   overriding procedure Visit
+    (Self     : not null access Service_Node;
+     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
+     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control  : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Iterator.Visit_Service (Visitor, Service_Access (Self), Control);
+   end Visit;
 
-   overriding procedure Enter_Binding_Operation
-    (Self    : in out Name_Resolver;
-     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
-     Control : in out WSDL.Iterators.Traverse_Control);
-
-   overriding procedure Enter_Interface
-    (Self    : in out Name_Resolver;
-     Node    : not null WSDL.AST.Interfaces.Interface_Access;
-     Control : in out WSDL.Iterators.Traverse_Control);
-
-   overriding procedure Enter_Service
-    (Self    : in out Name_Resolver;
-     Node    : not null WSDL.AST.Services.Service_Access;
-     Control : in out WSDL.Iterators.Traverse_Control);
-
-end WSDL.Name_Resolvers;
+end WSDL.AST.Services;

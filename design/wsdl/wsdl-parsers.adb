@@ -48,6 +48,7 @@ with League.String_Vectors;
 with WSDL.AST.Components;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
+with WSDL.AST.Services;
 with WSDL.AST.Types;
 with WSDL.Constants;
 
@@ -123,6 +124,14 @@ package body WSDL.Parsers is
      Success    : in out Boolean);
    --  Handles start of 'operation' element as child of 'binding' element.
 
+   procedure Start_Service_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
+     Parent     : WSDL.AST.Descriptions.Description_Access;
+--     Node       : out WSDL.AST.Interfaces.Interface_Access;
+     Success    : in out Boolean);
+   --  Handles start of 'service' element.
+
    -------------------------
    -- End_Binding_Element --
    -------------------------
@@ -177,6 +186,9 @@ package body WSDL.Parsers is
             Self.Pop;
 
          elsif Local_Name = Output_Element then
+            Self.Pop;
+
+         elsif Local_Name = Service_Element then
             Self.Pop;
 
          elsif Local_Name = Types_Element then
@@ -403,7 +415,18 @@ package body WSDL.Parsers is
               or Self.Current_State.Kind = WSDL_Interface
               or Self.Current_State.Kind = WSDL_Interface_Operation
               or Self.Current_State.Kind = WSDL_Output
+              or Self.Current_State.Kind = WSDL_Service
             then
+               Self.Ignore_Depth := 1;
+
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = Endpoint_Element then
+            if Self.Current_State.Kind = WSDL_Service then
+               --  XXX all children elements are ignored for now.
+
                Self.Ignore_Depth := 1;
 
             else
@@ -559,10 +582,9 @@ package body WSDL.Parsers is
          elsif Local_Name = Service_Element then
             if Self.Current_State.Kind = WSDL_Description then
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
-
-               --  XXX all children elements are ignored for now.
-
-               Self.Ignore_Depth := 1;
+               Self.Push (WSDL_Service);
+               Start_Service_Element
+                (Attributes, Self.Namespaces, Self.Description, Success);
 
             else
                raise Program_Error;
@@ -615,6 +637,7 @@ package body WSDL.Parsers is
            or Self.Current_State.Kind = WSDL_Interface
            or Self.Current_State.Kind = WSDL_Interface_Operation
            or Self.Current_State.Kind = WSDL_Output
+           or Self.Current_State.Kind = WSDL_Service
          then
             --  Ignore unknown extensions of interface component.
 
@@ -815,6 +838,48 @@ package body WSDL.Parsers is
    begin
       Self.Namespaces.Insert (Prefix, Namespace_URI);
    end Start_Prefix_Mapping;
+
+   ---------------------------
+   -- Start_Service_Element --
+   ---------------------------
+
+   procedure Start_Service_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
+     Parent     : WSDL.AST.Descriptions.Description_Access;
+--     Node       : out WSDL.AST.Interfaces.Interface_Access;
+     Success    : in out Boolean)
+   is
+      Name : constant League.Strings.Universal_String
+        := Attributes.Value (Name_Attribute);
+      Node : WSDL.AST.Services.Service_Access;
+
+   begin
+      --  Service-1060: "For each Service component in the {services} property
+      --  of a Description component, the {name} property MUST be unique."
+
+      if Parent.Services.Contains (Name) then
+         raise Program_Error;
+      end if;
+
+      Node := new WSDL.AST.Services.Service_Node;
+      Node.Parent := WSDL.AST.Components.Description_Access (Parent);
+      Node.Local_Name := Name;
+      Parent.Services.Insert (Name, Node);
+
+      --  Analyze 'interface' attribute.
+
+      declare
+         Value : constant League.Strings.Universal_String
+           := Attributes.Value (Interface_Attribute);
+         Index : constant Natural := Value.Index (':');
+
+      begin
+         Node.Interface_Name :=
+          (Namespaces.Element (Value.Slice (1, Index - 1)),
+           Value.Slice (Index + 1, Value.Length));
+      end;
+   end Start_Service_Element;
 
    -------------------------
    -- Start_Types_Element --

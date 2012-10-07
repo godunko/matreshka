@@ -46,6 +46,7 @@ with WSDL.AST.Descriptions;
 with WSDL.AST.Interfaces;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
+with WSDL.AST.Services;
 with WSDL.AST.Types;
 limited with WSDL.Visitors;
 
@@ -101,6 +102,12 @@ package WSDL.Iterators is
     (Self    : in out WSDL_Iterator;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
      Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out Traverse_Control) is null;
+
+   not overriding procedure Visit_Service
+    (Self    : in out WSDL_Iterator;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Node    : not null WSDL.AST.Services.Service_Access;
      Control : in out Traverse_Control) is null;
 
    not overriding procedure Visit_Types
