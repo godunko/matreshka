@@ -48,9 +48,11 @@ with XML.SAX.Attributes;
 with XML.SAX.Pretty_Writers;
 
 with WSDL.AST.Bindings;
+with WSDL.AST.Endpoints;
 with WSDL.AST.Interfaces;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
+with WSDL.AST.Services;
 with WSDL.AST.Types;
 with WSDL.Constants;
 with WSDL.Iterators.Containment;
@@ -96,6 +98,16 @@ package body WSDL.Debug is
      Node    : not null WSDL.AST.Descriptions.Description_Access;
      Control : in out WSDL.Iterators.Traverse_Control);
 
+   overriding procedure Enter_Endpoint
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Endpoint
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
    overriding procedure Enter_Interface
     (Self    : in out WSDL_Printer;
      Node    : not null WSDL.AST.Interfaces.Interface_Access;
@@ -124,6 +136,16 @@ package body WSDL.Debug is
    overriding procedure Leave_Interface_Operation
     (Self    : in out WSDL_Printer;
      Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Enter_Service
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Services.Service_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Leave_Service
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Services.Service_Access;
      Control : in out WSDL.Iterators.Traverse_Control);
 
    overriding procedure Enter_Types
@@ -201,6 +223,28 @@ package body WSDL.Debug is
        (WSDL_Namespace_URI, Description_Element, Attributes);
    end Enter_Description;
 
+   --------------------
+   -- Enter_Endpoint --
+   --------------------
+
+   overriding procedure Enter_Endpoint
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
+     Control : in out WSDL.Iterators.Traverse_Control)
+   is
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
+
+   begin
+      Attributes.Set_Value (Name_Attribute, Node.Local_Name);
+
+      if not Node.Address.Is_Empty then
+         Attributes.Set_Value (Address_Attribute, Node.Address);
+      end if;
+
+      Self.Writer.Start_Element
+       (WSDL_Namespace_URI, Endpoint_Element, Attributes);
+   end Enter_Endpoint;
+
    ---------------------
    -- Enter_Interface --
    ---------------------
@@ -253,6 +297,23 @@ package body WSDL.Debug is
        (WSDL_Namespace_URI, Operation_Element, Attributes);
    end Enter_Interface_Operation;
 
+   -------------------
+   -- Enter_Service --
+   -------------------
+
+   overriding procedure Enter_Service
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Services.Service_Access;
+     Control : in out WSDL.Iterators.Traverse_Control)
+   is
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
+
+   begin
+      Attributes.Set_Value (Name_Attribute, Node.Local_Name);
+      Self.Writer.Start_Element
+       (WSDL_Namespace_URI, Service_Element, Attributes);
+   end Enter_Service;
+
    -----------------
    -- Enter_Types --
    -----------------
@@ -304,6 +365,18 @@ package body WSDL.Debug is
       Ada.Wide_Wide_Text_IO.Put_Line (Self.Writer.Text.To_Wide_Wide_String);
    end Leave_Description;
 
+   --------------------
+   -- Leave_Endpoint --
+   --------------------
+
+   overriding procedure Leave_Endpoint
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Endpoint_Element);
+   end Leave_Endpoint;
+
    ---------------------
    -- Leave_Interface --
    ---------------------
@@ -345,6 +418,18 @@ package body WSDL.Debug is
    begin
       Self.Writer.End_Element (WSDL_Namespace_URI, Operation_Element);
    end Leave_Interface_Operation;
+
+   -------------------
+   -- Leave_Service --
+   -------------------
+
+   overriding procedure Leave_Service
+    (Self    : in out WSDL_Printer;
+     Node    : not null WSDL.AST.Services.Service_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Self.Writer.End_Element (WSDL_Namespace_URI, Service_Element);
+   end Leave_Service;
 
    -----------------
    -- Leave_Types --
