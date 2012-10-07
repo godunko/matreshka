@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with WSDL.AST.Bindings;
 with WSDL.AST.Descriptions;
+with WSDL.AST.Endpoints;
 with WSDL.AST.Interfaces;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
@@ -84,6 +85,16 @@ package WSDL.Visitors is
    not overriding procedure Leave_Description
     (Self    : in out WSDL_Visitor;
      Node    : not null WSDL.AST.Descriptions.Description_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is null;
+
+   not overriding procedure Enter_Endpoint
+    (Self    : in out WSDL_Visitor;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is null;
+
+   not overriding procedure Leave_Endpoint
+    (Self    : in out WSDL_Visitor;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
      Control : in out WSDL.Iterators.Traverse_Control) is null;
 
    not overriding procedure Enter_Interface

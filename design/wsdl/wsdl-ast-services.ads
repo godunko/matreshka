@@ -41,12 +41,25 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Hashed_Maps;
+
+with League.Strings.Hash;
+
 with WSDL.AST.Components;
+with WSDL.AST.Endpoints;
 with WSDL.AST.Interfaces;
 
 package WSDL.AST.Services is
 
    pragma Preelaborate;
+
+   package Endpoint_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           WSDL.AST.Endpoints.Endpoint_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           WSDL.AST.Endpoints."=");
 
    type Service_Node is new WSDL.AST.Components.Component_Node with record
       Local_Name     : League.Strings.Universal_String;
@@ -57,6 +70,9 @@ package WSDL.AST.Services is
 
       Interface_Node : WSDL.AST.Interfaces.Interface_Access;
       --  Value of {interface} property.
+
+      Endpoints      : Endpoint_Maps.Map;
+      --  Value of {endpoints} property.
    end record;
 
    type Service_Access is access all Service_Node'Class;

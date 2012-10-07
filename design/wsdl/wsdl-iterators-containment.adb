@@ -119,4 +119,19 @@ package body WSDL.Iterators.Containment is
       end loop;
    end Visit_Interface_Operation;
 
+   -------------------
+   -- Visit_Service --
+   -------------------
+
+   overriding procedure Visit_Service
+    (Self    : in out Containment_Iterator;
+     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Node    : not null WSDL.AST.Services.Service_Access;
+     Control : in out Traverse_Control) is
+   begin
+      for J of Node.Endpoints loop
+         Self.Visit (Visitor, WSDL.AST.Node_Access (J), Control);
+      end loop;
+   end Visit_Service;
+
 end WSDL.Iterators.Containment;

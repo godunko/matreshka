@@ -46,9 +46,9 @@ with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with League.String_Vectors;
 
 with WSDL.AST.Components;
+with WSDL.AST.Endpoints;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
-with WSDL.AST.Services;
 with WSDL.AST.Types;
 with WSDL.Constants;
 
@@ -68,6 +68,12 @@ package body WSDL.Parsers is
     (Self : in out WSDL_Parser'Class; State : Parser_State_Kind);
 
    procedure Pop (Self : in out WSDL_Parser'Class);
+
+   function To_Qualified_Name
+    (Namespaces : Namespace_Maps.Map;
+     Name       : League.Strings.Universal_String)
+       return WSDL.AST.Qualified_Name;
+   --  Construct qualified name from the given prefix:localName string.
 
    procedure Start_Description_Element
     (Self       : in out WSDL_Parser'Class;
@@ -128,7 +134,14 @@ package body WSDL.Parsers is
     (Attributes : XML.SAX.Attributes.SAX_Attributes;
      Namespaces : Namespace_Maps.Map;
      Parent     : WSDL.AST.Descriptions.Description_Access;
---     Node       : out WSDL.AST.Interfaces.Interface_Access;
+     Node       : out WSDL.AST.Services.Service_Access;
+     Success    : in out Boolean);
+   --  Handles start of 'service' element.
+
+   procedure Start_Endpoint_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
+     Parent     : WSDL.AST.Services.Service_Access;
      Success    : in out Boolean);
    --  Handles start of 'service' element.
 
@@ -174,6 +187,9 @@ package body WSDL.Parsers is
             Self.Pop;
 
          elsif Local_Name = Description_Element then
+            Self.Pop;
+
+         elsif Local_Name = Endpoint_Element then
             Self.Pop;
 
          elsif Local_Name = Input_Element then
@@ -280,16 +296,9 @@ package body WSDL.Parsers is
       --  Analyze 'interface' attribute.
 
       if Attributes.Is_Specified (Interface_Attribute) then
-         declare
-            Value : constant League.Strings.Universal_String
-              := Attributes.Value (Interface_Attribute);
-            Index : constant Natural := Value.Index (':');
-
-         begin
-            Node.Interface_Name :=
-              (Namespaces.Element (Value.Slice (1, Index - 1)),
-               Value.Slice (Index + 1, Value.Length));
-         end;
+         Node.Interface_Name :=
+            To_Qualified_Name
+             (Namespaces, Attributes.Value (Interface_Attribute));
       end if;
 
       --  Analyze 'type' attribute.
@@ -317,16 +326,8 @@ package body WSDL.Parsers is
 
       --  Analyze 'ref' attribute.
 
-      declare
-         Value : constant League.Strings.Universal_String
-           := Attributes.Value (Ref_Attribute);
-         Index : constant Natural := Value.Index (':');
-
-      begin
-         Node.Ref :=
-          (Namespaces.Element (Value.Slice (1, Index - 1)),
-           Value.Slice (Index + 1, Value.Length));
-      end;
+      Node.Ref :=
+        To_Qualified_Name (Namespaces, Attributes.Value (Ref_Attribute));
    end Start_Binding_Operation_Element;
 
    -------------------------------
@@ -411,6 +412,7 @@ package body WSDL.Parsers is
 
             elsif Self.Current_State.Kind = WSDL_Binding
               or Self.Current_State.Kind = WSDL_Binding_Operation
+              or Self.Current_State.Kind = WSDL_Endpoint
               or Self.Current_State.Kind = WSDL_Input
               or Self.Current_State.Kind = WSDL_Interface
               or Self.Current_State.Kind = WSDL_Interface_Operation
@@ -425,9 +427,9 @@ package body WSDL.Parsers is
 
          elsif Local_Name = Endpoint_Element then
             if Self.Current_State.Kind = WSDL_Service then
-               --  XXX all children elements are ignored for now.
-
-               Self.Ignore_Depth := 1;
+               Self.Push (WSDL_Endpoint);
+               Start_Endpoint_Element
+                (Attributes, Self.Namespaces, Self.Current_Service, Success);
 
             else
                raise Program_Error;
@@ -584,7 +586,11 @@ package body WSDL.Parsers is
                Self.Current_State.Last_Child_Kind := Interface_Binding_Service;
                Self.Push (WSDL_Service);
                Start_Service_Element
-                (Attributes, Self.Namespaces, Self.Description, Success);
+                (Attributes,
+                 Self.Namespaces,
+                 Self.Description,
+                 Self.Current_Service,
+                 Success);
 
             else
                raise Program_Error;
@@ -633,6 +639,7 @@ package body WSDL.Parsers is
 
          elsif Self.Current_State.Kind = WSDL_Binding
            or Self.Current_State.Kind = WSDL_Binding_Operation
+           or Self.Current_State.Kind = WSDL_Endpoint
            or Self.Current_State.Kind = WSDL_Input
            or Self.Current_State.Kind = WSDL_Interface
            or Self.Current_State.Kind = WSDL_Interface_Operation
@@ -653,6 +660,38 @@ package body WSDL.Parsers is
          end if;
       end if;
    end Start_Element;
+
+   ----------------------------
+   -- Start_Endpoint_Element --
+   ----------------------------
+
+   procedure Start_Endpoint_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
+     Parent     : WSDL.AST.Services.Service_Access;
+     Success    : in out Boolean)
+   is
+      Name : constant League.Strings.Universal_String
+        := Attributes.Value (Name_Attribute);
+      Node : WSDL.AST.Endpoints.Endpoint_Access;
+
+   begin
+      Node := new WSDL.AST.Endpoints.Endpoint_Node;
+      Node.Parent := WSDL.AST.Endpoints.Service_Access (Parent);
+      Node.Local_Name := Name;
+      Parent.Endpoints.Insert (Name, Node);
+
+      --  Analyze 'binding' attribute.
+
+      Node.Binding_Name :=
+        To_Qualified_Name (Namespaces, Attributes.Value (Binding_Attribute));
+
+      --  Analyze 'address' attribute.
+
+      if Attributes.Is_Specified (Address_Attribute) then
+         Node.Address := Attributes.Value (Address_Attribute);
+      end if;
+   end Start_Endpoint_Element;
 
    --------------------------------
    -- Start_Input_Output_Element --
@@ -744,17 +783,11 @@ package body WSDL.Parsers is
             Values : constant League.String_Vectors.Universal_String_Vector
               := Attributes.Value (Extends_Attribute).Split
                   (' ', League.Strings.Skip_Empty);
-            Value  : League.Strings.Universal_String;
-            Index  : Natural;
             Item   : WSDL.AST.Qualified_Name;
 
          begin
             for J in 1 .. Values.Length loop
-               Value := Values.Element (J);
-               Index := Value.Index (':');
-               Item :=
-                (Namespaces.Element (Value.Slice (1, Index - 1)),
-                 Value.Slice (Index + 1, Value.Length));
+               Item := To_Qualified_Name (Namespaces, Values.Element (J));
 
                --  Interface-1011: The list of xs:QName in an extends attribute
                --  information item MUST NOT contain duplicates.
@@ -847,12 +880,11 @@ package body WSDL.Parsers is
     (Attributes : XML.SAX.Attributes.SAX_Attributes;
      Namespaces : Namespace_Maps.Map;
      Parent     : WSDL.AST.Descriptions.Description_Access;
---     Node       : out WSDL.AST.Interfaces.Interface_Access;
+     Node       : out WSDL.AST.Services.Service_Access;
      Success    : in out Boolean)
    is
       Name : constant League.Strings.Universal_String
         := Attributes.Value (Name_Attribute);
-      Node : WSDL.AST.Services.Service_Access;
 
    begin
       --  Service-1060: "For each Service component in the {services} property
@@ -869,16 +901,8 @@ package body WSDL.Parsers is
 
       --  Analyze 'interface' attribute.
 
-      declare
-         Value : constant League.Strings.Universal_String
-           := Attributes.Value (Interface_Attribute);
-         Index : constant Natural := Value.Index (':');
-
-      begin
-         Node.Interface_Name :=
-          (Namespaces.Element (Value.Slice (1, Index - 1)),
-           Value.Slice (Index + 1, Value.Length));
-      end;
+      Node.Interface_Name :=
+        To_Qualified_Name (Namespaces, Attributes.Value (Interface_Attribute));
    end Start_Service_Element;
 
    -------------------------
@@ -893,5 +917,22 @@ package body WSDL.Parsers is
       Description.Types.Parent :=
         WSDL.AST.Components.Description_Access (Description);
    end Start_Types_Element;
+
+   -----------------------
+   -- To_Qualified_Name --
+   -----------------------
+
+   function To_Qualified_Name
+    (Namespaces : Namespace_Maps.Map;
+     Name       : League.Strings.Universal_String)
+       return WSDL.AST.Qualified_Name
+   is
+      Index : constant Natural := Name.Index (':');
+
+   begin
+      return
+       (Namespace_URI => Namespaces.Element (Name.Slice (1, Index - 1)),
+        Local_Name    => Name.Slice (Index + 1, Name.Length));
+   end To_Qualified_Name;
 
 end WSDL.Parsers;

@@ -52,6 +52,7 @@ private with WSDL.AST.Bindings;
 with WSDL.AST.Descriptions;
 private with WSDL.AST.Interfaces;
 private with WSDL.AST.Operations;
+private with WSDL.AST.Services;
 
 package WSDL.Parsers is
 
@@ -84,6 +85,7 @@ private
      WSDL_Binding,
      WSDL_Binding_Operation,
      WSDL_Description,
+     WSDL_Endpoint,
      WSDL_Input,
      WSDL_Interface,
      WSDL_Interface_Operation,
@@ -136,6 +138,9 @@ private
 
       Current_Binding   : WSDL.AST.Bindings.Binding_Access;
       --  Currently processed binding component.
+
+      Current_Service   : WSDL.AST.Services.Service_Access;
+      --  Currently processed service component.
    end record;
 
    overriding function Error_String

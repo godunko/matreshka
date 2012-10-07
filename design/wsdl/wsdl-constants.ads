@@ -82,6 +82,10 @@ package WSDL.Constants is
    Types_Element         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("types");
 
+   Address_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("address");
+   Binding_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("binding");
    Element_Attribute          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("element");
    Extends_Attribute          : constant League.Strings.Universal_String

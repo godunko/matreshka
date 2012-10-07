@@ -54,6 +54,7 @@
 ------------------------------------------------------------------------------
 private with WSDL.AST.Bindings;
 with WSDL.AST.Descriptions;
+private with WSDL.AST.Endpoints;
 private with WSDL.AST.Interfaces;
 private with WSDL.AST.Operations;
 private with WSDL.AST.Services;
@@ -84,6 +85,11 @@ private
    overriding procedure Enter_Binding_Operation
     (Self    : in out Name_Resolver;
      Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+   overriding procedure Enter_Endpoint
+    (Self    : in out Name_Resolver;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
      Control : in out WSDL.Iterators.Traverse_Control);
 
    overriding procedure Enter_Interface

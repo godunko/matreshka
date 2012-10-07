@@ -42,85 +42,47 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with WSDL.AST.Bindings;
-with WSDL.AST.Descriptions;
-with WSDL.AST.Endpoints;
-with WSDL.AST.Interfaces;
-with WSDL.AST.Messages;
-with WSDL.AST.Operations;
-with WSDL.AST.Services;
-with WSDL.AST.Types;
-limited with WSDL.Visitors;
+limited with WSDL.AST.Services;
 
-package WSDL.Iterators is
+package WSDL.AST.Endpoints is
 
    pragma Preelaborate;
 
-   type Traverse_Control is
-    (Continue,
-     Abandon_Children,
-     Abandon_Sibling,
-     Terminate_Immediately);
+   type Service_Access is access all WSDL.AST.Services.Service_Node'Class;
 
-   type WSDL_Iterator is limited interface;
+   type Endpoint_Node is new WSDL.AST.Abstract_Node with record
+      Local_Name   : League.Strings.Universal_String;
+      --  Local name part of the name of the operation.
 
-   procedure Visit
-    (Self    : in out WSDL_Iterator'Class;
+      Parent       : Service_Access;
+      --  Value of {parent} property.
+
+      Binding_Name : Qualified_Name;
+      --  Name of the referenced binding component.
+
+      Binding      : WSDL.AST.Bindings.Binding_Access;
+      --  Value of {binding} property.
+
+      Address      : League.Strings.Universal_String;
+      --  Value of {address} property.
+   end record;
+
+   type Endpoint_Access is access all Endpoint_Node'Class;
+
+   overriding procedure Enter
+    (Self    : not null access Endpoint_Node;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Node_Access;
-     Control : in out Traverse_Control);
+     Control : in out WSDL.Iterators.Traverse_Control);
 
-   not overriding procedure Visit_Binding
-    (Self    : in out WSDL_Iterator;
+   overriding procedure Leave
+    (Self    : not null access Endpoint_Node;
      Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Bindings.Binding_Access;
-     Control : in out Traverse_Control) is null;
+     Control : in out WSDL.Iterators.Traverse_Control);
 
-   not overriding procedure Visit_Binding_Operation
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
-     Control : in out Traverse_Control) is null;
+   overriding procedure Visit
+    (Self     : not null access Endpoint_Node;
+     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
+     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
+     Control  : in out WSDL.Iterators.Traverse_Control);
 
-   not overriding procedure Visit_Description
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Descriptions.Description_Access;
-     Control : in out Traverse_Control) is null;
-
-   not overriding procedure Visit_Endpoint
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
-     Control : in out Traverse_Control) is null;
-
-   not overriding procedure Visit_Interface
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Interfaces.Interface_Access;
-     Control : in out Traverse_Control) is null;
-
-   not overriding procedure Visit_Interface_Message
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Messages.Interface_Message_Access;
-     Control : in out Traverse_Control) is null;
-
-   not overriding procedure Visit_Interface_Operation
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
-     Control : in out Traverse_Control) is null;
-
-   not overriding procedure Visit_Service
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Services.Service_Access;
-     Control : in out Traverse_Control) is null;
-
-   not overriding procedure Visit_Types
-    (Self    : in out WSDL_Iterator;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Node    : not null WSDL.AST.Types.Types_Access;
-     Control : in out Traverse_Control) is null;
-
-end WSDL.Iterators;
+end WSDL.AST.Endpoints;

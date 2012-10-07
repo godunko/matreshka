@@ -47,7 +47,15 @@ with WSDL.AST.Interfaces;
 
 package body WSDL.Name_Resolvers is
 
+   use type League.Strings.Universal_String;
    use type WSDL.AST.Operations.Interface_Operation_Access;
+
+   function Resolve_Binding
+    (Root          : not null WSDL.AST.Descriptions.Description_Access;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return WSDL.AST.Bindings.Binding_Access;
+   --  Resolves binding component by qualified name.
 
    function Resolve_Interface
     (Root          : not null WSDL.AST.Descriptions.Description_Access;
@@ -105,6 +113,22 @@ package body WSDL.Name_Resolvers is
          (Node.Parent.Interface_Node, Node.Ref.Local_Name);
    end Enter_Binding_Operation;
 
+   --------------------
+   -- Enter_Endpoint --
+   --------------------
+
+   overriding procedure Enter_Endpoint
+    (Self    : in out Name_Resolver;
+     Node    : not null WSDL.AST.Endpoints.Endpoint_Access;
+     Control : in out WSDL.Iterators.Traverse_Control) is
+   begin
+      Node.Binding :=
+        Resolve_Binding
+         (Self.Root,
+          Node.Binding_Name.Namespace_URI,
+          Node.Binding_Name.Local_Name);
+   end Enter_Endpoint;
+
    ---------------------
    -- Enter_Interface --
    ---------------------
@@ -138,6 +162,30 @@ package body WSDL.Name_Resolvers is
           Node.Interface_Name.Local_Name);
    end Enter_Service;
 
+   ---------------------
+   -- Resolve_Binding --
+   ---------------------
+
+   function Resolve_Binding
+    (Root          : not null WSDL.AST.Descriptions.Description_Access;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return WSDL.AST.Bindings.Binding_Access is
+   begin
+      --  QName-resolution-1064: "A Description component MUST NOT have such
+      --  broken references."
+
+      if Root.Target_Namespace /= Namespace_URI then
+         raise Program_Error;
+      end if;
+
+      if not Root.Bindings.Contains (Local_Name) then
+         raise Program_Error;
+      end if;
+
+      return Root.Bindings.Element (Local_Name);
+   end Resolve_Binding;
+
    -----------------------
    -- Resolve_Interface --
    -----------------------
@@ -146,10 +194,7 @@ package body WSDL.Name_Resolvers is
     (Root          : not null WSDL.AST.Descriptions.Description_Access;
      Namespace_URI : League.Strings.Universal_String;
      Local_Name    : League.Strings.Universal_String)
-       return WSDL.AST.Interfaces.Interface_Access
-   is
-      use type League.Strings.Universal_String;
-
+       return WSDL.AST.Interfaces.Interface_Access is
    begin
       --  QName-resolution-1064: "A Description component MUST NOT have such
       --  broken references."
