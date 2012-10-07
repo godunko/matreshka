@@ -52,35 +52,13 @@ with WSDL.AST.Interfaces;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
 with WSDL.AST.Types;
+with WSDL.Constants;
 with WSDL.Iterators.Containment;
 with WSDL.Visitors;
 
 package body WSDL.Debug is
 
-   WSDL_Namespace_URI : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl");
-
-   Binding_Element       : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("binding");
-   Description_Element   : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("description");
-   Input_Element         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("input");
-   Interface_Element     : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("interface");
-   Operation_Element     : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("operation");
-   Output_Element        : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("output");
-   Types_Element         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("types");
-
-   Name_Attribute             : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("name");
-   Target_Namespace_Attribute : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("targetNamespace");
-   Type_Attribute             : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("type");
+   use WSDL.Constants;
 
    type WSDL_Printer is
      limited new WSDL.Visitors.WSDL_Visitor with

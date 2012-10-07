@@ -50,70 +50,12 @@ with WSDL.AST.Components;
 with WSDL.AST.Messages;
 with WSDL.AST.Operations;
 with WSDL.AST.Types;
+with WSDL.Constants;
 
 package body WSDL.Parsers is
 
+   use WSDL.Constants;
    use type League.Strings.Universal_String;
-
-   WSDL_Namespace  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl");
-
-   Binding_Element       : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("binding");
-   Description_Element   : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("description");
-   Documentation_Element : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("documentation");
-   Fault_Element         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("fault");
-   Infault_Element       : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("infault");
-   Include_Element       : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("include");
-   Input_Element         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("input");
-   Interface_Element     : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("interface");
-   Import_Element        : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("import");
-   Operation_Element     : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("operation");
-   Outfault_Element      : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("outfault");
-   Output_Element        : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("output");
-   Service_Element       : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("service");
-   Types_Element         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("types");
-
-   Element_Attribute          : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("element");
-   Extends_Attribute          : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("extends");
-   Interface_Attribute        : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("interface");
-   Message_Label_Attribute    : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("messageLabel");
-   Name_Attribute             : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("name");
-   Pattern_Attribute          : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("pattern");
-   Style_Attribute            : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("style");
-   Style_Default_Attribute    : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("styleDefault");
-   Target_Namespace_Attribute : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("targetNamespace");
-   Type_Attribute             : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("type");
-
-   Any_Literal   : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("#any");
-   None_Literal  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("#none");
-   Other_Literal : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("#other");
 
    Pattern_Default : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
@@ -228,7 +170,7 @@ package body WSDL.Parsers is
       if Self.Ignore_Depth /= 0 then
          Self.Ignore_Depth := Self.Ignore_Depth - 1;
 
-      elsif Namespace_URI = WSDL_Namespace then
+      elsif Namespace_URI = WSDL_Namespace_URI then
          if Local_Name = Binding_Element then
             Self.Pop;
 
@@ -392,7 +334,7 @@ package body WSDL.Parsers is
       if Self.Ignore_Depth /= 0 then
          Self.Ignore_Depth := Self.Ignore_Depth + 1;
 
-      elsif Namespace_URI = WSDL_Namespace then
+      elsif Namespace_URI = WSDL_Namespace_URI then
          Put_Line ("Start_Element '" & Qualified_Name.To_Wide_Wide_String & "'");
 
          if Local_Name = Binding_Element then
