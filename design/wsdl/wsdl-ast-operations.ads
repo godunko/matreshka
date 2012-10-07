@@ -111,11 +111,14 @@ package WSDL.AST.Operations is
    -----------------------
 
    type Binding_Operation_Node is new Abstract_Node with record
-      Ref    : Name_Pair;
+      Ref                 : Name_Pair;
       --  Name of the related interface operation.
 
-      Parent : Binding_Access;
+      Parent              : Binding_Access;
       --  Value of {parent} property.
+
+      Interface_Operation : Interface_Operation_Access;
+      --  Value of {interface operation} property.
    end record;
 
    type Binding_Operation_Access is

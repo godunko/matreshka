@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Hashed_Maps;
 with Ada.Containers.Hashed_Sets;
+with Ada.Containers.Vectors;
 
 with League.String_Vectors;
 with League.Strings.Hash;
@@ -65,6 +66,13 @@ package WSDL.AST.Interfaces is
            League.Strings."=",
            WSDL.AST.Operations."=");
 
+   type Interface_Node is tagged;
+
+   type Interface_Access is access all Interface_Node'Class;
+
+   package Interface_Vectors is
+     new Ada.Containers.Vectors (Positive, Interface_Access);
+
    type Interface_Node is new WSDL.AST.Components.Component_Node with record
       Local_Name           : League.Strings.Universal_String;
       --  Name of the interface.
@@ -72,14 +80,15 @@ package WSDL.AST.Interfaces is
       Extends              : Name_Pair_Sets.Set;
       --  Names of interface components that this interface derives from.
 
+      Extended_Interfaces  : Interface_Vectors.Vector;
+      --  Value of {extended interfaces} property.
+
       Style_Default        : League.String_Vectors.Universal_String_Vector;
       --  Default value of operation style for all operations of the interface.
 
       Interface_Operations : Interface_Operation_Maps.Map;
       --  Value of {interface operations} property of interface component.
    end record;
-
-   type Interface_Access is access all Interface_Node'Class;
 
    overriding procedure Enter
     (Self    : not null access Interface_Node;

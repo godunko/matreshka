@@ -44,6 +44,7 @@
 with Ada.Containers.Vectors;
 
 with WSDL.AST.Components;
+with WSDL.AST.Interfaces;
 with WSDL.AST.Operations;
 
 package WSDL.AST.Bindings is
@@ -62,6 +63,9 @@ package WSDL.AST.Bindings is
 
       Interface_Name     : Name_Pair;
       --  Name of interface.
+
+      Interface_Node     : WSDL.AST.Interfaces.Interface_Access;
+      --  Value of {interface} property.
 
       Binding_Type       : League.Strings.Universal_String;
       --  Value of {type} property.

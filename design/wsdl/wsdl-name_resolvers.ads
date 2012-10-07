@@ -41,41 +41,53 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+--  This package provides name resolver.
+--
+--  XXX Note: components can be specified in any order, thus this resolver
+--  should do several passes to handle all possible combination correctly. For
+--  example, it can be separated onto several visitors, which will be run in
+--  appropriate order. For now, following dependencies are not handled
+--  correctly in some cases:
+--
+--   - binding operation to interface operation reference resolution:
+--     {extended_interface} property must be resolved already.
+------------------------------------------------------------------------------
+private with WSDL.AST.Bindings;
+with WSDL.AST.Descriptions;
+private with WSDL.AST.Interfaces;
+private with WSDL.AST.Operations;
+private with WSDL.Iterators;
+with WSDL.Visitors;
 
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
+package WSDL.Name_Resolvers is
 
-with WSDL.AST;
-with WSDL.Debug;
-with WSDL.Iterators.Containment;
-with WSDL.Parsers;
-with WSDL.Name_Resolvers;
+   pragma Preelaborate;
 
-procedure WSDL.Driver is
-   Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-   Handler : aliased WSDL.Parsers.WSDL_Parser;
-   Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+   type Name_Resolver is limited new WSDL.Visitors.WSDL_Visitor with private;
 
-begin
-   --  Load document.
+   procedure Set_Root
+    (Self : in out Name_Resolver'Class;
+     Root : WSDL.AST.Descriptions.Description_Access);
 
-   Reader.Set_Content_Handler (Handler'Unchecked_Access);
-   Source.Open_By_File_Name (League.Application.Arguments.Element (1));
-   Reader.Parse (Source'Unchecked_Access);
+private
 
-   --  Resolve names.
+   type Name_Resolver is limited new WSDL.Visitors.WSDL_Visitor with record
+      Root : WSDL.AST.Descriptions.Description_Access;
+   end record;
 
-   declare
-      Resolver : WSDL.Name_Resolvers.Name_Resolver;
-      Iterator : WSDL.Iterators.Containment.Containment_Iterator;
-      Control  : WSDL.Iterators.Traverse_Control := WSDL.Iterators.Continue;
+   overriding procedure Enter_Binding
+    (Self    : in out Name_Resolver;
+     Node    : not null WSDL.AST.Bindings.Binding_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
 
-   begin
-      Resolver.Set_Root (Handler.Get_Description);
-      Iterator.Visit
-       (Resolver, WSDL.AST.Node_Access (Handler.Get_Description), Control);
-   end;
+   overriding procedure Enter_Binding_Operation
+    (Self    : in out Name_Resolver;
+     Node    : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
 
---   WSDL.Debug.Dump (Handler.Get_Description);
-end WSDL.Driver;
+   overriding procedure Enter_Interface
+    (Self    : in out Name_Resolver;
+     Node    : not null WSDL.AST.Interfaces.Interface_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
+
+end WSDL.Name_Resolvers;
