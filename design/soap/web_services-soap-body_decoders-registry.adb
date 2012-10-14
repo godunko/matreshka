@@ -81,14 +81,20 @@ package body Web_Services.SOAP.Body_Decoders.Registry is
 
    function Resolve
     (URI : League.Strings.Universal_String)
-       return not null Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access
+       return Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access
    is
-      Aux : aliased League.Strings.Universal_String := URI;
+      Aux      : aliased League.Strings.Universal_String := URI;
+      Position : String_Tag_Maps.Cursor := Registry.Find (URI);
 
    begin
-      return
-        new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class'
-             (Create (Registry.Element (URI), Aux'Access));
+      if String_Tag_Maps.Has_Element (Position) then
+         return
+           new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class'
+                (Create (String_Tag_Maps.Element (Position), Aux'Access));
+
+      else
+         return null;
+      end if;
    end Resolve;
 
 end Web_Services.SOAP.Body_Decoders.Registry;

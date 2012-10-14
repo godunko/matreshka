@@ -56,7 +56,6 @@ package Web_Services.SOAP.Body_Decoders.Registry is
 
    function Resolve
     (URI : League.Strings.Universal_String)
-       return
-         not null Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
+       return Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
 
 end Web_Services.SOAP.Body_Decoders.Registry;

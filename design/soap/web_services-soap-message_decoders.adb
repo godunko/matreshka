@@ -64,6 +64,12 @@ package body Web_Services.SOAP.Message_Decoders is
           (Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class,
            Web_Services.SOAP.Messages.SOAP_Message_Access);
 
+   procedure Set_Error
+    (Self      : in out SOAP_Message_Decoder'Class;
+     Diagnosis : League.Strings.Universal_String);
+   --  Sets error state with specified diagnosis and creates env:Sender fault
+   --  request.
+
    ----------------
    -- Characters --
    ----------------
@@ -152,8 +158,11 @@ package body Web_Services.SOAP.Message_Decoders is
    overriding procedure Error
     (Self       : in out SOAP_Message_Decoder;
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
-     Success    : in out Boolean)
-       renames Fatal_Error;
+     Success    : in out Boolean) is
+   begin
+      Self.Fatal_Error (Occurrence);
+      Success := False;
+   end Error;
 
    ------------------
    -- Error_String --
@@ -171,24 +180,13 @@ package body Web_Services.SOAP.Message_Decoders is
 
    overriding procedure Fatal_Error
     (Self       : in out SOAP_Message_Decoder;
-     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
-     Success    : in out Boolean) is
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception) is
    begin
-      --  Reports only first detected error.
+      --  Set error message only when there is no previous error message was
+      --  set.
 
       if Self.Success then
-         --  Deallocate decoded SOAP message if any.
-
-         Free (Self.Message);
-
-         Self.Success := False;
-         Self.Diagnosis := "XML error: " & Occurrence.Message;
-         Self.Message :=
-           Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
-            (League.Strings.To_Universal_String ("Sender"),
-             League.Strings.To_Universal_String ("en"),
-             Self.Diagnosis);
-         Success := False;
+         Self.Set_Error ("XML error: " & Occurrence.Message);
       end if;
    end Fatal_Error;
 
@@ -234,6 +232,32 @@ package body Web_Services.SOAP.Message_Decoders is
       Success := False;
    end Processing_Instruction;
 
+   ---------------
+   -- Set_Error --
+   ---------------
+
+   procedure Set_Error
+    (Self      : in out SOAP_Message_Decoder'Class;
+     Diagnosis : League.Strings.Universal_String) is
+   begin
+      --  Deallocate decoded SOAP message if any.
+
+      Free (Self.Message);
+
+      --  Set error state and diagnosis.
+
+      Self.Success := False;
+      Self.Diagnosis := Diagnosis;
+
+      --  Create env:Sender fault reply.
+
+      Self.Message :=
+        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
+         (League.Strings.To_Universal_String ("Sender"),
+          League.Strings.To_Universal_String ("en"),
+          Self.Diagnosis);
+   end Set_Error;
+
    -------------------
    -- Start_Element --
    -------------------
@@ -246,14 +270,10 @@ package body Web_Services.SOAP.Message_Decoders is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
+      use type Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
       use type Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
 
    begin
-
-         Put_Line
-          (Namespace_URI.To_Wide_Wide_String
-             & " : "
-             & Local_Name.To_Wide_Wide_String);
       if Self.Ignore_Element /= 0 then
          --  Each children element of unknown element increments element ignore
          --  counter to proper handling of arbitrary depth of elements.
@@ -376,6 +396,17 @@ package body Web_Services.SOAP.Message_Decoders is
 
          Self.Body_Decoder :=
            Web_Services.SOAP.Body_Decoders.Registry.Resolve (Namespace_URI);
+
+         if Self.Body_Decoder = null then
+            Self.Set_Error
+             ("Unknown namespace URI '"
+                & Namespace_URI
+                & "' of the child element of SOAP:Body");
+            Success := False;
+
+            return;
+         end if;
+
          Self.State := SOAP_Body_Element;
          Self.Body_Depth := 1;
 

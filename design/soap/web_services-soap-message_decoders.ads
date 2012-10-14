@@ -115,8 +115,7 @@ private
 
    overriding procedure Fatal_Error
     (Self       : in out SOAP_Message_Decoder;
-     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
-     Success    : in out Boolean);
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception);
    --  Stops processing of the message.
 
    overriding procedure Processing_Instruction
