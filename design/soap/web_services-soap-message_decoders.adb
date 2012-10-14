@@ -88,6 +88,14 @@ package body Web_Services.SOAP.Message_Decoders is
         and then Self.Body_Depth /= 0
       then
          Self.Body_Decoder.Characters (Text, Success);
+
+         if not Success then
+            Self.Set_Error
+             (League.Strings.To_Universal_String
+               ("Message body decoder reports error"));
+
+            return;
+         end if;
       end if;
    end Characters;
 
@@ -141,6 +149,14 @@ package body Web_Services.SOAP.Message_Decoders is
          --  Redirect processing to decoder.
 
          Self.Body_Decoder.End_Element (Namespace_URI, Local_Name, Success);
+
+         if not Success then
+            Self.Set_Error
+             (League.Strings.To_Universal_String
+               ("Message body decoder reports error"));
+
+            return;
+         end if;
 
          --  Obtain decoded data.
 
@@ -415,11 +431,27 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Body_Decoder.Start_Element
           (Namespace_URI, Local_Name, Attributes, Success);
 
+         if not Success then
+            Self.Set_Error
+             (League.Strings.To_Universal_String
+               ("Message body decoder reports error"));
+
+            return;
+         end if;
+
       elsif Self.State = SOAP_Body_Element then
          --  Redirect handling of current XML element to decoder.
 
          Self.Body_Decoder.Start_Element
           (Namespace_URI, Local_Name, Attributes, Success);
+
+         if not Success then
+            Self.Set_Error
+             (League.Strings.To_Universal_String
+               ("Message body decoder reports error"));
+
+            return;
+         end if;
 
          --  Increment depth of nested XML elements in Body element.
 
