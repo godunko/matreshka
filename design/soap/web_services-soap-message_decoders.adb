@@ -64,7 +64,7 @@ package body Web_Services.SOAP.Message_Decoders is
           (Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class,
            Web_Services.SOAP.Messages.SOAP_Message_Access);
 
-   procedure Set_Error
+   procedure Set_Sender_Error
     (Self      : in out SOAP_Message_Decoder'Class;
      Diagnosis : League.Strings.Universal_String);
    --  Sets error state with specified diagnosis and creates env:Sender fault
@@ -90,7 +90,7 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Body_Decoder.Characters (Text, Success);
 
          if not Success then
-            Self.Set_Error
+            Self.Set_Sender_Error
              (League.Strings.To_Universal_String
                ("Message body decoder reports error"));
 
@@ -151,7 +151,7 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Body_Decoder.End_Element (Namespace_URI, Local_Name, Success);
 
          if not Success then
-            Self.Set_Error
+            Self.Set_Sender_Error
              (League.Strings.To_Universal_String
                ("Message body decoder reports error"));
 
@@ -202,7 +202,7 @@ package body Web_Services.SOAP.Message_Decoders is
       --  set.
 
       if Self.Success then
-         Self.Set_Error ("XML error: " & Occurrence.Message);
+         Self.Set_Sender_Error ("XML error: " & Occurrence.Message);
       end if;
    end Fatal_Error;
 
@@ -236,23 +236,17 @@ package body Web_Services.SOAP.Message_Decoders is
       --  processing instruction information item SHOULD generate a SOAP fault
       --  with the Value of Code set to "env:Sender"."
 
-      Self.Success := False;
-      Self.Diagnosis :=
-        League.Strings.To_Universal_String
-         ("SOAP message must not contain processing instruction");
-      Self.Message :=
-        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
-         (League.Strings.To_Universal_String ("Sender"),
-          League.Strings.To_Universal_String ("en"),
-          Self.Diagnosis);
+      Self.Set_Sender_Error
+       (League.Strings.To_Universal_String
+         ("SOAP message must not contain processing instruction"));
       Success := False;
    end Processing_Instruction;
 
-   ---------------
-   -- Set_Error --
-   ---------------
+   ----------------------
+   -- Set_Sender_Error --
+   ----------------------
 
-   procedure Set_Error
+   procedure Set_Sender_Error
     (Self      : in out SOAP_Message_Decoder'Class;
      Diagnosis : League.Strings.Universal_String) is
    begin
@@ -272,7 +266,7 @@ package body Web_Services.SOAP.Message_Decoders is
          (League.Strings.To_Universal_String ("Sender"),
           League.Strings.To_Universal_String ("en"),
           Self.Diagnosis);
-   end Set_Error;
+   end Set_Sender_Error;
 
    -------------------
    -- Start_Element --
@@ -414,7 +408,7 @@ package body Web_Services.SOAP.Message_Decoders is
            Web_Services.SOAP.Body_Decoders.Registry.Resolve (Namespace_URI);
 
          if Self.Body_Decoder = null then
-            Self.Set_Error
+            Self.Set_Sender_Error
              ("Unknown namespace URI '"
                 & Namespace_URI
                 & "' of the child element of SOAP:Body");
@@ -432,7 +426,7 @@ package body Web_Services.SOAP.Message_Decoders is
           (Namespace_URI, Local_Name, Attributes, Success);
 
          if not Success then
-            Self.Set_Error
+            Self.Set_Sender_Error
              (League.Strings.To_Universal_String
                ("Message body decoder reports error"));
 
@@ -446,7 +440,7 @@ package body Web_Services.SOAP.Message_Decoders is
           (Namespace_URI, Local_Name, Attributes, Success);
 
          if not Success then
-            Self.Set_Error
+            Self.Set_Sender_Error
              (League.Strings.To_Universal_String
                ("Message body decoder reports error"));
 
