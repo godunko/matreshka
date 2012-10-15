@@ -68,7 +68,13 @@ package body Web_Services.SOAP.Message_Decoders is
     (Self      : in out SOAP_Message_Decoder'Class;
      Diagnosis : League.Strings.Universal_String);
    --  Sets error state with specified diagnosis and creates env:Sender fault
-   --  request.
+   --  message.
+
+   procedure Set_Must_Understand_Error
+    (Self      : in out SOAP_Message_Decoder'Class;
+     Diagnosis : League.Strings.Universal_String);
+   --  Sets error state with specified diagnosis and creates env:MustUnderstand
+   --  fault message.
 
    ----------------
    -- Characters --
