@@ -187,7 +187,9 @@ package body Web_Services.SOAP.Message_Decoders is
    overriding function Error_String
     (Self : SOAP_Message_Decoder) return League.Strings.Universal_String is
    begin
-      return Self.Diagnosis;
+      return
+        League.Strings.To_Universal_String
+         ("Unknown error in SOAP message decoder");
    end Error_String;
 
    -----------------
@@ -254,10 +256,9 @@ package body Web_Services.SOAP.Message_Decoders is
 
       Free (Self.Message);
 
-      --  Set error state and diagnosis.
+      --  Set error state.
 
       Self.Success := False;
-      Self.Diagnosis := Diagnosis;
 
       --  Create env:MustUnderstand fault reply.
 
@@ -265,7 +266,7 @@ package body Web_Services.SOAP.Message_Decoders is
         Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
          (League.Strings.To_Universal_String ("MustUnderstand"),
           League.Strings.To_Universal_String ("en"),
-          Self.Diagnosis);
+          Diagnosis);
    end Set_Must_Understand_Error;
 
    ----------------------
@@ -283,7 +284,6 @@ package body Web_Services.SOAP.Message_Decoders is
       --  Set error state and diagnosis.
 
       Self.Success := False;
-      Self.Diagnosis := Diagnosis;
 
       --  Create env:Sender fault reply.
 
@@ -291,7 +291,7 @@ package body Web_Services.SOAP.Message_Decoders is
         Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
          (League.Strings.To_Universal_String ("Sender"),
           League.Strings.To_Universal_String ("en"),
-          Self.Diagnosis);
+          Diagnosis);
    end Set_Sender_Error;
 
    -------------------

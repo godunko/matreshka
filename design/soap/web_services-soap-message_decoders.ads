@@ -87,7 +87,6 @@ private
       Header_Depth   : Natural := 0;
       Ignore_Element : Natural := 0;
       Message        : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Diagnosis      : League.Strings.Universal_String;
       Success        : Boolean := True;
    end record;
 
