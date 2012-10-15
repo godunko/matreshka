@@ -83,8 +83,8 @@ package body Web_Services.SOAP.Body_Decoders.Registry is
     (URI : League.Strings.Universal_String)
        return Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access
    is
+      Position : constant String_Tag_Maps.Cursor := Registry.Find (URI);
       Aux      : aliased League.Strings.Universal_String := URI;
-      Position : String_Tag_Maps.Cursor := Registry.Find (URI);
 
    begin
       if String_Tag_Maps.Has_Element (Position) then
