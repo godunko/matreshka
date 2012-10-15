@@ -242,6 +242,32 @@ package body Web_Services.SOAP.Message_Decoders is
       Success := False;
    end Processing_Instruction;
 
+   -------------------------------
+   -- Set_Must_Understand_Error --
+   -------------------------------
+
+   procedure Set_Must_Understand_Error
+    (Self      : in out SOAP_Message_Decoder'Class;
+     Diagnosis : League.Strings.Universal_String) is
+   begin
+      --  Deallocate decoded SOAP message if any.
+
+      Free (Self.Message);
+
+      --  Set error state and diagnosis.
+
+      Self.Success := False;
+      Self.Diagnosis := Diagnosis;
+
+      --  Create env:MustUnderstand fault reply.
+
+      Self.Message :=
+        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
+         (League.Strings.To_Universal_String ("MustUnderstand"),
+          League.Strings.To_Universal_String ("en"),
+          Self.Diagnosis);
+   end Set_Must_Understand_Error;
+
    ----------------------
    -- Set_Sender_Error --
    ----------------------
@@ -364,15 +390,9 @@ package body Web_Services.SOAP.Message_Decoders is
             --  XXX Generation of NotUnderstood SOAP header blocks is not
             --  implemented yet.
 
-            Self.Success := False;
-            Self.Diagnosis :=
-              League.Strings.To_Universal_String
-               ("One or more mandatory SOAP header blocks not understood");
-            Self.Message :=
-              Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
-               (League.Strings.To_Universal_String ("MustUnderstand"),
-                League.Strings.To_Universal_String ("en"),
-                Self.Diagnosis);
+            Self.Set_Must_Understand_Error
+             (League.Strings.To_Universal_String
+               ("One or more mandatory SOAP header blocks not understood"));
             Success := False;
 
          elsif Self.Header_Decoder /= null then
