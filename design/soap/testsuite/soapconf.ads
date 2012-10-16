@@ -41,16 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with "../../../gnat/matreshka_league.gpr";
+--  Root package of automated test based on 'SOAP Version 1.2 Specification
+--  Assertions and Test Collection (Second Edition)' document.
+------------------------------------------------------------------------------
 
-project Test is
+package SOAPConf is
 
-   for Main use ("test_248.adb", "soapconf-driver.adb");
-   for Object_Dir use ".objs";
-   for Source_Dirs use (".", "..");
+   pragma Pure;
 
-   package Compiler is
-      for Default_Switches ("Ada") use ("-g", "-gnat12");
-   end Compiler;
-
-end Test;
+end SOAPConf;

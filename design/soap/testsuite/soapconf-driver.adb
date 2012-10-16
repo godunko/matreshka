@@ -41,16 +41,81 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with "../../../gnat/matreshka_league.gpr";
+with Ada.Wide_Wide_Text_IO;
 
-project Test is
+with League.Stream_Element_Vectors;
+with League.Strings;
+with League.Text_Codecs;
 
-   for Main use ("test_248.adb", "soapconf-driver.adb");
-   for Object_Dir use ".objs";
-   for Source_Dirs use (".", "..");
+with Web_Services.SOAP.Dispatcher;
 
-   package Compiler is
-      for Default_Switches ("Ada") use ("-g", "-gnat12");
-   end Compiler;
+procedure SOAPConf.Driver is
+   use type League.Strings.Universal_String;
 
-end Test;
+   --  T24
+
+   Codec    : constant League.Text_Codecs.Text_Codec
+     := League.Text_Codecs.Codec
+         (League.Strings.To_Universal_String ("utf-8"));
+   Source   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("<?xml version='1.0'?>"
+            & "<env:Envelope xmlns:env='http://example.org/wrong-version/'>"
+            & "<env:Body>"
+            & "<test:echoOk xmlns:test='http://example.org/ts-tests'>"
+            & "foo"
+            & "</test:echoOk>"
+            & "</env:Body>"
+            & "</env:Envelope>");
+
+   --  Expected message:
+   --
+   --  <?xml version='1.0' ?>
+   --  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+   --    <env:Body>
+   --      <env:Fault>
+   --        <env:Code>
+   --          <env:Value>env:VersionMismatch</env:Value>
+   --        </env:Code>
+   --        <env:Reason>
+   --          <env:Text xml:lang="en-US"> Wrong Version </env:Text>
+   --        </env:Reason>
+   --      </env:Fault>
+   --    </env:Body>
+   --  </env:Envelope>
+
+   Expected : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("<?xml version='1.0'?>"
+            & "<env:Envelope"
+            & " xmlns:env='http://www.w3.org/2003/05/soap-envelope'>"
+            & "<env:Body>"
+            & "<env:Fault>"
+            & "<env:Code>"
+            & "<env:Value>env:VersionMismatch</env:Value>"
+            & "</env:Code>"
+            & "<env:Reason>"
+            & "<env:Text xml:lang='en-US'>Wrong Version</env:Text>"
+            & "</env:Reason>"
+            & "</env:Fault>"
+            & "</env:Body>"
+            & "</env:Envelope>");
+
+   Status       : Web_Services.SOAP.Dispatcher.Status_Type;
+   Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
+   Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
+
+begin
+   Web_Services.SOAP.Dispatcher.Dispatch
+    (Codec.Encode (Source).To_Stream_Element_Array,
+     Status,
+     Content_Type,
+     Output_Data);
+
+   if Codec.Decode (Output_Data) /= Expected then
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Codec.Decode (Output_Data).To_Wide_Wide_String);
+
+      raise Program_Error;
+   end if;
+end SOAPConf.Driver;
