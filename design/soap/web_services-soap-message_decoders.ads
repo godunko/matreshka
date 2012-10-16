@@ -48,6 +48,7 @@ with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 with XML.SAX.Error_Handlers;
 with XML.SAX.Parse_Exceptions;
+with XML.SAX.Lexical_Handlers;
 
 private with Web_Services.SOAP.Body_Decoders;
 private with Web_Services.SOAP.Header_Decoders;
@@ -57,7 +58,8 @@ package Web_Services.SOAP.Message_Decoders is
 
    type SOAP_Message_Decoder is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
-       and XML.SAX.Error_Handlers.SAX_Error_Handler with private;
+       and XML.SAX.Error_Handlers.SAX_Error_Handler
+       and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with private;
 
    function Success (Self : SOAP_Message_Decoder'Class) return Boolean;
 
@@ -77,7 +79,8 @@ private
 
    type SOAP_Message_Decoder is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
-       and XML.SAX.Error_Handlers.SAX_Error_Handler with
+       and XML.SAX.Error_Handlers.SAX_Error_Handler
+       and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with
    record
       State          : States := Initial;
       Body_Decoder   :
@@ -126,6 +129,13 @@ private
    --  Handles processing instructions in XML stream. Processing instructions
    --  are prohibited in SOAP messages, this subprogram always sets Success to
    --  False.
+
+   overriding procedure Start_DTD
+    (Self      : in out SOAP_Message_Decoder;
+     Name      : League.Strings.Universal_String;
+     Public_Id : League.Strings.Universal_String;
+     System_Id : League.Strings.Universal_String;
+     Success   : in out Boolean);
 
    overriding procedure Start_Element
     (Self           : in out SOAP_Message_Decoder;

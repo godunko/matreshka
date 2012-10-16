@@ -86,6 +86,7 @@ package body Web_Services.SOAP.Dispatcher is
       Source.Set_Stream_Element_Array (Input_Data);
       Reader.Set_Content_Handler (Handler'Unchecked_Access);
       Reader.Set_Error_Handler (Handler'Unchecked_Access);
+      Reader.Set_Lexical_Handler (Handler'Unchecked_Access);
       Reader.Parse (Source'Access);
 
       if Handler.Success then

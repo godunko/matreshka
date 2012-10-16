@@ -64,7 +64,7 @@ package body Web_Services.SOAP.Message_Decoders is
           (Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class,
            Web_Services.SOAP.Messages.SOAP_Message_Access);
 
-   procedure Set_Sender_Error
+   procedure Set_Sender_Fault
     (Self      : in out SOAP_Message_Decoder'Class;
      Diagnosis : League.Strings.Universal_String);
    --  Sets error state with specified diagnosis and creates env:Sender fault
@@ -102,7 +102,7 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Body_Decoder.Characters (Text, Success);
 
          if not Success then
-            Self.Set_Sender_Error
+            Self.Set_Sender_Fault
              (League.Strings.To_Universal_String
                ("Message body decoder reports error"));
 
@@ -163,7 +163,7 @@ package body Web_Services.SOAP.Message_Decoders is
          Self.Body_Decoder.End_Element (Namespace_URI, Local_Name, Success);
 
          if not Success then
-            Self.Set_Sender_Error
+            Self.Set_Sender_Fault
              (League.Strings.To_Universal_String
                ("Message body decoder reports error"));
 
@@ -216,7 +216,7 @@ package body Web_Services.SOAP.Message_Decoders is
       --  set.
 
       if Self.Success then
-         Self.Set_Sender_Error ("XML error: " & Occurrence.Message);
+         Self.Set_Sender_Fault ("XML error: " & Occurrence.Message);
       end if;
    end Fatal_Error;
 
@@ -250,7 +250,7 @@ package body Web_Services.SOAP.Message_Decoders is
       --  processing instruction information item SHOULD generate a SOAP fault
       --  with the Value of Code set to "env:Sender"."
 
-      Self.Set_Sender_Error
+      Self.Set_Sender_Fault
        (League.Strings.To_Universal_String
          ("SOAP message must not contain processing instruction"));
       Success := False;
@@ -282,10 +282,10 @@ package body Web_Services.SOAP.Message_Decoders is
    end Set_Must_Understand_Error;
 
    ----------------------
-   -- Set_Sender_Error --
+   -- Set_Sender_Fault --
    ----------------------
 
-   procedure Set_Sender_Error
+   procedure Set_Sender_Fault
     (Self      : in out SOAP_Message_Decoder'Class;
      Diagnosis : League.Strings.Universal_String) is
    begin
@@ -304,7 +304,7 @@ package body Web_Services.SOAP.Message_Decoders is
          (League.Strings.To_Universal_String ("Sender"),
           League.Strings.To_Universal_String ("en-US"),
           Diagnosis);
-   end Set_Sender_Error;
+   end Set_Sender_Fault;
 
    --------------------------------
    -- Set_Version_Mismatch_Fault --
@@ -330,6 +330,28 @@ package body Web_Services.SOAP.Message_Decoders is
           League.Strings.To_Universal_String ("en-US"),
           Diagnosis);
    end Set_Version_Mismatch_Fault;
+
+   ---------------
+   -- Start_DTD --
+   ---------------
+
+   overriding procedure Start_DTD
+    (Self      : in out SOAP_Message_Decoder;
+     Name      : League.Strings.Universal_String;
+     Public_Id : League.Strings.Universal_String;
+     System_Id : League.Strings.Universal_String;
+     Success   : in out Boolean) is
+   begin
+      --  [SOAP12P1] 5. SOAP Message Construct
+      --
+      --  "The XML infoset of a SOAP message MUST NOT contain a document type
+      --  declaration information item."
+
+      Self.Set_Sender_Fault
+       (League.Strings.To_Universal_String
+         ("DTD are not supported by SOAP 1.2"));
+      Success := False;
+   end Start_DTD;
 
    -------------------
    -- Start_Element --
@@ -502,7 +524,7 @@ package body Web_Services.SOAP.Message_Decoders is
                   (Namespace_URI);
 
                if Self.Body_Decoder = null then
-                  Self.Set_Sender_Error
+                  Self.Set_Sender_Fault
                    ("Unknown namespace URI '"
                       & Namespace_URI
                       & "' of the child element of SOAP:Body");
@@ -520,7 +542,7 @@ package body Web_Services.SOAP.Message_Decoders is
                 (Namespace_URI, Local_Name, Attributes, Success);
 
                if not Success then
-                  Self.Set_Sender_Error
+                  Self.Set_Sender_Fault
                    (League.Strings.To_Universal_String
                      ("Message body decoder reports error"));
 
@@ -534,7 +556,7 @@ package body Web_Services.SOAP.Message_Decoders is
                 (Namespace_URI, Local_Name, Attributes, Success);
 
                if not Success then
-                  Self.Set_Sender_Error
+                  Self.Set_Sender_Fault
                    (League.Strings.To_Universal_String
                      ("Message body decoder reports error"));
 
