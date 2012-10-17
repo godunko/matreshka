@@ -52,7 +52,7 @@ package Web_Services.SOAP.Body_Decoders is
 
    pragma Preelaborate;
 
-   type SOAP_Body_Decoder is limited interface;
+   type SOAP_Body_Decoder is abstract tagged limited null record;
 
    type SOAP_Body_Decoder_Access is access all SOAP_Body_Decoder'Class;
 
