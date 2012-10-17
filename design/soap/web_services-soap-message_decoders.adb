@@ -65,8 +65,10 @@ package body Web_Services.SOAP.Message_Decoders is
            Web_Services.SOAP.Messages.SOAP_Message_Access);
 
    procedure Set_Sender_Fault
-    (Self      : in out SOAP_Message_Decoder'Class;
-     Diagnosis : League.Strings.Universal_String);
+    (Self   : in out SOAP_Message_Decoder'Class;
+     Text   : League.Strings.Universal_String;
+     Detail : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String);
    --  Sets error state with specified diagnosis and creates env:Sender fault
    --  message.
 
@@ -81,6 +83,14 @@ package body Web_Services.SOAP.Message_Decoders is
      Diagnosis : League.Strings.Universal_String);
    --  Sets error state with specified diagnosis and creates
    --  env:VersionMismatch fault message.
+
+   procedure Check_No_SOAP_Encoding_Style_Attribute
+    (Self       : in out SOAP_Message_Decoder'Class;
+     Local_Name : League.Strings.Universal_String;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean);
+   --  Checks that encodingStyle attribute is not present in the given set of
+   --  attributes.
 
    ----------------
    -- Characters --
@@ -110,6 +120,33 @@ package body Web_Services.SOAP.Message_Decoders is
          end if;
       end if;
    end Characters;
+
+   --------------------------------------------
+   -- Check_No_SOAP_Encoding_Style_Attribute --
+   --------------------------------------------
+
+   procedure Check_No_SOAP_Encoding_Style_Attribute
+    (Self       : in out SOAP_Message_Decoder'Class;
+     Local_Name : League.Strings.Universal_String;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean) is
+   begin
+      for J in 1 .. Attributes.Length loop
+         if Attributes.Namespace_URI (J) = SOAP_Envelope_URI
+           and Attributes.Local_Name (J) = SOAP_Encoding_Style_Name
+         then
+            Self.Set_Sender_Fault
+             (League.Strings.To_Universal_String
+               ("Incorrect SOAP Body element serialization"),
+              "SOAP "
+                & Local_Name
+                & " must not have encodingStyle attribute information item.");
+            Success := False;
+
+            return;
+         end if;
+      end loop;
+   end Check_No_SOAP_Encoding_Style_Attribute;
 
    -----------------
    -- End_Element --
@@ -291,8 +328,10 @@ package body Web_Services.SOAP.Message_Decoders is
    ----------------------
 
    procedure Set_Sender_Fault
-    (Self      : in out SOAP_Message_Decoder'Class;
-     Diagnosis : League.Strings.Universal_String) is
+    (Self   : in out SOAP_Message_Decoder'Class;
+     Text   : League.Strings.Universal_String;
+     Detail : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String) is
    begin
       --  Deallocate decoded SOAP message if any.
 
@@ -308,7 +347,8 @@ package body Web_Services.SOAP.Message_Decoders is
         Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
          (League.Strings.To_Universal_String ("Sender"),
           League.Strings.To_Universal_String ("en-US"),
-          Diagnosis);
+          Text,
+          Detail);
    end Set_Sender_Fault;
 
    --------------------------------
@@ -385,7 +425,15 @@ package body Web_Services.SOAP.Message_Decoders is
             when Initial =>
                if Namespace_URI = SOAP_Envelope_URI then
                   if Local_Name = SOAP_Envelope_Name then
-                     null;
+                     --  The encodingStyle attribute MUST NOT appear in SOAP
+                     --  Envelope element.
+
+                     Self.Check_No_SOAP_Encoding_Style_Attribute
+                      (Local_Name, Attributes, Success);
+
+                     if not Success then
+                        return;
+                     end if;
                   end if;
 
                elsif Local_Name = SOAP_Envelope_Name then
@@ -409,6 +457,16 @@ package body Web_Services.SOAP.Message_Decoders is
                      Self.State := SOAP_Header;
 
                   elsif Local_Name = SOAP_Body_Name then
+                     --  The encodingStyle attribute MUST NOT appear in SOAP
+                     --  Body element.
+
+                     Self.Check_No_SOAP_Encoding_Style_Attribute
+                      (Local_Name, Attributes, Success);
+
+                     if not Success then
+                        return;
+                     end if;
+
                      --  Switch state to process content of SOAP Body element.
 
                      Self.State := SOAP_Body;
@@ -537,6 +595,28 @@ package body Web_Services.SOAP.Message_Decoders is
 
                   return;
                end if;
+
+               --  [SOAP1.2P1] 5.1.1 SOAP encodingStyle Attribute
+               --
+               --  "The encodingStyle attribute information item MAY appear on
+               --  the following:"
+               --
+               --  ...
+               --
+               --  "A child element information item of the SOAP Body element
+               --  information item (see 5.3.1 SOAP Body child Element) if that
+               --  child is not a SOAP Fault element information item (see 5.4
+               --  SOAP Fault)."
+
+               --  XXX This check is not implemented yet.
+
+--               Self.Check_No_SOAP_Encoding_Style_Attribute
+--                (Local_Name, Attributes, Success);
+--
+--               if not Success then
+--                  return;
+--               end if;
+
 
                Self.State := SOAP_Body_Element;
                Self.Body_Depth := 1;

@@ -86,7 +86,9 @@ package body Web_Services.SOAP.Messages.Faults.Simple is
      Code_Namespace_URI : League.Strings.Universal_String;
      Code_Local_Name    : League.Strings.Universal_String;
      Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String)
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
        return Web_Services.SOAP.Messages.SOAP_Message_Access is
    begin
       return Result : constant Web_Services.SOAP.Messages.SOAP_Message_Access
@@ -100,6 +102,7 @@ package body Web_Services.SOAP.Messages.Faults.Simple is
             Self.Namespace_URI := Code_Namespace_URI;
             Self.Local_Name    := Code_Local_Name;
             Self.Reason.Insert (Reason_Language, Reason_Text);
+            Self.Detail        := Detail;
          end;
       end return;
    end Create;
@@ -111,7 +114,9 @@ package body Web_Services.SOAP.Messages.Faults.Simple is
    function Create_SOAP_Fault
     (Code_Local_Name    : League.Strings.Universal_String;
      Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String)
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
        return Web_Services.SOAP.Messages.SOAP_Message_Access is
    begin
       return

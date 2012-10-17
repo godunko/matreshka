@@ -54,13 +54,17 @@ package Web_Services.SOAP.Messages.Faults.Simple is
      Code_Namespace_URI : League.Strings.Universal_String;
      Code_Local_Name    : League.Strings.Universal_String;
      Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String)
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
        return Web_Services.SOAP.Messages.SOAP_Message_Access;
 
    function Create_SOAP_Fault
     (Code_Local_Name    : League.Strings.Universal_String;
      Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String)
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
        return Web_Services.SOAP.Messages.SOAP_Message_Access;
 
 private
@@ -71,6 +75,7 @@ private
       Prefix        : League.Strings.Universal_String;
       Local_Name    : League.Strings.Universal_String;
       Reason        : Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map;
+      Detail        : League.Strings.Universal_String;
    end record;
 
    overriding function Code_Namespace_URI
