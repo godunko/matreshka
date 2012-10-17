@@ -41,69 +41,52 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
-
-with League.Stream_Element_Vectors;
 with League.Strings;
-with League.Text_Codecs;
+private with XML.SAX.Attributes;
 
-with Web_Services.SOAP.Dispatcher;
+with Web_Services.SOAP.Body_Decoders;
+private with Web_Services.SOAP.Messages;
 
-with SOAPConf.Testcases.Core;
+package SOAPConf.Decoders is
 
-with SOAPConf.Decoders;
-pragma Unreferenced (SOAPConf.Decoders);
-with SOAPConf.Encoders;
-pragma Unreferenced (SOAPConf.Encoders);
-with SOAPConf.Handlers;
-pragma Unreferenced (SOAPConf.Handlers);
+   type Test_Body_Decoder is
+     limited new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder
+       with private;
 
-procedure SOAPConf.Driver is
-   use type League.Strings.Universal_String;
+private
 
-   Codec    : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
+   type Test_Body_Decoder is
+     limited new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder with
+   record
+      Collect : Boolean := False;
+      Text    : League.Strings.Universal_String;
+      Message : Web_Services.SOAP.Messages.SOAP_Message_Access;
+   end record;
 
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String);
+   overriding function Create
+    (URI : not null access League.Strings.Universal_String)
+       return Test_Body_Decoder;
 
-   --------------------
-   -- Do_Simple_Test --
-   --------------------
+   overriding procedure Characters
+    (Self    : in out Test_Body_Decoder;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean);
 
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String)
-   is
-      Status       : Web_Services.SOAP.Dispatcher.Status_Type;
-      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
+   overriding function Message
+    (Self : Test_Body_Decoder)
+       return not null Web_Services.SOAP.Messages.SOAP_Message_Access;
 
-   begin
-      Web_Services.SOAP.Dispatcher.Dispatch
-       (Codec.Encode (Source).To_Stream_Element_Array,
-        Status,
-        Content_Type,
-        Output_Data);
+   overriding procedure End_Element
+    (Self           : in out Test_Body_Decoder;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Success        : in out Boolean);
 
-      if Codec.Decode (Output_Data) /= Expected then
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Codec.Decode (Output_Data).To_Wide_Wide_String);
+   overriding procedure Start_Element
+    (Self           : in out Test_Body_Decoder;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Attributes     : XML.SAX.Attributes.SAX_Attributes;
+     Success        : in out Boolean);
 
-         raise Program_Error;
-      end if;
-   end Do_Simple_Test;
-
-begin
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T24.Message_A,
-     SOAPConf.Testcases.Core.Test_T24.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T25.Message_A,
-     SOAPConf.Testcases.Core.Test_T25.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T26.Message_A,
-     SOAPConf.Testcases.Core.Test_T26.Message_C);
-end SOAPConf.Driver;
+end SOAPConf.Decoders;

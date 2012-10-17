@@ -41,69 +41,67 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
-
-with League.Stream_Element_Vectors;
 with League.Strings;
-with League.Text_Codecs;
+with Web_Services.SOAP.Body_Encoders.Registry;
 
-with Web_Services.SOAP.Dispatcher;
+with SOAPConf.Messages;
 
-with SOAPConf.Testcases.Core;
+package body SOAPConf.Encoders is
 
-with SOAPConf.Decoders;
-pragma Unreferenced (SOAPConf.Decoders);
-with SOAPConf.Encoders;
-pragma Unreferenced (SOAPConf.Encoders);
-with SOAPConf.Handlers;
-pragma Unreferenced (SOAPConf.Handlers);
+   Test_URI    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://example.org/ts-tests");
+   Test_Prefix : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("test");
 
-procedure SOAPConf.Driver is
-   use type League.Strings.Universal_String;
+   Response_Ok_Name : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("responseOk");
 
-   Codec    : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
+   procedure Encode_Response_OK
+    (Message : SOAPConf.Messages.Response_Ok;
+     Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
 
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String);
+   ------------
+   -- Create --
+   ------------
 
-   --------------------
-   -- Do_Simple_Test --
-   --------------------
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String)
-   is
-      Status       : Web_Services.SOAP.Dispatcher.Status_Type;
-      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
-
+   overriding function Create
+    (Dummy : not null access Boolean) return Test_Body_Encoder is
    begin
-      Web_Services.SOAP.Dispatcher.Dispatch
-       (Codec.Encode (Source).To_Stream_Element_Array,
-        Status,
-        Content_Type,
-        Output_Data);
+      return X : Test_Body_Encoder;
+   end Create;
 
-      if Codec.Decode (Output_Data) /= Expected then
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Codec.Decode (Output_Data).To_Wide_Wide_String);
+   ------------
+   -- Encode --
+   ------------
 
+   overriding procedure Encode
+    (Self    : Test_Body_Encoder;
+     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class;
+     Writer  : in out XML.SAX.Writers.SAX_Writer'Class) is
+   begin
+      if Message in SOAPConf.Messages.Response_Ok then
+         Encode_Response_OK (SOAPConf.Messages.Response_Ok (Message), Writer);
+
+      else
          raise Program_Error;
       end if;
-   end Do_Simple_Test;
+   end Encode;
+
+   ------------------------
+   -- Encode_Response_OK --
+   ------------------------
+
+   procedure Encode_Response_OK
+    (Message : SOAPConf.Messages.Response_Ok;
+     Writer  : in out XML.SAX.Writers.SAX_Writer'Class) is
+   begin
+      Writer.Start_Prefix_Mapping (Test_Prefix, Test_URI);
+      Writer.Start_Element (Test_URI, Response_Ok_Name);
+      Writer.Characters (Message.Text);
+      Writer.End_Element (Test_URI, Response_Ok_Name);
+   end Encode_Response_OK;
 
 begin
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T24.Message_A,
-     SOAPConf.Testcases.Core.Test_T24.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T25.Message_A,
-     SOAPConf.Testcases.Core.Test_T25.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T26.Message_A,
-     SOAPConf.Testcases.Core.Test_T26.Message_C);
-end SOAPConf.Driver;
+   Web_Services.SOAP.Body_Encoders.Registry.Register
+    (SOAPConf.Messages.Response_Ok'Tag, Test_Body_Encoder'Tag);
+end SOAPConf.Encoders;

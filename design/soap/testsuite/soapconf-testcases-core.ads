@@ -179,4 +179,71 @@ package SOAPConf.Testcases.Core is
              & "</env:Body>"
              & "</env:Envelope>"));
 
+   ----------------
+   --  Test:T26  --
+   ----------------
+
+   --  Description:
+   --
+   --  Node A sends to node C message with Processing Instruction node. Node C
+   --  ignores PI and returns back Body with test:responseOk element.
+   --
+   --  Messages:
+   --
+   --  Message sent from Node A
+   --
+   --  <?xml version='1.0' ?>
+   --  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"> 
+   --    <?xml-stylesheet href="http://example.org/ts-tests/sub.xsl"
+   --      type = "text/xsl"?>
+   --    <env:Body>
+   --      <test:echoOk xmlns:test="http://example.org/ts-tests">
+   --        foo
+   --      </test:echoOk>
+   --    </env:Body>
+   --  </env:Envelope>
+   --
+   --  Message sent from Node C
+   --
+   --  <?xml version='1.0' ?>
+   --  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"> 
+   --    <env:Body>
+   --      <test:responseOk xmlns:test="http://example.org/ts-tests">
+   --        foo
+   --      </test:responseOk>
+   --    </env:Body>
+   --  </env:Envelope>
+
+   Test_T26 : constant Testcase_Data
+     := (League.Strings.To_Universal_String
+          ("<?xml version='1.0'?>"
+             & "<env:Envelope"
+             & " xmlns:env='http://www.w3.org/2003/05/soap-envelope'>"
+             & "<?xml-stylesheet"
+             & " href='http://example.org/ts-tests/sub.xsl'"
+             & " type = 'text/xsl'?>"
+             & "<env:Body>"
+             & "<test:echoOk xmlns:test='http://example.org/ts-tests'>"
+             & "foo"
+             & "</test:echoOk>"
+             & "</env:Body>"
+             & "</env:Envelope>"),
+         League.Strings.To_Universal_String
+          ("<?xml version='1.0'?>"
+             & "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'>"
+             & "<env:Body>"
+             & "<test:responseOk xmlns:test='http://example.org/ts-tests'>"
+             & "foo"
+             & "</test:responseOk>"
+             & "</env:Body>"
+             & "</env:Envelope>"));
+
+--   Test_XXX : constant Testcase_Data
+--     := (League.Strings.To_Universal_String
+--          ("<?xml version='1.0'?>"
+--             & "</env:Envelope>"),
+--         League.Strings.To_Universal_String
+--          ("<?xml version='1.0'?>"
+--             & "</env:Envelope>"));
+
 end SOAPConf.Testcases.Core;

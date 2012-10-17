@@ -41,69 +41,110 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
+with Web_Services.SOAP.Body_Decoders.Registry;
 
-with League.Stream_Element_Vectors;
-with League.Strings;
-with League.Text_Codecs;
+with SOAPConf.Messages;
 
-with Web_Services.SOAP.Dispatcher;
+package body SOAPConf.Decoders is
 
-with SOAPConf.Testcases.Core;
-
-with SOAPConf.Decoders;
-pragma Unreferenced (SOAPConf.Decoders);
-with SOAPConf.Encoders;
-pragma Unreferenced (SOAPConf.Encoders);
-with SOAPConf.Handlers;
-pragma Unreferenced (SOAPConf.Handlers);
-
-procedure SOAPConf.Driver is
    use type League.Strings.Universal_String;
 
-   Codec    : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
+   Test_URI : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://example.org/ts-tests");
 
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String);
+   Echo_OK_Name : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("echoOk");
 
-   --------------------
-   -- Do_Simple_Test --
-   --------------------
+   ----------------
+   -- Characters --
+   ----------------
 
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String)
-   is
-      Status       : Web_Services.SOAP.Dispatcher.Status_Type;
-      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
-
+   overriding procedure Characters
+    (Self    : in out Test_Body_Decoder;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean) is
    begin
-      Web_Services.SOAP.Dispatcher.Dispatch
-       (Codec.Encode (Source).To_Stream_Element_Array,
-        Status,
-        Content_Type,
-        Output_Data);
+      if Self.Collect then
+         Self.Text.Append (Text);
+      end if;
+   end Characters;
 
-      if Codec.Decode (Output_Data) /= Expected then
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Codec.Decode (Output_Data).To_Wide_Wide_String);
+   ------------
+   -- Create --
+   ------------
 
+   overriding function Create
+    (URI : not null access League.Strings.Universal_String)
+       return Test_Body_Decoder is
+   begin
+      return X : Test_Body_Decoder do
+         X.Text.Clear;
+      end return;
+   end Create;
+
+   -----------------
+   -- End_Element --
+   -----------------
+
+   overriding procedure End_Element
+    (Self           : in out Test_Body_Decoder;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Success        : in out Boolean) is
+   begin
+      if Namespace_URI = Test_URI then
+         if Local_Name = Echo_OK_Name then
+            declare
+               Msg : SOAPConf.Messages.Echo_OK
+                 renames SOAPConf.Messages.Echo_OK (Self.Message.all);
+
+            begin
+               Msg.Text := Self.Text;
+               Self.Collect := True;
+               Self.Text.Clear;
+            end;
+         end if;
+      end if;
+   end End_Element;
+
+   -------------
+   -- Message --
+   -------------
+
+   overriding function Message
+    (Self : Test_Body_Decoder)
+       return not null Web_Services.SOAP.Messages.SOAP_Message_Access is
+   begin
+      return Self.Message;
+   end Message;
+
+   -------------------
+   -- Start_Element --
+   -------------------
+
+   overriding procedure Start_Element
+    (Self           : in out Test_Body_Decoder;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Attributes     : XML.SAX.Attributes.SAX_Attributes;
+     Success        : in out Boolean) is
+   begin
+      if Namespace_URI = Test_URI then
+         if Local_Name = Echo_OK_Name then
+            Self.Message := new SOAPConf.Messages.Echo_OK;
+            Self.Collect := True;
+            Self.Text.Clear;
+
+         else
+            raise Program_Error;
+         end if;
+
+      else
          raise Program_Error;
       end if;
-   end Do_Simple_Test;
+   end Start_Element;
 
 begin
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T24.Message_A,
-     SOAPConf.Testcases.Core.Test_T24.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T25.Message_A,
-     SOAPConf.Testcases.Core.Test_T25.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T26.Message_A,
-     SOAPConf.Testcases.Core.Test_T26.Message_C);
-end SOAPConf.Driver;
+   Web_Services.SOAP.Body_Decoders.Registry.Register
+    (Test_URI, Test_Body_Decoder'Tag);
+end SOAPConf.Decoders;

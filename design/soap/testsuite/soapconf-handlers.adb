@@ -41,69 +41,33 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
+with Web_Services.SOAP.Handler_Registry;
+with Web_Services.SOAP.Messages;
 
-with League.Stream_Element_Vectors;
-with League.Strings;
-with League.Text_Codecs;
+with SOAPConf.Messages;
 
-with Web_Services.SOAP.Dispatcher;
+package body SOAPConf.Handlers is
 
-with SOAPConf.Testcases.Core;
+   procedure Echo_OK_Handler
+    (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;
+     Output_Message : out Web_Services.SOAP.Messages.SOAP_Message_Access);
 
-with SOAPConf.Decoders;
-pragma Unreferenced (SOAPConf.Decoders);
-with SOAPConf.Encoders;
-pragma Unreferenced (SOAPConf.Encoders);
-with SOAPConf.Handlers;
-pragma Unreferenced (SOAPConf.Handlers);
+   ---------------------
+   -- Echo_OK_Handler --
+   ---------------------
 
-procedure SOAPConf.Driver is
-   use type League.Strings.Universal_String;
-
-   Codec    : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String);
-
-   --------------------
-   -- Do_Simple_Test --
-   --------------------
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String)
+   procedure Echo_OK_Handler
+    (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;
+     Output_Message : out Web_Services.SOAP.Messages.SOAP_Message_Access)
    is
-      Status       : Web_Services.SOAP.Dispatcher.Status_Type;
-      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Input : SOAPConf.Messages.Echo_OK
+        renames SOAPConf.Messages.Echo_OK (Input_Message.all);
 
    begin
-      Web_Services.SOAP.Dispatcher.Dispatch
-       (Codec.Encode (Source).To_Stream_Element_Array,
-        Status,
-        Content_Type,
-        Output_Data);
-
-      if Codec.Decode (Output_Data) /= Expected then
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Codec.Decode (Output_Data).To_Wide_Wide_String);
-
-         raise Program_Error;
-      end if;
-   end Do_Simple_Test;
+      Output_Message := new SOAPConf.Messages.Response_OK'(Text => Input.Text);
+   end Echo_OK_Handler;
 
 begin
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T24.Message_A,
-     SOAPConf.Testcases.Core.Test_T24.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T25.Message_A,
-     SOAPConf.Testcases.Core.Test_T25.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T26.Message_A,
-     SOAPConf.Testcases.Core.Test_T26.Message_C);
-end SOAPConf.Driver;
+   Web_Services.SOAP.Handler_Registry.Register
+    (SOAPConf.Messages.Echo_OK'Tag, Echo_OK_Handler'Access);
+end SOAPConf.Handlers;
