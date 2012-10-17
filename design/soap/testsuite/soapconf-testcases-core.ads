@@ -238,6 +238,85 @@ package SOAPConf.Testcases.Core is
              & "</env:Body>"
              & "</env:Envelope>"));
 
+   ----------------
+   --  Test:T28  --
+   ----------------
+
+   --  Description:
+   --
+   --  Node A sends to node C message with Body element that has encodingStyle
+   --  attribute. Node C returns Fault message, because Body element must not
+   --  contain attributes.
+   --
+   --  Messages:
+   --
+   --  Message sent from Node A
+   --
+   --  <?xml version='1.0' ?>
+   --  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"> 
+   --    <env:Body env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+   --      <test:echoOk xmlns:test="http://example.org/ts-tests" >
+   --        foo
+   --      </test:echoOk>
+   --    </env:Body>
+   --  </env:Envelope>
+   --
+   --  Message sent from Node C
+   --
+   --  <?xml version='1.0' ?>
+   --  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"> 
+   --    <env:Body>
+   --      <env:Fault>
+   --        <env:Code>
+   --          <env:Value>env:Sender</env:Value>
+   --        </env:Code>
+   --        <env:Reason>
+   --          <env:Text xml:lang="en-US">
+   --            Incorrect SOAP Body element serialization
+   --          </env:Text>
+   --        </env:Reason>
+   --        <env:Detail>
+   --          SOAP Body must not have encodingStyle attribute information item.
+   --        </env:Detail>
+   --      </env:Fault>
+   --    </env:Body>
+   --  </env:Envelope>
+
+   Test_T28 : constant Testcase_Data
+     := (League.Strings.To_Universal_String
+          ("<?xml version='1.0'?>"
+             & "<env:Envelope"
+             & " xmlns:env='http://www.w3.org/2003/05/soap-envelope'>"
+             & "<env:Body"
+             & " env:encodingStyle='http://www.w3.org/2003/05/soap-encoding'>"
+             & "<test:echoOk xmlns:test='http://example.org/ts-tests'>"
+             & "foo"
+             & "</test:echoOk>"
+             & "</env:Body>"
+             & "</env:Envelope>"),
+         League.Strings.To_Universal_String
+          ("<?xml version='1.0'?>"
+             & "<env:Envelope"
+             & " xmlns:env='http://www.w3.org/2003/05/soap-envelope'>"
+             & "<env:Body>"
+             & "<env:Fault>"
+             & "<env:Code>"
+             & "<env:Value>env:Sender</env:Value>"
+             & "</env:Code>"
+             & "<env:Reason>"
+             & "<env:Text xml:lang='en-US'>"
+             & "Incorrect SOAP Body element serialization"
+             & "</env:Text>"
+             & "</env:Reason>"
+--  XXX Detail is not supported yet.
+--             & "<env:Detail>"
+--             & "SOAP Body must not have encodingStyle attribute information"
+--             & " item."
+--             & "</env:Detail>"
+             & "</env:Fault>"
+             & "</env:Body>"
+             & "</env:Envelope>"));
+
 --   Test_XXX : constant Testcase_Data
 --     := (League.Strings.To_Universal_String
 --          ("<?xml version='1.0'?>"

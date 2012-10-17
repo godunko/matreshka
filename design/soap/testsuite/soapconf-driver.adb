@@ -89,6 +89,7 @@ procedure SOAPConf.Driver is
         Output_Data);
 
       if Codec.Decode (Output_Data) /= Expected then
+         Ada.Wide_Wide_Text_IO.Put_Line (Expected.To_Wide_Wide_String);
          Ada.Wide_Wide_Text_IO.Put_Line
           (Codec.Decode (Output_Data).To_Wide_Wide_String);
 
@@ -106,4 +107,7 @@ begin
    Do_Simple_Test
     (SOAPConf.Testcases.Core.Test_T26.Message_A,
      SOAPConf.Testcases.Core.Test_T26.Message_C);
+   Do_Simple_Test
+    (SOAPConf.Testcases.Core.Test_T28.Message_A,
+     SOAPConf.Testcases.Core.Test_T28.Message_C);
 end SOAPConf.Driver;
