@@ -41,59 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
-
-with League.Stream_Element_Vectors;
 with League.Strings;
-with League.Text_Codecs;
 
-with Web_Services.SOAP.Dispatcher;
+package SOAPConf.Testcases is
 
-with SOAPConf.Testcases.Core;
+   pragma Preelaborate;
 
-procedure SOAPConf.Driver is
-   use type League.Strings.Universal_String;
+   type Testcase_Data is record
+      Message_A : League.Strings.Universal_String;
+      Message_C : League.Strings.Universal_String;
+   end record;
 
-   Codec    : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String);
-
-   --------------------
-   -- Do_Simple_Test --
-   --------------------
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String)
-   is
-      Status       : Web_Services.SOAP.Dispatcher.Status_Type;
-      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
-
-   begin
-      Web_Services.SOAP.Dispatcher.Dispatch
-       (Codec.Encode (Source).To_Stream_Element_Array,
-        Status,
-        Content_Type,
-        Output_Data);
-
-      if Codec.Decode (Output_Data) /= Expected then
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Codec.Decode (Output_Data).To_Wide_Wide_String);
-
-         raise Program_Error;
-      end if;
-   end Do_Simple_Test;
-
-begin
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T24.Message_A,
-     SOAPConf.Testcases.Core.Test_T24.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Core.Test_T25.Message_A,
-     SOAPConf.Testcases.Core.Test_T25.Message_C);
-end SOAPConf.Driver;
+end SOAPConf.Testcases;
