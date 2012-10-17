@@ -77,11 +77,18 @@ private
      SOAP_Body,            --  SOAP Body element has beed processed.
      SOAP_Body_Element);   --  SOAP Body child element has been processed.
 
+   type Modes is
+    (Strict,               --  Strict mode: all 'SHOULD' assertions are
+                           --  checked.
+     Conformant);          --  Relaxed mode to pass SOAP conformance testsuite;
+                           --  some 'SHOULD' assertions aren't checked.
+
    type SOAP_Message_Decoder is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Error_Handlers.SAX_Error_Handler
        and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with
    record
+      Mode           : Modes  := Conformant;
       State          : States := Initial;
       Body_Decoder   :
         Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;

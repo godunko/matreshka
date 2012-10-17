@@ -250,10 +250,15 @@ package body Web_Services.SOAP.Message_Decoders is
       --  processing instruction information item SHOULD generate a SOAP fault
       --  with the Value of Code set to "env:Sender"."
 
-      Self.Set_Sender_Fault
-       (League.Strings.To_Universal_String
-         ("SOAP message must not contain processing instruction"));
-      Success := False;
+      if Self.Mode = Strict then
+         --  This assertion is checked in strict mode only; otherwise Test:T26
+         --  testcase of SOAP Conformance Testsuite is failed.
+
+         Self.Set_Sender_Fault
+          (League.Strings.To_Universal_String
+            ("SOAP message must not contain processing instruction"));
+         Success := False;
+      end if;
    end Processing_Instruction;
 
    -------------------------------
