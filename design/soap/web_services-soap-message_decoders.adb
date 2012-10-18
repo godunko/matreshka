@@ -617,7 +617,6 @@ package body Web_Services.SOAP.Message_Decoders is
 --                  return;
 --               end if;
 
-
                Self.State := SOAP_Body_Element;
                Self.Body_Depth := 1;
 
