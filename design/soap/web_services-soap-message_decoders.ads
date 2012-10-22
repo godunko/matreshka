@@ -50,7 +50,7 @@ with XML.SAX.Error_Handlers;
 with XML.SAX.Parse_Exceptions;
 with XML.SAX.Lexical_Handlers;
 
-private with Web_Services.SOAP.Body_Decoders;
+private with Web_Services.SOAP.Payloads.Decoders;
 private with Web_Services.SOAP.Header_Decoders;
 with Web_Services.SOAP.Messages;
 
@@ -88,17 +88,17 @@ private
        and XML.SAX.Error_Handlers.SAX_Error_Handler
        and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with
    record
-      Mode           : Modes  := Conformant;
-      State          : States := Initial;
-      Body_Decoder   :
-        Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
-      Body_Depth     : Natural := 0;
-      Header_Decoder :
+      Mode            : Modes  := Conformant;
+      State           : States := Initial;
+      Payload_Decoder :
+        Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access;
+      Body_Depth      : Natural := 0;
+      Header_Decoder  :
         Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
-      Header_Depth   : Natural := 0;
-      Ignore_Element : Natural := 0;
-      Message        : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Success        : Boolean := True;
+      Header_Depth    : Natural := 0;
+      Ignore_Element  : Natural := 0;
+      Message         : Web_Services.SOAP.Messages.SOAP_Message_Access;
+      Success         : Boolean := True;
    end record;
 
    overriding procedure Characters

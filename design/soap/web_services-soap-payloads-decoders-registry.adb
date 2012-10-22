@@ -41,49 +41,60 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Interface of decoder of SOAP Body's child element.
-------------------------------------------------------------------------------
-with League.Strings;
-with XML.SAX.Attributes;
+with Ada.Containers.Hashed_Maps;
+with Ada.Tags.Generic_Dispatching_Constructor;
 
-with Web_Services.SOAP.Messages;
+with League.Strings.Hash;
 
-package Web_Services.SOAP.Body_Decoders is
+package body Web_Services.SOAP.Payloads.Decoders.Registry is
 
-   pragma Preelaborate;
+   function Create is
+     new Ada.Tags.Generic_Dispatching_Constructor
+          (Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder,
+           League.Strings.Universal_String,
+           Web_Services.SOAP.Payloads.Decoders.Create);
 
-   type SOAP_Body_Decoder is abstract tagged limited null record;
+   package String_Tag_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Ada.Tags.Tag,
+           League.Strings.Hash,
+           League.Strings."=",
+           Ada.Tags."=");
 
-   type SOAP_Body_Decoder_Access is access all SOAP_Body_Decoder'Class;
+   Registry : String_Tag_Maps.Map;
 
-   not overriding function Create
-    (URI : not null access League.Strings.Universal_String)
-       return SOAP_Body_Decoder is abstract;
-   --  This subprogram is used by dispatching constructor to create instance of
-   --  the decoder.
+   --------------
+   -- Register --
+   --------------
 
-   not overriding function Message
-    (Self : SOAP_Body_Decoder)
-       return not null Web_Services.SOAP.Messages.SOAP_Message_Access
-         is abstract;
-   --  Returns constructed SOAP message.
+   procedure Register
+    (URI : League.Strings.Universal_String;
+     Tag : Ada.Tags.Tag) is
+   begin
+      Registry.Insert (URI, Tag);
+   end Register;
 
-   not overriding procedure Characters
-    (Self    : in out SOAP_Body_Decoder;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is null;
+   -------------
+   -- Resolve --
+   -------------
 
-   not overriding procedure End_Element
-    (Self           : in out SOAP_Body_Decoder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Success        : in out Boolean) is null;
+   function Resolve
+    (URI : League.Strings.Universal_String)
+       return Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access
+   is
+      Position : constant String_Tag_Maps.Cursor := Registry.Find (URI);
+      Aux      : aliased League.Strings.Universal_String := URI;
 
-   not overriding procedure Start_Element
-    (Self           : in out SOAP_Body_Decoder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is null;
+   begin
+      if String_Tag_Maps.Has_Element (Position) then
+         return
+           new Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder'Class'
+                (Create (String_Tag_Maps.Element (Position), Aux'Access));
 
-end Web_Services.SOAP.Body_Decoders;
+      else
+         return null;
+      end if;
+   end Resolve;
+
+end Web_Services.SOAP.Payloads.Decoders.Registry;

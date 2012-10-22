@@ -41,33 +41,53 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Abstract interface of SOAP Body encoder. Application specific encoders must
---  be derived from this interface type.
-------------------------------------------------------------------------------
-with Ada.Tags;
+with League.Strings;
 
-with XML.SAX.Writers;
+package Web_Services.SOAP.Payloads.Faults.Simple is
 
-with Web_Services.SOAP.Messages;
+   type Simple_Fault is
+     new Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault with private;
 
-package Web_Services.SOAP.Body_Encoders is
+   function Create
+    (Code_Prefix        : League.Strings.Universal_String;
+     Code_Namespace_URI : League.Strings.Universal_String;
+     Code_Local_Name    : League.Strings.Universal_String;
+     Reason_Language    : League.Strings.Universal_String;
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
+       return Web_Services.SOAP.Payloads.SOAP_Payload_Access;
 
---   pragma Preelaborate;
+   function Create_SOAP_Fault
+    (Code_Local_Name    : League.Strings.Universal_String;
+     Reason_Language    : League.Strings.Universal_String;
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
+       return Web_Services.SOAP.Payloads.SOAP_Payload_Access;
 
-   type SOAP_Body_Encoder is limited interface;
+private
 
-   type SOAP_Body_Encoder_Access is access all SOAP_Body_Encoder'Class;
+   type Simple_Fault is
+     new Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault with record
+      Namespace_URI : League.Strings.Universal_String;
+      Prefix        : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+      Reason        : Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Map;
+      Detail        : League.Strings.Universal_String;
+   end record;
 
-   not overriding function Create
---    (Tag : not null access Ada.Tags.Tag)
-    (Dummy : not null access Boolean)
-       return SOAP_Body_Encoder is abstract;
-   --  This subprogram is used by dispatching constructor to create instance of
-   --  the encoder.
+   overriding function Code_Namespace_URI
+    (Self : Simple_Fault) return League.Strings.Universal_String;
 
-   not overriding procedure Encode
-    (Self    : SOAP_Body_Encoder;
-     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class;
-     Writer  : in out XML.SAX.Writers.SAX_Writer'Class) is abstract;
+   overriding function Code_Prefix
+    (Self : Simple_Fault) return League.Strings.Universal_String;
 
-end Web_Services.SOAP.Body_Encoders;
+   overriding function Code_Local_Name
+    (Self : Simple_Fault) return League.Strings.Universal_String;
+
+   overriding function Reason
+    (Self : Simple_Fault)
+       return Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Map;
+
+end Web_Services.SOAP.Payloads.Faults.Simple;

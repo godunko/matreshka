@@ -41,38 +41,102 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
+with Web_Services.SOAP.Constants;
 
-with League.Strings.Hash;
+package body Web_Services.SOAP.Payloads.Faults.Simple is
 
-package Web_Services.SOAP.Messages.Faults is
+   use Web_Services.SOAP.Constants;
 
-   pragma Preelaborate;
+   ---------------------
+   -- Code_Local_Name --
+   ---------------------
 
-   package Language_Text_Maps is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           League.Strings.Universal_String,
-           League.Strings.Hash,
-           League.Strings."=",
-           League.Strings."=");
+   overriding function Code_Local_Name
+    (Self : Simple_Fault) return League.Strings.Universal_String is
+   begin
+      return Self.Local_Name;
+   end Code_Local_Name;
 
-   type Abstract_SOAP_Fault is
-     abstract new Abstract_SOAP_Message with null record;
+   ------------------------
+   -- Code_Namespace_URI --
+   ------------------------
 
-   not overriding function Code_Namespace_URI
-    (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
-       is abstract;
+   overriding function Code_Namespace_URI
+    (Self : Simple_Fault) return League.Strings.Universal_String is
+   begin
+      return Self.Namespace_URI;
+   end Code_Namespace_URI;
 
-   not overriding function Code_Prefix
-    (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
-       is abstract;
+   -----------------
+   -- Code_Prefix --
+   -----------------
 
-   not overriding function Code_Local_Name
-    (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
-       is abstract;
+   overriding function Code_Prefix
+    (Self : Simple_Fault) return League.Strings.Universal_String is
+   begin
+      return Self.Prefix;
+   end Code_Prefix;
 
-   not overriding function Reason
-    (Self : Abstract_SOAP_Fault) return Language_Text_Maps.Map is abstract;
+   ------------
+   -- Create --
+   ------------
 
-end Web_Services.SOAP.Messages.Faults;
+   function Create
+    (Code_Prefix        : League.Strings.Universal_String;
+     Code_Namespace_URI : League.Strings.Universal_String;
+     Code_Local_Name    : League.Strings.Universal_String;
+     Reason_Language    : League.Strings.Universal_String;
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
+       return Web_Services.SOAP.Payloads.SOAP_Payload_Access is
+   begin
+      return Result : constant Web_Services.SOAP.Payloads.SOAP_Payload_Access
+               := new Simple_Fault
+      do
+         declare
+            Self : Simple_Fault renames Simple_Fault (Result.all);
+
+         begin
+            Self.Prefix        := Code_Prefix;
+            Self.Namespace_URI := Code_Namespace_URI;
+            Self.Local_Name    := Code_Local_Name;
+            Self.Reason.Insert (Reason_Language, Reason_Text);
+            Self.Detail        := Detail;
+         end;
+      end return;
+   end Create;
+
+   -----------------------
+   -- Create_SOAP_Fault --
+   -----------------------
+
+   function Create_SOAP_Fault
+    (Code_Local_Name    : League.Strings.Universal_String;
+     Reason_Language    : League.Strings.Universal_String;
+     Reason_Text        : League.Strings.Universal_String;
+     Detail             : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String)
+       return Web_Services.SOAP.Payloads.SOAP_Payload_Access is
+   begin
+      return
+        Create
+         (SOAP_Envelope_Prefix,
+          SOAP_Envelope_URI,
+          Code_Local_Name,
+          Reason_Language,
+          Reason_Text);
+   end Create_SOAP_Fault;
+
+   ------------
+   -- Reason --
+   ------------
+
+   overriding function Reason
+    (Self : Simple_Fault)
+       return Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Map is
+   begin
+      return Self.Reason;
+   end Reason;
+
+end Web_Services.SOAP.Payloads.Faults.Simple;

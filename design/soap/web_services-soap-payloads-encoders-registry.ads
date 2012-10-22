@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Tags;
 
-package Web_Services.SOAP.Body_Encoders.Registry is
+package Web_Services.SOAP.Payloads.Encoders.Registry is
 
    procedure Register (Message_Tag : Ada.Tags.Tag; Encoder_Tag : Ada.Tags.Tag);
    --  Register encoder.
@@ -51,7 +51,8 @@ package Web_Services.SOAP.Body_Encoders.Registry is
    function Resolve
     (Message_Tag : Ada.Tags.Tag)
        return
-         not null Web_Services.SOAP.Body_Encoders.SOAP_Body_Encoder_Access;
+         not null
+           Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder_Access;
    --  Resolve encoder for the given message.
 
-end Web_Services.SOAP.Body_Encoders.Registry;
+end Web_Services.SOAP.Payloads.Encoders.Registry;

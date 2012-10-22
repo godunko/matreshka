@@ -46,9 +46,7 @@
 ------------------------------------------------------------------------------
 with Ada.Tags;
 
-with League.Strings;
-
-package Web_Services.SOAP.Body_Decoders.Registry is
+package Web_Services.SOAP.Payloads.Decoders.Registry is
 
    procedure Register
     (URI : League.Strings.Universal_String;
@@ -56,6 +54,6 @@ package Web_Services.SOAP.Body_Decoders.Registry is
 
    function Resolve
     (URI : League.Strings.Universal_String)
-       return Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
+       return Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access;
 
-end Web_Services.SOAP.Body_Decoders.Registry;
+end Web_Services.SOAP.Payloads.Decoders.Registry;

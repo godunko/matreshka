@@ -41,54 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with Web_Services.SOAP.Messages.Faults;
+--  Abstract base for actual payload of SOAP message, incapsulated in the SOAP
+--  Body.
+------------------------------------------------------------------------------
 
-package Web_Services.SOAP.Messages.Faults.Simple is
+package Web_Services.SOAP.Payloads is
 
-   type Simple_Fault is
-     new Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault with private;
+   pragma Preelaborate;
 
-   function Create
-    (Code_Prefix        : League.Strings.Universal_String;
-     Code_Namespace_URI : League.Strings.Universal_String;
-     Code_Local_Name    : League.Strings.Universal_String;
-     Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String;
-     Detail             : League.Strings.Universal_String
-       := League.Strings.Empty_Universal_String)
-       return Web_Services.SOAP.Messages.SOAP_Message_Access;
+   type Abstract_SOAP_Payload is abstract tagged limited null record;
 
-   function Create_SOAP_Fault
-    (Code_Local_Name    : League.Strings.Universal_String;
-     Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String;
-     Detail             : League.Strings.Universal_String
-       := League.Strings.Empty_Universal_String)
-       return Web_Services.SOAP.Messages.SOAP_Message_Access;
+   type SOAP_Payload_Access is access all Abstract_SOAP_Payload'Class;
 
-private
-
-   type Simple_Fault is
-     new Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault with record
-      Namespace_URI : League.Strings.Universal_String;
-      Prefix        : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
-      Reason        : Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map;
-      Detail        : League.Strings.Universal_String;
-   end record;
-
-   overriding function Code_Namespace_URI
-    (Self : Simple_Fault) return League.Strings.Universal_String;
-
-   overriding function Code_Prefix
-    (Self : Simple_Fault) return League.Strings.Universal_String;
-
-   overriding function Code_Local_Name
-    (Self : Simple_Fault) return League.Strings.Universal_String;
-
-   overriding function Reason
-    (Self : Simple_Fault)
-       return Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map;
-
-end Web_Services.SOAP.Messages.Faults.Simple;
+end Web_Services.SOAP.Payloads;

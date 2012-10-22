@@ -51,7 +51,7 @@ package Web_Services.SOAP.Message_Encoders is
 
    function Encode
     (Self    : in out SOAP_Message_Encoder'Class;
-     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class)
+     Message : Web_Services.SOAP.Messages.SOAP_Message'Class)
        return League.Stream_Element_Vectors.Stream_Element_Vector;
 
 private

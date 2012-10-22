@@ -95,7 +95,7 @@ package body Web_Services.SOAP.Dispatcher is
          Input := Handler.Message;
 
          Web_Services.SOAP.Handler_Registry.Resolve
-          (Input'Tag) (Input, Output);
+          (Input.Payload'Tag) (Input, Output);
          Status := S_200;
 
       else

@@ -41,102 +41,47 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Web_Services.SOAP.Constants;
+--  Interface of decoder of SOAP Body's child element.
+------------------------------------------------------------------------------
+with League.Strings;
+with XML.SAX.Attributes;
 
-package body Web_Services.SOAP.Messages.Faults.Simple is
+package Web_Services.SOAP.Payloads.Decoders is
 
-   use Web_Services.SOAP.Constants;
+   pragma Preelaborate;
 
-   ---------------------
-   -- Code_Local_Name --
-   ---------------------
+   type SOAP_Payload_Decoder is abstract tagged limited null record;
 
-   overriding function Code_Local_Name
-    (Self : Simple_Fault) return League.Strings.Universal_String is
-   begin
-      return Self.Local_Name;
-   end Code_Local_Name;
+   type SOAP_Payload_Decoder_Access is access all SOAP_Payload_Decoder'Class;
 
-   ------------------------
-   -- Code_Namespace_URI --
-   ------------------------
+   not overriding function Create
+    (URI : not null access League.Strings.Universal_String)
+       return SOAP_Payload_Decoder is abstract;
+   --  This subprogram is used by dispatching constructor to create instance of
+   --  the decoder.
 
-   overriding function Code_Namespace_URI
-    (Self : Simple_Fault) return League.Strings.Universal_String is
-   begin
-      return Self.Namespace_URI;
-   end Code_Namespace_URI;
+   not overriding function Payload
+    (Self : SOAP_Payload_Decoder)
+       return not null Web_Services.SOAP.Payloads.SOAP_Payload_Access
+         is abstract;
+   --  Returns constructed SOAP message.
 
-   -----------------
-   -- Code_Prefix --
-   -----------------
+   not overriding procedure Characters
+    (Self    : in out SOAP_Payload_Decoder;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean) is null;
 
-   overriding function Code_Prefix
-    (Self : Simple_Fault) return League.Strings.Universal_String is
-   begin
-      return Self.Prefix;
-   end Code_Prefix;
+   not overriding procedure End_Element
+    (Self           : in out SOAP_Payload_Decoder;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Success        : in out Boolean) is null;
 
-   ------------
-   -- Create --
-   ------------
+   not overriding procedure Start_Element
+    (Self           : in out SOAP_Payload_Decoder;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Attributes     : XML.SAX.Attributes.SAX_Attributes;
+     Success        : in out Boolean) is null;
 
-   function Create
-    (Code_Prefix        : League.Strings.Universal_String;
-     Code_Namespace_URI : League.Strings.Universal_String;
-     Code_Local_Name    : League.Strings.Universal_String;
-     Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String;
-     Detail             : League.Strings.Universal_String
-       := League.Strings.Empty_Universal_String)
-       return Web_Services.SOAP.Messages.SOAP_Message_Access is
-   begin
-      return Result : constant Web_Services.SOAP.Messages.SOAP_Message_Access
-               := new Simple_Fault
-      do
-         declare
-            Self : Simple_Fault renames Simple_Fault (Result.all);
-
-         begin
-            Self.Prefix        := Code_Prefix;
-            Self.Namespace_URI := Code_Namespace_URI;
-            Self.Local_Name    := Code_Local_Name;
-            Self.Reason.Insert (Reason_Language, Reason_Text);
-            Self.Detail        := Detail;
-         end;
-      end return;
-   end Create;
-
-   -----------------------
-   -- Create_SOAP_Fault --
-   -----------------------
-
-   function Create_SOAP_Fault
-    (Code_Local_Name    : League.Strings.Universal_String;
-     Reason_Language    : League.Strings.Universal_String;
-     Reason_Text        : League.Strings.Universal_String;
-     Detail             : League.Strings.Universal_String
-       := League.Strings.Empty_Universal_String)
-       return Web_Services.SOAP.Messages.SOAP_Message_Access is
-   begin
-      return
-        Create
-         (SOAP_Envelope_Prefix,
-          SOAP_Envelope_URI,
-          Code_Local_Name,
-          Reason_Language,
-          Reason_Text);
-   end Create_SOAP_Fault;
-
-   ------------
-   -- Reason --
-   ------------
-
-   overriding function Reason
-    (Self : Simple_Fault)
-       return Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map is
-   begin
-      return Self.Reason;
-   end Reason;
-
-end Web_Services.SOAP.Messages.Faults.Simple;
+end Web_Services.SOAP.Payloads.Decoders;

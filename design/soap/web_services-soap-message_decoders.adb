@@ -45,9 +45,9 @@ with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Constants;
-with Web_Services.SOAP.Body_Decoders.Registry;
 with Web_Services.SOAP.Header_Decoders.Registry;
-with Web_Services.SOAP.Messages.Faults.Simple;
+with Web_Services.SOAP.Payloads.Decoders.Registry;
+with Web_Services.SOAP.Payloads.Faults.Simple;
 
 package body Web_Services.SOAP.Message_Decoders is
 
@@ -56,12 +56,12 @@ package body Web_Services.SOAP.Message_Decoders is
 
    procedure Free is
      new Ada.Unchecked_Deallocation
-          (Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class,
-           Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access);
+          (Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder'Class,
+           Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access);
 
    procedure Free is
      new Ada.Unchecked_Deallocation
-          (Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class,
+          (Web_Services.SOAP.Messages.SOAP_Message'Class,
            Web_Services.SOAP.Messages.SOAP_Message_Access);
 
    procedure Set_Sender_Fault
@@ -109,7 +109,7 @@ package body Web_Services.SOAP.Message_Decoders is
       elsif Self.State = SOAP_Body_Element
         and then Self.Body_Depth /= 0
       then
-         Self.Body_Decoder.Characters (Text, Success);
+         Self.Payload_Decoder.Characters (Text, Success);
 
          if not Success then
             Self.Set_Sender_Fault
@@ -197,7 +197,7 @@ package body Web_Services.SOAP.Message_Decoders is
 
          --  Redirect processing to decoder.
 
-         Self.Body_Decoder.End_Element (Namespace_URI, Local_Name, Success);
+         Self.Payload_Decoder.End_Element (Namespace_URI, Local_Name, Success);
 
          if not Success then
             Self.Set_Sender_Fault
@@ -210,8 +210,10 @@ package body Web_Services.SOAP.Message_Decoders is
          --  Obtain decoded data.
 
          if Self.Body_Depth = 0 then
-            Self.Message := Self.Body_Decoder.Message;
-            Free (Self.Body_Decoder);
+            Self.Message :=
+              new Web_Services.SOAP.Messages.SOAP_Message'
+                   (Payload => Self.Payload_Decoder.Payload);
+            Free (Self.Payload_Decoder);
          end if;
       end if;
    end End_Element;
@@ -317,10 +319,12 @@ package body Web_Services.SOAP.Message_Decoders is
       --  Create env:MustUnderstand fault reply.
 
       Self.Message :=
-        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
-         (League.Strings.To_Universal_String ("MustUnderstand"),
-          League.Strings.To_Universal_String ("en-US"),
-          Diagnosis);
+        new Web_Services.SOAP.Messages.SOAP_Message'
+             (Payload =>
+                Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
+                 (League.Strings.To_Universal_String ("MustUnderstand"),
+                  League.Strings.To_Universal_String ("en-US"),
+                  Diagnosis));
    end Set_Must_Understand_Error;
 
    ----------------------
@@ -344,11 +348,13 @@ package body Web_Services.SOAP.Message_Decoders is
       --  Create env:Sender fault reply.
 
       Self.Message :=
-        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
-         (League.Strings.To_Universal_String ("Sender"),
-          League.Strings.To_Universal_String ("en-US"),
-          Text,
-          Detail);
+        new Web_Services.SOAP.Messages.SOAP_Message'
+             (Payload =>
+                Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
+                 (League.Strings.To_Universal_String ("Sender"),
+                  League.Strings.To_Universal_String ("en-US"),
+                  Text,
+                  Detail));
    end Set_Sender_Fault;
 
    --------------------------------
@@ -370,10 +376,12 @@ package body Web_Services.SOAP.Message_Decoders is
       --  Create env:VersionMismatch fault reply.
 
       Self.Message :=
-        Web_Services.SOAP.Messages.Faults.Simple.Create_SOAP_Fault
-         (League.Strings.To_Universal_String ("VersionMismatch"),
-          League.Strings.To_Universal_String ("en-US"),
-          Diagnosis);
+        new Web_Services.SOAP.Messages.SOAP_Message'
+             (Payload =>
+                Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
+                 (League.Strings.To_Universal_String ("VersionMismatch"),
+                  League.Strings.To_Universal_String ("en-US"),
+                  Diagnosis));
    end Set_Version_Mismatch_Fault;
 
    ---------------
@@ -410,7 +418,7 @@ package body Web_Services.SOAP.Message_Decoders is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
-      use type Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access;
+      use type Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access;
       use type Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
 
    begin
@@ -582,11 +590,11 @@ package body Web_Services.SOAP.Message_Decoders is
                --  child. Appropriate decoder must be created to continue
                --  processing.
 
-               Self.Body_Decoder :=
-                 Web_Services.SOAP.Body_Decoders.Registry.Resolve
+               Self.Payload_Decoder :=
+                 Web_Services.SOAP.Payloads.Decoders.Registry.Resolve
                   (Namespace_URI);
 
-               if Self.Body_Decoder = null then
+               if Self.Payload_Decoder = null then
                   Self.Set_Sender_Fault
                    ("Unknown namespace URI '"
                       & Namespace_URI
@@ -622,7 +630,7 @@ package body Web_Services.SOAP.Message_Decoders is
 
                --  Redirect handling of current XML element to decoder.
 
-               Self.Body_Decoder.Start_Element
+               Self.Payload_Decoder.Start_Element
                 (Namespace_URI, Local_Name, Attributes, Success);
 
                if not Success then
@@ -636,7 +644,7 @@ package body Web_Services.SOAP.Message_Decoders is
             when SOAP_Body_Element =>
                --  Redirect handling of current XML element to decoder.
 
-               Self.Body_Decoder.Start_Element
+               Self.Payload_Decoder.Start_Element
                 (Namespace_URI, Local_Name, Attributes, Success);
 
                if not Success then

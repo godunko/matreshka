@@ -48,15 +48,15 @@ with XML.SAX.Pretty_Writers;
 with XML.SAX.Writers;
 
 with Web_Services.SOAP.Constants;
-with Web_Services.SOAP.Body_Encoders.Registry;
-with Web_Services.SOAP.Messages.Faults;
+with Web_Services.SOAP.Payloads.Encoders.Registry;
+with Web_Services.SOAP.Payloads.Faults;
 
 package body Web_Services.SOAP.Message_Encoders is
 
    use Web_Services.SOAP.Constants;
 
    procedure Encode_Fault
-    (Fault  : Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class;
+    (Fault  : Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class;
      Writer : in out XML.SAX.Writers.SAX_Writer'Class);
 
    ------------
@@ -65,7 +65,7 @@ package body Web_Services.SOAP.Message_Encoders is
 
    function Encode
     (Self    : in out SOAP_Message_Encoder'Class;
-     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class)
+     Message : Web_Services.SOAP.Messages.SOAP_Message'Class)
        return League.Stream_Element_Vectors.Stream_Element_Vector
    is
       Codec  : constant League.Text_Codecs.Text_Codec
@@ -87,20 +87,20 @@ package body Web_Services.SOAP.Message_Encoders is
 
       --  Encode SOAP Body.
 
-      if Message
-           not in Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class
+      if Message.Payload.all
+           not in Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class
       then
-         --  Lookup for SOAP Body encoder.
+         --  Lookup for SOAP payload encoder.
 
-         Web_Services.SOAP.Body_Encoders.Registry.Resolve
-          (Message'Tag).Encode (Message, Writer);
+         Web_Services.SOAP.Payloads.Encoders.Registry.Resolve
+          (Message.Payload'Tag).Encode (Message.Payload.all, Writer);
 
       else
          --  Encode SOAP Fault.
 
          Encode_Fault
-          (Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class
-            (Message),
+          (Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class
+            (Message.Payload.all),
            Writer);
       end if;
 
@@ -117,14 +117,14 @@ package body Web_Services.SOAP.Message_Encoders is
    ------------------
 
    procedure Encode_Fault
-    (Fault  : Web_Services.SOAP.Messages.Faults.Abstract_SOAP_Fault'Class;
+    (Fault  : Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class;
      Writer : in out XML.SAX.Writers.SAX_Writer'Class)
    is
       Reason     : constant
-        Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Map
+        Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Map
           := Fault.Reason;
       Position   :
-        Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Cursor
+        Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Cursor
           := Reason.First;
       Attributes : XML.SAX.Attributes.SAX_Attributes;
 
@@ -155,22 +155,22 @@ package body Web_Services.SOAP.Message_Encoders is
       Writer.Start_Element (SOAP_Envelope_URI, SOAP_Reason_Name);
 
       while
-        Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Has_Element
+        Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Has_Element
          (Position)
       loop
          Attributes.Clear;
          Attributes.Set_Value
           (XML_URI,
            XML_Lang_Name,
-           Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Key
+           Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Key
             (Position));
          Writer.Start_Element
           (SOAP_Envelope_URI, SOAP_Text_Name, Attributes => Attributes);
          Writer.Characters
-          (Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Element
+          (Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Element
             (Position));
          Writer.End_Element (SOAP_Envelope_URI, SOAP_Text_Name);
-         Web_Services.SOAP.Messages.Faults.Language_Text_Maps.Next (Position);
+         Web_Services.SOAP.Payloads.Faults.Language_Text_Maps.Next (Position);
       end loop;
 
       Writer.End_Element (SOAP_Envelope_URI, SOAP_Reason_Name);

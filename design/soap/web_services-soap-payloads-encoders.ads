@@ -41,65 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-with Ada.Strings.Hash;
-with Ada.Tags.Generic_Dispatching_Constructor;
+--  Abstract interface of SOAP payload encoder. Application specific encoders
+--  must be derived from this interface type.
+------------------------------------------------------------------------------
+with Ada.Tags;
 
-package body Web_Services.SOAP.Body_Encoders.Registry is
+with XML.SAX.Writers;
 
-   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type;
+with Web_Services.SOAP.Messages;
 
-   function Create is
-     new Ada.Tags.Generic_Dispatching_Constructor
-          (Web_Services.SOAP.Body_Encoders.SOAP_Body_Encoder,
-           Boolean,
---           Ada.Tags.Tag,
-           Web_Services.SOAP.Body_Encoders.Create);
+package Web_Services.SOAP.Payloads.Encoders is
 
-   package Tag_Tag_Maps is
-     new Ada.Containers.Hashed_Maps
-          (Ada.Tags.Tag,
-           Ada.Tags.Tag,
-           Hash,
-           Ada.Tags."=",
-           Ada.Tags."=");
+--   pragma Preelaborate;
 
-   Registry : Tag_Tag_Maps.Map;
+   type SOAP_Payload_Encoder is limited interface;
 
-   ----------
-   -- Hash --
-   ----------
+   type SOAP_Payload_Encoder_Access is access all SOAP_Payload_Encoder'Class;
 
-   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type is
-   begin
-      return Ada.Strings.Hash (Ada.Tags.External_Tag (Item));
-   end Hash;
+   not overriding function Create
+    (Dummy : not null access Boolean)
+       return SOAP_Payload_Encoder is abstract;
+   --  This subprogram is used by dispatching constructor to create instance of
+   --  the encoder.
 
-   --------------
-   -- Register --
-   --------------
+   not overriding procedure Encode
+    (Self    : SOAP_Payload_Encoder;
+     Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+     Writer  : in out XML.SAX.Writers.SAX_Writer'Class) is abstract;
 
-   procedure Register
-    (Message_Tag : Ada.Tags.Tag; Encoder_Tag : Ada.Tags.Tag) is
-   begin
-      Registry.Insert (Message_Tag, Encoder_Tag);
-   end Register;
-
-   -------------
-   -- Resolve --
-   -------------
-
-   function Resolve
-    (Message_Tag : Ada.Tags.Tag)
-       return not null Web_Services.SOAP.Body_Encoders.SOAP_Body_Encoder_Access
-   is
---      Aux : aliased Ada.Tags.Tag := Message_Tag;
-      Aux : aliased Boolean := False;
-
-   begin
-      return
-        new Web_Services.SOAP.Body_Encoders.SOAP_Body_Encoder'Class'
-             (Create (Registry.Element (Message_Tag), Aux'Access));
-   end Resolve;
-
-end Web_Services.SOAP.Body_Encoders.Registry;
+end Web_Services.SOAP.Payloads.Encoders;

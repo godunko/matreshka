@@ -41,18 +41,65 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Base data structure for internal representation of SOAP Message.
-------------------------------------------------------------------------------
-with Web_Services.SOAP.Payloads;
+with Ada.Containers.Hashed_Maps;
+with Ada.Strings.Hash;
+with Ada.Tags.Generic_Dispatching_Constructor;
 
-package Web_Services.SOAP.Messages is
+package body Web_Services.SOAP.Payloads.Encoders.Registry is
 
-   pragma Preelaborate;
+   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type;
 
-   type SOAP_Message is tagged limited record
-      Payload : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
-   end record;
+   function Create is
+     new Ada.Tags.Generic_Dispatching_Constructor
+          (Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder,
+           Boolean,
+           Web_Services.SOAP.Payloads.Encoders.Create);
 
-   type SOAP_Message_Access is access all SOAP_Message'Class;
+   package Tag_Tag_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Ada.Tags.Tag,
+           Ada.Tags.Tag,
+           Hash,
+           Ada.Tags."=",
+           Ada.Tags."=");
 
-end Web_Services.SOAP.Messages;
+   Registry : Tag_Tag_Maps.Map;
+
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type is
+   begin
+      return Ada.Strings.Hash (Ada.Tags.External_Tag (Item));
+   end Hash;
+
+   --------------
+   -- Register --
+   --------------
+
+   procedure Register
+    (Message_Tag : Ada.Tags.Tag; Encoder_Tag : Ada.Tags.Tag) is
+   begin
+      Registry.Insert (Message_Tag, Encoder_Tag);
+   end Register;
+
+   -------------
+   -- Resolve --
+   -------------
+
+   function Resolve
+    (Message_Tag : Ada.Tags.Tag)
+       return
+         not null
+           Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder_Access
+   is
+      Aux : aliased Boolean := False;
+
+   begin
+      return
+        new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder'Class'
+             (Create (Registry.Element (Message_Tag), Aux'Access));
+   end Resolve;
+
+end Web_Services.SOAP.Payloads.Encoders.Registry;

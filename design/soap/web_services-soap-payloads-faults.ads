@@ -42,59 +42,37 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Containers.Hashed_Maps;
-with Ada.Tags.Generic_Dispatching_Constructor;
 
 with League.Strings.Hash;
 
-package body Web_Services.SOAP.Body_Decoders.Registry is
+package Web_Services.SOAP.Payloads.Faults is
 
-   function Create is
-     new Ada.Tags.Generic_Dispatching_Constructor
-          (Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder,
-           League.Strings.Universal_String,
-           Web_Services.SOAP.Body_Decoders.Create);
+   pragma Preelaborate;
 
-   package String_Tag_Maps is
+   package Language_Text_Maps is
      new Ada.Containers.Hashed_Maps
           (League.Strings.Universal_String,
-           Ada.Tags.Tag,
+           League.Strings.Universal_String,
            League.Strings.Hash,
            League.Strings."=",
-           Ada.Tags."=");
+           League.Strings."=");
 
-   Registry : String_Tag_Maps.Map;
+   type Abstract_SOAP_Fault is
+     abstract new Abstract_SOAP_Payload with null record;
 
-   --------------
-   -- Register --
-   --------------
+   not overriding function Code_Namespace_URI
+    (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
+       is abstract;
 
-   procedure Register
-    (URI : League.Strings.Universal_String;
-     Tag : Ada.Tags.Tag) is
-   begin
-      Registry.Insert (URI, Tag);
-   end Register;
+   not overriding function Code_Prefix
+    (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
+       is abstract;
 
-   -------------
-   -- Resolve --
-   -------------
+   not overriding function Code_Local_Name
+    (Self : Abstract_SOAP_Fault) return League.Strings.Universal_String
+       is abstract;
 
-   function Resolve
-    (URI : League.Strings.Universal_String)
-       return Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder_Access
-   is
-      Position : constant String_Tag_Maps.Cursor := Registry.Find (URI);
-      Aux      : aliased League.Strings.Universal_String := URI;
+   not overriding function Reason
+    (Self : Abstract_SOAP_Fault) return Language_Text_Maps.Map is abstract;
 
-   begin
-      if String_Tag_Maps.Has_Element (Position) then
-         return
-           new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder'Class'
-                (Create (String_Tag_Maps.Element (Position), Aux'Access));
-
-      else
-         return null;
-      end if;
-   end Resolve;
-
-end Web_Services.SOAP.Body_Decoders.Registry;
+end Web_Services.SOAP.Payloads.Faults;
