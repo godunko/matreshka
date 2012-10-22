@@ -61,11 +61,6 @@ procedure Test_248 is
     (Request : Wide_Wide_String;
      Reply   : Wide_Wide_String);
 
-   procedure Free is
-     new Ada.Unchecked_Deallocation
-          (Web_Services.SOAP.Messages.SOAP_Message'Class,
-           Web_Services.SOAP.Messages.SOAP_Message_Access);
-
    -------------
    -- Do_Test --
    -------------
@@ -109,7 +104,7 @@ procedure Test_248 is
          raise Program_Error;
       end if;
 
-      Free (Message);
+      Web_Services.SOAP.Messages.Free (Message);
    end Do_Test;
 
 begin

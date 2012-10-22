@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Unchecked_Deallocation;
+
 with League.Strings;
 with League.Text_Codecs;
 with XML.SAX.Attributes;
@@ -55,6 +57,11 @@ package body Web_Services.SOAP.Message_Encoders is
 
    use Web_Services.SOAP.Constants;
 
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder'Class,
+           Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder_Access);
+
    procedure Encode_Fault
     (Fault  : Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class;
      Writer : in out XML.SAX.Writers.SAX_Writer'Class);
@@ -68,10 +75,12 @@ package body Web_Services.SOAP.Message_Encoders is
      Message : Web_Services.SOAP.Messages.SOAP_Message)
        return League.Stream_Element_Vectors.Stream_Element_Vector
    is
-      Codec  : constant League.Text_Codecs.Text_Codec
+      Codec   : constant League.Text_Codecs.Text_Codec
         := League.Text_Codecs.Codec
             (League.Strings.To_Universal_String ("utf-8"));
-      Writer : XML.SAX.Pretty_Writers.SAX_Pretty_Writer;
+      Writer  : XML.SAX.Pretty_Writers.SAX_Pretty_Writer;
+      Encoder :
+        Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder_Access;
 
    begin
       Writer.Start_Document;
@@ -92,8 +101,11 @@ package body Web_Services.SOAP.Message_Encoders is
       then
          --  Lookup for SOAP payload encoder.
 
-         Web_Services.SOAP.Payloads.Encoders.Registry.Resolve
-          (Message.Payload'Tag).Encode (Message.Payload.all, Writer);
+         Encoder :=
+           Web_Services.SOAP.Payloads.Encoders.Registry.Resolve
+            (Message.Payload'Tag);
+         Encoder.Encode (Message.Payload.all, Writer);
+         Free (Encoder);
 
       else
          --  Encode SOAP Fault.
