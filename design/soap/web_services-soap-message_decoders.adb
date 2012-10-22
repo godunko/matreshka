@@ -306,6 +306,7 @@ package body Web_Services.SOAP.Message_Decoders is
       --  Deallocate decoded SOAP message if any.
 
       Web_Services.SOAP.Messages.Free (Self.Message);
+      Free (Self.Payload_Decoder);
 
       --  Set error state.
 
@@ -335,6 +336,7 @@ package body Web_Services.SOAP.Message_Decoders is
       --  Deallocate decoded SOAP message if any.
 
       Web_Services.SOAP.Messages.Free (Self.Message);
+      Free (Self.Payload_Decoder);
 
       --  Set error state and diagnosis.
 
@@ -363,6 +365,7 @@ package body Web_Services.SOAP.Message_Decoders is
       --  Deallocate decoded SOAP message if any.
 
       Web_Services.SOAP.Messages.Free (Self.Message);
+      Free (Self.Payload_Decoder);
 
       --  Set error state and diagnosis.
 
