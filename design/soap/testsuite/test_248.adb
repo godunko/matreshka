@@ -63,7 +63,7 @@ procedure Test_248 is
 
    procedure Free is
      new Ada.Unchecked_Deallocation
-          (Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class,
+          (Web_Services.SOAP.Messages.SOAP_Message'Class,
            Web_Services.SOAP.Messages.SOAP_Message_Access);
 
    -------------

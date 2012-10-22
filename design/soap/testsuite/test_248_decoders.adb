@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Web_Services.SOAP.Body_Decoders.Registry;
+with Web_Services.SOAP.Payloads.Decoders.Registry;
 
 package body Test_248_Decoders is
 
@@ -96,15 +96,15 @@ package body Test_248_Decoders is
    end End_Element;
 
    -------------
-   -- Message --
+   -- Payload --
    -------------
 
-   overriding function Message
+   overriding function Payload
     (Self : Test_248_Decoder)
-       return not null Web_Services.SOAP.Messages.SOAP_Message_Access is
+       return not null Web_Services.SOAP.Payloads.SOAP_Payload_Access is
    begin
       return null;
-   end Message;
+   end Payload;
 
    -------------------
    -- Start_Element --
@@ -123,6 +123,6 @@ package body Test_248_Decoders is
    end Start_Element;
 
 begin
-   Web_Services.SOAP.Body_Decoders.Registry.Register
+   Web_Services.SOAP.Payloads.Decoders.Registry.Register
     (Test_URI, Test_248_Decoder'Tag);
 end Test_248_Decoders;

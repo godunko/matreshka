@@ -42,9 +42,9 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
-with Web_Services.SOAP.Body_Encoders.Registry;
+with Web_Services.SOAP.Payloads.Encoders.Registry;
 
-with SOAPConf.Messages;
+with SOAPConf.Payloads;
 
 package body SOAPConf.Encoders is
 
@@ -57,7 +57,7 @@ package body SOAPConf.Encoders is
      := League.Strings.To_Universal_String ("responseOk");
 
    procedure Encode_Response_OK
-    (Message : SOAPConf.Messages.Response_Ok;
+    (Payload : SOAPConf.Payloads.Response_Ok;
      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
 
    ------------
@@ -65,9 +65,9 @@ package body SOAPConf.Encoders is
    ------------
 
    overriding function Create
-    (Dummy : not null access Boolean) return Test_Body_Encoder is
+    (Dummy : not null access Boolean) return Test_Payload_Encoder is
    begin
-      return X : Test_Body_Encoder;
+      return X : Test_Payload_Encoder;
    end Create;
 
    ------------
@@ -75,12 +75,12 @@ package body SOAPConf.Encoders is
    ------------
 
    overriding procedure Encode
-    (Self    : Test_Body_Encoder;
-     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class;
+    (Self    : Test_Payload_Encoder;
+     Payload : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
      Writer  : in out XML.SAX.Writers.SAX_Writer'Class) is
    begin
-      if Message in SOAPConf.Messages.Response_Ok then
-         Encode_Response_OK (SOAPConf.Messages.Response_Ok (Message), Writer);
+      if Payload in SOAPConf.Payloads.Response_Ok then
+         Encode_Response_OK (SOAPConf.Payloads.Response_Ok (Payload), Writer);
 
       else
          raise Program_Error;
@@ -92,16 +92,16 @@ package body SOAPConf.Encoders is
    ------------------------
 
    procedure Encode_Response_OK
-    (Message : SOAPConf.Messages.Response_Ok;
+    (Payload : SOAPConf.Payloads.Response_Ok;
      Writer  : in out XML.SAX.Writers.SAX_Writer'Class) is
    begin
       Writer.Start_Prefix_Mapping (Test_Prefix, Test_URI);
       Writer.Start_Element (Test_URI, Response_Ok_Name);
-      Writer.Characters (Message.Text);
+      Writer.Characters (Payload.Text);
       Writer.End_Element (Test_URI, Response_Ok_Name);
    end Encode_Response_OK;
 
 begin
-   Web_Services.SOAP.Body_Encoders.Registry.Register
-    (SOAPConf.Messages.Response_Ok'Tag, Test_Body_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+    (SOAPConf.Payloads.Response_Ok'Tag, Test_Payload_Encoder'Tag);
 end SOAPConf.Encoders;

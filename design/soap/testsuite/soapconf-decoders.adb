@@ -41,9 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Web_Services.SOAP.Body_Decoders.Registry;
+with Web_Services.SOAP.Payloads.Decoders.Registry;
 
-with SOAPConf.Messages;
+with SOAPConf.Payloads;
 
 package body SOAPConf.Decoders is
 
@@ -60,7 +60,7 @@ package body SOAPConf.Decoders is
    ----------------
 
    overriding procedure Characters
-    (Self    : in out Test_Body_Decoder;
+    (Self    : in out Test_Payload_Decoder;
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
@@ -75,9 +75,9 @@ package body SOAPConf.Decoders is
 
    overriding function Create
     (URI : not null access League.Strings.Universal_String)
-       return Test_Body_Decoder is
+       return Test_Payload_Decoder is
    begin
-      return X : Test_Body_Decoder do
+      return X : Test_Payload_Decoder do
          X.Text.Clear;
       end return;
    end Create;
@@ -87,7 +87,7 @@ package body SOAPConf.Decoders is
    -----------------
 
    overriding procedure End_Element
-    (Self           : in out Test_Body_Decoder;
+    (Self           : in out Test_Payload_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Success        : in out Boolean) is
@@ -95,8 +95,8 @@ package body SOAPConf.Decoders is
       if Namespace_URI = Test_URI then
          if Local_Name = Echo_OK_Name then
             declare
-               Msg : SOAPConf.Messages.Echo_OK
-                 renames SOAPConf.Messages.Echo_OK (Self.Message.all);
+               Msg : SOAPConf.Payloads.Echo_OK
+                 renames SOAPConf.Payloads.Echo_OK (Self.Payload.all);
 
             begin
                Msg.Text := Self.Text;
@@ -108,22 +108,22 @@ package body SOAPConf.Decoders is
    end End_Element;
 
    -------------
-   -- Message --
+   -- Payload --
    -------------
 
-   overriding function Message
-    (Self : Test_Body_Decoder)
-       return not null Web_Services.SOAP.Messages.SOAP_Message_Access is
+   overriding function Payload
+    (Self : Test_Payload_Decoder)
+       return not null Web_Services.SOAP.Payloads.SOAP_Payload_Access is
    begin
-      return Self.Message;
-   end Message;
+      return Self.Payload;
+   end Payload;
 
    -------------------
    -- Start_Element --
    -------------------
 
    overriding procedure Start_Element
-    (Self           : in out Test_Body_Decoder;
+    (Self           : in out Test_Payload_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
@@ -131,7 +131,7 @@ package body SOAPConf.Decoders is
    begin
       if Namespace_URI = Test_URI then
          if Local_Name = Echo_OK_Name then
-            Self.Message := new SOAPConf.Messages.Echo_OK;
+            Self.Payload := new SOAPConf.Payloads.Echo_OK;
             Self.Collect := True;
             Self.Text.Clear;
 
@@ -145,6 +145,6 @@ package body SOAPConf.Decoders is
    end Start_Element;
 
 begin
-   Web_Services.SOAP.Body_Decoders.Registry.Register
-    (Test_URI, Test_Body_Decoder'Tag);
+   Web_Services.SOAP.Payloads.Decoders.Registry.Register
+    (Test_URI, Test_Payload_Decoder'Tag);
 end SOAPConf.Decoders;

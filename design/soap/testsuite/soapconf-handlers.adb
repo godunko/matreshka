@@ -44,7 +44,7 @@
 with Web_Services.SOAP.Handler_Registry;
 with Web_Services.SOAP.Messages;
 
-with SOAPConf.Messages;
+with SOAPConf.Payloads;
 
 package body SOAPConf.Handlers is
 
@@ -60,14 +60,17 @@ package body SOAPConf.Handlers is
     (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;
      Output_Message : out Web_Services.SOAP.Messages.SOAP_Message_Access)
    is
-      Input : SOAPConf.Messages.Echo_OK
-        renames SOAPConf.Messages.Echo_OK (Input_Message.all);
+      Input : SOAPConf.Payloads.Echo_OK
+        renames SOAPConf.Payloads.Echo_OK (Input_Message.Payload.all);
 
    begin
-      Output_Message := new SOAPConf.Messages.Response_OK'(Text => Input.Text);
+      Output_Message :=
+        new Web_Services.SOAP.Messages.SOAP_Message'
+             (Payload =>
+                new SOAPConf.Payloads.Response_OK'(Text => Input.Text));
    end Echo_OK_Handler;
 
 begin
    Web_Services.SOAP.Handler_Registry.Register
-    (SOAPConf.Messages.Echo_OK'Tag, Echo_OK_Handler'Access);
+    (SOAPConf.Payloads.Echo_OK'Tag, Echo_OK_Handler'Access);
 end SOAPConf.Handlers;

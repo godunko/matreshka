@@ -43,20 +43,20 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
-with Web_Services.SOAP.Messages;
+with Web_Services.SOAP.Payloads;
 
-package SOAPConf.Messages is
+package SOAPConf.Payloads is
 
    pragma Preelaborate;
 
    type Echo_OK is
-     limited new Web_Services.SOAP.Messages.Abstract_SOAP_Message with record
+     limited new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload with record
       Text : League.Strings.Universal_String;
    end record;
 
    type Response_OK is
-     limited new Web_Services.SOAP.Messages.Abstract_SOAP_Message with record
+     limited new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload with record
       Text : League.Strings.Universal_String;
    end record;
 
-end SOAPConf.Messages;
+end SOAPConf.Payloads;

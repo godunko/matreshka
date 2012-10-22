@@ -44,15 +44,14 @@
 private with League.Strings;
 private with XML.SAX.Attributes;
 
-private with Web_Services.SOAP.Body_Decoders;
-private with Web_Services.SOAP.Messages;
+private with Web_Services.SOAP.Payloads.Decoders;
 
 package Test_248_Decoders is
 
 private
 
    type Test_248_Decoder is
-     limited new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder
+     limited new Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder
        with null record;
 
    overriding procedure Characters
@@ -70,9 +69,9 @@ private
      Local_Name     : League.Strings.Universal_String;
      Success        : in out Boolean);
 
-   overriding function Message
+   overriding function Payload
     (Self : Test_248_Decoder)
-       return not null Web_Services.SOAP.Messages.SOAP_Message_Access;
+       return not null Web_Services.SOAP.Payloads.SOAP_Payload_Access;
 
    overriding procedure Start_Element
     (Self           : in out Test_248_Decoder;

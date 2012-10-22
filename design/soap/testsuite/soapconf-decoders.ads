@@ -44,46 +44,45 @@
 with League.Strings;
 private with XML.SAX.Attributes;
 
-with Web_Services.SOAP.Body_Decoders;
-private with Web_Services.SOAP.Messages;
+with Web_Services.SOAP.Payloads.Decoders;
 
 package SOAPConf.Decoders is
 
-   type Test_Body_Decoder is
-     limited new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder
+   type Test_Payload_Decoder is
+     limited new Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder
        with private;
 
 private
 
-   type Test_Body_Decoder is
-     limited new Web_Services.SOAP.Body_Decoders.SOAP_Body_Decoder with
+   type Test_Payload_Decoder is
+     limited new Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder with
    record
       Collect : Boolean := False;
       Text    : League.Strings.Universal_String;
-      Message : Web_Services.SOAP.Messages.SOAP_Message_Access;
+      Payload : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
    end record;
 
    overriding function Create
     (URI : not null access League.Strings.Universal_String)
-       return Test_Body_Decoder;
+       return Test_Payload_Decoder;
 
    overriding procedure Characters
-    (Self    : in out Test_Body_Decoder;
+    (Self    : in out Test_Payload_Decoder;
      Text    : League.Strings.Universal_String;
      Success : in out Boolean);
 
-   overriding function Message
-    (Self : Test_Body_Decoder)
-       return not null Web_Services.SOAP.Messages.SOAP_Message_Access;
+   overriding function Payload
+    (Self : Test_Payload_Decoder)
+       return not null Web_Services.SOAP.Payloads.SOAP_Payload_Access;
 
    overriding procedure End_Element
-    (Self           : in out Test_Body_Decoder;
+    (Self           : in out Test_Payload_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Success        : in out Boolean);
 
    overriding procedure Start_Element
-    (Self           : in out Test_Body_Decoder;
+    (Self           : in out Test_Payload_Decoder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;

@@ -43,21 +43,20 @@
 ------------------------------------------------------------------------------
 with XML.SAX.Writers;
 
-with Web_Services.SOAP.Body_Encoders;
-with Web_Services.SOAP.Messages;
+with Web_Services.SOAP.Payloads.Encoders;
 
 package SOAPConf.Encoders is
 
-   type Test_Body_Encoder is
-     limited new Web_Services.SOAP.Body_Encoders.SOAP_Body_Encoder
+   type Test_Payload_Encoder is
+     limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
        with null record;
 
    overriding function Create
-    (Dummy : not null access Boolean) return Test_Body_Encoder;
+    (Dummy : not null access Boolean) return Test_Payload_Encoder;
 
    overriding procedure Encode
-    (Self    : Test_Body_Encoder;
-     Message : Web_Services.SOAP.Messages.Abstract_SOAP_Message'Class;
+    (Self    : Test_Payload_Encoder;
+     Payload : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
 
 end SOAPConf.Encoders;
