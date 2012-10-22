@@ -41,9 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides entry point to handle SOAP requests received from
---  HTTP server.
-------------------------------------------------------------------------------
 with League.Strings;
 with League.Text_Codecs;
 with XML.SAX.Input_Sources.Streams.Element_Arrays;
@@ -130,6 +127,7 @@ package body Web_Services.SOAP.Dispatcher is
          begin
             Content_Type := To_Stream_Element_Vector ("application/soap+xml");
             Output_Data := Encoder.Encode (Output.all);
+            Web_Services.SOAP.Messages.Free (Output);
 
             return;
          end;
