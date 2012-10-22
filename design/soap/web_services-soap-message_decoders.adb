@@ -59,11 +59,6 @@ package body Web_Services.SOAP.Message_Decoders is
           (Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder'Class,
            Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access);
 
-   procedure Free is
-     new Ada.Unchecked_Deallocation
-          (Web_Services.SOAP.Messages.SOAP_Message'Class,
-           Web_Services.SOAP.Messages.SOAP_Message_Access);
-
    procedure Set_Sender_Fault
     (Self   : in out SOAP_Message_Decoder'Class;
      Text   : League.Strings.Universal_String;
@@ -310,7 +305,7 @@ package body Web_Services.SOAP.Message_Decoders is
    begin
       --  Deallocate decoded SOAP message if any.
 
-      Free (Self.Message);
+      Web_Services.SOAP.Messages.Free (Self.Message);
 
       --  Set error state.
 
@@ -339,7 +334,7 @@ package body Web_Services.SOAP.Message_Decoders is
    begin
       --  Deallocate decoded SOAP message if any.
 
-      Free (Self.Message);
+      Web_Services.SOAP.Messages.Free (Self.Message);
 
       --  Set error state and diagnosis.
 
@@ -367,7 +362,7 @@ package body Web_Services.SOAP.Message_Decoders is
    begin
       --  Deallocate decoded SOAP message if any.
 
-      Free (Self.Message);
+      Web_Services.SOAP.Messages.Free (Self.Message);
 
       --  Set error state and diagnosis.
 

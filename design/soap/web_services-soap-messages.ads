@@ -49,10 +49,14 @@ package Web_Services.SOAP.Messages is
 
    pragma Preelaborate;
 
-   type SOAP_Message is tagged limited record
+   type SOAP_Message is limited record
       Payload : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
    end record;
 
-   type SOAP_Message_Access is access all SOAP_Message'Class;
+   type SOAP_Message_Access is access all SOAP_Message;
+
+   procedure Finalize (Self : in out SOAP_Message);
+
+   procedure Free (Message : in out SOAP_Message_Access);
 
 end Web_Services.SOAP.Messages;

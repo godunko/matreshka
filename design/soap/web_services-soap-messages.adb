@@ -41,21 +41,43 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Stream_Element_Vectors;
+--  Base data structure for internal representation of SOAP Message.
+------------------------------------------------------------------------------
+with Ada.Unchecked_Deallocation;
 
-with Web_Services.SOAP.Messages;
+package body Web_Services.SOAP.Messages is
 
-package Web_Services.SOAP.Message_Encoders is
+   --------------
+   -- Finalize --
+   --------------
 
-   type SOAP_Message_Encoder is tagged limited private;
+   procedure Finalize (Self : in out SOAP_Message) is
 
-   function Encode
-    (Self    : in out SOAP_Message_Encoder'Class;
-     Message : Web_Services.SOAP.Messages.SOAP_Message)
-       return League.Stream_Element_Vectors.Stream_Element_Vector;
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class,
+              Web_Services.SOAP.Payloads.SOAP_Payload_Access);
 
-private
+   begin
+      Free (Self.Payload);
+   end Finalize;
 
-   type SOAP_Message_Encoder is tagged limited null record;
+   ----------
+   -- Free --
+   ----------
 
-end Web_Services.SOAP.Message_Encoders;
+   procedure Free (Message : in out SOAP_Message_Access) is
+
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Web_Services.SOAP.Messages.SOAP_Message,
+              Web_Services.SOAP.Messages.SOAP_Message_Access);
+
+   begin
+      if Message /= null then
+         Finalize (Message.all);
+         Free (Message);
+      end if;
+   end Free;
+
+end Web_Services.SOAP.Messages;
