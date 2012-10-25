@@ -135,6 +135,21 @@ package body Web_Services.SOAP.Dispatcher is
       end if;
    end Dispatch;
 
+   --------------
+   -- Dispatch --
+   --------------
+
+   procedure Dispatch
+    (Input_Data   : Ada.Streams.Stream_Element_Array;
+     Status       : out Status_Type;
+     Stream       : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access)
+   is
+      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
+   begin
+      Dispatch (Input_Data, Status, Content_Type, Output_Data);
+   end Dispatch;
+
    ------------------------------
    -- To_Stream_Element_Vector --
    ------------------------------

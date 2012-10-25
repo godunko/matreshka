@@ -41,30 +41,26 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides entry point to handle SOAP requests received from
---  HTTP server.
+--  This package provides interface to stream SOAP replies back to HTTP server.
 ------------------------------------------------------------------------------
+
 with Ada.Streams;
 
 with League.Stream_Element_Vectors;
 
-with Web_Services.SOAP.Reply_Streams;
+package Web_Services.SOAP.Reply_Streams is
 
-package Web_Services.SOAP.Dispatcher is
+   type Reply_Stream is abstract tagged null record;
+   type Reply_Stream_Access is access Reply_Stream'Class;
 
-   type Status_Type is (S_200, S_400);
+   procedure More_Replies_Expected (Self : in out Reply_Stream) is abstract;
+   --  To enable multiply replies returned for single request
 
-   procedure Dispatch
-    (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Status       : out Status_Type;
-     Content_Type : out League.Stream_Element_Vectors.Stream_Element_Vector;
-     Output_Data  : out League.Stream_Element_Vectors.Stream_Element_Vector);
+   procedure Send_Reply
+    (Self         : in out Reply_Stream;
+     Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
+     Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector)
+   is abstract;
+   --  Return given data as SOAP reply
 
-   procedure Dispatch
-    (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Status       : out Status_Type;
-     Stream       : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access);
-   --  Dispatch SOAP request represented as Input_Data. Use Stream to return
-   --  SOAP replies.
-
-end Web_Services.SOAP.Dispatcher;
+end Web_Services.SOAP.Reply_Streams;
