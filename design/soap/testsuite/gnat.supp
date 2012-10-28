@@ -1,0 +1,12 @@
+{
+   <GNAT doesn't finalize object in separate compilation units>
+   Memcheck:Leak
+   fun:malloc
+   fun:__gnat_malloc
+   fun:matreshka__internals__strings__allocate
+   fun:league__strings__to_utf16_string
+   fun:league__strings__to_universal_string
+   fun:xml__sax__input_sources__streams__files___elabb
+   fun:adainit
+   fun:main
+}
