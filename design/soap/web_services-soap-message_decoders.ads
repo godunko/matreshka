@@ -137,6 +137,11 @@ private
    --  are prohibited in SOAP messages, this subprogram always sets Success to
    --  False.
 
+   overriding procedure Start_Document
+    (Self    : in out SOAP_Message_Decoder;
+     Success : in out Boolean);
+   --  Handles start of processing of document. Used for initialization.
+
    overriding procedure Start_DTD
     (Self      : in out SOAP_Message_Decoder;
      Name      : League.Strings.Universal_String;

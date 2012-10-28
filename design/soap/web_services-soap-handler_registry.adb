@@ -63,8 +63,15 @@ package body Web_Services.SOAP.Handler_Registry is
    ----------
 
    function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type is
+      use type Ada.Tags.Tag;
+
    begin
-      return Ada.Strings.Hash (Ada.Tags.External_Tag (Item));
+      if Item = Ada.Tags.No_Tag then
+         return 0;
+
+      else
+         return Ada.Strings.Hash (Ada.Tags.External_Tag (Item));
+      end if;
    end Hash;
 
    --------------

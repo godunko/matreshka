@@ -205,9 +205,7 @@ package body Web_Services.SOAP.Message_Decoders is
          --  Obtain decoded data.
 
          if Self.Body_Depth = 0 then
-            Self.Message :=
-              new Web_Services.SOAP.Messages.SOAP_Message'
-                   (Payload => Self.Payload_Decoder.Payload);
+            Self.Message.Payload := Self.Payload_Decoder.Payload;
             Free (Self.Payload_Decoder);
          end if;
       end if;
@@ -381,6 +379,17 @@ package body Web_Services.SOAP.Message_Decoders is
                   League.Strings.To_Universal_String ("en-US"),
                   Diagnosis));
    end Set_Version_Mismatch_Fault;
+
+   --------------------
+   -- Start_Document --
+   --------------------
+
+   overriding procedure Start_Document
+    (Self    : in out SOAP_Message_Decoder;
+     Success : in out Boolean) is
+   begin
+      Self.Message := new Web_Services.SOAP.Messages.SOAP_Message;
+   end Start_Document;
 
    ---------------
    -- Start_DTD --

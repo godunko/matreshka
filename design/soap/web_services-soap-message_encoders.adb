@@ -75,6 +75,8 @@ package body Web_Services.SOAP.Message_Encoders is
      Message : Web_Services.SOAP.Messages.SOAP_Message)
        return League.Stream_Element_Vectors.Stream_Element_Vector
    is
+      use type Web_Services.SOAP.Payloads.SOAP_Payload_Access;
+
       Codec   : constant League.Text_Codecs.Text_Codec
         := League.Text_Codecs.Codec
             (League.Strings.To_Universal_String ("utf-8"));
@@ -94,26 +96,27 @@ package body Web_Services.SOAP.Message_Encoders is
 
       Writer.Start_Element (SOAP_Envelope_URI, SOAP_Body_Name);
 
-      --  Encode SOAP Body.
+      --  Encode SOAP Body, when available.
 
-      if Message.Payload.all
-           not in Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class
-      then
-         --  Lookup for SOAP payload encoder.
+      if Message.Payload /= null then
+         if Message.Payload.all
+              in Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class
+         then
+            --  Encode SOAP Fault.
 
-         Encoder :=
-           Web_Services.SOAP.Payloads.Encoders.Registry.Resolve
-            (Message.Payload'Tag);
-         Encoder.Encode (Message.Payload.all, Writer);
-         Free (Encoder);
+            Encode_Fault
+             (Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class
+               (Message.Payload.all),
+              Writer);
+         else
+            --  Lookup for SOAP payload encoder.
 
-      else
-         --  Encode SOAP Fault.
-
-         Encode_Fault
-          (Web_Services.SOAP.Payloads.Faults.Abstract_SOAP_Fault'Class
-            (Message.Payload.all),
-           Writer);
+            Encoder :=
+              Web_Services.SOAP.Payloads.Encoders.Registry.Resolve
+               (Message.Payload'Tag);
+            Encoder.Encode (Message.Payload.all, Writer);
+            Free (Encoder);
+         end if;
       end if;
 
       --  End env:Body and env:Envelope elements.

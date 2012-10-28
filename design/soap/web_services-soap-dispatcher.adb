@@ -41,15 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Tags;
+
 with League.Strings;
 with League.Text_Codecs;
 with XML.SAX.Input_Sources.Streams.Element_Arrays;
 with XML.SAX.Simple_Readers;
 
 with Web_Services.SOAP.Handler_Registry;
+with Web_Services.SOAP.Handlers;
 with Web_Services.SOAP.Message_Decoders;
 with Web_Services.SOAP.Message_Encoders;
 with Web_Services.SOAP.Messages;
+with Web_Services.SOAP.Payloads;
 
 package body Web_Services.SOAP.Dispatcher is
 
@@ -67,37 +71,47 @@ package body Web_Services.SOAP.Dispatcher is
      Output_Data  : out League.Stream_Element_Vectors.Stream_Element_Vector)
    is
       use type Web_Services.SOAP.Messages.SOAP_Message_Access;
+      use type Web_Services.SOAP.Payloads.SOAP_Payload_Access;
 
       Source  : aliased
         XML.SAX.Input_Sources.Streams.Element_Arrays.
           Stream_Element_Array_Input_Source;
-      Handler : aliased
+      Decoder : aliased
         Web_Services.SOAP.Message_Decoders.SOAP_Message_Decoder;
       Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
       Input   : Web_Services.SOAP.Messages.SOAP_Message_Access;
       Output  : Web_Services.SOAP.Messages.SOAP_Message_Access;
+      Handler : Web_Services.SOAP.Handlers.SOAP_Message_Handler;
 
    begin
       --  Parse request data.
 
       Source.Set_Stream_Element_Array (Input_Data);
-      Reader.Set_Content_Handler (Handler'Unchecked_Access);
-      Reader.Set_Error_Handler (Handler'Unchecked_Access);
-      Reader.Set_Lexical_Handler (Handler'Unchecked_Access);
+      Reader.Set_Content_Handler (Decoder'Unchecked_Access);
+      Reader.Set_Error_Handler (Decoder'Unchecked_Access);
+      Reader.Set_Lexical_Handler (Decoder'Unchecked_Access);
       Reader.Parse (Source'Access);
 
-      if Handler.Success then
+      if Decoder.Success then
          --  Request was decoded successfully, lookup for handler and call it.
 
-         Input := Handler.Message;
+         Input := Decoder.Message;
 
-         Web_Services.SOAP.Handler_Registry.Resolve
-          (Input.Payload'Tag) (Input, Output);
+         if Input.Payload = null then
+            Handler :=
+              Web_Services.SOAP.Handler_Registry.Resolve (Ada.Tags.No_Tag);
+
+         else
+            Handler :=
+              Web_Services.SOAP.Handler_Registry.Resolve (Input.Payload'Tag);
+         end if;
+
+         Handler (Input, Output);
          Web_Services.SOAP.Messages.Free (Input);
          Status := S_200;
 
       else
-         Output := Handler.Message;
+         Output := Decoder.Message;
 
          if Output = null then
             --  SOAP message handler detects error, but unable to generate
@@ -109,7 +123,7 @@ package body Web_Services.SOAP.Dispatcher is
                      (League.Strings.To_Universal_String ("utf-8"));
 
             begin
-               Output_Data  := Codec.Encode (Handler.Error_String);
+               Output_Data  := Codec.Encode (Decoder.Error_String);
                Content_Type := To_Stream_Element_Vector ("text/plain");
                Status       := S_400;
 
