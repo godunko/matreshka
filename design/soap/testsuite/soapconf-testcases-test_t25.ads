@@ -41,76 +41,76 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
+--  Test:T25
+--
+--  Description:
+--
+--  Node A sends to node C message with reference to external DTD. Node C
+--  returns back DTDNotSupported Fault.
+--
+--  Messages:
+--
+--  Message sent from Node A
+--
+--  <?xml version='1.0' ?>
+--  <!DOCTYPE env:Envelope SYSTEM "env.dtd"[]>
+--  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"> 
+--    <env:Body>
+--      <test:echoOk xmlns:test="http://example.org/ts-tests">
+--        foo
+--      </test:echoOk>
+--    </env:Body>
+--  </env:Envelope>
+--
+--  Message sent from Node C
+--
+--  <?xml version='1.0' ?>
+--  <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"> 
+--    <env:Body>
+--      <env:Fault>
+--        <env:Code>
+--          <env:Value>env:Sender</env:Value>
+--        </env:Code>
+--        <env:Reason>
+--          <env:Text xml:lang="en-US">
+--            DTD are not supported by SOAP 1.2
+--          </env:Text>
+--        </env:Reason>
+--      </env:Fault>
+--    </env:Body>
+--  </env:Envelope>
+------------------------------------------------------------------------------
 
-with League.Stream_Element_Vectors;
-with League.Strings;
-with League.Text_Codecs;
+package SOAPConf.Testcases.Test_T25 is
 
-with Web_Services.SOAP.Dispatcher;
+   Scenario : constant Testcase_Data
+     := (League.Strings.To_Universal_String
+          ("<?xml version='1.0'?>"
+             & "<!DOCTYPE env:Envelope SYSTEM 'env.dtd'[]>"
+             & "<env:Envelope"
+             & " xmlns:env='http://www.w3.org/2003/05/soap-envelope'>"
+             & "<env:Body>"
+             & "<test:echoOk xmlns:test='http://example.org/ts-tests'>"
+             & "foo"
+             & "</test:echoOk>"
+             & "</env:Body>"
+             & "</env:Envelope>"),
+         League.Strings.To_Universal_String
+          ("<?xml version='1.0'?>"
+             & "<env:Envelope"
+             & " xmlns:env='http://www.w3.org/2003/05/soap-envelope'>"
+             & "<env:Body>"
+             & "<env:Fault>"
+             & "<env:Code>"
+             & "<env:Value>env:Sender</env:Value>"
+             & "</env:Code>"
+             & "<env:Reason>"
+             & "<env:Text xml:lang='en-US'>"
+             & "DTD are not supported by SOAP 1.2"
+             & "</env:Text>"
+             & "</env:Reason>"
+             & "</env:Fault>"
+             & "</env:Body>"
+             & "</env:Envelope>"));
 
-with SOAPConf.Testcases.Test_T24;
-with SOAPConf.Testcases.Test_T25;
-with SOAPConf.Testcases.Test_T26;
-with SOAPConf.Testcases.Test_T28;
-
-with SOAPConf.Decoders;
-pragma Unreferenced (SOAPConf.Decoders);
-with SOAPConf.Encoders;
-pragma Unreferenced (SOAPConf.Encoders);
-with SOAPConf.Handlers;
-pragma Unreferenced (SOAPConf.Handlers);
-
-procedure SOAPConf.Driver is
-   use type League.Strings.Universal_String;
-
-   Codec    : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String);
-
-   --------------------
-   -- Do_Simple_Test --
-   --------------------
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String)
-   is
-      Status       : Web_Services.SOAP.Dispatcher.Status_Type;
-      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
-
-   begin
-      Web_Services.SOAP.Dispatcher.Dispatch
-       (Codec.Encode (Source).To_Stream_Element_Array,
-        Status,
-        Content_Type,
-        Output_Data);
-
-      if Codec.Decode (Output_Data) /= Expected then
-         Ada.Wide_Wide_Text_IO.Put_Line (Expected.To_Wide_Wide_String);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Codec.Decode (Output_Data).To_Wide_Wide_String);
-
-         raise Program_Error;
-      end if;
-   end Do_Simple_Test;
-
-begin
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T24.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T24.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T25.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T25.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T26.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T26.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T28.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T28.Scenario.Message_C);
-end SOAPConf.Driver;
+end SOAPConf.Testcases.Test_T25;
