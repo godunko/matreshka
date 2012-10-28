@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Tags;
+
 with Web_Services.SOAP.Handler_Registry;
 with Web_Services.SOAP.Messages;
 
@@ -51,6 +53,21 @@ package body SOAPConf.Handlers is
    procedure Echo_OK_Handler
     (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;
      Output_Message : out Web_Services.SOAP.Messages.SOAP_Message_Access);
+
+   procedure Default_Handler
+    (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;
+     Output_Message : out Web_Services.SOAP.Messages.SOAP_Message_Access);
+
+   ---------------------
+   -- Default_Handler --
+   ---------------------
+
+   procedure Default_Handler
+    (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;
+     Output_Message : out Web_Services.SOAP.Messages.SOAP_Message_Access) is
+   begin
+      Output_Message := new Web_Services.SOAP.Messages.SOAP_Message;
+   end Default_Handler;
 
    ---------------------
    -- Echo_OK_Handler --
@@ -71,6 +88,8 @@ package body SOAPConf.Handlers is
    end Echo_OK_Handler;
 
 begin
+   Web_Services.SOAP.Handler_Registry.Register
+    (Ada.Tags.No_Tag, Default_Handler'Access);
    Web_Services.SOAP.Handler_Registry.Register
     (SOAPConf.Payloads.Echo_OK'Tag, Echo_OK_Handler'Access);
 end SOAPConf.Handlers;

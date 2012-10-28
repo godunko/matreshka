@@ -53,6 +53,7 @@ with SOAPConf.Testcases.Test_T24;
 with SOAPConf.Testcases.Test_T25;
 with SOAPConf.Testcases.Test_T26;
 with SOAPConf.Testcases.Test_T28;
+with SOAPConf.Testcases.Test_T29;
 
 with SOAPConf.Decoders;
 pragma Unreferenced (SOAPConf.Decoders);
@@ -113,4 +114,7 @@ begin
    Do_Simple_Test
     (SOAPConf.Testcases.Test_T28.Scenario.Message_A,
      SOAPConf.Testcases.Test_T28.Scenario.Message_C);
+   Do_Simple_Test
+    (SOAPConf.Testcases.Test_T29.Scenario.Message_A,
+     SOAPConf.Testcases.Test_T29.Scenario.Message_C);
 end SOAPConf.Driver;
