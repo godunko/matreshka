@@ -41,99 +41,51 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Tags;
-
-with League.Strings;
-with League.Text_Codecs;
-with XML.SAX.Input_Sources.Streams.Element_Arrays;
-with XML.SAX.Simple_Readers;
 
 with Web_Services.SOAP.Constants;
-with Web_Services.SOAP.Handler_Registry;
-with Web_Services.SOAP.Handlers;
-with Web_Services.SOAP.Message_Decoders;
 with Web_Services.SOAP.Message_Encoders;
-with Web_Services.SOAP.Messages;
-with Web_Services.SOAP.Payloads;
 
-package body Web_Services.SOAP.Dispatcher is
+package body Web_Services.SOAP.Reply_Streams is
 
-   --------------
-   -- Dispatch --
-   --------------
+   ------------------
+   -- Send_Message --
+   ------------------
 
-   procedure Dispatch
-    (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Stream       : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access)
+   procedure Send_Message
+     (Self    : in out Reply_Stream'Class;
+      Status  : Status_Type;
+      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
    is
+      use League.Stream_Element_Vectors;
       use type Web_Services.SOAP.Messages.SOAP_Message_Access;
-      use type Web_Services.SOAP.Payloads.SOAP_Payload_Access;
 
-      Source  : aliased
-        XML.SAX.Input_Sources.Streams.Element_Arrays.
-          Stream_Element_Array_Input_Source;
-      Decoder : aliased
-        Web_Services.SOAP.Message_Decoders.SOAP_Message_Decoder;
-      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      Input   : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Output  : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Handler : Web_Services.SOAP.Handlers.SOAP_Message_Handler;
-      Status  : Reply_Streams.Status_Type;
-
+      Encoder : Web_Services.SOAP.Message_Encoders.SOAP_Message_Encoder;
    begin
-      --  Parse request data.
-
-      Source.Set_Stream_Element_Array (Input_Data);
-      Reader.Set_Content_Handler (Decoder'Unchecked_Access);
-      Reader.Set_Error_Handler (Decoder'Unchecked_Access);
-      Reader.Set_Lexical_Handler (Decoder'Unchecked_Access);
-      Reader.Parse (Source'Access);
-
-      if Decoder.Success then
-         --  Request was decoded successfully, lookup for handler and call it.
-
-         Input := Decoder.Message;
-
-         if Input.Payload = null then
-            Handler :=
-              Web_Services.SOAP.Handler_Registry.Resolve (Ada.Tags.No_Tag);
-
-         else
-            Handler :=
-              Web_Services.SOAP.Handler_Registry.Resolve (Input.Payload'Tag);
-         end if;
-
-         Handler (Input, Output);
-         Web_Services.SOAP.Messages.Free (Input);
-         Status := Reply_Streams.S_200;
-
+      if Message = null then
+         Self.Send_Reply
+           (Status       => Status,
+            Content_Type => Empty_Stream_Element_Vector,
+            Output_Data  => Empty_Stream_Element_Vector);
       else
-         Output := Decoder.Message;
+         Self.Send_Reply
+           (Status       => Status,
+            Content_Type => Constants.MIME_Application_SOAP_XML,
+            Output_Data  => Encoder.Encode (Message.all));
 
-         if Output = null then
-            --  SOAP message handler detects error, but unable to generate
-            --  SOAP fault.
-
-            declare
-               Codec : constant League.Text_Codecs.Text_Codec
-                 := League.Text_Codecs.Codec
-                     (League.Strings.To_Universal_String ("utf-8"));
-
-            begin
-               Stream.Send_Reply
-                 (Status       => Reply_Streams.S_400,
-                  Content_Type => Web_Services.SOAP.Constants.MIME_Text_Plain,
-                  Output_Data  => Codec.Encode (Decoder.Error_String));
-
-               return;
-            end;
-         end if;
-
-         Status := Reply_Streams.S_400;
-
+         Web_Services.SOAP.Messages.Free (Message);
       end if;
+   end Send_Message;
 
-      Stream.Send_Message (Status, Output);
-   end Dispatch;
+   -----------------------
+   -- Send_Next_Message --
+   -----------------------
 
-end Web_Services.SOAP.Dispatcher;
+   procedure Send_Next_Message
+     (Self    : in out Reply_Stream'Class;
+      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access) is
+   begin
+      --  Status doesn't matter in next messages, let it be S_200
+      Self.Send_Message (S_200, Message);
+   end Send_Next_Message;
+
+end Web_Services.SOAP.Reply_Streams;

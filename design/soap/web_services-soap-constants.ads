@@ -44,7 +44,10 @@
 --  This package contains declarations of constants used in several places of
 --  SOAP implementation.
 ------------------------------------------------------------------------------
+with Ada.Streams;
+
 with League.Strings;
+with League.Stream_Element_Vectors;
 
 package Web_Services.SOAP.Constants is
 
@@ -89,5 +92,32 @@ package Web_Services.SOAP.Constants is
 
    SOAP_True_Literal : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("true");
+
+   --  "text/plain" Stream_Element_Array
+   Text_Plain_Array : constant Ada.Streams.Stream_Element_Array :=
+     (Character'Pos ('t'), Character'Pos ('e'), Character'Pos ('x'),
+      Character'Pos ('t'), Character'Pos ('/'), Character'Pos ('p'),
+      Character'Pos ('l'), Character'Pos ('a'), Character'Pos ('i'),
+      Character'Pos ('n'));
+
+   --  "application/soap+xml" Stream_Element_Array
+   Application_SOAP_XML_Array : constant Ada.Streams.Stream_Element_Array :=
+     (Character'Pos ('a'), Character'Pos ('p'), Character'Pos ('p'),
+      Character'Pos ('l'), Character'Pos ('i'), Character'Pos ('c'),
+      Character'Pos ('a'), Character'Pos ('t'), Character'Pos ('i'),
+      Character'Pos ('o'), Character'Pos ('n'), Character'Pos ('/'),
+      Character'Pos ('s'), Character'Pos ('o'), Character'Pos ('a'),
+      Character'Pos ('p'), Character'Pos ('+'), Character'Pos ('x'),
+      Character'Pos ('m'), Character'Pos ('l'));
+
+   MIME_Text_Plain :
+     constant League.Stream_Element_Vectors.Stream_Element_Vector :=
+       League.Stream_Element_Vectors.To_Stream_Element_Vector
+         (Text_Plain_Array);
+
+   MIME_Application_SOAP_XML :
+     constant League.Stream_Element_Vectors.Stream_Element_Vector :=
+       League.Stream_Element_Vectors.To_Stream_Element_Vector
+         (Application_SOAP_XML_Array);
 
 end Web_Services.SOAP.Constants;

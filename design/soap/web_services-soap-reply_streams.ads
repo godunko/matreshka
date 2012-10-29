@@ -48,19 +48,39 @@ with Ada.Streams;
 
 with League.Stream_Element_Vectors;
 
+with Web_Services.SOAP.Messages;
+
 package Web_Services.SOAP.Reply_Streams is
 
    type Reply_Stream is abstract tagged null record;
    type Reply_Stream_Access is access Reply_Stream'Class;
 
-   procedure More_Replies_Expected (Self : in out Reply_Stream) is abstract;
+   procedure Enable_Multipart_Content (Self : in out Reply_Stream) is abstract;
    --  To enable multiply replies returned for single request
+
+   type Status_Type is (S_200, S_400);
 
    procedure Send_Reply
     (Self         : in out Reply_Stream;
+     Status       : Status_Type;
      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector)
    is abstract;
    --  Return given data as SOAP reply
+   --  Status matters only in first reply
+
+   procedure Send_Message
+     (Self    : in out Reply_Stream'Class;
+      Status  : Status_Type;
+      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
+   --  Send first (or only) reply using given reply stream
+   --  Free message after sending
+
+   procedure Send_Next_Message
+     (Self    : in out Reply_Stream'Class;
+      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
+   --  Send another reply using given reply stream
+   --  Use this only if stream in multipart mode
+   --  Free message after sending
 
 end Web_Services.SOAP.Reply_Streams;

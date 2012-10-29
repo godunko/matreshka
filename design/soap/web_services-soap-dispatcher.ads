@@ -52,17 +52,8 @@ with Web_Services.SOAP.Reply_Streams;
 
 package Web_Services.SOAP.Dispatcher is
 
-   type Status_Type is (S_200, S_400);
-
    procedure Dispatch
     (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Status       : out Status_Type;
-     Content_Type : out League.Stream_Element_Vectors.Stream_Element_Vector;
-     Output_Data  : out League.Stream_Element_Vectors.Stream_Element_Vector);
-
-   procedure Dispatch
-    (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Status       : out Status_Type;
      Stream       : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access);
    --  Dispatch SOAP request represented as Input_Data. Use Stream to return
    --  SOAP replies.
