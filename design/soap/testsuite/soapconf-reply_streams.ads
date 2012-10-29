@@ -48,7 +48,7 @@ with Web_Services.SOAP.Reply_Streams;
 package SOAPConf.Reply_Streams is
 
    type Reply_Stream is
-     new Web_Services.SOAP.Reply_Streams.Reply_Stream with record
+     new Web_Services.SOAP.Reply_Streams.Abstract_Reply_Stream with record
       Output_Data : League.Stream_Element_Vectors.Stream_Element_Vector;
    end record;
 
