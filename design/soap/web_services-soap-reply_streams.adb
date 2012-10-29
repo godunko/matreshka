@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
 with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Message_Encoders;
 
@@ -52,20 +51,22 @@ package body Web_Services.SOAP.Reply_Streams is
    ------------------
 
    procedure Send_Message
-     (Self    : in out Reply_Stream'Class;
-      Status  : Status_Type;
-      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
+    (Self    : in out Reply_Stream'Class;
+     Status  : Status_Type;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
    is
       use League.Stream_Element_Vectors;
       use type Web_Services.SOAP.Messages.SOAP_Message_Access;
 
       Encoder : Web_Services.SOAP.Message_Encoders.SOAP_Message_Encoder;
+
    begin
       if Message = null then
          Self.Send_Reply
            (Status       => Status,
             Content_Type => Empty_Stream_Element_Vector,
             Output_Data  => Empty_Stream_Element_Vector);
+
       else
          Self.Send_Reply
            (Status       => Status,
@@ -81,10 +82,11 @@ package body Web_Services.SOAP.Reply_Streams is
    -----------------------
 
    procedure Send_Next_Message
-     (Self    : in out Reply_Stream'Class;
-      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access) is
+    (Self    : in out Reply_Stream'Class;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access) is
    begin
       --  Status doesn't matter in next messages, let it be S_200
+
       Self.Send_Message (S_200, Message);
    end Send_Next_Message;
 

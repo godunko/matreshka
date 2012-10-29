@@ -43,7 +43,6 @@
 ------------------------------------------------------------------------------
 --  This package provides interface to stream SOAP replies back to HTTP server.
 ------------------------------------------------------------------------------
-
 with Ada.Streams;
 
 with League.Stream_Element_Vectors;
@@ -56,7 +55,7 @@ package Web_Services.SOAP.Reply_Streams is
    type Reply_Stream_Access is access all Reply_Stream'Class;
 
    procedure Enable_Multipart_Content (Self : in out Reply_Stream) is abstract;
-   --  To enable multiply replies returned for single request
+   --  To enable multiply replies returned for single request.
 
    type Status_Type is (S_200, S_400);
 
@@ -65,22 +64,20 @@ package Web_Services.SOAP.Reply_Streams is
      Status       : Status_Type;
      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector)
-   is abstract;
-   --  Return given data as SOAP reply
-   --  Status matters only in first reply
+       is abstract;
+   --  Return given data as SOAP reply. Status matters only in first reply.
 
    procedure Send_Message
-     (Self    : in out Reply_Stream'Class;
-      Status  : Status_Type;
-      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
-   --  Send first (or only) reply using given reply stream
-   --  Free message after sending
+    (Self    : in out Reply_Stream'Class;
+     Status  : Status_Type;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
+   --  Send first (or only) reply using given reply stream. Free message after
+   --  sending.
 
    procedure Send_Next_Message
-     (Self    : in out Reply_Stream'Class;
-      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
-   --  Send another reply using given reply stream
-   --  Use this only if stream in multipart mode
-   --  Free message after sending
+    (Self    : in out Reply_Stream'Class;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
+   --  Send another reply using given reply stream. Use this only if stream in
+   --  multipart mode. Free message after sending.
 
 end Web_Services.SOAP.Reply_Streams;
