@@ -44,14 +44,12 @@
 --  Base data structure for internal representation of SOAP Message.
 ------------------------------------------------------------------------------
 with Web_Services.SOAP.Payloads;
-limited with Web_Services.SOAP.Reply_Streams;
+with Web_Services.SOAP.Reply_Streams;
 
 package Web_Services.SOAP.Messages is
 
-   pragma Preelaborate;
-
    type SOAP_Message is limited record
-      Output  : access Web_Services.SOAP.Reply_Streams.Reply_Stream'Class;
+      Output  : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access;
       Payload : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
    end record;
 

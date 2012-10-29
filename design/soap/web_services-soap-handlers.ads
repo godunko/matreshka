@@ -45,8 +45,6 @@ with Web_Services.SOAP.Messages;
 
 package Web_Services.SOAP.Handlers is
 
-   pragma Preelaborate;
-
    type SOAP_Message_Handler is
      access procedure
       (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;

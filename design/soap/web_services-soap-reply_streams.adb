@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Message_Encoders;
+with Web_Services.SOAP.Messages;
 
 package body Web_Services.SOAP.Reply_Streams is
 
@@ -51,7 +52,7 @@ package body Web_Services.SOAP.Reply_Streams is
    ------------------
 
    procedure Send_Message
-    (Self    : in out Reply_Stream'Class;
+    (Self    : in out Abstract_Reply_Stream'Class;
      Status  : Status_Type;
      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
    is
@@ -82,7 +83,7 @@ package body Web_Services.SOAP.Reply_Streams is
    -----------------------
 
    procedure Send_Next_Message
-    (Self    : in out Reply_Stream'Class;
+    (Self    : in out Abstract_Reply_Stream'Class;
      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access) is
    begin
       --  Status doesn't matter in next messages, let it be S_200
