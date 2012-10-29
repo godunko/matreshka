@@ -131,7 +131,6 @@ package body Web_Services.SOAP.Dispatcher is
          end if;
 
          Status := Reply_Streams.S_400;
-
       end if;
 
       Stream.Send_Message (Status, Output);
