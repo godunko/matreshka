@@ -83,7 +83,8 @@ package body SOAPConf.Handlers is
    begin
       Output_Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
-             (Payload =>
+             (Output  => null,
+              Payload =>
                 new SOAPConf.Payloads.Response_OK'(Text => Input.Text));
    end Echo_OK_Handler;
 

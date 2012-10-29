@@ -41,86 +41,23 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
-
 with League.Stream_Element_Vectors;
-with League.Strings;
-with League.Text_Codecs;
 
-with Web_Services.SOAP.Dispatcher;
 with Web_Services.SOAP.Reply_Streams;
 
-with SOAPConf.Reply_Streams;
-with SOAPConf.Testcases.Test_T24;
-with SOAPConf.Testcases.Test_T25;
-with SOAPConf.Testcases.Test_T26;
-with SOAPConf.Testcases.Test_T28;
-with SOAPConf.Testcases.Test_T29;
-with SOAPConf.Testcases.Test_T34;
-with SOAPConf.Testcases.Test_T37;
+package SOAPConf.Reply_Streams is
 
-with SOAPConf.Decoders;
-pragma Unreferenced (SOAPConf.Decoders);
-with SOAPConf.Encoders;
-pragma Unreferenced (SOAPConf.Encoders);
-with SOAPConf.Handlers;
-pragma Unreferenced (SOAPConf.Handlers);
+   type Reply_Stream is
+     new Web_Services.SOAP.Reply_Streams.Reply_Stream with record
+      Output_Data : League.Stream_Element_Vectors.Stream_Element_Vector;
+   end record;
 
-procedure SOAPConf.Driver is
-   use type League.Strings.Universal_String;
+   overriding procedure Enable_Multipart_Content (Self : in out Reply_Stream);
 
-   Codec : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
+   overriding procedure Send_Reply
+    (Self         : in out Reply_Stream;
+     Status       : Web_Services.SOAP.Reply_Streams.Status_Type;
+     Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
+     Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector);
 
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String);
-
-   --------------------
-   -- Do_Simple_Test --
-   --------------------
-
-   procedure Do_Simple_Test
-    (Source   : League.Strings.Universal_String;
-     Expected : League.Strings.Universal_String)
-   is
-      Reply : aliased SOAPConf.Reply_Streams.Reply_Stream;
-
-   begin
-      Web_Services.SOAP.Dispatcher.Dispatch
-       (Codec.Encode (Source).To_Stream_Element_Array,
-        Reply'Unchecked_Access);
-
-      if Codec.Decode (Reply.Output_Data) /= Expected then
-         Ada.Wide_Wide_Text_IO.Put_Line (Expected.To_Wide_Wide_String);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Codec.Decode (Reply.Output_Data).To_Wide_Wide_String);
-
-         raise Program_Error;
-      end if;
-   end Do_Simple_Test;
-
-begin
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T24.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T24.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T25.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T25.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T26.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T26.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T28.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T28.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T29.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T29.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T34.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T34.Scenario.Message_C);
-   Do_Simple_Test
-    (SOAPConf.Testcases.Test_T37.Scenario.Message_A,
-     SOAPConf.Testcases.Test_T37.Scenario.Message_C);
-end SOAPConf.Driver;
+end SOAPConf.Reply_Streams;
