@@ -93,6 +93,7 @@ package body Web_Services.SOAP.Dispatcher is
          --  Request was decoded successfully, lookup for handler and call it.
 
          Input := Decoder.Message;
+         Input.Output := Stream;
 
          if Input.Payload = null then
             Handler :=

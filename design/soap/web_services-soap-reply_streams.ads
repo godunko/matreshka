@@ -53,7 +53,7 @@ with Web_Services.SOAP.Messages;
 package Web_Services.SOAP.Reply_Streams is
 
    type Reply_Stream is abstract tagged null record;
-   type Reply_Stream_Access is access Reply_Stream'Class;
+   type Reply_Stream_Access is access all Reply_Stream'Class;
 
    procedure Enable_Multipart_Content (Self : in out Reply_Stream) is abstract;
    --  To enable multiply replies returned for single request
