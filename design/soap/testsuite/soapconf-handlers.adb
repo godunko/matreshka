@@ -84,6 +84,7 @@ package body SOAPConf.Handlers is
       Output_Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
              (Output  => null,
+              Headers => <>,
               Payload =>
                 new SOAPConf.Payloads.Response_OK'(Text => Input.Text));
    end Echo_OK_Handler;
