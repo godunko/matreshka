@@ -58,6 +58,9 @@ package SOAPConf.Reply_Streams is
     (Self         : in out Reply_Stream;
      Status       : Web_Services.SOAP.Reply_Streams.Status_Type;
      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-     Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector);
+     Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
+     Success      : out Boolean);
+
+   overriding procedure Finalyze (Self : in out Reply_Stream) is null;
 
 end SOAPConf.Reply_Streams;

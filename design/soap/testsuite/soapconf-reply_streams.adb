@@ -49,7 +49,7 @@ package body SOAPConf.Reply_Streams is
    ------------------------------
 
    overriding procedure Enable_Multipart_Content
-    (Self : in out Reply_Stream) is
+     (Self : in out Reply_Stream) is
    begin
       raise Program_Error;
       --  Multipart mode is not supported.
@@ -60,12 +60,14 @@ package body SOAPConf.Reply_Streams is
    ----------------
 
    overriding procedure Send_Reply
-    (Self         : in out Reply_Stream;
-     Status       : Web_Services.SOAP.Reply_Streams.Status_Type;
-     Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-     Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector) is
+     (Self         : in out Reply_Stream;
+      Status       : Web_Services.SOAP.Reply_Streams.Status_Type;
+      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Success      : out Boolean) is
    begin
       Self.Output_Data := Output_Data;
+      Success := True;
    end Send_Reply;
 
 end SOAPConf.Reply_Streams;
