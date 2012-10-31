@@ -107,5 +107,4 @@ package body Web_Services.SOAP.Messages is
       return Ada.Strings.Hash (Ada.Tags.External_Tag (Item'Tag));
    end Hash;
 
-
 end Web_Services.SOAP.Messages;

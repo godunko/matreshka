@@ -41,20 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Unchecked_Deallocation;
+
 with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Message_Encoders;
 with Web_Services.SOAP.Messages;
 
 package body Web_Services.SOAP.Reply_Streams is
 
-   ------------------
-   -- Send_Message --
-   ------------------
-
-   procedure Send_Message
+   procedure Common_Send_Message
     (Self    : in out Abstract_Reply_Stream'Class;
      Status  : Status_Type;
-     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access;
+     Success : out Boolean);
+
+   -------------------------
+   -- Common_Send_Message --
+   -------------------------
+
+   procedure Common_Send_Message
+    (Self    : in out Abstract_Reply_Stream'Class;
+     Status  : Status_Type;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access;
+     Success : out Boolean)
    is
       use League.Stream_Element_Vectors;
       use type Web_Services.SOAP.Messages.SOAP_Message_Access;
@@ -65,17 +74,45 @@ package body Web_Services.SOAP.Reply_Streams is
       if Message = null then
          Self.Send_Reply
            (Status       => Status,
+            Success      => Success,
             Content_Type => Empty_Stream_Element_Vector,
             Output_Data  => Empty_Stream_Element_Vector);
 
       else
          Self.Send_Reply
            (Status       => Status,
+            Success      => Success,
             Content_Type => Constants.MIME_Application_SOAP_XML,
             Output_Data  => Encoder.Encode (Message.all));
 
          Web_Services.SOAP.Messages.Free (Message);
       end if;
+   end Common_Send_Message;
+
+   -------------
+   -- Destroy --
+   -------------
+
+   procedure Destroy (Self : in out Reply_Stream_Access) is
+      procedure Free is new Ada.Unchecked_Deallocation
+        (Abstract_Reply_Stream'Class, Reply_Stream_Access);
+   begin
+      Self.Finalyze;
+      Free (Self);
+   end Destroy;
+
+   ------------------
+   -- Send_Message --
+   ------------------
+
+   procedure Send_Message
+    (Self    : in out Abstract_Reply_Stream'Class;
+     Status  : Status_Type;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
+   is
+      Ignore : Boolean;
+   begin
+      Common_Send_Message (Self, Status, Message, Ignore);
    end Send_Message;
 
    -----------------------
@@ -83,12 +120,13 @@ package body Web_Services.SOAP.Reply_Streams is
    -----------------------
 
    procedure Send_Next_Message
-    (Self    : in out Abstract_Reply_Stream'Class;
-     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access) is
+     (Self    : in out Abstract_Reply_Stream'Class;
+      Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access;
+      Success : out Boolean) is
    begin
       --  Status doesn't matter in next messages, let it be S_200
 
-      Self.Send_Message (S_200, Message);
+      Common_Send_Message (Self, S_200, Message, Success);
    end Send_Next_Message;
 
 end Web_Services.SOAP.Reply_Streams;

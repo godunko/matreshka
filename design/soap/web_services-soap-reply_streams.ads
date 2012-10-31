@@ -64,9 +64,14 @@ package Web_Services.SOAP.Reply_Streams is
     (Self         : in out Abstract_Reply_Stream;
      Status       : Status_Type;
      Content_Type : League.Stream_Element_Vectors.Stream_Element_Vector;
-     Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector)
+     Output_Data  : League.Stream_Element_Vectors.Stream_Element_Vector;
+     Success      : out Boolean)
        is abstract;
-   --  Return given data as SOAP reply. Status matters only in first reply.
+   --  Send given data as SOAP reply. Status matters only in first reply.
+
+   not overriding procedure Finalyze (Self : in out Abstract_Reply_Stream)
+     is abstract;
+   --  Clean up internal data before stream deallocation
 
    procedure Send_Message
     (Self    : in out Abstract_Reply_Stream'Class;
@@ -77,8 +82,13 @@ package Web_Services.SOAP.Reply_Streams is
 
    procedure Send_Next_Message
     (Self    : in out Abstract_Reply_Stream'Class;
-     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message_Access;
+     Success : out Boolean);
    --  Send another reply using given reply stream. Use this only if stream in
    --  multipart mode. Free message after sending.
+   --  Return Success = False if sending replies not available any more
+
+   procedure Destroy (Self : in out Reply_Stream_Access);
+   --  Close and deallocate reply stream
 
 end Web_Services.SOAP.Reply_Streams;

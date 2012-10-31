@@ -131,13 +131,15 @@ package body Web_Services.SOAP.Dispatcher is
             --  SOAP fault.
 
             declare
-               Codec : constant League.Text_Codecs.Text_Codec
+               Ignore : Boolean;
+               Codec  : constant League.Text_Codecs.Text_Codec
                  := League.Text_Codecs.Codec
                      (League.Strings.To_Universal_String ("utf-8"));
 
             begin
                Stream.Send_Reply
                  (Status       => Reply_Streams.S_400,
+                  Success      => Ignore,
                   Content_Type => Web_Services.SOAP.Constants.MIME_Text_Plain,
                   Output_Data  => Codec.Encode (Decoder.Error_String));
 
