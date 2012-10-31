@@ -59,6 +59,11 @@ package body Web_Services.SOAP.Message_Decoders is
           (Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder'Class,
            Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access);
 
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder'Class,
+           Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder_Access);
+
    procedure Set_Sender_Fault
     (Self   : in out SOAP_Message_Decoder'Class;
      Text   : League.Strings.Universal_String;
@@ -182,7 +187,14 @@ package body Web_Services.SOAP.Message_Decoders is
          --  Obtain decoded data.
 
          if Self.Header_Depth = 0 then
-            null;
+            declare
+               Header : constant Web_Services.SOAP.Headers.SOAP_Header_Access
+                 := Self.Header_Decoder.Header;
+
+            begin
+               Self.Message.Headers.Insert (Header);
+               Free (Self.Header_Decoder);
+            end;
          end if;
 
       elsif Self.State = SOAP_Body_Element then

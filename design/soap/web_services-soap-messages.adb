@@ -56,10 +56,25 @@ package body Web_Services.SOAP.Messages is
 
       procedure Free is
         new Ada.Unchecked_Deallocation
+             (Web_Services.SOAP.Headers.Abstract_SOAP_Header'Class,
+              Web_Services.SOAP.Headers.SOAP_Header_Access);
+
+      procedure Free is
+        new Ada.Unchecked_Deallocation
              (Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class,
               Web_Services.SOAP.Payloads.SOAP_Payload_Access);
 
+      Position : Header_Sets.Cursor;
+      Header   : Web_Services.SOAP.Headers.SOAP_Header_Access;
+
    begin
+      while not Self.Headers.Is_Empty loop
+         Position := Self.Headers.First;
+         Header := Header_Sets.Element (Position);
+         Self.Headers.Delete (Position);
+         Free (Header);
+      end loop;
+
       Free (Self.Payload);
    end Finalize;
 
@@ -85,9 +100,12 @@ package body Web_Services.SOAP.Messages is
    -- Hash --
    ----------
 
-   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type is
+   function Hash
+    (Item : Web_Services.SOAP.Headers.SOAP_Header_Access)
+       return Ada.Containers.Hash_Type is
    begin
-      return Ada.Strings.Hash (Ada.Tags.External_Tag (Item));
+      return Ada.Strings.Hash (Ada.Tags.External_Tag (Item'Tag));
    end Hash;
+
 
 end Web_Services.SOAP.Messages;
