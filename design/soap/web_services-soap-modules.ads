@@ -41,114 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Tags;
-
-with League.Strings;
-with League.Text_Codecs;
-with XML.SAX.Input_Sources.Streams.Element_Arrays;
-with XML.SAX.Simple_Readers;
-
-with Web_Services.SOAP.Constants;
-with Web_Services.SOAP.Handler_Registry;
-with Web_Services.SOAP.Handlers;
-with Web_Services.SOAP.Message_Decoders;
-with Web_Services.SOAP.Message_Encoders;
 with Web_Services.SOAP.Messages;
-with Web_Services.SOAP.Modules.Registry;
-with Web_Services.SOAP.Payloads;
 
-package body Web_Services.SOAP.Dispatcher is
+package Web_Services.SOAP.Modules is
 
-   --------------
-   -- Dispatch --
-   --------------
+   type Abstract_SOAP_Module is abstract tagged limited null record;
 
-   procedure Dispatch
-    (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Stream       : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access)
-   is
-      use type Web_Services.SOAP.Messages.SOAP_Message_Access;
-      use type Web_Services.SOAP.Payloads.SOAP_Payload_Access;
+   type SOAP_Module_Access is access all Abstract_SOAP_Module'Class;
 
-      Source  : aliased
-        XML.SAX.Input_Sources.Streams.Element_Arrays.
-          Stream_Element_Array_Input_Source;
-      Decoder : aliased
-        Web_Services.SOAP.Message_Decoders.SOAP_Message_Decoder;
-      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      Input   : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Output  : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Handler : Web_Services.SOAP.Handlers.SOAP_Message_Handler;
-      Status  : Reply_Streams.Status_Type;
+   not overriding procedure Receive_Request
+    (Self    : in out Abstract_SOAP_Module;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message;
+     Output  : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
+       is abstract;
 
-   begin
-      --  Parse request data.
-
-      Source.Set_Stream_Element_Array (Input_Data);
-      Reader.Set_Content_Handler (Decoder'Unchecked_Access);
-      Reader.Set_Error_Handler (Decoder'Unchecked_Access);
-      Reader.Set_Lexical_Handler (Decoder'Unchecked_Access);
-      Reader.Parse (Source'Access);
-
-      if Decoder.Success then
-         --  Request was decoded successfully, lookup for handler.
-
-         Input := Decoder.Message;
-         Input.Output := Stream;
-
-         if Input.Payload = null then
-            Handler :=
-              Web_Services.SOAP.Handler_Registry.Resolve (Ada.Tags.No_Tag);
-
-         else
-            Handler :=
-              Web_Services.SOAP.Handler_Registry.Resolve (Input.Payload'Tag);
-         end if;
-
-         --  Execute SOAP Modules.
-
-         Web_Services.SOAP.Modules.Registry.Execute_Receive_Request
-          (Input.all, Output);
-
-         if Output = null then
-            --  Execute handler.
-
-            Handler (Input, Output);
-            Web_Services.SOAP.Messages.Free (Input);
-            Status := Reply_Streams.S_200;
-
-         else
-            --  Return error when SOAP Module returns fault.
-
-            Status := Reply_Streams.S_400;
-         end if;
-
-      else
-         Output := Decoder.Message;
-
-         if Output = null then
-            --  SOAP message handler detects error, but unable to generate
-            --  SOAP fault.
-
-            declare
-               Codec : constant League.Text_Codecs.Text_Codec
-                 := League.Text_Codecs.Codec
-                     (League.Strings.To_Universal_String ("utf-8"));
-
-            begin
-               Stream.Send_Reply
-                 (Status       => Reply_Streams.S_400,
-                  Content_Type => Web_Services.SOAP.Constants.MIME_Text_Plain,
-                  Output_Data  => Codec.Encode (Decoder.Error_String));
-
-               return;
-            end;
-         end if;
-
-         Status := Reply_Streams.S_400;
-      end if;
-
-      Stream.Send_Message (Status, Output);
-   end Dispatch;
-
-end Web_Services.SOAP.Dispatcher;
+end Web_Services.SOAP.Modules;
