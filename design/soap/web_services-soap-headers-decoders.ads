@@ -50,7 +50,7 @@ package Web_Services.SOAP.Headers.Decoders is
 
    pragma Preelaborate;
 
-   type SOAP_Header_Decoder is limited interface;
+   type SOAP_Header_Decoder is abstract tagged limited null record;
 
    type SOAP_Header_Decoder_Access is access all SOAP_Header_Decoder'Class;
 
