@@ -41,49 +41,23 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Interface of decoder of SOAP Body's child element.
+--  This package provides registry of SOAP Header children elements decoders.
+--  Decoders are identified by namespace URI of child element.
 ------------------------------------------------------------------------------
+with Ada.Tags;
+
 with League.Strings;
-with XML.SAX.Attributes;
 
---  with Web_Services.SOAP.Messages;
+package Web_Services.SOAP.Headers.Decoders.Registry is
 
-package Web_Services.SOAP.Header_Decoders is
+   procedure Register
+    (URI : League.Strings.Universal_String;
+     Tag : Ada.Tags.Tag);
 
-   pragma Preelaborate;
+   function Resolve
+    (URI : League.Strings.Universal_String)
+       return Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder_Access;
+   --  Resolves URI to specific decoder. Returns null when there is no decoder
+   --  was registered.
 
-   type SOAP_Header_Decoder is limited interface;
-
-   type SOAP_Header_Decoder_Access is access all SOAP_Header_Decoder'Class;
-
-   not overriding function Create
-    (URI : not null access League.Strings.Universal_String)
-       return SOAP_Header_Decoder is abstract;
-   --  This subprogram is used by dispatching constructor to create instance of
-   --  the decoder.
-
---   not overriding function Message
---    (Self : SOAP_Header_Decoder)
---       return not null Web_Services.SOAP.Messages.SOAP_Message_Access
---         is abstract;
---   --  Returns constructed SOAP message.
-
-   not overriding procedure Characters
-    (Self    : in out SOAP_Header_Decoder;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is null;
-
-   not overriding procedure End_Element
-    (Self           : in out SOAP_Header_Decoder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Success        : in out Boolean) is null;
-
-   not overriding procedure Start_Element
-    (Self           : in out SOAP_Header_Decoder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is null;
-
-end Web_Services.SOAP.Header_Decoders;
+end Web_Services.SOAP.Headers.Decoders.Registry;

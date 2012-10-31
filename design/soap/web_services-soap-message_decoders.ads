@@ -51,7 +51,7 @@ with XML.SAX.Parse_Exceptions;
 with XML.SAX.Lexical_Handlers;
 
 private with Web_Services.SOAP.Payloads.Decoders;
-private with Web_Services.SOAP.Header_Decoders;
+private with Web_Services.SOAP.Headers.Decoders;
 with Web_Services.SOAP.Messages;
 
 package Web_Services.SOAP.Message_Decoders is
@@ -94,7 +94,7 @@ private
         Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access;
       Body_Depth      : Natural := 0;
       Header_Decoder  :
-        Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
+        Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder_Access;
       Header_Depth    : Natural := 0;
       Ignore_Element  : Natural := 0;
       Message         : Web_Services.SOAP.Messages.SOAP_Message_Access;

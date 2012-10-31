@@ -45,7 +45,7 @@ with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Constants;
-with Web_Services.SOAP.Header_Decoders.Registry;
+with Web_Services.SOAP.Headers.Decoders.Registry;
 with Web_Services.SOAP.Payloads.Decoders.Registry;
 with Web_Services.SOAP.Payloads.Faults.Simple;
 
@@ -315,6 +315,7 @@ package body Web_Services.SOAP.Message_Decoders is
       Self.Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
              (Output  => null,
+              Headers => <>,
               Payload =>
                 Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                  (League.Strings.To_Universal_String ("MustUnderstand"),
@@ -346,6 +347,7 @@ package body Web_Services.SOAP.Message_Decoders is
       Self.Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
              (Output  => null,
+              Headers => <>,
               Payload =>
                 Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                  (League.Strings.To_Universal_String ("Sender"),
@@ -376,7 +378,8 @@ package body Web_Services.SOAP.Message_Decoders is
       Self.Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
              (Output  => null,
-         Payload =>
+              Headers => <>,
+              Payload =>
                 Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                  (League.Strings.To_Universal_String ("VersionMismatch"),
                   League.Strings.To_Universal_String ("en-US"),
@@ -429,7 +432,7 @@ package body Web_Services.SOAP.Message_Decoders is
      Success        : in out Boolean)
    is
       use type Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access;
-      use type Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
+      use type Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder_Access;
 
    begin
       if Self.Ignore_Element /= 0 then
@@ -509,7 +512,7 @@ package body Web_Services.SOAP.Message_Decoders is
                --  processing.
 
                Self.Header_Decoder :=
-                 Web_Services.SOAP.Header_Decoders.Registry.Resolve
+                 Web_Services.SOAP.Headers.Decoders.Registry.Resolve
                   (Namespace_URI);
 
                --  [SOAP1.2] 5.2.3 SOAP mustUnderstand Attribute

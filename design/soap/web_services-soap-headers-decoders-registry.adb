@@ -41,53 +41,60 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Base data structure for internal representation of SOAP Message.
-------------------------------------------------------------------------------
-with Ada.Strings.Hash;
-with Ada.Unchecked_Deallocation;
+with Ada.Containers.Hashed_Maps;
+with Ada.Tags.Generic_Dispatching_Constructor;
 
-package body Web_Services.SOAP.Messages is
+with League.Strings.Hash;
+
+package body Web_Services.SOAP.Headers.Decoders.Registry is
+
+   function Create is
+     new Ada.Tags.Generic_Dispatching_Constructor
+          (Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder,
+           League.Strings.Universal_String,
+           Web_Services.SOAP.Headers.Decoders.Create);
+
+   package String_Tag_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Ada.Tags.Tag,
+           League.Strings.Hash,
+           League.Strings."=",
+           Ada.Tags."=");
+
+   Registry : String_Tag_Maps.Map;
 
    --------------
-   -- Finalize --
+   -- Register --
    --------------
 
-   procedure Finalize (Self : in out SOAP_Message) is
+   procedure Register
+    (URI : League.Strings.Universal_String;
+     Tag : Ada.Tags.Tag) is
+   begin
+      Registry.Insert (URI, Tag);
+   end Register;
 
-      procedure Free is
-        new Ada.Unchecked_Deallocation
-             (Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class,
-              Web_Services.SOAP.Payloads.SOAP_Payload_Access);
+   -------------
+   -- Resolve --
+   -------------
+
+   function Resolve
+    (URI : League.Strings.Universal_String)
+       return Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder_Access
+   is
+      Position : constant String_Tag_Maps.Cursor := Registry.Find (URI);
+      Aux      : aliased League.Strings.Universal_String := URI;
 
    begin
-      Free (Self.Payload);
-   end Finalize;
+      if String_Tag_Maps.Has_Element (Position) then
+         return
+           new Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder'Class'
+                (Create (String_Tag_Maps.Element (Position), Aux'Access));
 
-   ----------
-   -- Free --
-   ----------
-
-   procedure Free (Message : in out SOAP_Message_Access) is
-
-      procedure Free is
-        new Ada.Unchecked_Deallocation
-             (Web_Services.SOAP.Messages.SOAP_Message,
-              Web_Services.SOAP.Messages.SOAP_Message_Access);
-
-   begin
-      if Message /= null then
-         Finalize (Message.all);
-         Free (Message);
+      else
+         return null;
       end if;
-   end Free;
+   end Resolve;
 
-   ----------
-   -- Hash --
-   ----------
-
-   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type is
-   begin
-      return Ada.Strings.Hash (Ada.Tags.External_Tag (Item));
-   end Hash;
-
-end Web_Services.SOAP.Messages;
+end Web_Services.SOAP.Headers.Decoders.Registry;

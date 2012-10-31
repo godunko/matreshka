@@ -41,23 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides registry of SOAP Header children elements decoders.
---  Decoders are identified by namespace URI of child element.
+--  Base tagged type to represent information in SOAP Header.
 ------------------------------------------------------------------------------
-with Ada.Tags;
 
-with League.Strings;
+package Web_Services.SOAP.Headers is
 
-package Web_Services.SOAP.Header_Decoders.Registry is
+   pragma Preelaborate;
 
-   procedure Register
-    (URI : League.Strings.Universal_String;
-     Tag : Ada.Tags.Tag);
+   type Abstract_SOAP_Header is abstract tagged limited null record;
+   type SOAP_Header_Access is access all Abstract_SOAP_Header'Class;
 
-   function Resolve
-    (URI : League.Strings.Universal_String)
-       return Web_Services.SOAP.Header_Decoders.SOAP_Header_Decoder_Access;
-   --  Resolves URI to specific decoder. Returns null when there is no decoder
-   --  was registered.
-
-end Web_Services.SOAP.Header_Decoders.Registry;
+end Web_Services.SOAP.Headers;

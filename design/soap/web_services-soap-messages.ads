@@ -43,13 +43,28 @@
 ------------------------------------------------------------------------------
 --  Base data structure for internal representation of SOAP Message.
 ------------------------------------------------------------------------------
+with Ada.Containers.Hashed_Maps;
+with Ada.Tags;
+
+with Web_Services.SOAP.Headers;
 with Web_Services.SOAP.Payloads;
 with Web_Services.SOAP.Reply_Streams;
 
 package Web_Services.SOAP.Messages is
 
+   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type;
+
+   package Header_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Ada.Tags.Tag,
+           Web_Services.SOAP.Headers.SOAP_Header_Access,
+           Hash,
+           Ada.Tags."=",
+           Web_Services.SOAP.Headers."=");
+
    type SOAP_Message is limited record
       Output  : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access;
+      Headers : Header_Maps.Map;
       Payload : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
    end record;
 
