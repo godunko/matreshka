@@ -41,19 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Web_Services.SOAP.Headers.Decoders.Registry;
-with Web_Services.SOAP.Modules.Registry;
-with Web_Services.SOAP.Security.Constants;
-with Web_Services.SOAP.Security.Headers.Decoders;
-with Web_Services.SOAP.Security.Modules;
 
-package body Web_Services.SOAP.Security.Setup is
+package body Web_Services.SOAP.Security.Modules is
 
-   Module : aliased Web_Services.SOAP.Security.Modules.Security_Module;
+   ---------------------
+   -- Receive_Request --
+   ---------------------
 
-begin
-   Web_Services.SOAP.Headers.Decoders.Registry.Register
-    (Web_Services.SOAP.Security.Constants.WSSE_Namespace_URI,
-     Web_Services.SOAP.Security.Headers.Decoders.Security_Header_Decoder'Tag);
-   Web_Services.SOAP.Modules.Registry.Register (Module'Access);
-end Web_Services.SOAP.Security.Setup;
+   overriding procedure Receive_Request
+    (Self    : in out Security_Module;
+     Message : in out Web_Services.SOAP.Messages.SOAP_Message;
+     Output  : in out Web_Services.SOAP.Messages.SOAP_Message_Access) is
+   begin
+      null;
+   end Receive_Request;
+
+end Web_Services.SOAP.Security.Modules;
