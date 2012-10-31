@@ -57,4 +57,6 @@ package Web_Services.SOAP.Security.Headers is
       Created  : League.Strings.Universal_String;
    end record;
 
+   type Username_Token_Header_Access is access all Username_Token_Header'Class;
+
 end Web_Services.SOAP.Security.Headers;

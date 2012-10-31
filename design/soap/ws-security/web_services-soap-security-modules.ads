@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 private with Web_Services.SOAP.Messages;
 with Web_Services.SOAP.Modules;
 
@@ -48,6 +50,16 @@ package Web_Services.SOAP.Security.Modules is
 
    type Security_Module is
      new Web_Services.SOAP.Modules.Abstract_SOAP_Module with private;
+
+   type Authentication_Data_Provider is
+     access procedure
+      (Username : League.Strings.Universal_String;
+       Password : out League.Strings.Universal_String;
+       Success  : out Boolean);
+
+   procedure Set_Authentication_Data_Provider
+    (Provider : Authentication_Data_Provider);
+   --  Sets subprogram to obtain authentication data.
 
 private
 

@@ -53,8 +53,6 @@ package Web_Services.SOAP.Security.Headers.Decoders is
 
 private
 
-   type Username_Token_Header_Access is access all Username_Token_Header'Class;
-
    type Security_Header_Decoder is
      limited new Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder with
    record
