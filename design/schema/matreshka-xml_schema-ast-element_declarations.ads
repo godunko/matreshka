@@ -41,17 +41,31 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-
-with League.Strings.Hash;
+with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
 
-package Matreshka.XML_Schema.AST.Schemas is
+package Matreshka.XML_Schema.AST.Element_Declarations is
 
    pragma Preelaborate;
 
-   type Schema_Node is new Abstract_Node with record
+   type Type_Table (Is_Null : Boolean := True) is record
+      case Is_Null is
+         when False =>
+            Alternatives : Types.Type_Alternative_Lists.List;
+            --  {alternatives}
+            --  A sequence of Type Alternative components.
+
+            Default_Type_Definition : Types.Type_Alternative_Access;
+            --  {default type definition}
+            --  A Type Alternative component. Required.
+         when True =>
+            null;
+      end case;
+   end record;
+
+   type Element_Declaration_Node is
+     new Matreshka.XML_Schema.AST.Types.Term_Node with record
       --  Properties:
       --
 
@@ -59,43 +73,55 @@ package Matreshka.XML_Schema.AST.Schemas is
       --  {annotations}
       --  A sequence of Annotation components.
 
-      Type_Definitions : Types.Type_Definition_Maps.Map;
-      --  {type definitions}
-      --  A set of Type Definition components.
+      Name  : League.Strings.Universal_String;
+      --  {name}
+      --  An xs:NCName value. Required.
 
-      Attribute_Declarations : Types.Attribute_Declaration_Maps.Map;
-      --  {attribute declarations}
-      --  A set of Attribute Declaration components.
+      Target_Namespace  : League.Strings.Universal_String;
+      --  {target namespace}
+      --  An xs:anyURI value. Optional.
 
-      Element_Declarations : Types.Element_Declaration_Maps.Map;
-      --  {element declarations}
-      --  A set of Element Declaration components.
+      Type_Definition : Types.Type_Definition_Access;
+      --  {type definition}
+      --  A Type Definition component. Required.
 
-      Attribute_Group_Definitions : Types.Attribute_Group_Maps.Map;
-      --  {attribute group definitions}
-      --  A set of Attribute Group Definition components.
+      Type_Table : Element_Declarations.Type_Table;
+      --  {type table}
+      --  A Type Table property record. Optional.
 
-      Model_Group_Definitions : Types.Model_Group_Definition_Maps.Map;
-      --  {model group definitions}
-      --  A set of Model Group Definition components.
+      Scope : Types.Scope;
+      --  {scope}
+      --  A Scope property record. Required.
 
-      Notation_Declarations : Types.Notation_Declaration_Maps.Map;
-      --  {notation declarations}
-      --  A set of Notation Declaration components.
+      Value_Constraint : Types.Value_Constraint;
+      --  {value constraint}
+      --  A Value Constraint property record. Optional.
+
+      Nillable : Boolean;
+      --  {nillable}
+      --  An xs:boolean value. Required.
 
       Identity_Constraint_Definitions :
         Types.Identity_Constraint_Definition_Sets.List;
       --  {identity-constraint definitions}
       --  A set of Identity-Constraint Definition components.
 
-      --  Internal data.
+      Substitution_Group_Affiliations : Types.Element_Declaration_Maps.Map;
+      --  {substitution group affiliations}
+      --  A set of Element Declaration components.
 
-      Final_Default            : Matreshka.XML_Schema.AST.Derivation_Set;
+      Substitution_Group_Exclusions : Derivation_Set;
+      --  {substitution group exclusions}
+      --  A subset of {extension, restriction}.
 
-      Target_Namespace         : League.Strings.Universal_String;
-      Target_Namespace_Defined : Boolean;
+      Disallowed_Substitutions : Derivation_Set;
+      --  {disallowed substitutions}
+      --  A subset of {substitution, extension, restriction}.
+
+      Is_Abstract : Boolean;
+      --  {abstract}
+      --  An xs:boolean value. Required.
+
    end record;
 
-   type Schema_Access is access all Schema_Node'Class;
-
-end Matreshka.XML_Schema.AST.Schemas;
+end Matreshka.XML_Schema.AST.Element_Declarations;

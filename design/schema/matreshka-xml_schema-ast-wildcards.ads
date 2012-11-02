@@ -41,17 +41,47 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-
-with League.Strings.Hash;
+with League.Strings;
+with League.String_Vectors;
 
 with Matreshka.XML_Schema.AST.Types;
 
-package Matreshka.XML_Schema.AST.Schemas is
+package Matreshka.XML_Schema.AST.Wildcards is
 
    pragma Preelaborate;
 
-   type Schema_Node is new Abstract_Node with record
+   type Process_Content_Kind is (Skip, Strict, Lax);
+
+   type Namespace_Constraint_Variety is (Any, Enumeration, A_Not);
+
+   type Namespaces is record
+      URIs       : League.String_Vectors.Universal_String_Vector;
+      Has_Absent : Boolean;
+   end record;
+
+   type Disallowed_Names is record
+      Names       : League.String_Vectors.Universal_String_Vector;
+      Has_Defined : Boolean;
+      Has_Sibling : Boolean;
+   end record;
+
+   type Namespace_Constraint is record
+      Variety : Namespace_Constraint_Variety;
+      --  {variety}
+      --  One of {any, enumeration, not}. Required.
+
+      Namespaces : Wildcards.Namespaces;
+      --  {namespaces}
+      --  A set each of whose members is either an xs:anyURI value or
+      --  the distinguished value ·absent·. Required.
+
+      Disallowed_Names : Wildcards.Disallowed_Names;
+      --  {disallowed names}
+      --  A set each of whose members is either an xs:QName value or
+      --  the keyword defined or the keyword sibling. Required.
+   end record;
+
+   type Wildcard_Node is new AST.Types.Term_Node with record
       --  Properties:
       --
 
@@ -59,43 +89,13 @@ package Matreshka.XML_Schema.AST.Schemas is
       --  {annotations}
       --  A sequence of Annotation components.
 
-      Type_Definitions : Types.Type_Definition_Maps.Map;
-      --  {type definitions}
-      --  A set of Type Definition components.
+      Namespace_Constraint : Wildcards.Namespace_Constraint;
+      --  {namespace constraint}
+      --  A Namespace Constraint property record. Required.
 
-      Attribute_Declarations : Types.Attribute_Declaration_Maps.Map;
-      --  {attribute declarations}
-      --  A set of Attribute Declaration components.
-
-      Element_Declarations : Types.Element_Declaration_Maps.Map;
-      --  {element declarations}
-      --  A set of Element Declaration components.
-
-      Attribute_Group_Definitions : Types.Attribute_Group_Maps.Map;
-      --  {attribute group definitions}
-      --  A set of Attribute Group Definition components.
-
-      Model_Group_Definitions : Types.Model_Group_Definition_Maps.Map;
-      --  {model group definitions}
-      --  A set of Model Group Definition components.
-
-      Notation_Declarations : Types.Notation_Declaration_Maps.Map;
-      --  {notation declarations}
-      --  A set of Notation Declaration components.
-
-      Identity_Constraint_Definitions :
-        Types.Identity_Constraint_Definition_Sets.List;
-      --  {identity-constraint definitions}
-      --  A set of Identity-Constraint Definition components.
-
-      --  Internal data.
-
-      Final_Default            : Matreshka.XML_Schema.AST.Derivation_Set;
-
-      Target_Namespace         : League.Strings.Universal_String;
-      Target_Namespace_Defined : Boolean;
+      Process_Contents : Process_Content_Kind;
+      --  {process contents}
+      --  One of {skip, strict, lax}. Required.
    end record;
 
-   type Schema_Access is access all Schema_Node'Class;
-
-end Matreshka.XML_Schema.AST.Schemas;
+end Matreshka.XML_Schema.AST.Wildcards;

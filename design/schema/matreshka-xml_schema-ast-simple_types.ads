@@ -53,6 +53,8 @@ package Matreshka.XML_Schema.AST.Simple_Types is
      new Matreshka.XML_Schema.AST.Types.Type_Definition_Node with record
       --  Properties:
       --
+
+      Annotations : Types.Annotation_Lists.List;
       --  {annotations}
       --  A sequence of Annotation components.
 
@@ -60,6 +62,7 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  {name}
       --  An xs:NCName value. Optional.
 
+      Target_Namespace  : League.Strings.Universal_String;
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
@@ -67,12 +70,15 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  {final}
       --  A subset of {extension, restriction, list, union}.
 
+      Context : Types.Abstract_Node_Access;
       --  {context}
       --  Required if {name} is ·absent·, otherwise must be ·absent·.
       --
       --  Either an Attribute Declaration, an Element Declaration, a Complex
       --  Type Definition, or a Simple Type Definition.
-      --
+
+
+      Base_Type_Definition : Types.Type_Definition_Access;
       --  {base type definition}
       --  A Type Definition component. Required.
       --
@@ -87,10 +93,14 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  {fundamental facets}
       --  A set of Fundamental Facet components.
       --
+
+      Variety : Simple_Type_Variety;
       --  {variety}
       --  One of {atomic, list, union}. Required for all Simple Type
       --  Definitions except ·xs:anySimpleType·, in which it is ·absent·.
       --
+
+      Simple_Type_Definition : Types.Simple_Type_Definition_Access;
       --  {primitive type definition}
       --  A Simple Type Definition component. With one exception, required if
       --  {variety} is atomic, otherwise must be ·absent·. The exception is
@@ -98,6 +108,8 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --
       --  If non-·absent·, must be a primitive definition.
       --
+
+      Item_Type_Definition : Types.Simple_Type_Definition_Access;
       --  {item type definition}
       --  A Simple Type Definition component. Required if {variety} is list,
       --  otherwise must be ·absent·.
@@ -108,6 +120,8 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  the value must not itself be a list type (have {variety} = list) or
       --  have any basic members which are list types.
       --
+
+      Member_Type_Definitions : Types.Simple_Type_Definition_Lists.List;
       --  {member type definitions}
       --  A sequence of primitive or ordinary Simple Type Definition
       --  components.

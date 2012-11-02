@@ -41,17 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-
-with League.Strings.Hash;
+with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
 
-package Matreshka.XML_Schema.AST.Schemas is
+package Matreshka.XML_Schema.AST.Identity_Constraints is
 
    pragma Preelaborate;
 
-   type Schema_Node is new Abstract_Node with record
+   type Category is (Key, Keyref, Unique);
+
+   type Identity_Constraint_Definition_Node is new Abstract_Node with record
       --  Properties:
       --
 
@@ -59,43 +59,34 @@ package Matreshka.XML_Schema.AST.Schemas is
       --  {annotations}
       --  A sequence of Annotation components.
 
-      Type_Definitions : Types.Type_Definition_Maps.Map;
-      --  {type definitions}
-      --  A set of Type Definition components.
+      Name  : League.Strings.Universal_String;
+      --  {name}
+      --  An xs:NCName value. Required.
 
-      Attribute_Declarations : Types.Attribute_Declaration_Maps.Map;
-      --  {attribute declarations}
-      --  A set of Attribute Declaration components.
+      Target_Namespace  : League.Strings.Universal_String;
+      --  {target namespace}
+      --  An xs:anyURI value. Optional.
 
-      Element_Declarations : Types.Element_Declaration_Maps.Map;
-      --  {element declarations}
-      --  A set of Element Declaration components.
+      Identity_Constraint_Category : Category;
+      --  {identity-constraint category}
+      --  One of {key, keyref, unique}. Required.
 
-      Attribute_Group_Definitions : Types.Attribute_Group_Maps.Map;
-      --  {attribute group definitions}
-      --  A set of Attribute Group Definition components.
+      Selector : Types.XPath_Expression;
+      --  {selector}
+      --  An XPath Expression property record. Required.
 
-      Model_Group_Definitions : Types.Model_Group_Definition_Maps.Map;
-      --  {model group definitions}
-      --  A set of Model Group Definition components.
+      Fields : Types.XPath_Expression_Lists.List;
+      --  {fields}
+      --  A sequence of XPath Expression property records.
 
-      Notation_Declarations : Types.Notation_Declaration_Maps.Map;
-      --  {notation declarations}
-      --  A set of Notation Declaration components.
-
-      Identity_Constraint_Definitions :
-        Types.Identity_Constraint_Definition_Sets.List;
-      --  {identity-constraint definitions}
-      --  A set of Identity-Constraint Definition components.
-
-      --  Internal data.
-
-      Final_Default            : Matreshka.XML_Schema.AST.Derivation_Set;
-
-      Target_Namespace         : League.Strings.Universal_String;
-      Target_Namespace_Defined : Boolean;
+      Referenced_Key : Types.Identity_Constraint_Definition_Access;
+      --  {referenced key}
+      --  An Identity-Constraint Definition component. Required
+      --  if {identity-constraint category} is keyref,
+      --  otherwise ({identity-constraint category} is key or unique) must be
+      --  ·absent·.
+      --  If a value is present, its {identity-constraint category} must be
+      --  key or unique.
    end record;
 
-   type Schema_Access is access all Schema_Node'Class;
-
-end Matreshka.XML_Schema.AST.Schemas;
+end Matreshka.XML_Schema.AST.Identity_Constraints;

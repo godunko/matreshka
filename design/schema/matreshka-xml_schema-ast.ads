@@ -48,7 +48,8 @@ package Matreshka.XML_Schema.AST is
 
    type Abstract_Node is abstract tagged limited null record;
 
-   type Type_Derivation_Control is (Extension, Restriction, List, Union);
+   type Type_Derivation_Control is
+     (Extension, Restriction, List, Union, Substitution);
 
    type Derivation_Set is array (Type_Derivation_Control) of Boolean;
    pragma Pack (Derivation_Set);

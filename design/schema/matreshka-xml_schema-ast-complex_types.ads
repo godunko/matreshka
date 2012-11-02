@@ -41,61 +41,112 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-
-with League.Strings.Hash;
+with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
 
-package Matreshka.XML_Schema.AST.Schemas is
+package Matreshka.XML_Schema.AST.Complex_Types is
 
    pragma Preelaborate;
 
-   type Schema_Node is new Abstract_Node with record
+   type Open_Content_Mode is (Interleave, Suffix);
+
+   type Open_Content is record
+      Mode : Open_Content_Mode;
+      --  {mode}
+      --  One of {interleave, suffix}. Required.
+
+      Wildcard : Types.Wildcard_Access;
+      --  {wildcard}
+      --  A Wildcard component. Required.
+   end record;
+
+   type Content_Type_Variety is (Empty, Simple, Element_Only, Mixed);
+
+   type Content_Type (Variety : Content_Type_Variety := Empty) is record
+      --  {variety}
+      --  One of {empty, simple, element-only, mixed}. Required.
+
+      case Variety is
+         when Element_Only | Mixed =>
+            Particle : Types.Particle_Access;
+            --  {particle}
+            --  A Particle component. Required if {variety} is element-only or
+            --  mixed, otherwise must be ·absent·.
+
+            Open_Content : Complex_Types.Open_Content;
+            --  {open content}
+            --  An Open Content property record. Optional if {variety} is
+            --  element-only or mixed, otherwise must be ·absent·.
+
+         when Simple =>
+            Simple_Type_Definition : Types.Simple_Type_Definition_Access;
+            --  {simple type definition}
+            --  A Simple Type Definition component. Required if {variety} is
+            --  simple, otherwise must be ·absent·.
+         when Empty =>
+            null;
+      end case;
+   end record;
+
+   type Complex_Type_Definition_Node is
+     new Matreshka.XML_Schema.AST.Types.Type_Definition_Node with record
       --  Properties:
       --
 
       Annotations : Types.Annotation_Lists.List;
       --  {annotations}
       --  A sequence of Annotation components.
+      --  {name}
 
-      Type_Definitions : Types.Type_Definition_Maps.Map;
-      --  {type definitions}
-      --  A set of Type Definition components.
+      Name  : League.Strings.Universal_String;
+      --  An xs:NCName value. Optional.
 
-      Attribute_Declarations : Types.Attribute_Declaration_Maps.Map;
-      --  {attribute declarations}
-      --  A set of Attribute Declaration components.
+      Target_Namespace  : League.Strings.Universal_String;
+      --  {target namespace}
+      --  An xs:anyURI value. Optional.
 
-      Element_Declarations : Types.Element_Declaration_Maps.Map;
-      --  {element declarations}
-      --  A set of Element Declaration components.
+      Base_Type_Definition : Types.Type_Definition_Access;
+      --  {base type definition}
+      --  A type definition component. Required.
 
-      Attribute_Group_Definitions : Types.Attribute_Group_Maps.Map;
-      --  {attribute group definitions}
-      --  A set of Attribute Group Definition components.
+      Final : Derivation_Set;
+      --  {final}
+      --  A subset of {extension, restriction}.
 
-      Model_Group_Definitions : Types.Model_Group_Definition_Maps.Map;
-      --  {model group definitions}
-      --  A set of Model Group Definition components.
+      Context : Types.Abstract_Node_Access;
+      --  {context}
+      --  Required if {name} is ·absent·, otherwise must be ·absent·.
+      --  Either an Element Declaration or a Complex Type Definition.
 
-      Notation_Declarations : Types.Notation_Declaration_Maps.Map;
-      --  {notation declarations}
-      --  A set of Notation Declaration components.
+      Derivation_Method : Type_Derivation_Control;
+      --  {derivation method}
+      --  One of {extension, restriction}. Required.
 
-      Identity_Constraint_Definitions :
-        Types.Identity_Constraint_Definition_Sets.List;
-      --  {identity-constraint definitions}
-      --  A set of Identity-Constraint Definition components.
+      Is_Abstract : Boolean;
+      --  {abstract}
+      --  An xs:boolean value. Required.
 
-      --  Internal data.
+      Attribute_Uses : Types.Attribute_Use_Sets.List;
+      --  {attribute uses}
+      --  A set of Attribute Use components.
 
-      Final_Default            : Matreshka.XML_Schema.AST.Derivation_Set;
+      Attribute_Wildcard : Types.Wildcard_Access;
+      --  {attribute wildcard}
+      --  A Wildcard component. Optional.
 
-      Target_Namespace         : League.Strings.Universal_String;
-      Target_Namespace_Defined : Boolean;
+      Content_Type : Complex_Types.Content_Type;
+      --  {content type}
+      --  A Content Type property record. Required.
+
+      Prohibited_Substitutions : Derivation_Set;
+      --  {prohibited substitutions}
+      --  A subset of {extension, restriction}.
+
+      Assertions : Types.Assertion_Lists.List;
+      --  {assertions}
+      --  A sequence of Assertion components.
+
    end record;
 
-   type Schema_Access is access all Schema_Node'Class;
-
-end Matreshka.XML_Schema.AST.Schemas;
+end Matreshka.XML_Schema.AST.Complex_Types;
