@@ -488,7 +488,8 @@ package body Web_Services.SOAP.Security.Modules is
 
    begin
       while Item'Last - First > 0 loop
-         Result (Unused) := (Decode (Item (First)) * 16) or Decode (Item (First + 1));
+         Result (Unused) :=
+          (Decode (Item (First)) * 16) or Decode (Item (First + 1));
          Unused := Unused + 1;
          First := First + 2;
       end loop;
