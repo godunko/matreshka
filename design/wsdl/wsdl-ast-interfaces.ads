@@ -74,9 +74,6 @@ package WSDL.AST.Interfaces is
      new Ada.Containers.Vectors (Positive, Interface_Access);
 
    type Interface_Node is new WSDL.AST.Components.Component_Node with record
-      Local_Name           : League.Strings.Universal_String;
-      --  Name of the interface.
-
       Extends              : Qualified_Name_Sets.Set;
       --  Names of interface components that this interface derives from.
 

@@ -58,9 +58,6 @@ package WSDL.AST.Bindings is
            WSDL.AST.Operations."=");
 
    type Binding_Node is new WSDL.AST.Components.Component_Node with record
-      Local_Name         : League.Strings.Universal_String;
-      --  Name of the binding.
-
       Interface_Name     : Qualified_Name;
       --  Name of interface.
 

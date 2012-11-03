@@ -41,27 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Components are direct children of 'description' element.
-------------------------------------------------------------------------------
-limited with WSDL.AST.Descriptions;
+with WSDL.AST.Descriptions;
 
-package WSDL.AST.Components is
+package body WSDL.AST.Components is
 
-   pragma Preelaborate;
-
-   type Description_Access is
-     access all WSDL.AST.Descriptions.Description_Node'Class;
-
-   type Component_Node is abstract new Abstract_Node with record
-      Parent : Description_Access;
-      --  Parent description element.
-
-      Local_Name     : League.Strings.Universal_String;
-      --  Name of the component.
-   end record;
+   ----------
+   -- Name --
+   ----------
 
    not overriding function Name
-    (Self : not null access Component_Node) return Qualified_Name;
-   --  Returns value of {name} property of the component.
+    (Self : not null access Component_Node) return Qualified_Name is
+   begin
+      return (Self.Parent.Target_Namespace, Self.Local_Name);
+   end Name;
 
 end WSDL.AST.Components;
