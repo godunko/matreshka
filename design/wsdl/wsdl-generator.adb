@@ -41,18 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Ordered_Maps;
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
 with League.Strings;
 
 with WSDL.AST.Bindings;
 with WSDL.AST.Interfaces;
+with WSDL.AST.Operations;
 with WSDL.AST.Services;
 with WSDL.Constants;
 
 package body WSDL.Generator is
 
    use WSDL.Constants;
+
+   package Operation_Maps is
+     new Ada.Containers.Ordered_Maps
+          (League.Strings.Universal_String,
+           WSDL.AST.Operations.Interface_Operation_Access,
+           League.Strings."<",
+           WSDL.AST.Operations."=");
+
+   procedure Put_Line (Item : League.Strings.Universal_String);
 
    procedure Put_Line (Item : WSDL.AST.Qualified_Name);
    --  Format and output qualified name.
@@ -64,6 +75,51 @@ package body WSDL.Generator is
     (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access;
      Binding_Node   : out WSDL.AST.Bindings.Binding_Access);
 
+   function Compute_All_Operations
+    (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access)
+       return Operation_Maps.Map;
+
+   ----------------------------
+   -- Compute_All_Operations --
+   ----------------------------
+
+   function Compute_All_Operations
+    (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access)
+       return Operation_Maps.Map
+   is
+      Result : Operation_Maps.Map;
+
+      procedure Analyze_Interface
+       (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access);
+
+      -----------------------
+      -- Analyze_Interface --
+      -----------------------
+
+      procedure Analyze_Interface
+       (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access) is
+      begin
+         --  Fill result by own operations of the interface, but excluding
+         --  all operations which names is in the result already because they
+         --  come from extended interface.
+
+         for Operation_Node of Interface_Node.Interface_Operations loop
+            if not Result.Contains (Operation_Node.Local_Name) then
+               Result.Insert (Operation_Node.Local_Name, Operation_Node);
+            end if;
+         end loop;
+
+         for Extended_Interface_Node of Interface_Node.Extended_Interfaces loop
+            Analyze_Interface (Extended_Interface_Node);
+         end loop;
+      end Analyze_Interface;
+
+   begin
+      Analyze_Interface (Interface_Node);
+
+      return Result;
+   end Compute_All_Operations;
+
    --------------
    -- Generate --
    --------------
@@ -72,7 +128,6 @@ package body WSDL.Generator is
     (Description : not null WSDL.AST.Descriptions.Description_Access) is
    begin
       for Service_Node of Description.Services loop
-         Put_Line (Service_Node.Name);
          Generate_Service (Service_Node);
       end loop;
    end Generate;
@@ -88,9 +143,10 @@ package body WSDL.Generator is
       use type WSDL.AST.Bindings.Binding_Access;
 
       Binding_Node : WSDL.AST.Bindings.Binding_Access;
+      Operations   : Operation_Maps.Map;
 
    begin
-      Put_Line (Service_Node.Interface_Node.Name);
+      --  Lookup for corresponding binding component.
 
       Lookup_Binding (Service_Node.Interface_Node, Binding_Node);
 
@@ -99,8 +155,6 @@ package body WSDL.Generator is
 
          raise Program_Error;
       end if;
-
-      Put_Line (Binding_Node.Name);
 
       if Binding_Node.Binding_Type /= SOAP_Binding_Type then
          --  This binding type is not supported.
@@ -113,6 +167,25 @@ package body WSDL.Generator is
 
          raise Program_Error;
       end if;
+
+      --  Compute set of all interface's operations, including inherited.
+
+      Operations := Compute_All_Operations (Service_Node.Interface_Node);
+
+      --  Generate package for Ada interface type specification.
+
+      Put_Line ("package " & Service_Node.Interface_Node.Local_Name & " is");
+      New_Line;
+      Put_Line ("   type " & Service_Node.Interface_Node.Local_Name & " is limited interface;");
+
+      for Operation_Node of Operations loop
+         New_Line;
+         Put_Line ("   not overriding procedure " & Operation_Node.Local_Name);
+         Put_Line ("    (Self : in out " & Service_Node.Interface_Node.Local_Name & ");");
+      end loop;
+
+      New_Line;
+      Put_Line ("end " & Service_Node.Interface_Node.Local_Name & ";");
    end Generate_Service;
 
    --------------------
@@ -145,6 +218,15 @@ package body WSDL.Generator is
          end if;
       end loop;
    end Lookup_Binding;
+
+   --------------
+   -- Put_Line --
+   --------------
+
+   procedure Put_Line (Item : League.Strings.Universal_String) is
+   begin
+      Put_Line (Item.To_Wide_Wide_String);
+   end Put_Line;
 
    --------------
    -- Put_Line --
