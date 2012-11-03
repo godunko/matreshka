@@ -48,5 +48,14 @@ private package WSDL.Parsers.SOAP is
     (Attributes : XML.SAX.Attributes.SAX_Attributes;
      Node       : not null WSDL.AST.Bindings.Binding_Access;
      Success    : in out Boolean);
+   --  Process start of binding element by analyzing SOAP Extension's
+   --  attributes.
+
+   procedure Start_Binding_Operation_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Node       : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Success    : in out Boolean);
+   --  Process start of binding operation element by analyzing SOAP Extension's
+   --  attributes.
 
 end WSDL.Parsers.SOAP;

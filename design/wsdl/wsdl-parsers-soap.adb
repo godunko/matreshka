@@ -56,6 +56,8 @@ package body WSDL.Parsers.SOAP is
      Node       : not null WSDL.AST.Bindings.Binding_Access;
      Success    : in out Boolean) is
    begin
+      --  Analyze 'wsoap:version' attribute.
+      --
       --  SOAPBinding-2069: "Every SOAP binding MUST indicate what version of
       --  SOAP is in use for the operations of the interface that this binding
       --  applies to."
@@ -74,6 +76,8 @@ package body WSDL.Parsers.SOAP is
          Node.SOAP.Version := SOAP_Version_12_Literal;
       end if;
 
+      --  Analyze 'wsoap:protocol' attribute.
+      --
       --  SOAPBinding-2070: "Every SOAP binding MUST indicate what underlying
       --  protocol is in use."
       --
@@ -87,7 +91,46 @@ package body WSDL.Parsers.SOAP is
       end if;
 
       Node.SOAP.Underlying_Protocol :=
-        Attributes.Value (SOAP_Namespace_URI, Protocol_Attribute);
+      Attributes.Value (SOAP_Namespace_URI, Protocol_Attribute);
+
+      --  Analyze mepDefault attribute.
+      --
+      --  SOAPMEPDefault-2073: "A xs:anyURI, which is an absolute IRI as
+      --  defined by [IETF RFC 3987], to the Binding component."
+      --
+      --  XXX Check of SOAPMEPDefault-2073 assertion is not implemented.
+
+      Node.SOAP.MEP_Default :=
+        Attributes.Value (SOAP_Namespace_URI, MEP_Default_Attribute);
    end Start_Binding_Element;
+
+   -------------------------------------
+   -- Start_Binding_Operation_Element --
+   -------------------------------------
+
+   procedure Start_Binding_Operation_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Node       : not null WSDL.AST.Operations.Binding_Operation_Access;
+     Success    : in out Boolean) is
+   begin
+      --  Analyze 'wsoap:mep' attribute.
+      --
+      --  SOAPMEP-2074: "A xs:anyURI, which is an absolute IRI as defined by
+      --  [IETF RFC 3987], to the Binding Operation component."
+      --
+      --  XXX Check of SOAPMEP-2074 assertion is not implemented.
+
+      Node.SOAP.MEP := Attributes.Value (SOAP_Namespace_URI, MEP_Attribute);
+
+      --  Analyze 'wsoap:action' attribute.
+      --
+      --  SOAPAction-2075: "A xs:anyURI, which is an absolute IRI as defined by
+      --  [IETF RFC 3987], to the Binding Operation component."
+      --
+      --  XXX Check of SOAPAction-2075 assertion is not implemented.
+
+      Node.SOAP.Action :=
+        Attributes.Value (SOAP_Namespace_URI, Action_Attribute);
+   end Start_Binding_Operation_Element;
 
 end WSDL.Parsers.SOAP;

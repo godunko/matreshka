@@ -126,9 +126,15 @@ package WSDL.Constants is
    SOAP_Namespace_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl/soap");
 
-   Protocol_Attribute : constant League.Strings.Universal_String
+   Action_Attribute         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("action");
+   MEP_Attribute         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("mep");
+   MEP_Default_Attribute : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("mepDefault");
+   Protocol_Attribute    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("protocol");
-   Version_Attribute  : constant League.Strings.Universal_String
+   Version_Attribute     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("version");
 
    SOAP_Version_12_Literal : constant League.Strings.Universal_String

@@ -63,6 +63,9 @@ package WSDL.AST.Bindings is
 
       Underlying_Protocol : League.Strings.Universal_String;
       --  Value of {soap underlying protocol} property.
+
+      MEP_Default         : League.Strings.Universal_String;
+      --  Value of {soap mep default} property.
    end record;
 
    type Binding_Node is new WSDL.AST.Components.Component_Node with record

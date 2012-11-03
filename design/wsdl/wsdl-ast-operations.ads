@@ -110,6 +110,14 @@ package WSDL.AST.Operations is
    -- Binding Operation --
    -----------------------
 
+   type SOAP_Binding_Operation_Extension is record
+      MEP    : League.Strings.Universal_String;
+      --  Value of {soap mep} property.
+
+      Action : League.Strings.Universal_String;
+      --  Value of {soap action} property.
+   end record;
+
    type Binding_Operation_Node is new Abstract_Node with record
       Ref                 : Qualified_Name;
       --  Name of the related interface operation.
@@ -119,6 +127,9 @@ package WSDL.AST.Operations is
 
       Interface_Operation : Interface_Operation_Access;
       --  Value of {interface operation} property.
+
+      SOAP                : SOAP_Binding_Operation_Extension;
+      --  SOAP Binding extension information;
    end record;
 
    type Binding_Operation_Access is
