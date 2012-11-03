@@ -41,46 +41,122 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
+with League.Strings;
 
-with WSDL.AST;
-with WSDL.Debug;
-with WSDL.Generator;
-with WSDL.Iterators.Containment;
-with WSDL.Parsers;
-with WSDL.Name_Resolvers;
+with WSDL.AST.Bindings;
+with WSDL.AST.Interfaces;
+with WSDL.AST.Services;
+with WSDL.Constants;
 
-procedure WSDL.Driver is
-   Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-   Handler : aliased WSDL.Parsers.WSDL_Parser;
-   Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+package body WSDL.Generator is
 
-begin
-   --  Load document.
+   use WSDL.Constants;
 
-   Reader.Set_Content_Handler (Handler'Unchecked_Access);
-   Source.Open_By_File_Name (League.Application.Arguments.Element (1));
-   Reader.Parse (Source'Unchecked_Access);
+   procedure Put_Line (Item : WSDL.AST.Qualified_Name);
+   --  Format and output qualified name.
 
-   --  Resolve names.
+   procedure Generate_Service
+    (Service_Node : not null WSDL.AST.Services.Service_Access);
 
-   declare
-      Resolver : WSDL.Name_Resolvers.Name_Resolver;
-      Iterator : WSDL.Iterators.Containment.Containment_Iterator;
-      Control  : WSDL.Iterators.Traverse_Control := WSDL.Iterators.Continue;
+   procedure Lookup_Binding
+    (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access;
+     Binding_Node   : out WSDL.AST.Bindings.Binding_Access);
+
+   --------------
+   -- Generate --
+   --------------
+
+   procedure Generate
+    (Description : not null WSDL.AST.Descriptions.Description_Access) is
+   begin
+      for Service_Node of Description.Services loop
+         Put_Line (Service_Node.Name);
+         Generate_Service (Service_Node);
+      end loop;
+   end Generate;
+
+   ----------------------
+   -- Generate_Service --
+   ----------------------
+
+   procedure Generate_Service
+    (Service_Node : not null WSDL.AST.Services.Service_Access)
+   is
+      use type League.Strings.Universal_String;
+      use type WSDL.AST.Bindings.Binding_Access;
+
+      Binding_Node : WSDL.AST.Bindings.Binding_Access;
 
    begin
-      Resolver.Set_Root (Handler.Get_Description);
-      Iterator.Visit
-       (Resolver, WSDL.AST.Node_Access (Handler.Get_Description), Control);
-   end;
+      Put_Line (Service_Node.Interface_Node.Name);
 
-   WSDL.Debug.Dump (Handler.Get_Description);
+      Lookup_Binding (Service_Node.Interface_Node, Binding_Node);
 
-   --  Generate code.
+      if Binding_Node = null then
+         --  There is no binding for interface element specified.
 
-   WSDL.Generator.Generate (Handler.Get_Description);
-end WSDL.Driver;
+         raise Program_Error;
+      end if;
+
+      Put_Line (Binding_Node.Name);
+
+      if Binding_Node.Binding_Type /= SOAP_Binding_Type then
+         --  This binding type is not supported.
+
+         raise Program_Error;
+      end if;
+
+      if Binding_Node.SOAP.Version /= SOAP_Version_12_Literal then
+         --  This version of SOAP is not supported.
+
+         raise Program_Error;
+      end if;
+   end Generate_Service;
+
+   --------------------
+   -- Lookup_Binding --
+   --------------------
+
+   procedure Lookup_Binding
+    (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access;
+     Binding_Node   : out WSDL.AST.Bindings.Binding_Access)
+   is
+      use type WSDL.AST.Interfaces.Interface_Access;
+
+   begin
+      Binding_Node := null;
+
+      for Binding of Interface_Node.Parent.Bindings loop
+         --  Use default binding when found. Default value will be overwritten
+         --  when interface specific binding will be found.
+
+         if Binding.Interface_Node = null then
+            Binding_Node := Binding;
+         end if;
+
+         --  Use interface specific binding when found.
+
+         if Binding.Interface_Node = Interface_Node then
+            Binding_Node := Binding;
+
+            exit;
+         end if;
+      end loop;
+   end Lookup_Binding;
+
+   --------------
+   -- Put_Line --
+   --------------
+
+   procedure Put_Line (Item : WSDL.AST.Qualified_Name) is
+   begin
+      Put ('{');
+      Put (Item.Namespace_URI.To_Wide_Wide_String);
+      Put ('}');
+      Put (Item.Local_Name.To_Wide_Wide_String);
+      New_Line;
+   end Put_Line;
+
+end WSDL.Generator;

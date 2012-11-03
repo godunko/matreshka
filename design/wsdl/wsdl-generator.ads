@@ -41,46 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+with WSDL.AST.Descriptions;
 
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
+package WSDL.Generator is
 
-with WSDL.AST;
-with WSDL.Debug;
-with WSDL.Generator;
-with WSDL.Iterators.Containment;
-with WSDL.Parsers;
-with WSDL.Name_Resolvers;
+   procedure Generate
+    (Description : not null WSDL.AST.Descriptions.Description_Access);
+   --  Generates code for all serives iof the given description.
 
-procedure WSDL.Driver is
-   Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-   Handler : aliased WSDL.Parsers.WSDL_Parser;
-   Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-
-begin
-   --  Load document.
-
-   Reader.Set_Content_Handler (Handler'Unchecked_Access);
-   Source.Open_By_File_Name (League.Application.Arguments.Element (1));
-   Reader.Parse (Source'Unchecked_Access);
-
-   --  Resolve names.
-
-   declare
-      Resolver : WSDL.Name_Resolvers.Name_Resolver;
-      Iterator : WSDL.Iterators.Containment.Containment_Iterator;
-      Control  : WSDL.Iterators.Traverse_Control := WSDL.Iterators.Continue;
-
-   begin
-      Resolver.Set_Root (Handler.Get_Description);
-      Iterator.Visit
-       (Resolver, WSDL.AST.Node_Access (Handler.Get_Description), Control);
-   end;
-
-   WSDL.Debug.Dump (Handler.Get_Description);
-
-   --  Generate code.
-
-   WSDL.Generator.Generate (Handler.Get_Description);
-end WSDL.Driver;
+end WSDL.Generator;
