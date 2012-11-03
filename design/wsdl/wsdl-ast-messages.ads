@@ -59,7 +59,7 @@ package WSDL.AST.Messages is
       --  Value of {parent} property.
 
       Message_Label         : League.Strings.Universal_String;
-      --  Value of {{message label} property.
+      --  Value of {message label} property.
 
       Direction             : Message_Directions;
       --  Value of {direction} property.
