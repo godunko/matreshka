@@ -116,4 +116,22 @@ package WSDL.Constants is
    Other_Literal : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("#other");
 
+   --------------------
+   --  SOAP Binding  --
+   --------------------
+
+   SOAP_Binding_Type : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl/soap");
+
+   SOAP_Namespace_URI : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl/soap");
+
+   Protocol_Attribute : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("protocol");
+   Version_Attribute  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("version");
+
+   SOAP_Version_12_Literal : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("1.2");
+
 end WSDL.Constants;

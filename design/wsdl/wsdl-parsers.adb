@@ -49,6 +49,7 @@ with WSDL.AST.Messages;
 with WSDL.AST.Operations;
 with WSDL.AST.Types;
 with WSDL.Constants;
+with WSDL.Parsers.SOAP;
 
 package body WSDL.Parsers is
 
@@ -302,6 +303,12 @@ package body WSDL.Parsers is
       --  Analyze 'type' attribute.
 
       Node.Binding_Type := Attributes.Value (Type_Attribute);
+
+      if Node.Binding_Type = SOAP_Binding_Type then
+         --  Call SOAP Binding handler.
+
+         WSDL.Parsers.SOAP.Start_Binding_Element (Attributes, Node, Success);
+      end if;
    end Start_Binding_Element;
 
    -------------------------------------

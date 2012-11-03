@@ -41,62 +41,53 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Vectors;
+with WSDL.Constants;
 
-with WSDL.AST.Components;
-with WSDL.AST.Interfaces;
-with WSDL.AST.Operations;
+package body WSDL.Parsers.SOAP is
 
-package WSDL.AST.Bindings is
+   use WSDL.Constants;
 
-   pragma Preelaborate;
+   ---------------------------
+   -- Start_Binding_Element --
+   ---------------------------
 
-   package Binding_Operation_Vectors is
-     new Ada.Containers.Vectors
-          (Positive,
-           WSDL.AST.Operations.Binding_Operation_Access,
-           WSDL.AST.Operations."=");
+   procedure Start_Binding_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Node       : not null WSDL.AST.Bindings.Binding_Access;
+     Success    : in out Boolean) is
+   begin
+      --  SOAPBinding-2069: "Every SOAP binding MUST indicate what version of
+      --  SOAP is in use for the operations of the interface that this binding
+      --  applies to."
+      --
+      --  "{soap version} The actual value of the wsoap:version attribute
+      --  information item, if present; otherwise "1.2"."
+      --
+      --  Thus, we don't need to check and issue error for SOAPBinding-2069,
+      --  but we need to set default value.
 
-   type SOAP_Binding_Extension is record
-      Version             : League.Strings.Universal_String;
-      --  Value of {soap version} property.
+      if Attributes.Is_Specified (SOAP_Namespace_URI, Version_Attribute) then
+         Node.SOAP.Version :=
+           Attributes.Value (SOAP_Namespace_URI, Version_Attribute);
 
-      Underlying_Protocol : League.Strings.Universal_String;
-      --  Value of {soap underlying protocol} property.
-   end record;
+      else
+         Node.SOAP.Version := SOAP_Version_12_Literal;
+      end if;
 
-   type Binding_Node is new WSDL.AST.Components.Component_Node with record
-      Interface_Name     : Qualified_Name;
-      --  Name of interface.
+      --  SOAPBinding-2070: "Every SOAP binding MUST indicate what underlying
+      --  protocol is in use."
+      --
+      --  There is no default value for this property, thus report error when
+      --  this attribute is absent.
 
-      Interface_Node     : WSDL.AST.Interfaces.Interface_Access;
-      --  Value of {interface} property.
+      if not Attributes.Is_Specified
+              (SOAP_Namespace_URI, Protocol_Attribute)
+      then
+         raise Program_Error;
+      end if;
 
-      Binding_Type       : League.Strings.Universal_String;
-      --  Value of {type} property.
+      Node.SOAP.Underlying_Protocol :=
+        Attributes.Value (SOAP_Namespace_URI, Protocol_Attribute);
+   end Start_Binding_Element;
 
-      Binding_Operations : Binding_Operation_Vectors.Vector;
-
-      SOAP               : SOAP_Binding_Extension;
-      --  SOAP Binding specific components.
-   end record;
-
-   type Binding_Access is access all Binding_Node'Class;
-
-   overriding procedure Enter
-    (Self    : not null access Binding_Node;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
-
-   overriding procedure Leave
-    (Self    : not null access Binding_Node;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
-
-   overriding procedure Visit
-    (Self     : not null access Binding_Node;
-     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
-     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control  : in out WSDL.Iterators.Traverse_Control);
-
-end WSDL.AST.Bindings;
+end WSDL.Parsers.SOAP;

@@ -41,62 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Vectors;
 
-with WSDL.AST.Components;
-with WSDL.AST.Interfaces;
-with WSDL.AST.Operations;
+private package WSDL.Parsers.SOAP is
 
-package WSDL.AST.Bindings is
+   procedure Start_Binding_Element
+    (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Node       : not null WSDL.AST.Bindings.Binding_Access;
+     Success    : in out Boolean);
 
-   pragma Preelaborate;
-
-   package Binding_Operation_Vectors is
-     new Ada.Containers.Vectors
-          (Positive,
-           WSDL.AST.Operations.Binding_Operation_Access,
-           WSDL.AST.Operations."=");
-
-   type SOAP_Binding_Extension is record
-      Version             : League.Strings.Universal_String;
-      --  Value of {soap version} property.
-
-      Underlying_Protocol : League.Strings.Universal_String;
-      --  Value of {soap underlying protocol} property.
-   end record;
-
-   type Binding_Node is new WSDL.AST.Components.Component_Node with record
-      Interface_Name     : Qualified_Name;
-      --  Name of interface.
-
-      Interface_Node     : WSDL.AST.Interfaces.Interface_Access;
-      --  Value of {interface} property.
-
-      Binding_Type       : League.Strings.Universal_String;
-      --  Value of {type} property.
-
-      Binding_Operations : Binding_Operation_Vectors.Vector;
-
-      SOAP               : SOAP_Binding_Extension;
-      --  SOAP Binding specific components.
-   end record;
-
-   type Binding_Access is access all Binding_Node'Class;
-
-   overriding procedure Enter
-    (Self    : not null access Binding_Node;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
-
-   overriding procedure Leave
-    (Self    : not null access Binding_Node;
-     Visitor : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control : in out WSDL.Iterators.Traverse_Control);
-
-   overriding procedure Visit
-    (Self     : not null access Binding_Node;
-     Iterator : in out WSDL.Iterators.WSDL_Iterator'Class;
-     Visitor  : in out WSDL.Visitors.WSDL_Visitor'Class;
-     Control  : in out WSDL.Iterators.Traverse_Control);
-
-end WSDL.AST.Bindings;
+end WSDL.Parsers.SOAP;
