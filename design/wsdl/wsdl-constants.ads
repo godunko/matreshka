@@ -51,6 +51,8 @@ package WSDL.Constants is
    WSDL_Namespace_URI  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/ns/wsdl");
 
+   --  Element names.
+
    Binding_Element       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("binding");
    Description_Element   : constant League.Strings.Universal_String
@@ -82,6 +84,8 @@ package WSDL.Constants is
    Types_Element         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("types");
 
+   --  Attribute names,
+
    Address_Attribute          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("address");
    Binding_Attribute          : constant League.Strings.Universal_String
@@ -108,6 +112,8 @@ package WSDL.Constants is
      := League.Strings.To_Universal_String ("targetNamespace");
    Type_Attribute             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("type");
+ 
+   --  Literals textual representation.
 
    Any_Literal   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("#any");
@@ -115,6 +121,18 @@ package WSDL.Constants is
      := League.Strings.To_Universal_String ("#none");
    Other_Literal : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("#other");
+
+   --  Predefined message exchange patterns.
+
+   In_Only_MEP        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/in-only");
+   In_Out_MEP         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/in-out");
+   Rubust_In_Only_MEP : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/robust-in-only");
 
    --------------------
    --  SOAP Binding  --

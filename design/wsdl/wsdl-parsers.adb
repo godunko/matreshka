@@ -56,10 +56,6 @@ package body WSDL.Parsers is
    use WSDL.Constants;
    use type League.Strings.Universal_String;
 
-   Pattern_Default : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-         ("http://www.w3.org/ns/wsdl/in-out");
-
    type Universal_String_Array is
      array (Positive range <>) of League.Strings.Universal_String;
 
@@ -858,7 +854,7 @@ package body WSDL.Parsers is
          Node.Message_Exchange_Pattern := Attributes.Value (Pattern_Attribute);
 
       else
-         Node.Message_Exchange_Pattern := Pattern_Default;
+         Node.Message_Exchange_Pattern := In_Out_MEP;
       end if;
 
       --  Analyze 'style' attribute.
