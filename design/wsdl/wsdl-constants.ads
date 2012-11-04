@@ -124,15 +124,36 @@ package WSDL.Constants is
 
    --  Predefined message exchange patterns.
 
-   In_Only_MEP        : constant League.Strings.Universal_String
+   In_Only_MEP         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/ns/wsdl/in-only");
-   In_Out_MEP         : constant League.Strings.Universal_String
+   In_Optional_Out_MEP : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/in-opt-out");
+   In_Out_MEP          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/ns/wsdl/in-out");
-   Rubust_In_Only_MEP : constant League.Strings.Universal_String
+   Out_In_MEP          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/out-in");
+   Out_Only_MEP : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/out-only");
+   Out_Optional_In_MEP : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/out-opt-in");
+   Robust_In_Only_MEP  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/ns/wsdl/robust-in-only");
+   Robust_Out_Only_MEP : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/ns/wsdl/robust-out-only");
+
+
+   In_Label  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("In");
+   Out_Label : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("Out");
 
    --------------------
    --  SOAP Binding  --
