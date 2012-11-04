@@ -246,8 +246,10 @@ package body WSDL.Generator is
             end loop;
          end if;
 
-         Put_Line (";");
-         Put ("     Fault  : out SOAP_Fault_Access;");
+         --  Generate output fault parameter, if eny.
+
+--         Put_Line (";");
+--         Put ("     Fault  : out SOAP_Fault_Access");
 
          Put_Line (");");
       end loop;
