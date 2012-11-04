@@ -182,6 +182,9 @@ package body WSDL.Analyzer is
                when WSDL.AST.Messages.Out_Message =>
                   --  RobustInOnlyComposition-2013: Output messages can't be
                   --  specified for this MEP.
+                  --
+                  --  XXX Must never be happen when MessageLabel-1033 will be
+                  --  implemented (check will be done by parser).
 
                   raise Program_Error;
             end case;
