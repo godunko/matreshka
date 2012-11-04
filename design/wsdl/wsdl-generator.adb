@@ -48,6 +48,7 @@ with League.Strings;
 
 with WSDL.AST.Bindings;
 with WSDL.AST.Interfaces;
+with WSDL.AST.Messages;
 with WSDL.AST.Operations;
 with WSDL.AST.Services;
 with WSDL.Constants;
@@ -62,6 +63,8 @@ package body WSDL.Generator is
            WSDL.AST.Operations.Interface_Operation_Access,
            League.Strings."<",
            WSDL.AST.Operations."=");
+
+   procedure Put (Item : League.Strings.Universal_String);
 
    procedure Put_Line (Item : League.Strings.Universal_String);
 
@@ -141,6 +144,8 @@ package body WSDL.Generator is
    is
       use type League.Strings.Universal_String;
       use type WSDL.AST.Bindings.Binding_Access;
+      use type WSDL.AST.Messages.Message_Directions;
+      use type WSDL.AST.Messages.Message_Content_Models;
 
       Binding_Node : WSDL.AST.Bindings.Binding_Access;
       Operations   : Operation_Maps.Map;
@@ -176,12 +181,75 @@ package body WSDL.Generator is
 
       Put_Line ("package " & Service_Node.Interface_Node.Local_Name & " is");
       New_Line;
-      Put_Line ("   type " & Service_Node.Interface_Node.Local_Name & " is limited interface;");
+      Put_Line
+       ("   type "
+          & Service_Node.Interface_Node.Local_Name
+          & " is limited interface;");
 
       for Operation_Node of Operations loop
+         if Operation_Node.Message_Exchange_Pattern /= In_Out_MEP
+           and Operation_Node.Message_Exchange_Pattern /= Robust_In_Only_MEP
+         then
+            --  Only in-out and robust-in-only MEPs are supported.
+
+            raise Program_Error;
+         end if;
+
          New_Line;
          Put_Line ("   not overriding procedure " & Operation_Node.Local_Name);
-         Put_Line ("    (Self : in out " & Service_Node.Interface_Node.Local_Name & ");");
+         Put
+          ("    (Self   : in out "
+             & Service_Node.Interface_Node.Local_Name);
+
+         --  Generate input parameter, if any.
+
+         for Message_Node of Operation_Node.Interface_Message_References loop
+            if Message_Node.Direction = WSDL.AST.Messages.In_Message then
+               if Message_Node.Message_Content_Model
+                 not in WSDL.AST.Messages.None | WSDL.AST.Messages.Element
+               then
+                  --  Only '#none' and '#element' message content models are
+                  --  supported.
+
+                  raise Program_Error;
+               end if;
+
+               if Message_Node.Message_Content_Model
+                    = WSDL.AST.Messages.Element
+               then
+                  Put_Line (";");
+                  Put
+                   ("     Input  : "
+                      & Message_Node.Element
+                      & "'Class");
+               end if;
+
+               exit;
+            end if;
+         end loop;
+
+         --  Generate output parameter, if any.
+
+         if Operation_Node.Message_Exchange_Pattern = In_Out_MEP then
+            for Message_Node
+                  of Operation_Node.Interface_Message_References
+            loop
+               if Message_Node.Direction = WSDL.AST.Messages.Out_Message then
+                  Put_Line (";");
+                  Put
+                   ("     Output : out "
+                      & Message_Node.Element
+                      & "_Access");
+
+                  exit;
+               end if;
+            end loop;
+         end if;
+
+         Put_Line (";");
+         Put ("     Fault  : out SOAP_Fault_Access;");
+
+         Put_Line (");");
       end loop;
 
       New_Line;
@@ -218,6 +286,15 @@ package body WSDL.Generator is
          end if;
       end loop;
    end Lookup_Binding;
+
+   ---------
+   -- Put --
+   ---------
+
+   procedure Put (Item : League.Strings.Universal_String) is
+   begin
+      Put (Item.To_Wide_Wide_String);
+   end Put;
 
    --------------
    -- Put_Line --
