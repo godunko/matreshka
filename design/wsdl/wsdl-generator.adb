@@ -52,6 +52,7 @@ with WSDL.AST.Messages;
 with WSDL.AST.Operations;
 with WSDL.AST.Services;
 with WSDL.Constants;
+with WSDL.Generator.Naming_Conventions;
 
 package body WSDL.Generator is
 
@@ -144,8 +145,10 @@ package body WSDL.Generator is
       use type WSDL.AST.Messages.Message_Directions;
       use type WSDL.AST.Messages.Message_Content_Models;
 
-      Binding_Node : WSDL.AST.Bindings.Binding_Access;
-      Operations   : Operation_Maps.Map;
+      Binding_Node           : WSDL.AST.Bindings.Binding_Access;
+      Operations             : Operation_Maps.Map;
+      Interface_Type_Name    : League.Strings.Universal_String;
+      Interface_Package_Name : League.Strings.Universal_String;
 
    begin
       --  Lookup for corresponding binding component.
@@ -176,12 +179,20 @@ package body WSDL.Generator is
 
       --  Generate package for Ada interface type specification.
 
-      Put_Line ("package " & Service_Node.Interface_Node.Local_Name & " is");
+      Interface_Package_Name :=
+        Naming_Conventions.Plural
+         (Naming_Conventions.To_Ada_Identifier
+           (Service_Node.Interface_Node.Local_Name));
+      Interface_Type_Name :=
+        Naming_Conventions.To_Ada_Identifier
+         (Service_Node.Interface_Node.Local_Name);
+
+      Put_Line ("with Payloads;");
+      New_Line;
+      Put_Line ("package " & Interface_Package_Name & " is");
       New_Line;
       Put_Line
-       ("   type "
-          & Service_Node.Interface_Node.Local_Name
-          & " is limited interface;");
+       ("   type " & Interface_Type_Name & " is limited interface;");
 
       for Operation_Node of Operations loop
          if Operation_Node.Message_Exchange_Pattern /= In_Out_MEP
@@ -193,10 +204,11 @@ package body WSDL.Generator is
          end if;
 
          New_Line;
-         Put_Line ("   not overriding procedure " & Operation_Node.Local_Name);
-         Put
-          ("    (Self   : in out "
-             & Service_Node.Interface_Node.Local_Name);
+         Put_Line
+          ("   not overriding procedure "
+             & Naming_Conventions.To_Ada_Identifier
+                (Operation_Node.Local_Name));
+         Put ("    (Self   : in out " & Interface_Type_Name);
 
          --  Generate input parameter, if any.
 
@@ -216,8 +228,9 @@ package body WSDL.Generator is
                then
                   Put_Line (";");
                   Put
-                   ("     Input  : "
-                      & WSDL.AST.Image (Message_Node.Element)
+                   ("     Input  : Payloads."
+                      & Naming_Conventions.To_Ada_Identifier
+                         (Message_Node.Element.Local_Name)
                       & "'Class");
                end if;
 
@@ -234,8 +247,9 @@ package body WSDL.Generator is
                if Message_Node.Direction = WSDL.AST.Messages.Out_Message then
                   Put_Line (";");
                   Put
-                   ("     Output : out "
-                      & WSDL.AST.Image (Message_Node.Element)
+                   ("     Output : out Payloads."
+                      & Naming_Conventions.To_Ada_Identifier
+                         (Message_Node.Element.Local_Name)
                       & "_Access");
 
                   exit;
@@ -252,7 +266,7 @@ package body WSDL.Generator is
       end loop;
 
       New_Line;
-      Put_Line ("end " & Service_Node.Interface_Node.Local_Name & ";");
+      Put_Line ("end " & Interface_Package_Name & ";");
    end Generate_Service;
 
    --------------------
