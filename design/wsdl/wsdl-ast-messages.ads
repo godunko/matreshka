@@ -67,7 +67,7 @@ package WSDL.AST.Messages is
       Message_Content_Model : Message_Content_Models;
       --  Value of {message content model} property.
 
-      Element               : League.Strings.Universal_String;
+      Element               : WSDL.AST.Qualified_Name;
       --  Name of the element which is used as content of the message.
    end record;
 

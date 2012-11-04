@@ -59,6 +59,9 @@ package WSDL.AST is
       Local_Name    : League.Strings.Universal_String;
    end record;
 
+   function Image
+    (Item : Qualified_Name) return League.Strings.Universal_String;
+
    function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type;
 
    type Abstract_Node is abstract tagged record

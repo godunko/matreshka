@@ -68,9 +68,6 @@ package body WSDL.Generator is
 
    procedure Put_Line (Item : League.Strings.Universal_String);
 
-   procedure Put_Line (Item : WSDL.AST.Qualified_Name);
-   --  Format and output qualified name.
-
    procedure Generate_Service
     (Service_Node : not null WSDL.AST.Services.Service_Access);
 
@@ -220,7 +217,7 @@ package body WSDL.Generator is
                   Put_Line (";");
                   Put
                    ("     Input  : "
-                      & Message_Node.Element
+                      & WSDL.AST.Image (Message_Node.Element)
                       & "'Class");
                end if;
 
@@ -238,7 +235,7 @@ package body WSDL.Generator is
                   Put_Line (";");
                   Put
                    ("     Output : out "
-                      & Message_Node.Element
+                      & WSDL.AST.Image (Message_Node.Element)
                       & "_Access");
 
                   exit;
@@ -305,19 +302,6 @@ package body WSDL.Generator is
    procedure Put_Line (Item : League.Strings.Universal_String) is
    begin
       Put_Line (Item.To_Wide_Wide_String);
-   end Put_Line;
-
-   --------------
-   -- Put_Line --
-   --------------
-
-   procedure Put_Line (Item : WSDL.AST.Qualified_Name) is
-   begin
-      Put ('{');
-      Put (Item.Namespace_URI.To_Wide_Wide_String);
-      Put ('}');
-      Put (Item.Local_Name.To_Wide_Wide_String);
-      New_Line;
    end Put_Line;
 
 end WSDL.Generator;

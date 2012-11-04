@@ -98,6 +98,7 @@ package body WSDL.Parsers is
 
    procedure Start_Input_Output_Element
     (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
      Parent     : WSDL.AST.Operations.Interface_Operation_Access;
      Direction  : WSDL.AST.Messages.Message_Directions;
      Success    : in out Boolean);
@@ -497,6 +498,7 @@ package body WSDL.Parsers is
                Self.Push (WSDL_Input);
                Start_Input_Output_Element
                 (Attributes,
+                 Self.Namespaces,
                  Self.Current_Operation,
                  WSDL.AST.Messages.In_Message,
                  Success);
@@ -583,6 +585,7 @@ package body WSDL.Parsers is
                Self.Push (WSDL_Output);
                Start_Input_Output_Element
                 (Attributes,
+                 Self.Namespaces,
                  Self.Current_Operation,
                  WSDL.AST.Messages.Out_Message,
                  Success);
@@ -709,6 +712,7 @@ package body WSDL.Parsers is
 
    procedure Start_Input_Output_Element
     (Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Namespaces : Namespace_Maps.Map;
      Parent     : WSDL.AST.Operations.Interface_Operation_Access;
      Direction  : WSDL.AST.Messages.Message_Directions;
      Success    : in out Boolean)
@@ -746,7 +750,7 @@ package body WSDL.Parsers is
 
             else
                Node.Message_Content_Model := WSDL.AST.Messages.Element;
-               Node.Element := Value;
+               Node.Element := To_Qualified_Name (Namespaces, Value);
             end if;
          end;
 

@@ -45,15 +45,25 @@ with League.Strings.Hash;
 
 package body WSDL.AST is
 
+   use type League.Strings.Universal_String;
+
    ----------
    -- Hash --
    ----------
 
    function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type is
-      use type League.Strings.Universal_String;
-
    begin
       return League.Strings.Hash (Item.Namespace_URI & Item.Local_Name);
    end Hash;
+
+   -----------
+   -- Image --
+   -----------
+
+   function Image
+    (Item : Qualified_Name) return League.Strings.Universal_String is
+   begin
+      return '{' & Item.Namespace_URI & '}' & Item.Local_Name;
+   end Image;
 
 end WSDL.AST;
