@@ -41,60 +41,28 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+with WSDL.AST.Descriptions;
+private with WSDL.AST.Operations;
+private with WSDL.Iterators;
+with WSDL.Visitors;
 
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
+package WSDL.Analyzer is
 
-with WSDL.Analyzer;
-with WSDL.AST;
-with WSDL.Debug;
-with WSDL.Generator;
-with WSDL.Iterators.Containment;
-with WSDL.Parsers;
-with WSDL.Name_Resolvers;
+   type Analyzer is limited new WSDL.Visitors.WSDL_Visitor with private;
 
-procedure WSDL.Driver is
-   Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-   Handler : aliased WSDL.Parsers.WSDL_Parser;
-   Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+   procedure Set_Root
+    (Self : in out Analyzer'Class;
+     Root : WSDL.AST.Descriptions.Description_Access);
 
-begin
-   --  Load document.
+private
 
-   Reader.Set_Content_Handler (Handler'Unchecked_Access);
-   Source.Open_By_File_Name (League.Application.Arguments.Element (1));
-   Reader.Parse (Source'Unchecked_Access);
+   type Analyzer is limited new WSDL.Visitors.WSDL_Visitor with record
+      Root : WSDL.AST.Descriptions.Description_Access;
+   end record;
 
-   --  Resolve names.
+   overriding procedure Enter_Interface_Operation
+    (Self    : in out Analyzer;
+     Node    : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Control : in out WSDL.Iterators.Traverse_Control);
 
-   declare
-      Resolver : WSDL.Name_Resolvers.Name_Resolver;
-      Iterator : WSDL.Iterators.Containment.Containment_Iterator;
-      Control  : WSDL.Iterators.Traverse_Control := WSDL.Iterators.Continue;
-
-   begin
-      Resolver.Set_Root (Handler.Get_Description);
-      Iterator.Visit
-       (Resolver, WSDL.AST.Node_Access (Handler.Get_Description), Control);
-   end;
-
-   --  Analyze.
-
-   declare
-      Analyzer : WSDL.Analyzer.Analyzer;
-      Iterator : WSDL.Iterators.Containment.Containment_Iterator;
-      Control  : WSDL.Iterators.Traverse_Control := WSDL.Iterators.Continue;
-
-   begin
-      Analyzer.Set_Root (Handler.Get_Description);
-      Iterator.Visit
-       (Analyzer, WSDL.AST.Node_Access (Handler.Get_Description), Control);
-   end;
-
-   WSDL.Debug.Dump (Handler.Get_Description);
-
-   --  Generate code.
-
-   WSDL.Generator.Generate (Handler.Get_Description);
-end WSDL.Driver;
+end WSDL.Analyzer;
