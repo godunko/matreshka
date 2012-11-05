@@ -179,7 +179,7 @@ package body WSDL.Generator is
       SOAP_Action            : League.Strings.Universal_String;
       Input_Message          : WSDL.AST.Messages.Interface_Message_Access;
       Output_Message         : WSDL.AST.Messages.Interface_Message_Access;
-      First_Operation        : Boolean := True;
+      First_Operation        : Boolean;
 
    begin
       --  Lookup for corresponding binding component.
@@ -208,22 +208,21 @@ package body WSDL.Generator is
 
       Operations := Compute_All_Operations (Service_Node.Interface_Node);
 
-      --  Generate package for Ada interface type specification.
+      --  Generate specification of delegation package.
 
       Interface_Package_Name :=
-        Naming_Conventions.Plural
-         (Naming_Conventions.To_Ada_Identifier
-           (Service_Node.Interface_Node.Local_Name));
+        "Generic_"
+          & Naming_Conventions.To_Ada_Identifier
+             (Service_Node.Interface_Node.Local_Name);
       Interface_Type_Name :=
         Naming_Conventions.To_Ada_Identifier
          (Service_Node.Interface_Node.Local_Name);
 
       Put_Line ("with Payloads;");
       New_Line;
-      Put_Line ("package " & Interface_Package_Name & " is");
-      New_Line;
-      Put_Line
-       ("   type " & Interface_Type_Name & " is limited interface;");
+      Put_Line ("generic");
+
+      First_Operation := True;
 
       for Operation_Node of Operations loop
          if Operation_Node.Message_Exchange_Pattern /= In_Out_MEP
@@ -234,58 +233,79 @@ package body WSDL.Generator is
             raise Program_Error;
          end if;
 
-         New_Line;
-         Put_Line
-          ("   not overriding procedure "
+         --  All supported MEPs has at most one input and at most one output
+         --  placeholder. Lookup for input and output messages to simplify
+         --  code.
+
+         Input_Message := null;
+         Output_Message := null;
+
+         for Message_Node of Operation_Node.Interface_Message_References loop
+            case Message_Node.Direction is
+               when WSDL.AST.Messages.In_Message =>
+                  Input_Message := Message_Node;
+
+               when WSDL.AST.Messages.Out_Message =>
+                  Output_Message := Message_Node;
+            end case;
+         end loop;
+
+         if not First_Operation then
+            New_Line;
+
+         else
+            First_Operation := False;
+         end if;
+
+         Put
+          ("   with procedure "
              & Naming_Conventions.To_Ada_Identifier
                 (Operation_Node.Local_Name));
-         Put ("    (Self   : in out " & Interface_Type_Name);
 
          --  Generate input parameter, if any.
 
-         for Message_Node of Operation_Node.Interface_Message_References loop
-            if Message_Node.Direction = WSDL.AST.Messages.In_Message then
-               if Message_Node.Message_Content_Model
-                 not in WSDL.AST.Messages.None | WSDL.AST.Messages.Element
-               then
-                  --  Only '#none' and '#element' message content models are
-                  --  supported.
+         if Input_Message /= null then
+            if Input_Message.Message_Content_Model
+              not in WSDL.AST.Messages.None | WSDL.AST.Messages.Element
+            then
+               --  Only '#none' and '#element' message content models are
+               --  supported.
 
-                  raise Program_Error;
-               end if;
-
-               if Message_Node.Message_Content_Model
-                    = WSDL.AST.Messages.Element
-               then
-                  Put_Line (";");
-                  Put
-                   ("     Input  : Payloads."
-                      & Naming_Conventions.To_Ada_Identifier
-                         (Message_Node.Element.Local_Name)
-                      & "'Class");
-               end if;
-
-               exit;
+               raise Program_Error;
             end if;
-         end loop;
+
+            if Input_Message.Message_Content_Model
+                 = WSDL.AST.Messages.Element
+            then
+               New_Line;
+               Put
+                ("    (Input  : Payloads."
+                   & Naming_Conventions.To_Ada_Identifier
+                      (Input_Message.Element.Local_Name)
+                   & "'Class");
+            end if;
+         end if;
 
          --  Generate output parameter, if any.
 
-         if Operation_Node.Message_Exchange_Pattern = In_Out_MEP then
-            for Message_Node
-                  of Operation_Node.Interface_Message_References
-            loop
-               if Message_Node.Direction = WSDL.AST.Messages.Out_Message then
-                  Put_Line (";");
-                  Put
-                   ("     Output : out Payloads."
-                      & Naming_Conventions.To_Ada_Identifier
-                         (Message_Node.Element.Local_Name)
-                      & "_Access");
+         if Output_Message /= null then
+            if Input_Message /= null
+              and then Input_Message.Message_Content_Model
+                         = WSDL.AST.Messages.Element
+            then
+               Put_Line (";");
+               Put ("     ");
 
-                  exit;
-               end if;
-            end loop;
+            else
+               New_Line;
+               Put ("    (");
+            end if;
+
+            Put
+             ("Output : out Payloads."
+                & Naming_Conventions.To_Ada_Identifier
+                   (Output_Message.Element.Local_Name)
+                & "_Access");
          end if;
 
          --  Generate output fault parameter, if eny.
@@ -297,17 +317,29 @@ package body WSDL.Generator is
       end loop;
 
       New_Line;
+      Put_Line ("package " & Interface_Package_Name & " is");
+      New_Line;
+      Put_Line ("   procedure Register_Interface;");
+      New_Line;
       Put_Line ("end " & Interface_Package_Name & ";");
 
       --  Generate package for invocation dispatching.
 
+      Put_Line ("with League.Strings;");
       Put_Line ("with Web_Services.SOAP.Messages;");
+      Put_Line ("with Web_Services.SOAP.Payloads;");
       New_Line;
-      Put_Line ("package body " & Interface_Package_Name & ".Dispatcher is");
+      Put_Line ("package body " & Interface_Package_Name & " is");
+      New_Line;
+      Put_Line ("   use type League.Strings.Universal_String;");
+      New_Line;
+      Put_Line ("   function ""+""");
+      Put_Line ("    (Item : Wide_Wide_String)");
+      Put_Line ("       return League.Strings.Universal_String");
+      Put_Line ("         renames League.Strings.To_Universal_String;");
       New_Line;
       Put_Line ("   procedure Dispatch");
-      Put_Line ("    (Handler : in out Handler_Interface_Base'Class;");
-      Put_Line ("     Input   : Web_Services.SOAP.Messages.SOAP_Message;");
+      Put_Line ("    (Input   : Web_Services.SOAP.Messages.SOAP_Message;");
       Put_Line ("     Output  : out Web_Services.SOAP.Messages.SOAP_Message_Access;");
       Put_Line ("     Found   : in out Boolean);");
       New_Line;
@@ -316,11 +348,12 @@ package body WSDL.Generator is
       Put_Line ("   --------------");
       New_Line;
       Put_Line ("   procedure Dispatch");
-      Put_Line ("    (Handler : in out Handler_Interface_Base'Class;");
-      Put_Line ("     Input   : Web_Services.SOAP.Messages.SOAP_Message;");
+      Put_Line ("    (Input   : Web_Services.SOAP.Messages.SOAP_Message;");
       Put_Line ("     Output  : out Web_Services.SOAP.Messages.SOAP_Message_Access;");
       Put_Line ("     Found   : in out Boolean) is");
       Put_Line ("   begin");
+
+      First_Operation := True;
 
       for Operation_Node of Operations loop
          if Operation_Node.Message_Exchange_Pattern /= In_Out_MEP
@@ -361,15 +394,15 @@ package body WSDL.Generator is
          --  Use SOAP Action to dispatch call when specified.
 
          if not SOAP_Action.Is_Empty then
-            Put_Line (" Input.Action = """ & SOAP_Action & """ then");
+            Put_Line (" Input.Action = +""" & SOAP_Action & """ then");
 
          else
             Put_Line
-             (" Input.Payload_Namespace_URI = """
+             (" Input.Namespace_URI = +"""
                 & Input_Message.Element.Namespace_URI
                 & '"');
             Put_Line
-             ("        or Input.Payload_Local_Name = """
+             ("        or Input.Local_Name = +"""
                 & Input_Message.Element.Local_Name
                 & '"');
             Put_Line ("      then");
@@ -392,8 +425,6 @@ package body WSDL.Generator is
          Put_Line ("            Found := True;");
          Put
           ("            "
-             & Interface_Type_Name
-             & "'Class (Handler.all)."
              & Naming_Conventions.To_Ada_Identifier
                 (Operation_Node.Local_Name));
 
@@ -428,11 +459,11 @@ package body WSDL.Generator is
                         /= WSDL.AST.Messages.Element
             then
                New_Line;
-               Put ("             (Output");
+               Put ("             (Aux");
 
             else
                Put_Line (",");
-               Put ("              Output");
+               Put ("              Aux");
             end if;
          end if;
 
@@ -453,7 +484,7 @@ package body WSDL.Generator is
                 ("            Output.Payload :=");
                Put_Line
                 ("              "
-                   & "Web_Services.SOAP.Messages.SOAP_Message_Access (Aux);");
+                   & "Web_Services.SOAP.Payloads.SOAP_Payload_Access (Aux);");
             end if;
          end if;
 
@@ -464,7 +495,16 @@ package body WSDL.Generator is
 
       Put_Line ("   end Dispatch;");
       New_Line;
-      Put_Line ("end " & Interface_Package_Name & ".Dispatcher;");
+      Put_Line ("   ------------------------");
+      Put_Line ("   -- Register_Interface --");
+      Put_Line ("   ------------------------");
+      New_Line;
+      Put_Line ("   procedure Register_Interface is");
+      Put_Line ("   begin");
+      Put_Line ("      null;");
+      Put_Line ("   end Register_Interface;");
+      New_Line;
+      Put_Line ("end " & Interface_Package_Name & ";");
    end Generate_Service;
 
    --------------------
