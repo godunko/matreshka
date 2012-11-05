@@ -80,6 +80,11 @@ package body WSDL.Generator is
     (Interface_Node : not null WSDL.AST.Interfaces.Interface_Access)
        return Operation_Maps.Map;
 
+   function Compute_SOAP_Action
+    (Operation_Node : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Binding_Node   : WSDL.AST.Bindings.Binding_Access)
+       return League.Strings.Universal_String;
+
    ----------------------------
    -- Compute_All_Operations --
    ----------------------------
@@ -121,6 +126,27 @@ package body WSDL.Generator is
       return Result;
    end Compute_All_Operations;
 
+   -------------------------
+   -- Compute_SOAP_Action --
+   -------------------------
+
+   function Compute_SOAP_Action
+    (Operation_Node : not null WSDL.AST.Operations.Interface_Operation_Access;
+     Binding_Node   : WSDL.AST.Bindings.Binding_Access)
+       return League.Strings.Universal_String
+   is
+      use type WSDL.AST.Operations.Interface_Operation_Access;
+
+   begin
+      for Binding_Operation of Binding_Node.Binding_Operations loop
+         if Binding_Operation.Interface_Operation = Operation_Node then
+            return Binding_Operation.SOAP.Action;
+         end if;
+      end loop;
+
+      return League.Strings.Empty_Universal_String;
+   end Compute_SOAP_Action;
+
    --------------
    -- Generate --
    --------------
@@ -144,11 +170,16 @@ package body WSDL.Generator is
       use type WSDL.AST.Bindings.Binding_Access;
       use type WSDL.AST.Messages.Message_Directions;
       use type WSDL.AST.Messages.Message_Content_Models;
+      use type WSDL.AST.Messages.Interface_Message_Access;
 
       Binding_Node           : WSDL.AST.Bindings.Binding_Access;
       Operations             : Operation_Maps.Map;
       Interface_Type_Name    : League.Strings.Universal_String;
       Interface_Package_Name : League.Strings.Universal_String;
+      SOAP_Action            : League.Strings.Universal_String;
+      Input_Message          : WSDL.AST.Messages.Interface_Message_Access;
+      Output_Message         : WSDL.AST.Messages.Interface_Message_Access;
+      First_Operation        : Boolean := True;
 
    begin
       --  Lookup for corresponding binding component.
@@ -267,6 +298,173 @@ package body WSDL.Generator is
 
       New_Line;
       Put_Line ("end " & Interface_Package_Name & ";");
+
+      --  Generate package for invocation dispatching.
+
+      Put_Line ("with Web_Services.SOAP.Messages;");
+      New_Line;
+      Put_Line ("package body " & Interface_Package_Name & ".Dispatcher is");
+      New_Line;
+      Put_Line ("   procedure Dispatch");
+      Put_Line ("    (Handler : in out Handler_Interface_Base'Class;");
+      Put_Line ("     Input   : Web_Services.SOAP.Messages.SOAP_Message;");
+      Put_Line ("     Output  : out Web_Services.SOAP.Messages.SOAP_Message_Access;");
+      Put_Line ("     Found   : in out Boolean);");
+      New_Line;
+      Put_Line ("   --------------");
+      Put_Line ("   -- Dispatch --");
+      Put_Line ("   --------------");
+      New_Line;
+      Put_Line ("   procedure Dispatch");
+      Put_Line ("    (Handler : in out Handler_Interface_Base'Class;");
+      Put_Line ("     Input   : Web_Services.SOAP.Messages.SOAP_Message;");
+      Put_Line ("     Output  : out Web_Services.SOAP.Messages.SOAP_Message_Access;");
+      Put_Line ("     Found   : in out Boolean) is");
+      Put_Line ("   begin");
+
+      for Operation_Node of Operations loop
+         if Operation_Node.Message_Exchange_Pattern /= In_Out_MEP
+           and Operation_Node.Message_Exchange_Pattern /= Robust_In_Only_MEP
+         then
+            --  Only in-out and robust-in-only MEPs are supported.
+
+            raise Program_Error;
+         end if;
+
+         --  All supported MEPs has at most one input and at most one output
+         --  placeholder. Lookup for input and output messages to simplify
+         --  code.
+
+         Input_Message := null;
+         Output_Message := null;
+
+         for Message_Node of Operation_Node.Interface_Message_References loop
+            case Message_Node.Direction is
+               when WSDL.AST.Messages.In_Message =>
+                  Input_Message := Message_Node;
+
+               when WSDL.AST.Messages.Out_Message =>
+                  Output_Message := Message_Node;
+            end case;
+         end loop;
+
+         SOAP_Action := Compute_SOAP_Action (Operation_Node, Binding_Node);
+
+         if First_Operation then
+            Put ("      if");
+
+         else
+            New_Line;
+            Put ("      elsif");
+         end if;
+
+         --  Use SOAP Action to dispatch call when specified.
+
+         if not SOAP_Action.Is_Empty then
+            Put_Line (" Input.Action = """ & SOAP_Action & """ then");
+
+         else
+            Put_Line
+             (" Input.Payload_Namespace_URI = """
+                & Input_Message.Element.Namespace_URI
+                & '"');
+            Put_Line
+             ("        or Input.Payload_Local_Name = """
+                & Input_Message.Element.Local_Name
+                & '"');
+            Put_Line ("      then");
+         end if;
+
+         First_Operation := False;
+
+         Put_Line ("         declare");
+
+         if Output_Message /= null then
+            Put_Line
+             ("            Aux : Payloads."
+                & Naming_Conventions.To_Ada_Identifier
+                   (Output_Message.Element.Local_Name)
+                & "_Access;");
+            New_Line;
+         end if;
+
+         Put_Line ("         begin");
+         Put_Line ("            Found := True;");
+         Put
+          ("            "
+             & Interface_Type_Name
+             & "'Class (Handler.all)."
+             & Naming_Conventions.To_Ada_Identifier
+                (Operation_Node.Local_Name));
+
+         --  Generate input parameter, if any.
+
+         if Input_Message /= null then
+            if Input_Message.Message_Content_Model
+              not in WSDL.AST.Messages.None | WSDL.AST.Messages.Element
+            then
+               --  Only '#none' and '#element' message content models are
+               --  supported.
+
+               raise Program_Error;
+            end if;
+
+            if Input_Message.Message_Content_Model
+                 = WSDL.AST.Messages.Element
+            then
+               New_Line;
+               Put ("             (Payloads." 
+                   & Naming_Conventions.To_Ada_Identifier
+                      (Input_Message.Element.Local_Name)
+                   & "'Class (Input.Payload.all)");
+            end if;
+         end if;
+
+         --  Generate output parameter, if any.
+
+         if Output_Message /= null then
+            if Input_Message = null
+              or else Input_Message.Message_Content_Model
+                        /= WSDL.AST.Messages.Element
+            then
+               New_Line;
+               Put ("             (Output");
+
+            else
+               Put_Line (",");
+               Put ("              Output");
+            end if;
+         end if;
+
+         --  Generate output fault parameter, if eny.
+
+--         Put_Line (";");
+--         Put ("     Fault  : out SOAP_Fault_Access");
+
+         Put_Line (");");
+
+         if Operation_Node.Message_Exchange_Pattern = In_Out_MEP then
+            Put_Line
+             ("            Output :="
+                & " new Web_Services.SOAP.Messages.SOAP_Message;");
+
+            if Output_Message /= null then
+               Put_Line
+                ("            Output.Payload :=");
+               Put_Line
+                ("              "
+                   & "Web_Services.SOAP.Messages.SOAP_Message_Access (Aux);");
+            end if;
+         end if;
+
+         Put_Line ("         end;");
+      end loop;
+
+      Put_Line ("      end if;");
+
+      Put_Line ("   end Dispatch;");
+      New_Line;
+      Put_Line ("end " & Interface_Package_Name & ".Dispatcher;");
    end Generate_Service;
 
    --------------------
