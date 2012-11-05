@@ -91,6 +91,7 @@ procedure SOAPConf.Driver is
    begin
       Web_Services.SOAP.Dispatcher.Dispatch
        (Codec.Encode (Source).To_Stream_Element_Array,
+        League.Strings.Empty_Universal_String,
         Reply'Unchecked_Access);
 
       if Codec.Decode (Reply.Output_Data) /= Expected then
