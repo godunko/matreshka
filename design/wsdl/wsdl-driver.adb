@@ -92,7 +92,7 @@ begin
        (Analyzer, WSDL.AST.Node_Access (Handler.Get_Description), Control);
    end;
 
-   WSDL.Debug.Dump (Handler.Get_Description);
+--   WSDL.Debug.Dump (Handler.Get_Description);
 
    --  Generate code.
 
