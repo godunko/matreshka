@@ -218,6 +218,8 @@ package body Web_Services.SOAP.Message_Decoders is
 
          if Self.Body_Depth = 0 then
             Self.Message.Payload := Self.Payload_Decoder.Payload;
+            Self.Message.Namespace_URI := Namespace_URI;
+            Self.Message.Local_Name := Local_Name;
             Free (Self.Payload_Decoder);
          end if;
       end if;
