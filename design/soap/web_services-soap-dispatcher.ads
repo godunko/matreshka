@@ -47,14 +47,16 @@
 with Ada.Streams;
 
 with League.Stream_Element_Vectors;
+with League.Strings;
 
 with Web_Services.SOAP.Reply_Streams;
 
 package Web_Services.SOAP.Dispatcher is
 
    procedure Dispatch
-    (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Stream       : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access);
+    (Input_Data  : Ada.Streams.Stream_Element_Array;
+     SOAP_Action : League.Strings.Universal_String;
+     Stream      : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access);
    --  Dispatch SOAP request represented as Input_Data. Use Stream to return
    --  SOAP replies.
 

@@ -64,8 +64,9 @@ package body Web_Services.SOAP.Dispatcher is
    --------------
 
    procedure Dispatch
-    (Input_Data   : Ada.Streams.Stream_Element_Array;
-     Stream       : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access)
+    (Input_Data  : Ada.Streams.Stream_Element_Array;
+     SOAP_Action : League.Strings.Universal_String;
+     Stream      : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access)
    is
       use type Web_Services.SOAP.Messages.SOAP_Message_Access;
       use type Web_Services.SOAP.Payloads.SOAP_Payload_Access;
@@ -94,6 +95,7 @@ package body Web_Services.SOAP.Dispatcher is
          --  Request was decoded successfully, lookup for handler.
 
          Input := Decoder.Message;
+         Input.Action := SOAP_Action;
          Input.Output := Stream;
 
          if Input.Payload = null then

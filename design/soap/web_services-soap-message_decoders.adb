@@ -326,9 +326,12 @@ package body Web_Services.SOAP.Message_Decoders is
 
       Self.Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
-             (Output  => null,
-              Headers => <>,
-              Payload =>
+             (Action        => <>,
+              Namespace_URI => <>,
+              Local_Name    => <>,
+              Output        => null,
+              Headers       => <>,
+              Payload       =>
                 Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                  (League.Strings.To_Universal_String ("MustUnderstand"),
                   League.Strings.To_Universal_String ("en-US"),
@@ -358,9 +361,12 @@ package body Web_Services.SOAP.Message_Decoders is
 
       Self.Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
-             (Output  => null,
-              Headers => <>,
-              Payload =>
+             (Action        => <>,
+              Namespace_URI => <>,
+              Local_Name    => <>,
+              Output        => null,
+              Headers       => <>,
+              Payload       =>
                 Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                  (League.Strings.To_Universal_String ("Sender"),
                   League.Strings.To_Universal_String ("en-US"),
@@ -389,9 +395,12 @@ package body Web_Services.SOAP.Message_Decoders is
 
       Self.Message :=
         new Web_Services.SOAP.Messages.SOAP_Message'
-             (Output  => null,
-              Headers => <>,
-              Payload =>
+             (Action        => <>,
+              Namespace_URI => <>,
+              Local_Name    => <>,
+              Output        => null,
+              Headers       => <>,
+              Payload       =>
                 Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                  (League.Strings.To_Universal_String ("VersionMismatch"),
                   League.Strings.To_Universal_String ("en-US"),

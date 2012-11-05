@@ -46,6 +46,8 @@
 with Ada.Containers.Hashed_Sets;
 with Ada.Tags;
 
+with League.Strings;
+
 with Web_Services.SOAP.Headers;
 with Web_Services.SOAP.Payloads;
 with Web_Services.SOAP.Reply_Streams;
@@ -64,9 +66,16 @@ package Web_Services.SOAP.Messages is
            Web_Services.SOAP.Headers."=");
 
    type SOAP_Message is limited record
-      Output  : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access;
-      Headers : Header_Sets.Set;
-      Payload : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
+      Action        : League.Strings.Universal_String;
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+      --  SOAP Action, namespace URI and local name of child element of SOAP
+      --  Body. These components are used by generated dispatcher to redirect
+      --  message to the appropriate handler.
+
+      Output        : Web_Services.SOAP.Reply_Streams.Reply_Stream_Access;
+      Headers       : Header_Sets.Set;
+      Payload       : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
    end record;
 
    type SOAP_Message_Access is access all SOAP_Message;
