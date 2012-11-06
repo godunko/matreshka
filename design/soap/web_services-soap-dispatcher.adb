@@ -43,7 +43,6 @@
 ------------------------------------------------------------------------------
 with Ada.Tags;
 
-with League.Strings;
 with League.Text_Codecs;
 with XML.SAX.Input_Sources.Streams.Element_Arrays;
 with XML.SAX.Simple_Readers;

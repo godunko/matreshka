@@ -235,14 +235,13 @@ package body Web_Services.SOAP.Security.Modules is
       if Token = null then
          Output :=
            new Web_Services.SOAP.Messages.SOAP_Message'
-            (Output  => null,
-             Headers => <>,
-             Payload =>
+            (Payload =>
                Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                 (League.Strings.To_Universal_String ("Sender"),
                  League.Strings.To_Universal_String ("en-US"),
                  League.Strings.To_Universal_String
-                  ("An invalid security token was provided")));
+                  ("An invalid security token was provided")),
+             others => <>);
 --  XXX Fault/Code/Subcode/Value must be set to:
 --                 WSSE_Namespace_URI,
 --                 League.Strings.To_Universal_String ("wsse"),
@@ -258,15 +257,14 @@ package body Web_Services.SOAP.Security.Modules is
       if not Success then
          Output :=
            new Web_Services.SOAP.Messages.SOAP_Message'
-            (Output  => null,
-             Headers => <>,
-             Payload =>
+            (Payload =>
                Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                 (League.Strings.To_Universal_String ("Sender"),
                  League.Strings.To_Universal_String ("en-US"),
                  League.Strings.To_Universal_String
                   ("The security token could not be authenticated"
-                     & " or authorized")));
+                     & " or authorized")),
+             others => <>);
 --  XXX Fault/Code/Subcode/Value must be set to:
 --                 WSSE_Namespace_URI,
 --                 League.Strings.To_Universal_String ("wsse"),
@@ -301,15 +299,14 @@ package body Web_Services.SOAP.Security.Modules is
          if Digest /= Token.Password then
             Output :=
               new Web_Services.SOAP.Messages.SOAP_Message'
-               (Output  => null,
-                Headers => <>,
-                Payload =>
+               (Payload =>
                   Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
                    (League.Strings.To_Universal_String ("Sender"),
                     League.Strings.To_Universal_String ("en-US"),
                     League.Strings.To_Universal_String
                      ("The security token could not be authenticated"
-                        & " or authorized")));
+                        & " or authorized")),
+                others => <>);
 --  XXX Fault/Code/Subcode/Value must be set to:
 --                 WSSE_Namespace_URI,
 --                 League.Strings.To_Universal_String ("wsse"),
