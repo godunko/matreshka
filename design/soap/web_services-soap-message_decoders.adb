@@ -166,13 +166,10 @@ package body Web_Services.SOAP.Message_Decoders is
 
       elsif Namespace_URI = SOAP_Envelope_URI then
          if Local_Name = SOAP_Header_Name then
-            Self.State := Initial;
-
-         elsif Local_Name = SOAP_Header_Name then
-            Self.State := Initial;
+            Self.State := SOAP_Envelope;
 
          elsif Local_Name = SOAP_Body_Name then
-            Self.State := Initial;
+            Self.State := SOAP_Envelope;
          end if;
 
       elsif Self.State = SOAP_Header_Element then
@@ -194,6 +191,7 @@ package body Web_Services.SOAP.Message_Decoders is
             begin
                Self.Message.Headers.Insert (Header);
                Free (Self.Header_Decoder);
+               Self.State := SOAP_Envelope;
             end;
          end if;
 
@@ -524,9 +522,10 @@ package body Web_Services.SOAP.Message_Decoders is
 
                else
                   Put_Line
-                   ("Unknown element '"
-                      & Local_Name.To_Wide_Wide_String
-                      & ''');
+                   ("Unknown element {"
+                      & Namespace_URI.To_Wide_Wide_String
+                      & "}"
+                      & Local_Name.To_Wide_Wide_String);
                end if;
 
             when SOAP_Header =>
