@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 with Ada.Unchecked_Deallocation;
 
 with Web_Services.SOAP.Constants;
@@ -540,18 +539,13 @@ package body Web_Services.SOAP.Message_Decoders is
                   Self.State := SOAP_Body;
 
                else
-                  Put_Line
-                   ("Unknown element '"
-                      & Local_Name.To_Wide_Wide_String
-                      & ''');
+                  Self.Set_Sender_Fault
+                   ("Unexpected element {" & Namespace_URI & "}" & Local_Name);
                end if;
 
             else
-               Put_Line
-                ("Unknown element {"
-                   & Namespace_URI.To_Wide_Wide_String
-                   & "}"
-                   & Local_Name.To_Wide_Wide_String);
+               Self.Set_Sender_Fault
+                ("Unexpected element {" & Namespace_URI & "}" & Local_Name);
             end if;
 
          when SOAP_Header =>
