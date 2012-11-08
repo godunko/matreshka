@@ -70,12 +70,14 @@ package Web_Services.SOAP.Message_Decoders is
 private
 
    type States is
-    (Initial,              --  Initial state.
-     SOAP_Envelope,        --  SOAP Envelope element has been processed.
-     SOAP_Header,          --  SOAP Header element has been processed.
-     SOAP_Header_Element,  --  SOAP Header child element has been processed.
-     SOAP_Body,            --  SOAP Body element has beed processed.
-     SOAP_Body_Element);   --  SOAP Body child element has been processed.
+    (Initial,         --  Initial state.
+     SOAP_Envelope,   --  SOAP Envelope element has been processed.
+     SOAP_Header,     --  SOAP Header element has been processed.
+     Header_Element,  --  SOAP Header child element has been processed.
+     Header_Ignore,   --  Ignore child and grandchildren of SOAP Header.
+     SOAP_Body,       --  SOAP Body element has beed processed.
+     Body_Element,    --  SOAP Body child element has been processed.
+     Body_Ignore);    --  Ignore child and grandchildren of SOAP Header.
 
    type Modes is
     (Strict,               --  Strict mode: all 'SHOULD' assertions are
@@ -90,13 +92,11 @@ private
    record
       Mode            : Modes  := Conformant;
       State           : States := Initial;
+      Depth           : Natural := 0;
       Payload_Decoder :
         Web_Services.SOAP.Payloads.Decoders.SOAP_Payload_Decoder_Access;
-      Body_Depth      : Natural := 0;
       Header_Decoder  :
         Web_Services.SOAP.Headers.Decoders.SOAP_Header_Decoder_Access;
-      Header_Depth    : Natural := 0;
-      Ignore_Element  : Natural := 0;
       Message         : Web_Services.SOAP.Messages.SOAP_Message_Access;
       Success         : Boolean := True;
    end record;
