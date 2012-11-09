@@ -153,9 +153,7 @@ package body Generator.Type_Mapping is
       elsif The_Type.all in AMF.CMOF.Enumerations.CMOF_Enumeration'Class then
          return "AMF." & Owning_Metamodel_Ada_Name (The_Type);
 
-      elsif The_Type.all
-              in AMF.CMOF.Primitive_Types.CMOF_Primitive_Type'Class
-      then
+      elsif The_Type.all in AMF.CMOF.Data_Types.CMOF_Data_Type'Class then
          if not Mapping.Contains
                  (AMF.CMOF.Elements.CMOF_Element_Access (The_Type))
          then
@@ -270,9 +268,7 @@ package body Generator.Type_Mapping is
             end case;
          end if;
 
-      elsif The_Type.all
-              in AMF.CMOF.Primitive_Types.CMOF_Primitive_Type'Class
-      then
+      elsif The_Type.all in AMF.CMOF.Data_Types.CMOF_Data_Type'Class then
          return
            Mapping.Element
             (AMF.CMOF.Elements.CMOF_Element_Access
