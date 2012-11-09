@@ -293,18 +293,21 @@ package Generator is
    ------------------------
 
    type Module_Information is limited record
-      Ada_Name             : League.Strings.Universal_String;
+      Ada_Name                 : League.Strings.Universal_String;
       --  Ada style name of the generated module.
 
-      Classes              : CMOF_Class_Sets.Set;
+      Classes                  : CMOF_Class_Sets.Set;
       --  All classes from all metamodels of module.
 
-      Extents              : Extent_Vectors.Vector;
+      Extents                  : Extent_Vectors.Vector;
       --  All extents of module.
 
-      Attribute_Member     : CMOF_Property_Natural_Maps.Map;
-      Attribute_Collection : CMOF_Property_Natural_Maps.Map;
+      Attribute_Member         : CMOF_Property_Natural_Maps.Map;
+      Attribute_Collection     : CMOF_Property_Natural_Maps.Map;
       --  Attribute to member or collection mappings.
+
+      Has_Non_Abstract_Classes : Boolean := False;
+      --  Module has at least one non-abstract class.
    end record;
 
    ------------------------

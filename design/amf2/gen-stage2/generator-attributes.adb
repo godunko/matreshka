@@ -822,6 +822,12 @@ package body Generator.Attributes is
         := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Attributes";
 
    begin
+      if not Module_Info.Has_Non_Abstract_Classes then
+         --  All classes are abstract, attributes package is empty.
+
+         return;
+      end if;
+
       Unit.Add_Unit_Header (2010, 2012);
 
       Unit.Add_Line;
@@ -1080,6 +1086,12 @@ package body Generator.Attributes is
       Position     : AMF.Extents.Collections.Extent_Sets.Cursor;
 
    begin
+      if not Module_Info.Has_Non_Abstract_Classes then
+         --  All classes are abstract, attribute mapping is empty.
+
+         return;
+      end if;
+
       Unit.Add_Unit_Header (2010, 2012);
 
       Unit.Add_Line;
@@ -1191,6 +1203,12 @@ package body Generator.Attributes is
         := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Attributes";
 
    begin
+      if not Module_Info.Has_Non_Abstract_Classes then
+         --  All classes are abstract, attributes package is empty.
+
+         return;
+      end if;
+
       Analyze;
 
       Unit.Add_Unit_Header (2010, 2011);

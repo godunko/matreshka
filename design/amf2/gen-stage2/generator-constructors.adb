@@ -759,6 +759,12 @@ package body Generator.Constructors is
         := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Constructors";
 
    begin
+      if not Module_Info.Has_Non_Abstract_Classes then
+         --  All classes are abstract, constructors package is empty.
+
+         return;
+      end if;
+
       Unit.Add_Unit_Header (2010, 2012);
 
       Unit.Add_Line;
@@ -808,6 +814,12 @@ package body Generator.Constructors is
       end Generate_Create;
 
    begin
+      if not Module_Info.Has_Non_Abstract_Classes then
+         --  All classes are abstract, constructors package is empty.
+
+         return;
+      end if;
+
       Put_Header (2010, 2012);
 
       New_Line;

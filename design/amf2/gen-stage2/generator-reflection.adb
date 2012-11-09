@@ -867,6 +867,12 @@ package body Generator.Reflection is
         := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Reflection";
 
    begin
+      if not Module_Info.Has_Non_Abstract_Classes then
+         --  All classes are abstract, reflection package is empty.
+
+         return;
+      end if;
+
       Unit.Add_Unit_Header (2010, 2012);
 
       Unit.Add_Line;

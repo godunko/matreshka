@@ -641,6 +641,7 @@ package body Generator.Analyzer is
 
             if not The_Class.Get_Is_Abstract then
                Info.Non_Abstract_Classes.Insert (The_Class);
+               Module_Info.Has_Non_Abstract_Classes := True;
             end if;
 
             if Module_Info.Extents.Contains (Info.Extent) then
