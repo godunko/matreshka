@@ -373,13 +373,25 @@ package body Generator.Names is
 
       else
          declare
-            Class : constant not null AMF.CMOF.Classes.CMOF_Class_Access
+            use type AMF.CMOF.Classes.CMOF_Class_Access;
+
+            Class     : constant AMF.CMOF.Classes.CMOF_Class_Access
               := Property.Get_Class;
+            Data_Type : constant AMF.CMOF.Data_Types.CMOF_Data_Type_Access
+                := Property.Get_Datatype;
+            Name      : League.Strings.Universal_String;
 
          begin
+            if Class /= null then
+               Name := Class.Get_Name.Value;
+
+            else
+               Name := Data_Type.Get_Name.Value;
+            end if;
+
             Ada_Name :=
               League.Strings.To_Universal_String
-               (To_Ada_Identifier (Class.Get_Name.Value)
+               (To_Ada_Identifier (Name)
                   & '_'
                   & To_Ada_Identifier (Property.Get_Name.Value));
          end;
