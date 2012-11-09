@@ -470,48 +470,23 @@ package body Generator.Constructors is
                            Unit.Add (+" 0.0),");
 
                         else
-   --                        if Boolean'Wide_Wide_Value
-   --                            (Default.Value.To_Wide_Wide_String)
-   --                        then
-   --                           Put (" (M_Boolean, True),");
-   --
-   --                        else
-   --                           Put (" (M_Boolean, False),");
-   --                        end if;
-                           raise Program_Error;
+                           Unit.Add
+                            (+Long_Float'Wide_Wide_Image
+                               (Long_Float'Wide_Wide_Value
+                                 (Default.Value.To_Wide_Wide_String))
+                                & "),");
                         end if;
 
                      when Holder =>
-   --                     if Default.Is_Empty then
+                        if Default.Is_Empty then
+                           Unit.Add (+" (Is_Empty => True)),");
+
+                        else
                            raise Program_Error;
-   --
-   --                     else
-   --                        if Default = Unlimited_Image then
-   --                           raise Program_Error;
-   --
-   --                        else
-   --                           New_Line;
-   --                           Set_Col (22);
-   --                           Put
-   --                            (" (M_Unlimited_Natural_Holder, (False, (False,"
-   --                               & Integer'Wide_Wide_Image
-   --                                  (Integer'Wide_Wide_Value
-   --                                    (Default.Value.To_Wide_Wide_String))
-   --                               & "))),");
-   --                        end if;
-   --                     end if;
+                        end if;
 
-                     when Set =>
-                        raise Program_Error;
-
-                     when Ordered_Set =>
-                        raise Program_Error;
-
-                     when Bag =>
-                        raise Program_Error;
-
-                     when Sequence =>
-                        raise Program_Error;
+                     when Set | Ordered_Set | Bag | Sequence =>
+                        Unit.Add (+" 0),");
                   end case;
 
                elsif Attribute_Type.Get_Name = Unlimited_Natural_Name then
