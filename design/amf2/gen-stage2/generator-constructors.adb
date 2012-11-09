@@ -212,56 +212,36 @@ package body Generator.Constructors is
                    & ((8 - Image.Length) * ' ')
                    & "=>");
 
+               Unit.Add
+                (" ("
+                   & Types_Package
+                   & '.'
+                   & Generator.Type_Mapping.Member_Kind_Name
+                      (Attribute_Type,
+                       Representation (Original_Attribute))
+                   & ',');
+
                if Attribute_Type.all in AMF.CMOF.Classes.CMOF_Class'Class then
                   case Representation (Original_Attribute) is
                      when Value =>
                         if Default.Is_Empty then
-                           Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_Element, No_AMF_Link),");
+                           Unit.Add (+" No_AMF_Link),");
 
                         else
-   --                        if Boolean'Wide_Wide_Value
-   --                            (Default.Value.To_Wide_Wide_String)
-   --                        then
-   --                           Put (" (M_Boolean, True),");
-   --
-   --                        else
-   --                           Put (" (M_Boolean, False),");
-   --                        end if;
                            raise Program_Error;
                         end if;
 
                      when Holder =>
                         if Default.Is_Empty then
-                           Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_Element, No_AMF_Link),");
+                           Unit.Add (+" No_AMF_Link),");
 
                         else
-   --                        if Boolean'Wide_Wide_Value
-   --                            (Default.Value.To_Wide_Wide_String)
-   --                        then
-   --                           Put (" (M_Boolean, True),");
-   --
-   --                        else
-   --                           Put (" (M_Boolean, False),");
-   --                        end if;
                            raise Program_Error;
                         end if;
 
-                     when Set =>
-                        raise Program_Error;
+                     when Set | Ordered_Set | Bag | Sequence =>
+                        --  Collections of elements never occupy slots.
 
-                     when Ordered_Set =>
-                        raise Program_Error;
-
-                     when Bag =>
-                        raise Program_Error;
-
-                     when Sequence =>
                         raise Program_Error;
                   end case;
 
@@ -269,14 +249,6 @@ package body Generator.Constructors is
                        in AMF.CMOF.Enumerations.CMOF_Enumeration'Class
                then
                   --  Enumeration type
-
-                  Unit.Add
-                   (" ("
-                      & Types_Package
-                      & '.'
-                      & Generator.Type_Mapping.Member_Kind_Name
-                         (Attribute_Type,
-                          Representation (Original_Attribute)));
 
                   case Representation (Original_Attribute) is
                      when Value =>
@@ -288,7 +260,7 @@ package body Generator.Constructors is
                             ("AMF."
                                & Owning_Metamodel_Ada_Name (Attribute_Type));
                            Unit.Add
-                            (", AMF."
+                            (" AMF."
                                & Owning_Metamodel_Ada_Name (Attribute_Type)
                                & '.'
                                & Type_Mapping.Ada_Enumeration_Literal_Name
@@ -324,8 +296,7 @@ package body Generator.Constructors is
                               Unit.Context.Add
                                ("AMF." & Owning_Metamodel_Ada_Name (Literal));
                               Unit.Add
-                               (", "
-                                  & "AMF."
+                               (" AMF."
                                   & Owning_Metamodel_Ada_Name (Literal)
                                   & "."
                                   & Type_Mapping.Ada_Enumeration_Literal_Name
@@ -336,7 +307,7 @@ package body Generator.Constructors is
 
                      when Holder =>
                         if Default.Is_Empty then
-                           Unit.Add (+", (Is_Empty => True)),");
+                           Unit.Add (+" (Is_Empty => True)),");
 
                         else
                            declare
@@ -365,7 +336,7 @@ package body Generator.Constructors is
                               Unit.Context.Add
                                ("AMF." & Owning_Metamodel_Ada_Name (Literal));
                               Unit.Add
-                               (", (False, "
+                               (" (False, "
                                   & Type_Mapping.Ada_Enumeration_Literal_Qualified_Name
                                      (Literal)
                                   & ")),");
@@ -392,60 +363,36 @@ package body Generator.Constructors is
                            --  There is no default value specified, initialize
                            --  to some valid value.
 
-                           Unit.Add
-                            (" (" & Types_Package & ".M_Boolean, False),");
+                           Unit.Add (+" False),");
 
                         else
                            if Boolean'Wide_Wide_Value
                                (Default.Value.To_Wide_Wide_String)
                            then
-                              Unit.Add
-                               (" (" & Types_Package & ".M_Boolean, True),");
+                              Unit.Add (+" True),");
 
                            else
-                              Unit.Add
-                               (" (" & Types_Package & ".M_Boolean, False),");
+                              Unit.Add (+" False),");
                            end if;
                         end if;
 
                      when Holder =>
                         if Default.Is_Empty then
-                           Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_Boolean_Holder, (Is_Empty => True)),");
+                           Unit.Add (+" (Is_Empty => True)),");
 
                         else
                            if Boolean'Wide_Wide_Value
                                (Default.Value.To_Wide_Wide_String)
                            then
-                              Unit.Add
-                               (" ("
-                                  & Types_Package
-                                  & ".M_Boolean_Holder, (False, True)),");
+                              Unit.Add (+" (False, True)),");
 
                            else
-                              Unit.Add
-                               (" ("
-                                  & Types_Package
-                                  & ".M_Boolean_Holder, (False, False)),");
+                              Unit.Add (+" (False, False)),");
                            end if;
                         end if;
 
-                     when Set =>
-                        Unit.Add
-                         (" ("
-                            & Types_Package
-                            & ".M_Collection_Of_Boolean, 0),");
-
-                     when Ordered_Set =>
-                        raise Program_Error;
-
-                     when Bag =>
-                        raise Program_Error;
-
-                     when Sequence =>
-                        raise Program_Error;
+                     when Set | Ordered_Set | Bag | Sequence =>
+                        Unit.Add (+" 0),");
                   end case;
 
                elsif Attribute_Type.Get_Name = Integer_Name then
@@ -455,17 +402,14 @@ package body Generator.Constructors is
                            --  There is no default value specified, initialize
                            --  to some valid value.
 
-                           Unit.Add (" (" & Types_Package & ".M_Integer, 0),");
+                           Unit.Add (+" 0),");
 
                         else
                            Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_Integer,"
-                               & Integer'Wide_Wide_Image
-                                  (Integer'Wide_Wide_Value
-                                    (Default.Value.To_Wide_Wide_String))
-                               & "),");
+                            (+Integer'Wide_Wide_Image
+                               (Integer'Wide_Wide_Value
+                                 (Default.Value.To_Wide_Wide_String))
+                                & "),");
                         end if;
 
                      when Holder =>
@@ -474,13 +418,11 @@ package body Generator.Constructors is
 
                         else
                            Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_Integer_Holder, (False,"
-                               & Integer'Wide_Wide_Image
-                                  (Integer'Wide_Wide_Value
-                                    (Default.Value.To_Wide_Wide_String))
-                               & ")),");
+                            (+" (False,"
+                                & Integer'Wide_Wide_Image
+                                   (Integer'Wide_Wide_Value
+                                     (Default.Value.To_Wide_Wide_String))
+                                & ")),");
                         end if;
 
                      when Set =>
@@ -502,53 +444,30 @@ package body Generator.Constructors is
                         if Default.Is_Empty then
                            Unit.Context.Add (+"Matreshka.Internals.Strings");
                            Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_String, "
-                               & "Matreshka.Internals.Strings.Shared_Empty"
-                               & "'Access),");
+                            (+" Matreshka.Internals.Strings.Shared_Empty"
+                                & "'Access),");
 
                         else
                            raise Program_Error;
-   --                        if Boolean'Wide_Wide_Value
-   --                            (Default.Value.To_Wide_Wide_String)
-   --                        then
-   --                           Put (" (M_Boolean, True),");
-   --
-   --                        else
-   --                           Put (" (M_Boolean, False),");
-   --                        end if;
                         end if;
 
                      when Holder =>
                         if Default.Is_Empty then
-                           Unit.Add
-                            (" (" & Types_Package & ".M_String, null),");
+                           Unit.Add (+" null),");
 
                         else
                            raise Program_Error;
-   --                        if Boolean'Wide_Wide_Value
-   --                            (Default.Value.To_Wide_Wide_String)
-   --                        then
-   --                           Put (" (M_Boolean, True),");
-   --
-   --                        else
-   --                           Put (" (M_Boolean, False),");
-   --                        end if;
                         end if;
 
                      when Set | Ordered_Set | Bag | Sequence =>
-                        Unit.Add
-                         (" ("
-                            & Types_Package
-                            & ".M_Collection_Of_String, 0),");
+                        Unit.Add (+" 0),");
                   end case;
 
                elsif Attribute_Type.Get_Name = Real_Name then
                   case Representation (Original_Attribute) is
                      when Value =>
                         if Default.Is_Empty then
-                           Unit.Add (" (" & Types_Package & ".M_Real, 0.0),");
+                           Unit.Add (+" 0.0),");
 
                         else
    --                        if Boolean'Wide_Wide_Value
@@ -602,20 +521,15 @@ package body Generator.Constructors is
                            --  There is no default value specified, initialize
                            --  to some valid value.
 
-                           Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_Unlimited_Natural, (False, 0)),");
+                           Unit.Add (+" (False, 0)),");
 
                         else
                            Unit.Add
-                            (" ("
-                               & Types_Package
-                               & ".M_Unlimited_Natural, (False,"
-                               & Integer'Wide_Wide_Image
-                                  (Integer'Wide_Wide_Value
-                                    (Default.Value.To_Wide_Wide_String))
-                               & ")),");
+                            (+" (False,"
+                                & Integer'Wide_Wide_Image
+                                   (Integer'Wide_Wide_Value
+                                     (Default.Value.To_Wide_Wide_String))
+                                & ")),");
                         end if;
 
                      when Holder =>
@@ -628,14 +542,11 @@ package body Generator.Constructors is
 
                            else
                               Unit.Add
-                               (" ("
-                                  & Types_Package
-                                  & ".M_Unlimited_Natural_Holder,"
-                                  & " (False, (False,"
-                                  & Integer'Wide_Wide_Image
-                                     (Integer'Wide_Wide_Value
-                                       (Default.Value.To_Wide_Wide_String))
-                                  & "))),");
+                               (+" (False, (False,"
+                                   & Integer'Wide_Wide_Image
+                                      (Integer'Wide_Wide_Value
+                                        (Default.Value.To_Wide_Wide_String))
+                                   & "))),");
                            end if;
                         end if;
 

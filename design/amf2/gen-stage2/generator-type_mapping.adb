@@ -511,6 +511,10 @@ package body Generator.Type_Mapping is
    is
       Position : constant Mapping_Maps.Cursor
         := Mapping.Find (AMF.CMOF.Elements.CMOF_Element_Access (Element));
+      Ada_Name : constant League.Strings.Universal_String
+        := +To_Ada_Identifier
+             (AMF.CMOF.Named_Elements.CMOF_Named_Element'Class
+               (Element.all).Get_Name.Value);
 
    begin
       if Mapping_Maps.Has_Element (Position)
@@ -526,23 +530,27 @@ package body Generator.Type_Mapping is
               (Representation).Member_Kind_Name;
 
       else
-         case Representation is
-            when Value =>
-               return
-                 "M_" 
-                   & AMF.CMOF.Named_Elements.CMOF_Named_Element'Class
-                      (Element.all).Get_Name.Value;
-            when Holder | Set | Ordered_Set | Bag | Sequence =>
-               Put_Line
-                (Standard_Error,
-                 "error: memberKindName is not defined for "
-                   & Representation_Kinds'Wide_Wide_Image (Representation)
-                   & " of "
-                   & AMF.CMOF.Named_Elements.CMOF_Named_Element'Class
-                      (Element.all).Get_Name.Value.To_Wide_Wide_String);
+         if Element.all in AMF.CMOF.Classes.CMOF_Class'Class then
+            case Representation is
+               when Value | Holder =>
+                  return +"M_Element";
 
-               raise Program_Error;
-         end case;
+               when Set | Ordered_Set | Bag | Sequence =>
+                  return +"M_Collection_Of_Element";
+            end case;
+
+         else
+            case Representation is
+               when Value =>
+                  return "M_" & Ada_Name;
+
+               when Holder =>
+                  return "M_Holder_Of_" & Ada_Name;
+
+               when Set | Ordered_Set | Bag | Sequence =>
+                  return "M_Collection_Of_" & Ada_Name;
+            end case;
+         end if;
       end if;
    end Member_Kind_Name;
 
