@@ -615,6 +615,7 @@ package body Generator.Factories is
       Unit.Add_Line (+"      pragma Unreferenced (Self);");
       Unit.Add_Line;
       Unit.Add_Line (+"   begin");
+      Unit.Context.Add (+"AMF.Internals.Elements");
       Unit.Context.Add (+"AMF.Internals.Links");
       Unit.Add_Line (+"      return");
       Unit.Add_Line (+"        AMF.Internals.Links.Proxy");
