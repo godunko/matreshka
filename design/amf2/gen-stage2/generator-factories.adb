@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with AMF.CMOF.Enumerations;
 with AMF.CMOF.Enumeration_Literals.Collections;
+with AMF.CMOF.Primitive_Types;
 
 with Generator.Names;
 with Generator.Type_Mapping;
@@ -176,7 +177,7 @@ package body Generator.Factories is
             The_Data_Type := CMOF_Data_Type_Ordered_Sets.Element (Position);
 
             if The_Data_Type.all
-                 not in AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+                 in AMF.CMOF.Primitive_Types.CMOF_Primitive_Type'Class
             then
                --  Data type is not an enumeration, user must provide own
                --  implementation of String<->Holder conversion operation in
@@ -264,85 +265,94 @@ package body Generator.Factories is
             while CMOF_Data_Type_Ordered_Sets.Has_Element (Position) loop
                The_Data_Type := CMOF_Data_Type_Ordered_Sets.Element (Position);
 
-               if First then
-                  First := False;
-                  Unit.Add (+"      if");
-
-               else
-                  Unit.Add_Line;
-                  Unit.Add (+"      elsif");
-               end if;
-
-               Unit.Context.Add
-                (Element_Constant_Package_Name
-                  (AMF.CMOF.Elements.CMOF_Element_Access (The_Data_Type)));
-               Unit.Add_Line
-                (" DT = "
-                   & Element_Constant_Qualified_Name
-                      (AMF.CMOF.Elements.CMOF_Element_Access (The_Data_Type))
-                   & " then");
-
                if The_Data_Type.all
                     in AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+                 or The_Data_Type.all
+                      in AMF.CMOF.Primitive_Types.CMOF_Primitive_Type'Class
                then
-                  Unit.Add_Line (+"         declare");
-                  Unit.Add_Line
-                   ("            Item : constant "
-                      & Public_Ada_Type_Qualified_Name (The_Data_Type, Value));
+                  if First then
+                     First := False;
+                     Unit.Add (+"      if");
+
+                  else
+                     Unit.Add_Line;
+                     Unit.Add (+"      elsif");
+                  end if;
+
                   Unit.Context.Add
-                   ("AMF."
-                      & Owning_Metamodel_Ada_Name (The_Data_Type)
-                      & ".Holders."
-                      & Plural
-                         (To_Ada_Identifier (The_Data_Type.Get_Name.Value)));
+                   (Element_Constant_Package_Name
+                     (AMF.CMOF.Elements.CMOF_Element_Access (The_Data_Type)));
                   Unit.Add_Line
-                   ("              := AMF."
-                      & Owning_Metamodel_Ada_Name (The_Data_Type)
-                      & ".Holders."
-                      & Plural
-                         (To_Ada_Identifier (The_Data_Type.Get_Name.Value))
-                      & ".Element (Value);");
-                  Unit.Add_Line;
-                  Unit.Add_Line (+"         begin");
+                   (" DT = "
+                      & Element_Constant_Qualified_Name
+                         (AMF.CMOF.Elements.CMOF_Element_Access
+                           (The_Data_Type))
+                      & " then");
 
-                  Literals :=
-                    AMF.CMOF.Enumerations.CMOF_Enumeration'Class
-                     (The_Data_Type.all).Get_Owned_Literal;
-                  Unit.Add_Line (+"            case Item is");
-                  First_Literal := True;
+                  if The_Data_Type.all
+                       in AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+                  then
+                     Unit.Add_Line (+"         declare");
+                     Unit.Add_Line
+                      ("            Item : constant "
+                         & Public_Ada_Type_Qualified_Name
+                            (The_Data_Type, Value));
+                     Unit.Context.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (The_Data_Type)
+                         & ".Holders."
+                         & Plural
+                            (To_Ada_Identifier
+                              (The_Data_Type.Get_Name.Value)));
+                     Unit.Add_Line
+                      ("              := AMF."
+                         & Owning_Metamodel_Ada_Name (The_Data_Type)
+                         & ".Holders."
+                         & Plural
+                            (To_Ada_Identifier (The_Data_Type.Get_Name.Value))
+                         & ".Element (Value);");
+                     Unit.Add_Line;
+                     Unit.Add_Line (+"         begin");
 
-                  for J in 1 .. Literals.Length loop
-                     if First_Literal then
-                        First_Literal := False;
+                     Literals :=
+                       AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+                        (The_Data_Type.all).Get_Owned_Literal;
+                     Unit.Add_Line (+"            case Item is");
+                     First_Literal := True;
 
-                     else
-                        Unit.Add_Line;
-                     end if;
+                     for J in 1 .. Literals.Length loop
+                        if First_Literal then
+                           First_Literal := False;
+
+                        else
+                           Unit.Add_Line;
+                        end if;
+
+                        Unit.Add_Line
+                         ("               when "
+                            & Ada_Enumeration_Literal_Qualified_Name
+                               (Literals.Element (J))
+                            & " =>");
+                        Unit.Add_Line
+                         (+"                  return "
+                             & To_Ada_Identifier
+                                (Literals.Element (J).Get_Name.Value)
+                             & "_Img;");
+                     end loop;
+
+                     Unit.Add_Line (+"            end case;");
+                     Unit.Add_Line (+"         end;");
+
+                  else
+                     --  Data type is not an enumeration, user must provide own
+                     --  implementation of Convert_<Data_Type>_To_String
+                     --  operation in separate compilation unit.
 
                      Unit.Add_Line
-                      ("               when "
-                         & Ada_Enumeration_Literal_Qualified_Name
-                            (Literals.Element (J))
-                         & " =>");
-                     Unit.Add_Line
-                      (+"                  return "
-                          & To_Ada_Identifier
-                             (Literals.Element (J).Get_Name.Value)
-                          & "_Img;");
-                  end loop;
-
-                  Unit.Add_Line (+"            end case;");
-                  Unit.Add_Line (+"         end;");
-
-               else
-                  --  Data type is not an enumeration, user must provide own
-                  --  implementation of Convert_<Data_Type>_To_String operation
-                  --  in separate compilation unit.
-
-                  Unit.Add_Line
-                   (+"         return Convert_"
-                       & To_Ada_Identifier (The_Data_Type.Get_Name.Value)
-                       & "_To_String (Value);");
+                      (+"         return Convert_"
+                          & To_Ada_Identifier (The_Data_Type.Get_Name.Value)
+                          & "_To_String (Value);");
+                  end if;
                end if;
 
                CMOF_Data_Type_Ordered_Sets.Next (Position);
@@ -503,84 +513,92 @@ package body Generator.Factories is
             while CMOF_Data_Type_Ordered_Sets.Has_Element (Position) loop
                The_Data_Type := CMOF_Data_Type_Ordered_Sets.Element (Position);
 
-               if First then
-                  First := False;
-                  Unit.Add (+"      if");
-
-               else
-                  Unit.Add_Line;
-                  Unit.Add (+"      elsif");
-               end if;
-
-               Unit.Context.Add
-                (Element_Constant_Package_Name
-                  (AMF.CMOF.Elements.CMOF_Element_Access (The_Data_Type)));
-               Unit.Add_Line
-                (" DT = "
-                   & Element_Constant_Qualified_Name
-                      (AMF.CMOF.Elements.CMOF_Element_Access (The_Data_Type))
-                   & " then");
-
                if The_Data_Type.all
                     in AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+                 or The_Data_Type.all
+                      in AMF.CMOF.Primitive_Types.CMOF_Primitive_Type'Class
                then
-                  Literals :=
-                    AMF.CMOF.Enumerations.CMOF_Enumeration'Class
-                     (The_Data_Type.all).Get_Owned_Literal;
-                  First_Literal := True;
+                  if First then
+                     First := False;
+                     Unit.Add (+"      if");
 
-                  for J in 1 .. Literals.Length loop
-                     if First_Literal then
-                        First_Literal := False;
-                        Unit.Add (+"         if");
+                  else
+                     Unit.Add_Line;
+                     Unit.Add (+"      elsif");
+                  end if;
 
-                     else
-                        Unit.Add_Line;
-                        Unit.Add (+"         elsif");
-                     end if;
-
-                     Unit.Add_Line
-                      (+" Image = "
-                          & To_Ada_Identifier
-                             (Literals.Element (J).Get_Name.Value)
-                          & "_Img then");
-                     Unit.Context.Add
-                      ("AMF."
-                         & Owning_Metamodel_Ada_Name (The_Data_Type)
-                         & ".Holders."
-                         & Plural
-                            (To_Ada_Identifier
-                              (The_Data_Type.Get_Name.Value)));
-                     Unit.Add_Line
-                      (+"            return");
-                     Unit.Add_Line
-                      ("              AMF."
-                         & Owning_Metamodel_Ada_Name (The_Data_Type)
-                         & ".Holders."
-                         & Plural
-                            (To_Ada_Identifier (The_Data_Type.Get_Name.Value))
-                         & ".To_Holder");
-                     Unit.Add_Line
-                      ("               ("
-                         & Ada_Enumeration_Literal_Qualified_Name
-                            (Literals.Element (J))
-                         & ");");
-                  end loop;
-
-                  Unit.Add_Line;
-                  Unit.Add_Line (+"         else");
-                  Unit.Add_Line (+"            raise Constraint_Error;");
-                  Unit.Add_Line (+"         end if;");
-
-               else
-                  --  Data type is not an enumeration, user must provide own
-                  --  implementation of Create_<Data_Type>_From_String
-                  --  operation in separate compilation unit.
-
+                  Unit.Context.Add
+                   (Element_Constant_Package_Name
+                     (AMF.CMOF.Elements.CMOF_Element_Access (The_Data_Type)));
                   Unit.Add_Line
-                   (+"         return Create_"
-                       & To_Ada_Identifier (The_Data_Type.Get_Name.Value)
-                       & "_From_String (Image);");
+                   (" DT = "
+                      & Element_Constant_Qualified_Name
+                         (AMF.CMOF.Elements.CMOF_Element_Access
+                           (The_Data_Type))
+                      & " then");
+
+                  if The_Data_Type.all
+                       in AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+                  then
+                     Literals :=
+                       AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+                        (The_Data_Type.all).Get_Owned_Literal;
+                     First_Literal := True;
+
+                     for J in 1 .. Literals.Length loop
+                        if First_Literal then
+                           First_Literal := False;
+                           Unit.Add (+"         if");
+
+                        else
+                           Unit.Add_Line;
+                           Unit.Add (+"         elsif");
+                        end if;
+
+                        Unit.Add_Line
+                         (+" Image = "
+                             & To_Ada_Identifier
+                                (Literals.Element (J).Get_Name.Value)
+                             & "_Img then");
+                        Unit.Context.Add
+                         ("AMF."
+                            & Owning_Metamodel_Ada_Name (The_Data_Type)
+                            & ".Holders."
+                            & Plural
+                               (To_Ada_Identifier
+                                 (The_Data_Type.Get_Name.Value)));
+                        Unit.Add_Line
+                         (+"            return");
+                        Unit.Add_Line
+                         ("              AMF."
+                            & Owning_Metamodel_Ada_Name (The_Data_Type)
+                            & ".Holders."
+                            & Plural
+                               (To_Ada_Identifier
+                                 (The_Data_Type.Get_Name.Value))
+                            & ".To_Holder");
+                        Unit.Add_Line
+                         ("               ("
+                            & Ada_Enumeration_Literal_Qualified_Name
+                               (Literals.Element (J))
+                            & ");");
+                     end loop;
+
+                     Unit.Add_Line;
+                     Unit.Add_Line (+"         else");
+                     Unit.Add_Line (+"            raise Constraint_Error;");
+                     Unit.Add_Line (+"         end if;");
+
+                  else
+                     --  Data type is not an enumeration, user must provide own
+                     --  implementation of Create_<Data_Type>_From_String
+                     --  operation in separate compilation unit.
+
+                     Unit.Add_Line
+                      (+"         return Create_"
+                          & To_Ada_Identifier (The_Data_Type.Get_Name.Value)
+                          & "_From_String (Image);");
+                  end if;
                end if;
 
                CMOF_Data_Type_Ordered_Sets.Next (Position);
