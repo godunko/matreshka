@@ -291,13 +291,13 @@ package body Generator.Factories is
                       & Public_Ada_Type_Qualified_Name (The_Data_Type, Value));
                   Unit.Context.Add
                    ("AMF."
-                      & Module_Info.Ada_Name
+                      & Owning_Metamodel_Ada_Name (The_Data_Type)
                       & ".Holders."
                       & Plural
                          (To_Ada_Identifier (The_Data_Type.Get_Name.Value)));
                   Unit.Add_Line
                    ("              := AMF."
-                      & Module_Info.Ada_Name
+                      & Owning_Metamodel_Ada_Name (The_Data_Type)
                       & ".Holders."
                       & Plural
                          (To_Ada_Identifier (The_Data_Type.Get_Name.Value))
@@ -546,7 +546,7 @@ package body Generator.Factories is
                           & "_Img then");
                      Unit.Context.Add
                       ("AMF."
-                         & Module_Info.Ada_Name
+                         & Owning_Metamodel_Ada_Name (The_Data_Type)
                          & ".Holders."
                          & Plural
                             (To_Ada_Identifier
@@ -555,7 +555,7 @@ package body Generator.Factories is
                       (+"            return");
                      Unit.Add_Line
                       ("              AMF."
-                         & Module_Info.Ada_Name
+                         & Owning_Metamodel_Ada_Name (The_Data_Type)
                          & ".Holders."
                          & Plural
                             (To_Ada_Identifier (The_Data_Type.Get_Name.Value))
