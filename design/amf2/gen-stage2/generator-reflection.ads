@@ -44,6 +44,9 @@
 
 package Generator.Reflection is
 
+   procedure Generate_Reflection_Specification;
+   --  Generates specification of reflection package.
+
    procedure Generate_Reflection_Implementation;
    --  Generates implementation of reflection package.
 

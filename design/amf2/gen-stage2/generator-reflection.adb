@@ -1031,4 +1031,57 @@ package body Generator.Reflection is
       Unit.Put;
    end Generate_Reflection_Implementation;
 
+   ---------------------------------------
+   -- Generate_Reflection_Specification --
+   ---------------------------------------
+
+   procedure Generate_Reflection_Specification is
+      Package_Name : constant League.Strings.Universal_String
+        := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Reflection";
+      Unit         : Generator.Units.Unit;
+
+   begin
+      if not Module_Info.Has_Non_Abstract_Classes then
+         --  All classes are abstract, reflection package is empty.
+
+         return;
+      end if;
+
+      Unit.Add_Unit_Header (2010, 2012);
+
+      Unit.Add_Line;
+      Unit.Add_Line ("package " & Package_Name & " is");
+
+      Unit.Context.Add (+"League.Holders");
+
+      --  Getter
+
+      Unit.Add_Line;
+      Unit.Add_Line (+"   function Get");
+      Unit.Add_Line (+"    (Self     : AMF.Internals.AMF_Element;");
+      Unit.Add_Line
+       (+"     Property : CMOF_Element) return League.Holders.Holder;");
+
+      --  Get_Meta_Class
+
+      Unit.Add_Line;
+      Unit.Add_Line (+"   function Get_Meta_Class");
+      Unit.Add_Line
+       (+"    (Self : AMF.Internals.AMF_Element) return CMOF_Element;");
+
+      --  Setter
+
+      Unit.Add_Line;
+      Unit.Add_Line (+"   procedure Set");
+      Unit.Add_Line (+"    (Self     : AMF.Internals.AMF_Element;");
+      Unit.Add_Line (+"     Property : CMOF_Element;");
+      Unit.Add_Line (+"     Value    : League.Holders.Holder);");
+
+      Unit.Add_Line;
+      Unit.Add_Line ("end " & Package_Name & ";");
+
+      Unit.Context.Instantiate (Package_Name);
+      Unit.Put;
+   end Generate_Reflection_Specification;
+
 end Generator.Reflection;

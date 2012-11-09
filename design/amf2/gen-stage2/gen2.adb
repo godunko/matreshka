@@ -124,6 +124,7 @@ begin
 
    if Generator.Arguments.Generate_Reflection then
       Put_Line (Standard_Error, "Generating relfection...");
+      Generator.Reflection.Generate_Reflection_Specification;
       Generator.Reflection.Generate_Reflection_Implementation;
    end if;
 
