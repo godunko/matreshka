@@ -884,6 +884,66 @@ package body Generator.Metamodel is
              & ";");
       end Generate_Data_Type_Constant;
 
+      ------------------------------------------
+      -- Generate_Data_Type_Property_Constant --
+      ------------------------------------------
+
+      procedure Generate_Data_Type_Property_Constant
+       (Position : CMOF_Named_Element_Ordered_Sets.Cursor)
+      is
+
+         procedure Generate_Property_Constant
+          (Position : CMOF_Named_Element_Ordered_Sets.Cursor);
+
+         --------------------------------
+         -- Generate_Property_Constant --
+         --------------------------------
+
+         procedure Generate_Property_Constant
+          (Position : CMOF_Named_Element_Ordered_Sets.Cursor)
+         is
+            Property : constant AMF.CMOF.Properties.CMOF_Property_Access
+              := AMF.CMOF.Properties.CMOF_Property_Access
+                  (CMOF_Named_Element_Ordered_Sets.Element (Position));
+            Property_Type : constant AMF.CMOF.Types.CMOF_Type_Access
+              := Property.Get_Type;
+
+         begin
+            Unit.Add_Header (Property_Constant_Name (Property), 3);
+            Unit.Add_Line;
+            Unit.Add_Line
+             ("   function "
+                & Property_Constant_Name (Property)
+                & " return AMF.Internals.CMOF_Element is");
+            Unit.Add_Line (+"   begin");
+            Unit.Add_Line
+             (+"      return Base +"
+                 & Integer'Wide_Wide_Image
+                    (Metamodel_Info.Element_Numbers.Element
+                      (AMF.CMOF.Elements.CMOF_Element_Access (Property)))
+                 & ";");
+            Unit.Add_Line
+             ("   end " & Property_Constant_Name (Property) & ";");
+         end Generate_Property_Constant;
+
+         Data_Type      : constant AMF.CMOF.Data_Types.CMOF_Data_Type_Access
+           := AMF.CMOF.Data_Types.CMOF_Data_Type_Access
+               (CMOF_Named_Element_Ordered_Sets.Element (Position));
+         Attributes : constant
+           AMF.CMOF.Properties.Collections.Ordered_Set_Of_CMOF_Property
+             := Data_Type.Get_Owned_Attribute;
+         Properties : CMOF_Named_Element_Ordered_Sets.Set;
+
+      begin
+         for J in 1 .. Attributes.Length loop
+            Properties.Insert
+             (AMF.CMOF.Named_Elements.CMOF_Named_Element_Access
+               (Attributes.Element (J)));
+         end loop;
+
+         Properties.Iterate (Generate_Property_Constant'Access);
+      end Generate_Data_Type_Property_Constant;
+
       -------------------------------
       -- Generate_Package_Constant --
       -------------------------------
@@ -933,6 +993,8 @@ package body Generator.Metamodel is
       Sort (Metamodel_Info.Classes).Iterate (Generate_Class_Constant'Access);
       Sort (Metamodel_Info.Classes).Iterate
        (Generate_Class_Property_Constant'Access);
+      Sort (Metamodel_Info.Data_Types).Iterate
+       (Generate_Data_Type_Property_Constant'Access);
 
       if Metamodel_Info.Ada_Name.To_Wide_Wide_String = "CMOF" then
          --  Constants for properties owned by associations needed only to
@@ -1485,6 +1547,55 @@ package body Generator.Metamodel is
              & " return AMF.Internals.CMOF_Element;");
       end Generate_Data_Type_Constant;
 
+      ------------------------------------------
+      -- Generate_Data_Type_Property_Constant --
+      ------------------------------------------
+
+      procedure Generate_Data_Type_Property_Constant
+       (Position : CMOF_Named_Element_Ordered_Sets.Cursor)
+      is
+
+         procedure Generate_Property_Constant
+          (Position : CMOF_Named_Element_Ordered_Sets.Cursor);
+
+         --------------------------------
+         -- Generate_Property_Constant --
+         --------------------------------
+
+         procedure Generate_Property_Constant
+          (Position : CMOF_Named_Element_Ordered_Sets.Cursor)
+         is
+            Property : constant AMF.CMOF.Properties.CMOF_Property_Access
+              := AMF.CMOF.Properties.CMOF_Property_Access
+                  (CMOF_Named_Element_Ordered_Sets.Element (Position));
+            Property_Type : constant AMF.CMOF.Types.CMOF_Type_Access
+              := Property.Get_Type;
+
+         begin
+            Put_Line
+             ("   function "
+                & Property_Constant_Name (Property)
+                & " return AMF.Internals.CMOF_Element;");
+         end Generate_Property_Constant;
+
+         Class      : constant AMF.CMOF.Data_Types.CMOF_Data_Type_Access
+           := AMF.CMOF.Data_Types.CMOF_Data_Type_Access
+               (CMOF_Named_Element_Ordered_Sets.Element (Position));
+         Attributes : constant
+           AMF.CMOF.Properties.Collections.Ordered_Set_Of_CMOF_Property
+             := Class.Get_Owned_Attribute;
+         Properties : CMOF_Named_Element_Ordered_Sets.Set;
+
+      begin
+         for J in 1 .. Attributes.Length loop
+            Properties.Insert
+             (AMF.CMOF.Named_Elements.CMOF_Named_Element_Access
+               (Attributes.Element (J)));
+         end loop;
+
+         Properties.Iterate (Generate_Property_Constant'Access);
+      end Generate_Data_Type_Property_Constant;
+
       -------------------------------
       -- Generate_Package_Constant --
       -------------------------------
@@ -1515,9 +1626,15 @@ package body Generator.Metamodel is
       New_Line;
       Sort (Metamodel_Info.Packages).Iterate
        (Generate_Package_Constant'Access);
-      New_Line;
-      Sort (Metamodel_Info.Data_Types).Iterate
-       (Generate_Data_Type_Constant'Access);
+
+      if not Metamodel_Info.Data_Types.Is_Empty then
+         New_Line;
+         Sort (Metamodel_Info.Data_Types).Iterate
+          (Generate_Data_Type_Constant'Access);
+         New_Line;
+         Sort (Metamodel_Info.Data_Types).Iterate
+          (Generate_Data_Type_Property_Constant'Access);
+      end if;
 
       if not Metamodel_Info.Classes.Is_Empty then
          New_Line;
