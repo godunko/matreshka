@@ -404,11 +404,49 @@ package body Generator.Reflection is
                end case;
 
             else
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 Attribute_Type.Get_Name.Value.To_Wide_Wide_String);
+               --  Arbitrary data type.
 
-               raise Program_Error;
+               case Representation (Attribute) is
+                  when Value =>
+                     Unit.Context.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders."
+                         & Plural
+                            (To_Ada_Identifier
+                              (Attribute_Type.Get_Name.Value)));
+                     Holder_Name :=
+                       "AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders."
+                         & Plural
+                            (To_Ada_Identifier (Attribute_Type.Get_Name.Value))
+                         & ".To_Holder";
+
+                  when Holder =>
+                     Unit.Context.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders");
+                     Holder_Name :=
+                       "AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders.To_Holder";
+
+                  when Set | Ordered_Set | Bag | Sequence =>
+                     Unit.Context.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & "."
+                         & To_Ada_Identifier (Attribute_Type.Get_Name.Value)
+                         & "_Collections.Internals");
+                     Holder_Name :=
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & "."
+                         & To_Ada_Identifier (Attribute_Type.Get_Name.Value)
+                         & "_Collections.Internals.To_Holder");
+               end case;
             end if;
 
             if Convertor_Name.Is_Empty then
@@ -812,7 +850,45 @@ package body Generator.Reflection is
                end case;
 
             else
-               raise Program_Error;
+               case Representation (Attribute) is
+                  when Value =>
+                     Unit.Context.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders."
+                         & Plural
+                            (To_Ada_Identifier
+                              (Attribute_Type.Get_Name.Value)));
+                     Unit.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders."
+                         & Plural
+                            (To_Ada_Identifier (Attribute_Type.Get_Name.Value))
+                         & ".Element (Value)");
+
+                  when Holder =>
+                     Unit.Context.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders");
+                     Unit.Add
+                      ("AMF."
+                         & Owning_Metamodel_Ada_Name (Attribute_Type)
+                         & ".Holders.Element (Value)");
+
+                  when Set =>
+                     raise Program_Error;
+
+                  when Ordered_Set =>
+                     raise Program_Error;
+
+                  when Bag =>
+                     raise Program_Error;
+
+                  when Sequence =>
+                     raise Program_Error;
+               end case;
             end if;
 
             Unit.Add_Line (+");");
