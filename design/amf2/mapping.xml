@@ -36,6 +36,50 @@
     <mapping representation="holder" memberName="Visibility_Holder_Value" memberKindName="M_Visibility_Holder_Kind"/>
   </type>
 
+  <!--  Types of DC package of DD specification  -->
+
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#AlignmentKind">
+    <literal uri="http://www.omg.org/spec/DD/20110901/DC.cmof#AlignmentKind-start" adaLiteral="Align_Start"/>
+    <literal uri="http://www.omg.org/spec/DD/20110901/DC.cmof#AlignmentKind-end" adaLiteral="Align_End"/>
+    <literal uri="http://www.omg.org/spec/DD/20110901/DC.cmof#AlignmentKind-center" adaLiteral="Align_Center"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Boolean">
+    <mapping representation="value" adaType="Boolean" memberName="Boolean_Value"/>
+    <mapping representation="holder" adaType="AMF.Optional_Boolean" memberName="Boolean_Holder"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#String">
+    <mapping representation="value" adaType="League.Strings.Universal_String" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access"/>
+    <mapping representation="holder" adaType="AMF.Optional_String" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Real">
+    <mapping representation="value" adaType="Real" adaPackage="AMF" memberName="Real_Value"/>
+    <mapping representation="holder" adaType="AMF.Optional_Real"/>
+    <mapping representation="sequence" adaType="Sequence_Of_Real" adaPackage="AMF.Real_Collections" memberName="Real_Collection"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Point">
+    <mapping representation="value" adaType="DC_Point" adaPackage="AMF.DC"/>
+    <mapping representation="sequence" adaType="Sequence_Of_DC_Point" adaPackage="AMF.DC" memberName="Point_Collection"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Bounds">
+    <mapping representation="value" adaType="DC_Bounds" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaType="Optional_DC_Bounds" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Color">
+    <mapping representation="holder" adaType="Optional_DC_Color" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Dimension">
+    <mapping representation="value" adaType="DC_Dimension" ada_Package="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Transform">
+    <mapping representation="sequence" adaType="Sequence_Of_DG_Transform" adaPackage="AMF.DG" memberName="Transform_Collection"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#GradientStop">
+    <mapping representation="set" adaType="Set_Of_DG_Gradient_Stop" adaPackage="AMF.DG" memberName="Gradient_Collection"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#PathCommand">
+    <mapping representation="sequence" adaType="Sequence_Of_Path_Command" adaPackage="AMF.DG" memberName="Path_Collection"/>
+  </type>
+
   <!--  Primitive types of PrimitiveTypes package of UML specification  -->
 
   <type uri="http://www.omg.org/spec/UML/20100901/PrimitiveTypes.cmof#Boolean">
