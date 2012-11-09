@@ -1080,7 +1080,7 @@ package body Generator.Attributes is
    procedure Generate_Attributes_Mapping_Specification is
       Package_Name : constant League.Strings.Universal_String
         := "AMF.Internals.Tables."
-             & Metamodel_Info.Ada_Name
+             & Module_Info.Ada_Name
              & "_Attribute_Mappings";
       Unit         : Generator.Units.Unit;
       Position     : AMF.Extents.Collections.Extent_Sets.Cursor;
