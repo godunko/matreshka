@@ -58,12 +58,13 @@ package body Generator.Arguments is
       --  Parse first and last years for copyright statement.
 
       First_Year :=
-        Integer'Wide_Wide_Value (Arguments.Element (1).To_Wide_Wide_String);
+        Integer'Wide_Wide_Value (Arguments (1).To_Wide_Wide_String);
       Last_Year :=
-        Integer'Wide_Wide_Value (Arguments.Element (2).To_Wide_Wide_String);
+        Integer'Wide_Wide_Value (Arguments (2).To_Wide_Wide_String);
+      Module_Info.Ada_Name := Arguments (3);
 
-      for J in 3 .. Arguments.Length loop
-         Argument := Arguments.Element (J);
+      for J in 4 .. Arguments.Length loop
+         Argument := Arguments (J);
 
          if Argument = +"--verbose" then
             --  Output verbose messages.

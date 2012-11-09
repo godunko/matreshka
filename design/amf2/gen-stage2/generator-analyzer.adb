@@ -882,12 +882,6 @@ package body Generator.Analyzer is
                  (AMF.CMOF.Packages.CMOF_Package'Class
                    (Elements.Element (J).all).Get_Name.Value));
 
-            if Module_Info.Ada_Name.Is_Empty then
-               --  Set global name of the module to be used.
-
-               Module_Info.Ada_Name := Metamodel_Info.Ada_Name;
-            end if;
-
             exit;
          end if;
       end loop;
