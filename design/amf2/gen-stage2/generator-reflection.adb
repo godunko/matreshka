@@ -305,19 +305,15 @@ package body Generator.Reflection is
                         ("AMF.Holders.Reals.To_Holder");
 
                   when Holder =>
-                     raise Program_Error;
+                     Holder_Name :=
+                       League.Strings.To_Universal_String
+                        ("AMF.Holders.To_Holder");
 
-                  when Set =>
-                     raise Program_Error;
-
-                  when Ordered_Set =>
-                     raise Program_Error;
-
-                  when Bag =>
-                     raise Program_Error;
-
-                  when Sequence =>
-                     raise Program_Error;
+                  when Set | Ordered_Set | Bag | Sequence =>
+                     Unit.Context.Add (+"AMF.Real_Collections.Internals");
+                     Holder_Name :=
+                       League.Strings.To_Universal_String
+                        ("AMF.Real_Collections.Internals.To_Holder");
                end case;
 
             elsif Attribute_Type.Get_Name = String_Name then
