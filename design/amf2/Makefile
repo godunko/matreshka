@@ -97,13 +97,3 @@ gen-utp-stubs: gens
 
 clean:
 	rm -rf .libs amf/.objs gen-stage1/.objs gen-stage2/.obj uml/.objs gui/cmof_tree_view/.objs gui/cmof_tree_view/.amoc demo-cmof demo-reader demo-viewer
-
-
-gen-iats: gens
-	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2011 2012 'file:///home/godunko/Matreshka/matreshka/design/amf2/IATS_Profile.cmof' --stubs > iats/source.ada
-	gnatchop -gnat12 -w iats/source.ada iats
-	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2011 2011 'file:///home/godunko/Matreshka/matreshka/design/amf2/IATS_Profile.cmof' > iats/source.ada
-	gnatchop -gnat12 -w iats/source.ada iats
-
-build-iats:
-	gprbuild -p -j0 -Piats/iats.gpr
