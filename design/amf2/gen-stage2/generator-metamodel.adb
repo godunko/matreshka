@@ -1030,6 +1030,7 @@ package body Generator.Metamodel is
          Property_Type : constant AMF.CMOF.Types.CMOF_Type_Access
            := Property.Get_Type;
          Value         : League.Holders.Holder;
+         String_Value  : League.Strings.Universal_String;
 
       begin
          if Property_Type.all in AMF.CMOF.Data_Types.CMOF_Data_Type'Class
@@ -1144,6 +1145,8 @@ package body Generator.Metamodel is
 
                else
                   if not Is_Empty (Value) then
+                     String_Value := League.Holders.Element (Value);
+
                      Unit.Add_Line
                       (+"      "
                          & "AMF.Internals.Tables.CMOF_Attributes.Internal_Set_"
@@ -1153,17 +1156,27 @@ package body Generator.Metamodel is
                           & Integer'Wide_Wide_Image
                              (Metamodel_Info.Element_Numbers.Element (Element))
                           & ",");
-                     Unit.Context.Add
-                      (String_Data_Package_Name
-                        (Metamodel_Info.all, League.Holders.Element (Value)));
-                     Unit.Add_Line
-                      ("        "
-                         & String_Data_Package_Name
-                            (Metamodel_Info.all, League.Holders.Element (Value))
-                         & "."
-                         & String_Data_Constant_Name
-                            (Metamodel_Info.all, League.Holders.Element (Value))
-                         & "'Access);");
+
+                     if not String_Value.Is_Empty then
+                        Unit.Context.Add
+                         (String_Data_Package_Name
+                           (Metamodel_Info.all, String_Value));
+                        Unit.Add_Line
+                         ("        "
+                            & String_Data_Package_Name
+                               (Metamodel_Info.all, String_Value)
+                            & "."
+                            & String_Data_Constant_Name
+                               (Metamodel_Info.all, String_Value)
+                            & "'Access);");
+
+                     else
+                        Unit.Context.Add (+"Matreshka.Internals.Strings");
+                        Unit.Add_Line
+                         (+"        "
+                             & "Matreshka.Internals.Strings."
+                             & "Shared_Empty_String'Access);");
+                     end if;
                   end if;
                end if;
 

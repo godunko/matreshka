@@ -948,6 +948,7 @@ package body Generator.Analyzer is
            := Property.Get_Type;
          Value         : League.Holders.Holder;
          Collection    : AMF.Reflective_Collections.Reflective_Collection;
+         String_Value  : League.Strings.Universal_String;
 
       begin
          if Property_Type.Get_Name.Value = +"String"
@@ -961,13 +962,21 @@ package body Generator.Analyzer is
                  AMF.Holders.Reflective_Collections.Element (Value);
 
                for J in 1 .. Collection.Length loop
-                  Strings.Include
-                   (League.Holders.Element (Collection.Element (J)));
+                  String_Value :=
+                    League.Holders.Element (Collection.Element (J));
+
+                  if not String_Value.Is_Empty then
+                     Strings.Include (String_Value);
+                  end if;
                end loop;
 
             else
                if not League.Holders.Is_Empty (Value) then
-                  Strings.Include (League.Holders.Element (Value));
+                  String_Value := League.Holders.Element (Value);
+
+                  if not String_Value.Is_Empty then
+                     Strings.Include (String_Value);
+                  end if;
                end if;
             end if;
          end if;
