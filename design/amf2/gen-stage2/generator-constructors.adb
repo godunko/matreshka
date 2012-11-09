@@ -564,7 +564,37 @@ package body Generator.Constructors is
                   end case;
 
                else
-                  raise Program_Error;
+                  --  Arbitrary data type.
+
+                  case Representation (Original_Attribute) is
+                     when Value =>
+                        if Default.Is_Empty then
+                           Unit.Add (+" (others => <>)),");
+
+                        else
+                           raise Program_Error;
+                           if Boolean'Wide_Wide_Value
+                               (Default.Value.To_Wide_Wide_String)
+                           then
+                              Unit.Add (+" True),");
+
+                           else
+                              Unit.Add (+" False),");
+                           end if;
+                        end if;
+
+                     when Holder =>
+                        if Default.Is_Empty then
+                           Unit.Add (+" (Is_Empty => True)),");
+
+                        else
+                           raise Program_Error;
+                        end if;
+
+                     when Set | Ordered_Set | Bag | Sequence =>
+                        Unit.Add (+" 0),");
+                  end case;
+
                end if;
 
                Unit.Add_Line;
