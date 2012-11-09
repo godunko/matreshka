@@ -106,9 +106,20 @@ package body Generator.Factories is
 
       begin
          while CMOF_Element_Sets.Has_Element (Position) loop
-            Data_Types.Insert
-             (AMF.CMOF.Data_Types.CMOF_Data_Type_Access
-               (CMOF_Element_Sets.Element (Position)));
+            if CMOF_Element_Sets.Element (Position).all
+                 in AMF.CMOF.Primitive_Types.CMOF_Primitive_Type'Class
+              or CMOF_Element_Sets.Element (Position).all
+                   in AMF.CMOF.Enumerations.CMOF_Enumeration'Class
+            then
+               --  Add elements of CMOF::PrimitiveType and CMOF::Enumeration
+               --  types only to exclude elements of CMOF::DataType, which
+               --  can't be tested by Ada constructions.
+
+               Data_Types.Insert
+                (AMF.CMOF.Data_Types.CMOF_Data_Type_Access
+                  (CMOF_Element_Sets.Element (Position)));
+            end if;
+
             CMOF_Element_Sets.Next (Position);
          end loop;
       end;
