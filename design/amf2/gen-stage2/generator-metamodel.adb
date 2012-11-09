@@ -1175,7 +1175,7 @@ package body Generator.Metamodel is
                         Unit.Add_Line
                          (+"        "
                              & "Matreshka.Internals.Strings."
-                             & "Shared_Empty_String'Access);");
+                             & "Shared_Empty'Access);");
                      end if;
                   end if;
                end if;
