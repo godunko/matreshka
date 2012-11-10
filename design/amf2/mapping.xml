@@ -71,63 +71,13 @@
     <mapping representation="holder" adaType="Optional_DC_Dimension" adaPackage="AMF.DC"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Transform">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
     <mapping representation="sequence" adaType="Sequence_Of_DG_Transform" adaPackage="AMF.DG" memberName="Transform_Collection"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#GradientStop">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
     <mapping representation="set" adaType="Set_Of_DG_Gradient_Stop" adaPackage="AMF.DG" memberName="Gradient_Collection"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#PathCommand">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
     <mapping representation="sequence" adaType="Sequence_Of_Path_Command" adaPackage="AMF.DG" memberName="Path_Collection"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#ClosePath">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#CubicCurveTo">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#EllipticalArcTo">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#LineTo">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Matrix">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#MoveTo">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#QuadraticCurveTo">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Rotate">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Scale">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Skew">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
-  </type>
-  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Translate">
-    <mapping representation="value" adaPackage="AMF.DC"/>
-    <mapping representation="holder" adaPackage="AMF.DC"/>
   </type>
 
   <!--  Primitive types of PrimitiveTypes package of UML specification  -->
