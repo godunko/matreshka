@@ -301,7 +301,8 @@ package Generator is
 
       Non_Abstract_Classes     : CMOF_Class_Ordered_Sets.Set;
       --  Alphabetically ordered set of non-abstract classes in all metamodels
-      --  of the module.
+      --  of the module. This set doesn't include classes from metamodels
+      --  imported by the module.
 
       Extents                  : Extent_Vectors.Vector;
       --  All extents of module.

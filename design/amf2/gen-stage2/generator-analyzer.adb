@@ -644,7 +644,6 @@ package body Generator.Analyzer is
 
             if not The_Class.Get_Is_Abstract then
                Info.Non_Abstract_Classes.Insert (The_Class);
-               Module_Info.Non_Abstract_Classes.Insert (The_Class);
             end if;
 
             if Module_Info.Extents.Contains (Info.Extent) then
@@ -860,6 +859,7 @@ package body Generator.Analyzer is
 
       Process_Class (Class);
       Class_Info.Insert (Class, Info);
+      Module_Info.Non_Abstract_Classes.Insert (Class);
    end Compute_All_Properties;
 
    ----------------------------
