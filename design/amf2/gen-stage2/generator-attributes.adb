@@ -359,14 +359,17 @@ package body Generator.Attributes is
                               (Module_Info.Attribute_Member.Element
                                 (Attribute)),
                              Both)
-                         & ").String_Value;");
+                         & ")."
+                         & Generator.Type_Mapping.Member_Name
+                            (Attribute_Type, Representation (Attribute))
+                         & ";");
 
                   when Set | Ordered_Set | Bag | Sequence =>
                      Unit.Context.Add
                       ("AMF.Internals.Tables."
                          & Module_Info.Ada_Name
                          & "_Element_Table");
-                     Unit.Add
+                     Unit.Add_Line
                       ("      return AMF.Internals.Tables."
                          & Module_Info.Ada_Name
                          & "_Element_Table.Table (Self).Member ("
@@ -375,7 +378,10 @@ package body Generator.Attributes is
                               (Module_Info.Attribute_Member.Element
                                 (Attribute)),
                              Both)
-                         & ").String_Collection_Value;");
+                         & ")."
+                         & Generator.Type_Mapping.Member_Name
+                            (Attribute_Type, Representation (Attribute))
+                         & ";");
                end case;
 
             elsif Module_Info.Attribute_Member.Contains (Attribute) then
@@ -397,7 +403,10 @@ package body Generator.Attributes is
                          (Integer'Wide_Wide_Image
                            (Module_Info.Attribute_Member.Element (Attribute)),
                           Both)
-                      & ").Link, Self)");
+                      & ")."
+                      & Generator.Type_Mapping.Member_Name
+                         (Attribute_Type, Representation (Attribute))
+                      & ", Self)");
 
                else
                   Unit.Context.Add

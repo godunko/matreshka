@@ -309,6 +309,8 @@ package Generator is
       Attribute_Member         : CMOF_Property_Natural_Maps.Map;
       Attribute_Collection     : CMOF_Property_Natural_Maps.Map;
       --  Attribute to member or collection mappings.
+
+      Member_Count             : Natural := 0;
    end record;
 
    ------------------------

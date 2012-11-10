@@ -455,6 +455,10 @@ package body Generator.Type_Mapping is
    is
       Position : constant Mapping_Maps.Cursor
         := Mapping.Find (AMF.CMOF.Elements.CMOF_Element_Access (Element));
+      Ada_Name : constant League.Strings.Universal_String
+        := +To_Ada_Identifier
+             (AMF.CMOF.Named_Elements.CMOF_Named_Element'Class
+               (Element.all).Get_Name.Value);
 
    begin
       if Mapping_Maps.Has_Element (Position)
@@ -469,34 +473,27 @@ package body Generator.Type_Mapping is
               (Representation).Member_Name;
 
       else
-         case Representation is
-            when Value =>
-               return
-                 League.Strings.To_Universal_String
-                  (To_Ada_Identifier
-                    (AMF.CMOF.Named_Elements.CMOF_Named_Element'Class
-                      (Element.all).Get_Name.Value))
-                   & "_Value";
+         if Element.all in AMF.CMOF.Classes.CMOF_Class'Class then
+            case Representation is
+               when Value | Holder =>
+                  return +"Link";
 
-            when Holder =>
-               return
-                 League.Strings.To_Universal_String
-                  (To_Ada_Identifier
-                    (AMF.CMOF.Named_Elements.CMOF_Named_Element'Class
-                      (Element.all).Get_Name.Value))
-                   & "_Holder";
+               when Set | Ordered_Set | Bag | Sequence =>
+                  return +"Collection";
+            end case;
 
-            when Set | Ordered_Set | Bag | Sequence =>
-               Put_Line
-                (Standard_Error,
-                 "error: memberName is not defined for "
-                   & Representation_Kinds'Wide_Wide_Image (Representation)
-                   & " of "
-                   & AMF.CMOF.Named_Elements.CMOF_Named_Element'Class
-                      (Element.all).Get_Name.Value.To_Wide_Wide_String);
+         else
+            case Representation is
+               when Value =>
+                  return Ada_Name & "_Value";
 
-               raise Program_Error;
-         end case;
+               when Holder =>
+                  return Ada_Name & "_Holder";
+
+               when Set | Ordered_Set | Bag | Sequence =>
+                  return Ada_Name & "_Collection";
+            end case;
+         end if;
       end if;
    end Member_Name;
 

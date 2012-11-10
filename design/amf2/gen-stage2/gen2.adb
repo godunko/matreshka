@@ -62,6 +62,7 @@ with Generator.Loader;
 with Generator.Metamodel;
 with Generator.Reflection;
 with Generator.String_Data;
+with Generator.Tables;
 with Generator.Type_Mapping;
 with Generator.Visitors;
 
@@ -141,4 +142,7 @@ begin
 
    Put_Line (Standard_Error, "Generating link sets management...");
    Generator.Link_Sets.Generate_Construct_Union;
+
+   Put_Line (Standard_Error, "Generating element table...");
+   Generator.Tables.Generate_Types_Package;
 end Gen2;

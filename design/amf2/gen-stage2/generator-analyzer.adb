@@ -603,6 +603,9 @@ package body Generator.Analyzer is
                Module_Info.Attribute_Member.Insert
                 (Attribute, Attribute_Info.Index);
 
+               Module_Info.Member_Count :=
+                 Integer'Max (Module_Info.Member_Count, Attribute_Info.Index);
+
             else
                Module_Info.Attribute_Collection.Insert
                 (Attribute, Attribute_Info.Index);
