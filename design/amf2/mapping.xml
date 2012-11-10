@@ -3,37 +3,34 @@
   <!--  Primitive and enumeration types of CMOF  -->
 
   <type uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#Boolean">
-    <mapping representation="value" adaType="Boolean" memberName="Boolean_Value"/>
+    <mapping representation="value" adaType="Boolean" adaPackage=""/>
   </type>
   <type uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#Integer">
-    <mapping representation="value" adaType="Integer" memberName="Integer_Value"/>
-    <mapping representation="holder" adaType="AMF.Optional_Integer" memberName="Integer_Holder_Value"/>
+    <mapping representation="value" adaType="Integer" adaPackage=""/>
+    <mapping representation="holder" adaType="Optional_Integer" adaPackage="AMF"/>
   </type>
   <type uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#String">
-    <mapping representation="value" adaType="League.Strings.Universal_String" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access"/>
-    <mapping representation="holder" adaType="AMF.Optional_String" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access" memberKindName="M_String"/>
+    <mapping representation="value" adaType="Universal_String" adaPackage="League.Strings" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access"/>
+    <mapping representation="holder" adaType="Optional_String" adaPackage="AMF" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access" memberKindName="M_String" memberName="String_Value"/>
     <mapping representation="set" adaType="Set_Of_String" adaPackage="AMF.String_Collections" internalAdaPackage="AMF.Internals" internalAdaType="AMF_Collection_Of_String"/>
     <mapping representation="ordered_set" adaType="Ordered_Set_Of_String" adaPackage="AMF.String_Collections" internalAdaPackage="AMF.Internals" internalAdaType="AMF_Collection_Of_String"/>
     <mapping representation="sequence" adaType="Sequence_Of_String" adaPackage="AMF.String_Collections" internalAdaPackage="AMF.Internals" internalAdaType="AMF_Collection_Of_String"/>
   </type>
   <type uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#UnlimitedNatural">
-    <mapping representation="value" adaType="AMF.Unlimited_Natural" memberName="Natural_Value"/>
-    <mapping representation="holder" adaType="AMF.Optional_Unlimited_Natural" memberName="Natural_Holder_Value"/>
+    <mapping representation="value" adaType="Unlimited_Natural" adaPackage="AMF"/>
+    <mapping representation="holder" adaType="Optional_Unlimited_Natural" adaPackage="AMF"/>
   </type>
   <type uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#ParameterDirectionKind">
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#ParameterDirectionKind-in" adaLiteral="In_Parameter"/>
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#ParameterDirectionKind-inout" adaLiteral="In_Out_Parameter"/>
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#ParameterDirectionKind-out" adaLiteral="Out_Parameter"/>
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#ParameterDirectionKind-return" adaLiteral="Return_Parameter"/>
-    <mapping representation="value" memberName="Parameter_Direction_Value"/>
   </type>
   <type uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#VisibilityKind">
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#VisibilityKind-public" adaLiteral="Public_Visibility"/>
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#VisibilityKind-protected" adaLiteral="Protected_Visibility"/>
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#VisibilityKind-private" adaLiteral="Private_Visibility"/>
     <literal uri="http://schema.omg.org/spec/MOF/2.0/cmof.xml#VisibilityKind-package" adaLiteral="Package_Visibility"/>
-    <mapping representation="value" memberName="Visibility_Value"/>
-    <mapping representation="holder" memberName="Visibility_Holder_Value"/>
   </type>
 
   <!--  Types of DC package of DD specification  -->
@@ -44,20 +41,21 @@
     <literal uri="http://www.omg.org/spec/DD/20110901/DC.cmof#AlignmentKind-center" adaLiteral="Align_Center"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Boolean">
-    <mapping representation="value" adaType="Boolean" memberName="Boolean_Value"/>
-    <mapping representation="holder" adaType="AMF.Optional_Boolean" memberName="Boolean_Holder"/>
+    <mapping representation="value" adaType="Boolean" adaPackage="" memberName="Boolean_Value"/>
+    <mapping representation="holder" adaType="Optional_Boolean" adaPackage="AMF" memberName="Boolean_Holder"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#String">
-    <mapping representation="value" adaType="League.Strings.Universal_String" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access"/>
-    <mapping representation="holder" adaType="AMF.Optional_String" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access" memberKindName="M_String"/>
+    <mapping representation="value" adaType="Universal_String" adaPackage="League.Strings" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access"/>
+    <mapping representation="holder" adaType="Optional_String" adaPackage="AMF" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access" memberKindName="M_String" memberName="String_Value"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Real">
     <mapping representation="value" adaType="Real" adaPackage="AMF" memberName="Real_Value"/>
-    <mapping representation="holder" adaType="AMF.Optional_Real"/>
+    <mapping representation="holder" adaType="Optional_Real" adaPackage="AMF"/>
     <mapping representation="sequence" adaType="Sequence_Of_Real" adaPackage="AMF.Real_Collections" memberName="Real_Collection"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Point">
     <mapping representation="value" adaType="DC_Point" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaType="Optional_DC_Point" adaPackage="AMF.DC"/>
     <mapping representation="sequence" adaType="Sequence_Of_DC_Point" adaPackage="AMF.DC" memberName="Point_Collection"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Bounds">
@@ -65,19 +63,71 @@
     <mapping representation="holder" adaType="Optional_DC_Bounds" adaPackage="AMF.DC"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Color">
+    <mapping representation="value" adaType="DC_Color" adaPackage="AMF.DC"/>
     <mapping representation="holder" adaType="Optional_DC_Color" adaPackage="AMF.DC"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DC.cmof#Dimension">
-    <mapping representation="value" adaType="DC_Dimension" ada_Package="AMF.DC"/>
+    <mapping representation="value" adaType="DC_Dimension" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaType="Optional_DC_Dimension" adaPackage="AMF.DC"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Transform">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
     <mapping representation="sequence" adaType="Sequence_Of_DG_Transform" adaPackage="AMF.DG" memberName="Transform_Collection"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#GradientStop">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
     <mapping representation="set" adaType="Set_Of_DG_Gradient_Stop" adaPackage="AMF.DG" memberName="Gradient_Collection"/>
   </type>
   <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#PathCommand">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
     <mapping representation="sequence" adaType="Sequence_Of_Path_Command" adaPackage="AMF.DG" memberName="Path_Collection"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#ClosePath">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#CubicCurveTo">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#EllipticalArcTo">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#LineTo">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Matrix">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#MoveTo">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#QuadraticCurveTo">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Rotate">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Scale">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Skew">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
+  </type>
+  <type uri="http://www.omg.org/spec/DD/20110901/DG.cmof#Translate">
+    <mapping representation="value" adaPackage="AMF.DC"/>
+    <mapping representation="holder" adaPackage="AMF.DC"/>
   </type>
 
   <!--  Primitive types of PrimitiveTypes package of UML specification  -->
@@ -93,11 +143,11 @@
   </type>
   <type uri="http://www.omg.org/spec/UML/20100901/PrimitiveTypes.cmof#Real">
     <mapping representation="value" adaType="Real" adaPackage="AMF" memberName="Real_Value"/>
-    <mapping representation="holder" adaType="AMF.Optional_Real"/>
+    <mapping representation="holder" adaType="Optional_Real" adaPackage="AMF"/>
   </type>
   <type uri="http://www.omg.org/spec/UML/20100901/PrimitiveTypes.cmof#String">
     <mapping representation="value" adaType="League.Strings.Universal_String" adaPackage="" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access"/>
-    <mapping representation="holder" adaType="Optional_String" adaPackage="AMF" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access" memberKindName="M_String"/>
+    <mapping representation="holder" adaType="Optional_String" adaPackage="AMF" internalAdaPackage="Matreshka.Internals.Strings" internalAdaType="Shared_String_Access" memberKindName="M_String" memberName="String_Value"/>
     <mapping representation="set" adaType="Set_Of_String" adaPackage="AMF.String_Collections" internalAdaPackage="AMF.Internals" internalAdaType="AMF_Collection_Of_String"/>
     <mapping representation="ordered_set" adaType="Ordered_Set_Of_String" adaPackage="AMF.String_Collections" internalAdaPackage="AMF.Internals" internalAdaType="AMF_Collection_Of_String"/>
     <mapping representation="sequence" adaType="Sequence_Of_String" adaPackage="AMF.String_Collections" internalAdaPackage="AMF.Internals" internalAdaType="AMF_Collection_Of_String"/>
