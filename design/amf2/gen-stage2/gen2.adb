@@ -145,4 +145,5 @@ begin
 
    Put_Line (Standard_Error, "Generating element table...");
    Generator.Tables.Generate_Types_Package;
+   Generator.Tables.Generate_Element_Table_Package;
 end Gen2;

@@ -301,6 +301,12 @@ package body Generator.Names is
 
    function Plural (Name : Wide_Wide_String) return Wide_Wide_String is
    begin
+      --  Some exceptions.
+
+      if Name = "Bounds" then
+         return Name;
+      end if;
+
       if Name (Name'Last) = 'y' then
          return Name (Name'First .. Name'Last - 1) & "ies";
 

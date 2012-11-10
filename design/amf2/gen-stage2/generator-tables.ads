@@ -45,5 +45,9 @@
 package Generator.Tables is
 
    procedure Generate_Types_Package;
+   --  Generates types package.
+
+   procedure Generate_Element_Table_Package;
+   --  Generates element table package.
 
 end Generator.Tables;

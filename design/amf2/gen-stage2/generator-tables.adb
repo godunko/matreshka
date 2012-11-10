@@ -62,6 +62,39 @@ package body Generator.Tables is
           (League.Strings.Universal_String,
            Member_Information);
 
+   ------------------------------------
+   -- Generate_Element_Table_Package --
+   ------------------------------------
+
+   procedure Generate_Element_Table_Package is
+      Package_Name : constant League.Strings.Universal_String
+        := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Element_Table";
+      Types_Name   : constant League.Strings.Universal_String
+        := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Types";
+      Unit         : Generator.Units.Unit;
+
+   begin
+      if Module_Info.Non_Abstract_Classes.Is_Empty then
+         --  All classes are abstract, types package is empty.
+
+         return;
+      end if;
+
+      Unit.Add_Unit_Header (2010, 2012);
+
+      Unit.Context.Add (+"AMF.Internals.Generic_Element_Table");
+      Unit.Context.Add (Types_Name);
+
+      Unit.Add_Line;
+      Unit.Add_Line ("package " & Package_Name & " is");
+      Unit.Add_Line (+"  new AMF.Internals.Generic_Element_Table");
+      Unit.Add_Line ("       (" & Types_Name & ".Element_Record);");
+      Unit.Add_Line ("pragma Preelaborate (" & Package_Name & ");");
+
+      Unit.Context.Instantiate (Package_Name);
+      Unit.Put;
+   end Generate_Element_Table_Package;
+
    ----------------------------
    -- Generate_Types_Package --
    ----------------------------
