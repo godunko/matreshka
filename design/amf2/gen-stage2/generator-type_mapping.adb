@@ -150,38 +150,8 @@ package body Generator.Type_Mapping is
                 & ".Collections";
          end if;
 
-      elsif The_Type.all in AMF.CMOF.Enumerations.CMOF_Enumeration'Class then
-         return "AMF." & Owning_Metamodel_Ada_Name (The_Type);
-
-      elsif The_Type.all in AMF.CMOF.Data_Types.CMOF_Data_Type'Class then
-         if not Mapping.Contains
-                 (AMF.CMOF.Elements.CMOF_Element_Access (The_Type))
-         then
-            declare
-               Element : constant AMF.Elements.Element_Access
-                 := AMF.Elements.Element_Access (The_Type);
-               Extent  : constant AMF.Extents.Extent_Access
-                 := Element.Extent;
-
-            begin
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 "error: there is no mapping for '"
-                   & AMF.URI_Extents.URI_Extent'Class
-                      (Extent.all).URI (Element).To_Wide_Wide_String
-                   & ''');
-
-               raise Program_Error;
-            end;
-         end if;
-
-         return
-           Mapping.Element
-            (AMF.CMOF.Elements.CMOF_Element_Access
-              (The_Type)).Mapping (Representation).Ada_Package;
-
       else
-         raise Program_Error;
+         return "AMF." & Owning_Metamodel_Ada_Name (The_Type);
       end if;
    end Public_Ada_Package_Name;
 
@@ -232,7 +202,7 @@ package body Generator.Type_Mapping is
                    & To_Ada_Identifier (The_Type.Get_Name.Value);
          end case;
 
-      elsif The_Type.all in AMF.CMOF.Enumerations.CMOF_Enumeration'Class then
+      else
          if Mapping.Contains
              (AMF.CMOF.Elements.CMOF_Element_Access (The_Type))
            and then Mapping.Element
@@ -267,15 +237,6 @@ package body Generator.Type_Mapping is
                   raise Program_Error;
             end case;
          end if;
-
-      elsif The_Type.all in AMF.CMOF.Data_Types.CMOF_Data_Type'Class then
-         return
-           Mapping.Element
-            (AMF.CMOF.Elements.CMOF_Element_Access
-              (The_Type)).Mapping (Representation).Ada_Type;
-
-      else
-         raise Program_Error;
       end if;
    end Public_Ada_Type_Name;
 
