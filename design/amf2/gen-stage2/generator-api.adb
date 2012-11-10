@@ -45,6 +45,7 @@ with AMF.CMOF.Classes.Collections;
 with AMF.CMOF.Comments.Collections;
 with AMF.CMOF.Operations.Collections;
 with AMF.CMOF.Parameters.Collections;
+with AMF.CMOF.Primitive_Types;
 with AMF.CMOF.Properties.Collections;
 with AMF.CMOF.Types;
 with League.Characters;
@@ -528,7 +529,11 @@ package body Generator.API is
        (Generator.Type_Mapping.Public_Ada_Package_Name
          (Attribute_Type,
           Generator.Attribute_Mapping.Representation (Attribute)),
-        not Proxy);
+        not Proxy
+          and Attribute_Type.all
+                not in AMF.CMOF.Primitive_Types.CMOF_Primitive_Type'Class);
+      --  Don't generate 'limited with' for primitive types to avoid conflicts
+      --  with predefined types.
       Unit.Add
        ("       return "
           & Generator.Type_Mapping.Public_Ada_Type_Qualified_Name
