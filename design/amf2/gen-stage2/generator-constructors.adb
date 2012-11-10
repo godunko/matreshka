@@ -548,14 +548,6 @@ package body Generator.Constructors is
 
                         else
                            raise Program_Error;
-                           if Boolean'Wide_Wide_Value
-                               (Default.Value.To_Wide_Wide_String)
-                           then
-                              Unit.Add (+" True),");
-
-                           else
-                              Unit.Add (+" False),");
-                           end if;
                         end if;
 
                      when Holder =>
@@ -675,7 +667,7 @@ package body Generator.Constructors is
         := "AMF.Internals.Tables." & Module_Info.Ada_Name & "_Constructors";
 
    begin
-      if not Module_Info.Has_Non_Abstract_Classes then
+      if Module_Info.Non_Abstract_Classes.Is_Empty then
          --  All classes are abstract, constructors package is empty.
 
          return;
@@ -730,7 +722,7 @@ package body Generator.Constructors is
       end Generate_Create;
 
    begin
-      if not Module_Info.Has_Non_Abstract_Classes then
+      if Module_Info.Non_Abstract_Classes.Is_Empty then
          --  All classes are abstract, constructors package is empty.
 
          return;

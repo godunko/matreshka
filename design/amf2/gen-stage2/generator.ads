@@ -299,15 +299,16 @@ package Generator is
       Classes                  : CMOF_Class_Sets.Set;
       --  All classes from all metamodels of module.
 
+      Non_Abstract_Classes     : CMOF_Class_Ordered_Sets.Set;
+      --  Alphabetically ordered set of non-abstract classes in all metamodels
+      --  of the module.
+
       Extents                  : Extent_Vectors.Vector;
       --  All extents of module.
 
       Attribute_Member         : CMOF_Property_Natural_Maps.Map;
       Attribute_Collection     : CMOF_Property_Natural_Maps.Map;
       --  Attribute to member or collection mappings.
-
-      Has_Non_Abstract_Classes : Boolean := False;
-      --  Module has at least one non-abstract class.
    end record;
 
    ------------------------
