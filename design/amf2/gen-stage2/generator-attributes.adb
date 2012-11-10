@@ -940,7 +940,8 @@ package body Generator.Attributes is
             Unit.Add (+"         ");
          end if;
 
-         Unit.Context.Add ("AMF.Internals.Tables." & Info.Ada_Name & "_Types");
+         Unit.Context.Add
+          ("AMF.Internals.Tables." & Module_Info.Ada_Name & "_Types");
          Unit.Add_Line
           ("AMF.Internals.Tables."
              & Module_Info.Ada_Name
@@ -1042,7 +1043,7 @@ package body Generator.Attributes is
       Unit.Add_Line ("   " & Used.Ada_Name & "_Collection_Offset : constant");
       Unit.Add_Line
        ("     array (AMF.Internals.Tables."
-          & Info.Ada_Name
+          & Module_Info.Ada_Name
           & "_Types.Element_Kinds,");
       Unit.Add_Line
        (+"            AMF.Internals.CMOF_Element range"
@@ -1063,7 +1064,7 @@ package body Generator.Attributes is
       Unit.Add_Line ("   " & Used.Ada_Name & "_Member_Offset : constant");
       Unit.Add_Line
        ("     array (AMF.Internals.Tables."
-          & Info.Ada_Name
+          & Module_Info.Ada_Name
           & "_Types.Element_Kinds,");
       Unit.Add_Line
        (+"            AMF.Internals.CMOF_Element range"
