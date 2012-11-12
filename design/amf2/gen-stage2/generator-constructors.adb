@@ -441,7 +441,9 @@ package body Generator.Constructors is
                elsif Attribute_Type.Get_Name = String_Name then
                   case Representation (Original_Attribute) is
                      when Value =>
-                        if Default.Is_Empty then
+                        if Default.Is_Empty
+                          or else Default.Value.Is_Empty
+                        then
                            Unit.Context.Add (+"Matreshka.Internals.Strings");
                            Unit.Add
                             (+" Matreshka.Internals.Strings.Shared_Empty"
