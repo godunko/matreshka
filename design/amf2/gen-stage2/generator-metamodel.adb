@@ -996,13 +996,8 @@ package body Generator.Metamodel is
       Sort (Metamodel_Info.Data_Types).Iterate
        (Generate_Data_Type_Property_Constant'Access);
 
-      if Metamodel_Info.Ada_Name.To_Wide_Wide_String = "CMOF" then
-         --  Constants for properties owned by associations needed only to
-         --  initialize CMOF model.
-
-         Metamodel_Info.Associations.Iterate
-          (Generate_Association_Property_Constant'Access);
-      end if;
+      Metamodel_Info.Associations.Iterate
+       (Generate_Association_Property_Constant'Access);
 
       Metamodel_Info.Associations.Iterate
        (Generate_Association_Constant'Access);
@@ -1645,13 +1640,8 @@ package body Generator.Metamodel is
           (Generate_Class_Property_Constant'Access);
       end if;
 
-      if Metamodel_Info.Ada_Name.To_Wide_Wide_String = "CMOF" then
-         --  Constants for properties owned by associations needed only to
-         --  initialize CMOF model.
-
-         Metamodel_Info.Associations.Iterate
-          (Generate_Association_Property_Constant'Access);
-      end if;
+      Metamodel_Info.Associations.Iterate
+       (Generate_Association_Property_Constant'Access);
 
       if not Metamodel_Info.Associations.Is_Empty then
          New_Line;
