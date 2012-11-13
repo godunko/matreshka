@@ -64,6 +64,10 @@ package body Generator.Names is
        (Attribute : not null AMF.CMOF.Properties.CMOF_Property_Access)
           return League.Strings.Universal_String;
 
+      function Get_Type_Ada_Name
+       (Attribute : not null AMF.CMOF.Properties.CMOF_Property_Access)
+          return League.Strings.Universal_String;
+
       ------------------
       -- Get_Ada_Name --
       ------------------
@@ -85,6 +89,42 @@ package body Generator.Names is
          end if;
       end Get_Ada_Name;
 
+      -----------------------
+      -- Get_Type_Ada_Name --
+      -----------------------
+
+      function Get_Type_Ada_Name
+       (Attribute : not null AMF.CMOF.Properties.CMOF_Property_Access)
+          return League.Strings.Universal_String
+      is
+         use type AMF.CMOF.Classes.CMOF_Class_Access;
+         use type AMF.CMOF.Data_Types.CMOF_Data_Type_Access;
+         use type AMF.CMOF.Types.CMOF_Type_Access;
+
+         The_Class     : constant AMF.CMOF.Classes.CMOF_Class_Access
+           := Attribute.Get_Class;
+         The_Data_Type : constant AMF.CMOF.Data_Types.CMOF_Data_Type_Access
+           := Attribute.Get_Datatype;
+         The_Type      : AMF.CMOF.Types.CMOF_Type_Access;
+
+      begin
+         if The_Class /= null then
+            The_Type := AMF.CMOF.Types.CMOF_Type_Access (The_Class);
+
+         elsif The_Data_Type /= null then
+            The_Type := AMF.CMOF.Types.CMOF_Type_Access (The_Data_Type);
+
+         else
+            --  CMOF::Property is owned by association.
+
+            return League.Strings.To_Universal_String ("A");
+         end if;
+
+         return
+           League.Strings.To_Universal_String
+            (To_Ada_Identifier (The_Type.Get_Name.Value));
+      end Get_Type_Ada_Name;
+
       Member_End  : constant
         AMF.CMOF.Properties.Collections.Ordered_Set_Of_CMOF_Property
           := Association.Get_Member_End;
@@ -96,16 +136,10 @@ package body Generator.Names is
         := Get_Ada_Name (First_End);
       Second_Name : constant League.Strings.Universal_String
         := Get_Ada_Name (Second_End);
-      First_Type  : constant AMF.CMOF.Types.CMOF_Type_Access
-        := First_End.Get_Type;
-      Second_Type : constant AMF.CMOF.Types.CMOF_Type_Access
-        := Second_End.Get_Type;
       Ada_Name    : League.Strings.Universal_String;
 
    begin
-      Ada_Name.Append
-       (League.Strings.To_Universal_String
-         (To_Ada_Identifier (First_Type.Get_Name.Value)));
+      Ada_Name.Append (Get_Type_Ada_Name (First_End));
 
       if not First_Name.Is_Empty then
          Ada_Name.Append ('_');
@@ -115,9 +149,7 @@ package body Generator.Names is
       Ada_Name.Append ('_');
 
       if Second_Name.Is_Empty then
-         Ada_Name.Append
-          (League.Strings.To_Universal_String
-            (To_Ada_Identifier (Second_Type.Get_Name.Value)));
+         Ada_Name.Append (Get_Type_Ada_Name (Second_End));
 
       else
          Ada_Name.Append (Second_Name);
