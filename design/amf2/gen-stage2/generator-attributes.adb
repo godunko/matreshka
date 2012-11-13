@@ -1170,8 +1170,10 @@ package body Generator.Attributes is
 
          Getter    : constant Homograph_Information_Access
            := Homograph_Sets.Element (Position);
-         Attribute : AMF.CMOF.Properties.CMOF_Property_Access
+         Original  : constant AMF.CMOF.Properties.CMOF_Property_Access
            := Getter.Pairs.First_Element.Attribute;
+         Attribute : AMF.CMOF.Properties.CMOF_Property_Access
+           := Original;
          Redefined : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property
            := Attribute.Get_Redefined_Property;
          Get_Name  : constant League.Strings.Universal_String
@@ -1200,7 +1202,7 @@ package body Generator.Attributes is
          Unit.Add_Line (+"    (Self : AMF.Internals.AMF_Element)");
          Unit.Add_Line ("       return " & Type_Name & ";");
 
-         if Has_Internal_Setter (Attribute) then
+         if Has_Internal_Setter (Original) then
             Unit.Add_Line ("   procedure " & Set_Name);
             Unit.Add_Line (+"    (Self : AMF.Internals.AMF_Element;");
             Unit.Add_Line ("     To   : " & Type_Name & ");");
