@@ -21,7 +21,7 @@ sqldemo:
 gens:
 	gprbuild -j0 -p -Pgen-stage2/gens.gpr
 
-gen-all: gen-cmof gen-uml gen-ocl gen-mofext gen-utp gen-dd
+gen-all: gen-cmof gen-dd gen-uml gen-ocl gen-mofext gen-utp
 
 gen-cmof: gens
 	rm -rf .new
@@ -48,7 +48,7 @@ gen-uml-stubs: gens
 gen-uml: gens
 	rm -rf .new
 	mkdir .new
-	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2011 2012 UML 'http://www.omg.org/spec/UML/20100901/UML.cmof' 'http://www.omg.org/spec/UML/20100901/PrimitiveTypes.cmof' 'http://www.omg.org/spec/UML/20100901/StandardProfileL2.cmof' 'http://www.omg.org/spec/UML/20100901/StandardProfileL3.cmof' > .new/sources.ada
+	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2011 2012 UML 'http://www.omg.org/spec/UML/20100901/UML.cmof' 'http://www.omg.org/spec/UML/20100901/PrimitiveTypes.cmof' 'http://www.omg.org/spec/UML/20100901/StandardProfileL2.cmof' 'http://www.omg.org/spec/UML/20100901/StandardProfileL3.cmof' 'http://www.omg.org/spec/UML/20120801/UMLDI.cmof' > .new/sources.ada
 	gnatchop -gnat12 -w .new/sources.ada .new
 	ls .new/*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} ../../source/amf/uml/{}
 	rm -r .new
@@ -96,8 +96,15 @@ gen-utp-stubs: gens
 gen-dd: gens
 	rm -rf .new
 	mkdir .new
-#	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2012 2012 DD 'http://www.omg.org/spec/DD/20110901/DC.cmof' 'http://www.omg.org/spec/DD/20110901/DI.cmof' 'http://www.omg.org/spec/DD/20110901/DG.cmof' > .new/sources.ada
-	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2012 2012 DD 'http://www.omg.org/spec/DD/20110901/DC.cmof' 'http://www.omg.org/spec/DD/20110901/DI.cmof' > .new/sources.ada
+	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2012 2012 DD 'http://www.omg.org/spec/DD/20110901/DC.cmof' 'http://www.omg.org/spec/DD/20110901/DI.cmof' 'http://www.omg.org/spec/DD/20110901/DG.cmof' > .new/sources.ada
+	gnatchop -gnat12 -w .new/sources.ada .new
+	ls .new/*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} ../../source/amf/dd/{}
+	rm -r .new
+
+gen-dd-stubs: gens
+	rm -rf .new
+	mkdir .new
+	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2012 2012 DD 'http://www.omg.org/spec/DD/20110901/DC.cmof' 'http://www.omg.org/spec/DD/20110901/DI.cmof' 'http://www.omg.org/spec/DD/20110901/DG.cmof' --stubs > .new/sources.ada
 	gnatchop -gnat12 -w .new/sources.ada .new
 	ls .new/*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} ../../source/amf/dd/{}
 	rm -r .new
