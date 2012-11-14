@@ -63,8 +63,38 @@ package Modeler.Main_Windows is
    procedure File_Open (Self : not null access Main_Window'Class);
    pragma Q_Slot (File_Open);
 
+   procedure New_Activity_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Activity_Diagram);
+
    procedure New_Class_Diagram (Self : not null access Main_Window'Class);
    pragma Q_Slot (New_Class_Diagram);
+
+   procedure New_Component_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Component_Diagram);
+
+   procedure New_Composite_Structure_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Composite_Structure_Diagram);
+
+   procedure New_Deployment_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Deployment_Diagram);
+
+   procedure New_Interaction_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Interaction_Diagram);
+
+   procedure New_Object_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Object_Diagram);
+
+   procedure New_Package_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Package_Diagram);
+
+   procedure New_Profile_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Profile_Diagram);
+
+   procedure New_State_Machine_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_State_Machine_Diagram);
+
+   procedure New_Use_Case_Diagram (Self : not null access Main_Window'Class);
+   pragma Q_Slot (New_Use_Case_Diagram);
 
    package Constructors is
 
