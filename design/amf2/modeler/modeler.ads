@@ -54,4 +54,8 @@ package Modeler is
     (Item : Wide_Wide_String) return League.Strings.Universal_String
        renames League.Strings.To_Universal_String;
 
+   function "+"
+    (Item : League.Strings.Universal_String)
+       return Qt4.Strings.Q_String;
+
 end Modeler;

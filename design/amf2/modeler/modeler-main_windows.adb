@@ -43,14 +43,17 @@
 ------------------------------------------------------------------------------
 with Qt4.Actions.Constructors;
 with Qt4.File_Dialogs;
+with Qt4.Graphics_Views.Constructors;
 with Qt4.Mdi_Areas.Constructors;
+with Qt4.Mdi_Sub_Windows;
 with Qt4.Menu_Bars.Constructors;
 with Qt4.Settings.Constructors;
 --with Qt4.Status_Bars.Constructors;
 with Qt4.Variants;
 
 with AMF.Facility;
-with AMF.URI_Stores;
+with AMF.UML.Packageable_Elements.Collections;
+with AMF.UMLDI.UML_Class_Diagrams;
 with XMI.Reader;
 
 with Modeler.Containment_Tree_Docks;
@@ -59,6 +62,35 @@ with Modeler.Main_Windows.Moc;
 pragma Unreferenced (Modeler.Main_Windows.Moc);
 
 package body Modeler.Main_Windows is
+
+   -------------------
+   -- Attribute_Set --
+   -------------------
+
+   overriding procedure Attribute_Set
+    (Self      : not null access Main_Window;
+     Element   : not null AMF.Elements.Element_Access;
+     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
+     Position  : AMF.Optional_Integer;
+     Old_Value : League.Holders.Holder;
+     New_Value : League.Holders.Holder)
+   is
+      use type AMF.Optional_String;
+
+      Diagram : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access;
+
+   begin
+      if Element.all
+           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
+      then
+         Diagram := AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element);
+
+         if Property.Get_Name = +"name" then
+            Self.Diagram_Map.Element (Diagram).Set_Window_Title
+             (+League.Holders.Element (New_Value));
+         end if;
+      end if;
+   end Attribute_Set;
 
    -----------------
    -- Close_Event --
@@ -106,15 +138,15 @@ package body Modeler.Main_Windows is
       ----------------
 
       procedure Initialize (Self : not null access Main_Window'Class) is
-         Settings         : constant not null Qt4.Settings.Q_Settings_Access
+         Settings          : constant not null Qt4.Settings.Q_Settings_Access
            := Qt4.Settings.Constructors.Create;
-         Mdi_Area         : Qt4.Mdi_Areas.Q_Mdi_Area_Access;
-         Menu_Bar         : Qt4.Menu_Bars.Q_Menu_Bar_Access;
+         Menu_Bar          : Qt4.Menu_Bars.Q_Menu_Bar_Access;
 --         Status_Bar : Qt4.Status_Bars.Q_Status_Bar_Access;
-         Containment_Dock :
+         Containment_Dock  :
            Modeler.Containment_Tree_Docks.Containment_Tree_Dock_Access;
-         File_New_Action  : Qt4.Actions.Q_Action_Access;
-         File_Open_Action : Qt4.Actions.Q_Action_Access;
+         File_New_Action   : Qt4.Actions.Q_Action_Access;
+         File_Open_Action  : Qt4.Actions.Q_Action_Access;
+         New_Class_Diagram : Qt4.Actions.Q_Action_Access;
 
       begin
          Qt4.Main_Windows.Directors.Constructors.Initialize (Self);
@@ -129,6 +161,11 @@ package body Modeler.Main_Windows is
          File_Open_Action.Connect
           (Qt4.Signal ("triggered()"), Self, Qt4.Slot ("fileOpen()"));
 
+         New_Class_Diagram :=
+           Qt4.Actions.Constructors.Create (+"New Class Diagram", Self);
+         New_Class_Diagram.Connect
+          (Qt4.Signal ("triggered()"), Self, Qt4.Slot ("newClassDiagram()"));
+
          --  Create menu bar.
 
          Menu_Bar := Qt4.Menu_Bars.Constructors.Create (Self);
@@ -136,11 +173,13 @@ package body Modeler.Main_Windows is
 
          Menu_Bar.Add_Action (File_New_Action);
          Menu_Bar.Add_Action (File_Open_Action);
+         Menu_Bar.Add_Action (New_Class_Diagram);
 
          --  Create MDI area.
 
-         Mdi_Area := Qt4.Mdi_Areas.Constructors.Create (Self);
-         Self.Set_Central_Widget (Mdi_Area);
+         Self.Central_Widget := Qt4.Mdi_Areas.Constructors.Create (Self);
+         Self.Central_Widget.Set_View_Mode (Qt4.Mdi_Areas.Tabbed_View);
+         Self.Set_Central_Widget (Self.Central_Widget);
 
          --  Create docks.
 
@@ -164,6 +203,8 @@ package body Modeler.Main_Windows is
 
          Settings.End_Group;
          Settings.Delete_Later;
+
+         AMF.Listeners.Register (AMF.Listeners.Listener_Access (Self));
       end Initialize;
 
    end Constructors;
@@ -173,10 +214,17 @@ package body Modeler.Main_Windows is
    --------------
 
    procedure File_New (Self : not null access Main_Window'Class) is
-      Store : AMF.URI_Stores.URI_Store_Access;
-
    begin
-      Store := AMF.Facility.Create_URI_Store (+"file:///untitled.xmi");
+      Self.Store := AMF.Facility.Create_URI_Store (+"file:///untitled.xmi");
+      Self.UML_Factory :=
+        AMF.Factories.UML_Factories.UML_Factory_Access
+         (Self.Store.Get_Factory (+"http://www.omg.org/spec/UML/20100901"));
+      Self.DI_Factory :=
+        AMF.Factories.UMLDI_Factories.UMLDI_Factory_Access
+         (Self.Store.Get_Factory
+           (+"http://www.omg.org/spec/UML/20120801/UMLDI"));
+      Self.Model := Self.UML_Factory.Create_Model;
+      Self.Model.Set_Name ((False, +"UML Model"));
    end File_New;
 
    ---------------
@@ -184,14 +232,58 @@ package body Modeler.Main_Windows is
    ---------------
 
    procedure File_Open (Self : not null access Main_Window'Class) is
-      Name  : constant Qt4.Strings.Q_String
+      Name : constant Qt4.Strings.Q_String
         := Qt4.File_Dialogs.Get_Open_File_Name (Self);
-      Store : AMF.URI_Stores.URI_Store_Access;
 
    begin
       if not Name.Is_Null then
-         Store := XMI.Reader.Read_URI (+Name.To_UCS_4);
+         Self.Store := XMI.Reader.Read_URI (+Name.To_UCS_4);
       end if;
    end File_Open;
+
+   ---------------------
+   -- Instance_Create --
+   ---------------------
+
+   overriding procedure Instance_Create
+    (Self    : not null access Main_Window;
+     Element : not null AMF.Elements.Element_Access)
+   is
+      Sub_Window   : Qt4.Mdi_Sub_Windows.Q_Mdi_Sub_Window_Access;
+      Diagram_View : Qt4.Graphics_Views.Q_Graphics_View_Access;
+
+   begin
+      if Element.all
+           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
+      then
+         --  Create diagram view.
+
+         Diagram_View := Qt4.Graphics_Views.Constructors.Create;
+         Sub_Window := Self.Central_Widget.Add_Sub_Window (Diagram_View);
+         Diagram_View.Show;
+         Self.Diagram_Map.Insert
+          (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element),
+           Diagram_View);
+      end if;
+   end Instance_Create;
+
+   -----------------------
+   -- New_Class_Diagram --
+   -----------------------
+
+   procedure New_Class_Diagram (Self : not null access Main_Window'Class) is
+      Diagram      :
+        AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram_Access;
+      Elements     :
+        AMF.UML.Packageable_Elements.Collections.Set_Of_UML_Packageable_Element;
+
+   begin
+      --  Create new class diagram element.
+
+      Diagram := Self.DI_Factory.Create_UML_Class_Diagram;
+      Diagram.Set_Name (+"Class Diagram");
+      Elements := Self.Model.Get_Packaged_Element;
+      Elements.Add (Diagram);
+   end New_Class_Diagram;
 
 end Modeler.Main_Windows;

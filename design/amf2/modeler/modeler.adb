@@ -41,70 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Qt4.Core_Applications;
-with Qt4.Pixmaps;
-with Qt4.Splash_Screens.Constructors;
-with Qt4.Strings;
-with Qt_Ada.Application;
 
-with AMF.Facility;
+package body Modeler is
 
-with Modeler.Main_Windows;
+   ---------
+   -- "+" --
+   ---------
 
-with AMF.Internals.Modules.UML_Module;
-pragma Unreferenced (AMF.Internals.Modules.UML_Module);
+   function "+"
+    (Item : League.Strings.Universal_String)
+       return Qt4.Strings.Q_String is
+   begin
+      return Qt4.Strings.From_Ucs_4 (Item.To_Wide_Wide_String);
+   end "+";
 
-procedure Modeler.Driver is
-
-   use type Qt4.Alignment_Flag;
-
-   Splash : Qt4.Splash_Screens.Q_Splash_Screen_Access;
-   Main   : Modeler.Main_Windows.Main_Window_Access;
-
-begin
-   --  Initialize Qt toolkit.
-
-   Qt_Ada.Application.Initialize;
-   Qt4.Core_Applications.Set_Organization_Name (+"Vadim Godunko");
-   Qt4.Core_Applications.Set_Organization_Domain (+"qtada.com");
-   Qt4.Core_Applications.Set_Application_Name (+"Matreshka Modeler");
-   Qt4.Core_Applications.Set_Application_Version (+"0.2.0");
-
-   --  Create splash screen.
-
-   Splash := Qt4.Splash_Screens.Constructors.Create;
-   Splash.Set_Pixmap (Qt4.Pixmaps.Create (+"splash.png"));
-   Splash.Resize (480, 270);
-   Splash.Show;
-
-   --  Initialize AMF
-
-   Splash.Show_Message
-    (+"Initialize AMF", Qt4.Align_H_Center + Qt4.Align_Bottom);
-
-   AMF.Facility.Initialize;
-
-   --  Initialize GUI
-
-   Splash.Show_Message
-    (+"Initialize GUI", Qt4.Align_H_Center + Qt4.Align_Bottom);
-
-   Main := Modeler.Main_Windows.Constructors.Create;
-   Main.Show;
-
-   --  Hide splash screen and opens main window.
-
-   Splash.Finish (Main);
-
-   --  Initialize model.
-
-   Main.File_New;
-
-   --  Run event handling loop.
-
-   Qt_Ada.Application.Execute;
-
-   --  Finalize Qt toolkit.
-
-   Qt_Ada.Application.Finalize;
-end Modeler.Driver;
+end Modeler;
