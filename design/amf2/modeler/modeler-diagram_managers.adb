@@ -44,9 +44,179 @@
 with Qt4.Graphics_Views.Constructors;
 with Qt4.Mdi_Sub_Windows;
 
+with AMF.UMLDI.UML_Activity_Diagrams;
 with AMF.UMLDI.UML_Class_Diagrams;
+with AMF.UMLDI.UML_Component_Diagrams;
+with AMF.UMLDI.UML_Composite_Structure_Diagrams;
+with AMF.UMLDI.UML_Deployment_Diagrams;
+with AMF.UMLDI.UML_Interaction_Diagrams;
+with AMF.UMLDI.UML_Object_Diagrams;
+with AMF.UMLDI.UML_Package_Diagrams;
+with AMF.UMLDI.UML_Profile_Diagrams;
+with AMF.UMLDI.UML_State_Machine_Diagrams;
+with AMF.UMLDI.UML_Use_Case_Diagrams;
+with AMF.Visitors.UMLDI_Iterators;
+with AMF.Visitors.UMLDI_Visitors;
 
 package body Modeler.Diagram_Managers is
+
+   --  XXX It looks reasonable to move code of Update_Handler into diagram view
+   --  component.
+
+   type Create_Handler (Manager : not null access Diagram_Manager) is
+     limited new AMF.Visitors.UMLDI_Iterators.UMLDI_Iterator
+       and AMF.Visitors.UMLDI_Visitors.UMLDI_Visitor
+         with null record;
+
+   overriding procedure Enter_UML_Activity_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Activity_Diagrams.UMLDI_UML_Activity_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Class_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Component_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Component_Diagrams.UMLDI_UML_Component_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Composite_Structure_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Composite_Structure_Diagrams.UMLDI_UML_Composite_Structure_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Deployment_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Deployment_Diagrams.UMLDI_UML_Deployment_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Interaction_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Interaction_Diagrams.UMLDI_UML_Interaction_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Object_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Object_Diagrams.UMLDI_UML_Object_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Package_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Package_Diagrams.UMLDI_UML_Package_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Profile_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Profile_Diagrams.UMLDI_UML_Profile_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_State_Machine_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_State_Machine_Diagrams.UMLDI_UML_State_Machine_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Use_Case_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Use_Case_Diagrams.UMLDI_UML_Use_Case_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   type Update_Handler (Manager : not null access Diagram_Manager) is
+     limited new AMF.Visitors.UMLDI_Iterators.UMLDI_Iterator
+       and AMF.Visitors.UMLDI_Visitors.UMLDI_Visitor with
+   record
+     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
+     New_Value : League.Holders.Holder;
+   end record;
+
+   overriding procedure Enter_UML_Activity_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Activity_Diagrams.UMLDI_UML_Activity_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Class_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Component_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Component_Diagrams.UMLDI_UML_Component_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Composite_Structure_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Composite_Structure_Diagrams.UMLDI_UML_Composite_Structure_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Deployment_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Deployment_Diagrams.UMLDI_UML_Deployment_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Interaction_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Interaction_Diagrams.UMLDI_UML_Interaction_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Object_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Object_Diagrams.UMLDI_UML_Object_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Package_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Package_Diagrams.UMLDI_UML_Package_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Profile_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Profile_Diagrams.UMLDI_UML_Profile_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_State_Machine_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_State_Machine_Diagrams.UMLDI_UML_State_Machine_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   overriding procedure Enter_UML_Use_Case_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Use_Case_Diagrams.UMLDI_UML_Use_Case_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control);
+
+   procedure Enter_UML_Diagram
+    (Self    : in out Update_Handler'Class;
+     Element : not null AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access);
+   --  Updates diagram.
+
+   procedure Create_View
+    (Self    : not null access Diagram_Manager'Class;
+     Diagram : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access);
+   --  Creates QGraphicsView for the given diagram and register created view.
 
    -------------------
    -- Attribute_Set --
@@ -60,22 +230,363 @@ package body Modeler.Diagram_Managers is
      Old_Value : League.Holders.Holder;
      New_Value : League.Holders.Holder)
    is
+      Handler : Update_Handler := (Self, Property, New_Value);
+      Control : AMF.Visitors.Traverse_Control := AMF.Visitors.Continue;
+
+   begin
+      AMF.Visitors.Visit (Handler, Handler, Element, Control);
+   end Attribute_Set;
+
+   -----------------
+   -- Create_View --
+   -----------------
+
+   procedure Create_View
+    (Self    : not null access Diagram_Manager'Class;
+     Diagram : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access)
+   is
+      Sub_Window   : Qt4.Mdi_Sub_Windows.Q_Mdi_Sub_Window_Access;
+      Diagram_View : Qt4.Graphics_Views.Q_Graphics_View_Access;
+
+   begin
+      --  Create diagram view.
+
+      Diagram_View := Qt4.Graphics_Views.Constructors.Create;
+      Sub_Window := Self.Central_Widget.Add_Sub_Window (Diagram_View);
+      Diagram_View.Show;
+      Self.Diagram_Map.Insert
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Diagram),
+        Diagram_View);
+   end Create_View;
+
+   --------------------------------
+   -- Enter_UML_Activity_Diagram --
+   --------------------------------
+
+   overriding procedure Enter_UML_Activity_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Activity_Diagrams.UMLDI_UML_Activity_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Activity_Diagram;
+
+   --------------------------------
+   -- Enter_UML_Activity_Diagram --
+   --------------------------------
+
+   overriding procedure Enter_UML_Activity_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Activity_Diagrams.UMLDI_UML_Activity_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Activity_Diagram;
+
+   -----------------------------
+   -- Enter_UML_Class_Diagram --
+   -----------------------------
+
+   overriding procedure Enter_UML_Class_Diagram
+    (Self    : in out Create_Handler;
+     Element :
+       not null AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Class_Diagram;
+
+   -----------------------------
+   -- Enter_UML_Class_Diagram --
+   -----------------------------
+
+   overriding procedure Enter_UML_Class_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Class_Diagram;
+
+   ---------------------------------
+   -- Enter_UML_Component_Diagram --
+   ---------------------------------
+
+   overriding procedure Enter_UML_Component_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Component_Diagrams.UMLDI_UML_Component_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Component_Diagram;
+
+   ---------------------------------
+   -- Enter_UML_Component_Diagram --
+   ---------------------------------
+
+   overriding procedure Enter_UML_Component_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Component_Diagrams.UMLDI_UML_Component_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Component_Diagram;
+
+   -------------------------------------------
+   -- Enter_UML_Composite_Structure_Diagram --
+   -------------------------------------------
+
+   overriding procedure Enter_UML_Composite_Structure_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Composite_Structure_Diagrams.UMLDI_UML_Composite_Structure_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Composite_Structure_Diagram;
+
+   -------------------------------------------
+   -- Enter_UML_Composite_Structure_Diagram --
+   -------------------------------------------
+
+   overriding procedure Enter_UML_Composite_Structure_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Composite_Structure_Diagrams.UMLDI_UML_Composite_Structure_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Composite_Structure_Diagram;
+
+   ----------------------------------
+   -- Enter_UML_Deployment_Diagram --
+   ----------------------------------
+
+   overriding procedure Enter_UML_Deployment_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Deployment_Diagrams.UMLDI_UML_Deployment_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Deployment_Diagram;
+
+   ----------------------------------
+   -- Enter_UML_Deployment_Diagram --
+   ----------------------------------
+
+   overriding procedure Enter_UML_Deployment_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Deployment_Diagrams.UMLDI_UML_Deployment_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Deployment_Diagram;
+
+   -----------------------
+   -- Enter_UML_Diagram --
+   -----------------------
+
+   procedure Enter_UML_Diagram
+    (Self    : in out Update_Handler'Class;
+     Element : not null AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access)
+   is
       use type AMF.Optional_String;
 
       Diagram : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access;
 
    begin
-      if Element.all
-           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
-      then
-         Diagram := AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element);
+      Diagram := AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element);
 
-         if Property.Get_Name = +"name" then
-            Self.Diagram_Map.Element (Diagram).Set_Window_Title
-             (+League.Holders.Element (New_Value));
-         end if;
+      if Self.Property.Get_Name = +"name" then
+         Self.Manager.Diagram_Map.Element (Diagram).Set_Window_Title
+          (+League.Holders.Element (Self.New_Value));
       end if;
-   end Attribute_Set;
+   end Enter_UML_Diagram;
+
+   -----------------------------------
+   -- Enter_UML_Interaction_Diagram --
+   -----------------------------------
+
+   overriding procedure Enter_UML_Interaction_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Interaction_Diagrams.UMLDI_UML_Interaction_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Interaction_Diagram;
+
+   -----------------------------------
+   -- Enter_UML_Interaction_Diagram --
+   -----------------------------------
+
+   overriding procedure Enter_UML_Interaction_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Interaction_Diagrams.UMLDI_UML_Interaction_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Interaction_Diagram;
+
+   ------------------------------
+   -- Enter_UML_Object_Diagram --
+   ------------------------------
+
+   overriding procedure Enter_UML_Object_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Object_Diagrams.UMLDI_UML_Object_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Object_Diagram;
+
+   ------------------------------
+   -- Enter_UML_Object_Diagram --
+   ------------------------------
+
+   overriding procedure Enter_UML_Object_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Object_Diagrams.UMLDI_UML_Object_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Object_Diagram;
+
+   -------------------------------
+   -- Enter_UML_Package_Diagram --
+   -------------------------------
+
+   overriding procedure Enter_UML_Package_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Package_Diagrams.UMLDI_UML_Package_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Package_Diagram;
+
+   -------------------------------
+   -- Enter_UML_Package_Diagram --
+   -------------------------------
+
+   overriding procedure Enter_UML_Package_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Package_Diagrams.UMLDI_UML_Package_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Package_Diagram;
+
+   -------------------------------
+   -- Enter_UML_Profile_Diagram --
+   -------------------------------
+
+   overriding procedure Enter_UML_Profile_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Profile_Diagrams.UMLDI_UML_Profile_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Profile_Diagram;
+
+   -------------------------------
+   -- Enter_UML_Profile_Diagram --
+   -------------------------------
+
+   overriding procedure Enter_UML_Profile_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Profile_Diagrams.UMLDI_UML_Profile_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Profile_Diagram;
+
+   -------------------------------------
+   -- Enter_UML_State_Machine_Diagram --
+   -------------------------------------
+
+   overriding procedure Enter_UML_State_Machine_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_State_Machine_Diagrams.UMLDI_UML_State_Machine_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_State_Machine_Diagram;
+
+   -------------------------------------
+   -- Enter_UML_State_Machine_Diagram --
+   -------------------------------------
+
+   overriding procedure Enter_UML_State_Machine_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_State_Machine_Diagrams.UMLDI_UML_State_Machine_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_State_Machine_Diagram;
+
+   --------------------------------
+   -- Enter_UML_Use_Case_Diagram --
+   --------------------------------
+
+   overriding procedure Enter_UML_Use_Case_Diagram
+    (Self    : in out Create_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Use_Case_Diagrams.UMLDI_UML_Use_Case_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Manager.Create_View
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Use_Case_Diagram;
+
+   --------------------------------
+   -- Enter_UML_Use_Case_Diagram --
+   --------------------------------
+
+   overriding procedure Enter_UML_Use_Case_Diagram
+    (Self    : in out Update_Handler;
+     Element : not null
+       AMF.UMLDI.UML_Use_Case_Diagrams.UMLDI_UML_Use_Case_Diagram_Access;
+     Control : in out AMF.Visitors.Traverse_Control) is
+   begin
+      Self.Enter_UML_Diagram
+       (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element));
+   end Enter_UML_Use_Case_Diagram;
 
    ------------------
    -- Constructors --
@@ -125,24 +636,11 @@ package body Modeler.Diagram_Managers is
     (Self    : not null access Diagram_Manager;
      Element : not null AMF.Elements.Element_Access)
    is
-      Sub_Window   : Qt4.Mdi_Sub_Windows.Q_Mdi_Sub_Window_Access;
-      Diagram_View : Qt4.Graphics_Views.Q_Graphics_View_Access;
+      Handler : Create_Handler (Self);
+      Control : AMF.Visitors.Traverse_Control := AMF.Visitors.Continue;
 
    begin
-      --  Much better to use iterator/visitor here.
-
-      if Element.all
-           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
-      then
-         --  Create diagram view.
-
-         Diagram_View := Qt4.Graphics_Views.Constructors.Create;
-         Sub_Window := Self.Central_Widget.Add_Sub_Window (Diagram_View);
-         Diagram_View.Show;
-         Self.Diagram_Map.Insert
-          (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element),
-           Diagram_View);
-      end if;
+      AMF.Visitors.Visit (Handler, Handler, Element, Control);
    end Instance_Create;
 
 end Modeler.Diagram_Managers;
