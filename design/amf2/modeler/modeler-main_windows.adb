@@ -43,9 +43,7 @@
 ------------------------------------------------------------------------------
 with Qt4.Actions.Constructors;
 with Qt4.File_Dialogs;
-with Qt4.Graphics_Views.Constructors;
 with Qt4.Mdi_Areas.Constructors;
-with Qt4.Mdi_Sub_Windows;
 with Qt4.Menu_Bars.Constructors;
 with Qt4.Settings.Constructors;
 --with Qt4.Status_Bars.Constructors;
@@ -57,40 +55,12 @@ with AMF.UMLDI.UML_Class_Diagrams;
 with XMI.Reader;
 
 with Modeler.Containment_Tree_Docks;
+with Modeler.Diagram_Managers;
 
 with Modeler.Main_Windows.Moc;
 pragma Unreferenced (Modeler.Main_Windows.Moc);
 
 package body Modeler.Main_Windows is
-
-   -------------------
-   -- Attribute_Set --
-   -------------------
-
-   overriding procedure Attribute_Set
-    (Self      : not null access Main_Window;
-     Element   : not null AMF.Elements.Element_Access;
-     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
-     Position  : AMF.Optional_Integer;
-     Old_Value : League.Holders.Holder;
-     New_Value : League.Holders.Holder)
-   is
-      use type AMF.Optional_String;
-
-      Diagram : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access;
-
-   begin
-      if Element.all
-           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
-      then
-         Diagram := AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element);
-
-         if Property.Get_Name = +"name" then
-            Self.Diagram_Map.Element (Diagram).Set_Window_Title
-             (+League.Holders.Element (New_Value));
-         end if;
-      end if;
-   end Attribute_Set;
 
    -----------------
    -- Close_Event --
@@ -140,7 +110,9 @@ package body Modeler.Main_Windows is
       procedure Initialize (Self : not null access Main_Window'Class) is
          Settings          : constant not null Qt4.Settings.Q_Settings_Access
            := Qt4.Settings.Constructors.Create;
+         Central_Widget    : Qt4.Mdi_Areas.Q_Mdi_Area_Access;
          Menu_Bar          : Qt4.Menu_Bars.Q_Menu_Bar_Access;
+         Diagram_Manager   : Modeler.Diagram_Managers.Diagram_Manager_Access;
 --         Status_Bar : Qt4.Status_Bars.Q_Status_Bar_Access;
          Containment_Dock  :
            Modeler.Containment_Tree_Docks.Containment_Tree_Dock_Access;
@@ -177,9 +149,9 @@ package body Modeler.Main_Windows is
 
          --  Create MDI area.
 
-         Self.Central_Widget := Qt4.Mdi_Areas.Constructors.Create (Self);
-         Self.Central_Widget.Set_View_Mode (Qt4.Mdi_Areas.Tabbed_View);
-         Self.Set_Central_Widget (Self.Central_Widget);
+         Central_Widget := Qt4.Mdi_Areas.Constructors.Create (Self);
+         Central_Widget.Set_View_Mode (Qt4.Mdi_Areas.Tabbed_View);
+         Self.Set_Central_Widget (Central_Widget);
 
          --  Create docks.
 
@@ -204,7 +176,8 @@ package body Modeler.Main_Windows is
          Settings.End_Group;
          Settings.Delete_Later;
 
-         AMF.Listeners.Register (AMF.Listeners.Listener_Access (Self));
+         Diagram_Manager :=
+           Modeler.Diagram_Managers.Constructors.Create (Central_Widget);
       end Initialize;
 
    end Constructors;
@@ -240,32 +213,6 @@ package body Modeler.Main_Windows is
          Self.Store := XMI.Reader.Read_URI (+Name.To_UCS_4);
       end if;
    end File_Open;
-
-   ---------------------
-   -- Instance_Create --
-   ---------------------
-
-   overriding procedure Instance_Create
-    (Self    : not null access Main_Window;
-     Element : not null AMF.Elements.Element_Access)
-   is
-      Sub_Window   : Qt4.Mdi_Sub_Windows.Q_Mdi_Sub_Window_Access;
-      Diagram_View : Qt4.Graphics_Views.Q_Graphics_View_Access;
-
-   begin
-      if Element.all
-           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
-      then
-         --  Create diagram view.
-
-         Diagram_View := Qt4.Graphics_Views.Constructors.Create;
-         Sub_Window := Self.Central_Widget.Add_Sub_Window (Diagram_View);
-         Diagram_View.Show;
-         Self.Diagram_Map.Insert
-          (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element),
-           Diagram_View);
-      end if;
-   end Instance_Create;
 
    -----------------------
    -- New_Class_Diagram --

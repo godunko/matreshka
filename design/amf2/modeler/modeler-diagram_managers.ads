@@ -41,55 +41,65 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Qt4.Close_Events;
-with Qt4.Main_Windows;
-private with Qt4.Main_Windows.Directors;
+--  Diagram Manager handles creation/modification/destruction of diagrams in
+--  model and reflect these changes in GUI components.
+------------------------------------------------------------------------------
+private with Ada.Containers.Hashed_Maps;
 
-private with AMF.Factories.UML_Factories;
-private with AMF.Factories.UMLDI_Factories;
-private with AMF.UML.Models;
-private with AMF.URI_Stores;
+private with Qt4.Graphics_Views;
+with Qt4.Mdi_Areas;
 
-package Modeler.Main_Windows is
+private with AMF.CMOF.Properties;
+private with AMF.Elements;
+with AMF.Listeners;
+private with AMF.UMLDI.UML_Diagrams.Hash;
+private with League.Holders;
 
-   type Main_Window is
-     limited new Qt4.Main_Windows.Q_Main_Window with private;
+package Modeler.Diagram_Managers is
 
-   type Main_Window_Access is access all Main_Window'Class;
+   type Diagram_Manager is
+      limited new AMF.Listeners.Abstract_Listener with private;
 
-   procedure File_New (Self : not null access Main_Window'Class);
-   pragma Q_Slot (File_New);
-
-   procedure File_Open (Self : not null access Main_Window'Class);
-   pragma Q_Slot (File_Open);
-
-   procedure New_Class_Diagram (Self : not null access Main_Window'Class);
-   pragma Q_Slot (New_Class_Diagram);
+   type Diagram_Manager_Access is access all Diagram_Manager'Class;
 
    package Constructors is
 
-      function Create return not null Main_Window_Access;
+      function Create
+       (Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access)
+          return not null Diagram_Manager_Access;
 
    end Constructors;
 
 private
 
-   type Main_Window is
-     limited new Qt4.Main_Windows.Directors.Q_Main_Window_Director with
+   package Diagram_Maps is
+     new Ada.Containers.Hashed_Maps
+          (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access,
+           Qt4.Graphics_Views.Q_Graphics_View_Access,
+           AMF.UMLDI.UML_Diagrams.Hash,
+           AMF.UMLDI.UML_Diagrams."=",
+           Qt4.Graphics_Views."=");
+
+   type Diagram_Manager is
+     limited new AMF.Listeners.Abstract_Listener with
    record
-      Store          : AMF.URI_Stores.URI_Store_Access;
-      --  URI Store of the opened model.
+      Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access;
+      --  Central widget of main window.
 
-      UML_Factory    : AMF.Factories.UML_Factories.UML_Factory_Access;
-      DI_Factory     : AMF.Factories.UMLDI_Factories.UMLDI_Factory_Access;
-      --  Factories to create new elements in store.
-
-      Model          : AMF.UML.Models.UML_Model_Access;
-      --  Root model element.
+      Diagram_Map    : Diagram_Maps.Map;
+      --  Map from UMLDiagram to QGraphivsView.
    end record;
 
-   overriding procedure Close_Event
-    (Self  : not null access Main_Window;
-     Event : not null access Qt4.Close_Events.Q_Close_Event'Class);
+   overriding procedure Instance_Create
+    (Self    : not null access Diagram_Manager;
+     Element : not null AMF.Elements.Element_Access);
 
-end Modeler.Main_Windows;
+   overriding procedure Attribute_Set
+    (Self      : not null access Diagram_Manager;
+     Element   : not null AMF.Elements.Element_Access;
+     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
+     Position  : AMF.Optional_Integer;
+     Old_Value : League.Holders.Holder;
+     New_Value : League.Holders.Holder);
+
+end Modeler.Diagram_Managers;

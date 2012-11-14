@@ -41,55 +41,108 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Qt4.Close_Events;
-with Qt4.Main_Windows;
-private with Qt4.Main_Windows.Directors;
+with Qt4.Graphics_Views.Constructors;
+with Qt4.Mdi_Sub_Windows;
 
-private with AMF.Factories.UML_Factories;
-private with AMF.Factories.UMLDI_Factories;
-private with AMF.UML.Models;
-private with AMF.URI_Stores;
+with AMF.UMLDI.UML_Class_Diagrams;
 
-package Modeler.Main_Windows is
+package body Modeler.Diagram_Managers is
 
-   type Main_Window is
-     limited new Qt4.Main_Windows.Q_Main_Window with private;
+   -------------------
+   -- Attribute_Set --
+   -------------------
 
-   type Main_Window_Access is access all Main_Window'Class;
+   overriding procedure Attribute_Set
+    (Self      : not null access Diagram_Manager;
+     Element   : not null AMF.Elements.Element_Access;
+     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
+     Position  : AMF.Optional_Integer;
+     Old_Value : League.Holders.Holder;
+     New_Value : League.Holders.Holder)
+   is
+      use type AMF.Optional_String;
 
-   procedure File_New (Self : not null access Main_Window'Class);
-   pragma Q_Slot (File_New);
+      Diagram : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access;
 
-   procedure File_Open (Self : not null access Main_Window'Class);
-   pragma Q_Slot (File_Open);
+   begin
+      if Element.all
+           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
+      then
+         Diagram := AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element);
 
-   procedure New_Class_Diagram (Self : not null access Main_Window'Class);
-   pragma Q_Slot (New_Class_Diagram);
+         if Property.Get_Name = +"name" then
+            Self.Diagram_Map.Element (Diagram).Set_Window_Title
+             (+League.Holders.Element (New_Value));
+         end if;
+      end if;
+   end Attribute_Set;
 
-   package Constructors is
+   ------------------
+   -- Constructors --
+   ------------------
 
-      function Create return not null Main_Window_Access;
+   package body Constructors is
+
+      procedure Initialize
+       (Self : not null access Diagram_Manager'Class;
+        Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access);
+      --  Initialize widget.
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access)
+          return not null Diagram_Manager_Access is
+      begin
+         return Self : constant not null Diagram_Manager_Access
+           := new Diagram_Manager
+         do
+            Initialize (Self, Central_Widget);
+         end return;
+      end Create;
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self           : not null access Diagram_Manager'Class;
+        Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access) is
+      begin
+         Self.Central_Widget := Central_Widget;
+         AMF.Listeners.Register (AMF.Listeners.Listener_Access (Self));
+      end Initialize;
 
    end Constructors;
 
-private
+   ---------------------
+   -- Instance_Create --
+   ---------------------
 
-   type Main_Window is
-     limited new Qt4.Main_Windows.Directors.Q_Main_Window_Director with
-   record
-      Store          : AMF.URI_Stores.URI_Store_Access;
-      --  URI Store of the opened model.
+   overriding procedure Instance_Create
+    (Self    : not null access Diagram_Manager;
+     Element : not null AMF.Elements.Element_Access)
+   is
+      Sub_Window   : Qt4.Mdi_Sub_Windows.Q_Mdi_Sub_Window_Access;
+      Diagram_View : Qt4.Graphics_Views.Q_Graphics_View_Access;
 
-      UML_Factory    : AMF.Factories.UML_Factories.UML_Factory_Access;
-      DI_Factory     : AMF.Factories.UMLDI_Factories.UMLDI_Factory_Access;
-      --  Factories to create new elements in store.
+   begin
+      --  Much better to use iterator/visitor here.
 
-      Model          : AMF.UML.Models.UML_Model_Access;
-      --  Root model element.
-   end record;
+      if Element.all
+           in AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram'Class
+      then
+         --  Create diagram view.
 
-   overriding procedure Close_Event
-    (Self  : not null access Main_Window;
-     Event : not null access Qt4.Close_Events.Q_Close_Event'Class);
+         Diagram_View := Qt4.Graphics_Views.Constructors.Create;
+         Sub_Window := Self.Central_Widget.Add_Sub_Window (Diagram_View);
+         Diagram_View.Show;
+         Self.Diagram_Map.Insert
+          (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Element),
+           Diagram_View);
+      end if;
+   end Instance_Create;
 
-end Modeler.Main_Windows;
+end Modeler.Diagram_Managers;
