@@ -45,7 +45,9 @@ with Qt4.Actions.Constructors;
 with Qt4.File_Dialogs;
 with Qt4.Mdi_Areas.Constructors;
 with Qt4.Menu_Bars.Constructors;
+with Qt4.Settings.Constructors;
 --with Qt4.Status_Bars.Constructors;
+with Qt4.Variants;
 
 with AMF.Facility;
 with AMF.URI_Stores;
@@ -57,6 +59,25 @@ with Modeler.Main_Windows.Moc;
 pragma Unreferenced (Modeler.Main_Windows.Moc);
 
 package body Modeler.Main_Windows is
+
+   -----------------
+   -- Close_Event --
+   -----------------
+
+   overriding procedure Close_Event
+    (Self  : not null access Main_Window;
+     Event : not null access Qt4.Close_Events.Q_Close_Event'Class)
+   is
+      Settings : constant not null Qt4.Settings.Q_Settings_Access
+        := Qt4.Settings.Constructors.Create;
+
+   begin
+      Settings.Begin_Group (+"MainWindow");
+      Settings.Set_Value (+"size", Qt4.Variants.Create (Self.Size));
+      Settings.End_Group;
+      Settings.Sync;
+      Settings.Delete_Later;
+   end Close_Event;
 
    ------------------
    -- Constructors --
@@ -85,6 +106,8 @@ package body Modeler.Main_Windows is
       ----------------
 
       procedure Initialize (Self : not null access Main_Window'Class) is
+         Settings         : constant not null Qt4.Settings.Q_Settings_Access
+           := Qt4.Settings.Constructors.Create;
          Mdi_Area         : Qt4.Mdi_Areas.Q_Mdi_Area_Access;
          Menu_Bar         : Qt4.Menu_Bars.Q_Menu_Bar_Access;
 --         Status_Bar : Qt4.Status_Bars.Q_Status_Bar_Access;
@@ -130,6 +153,17 @@ package body Modeler.Main_Windows is
 --  XXX Qt4.Status_Bars.Constructors is not implemented.
 --         Status_Bar := Qt4.Status_Bars.Constructors.Create (Self);
 --         Self.Set_Status_Bar (Status_Bar);
+
+         --  Restore size of the main window.
+
+         Settings.Begin_Group (+"MainWindow");
+
+         if Settings.Contains (+"size") then
+            Self.Resize (Settings.Value (+"size").To_Size);
+         end if;
+
+         Settings.End_Group;
+         Settings.Delete_Later;
       end Initialize;
 
    end Constructors;

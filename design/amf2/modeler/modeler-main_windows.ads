@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Qt4.Close_Events;
 with Qt4.Main_Windows;
 private with Qt4.Main_Windows.Directors;
 
@@ -67,5 +68,9 @@ private
    type Main_Window is
      limited new Qt4.Main_Windows.Directors.Q_Main_Window_Director with
        null record;
+
+   overriding procedure Close_Event
+    (Self  : not null access Main_Window;
+     Event : not null access Qt4.Close_Events.Q_Close_Event'Class);
 
 end Modeler.Main_Windows;
