@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Qt4.Graphics_Scenes.Constructors;
 with Qt4.Graphics_Views.Constructors;
 with Qt4.Mdi_Sub_Windows;
 
@@ -57,6 +58,8 @@ with AMF.UMLDI.UML_State_Machine_Diagrams;
 with AMF.UMLDI.UML_Use_Case_Diagrams;
 with AMF.Visitors.UMLDI_Iterators;
 with AMF.Visitors.UMLDI_Visitors;
+
+with Modeler.Diagram_Items;
 
 package body Modeler.Diagram_Managers is
 
@@ -245,18 +248,37 @@ package body Modeler.Diagram_Managers is
     (Self    : not null access Diagram_Manager'Class;
      Diagram : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access)
    is
-      Sub_Window   : Qt4.Mdi_Sub_Windows.Q_Mdi_Sub_Window_Access;
-      Diagram_View : Qt4.Graphics_Views.Q_Graphics_View_Access;
+      use type AMF.Real;
+
+      Sub_Window    : Qt4.Mdi_Sub_Windows.Q_Mdi_Sub_Window_Access;
+      Diagram_View  : Qt4.Graphics_Views.Q_Graphics_View_Access;
+      Diagram_Scene : Qt4.Graphics_Scenes.Q_Graphics_Scene_Access;
+      Item          : Modeler.Diagram_Items.Diagram_Item_Access;
 
    begin
+      --  Create scene.
+
+      Diagram_Scene := Qt4.Graphics_Scenes.Constructors.Create;
+
+      Item := Modeler.Diagram_Items.Constructors.Create (Diagram);
+      Diagram_Scene.Add_Item (Item);
+
       --  Create diagram view.
 
-      Diagram_View := Qt4.Graphics_Views.Constructors.Create;
+      Diagram_View := Qt4.Graphics_Views.Constructors.Create (Diagram_Scene);
       Sub_Window := Self.Central_Widget.Add_Sub_Window (Diagram_View);
       Diagram_View.Show;
       Self.Diagram_Map.Insert
        (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access (Diagram),
         Diagram_View);
+
+      --  Scale view to map diagram elements to physical size correctly.
+
+      Diagram_View.Scale
+       (Qt4.Q_Real
+         (AMF.Real (Diagram_View.Physical_Dpi_X) / Diagram.Get_Resolution),
+        Qt4.Q_Real
+         (AMF.Real (Diagram_View.Physical_Dpi_Y) / Diagram.Get_Resolution));
    end Create_View;
 
    --------------------------------
