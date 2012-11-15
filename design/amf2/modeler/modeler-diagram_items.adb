@@ -45,9 +45,33 @@ with Qt4.Actions;
 with Qt4.Menus.Constructors;
 with Qt4.Styles;
 
+with AMF.DC;
+
 package body Modeler.Diagram_Items is
 
    use type Qt4.Q_Real;
+
+   -------------------
+   -- Attribute_Set --
+   -------------------
+
+   overriding procedure Attribute_Set
+    (Self      : not null access Diagram_Item;
+     Element   : not null AMF.Elements.Element_Access;
+     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
+     Position  : AMF.Optional_Integer;
+     Old_Value : League.Holders.Holder;
+     New_Value : League.Holders.Holder)
+   is
+      use type AMF.Optional_String;
+
+   begin
+      if Property.Get_Name = +"bounds" then
+         --  Notify about change of item's geometry.
+
+         Self.Prepare_Geometry_Change;
+      end if;
+   end Attribute_Set;
 
    -------------------
    -- Bounding_Rect --
@@ -55,10 +79,23 @@ package body Modeler.Diagram_Items is
 
    overriding function Bounding_Rect
     (Self : not null access constant Diagram_Item)
-       return Qt4.Rect_Fs.Q_Rect_F is
+       return Qt4.Rect_Fs.Q_Rect_F
+   is
+      Bounds : constant AMF.DC.Optional_DC_Bounds
+        := Self.Element.Get_Bounds;
+
    begin
-      return Qt4.Rect_Fs.Create (-10.0, -10.0, 3527.0, 2500.0);
---      return Qt4.Rect_Fs.Create (0.0, 0.0, 150.0, 100.0);
+      if Bounds.Is_Empty then
+         return Qt4.Rect_Fs.Create;
+
+      else
+         return
+           Qt4.Rect_Fs.Create
+            (Qt4.Q_Real (Bounds.Value.X),
+             Qt4.Q_Real (Bounds.Value.Y),
+             Qt4.Q_Real (Bounds.Value.Width),
+             Qt4.Q_Real (Bounds.Value.Height));
+      end if;
    end Bounding_Rect;
 
    ------------------
@@ -102,6 +139,14 @@ package body Modeler.Diagram_Items is
         Parent  : access Qt4.Graphics_Items.Q_Graphics_Item'Class) is
       begin
          Qt4.Graphics_Items.Directors.Constructors.Initialize (Self, Parent);
+
+         Self.Element := Diagram;
+
+         AMF.Listeners.Register_Instance_Listener
+          (AMF.Listeners.Listener_Access (Self),
+           AMF.Elements.Element_Access (Diagram));
+         --  GNAT Pro 7.1w (20120405): explicit type conversion is needed to
+         --  workaround compiler's bug.
       end Initialize;
 
    end Constructors;
@@ -192,21 +237,31 @@ package body Modeler.Diagram_Items is
            Qt4.Solid_Pattern);
       end Draw_Selection;
 
+      Bounds : constant AMF.DC.Optional_DC_Bounds
+        := Self.Element.Get_Bounds;
+
    begin
-      Painter.Draw_Rect (Qt4.Rect_Fs.Create (0.0, 0.0, 3507.0, 2480.0));
---      Painter.Draw_Rect (Qt4.Rect_Fs.Create (0.0, 0.0, 150.0, 100.0));
+      if Bounds.Is_Empty then
+         return;
+      end if;
+
+      Painter.Draw_Rect
+       (Qt4.Rect_Fs.Create
+         (Qt4.Q_Real (Bounds.Value.X),
+          Qt4.Q_Real (Bounds.Value.Y),
+          Qt4.Q_Real (Bounds.Value.Width),
+          Qt4.Q_Real (Bounds.Value.Height)));
 
       --  Draw selection rectangle.
 
       if Qt4.Styles.Is_Set (State, Qt4.Styles.State_Selected) then
          Draw_Selection
-          (0.0,
-           0.0,
-           3507.0,
-           2480.0,
+          (Qt4.Q_Real (Bounds.Value.X),
+           Qt4.Q_Real (Bounds.Value.Y),
+           Qt4.Q_Real (Bounds.Value.Width),
+           Qt4.Q_Real (Bounds.Value.Height),
            Qt4.Style_Option_Graphics_Items.Level_Of_Detail_From_Transform
             (Painter.World_Transform));
-         null;
       end if;
    end Paint;
 

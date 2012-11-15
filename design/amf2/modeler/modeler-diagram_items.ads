@@ -49,12 +49,18 @@ private with Qt4.Rect_Fs;
 private with Qt4.Style_Option_Graphics_Items;
 private with Qt4.Widgets;
 
+private with AMF.CMOF.Properties;
+private with AMF.Elements;
 with AMF.UMLDI.UML_Diagrams;
+with AMF.Listeners;
+private with League.Holders;
+
 
 package Modeler.Diagram_Items is
 
    type Diagram_Item is
-     limited new Qt4.Graphics_Items.Q_Graphics_Item with private;
+     limited new Qt4.Graphics_Items.Q_Graphics_Item
+       and AMF.Listeners.Abstract_Listener with private;
 
    type Diagram_Item_Access is access all Diagram_Item'Class;
 
@@ -72,7 +78,10 @@ private
 
    type Diagram_Item is
      limited new Qt4.Graphics_Items.Directors.Q_Graphics_Item_Director
-       with null record;
+       and AMF.Listeners.Abstract_Listener with
+   record
+      Element : AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access;
+   end record;
 
    overriding function Bounding_Rect
     (Self : not null access constant Diagram_Item) return Qt4.Rect_Fs.Q_Rect_F;
@@ -88,5 +97,13 @@ private
      Option  :
        Qt4.Style_Option_Graphics_Items.Q_Style_Option_Graphics_Item'Class;
      Widget  : access Qt4.Widgets.Q_Widget'Class := null);
+
+   overriding procedure Attribute_Set
+    (Self      : not null access Diagram_Item;
+     Element   : not null AMF.Elements.Element_Access;
+     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
+     Position  : AMF.Optional_Integer;
+     Old_Value : League.Holders.Holder;
+     New_Value : League.Holders.Holder);
 
 end Modeler.Diagram_Items;

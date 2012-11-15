@@ -50,6 +50,7 @@ with Qt4.Settings.Constructors;
 --with Qt4.Status_Bars.Constructors;
 with Qt4.Variants;
 
+with AMF.DC;
 with AMF.Facility;
 with AMF.UML.Packageable_Elements.Collections;
 with AMF.UMLDI.UML_Activity_Diagrams;
@@ -334,6 +335,8 @@ package body Modeler.Main_Windows is
    -----------------------
 
    procedure New_Class_Diagram (Self : not null access Main_Window'Class) is
+      use type AMF.Real;
+
       Diagram      :
         AMF.UMLDI.UML_Class_Diagrams.UMLDI_UML_Class_Diagram_Access;
       Elements     :
@@ -344,6 +347,13 @@ package body Modeler.Main_Windows is
 
       Diagram := Self.DI_Factory.Create_UML_Class_Diagram;
       Diagram.Set_Name (+"Class Diagram");
+      Diagram.Set_Bounds
+       (AMF.DC.Optional_DC_Bounds'
+         (False,
+          (0.1969 * Diagram.Get_Resolution,
+           0.1969 * Diagram.Get_Resolution,
+           11.2992 * Diagram.Get_Resolution,
+           7.8740 * Diagram.Get_Resolution)));
       Elements := Self.Model.Get_Packaged_Element;
       Elements.Add (Diagram);
    end New_Class_Diagram;
