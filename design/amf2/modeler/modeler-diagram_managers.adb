@@ -645,7 +645,10 @@ package body Modeler.Diagram_Managers is
         Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access) is
       begin
          Self.Central_Widget := Central_Widget;
-         AMF.Listeners.Register (AMF.Listeners.Listener_Access (Self));
+         AMF.Listeners.Register_Listener
+          (AMF.Listeners.Listener_Access (Self));
+         --  GNAT Pro 7.1w (20120405): explicit type conversion is needed to
+         --  workaround compiler's bug.
       end Initialize;
 
    end Constructors;

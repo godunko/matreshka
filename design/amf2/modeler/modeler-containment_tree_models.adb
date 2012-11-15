@@ -157,7 +157,8 @@ package body Modeler.Containment_Tree_Models is
 
          --  Register self as AMF listener.
 
-         AMF.Listeners.Register (AMF.Listeners.Listener_Access (Self));
+         AMF.Listeners.Register_Listener
+          (AMF.Listeners.Listener_Access (Self));
          --  GNAT Pro 7.1w (20120405): explicit type conversion is needed to
          --  workaround compiler's bug.
       end Initialize;
