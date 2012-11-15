@@ -41,27 +41,34 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Abstract interface of SOAP header encoder. Application specific encoders
---  must be derived from this interface type.
-------------------------------------------------------------------------------
+
+with Web_Services.SOAP.Headers.Encoders;
 
 with XML.SAX.Writers;
 
-package Web_Services.SOAP.Headers.Encoders is
+package Web_Services.SOAP.Security.Headers.Encoders is
 
-   type SOAP_Header_Encoder is limited interface;
+   type Security_Header_Encoder is
+     limited new Web_Services.SOAP.Headers.Encoders.SOAP_Header_Encoder
+       with private;
 
-   type SOAP_Header_Encoder_Access is access all SOAP_Header_Encoder'Class;
+private
 
-   not overriding function Create
+   type Security_Header_Encoder is
+     limited new Web_Services.SOAP.Headers.Encoders.SOAP_Header_Encoder with
+   record
+      Token   : Username_Token_Header_Access;
+      Collect : Boolean := False;
+      Text    : League.Strings.Universal_String;
+   end record;
+
+   overriding function Create
     (Dummy : not null access Boolean)
-       return SOAP_Header_Encoder is abstract;
-   --  This subprogram is used by dispatching constructor to create instance of
-   --  the encoder.
+       return Security_Header_Encoder;
 
-   not overriding procedure Encode
-    (Self   : SOAP_Header_Encoder;
+   overriding procedure Encode
+    (Self   : Security_Header_Encoder;
      Header : Web_Services.SOAP.Headers.Abstract_SOAP_Header'Class;
-     Writer : in out XML.SAX.Writers.SAX_Writer'Class) is abstract;
+     Writer : in out XML.SAX.Writers.SAX_Writer'Class);
 
-end Web_Services.SOAP.Headers.Encoders;
+end Web_Services.SOAP.Security.Headers.Encoders;

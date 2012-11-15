@@ -41,27 +41,71 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Abstract interface of SOAP header encoder. Application specific encoders
---  must be derived from this interface type.
-------------------------------------------------------------------------------
 
-with XML.SAX.Writers;
+with XML.SAX.Attributes;
 
-package Web_Services.SOAP.Headers.Encoders is
+with Web_Services.SOAP.Constants;
+with Web_Services.SOAP.Security.Constants;
 
-   type SOAP_Header_Encoder is limited interface;
+package body Web_Services.SOAP.Security.Headers.Encoders is
 
-   type SOAP_Header_Encoder_Access is access all SOAP_Header_Encoder'Class;
+   ------------
+   -- Create --
+   ------------
 
-   not overriding function Create
-    (Dummy : not null access Boolean)
-       return SOAP_Header_Encoder is abstract;
-   --  This subprogram is used by dispatching constructor to create instance of
-   --  the encoder.
+   overriding function Create
+     (Dummy : not null access Boolean)
+      return Security_Header_Encoder is
+   begin
+      return Self : Security_Header_Encoder;
+   end Create;
 
-   not overriding procedure Encode
-    (Self   : SOAP_Header_Encoder;
-     Header : Web_Services.SOAP.Headers.Abstract_SOAP_Header'Class;
-     Writer : in out XML.SAX.Writers.SAX_Writer'Class) is abstract;
+   ------------
+   -- Encode --
+   ------------
 
-end Web_Services.SOAP.Headers.Encoders;
+   overriding procedure Encode
+     (Self   : Security_Header_Encoder;
+      Header : Web_Services.SOAP.Headers.Abstract_SOAP_Header'Class;
+      Writer : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+      use Web_Services.SOAP.Constants;
+      use Web_Services.SOAP.Security.Constants;
+      Attributes : XML.SAX.Attributes.SAX_Attributes;
+      Token      : Username_Token_Header
+        renames Username_Token_Header (Header);
+   begin
+      Attributes.Set_Value
+        (SOAP_Envelope_URI, SOAP_Must_Understand_Name, SOAP_True_Literal);
+
+      Writer.Start_Element (WSSE_Namespace_URI, Security_Element, Attributes);
+
+      Attributes.Clear;
+      --  Attributes.Set_Value (WSU_Namespace_URI, "Id", "User");
+
+      Writer.Start_Element
+        (WSSE_Namespace_URI, Username_Token_Element, Attributes);
+
+      Writer.Start_Element (WSSE_Namespace_URI, Username_Element);
+      Writer.Characters (Token.Username);
+      Writer.End_Element (WSSE_Namespace_URI, Username_Element);
+
+      Attributes.Clear;
+      --  Attributes.Set_Value ("Type", PasswordDigest);
+      Writer.Start_Element (WSSE_Namespace_URI, Password_Element, Attributes);
+      Writer.Characters (Token.Password);
+      Writer.End_Element (WSSE_Namespace_URI, Password_Element);
+
+      Writer.Start_Element (WSSE_Namespace_URI, Nonce_Element);
+      Writer.Characters (Token.Nonce);
+      Writer.End_Element (WSSE_Namespace_URI, Nonce_Element);
+
+      Writer.Start_Element (WSU_Namespace_URI, Created_Element);
+      Writer.Characters (Token.Created);
+      Writer.End_Element (WSU_Namespace_URI, Created_Element);
+
+      Writer.End_Element (WSSE_Namespace_URI, Username_Token_Element);
+      Writer.End_Element (WSSE_Namespace_URI, Security_Element);
+   end Encode;
+
+end Web_Services.SOAP.Security.Headers.Encoders;

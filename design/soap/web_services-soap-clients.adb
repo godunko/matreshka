@@ -43,19 +43,23 @@
 ------------------------------------------------------------------------------
 
 with League.Text_Codecs;
+with League.Calendars.ISO_8601;
 
+with Web_Services.SOAP.Constants;
 with Web_Services.SOAP.Message_Decoders;
 with Web_Services.SOAP.Message_Encoders;
+with Web_Services.SOAP.Security.Headers;
 
 with XML.SAX.Input_Sources.Streams.Element_Arrays;
 with XML.SAX.Simple_Readers;
-
-with Web_Services.SOAP.Constants;
 
 package body Web_Services.SOAP.Clients is
 
    UTF8_Coder : constant League.Text_Codecs.Text_Codec :=
      League.Text_Codecs.Codec (League.Strings.To_Universal_String ("utf-8"));
+
+   Format : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("yyyy-MM-ddTHH:mm:ssZ");
 
    ----------
    -- Call --
@@ -78,6 +82,24 @@ package body Web_Services.SOAP.Clients is
    begin
       Input.Action := Action;
       Input.Payload := Request;
+
+      if not User.Is_Empty then
+         declare
+            Created : constant League.Calendars.Date_Time
+              := League.Calendars.Clock;
+            Header : constant Web_Services.SOAP.Security
+              .Headers.Username_Token_Header_Access
+                := new Web_Services.SOAP.Security
+                  .Headers.Username_Token_Header;
+         begin
+            Header.Username := User;
+            Header.Password := Password;
+            Header.Nonce := League.Strings.To_Universal_String ("nonce");
+            Header.Created :=
+              League.Calendars.ISO_8601.Image (Format, Created);
+            Input.Headers.Insert (Header.all'Access);
+         end;
+      end if;
 
       Self.Call (Input, Output);
 

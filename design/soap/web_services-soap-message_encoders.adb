@@ -50,6 +50,7 @@ with XML.SAX.Pretty_Writers;
 with XML.SAX.Writers;
 
 with Web_Services.SOAP.Constants;
+with Web_Services.SOAP.Headers.Encoders.Registry;
 with Web_Services.SOAP.Payloads.Encoders.Registry;
 with Web_Services.SOAP.Payloads.Faults;
 
@@ -91,6 +92,23 @@ package body Web_Services.SOAP.Message_Encoders is
       --  Start env:Envelope element.
 
       Writer.Start_Element (SOAP_Envelope_URI, SOAP_Envelope_Name);
+
+      --  Write env:Header elements.
+
+      for Header of Message.Headers loop
+         Writer.Start_Element (SOAP_Envelope_URI, SOAP_Header_Name);
+
+         declare
+            Header_Encoder : constant Web_Services.SOAP
+              .Headers.Encoders.SOAP_Header_Encoder_Access
+                := Web_Services.SOAP.Headers.Encoders.Registry.Resolve
+                  (Header'Tag);
+         begin
+            Header_Encoder.Encode (Header.all, Writer);
+         end;
+
+         Writer.Start_Element (SOAP_Envelope_URI, SOAP_Header_Name);
+      end loop;
 
       --  Start env:Body element.
 
