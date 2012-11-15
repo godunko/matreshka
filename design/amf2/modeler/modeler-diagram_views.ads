@@ -41,57 +41,53 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Diagram Manager handles creation/modification/destruction of diagrams in
---  model and reflect these changes in GUI components.
+--  Base class for diagram views. It updates own windowTitle property on
+--  changes of name property of diagram.
 ------------------------------------------------------------------------------
-private with Ada.Containers.Hashed_Maps;
-
-private with Qt4.Graphics_Views;
-with Qt4.Mdi_Areas;
+with Qt4.Graphics_Scenes;
+with Qt4.Graphics_Views;
+private with Qt4.Graphics_Views.Directors;
+with Qt4.Widgets;
 
 private with AMF.CMOF.Properties;
 private with AMF.Elements;
 with AMF.Listeners;
-private with AMF.UMLDI.UML_Diagrams.Hash;
+with AMF.UMLDI.UML_Diagrams;
 private with League.Holders;
 
-package Modeler.Diagram_Managers is
+package Modeler.Diagram_Views is
 
-   type Diagram_Manager is
-      limited new AMF.Listeners.Abstract_Listener with private;
+   type Diagram_View is
+     limited new Qt4.Graphics_Views.Q_Graphics_View
+       and AMF.Listeners.Abstract_Listener with private;
 
-   type Diagram_Manager_Access is access all Diagram_Manager'Class;
+   type Diagram_View_Access is access all Diagram_View;
 
    package Constructors is
 
       function Create
-       (Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access)
-          return not null Diagram_Manager_Access;
+       (Scene   : not null Qt4.Graphics_Scenes.Q_Graphics_Scene_Access;
+        Diagram : not null AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access;
+        Parent  : access Qt4.Widgets.Q_Widget'Class := null)
+          return not null Diagram_View_Access;
 
    end Constructors;
 
 private
 
-   package Diagram_Maps is
-     new Ada.Containers.Hashed_Maps
-          (AMF.UMLDI.UML_Diagrams.UMLDI_UML_Diagram_Access,
-           Qt4.Graphics_Views.Q_Graphics_View_Access,
-           AMF.UMLDI.UML_Diagrams.Hash,
-           AMF.UMLDI.UML_Diagrams."=",
-           Qt4.Graphics_Views."=");
-
-   type Diagram_Manager is
-     limited new AMF.Listeners.Abstract_Listener with
+   type Diagram_View is
+     limited new Qt4.Graphics_Views.Directors.Q_Graphics_View_Director
+       and AMF.Listeners.Abstract_Listener with
    record
-      Central_Widget : Qt4.Mdi_Areas.Q_Mdi_Area_Access;
-      --  Central widget of main window.
-
-      Diagram_Map    : Diagram_Maps.Map;
-      --  Map from UMLDiagram to QGraphivsView.
+      null;
    end record;
 
-   overriding procedure Instance_Create
-    (Self    : not null access Diagram_Manager;
-     Element : not null AMF.Elements.Element_Access);
+   overriding procedure Attribute_Set
+    (Self      : not null access Diagram_View;
+     Element   : not null AMF.Elements.Element_Access;
+     Property  : not null AMF.CMOF.Properties.CMOF_Property_Access;
+     Position  : AMF.Optional_Integer;
+     Old_Value : League.Holders.Holder;
+     New_Value : League.Holders.Holder);
 
-end Modeler.Diagram_Managers;
+end Modeler.Diagram_Views;
