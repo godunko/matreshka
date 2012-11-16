@@ -45,7 +45,7 @@ with Ada.Tags;
 
 package Web_Services.SOAP.Headers.Encoders.Registry is
 
-   procedure Register (Message_Tag : Ada.Tags.Tag; Encoder_Tag : Ada.Tags.Tag);
+   procedure Register (Header_Tag : Ada.Tags.Tag; Encoder_Tag : Ada.Tags.Tag);
    --  Register encoder.
 
    function Resolve

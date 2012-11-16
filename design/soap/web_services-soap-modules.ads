@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with Web_Services.SOAP.Messages;
 
+with League.Strings;
+
 package Web_Services.SOAP.Modules is
 
    type Abstract_SOAP_Module is abstract tagged limited null record;
@@ -54,5 +56,13 @@ package Web_Services.SOAP.Modules is
      Message : in out Web_Services.SOAP.Messages.SOAP_Message;
      Output  : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
        is abstract;
+
+   not overriding procedure Send_Request
+    (Self     : in out Abstract_SOAP_Module;
+     Message  : in out Web_Services.SOAP.Messages.SOAP_Message;
+     User     : League.Strings.Universal_String;
+     Password : League.Strings.Universal_String)
+       is abstract;
+   --  Sending request to server from client's part
 
 end Web_Services.SOAP.Modules;

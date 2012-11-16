@@ -75,13 +75,17 @@ package body Web_Services.SOAP.Security.Headers.Encoders is
       Token      : Username_Token_Header
         renames Username_Token_Header (Header);
    begin
+      Writer.Start_Prefix_Mapping (WSSE_Namespace_Prefix, WSSE_Namespace_URI);
+      Writer.Start_Prefix_Mapping (WSU_Namespace_Prefix, WSU_Namespace_URI);
+
       Attributes.Set_Value
         (SOAP_Envelope_URI, SOAP_Must_Understand_Name, SOAP_True_Literal);
 
       Writer.Start_Element (WSSE_Namespace_URI, Security_Element, Attributes);
 
       Attributes.Clear;
-      --  Attributes.Set_Value (WSU_Namespace_URI, "Id", "User");
+      Attributes.Set_Value
+        (WSU_Namespace_URI, Id_Attribute, Id_Attribute_Value);
 
       Writer.Start_Element
         (WSSE_Namespace_URI, Username_Token_Element, Attributes);
@@ -91,7 +95,8 @@ package body Web_Services.SOAP.Security.Headers.Encoders is
       Writer.End_Element (WSSE_Namespace_URI, Username_Element);
 
       Attributes.Clear;
-      --  Attributes.Set_Value ("Type", PasswordDigest);
+      Attributes.Set_Value (Type_Attribute, PasswordDigest);
+
       Writer.Start_Element (WSSE_Namespace_URI, Password_Element, Attributes);
       Writer.Characters (Token.Password);
       Writer.End_Element (WSSE_Namespace_URI, Password_Element);

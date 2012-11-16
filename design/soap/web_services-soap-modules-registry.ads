@@ -53,4 +53,11 @@ package Web_Services.SOAP.Modules.Registry is
    --  Execute modules in the chain one-by-one till end of chain is reached or
    --  someone stop processing by setting Output to non-null fault message.
 
+   procedure Execute_Send_Request
+    (Message  : in out Web_Services.SOAP.Messages.SOAP_Message;
+     User     : League.Strings.Universal_String;
+     Password : League.Strings.Universal_String);
+   --  Execute modules in the chain one-by-one till end of chain is reached or
+   --  someone stop processing by raising exception.
+
 end Web_Services.SOAP.Modules.Registry;

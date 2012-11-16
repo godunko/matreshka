@@ -41,7 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+
+private with Ada.Streams;
+private with System;
+
 with League.Strings;
+private with League.Stream_Element_Vectors;
+
+private with Ada.Numerics.Discrete_Random;
 
 private with Web_Services.SOAP.Messages;
 with Web_Services.SOAP.Modules;
@@ -63,12 +70,31 @@ package Web_Services.SOAP.Security.Modules is
 
 private
 
+   type Long_Random is mod System.Max_Binary_Modulus;
+
+   package Long_Random_Generators is
+     new Ada.Numerics.Discrete_Random (Long_Random);
+
    type Security_Module is
-     new Web_Services.SOAP.Modules.Abstract_SOAP_Module with null record;
+     new Web_Services.SOAP.Modules.Abstract_SOAP_Module with record
+      Random : Long_Random_Generators.Generator;
+   end record;
 
    overriding procedure Receive_Request
     (Self    : in out Security_Module;
      Message : in out Web_Services.SOAP.Messages.SOAP_Message;
      Output  : in out Web_Services.SOAP.Messages.SOAP_Message_Access);
+
+   overriding procedure Send_Request
+     (Self     : in out Security_Module;
+      Message  : in out Web_Services.SOAP.Messages.SOAP_Message;
+      User     : League.Strings.Universal_String;
+      Password : League.Strings.Universal_String);
+
+   not overriding function Create_Nonce
+     (Self     : in out Security_Module;
+      Message  : Web_Services.SOAP.Messages.SOAP_Message)
+      return League.Stream_Element_Vectors.Stream_Element_Vector;
+   --  Generate new nonce
 
 end Web_Services.SOAP.Security.Modules;

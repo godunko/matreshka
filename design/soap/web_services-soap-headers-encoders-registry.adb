@@ -79,9 +79,9 @@ package body Web_Services.SOAP.Headers.Encoders.Registry is
    --------------
 
    procedure Register
-    (Message_Tag : Ada.Tags.Tag; Encoder_Tag : Ada.Tags.Tag) is
+    (Header_Tag : Ada.Tags.Tag; Encoder_Tag : Ada.Tags.Tag) is
    begin
-      Registry.Insert (Message_Tag, Encoder_Tag);
+      Registry.Insert (Header_Tag, Encoder_Tag);
    end Register;
 
    -------------

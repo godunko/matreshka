@@ -41,9 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Web_Services.SOAP.Headers.Encoders.Registry;
 with Web_Services.SOAP.Headers.Decoders.Registry;
 with Web_Services.SOAP.Modules.Registry;
 with Web_Services.SOAP.Security.Constants;
+with Web_Services.SOAP.Security.Headers.Encoders;
 with Web_Services.SOAP.Security.Headers.Decoders;
 with Web_Services.SOAP.Security.Modules;
 
@@ -55,5 +57,8 @@ begin
    Web_Services.SOAP.Headers.Decoders.Registry.Register
     (Web_Services.SOAP.Security.Constants.WSSE_Namespace_URI,
      Web_Services.SOAP.Security.Headers.Decoders.Security_Header_Decoder'Tag);
+   Web_Services.SOAP.Headers.Encoders.Registry.Register
+    (Web_Services.SOAP.Security.Headers.Username_Token_Header'Tag,
+     Web_Services.SOAP.Security.Headers.Encoders.Security_Header_Encoder'Tag);
    Web_Services.SOAP.Modules.Registry.Register (Module'Access);
 end Web_Services.SOAP.Security.Setup;

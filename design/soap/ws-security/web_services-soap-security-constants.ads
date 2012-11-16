@@ -53,6 +53,15 @@ package Web_Services.SOAP.Security.Constants is
      := League.Strings.To_Universal_String
          ("http://docs.oasis-open.org/wss/2004/01/"
             & "oasis-200401-wss-wssecurity-utility-1.0.xsd");
+   PasswordDigest         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+       ("http://docs.oasis-open.org/wss/2004/01/"
+            & "oasis-200401-wss-username-token-profile-1.0#PasswordDigest");
+
+   WSSE_Namespace_Prefix : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("wsse");
+   WSU_Namespace_Prefix : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("wsu");
 
    Security_Element       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("Security");
@@ -66,5 +75,11 @@ package Web_Services.SOAP.Security.Constants is
      := League.Strings.To_Universal_String ("Nonce");
    Created_Element        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("Created");
+   Type_Attribute         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("Type");
+   Id_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("Id");
+   Id_Attribute_Value     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("User");
 
 end Web_Services.SOAP.Security.Constants;

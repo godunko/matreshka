@@ -107,7 +107,7 @@ package body Web_Services.SOAP.Message_Encoders is
             Header_Encoder.Encode (Header.all, Writer);
          end;
 
-         Writer.Start_Element (SOAP_Envelope_URI, SOAP_Header_Name);
+         Writer.End_Element (SOAP_Envelope_URI, SOAP_Header_Name);
       end loop;
 
       --  Start env:Body element.

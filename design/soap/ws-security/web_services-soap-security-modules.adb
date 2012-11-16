@@ -41,13 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Streams;
+with Ada.Storage_IO;
 with GNAT.SHA1;
 
 with League.Text_Codecs;
+with League.Calendars.ISO_8601;
 
 with Web_Services.SOAP.Payloads.Faults.Simple;
 with Web_Services.SOAP.Security.Headers;
+with System.Storage_Elements;
 
 package body Web_Services.SOAP.Security.Modules is
 
@@ -60,6 +62,11 @@ package body Web_Services.SOAP.Security.Modules is
      := League.Text_Codecs.Codec
          (League.Strings.To_Universal_String ("utf-8"));
    --  Text codec to convert strings into UTF8 representation.
+
+   Format : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("yyyy-MM-ddTHH:mm:ss");
+   --  Format of Created field in header, except 'Z' at the end, due to 'Z" is
+   --  pattern symbol
 
    Get_Authentication_Data : Authentication_Data_Provider
      := Default_Provider'Access;
@@ -77,6 +84,40 @@ package body Web_Services.SOAP.Security.Modules is
    --  Converts string into array of stream elements. Note: this subprogram is
    --  needed for GNAT GPL 2012 only, because it doesn't provide
    --  GNAT.SHA1.Digest subprogram which returns Binary_Message_Digest.
+
+   package Long_Random_IO is new Ada.Storage_IO (Long_Random);
+   package Message_Access_IO is new Ada.Storage_IO (System.Address);
+
+   ------------------
+   -- Create_Nonce --
+   ------------------
+
+   not overriding function Create_Nonce
+     (Self     : in out Security_Module;
+      Message  : Web_Services.SOAP.Messages.SOAP_Message)
+      return League.Stream_Element_Vectors.Stream_Element_Vector
+   is
+      use type System.Storage_Elements.Storage_Array;
+
+      Random_Buffer : Long_Random_IO.Buffer_Type;
+      Access_Buffer : Message_Access_IO.Buffer_Type;
+      Result        : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Value         : constant Long_Random :=
+        Long_Random_Generators.Random (Self.Random);
+   begin
+      Long_Random_IO.Write (Random_Buffer, Value);
+      Message_Access_IO.Write (Access_Buffer, Message'Address);
+
+      for X of Random_Buffer loop
+         Result.Append (Ada.Streams.Stream_Element (X));
+      end loop;
+
+      for X of Access_Buffer loop
+         Result.Append (Ada.Streams.Stream_Element (X));
+      end loop;
+
+      return Result;
+   end Create_Nonce;
 
    ----------------------
    -- Default_Provider --
@@ -316,6 +357,50 @@ package body Web_Services.SOAP.Security.Modules is
          end if;
       end;
    end Receive_Request;
+
+   ------------------
+   -- Send_Request --
+   ------------------
+
+   overriding procedure Send_Request
+     (Self     : in out Security_Module;
+      Message  : in out Web_Services.SOAP.Messages.SOAP_Message;
+      User     : League.Strings.Universal_String;
+      Password : League.Strings.Universal_String) is
+   begin
+      if User.Is_Empty then
+         return;
+      end if;
+
+      declare
+         Data : League.Stream_Element_Vectors.Stream_Element_Vector;
+         Nonce : constant League.Stream_Element_Vectors.Stream_Element_Vector
+           := Self.Create_Nonce (Message);
+         Created : constant League.Calendars.Date_Time :=
+           League.Calendars.Clock;
+         Header : constant Web_Services.SOAP.Security
+           .Headers.Username_Token_Header_Access :=
+             new Web_Services.SOAP.Security .Headers.Username_Token_Header;
+      begin
+         Header.Username := User;
+
+         Header.Created := League.Calendars.ISO_8601.Image (Format, Created);
+         Header.Created.Append ('Z');
+
+         Header.Nonce := UTF8_Codec.Decode
+           (To_Base_64 (Nonce.To_Stream_Element_Array));
+
+         Data.Append (Nonce);
+         Data.Append (UTF8_Codec.Encode (Header.Created));
+         Data.Append (UTF8_Codec.Encode (Password));
+
+         Header.Password := UTF8_Codec.Decode
+           (To_Base_64 (To_Binary_Message_Digest
+              (GNAT.SHA1.Digest (Data.To_Stream_Element_Array))));
+
+         Message.Headers.Insert (Header.all'Access);
+      end;
+   end Send_Request;
 
    --------------------------------------
    -- Set_Authentication_Data_Provider --

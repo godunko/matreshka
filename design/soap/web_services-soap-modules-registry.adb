@@ -68,6 +68,23 @@ package body Web_Services.SOAP.Modules.Registry is
       end loop;
    end Execute_Receive_Request;
 
+   --------------------------
+   -- Execute_Send_Request --
+   --------------------------
+
+   procedure Execute_Send_Request
+    (Message  : in out Web_Services.SOAP.Messages.SOAP_Message;
+     User     : League.Strings.Universal_String;
+     Password : League.Strings.Universal_String)
+   is
+      use type Web_Services.SOAP.Messages.SOAP_Message_Access;
+
+   begin
+      for M of Modules loop
+         M.Send_Request (Message, User, Password);
+      end loop;
+   end Execute_Send_Request;
+
    --------------
    -- Register --
    --------------
