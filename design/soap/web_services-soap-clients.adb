@@ -57,6 +57,11 @@ package body Web_Services.SOAP.Clients is
    UTF8_Coder : constant League.Text_Codecs.Text_Codec :=
      League.Text_Codecs.Codec (League.Strings.To_Universal_String ("utf-8"));
 
+   procedure Read_Payload
+     (Response_Data : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Response      : out Web_Services.SOAP.Payloads.SOAP_Payload_Access);
+   --  Extract Payload from Response_Data
+
    ----------
    -- Call --
    ----------
@@ -74,7 +79,6 @@ package body Web_Services.SOAP.Clients is
    is
       Input  : Web_Services.SOAP.Messages.SOAP_Message_Access :=
         new Web_Services.SOAP.Messages.SOAP_Message;
-      Output : Web_Services.SOAP.Messages.SOAP_Message_Access;
    begin
       Input.Action := Action;
       Input.Payload := Request;
@@ -82,13 +86,9 @@ package body Web_Services.SOAP.Clients is
       Web_Services.SOAP.Modules.Registry.Execute_Send_Request
         (Input.all, User, Password);
 
-      Self.Call (Input, Output);
-
-      Response := Output.Payload;
-      Output.Payload := null;
+      Self.Call (Input, Response);
 
       Web_Services.SOAP.Messages.Free (Input);
-      Web_Services.SOAP.Messages.Free (Output);
    end Call;
 
    ----------
@@ -96,9 +96,9 @@ package body Web_Services.SOAP.Clients is
    ----------
 
    procedure Call
-     (Self   : in out SOAP_Client;
-      Input  : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Output : out Web_Services.SOAP.Messages.SOAP_Message_Access)
+     (Self     : in out SOAP_Client;
+      Input    : Web_Services.SOAP.Messages.SOAP_Message_Access;
+      Response : out Web_Services.SOAP.Payloads.SOAP_Payload_Access)
    is
       use type League.Strings.Universal_String;
 
@@ -112,8 +112,6 @@ package body Web_Services.SOAP.Clients is
 
       Response_Data : League.Stream_Element_Vectors.Stream_Element_Vector;
    begin
-      Output := null;
-
       if not Input.Action.Is_Empty then
          Content_Type.Append (UTF8_Coder.Encode ("; action=" & Input.Action));
       end if;
@@ -123,29 +121,65 @@ package body Web_Services.SOAP.Clients is
          Request_Data  => Raw,
          Response_Data => Response_Data);
 
-      declare
-         Source  : aliased
-           XML.SAX.Input_Sources.Streams.Element_Arrays.
-             Stream_Element_Array_Input_Source;
-         Decoder : aliased
-           Web_Services.SOAP.Message_Decoders.SOAP_Message_Decoder;
-         Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      begin
-         --  Parse request data.
+      if Response_Data.Is_Empty then
+         return;
+      end if;
 
-         Source.Set_Stream_Element_Array
-           (Response_Data.To_Stream_Element_Array);
-         Reader.Set_Content_Handler (Decoder'Unchecked_Access);
-         Reader.Set_Error_Handler (Decoder'Unchecked_Access);
-         Reader.Set_Lexical_Handler (Decoder'Unchecked_Access);
-         Reader.Parse (Source'Access);
-
-         if Decoder.Success then
-            --  Request was decoded successfully.
-
-            Output := Decoder.Message;
-         end if;
-      end;
+      Read_Payload (Response_Data, Response);
    end Call;
+
+   -------------------
+   -- Next_Response --
+   -------------------
+
+   not overriding procedure Next_Response
+     (Self     : in out SOAP_Client;
+      Response : out Web_Services.SOAP.Payloads.SOAP_Payload_Access)
+   is
+      Response_Data : League.Stream_Element_Vectors.Stream_Element_Vector;
+   begin
+      Self.Transport.Next_Response (Response_Data);
+
+      if Response_Data.Is_Empty then
+         return;
+      end if;
+
+      Read_Payload (Response_Data, Response);
+   end Next_Response;
+
+   ------------------
+   -- Read_Payload --
+   ------------------
+
+   procedure Read_Payload
+     (Response_Data : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Response      : out Web_Services.SOAP.Payloads.SOAP_Payload_Access)
+   is
+      Output  : Web_Services.SOAP.Messages.SOAP_Message_Access;
+      Source  : aliased XML.SAX.Input_Sources.Streams.Element_Arrays.
+          Stream_Element_Array_Input_Source;
+      Decoder : aliased
+        Web_Services.SOAP.Message_Decoders.SOAP_Message_Decoder;
+      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+   begin
+      --  Parse request data.
+
+      Source.Set_Stream_Element_Array
+        (Response_Data.To_Stream_Element_Array);
+      Reader.Set_Content_Handler (Decoder'Unchecked_Access);
+      Reader.Set_Error_Handler (Decoder'Unchecked_Access);
+      Reader.Set_Lexical_Handler (Decoder'Unchecked_Access);
+      Reader.Parse (Source'Access);
+
+      if Decoder.Success then
+         --  Request was decoded successfully.
+
+         Output := Decoder.Message;
+         Response := Output.Payload;
+         Output.Payload := null;
+
+         Web_Services.SOAP.Messages.Free (Output);
+      end if;
+   end Read_Payload;
 
 end Web_Services.SOAP.Clients;

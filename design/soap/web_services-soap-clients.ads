@@ -77,7 +77,7 @@ package Web_Services.SOAP.Clients is
    type SOAP_Client (Transport : access Abstract_Transport'Class) is
      tagged limited private;
 
-   procedure Call
+   not overriding procedure Call
      (Self     : in out SOAP_Client;
       Request  : Web_Services.SOAP.Payloads.SOAP_Payload_Access;
       Response : out Web_Services.SOAP.Payloads.SOAP_Payload_Access;
@@ -89,14 +89,18 @@ package Web_Services.SOAP.Clients is
         League.Strings.Empty_Universal_String);
    --  Call server
 
+   not overriding procedure Next_Response
+     (Self     : in out SOAP_Client;
+      Response : out Web_Services.SOAP.Payloads.SOAP_Payload_Access);
+
 private
 
    type SOAP_Client (Transport : access Abstract_Transport'Class) is
      tagged limited null record;
 
    procedure Call
-     (Self   : in out SOAP_Client;
-      Input  : Web_Services.SOAP.Messages.SOAP_Message_Access;
-      Output : out Web_Services.SOAP.Messages.SOAP_Message_Access);
+     (Self     : in out SOAP_Client;
+      Input    : Web_Services.SOAP.Messages.SOAP_Message_Access;
+      Response : out Web_Services.SOAP.Payloads.SOAP_Payload_Access);
 
 end Web_Services.SOAP.Clients;
