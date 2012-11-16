@@ -64,7 +64,7 @@ package body Web_Services.SOAP.Modules.Registry is
       for M of Modules loop
          M.Receive_Request (Message, Output);
 
-         exit when Output = null;
+         exit when Output /= null;
       end loop;
    end Execute_Receive_Request;
 
