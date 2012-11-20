@@ -55,6 +55,7 @@ limited with Matreshka.XML_Schema.AST.Attribute_Declarations;
 limited with Matreshka.XML_Schema.AST.Attribute_Groups;
 limited with Matreshka.XML_Schema.AST.Attribute_Uses;
 limited with Matreshka.XML_Schema.AST.Complex_Types;
+limited with Matreshka.XML_Schema.AST.Constraining_Facets;
 limited with Matreshka.XML_Schema.AST.Element_Declarations;
 limited with Matreshka.XML_Schema.AST.Identity_Constraints;
 limited with Matreshka.XML_Schema.AST.Model_Groups;
@@ -97,6 +98,9 @@ package Matreshka.XML_Schema.AST.Types is
 
    type Element_Declaration_Access is
      access all Element_Declarations.Element_Declaration_Node'Class;
+
+   type Enumeration_Access is
+     access all Constraining_Facets.Enumeration_Node'Class;
 
    type Identity_Constraint_Definition_Access is
      access all Identity_Constraints.Identity_Constraint_Definition_Node'Class;
@@ -260,5 +264,8 @@ package Matreshka.XML_Schema.AST.Types is
    package XPath_Expression_Lists is
      new Ada.Containers.Doubly_Linked_Lists
        (XPath_Expression);
+
+   package Facet_Sets is
+     new Ada.Containers.Doubly_Linked_Lists (Abstract_Node_Access);
 
 end Matreshka.XML_Schema.AST.Types;

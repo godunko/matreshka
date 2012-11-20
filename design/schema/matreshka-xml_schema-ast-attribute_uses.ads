@@ -72,6 +72,11 @@ package Matreshka.XML_Schema.AST.Attribute_Uses is
       Inheritable : Boolean;
       --  {inheritable}
       --  An xs:boolean value. Required.
+
+      --  Internal data.
+
+      Ref : League.Strings.Universal_String;
+      --  @ref
    end record;
 
 end Matreshka.XML_Schema.AST.Attribute_Uses;

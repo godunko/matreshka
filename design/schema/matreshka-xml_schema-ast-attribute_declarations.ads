@@ -79,6 +79,12 @@ package Matreshka.XML_Schema.AST.Attribute_Declarations is
       Inheritable : Boolean;
       --  {inheritable}
       --  An xs:boolean value. Required.
+
+      --  Internal data.
+
+      Type_Name : League.Strings.Universal_String;
+      --  @type
+
    end record;
 
 end Matreshka.XML_Schema.AST.Attribute_Declarations;

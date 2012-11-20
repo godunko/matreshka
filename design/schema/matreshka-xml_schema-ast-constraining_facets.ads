@@ -45,12 +45,11 @@ with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
 
-package Matreshka.XML_Schema.AST.Simple_Types is
+package Matreshka.XML_Schema.AST.Constraining_Facets is
 
    pragma Preelaborate;
 
-   type Simple_Type_Definition_Node is
-     new Matreshka.XML_Schema.AST.Types.Type_Definition_Node with record
+   type Enumeration_Node is new Abstract_Node with record
       --  Properties:
       --
 
@@ -58,92 +57,11 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  {annotations}
       --  A sequence of Annotation components.
 
-      Name  : League.Strings.Universal_String;
-      --  {name}
-      --  An xs:NCName value. Optional.
+      Value : League.Strings.Universal_String;
 
-      Target_Namespace  : League.Strings.Universal_String;
-      --  {target namespace}
-      --  An xs:anyURI value. Optional.
-
-      Final : Matreshka.XML_Schema.AST.Derivation_Set;
-      --  {final}
-      --  A subset of {extension, restriction, list, union}.
-
-      Context : Types.Abstract_Node_Access;
-      --  {context}
-      --  Required if {name} is ·absent·, otherwise must be ·absent·.
+      --  {value}
       --
-      --  Either an Attribute Declaration, an Element Declaration, a Complex
-      --  Type Definition, or a Simple Type Definition.
+      --  A set of values from the ·value space· of the {base type definition}.
+  end record;
 
-
-      Base_Type_Definition : Types.Type_Definition_Access;
-      --  {base type definition}
-      --  A Type Definition component. Required.
-      --
-      --  With one exception, the {base type definition} of any Simple Type
-      --  Definition is a Simple Type Definition. The exception is
-      --  ·xs:anySimpleType·, which has ·xs:anyType·, a Complex Type
-      --  Definition, as its {base type definition}.
-      --
-
-      Facets : Types.Facet_Sets.List;
-
-      --  {facets}
-      --  A set of Constraining Facet components.
-      --
-      --  {fundamental facets}
-      --  A set of Fundamental Facet components.
-      --
-
-      Variety : Simple_Type_Variety;
-      --  {variety}
-      --  One of {atomic, list, union}. Required for all Simple Type
-      --  Definitions except ·xs:anySimpleType·, in which it is ·absent·.
-      --
-
-      Simple_Type_Definition : Types.Simple_Type_Definition_Access;
-      --  {primitive type definition}
-      --  A Simple Type Definition component. With one exception, required if
-      --  {variety} is atomic, otherwise must be ·absent·. The exception is
-      --  ·xs:anyAtomicType·, whose {primitive type definition} is ·absent·.
-      --
-      --  If non-·absent·, must be a primitive definition.
-      --
-
-      Item_Type_Definition : Types.Simple_Type_Definition_Access;
-      --  {item type definition}
-      --  A Simple Type Definition component. Required if {variety} is list,
-      --  otherwise must be ·absent·.
-      --
-      --  The value of this property must be a primitive or ordinary simple
-      --  type definition with {variety} = atomic, or an ordinary simple type
-      --  definition with {variety} = union whose basic members are all atomic;
-      --  the value must not itself be a list type (have {variety} = list) or
-      --  have any basic members which are list types.
-      --
-
-      Member_Type_Definitions : Types.Simple_Type_Definition_Lists.List;
-      --  {member type definitions}
-      --  A sequence of primitive or ordinary Simple Type Definition
-      --  components.
-      --
-      --  Must be present (but may be empty) if {variety} is union, otherwise
-      --  must be ·absent·.
-      --
-      --  The sequence may contain any primitive or ordinary simple type
-      --  definition, but must not contain any special type definitions.
-
-      --  Internal data.
-
-      Restriction_Base : League.Strings.Universal_String;
-      --  restriction/@base
-      Member_Types     : League.Strings.Universal_String;
-      --  union/@memberTypes
-   end record;
-
-   type Simple_Type_Definition_Access is
-     access all Simple_Type_Definition_Node'Class;
-
-end Matreshka.XML_Schema.AST.Simple_Types;
+end Matreshka.XML_Schema.AST.Constraining_Facets;

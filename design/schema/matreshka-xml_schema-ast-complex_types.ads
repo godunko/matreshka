@@ -147,6 +147,12 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {assertions}
       --  A sequence of Assertion components.
 
+      --  Internal data.
+
+      Restriction_Base : League.Strings.Universal_String;
+      --  restriction/@base
+      Extension_Base : League.Strings.Universal_String;
+      --  extension/@base
    end record;
 
 end Matreshka.XML_Schema.AST.Complex_Types;

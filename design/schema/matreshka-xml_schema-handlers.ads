@@ -52,6 +52,8 @@ private with Ada.Containers.Vectors;
 
 private with League.Strings;
 private with Matreshka.XML_Schema.AST.Schemas;
+private with Matreshka.XML_Schema.AST.Simple_Types;
+private with Matreshka.XML_Schema.AST.Types;
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 
@@ -63,19 +65,42 @@ package Matreshka.XML_Schema.Handlers is
 private
 
    type States is
-    (Document,
+    (Any_Attribute,
+     Attribute_Declaration,
+     Attribute_Group_Declaration,
+     Complex_Content,
+     Complex_Type,
+     Complex_Type_Restriction,
+     Document,
+     Enumeration,
+     Complex_Type_Extension,
      Schema,
      Simple_Type,
-     Simple_Type_Restriction);
+     Simple_Type_Restriction,
+     Union);
+
+   type State_Value is record
+      State                       : States;
+      Last_Simple_Type_Definition :
+        Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Access;
+      Last_Attribute_Declaration  :
+        Matreshka.XML_Schema.AST.Types.Attribute_Declaration_Access;
+      Last_Attribute_Group_Definition :
+        Matreshka.XML_Schema.AST.Types.Attribute_Group_Definition_Access;
+      Last_Complex_Type_Definition :
+        Matreshka.XML_Schema.AST.Types.Complex_Type_Definition_Access;
+   end record;
 
    package State_Vectors is
-     new Ada.Containers.Vectors (Positive, States);
+     new Ada.Containers.Vectors (Positive, State_Value);
 
    type XML_Schema_Handler is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
       Schema       : Matreshka.XML_Schema.AST.Schemas.Schema_Access;
       Ignore_Depth : Natural := 0;
-      States       : State_Vectors.Vector;
+      States       : State_Vectors.Vector;  --  Stack of states except top
+
+      Top_State    : State_Value;  --  Separate top item of stack
    end record;
 
    procedure Push (Self : in out XML_Schema_Handler'Class; State : States);
