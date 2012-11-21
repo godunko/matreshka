@@ -306,10 +306,11 @@ package body Generator.Type_Mapping is
       elsif The_Type.all in AMF.CMOF.Data_Types.CMOF_Data_Type'Class then
          --  Data types are mapped according to specified mapping rules.
 
-         if not Mapping.Element
-                 (AMF.CMOF.Elements.CMOF_Element_Access
-                   (The_Type)).Mapping
-                     (Representation).Internal_Ada_Package.Is_Empty
+         if Mapping.Contains (AMF.CMOF.Elements.CMOF_Element_Access (The_Type))
+           and then not Mapping.Element
+                         (AMF.CMOF.Elements.CMOF_Element_Access
+                           (The_Type)).Mapping
+                             (Representation).Internal_Ada_Package.Is_Empty
          then
             return
               Mapping.Element
@@ -358,9 +359,11 @@ package body Generator.Type_Mapping is
       elsif The_Type.all in AMF.CMOF.Data_Types.CMOF_Data_Type'Class then
          --  Data types are mapped according to specified mapping rules.
 
-         if not Mapping.Element
-            (AMF.CMOF.Elements.CMOF_Element_Access
-              (The_Type)).Mapping (Representation).Internal_Ada_Type.Is_Empty
+         if Mapping.Contains (AMF.CMOF.Elements.CMOF_Element_Access(The_Type))
+           and then not Mapping.Element
+                         (AMF.CMOF.Elements.CMOF_Element_Access
+                           (The_Type)).Mapping
+                             (Representation).Internal_Ada_Type.Is_Empty
          then
             if not Internal_Ada_Package_Name
                     (The_Type, Representation).Is_Empty
