@@ -30,8 +30,6 @@ procedure Main is
 --   end T;
 
 begin
-   XML.SAX.Simple_Readers.Put_Line := Put_Line'Access;
-
    Reader.Set_Entity_Resolver (Handler'Unchecked_Access);
 
    Load_Start := Ada.Calendar.Clock;
