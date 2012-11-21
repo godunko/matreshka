@@ -168,7 +168,7 @@ package body Generator.Tables is
                (Attribute.Get_Type, Representation);
 
             if Attribute_Type.all in AMF.CMOF.Classes.CMOF_Class'Class
-              and then Representation in Value | Holder
+              and Representation in Value | Holder
             then
                --  For value and holder representations we use AMF_Link type
                --  for member, while internal type is AMF_Element.
