@@ -307,6 +307,9 @@ package body Generator.Type_Mapping is
          --  Data types are mapped according to specified mapping rules.
 
          if Mapping.Contains (AMF.CMOF.Elements.CMOF_Element_Access (The_Type))
+           and then Mapping.Element
+                     (AMF.CMOF.Elements.CMOF_Element_Access
+                       (The_Type)).Mapping (Representation) /= null
            and then not Mapping.Element
                          (AMF.CMOF.Elements.CMOF_Element_Access
                            (The_Type)).Mapping
@@ -360,6 +363,9 @@ package body Generator.Type_Mapping is
          --  Data types are mapped according to specified mapping rules.
 
          if Mapping.Contains (AMF.CMOF.Elements.CMOF_Element_Access(The_Type))
+           and then Mapping.Element
+                     (AMF.CMOF.Elements.CMOF_Element_Access
+                       (The_Type)).Mapping (Representation) /= null
            and then not Mapping.Element
                          (AMF.CMOF.Elements.CMOF_Element_Access
                            (The_Type)).Mapping

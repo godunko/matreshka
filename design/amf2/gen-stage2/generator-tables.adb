@@ -148,6 +148,14 @@ package body Generator.Tables is
       Unit.Add_Line (+"   type Member_Kinds is");
       Unit.Add (+"    (M_None");
 
+      Members.Include
+       (+"M_Collection_Of_Element",
+        (+"M_Collection_Of_Element",
+         +"Collection",
+         +"AMF.Internals.AMF_Collection_Of_Element"));
+      --  Insert collection of elements into the mapping, it is used for first
+      --  (special) member of any element.
+
       for Class of Module_Info.Non_Abstract_Classes loop
          Class_Info := Generator.Class_Info.Element (Class);
 
@@ -160,7 +168,7 @@ package body Generator.Tables is
                (Attribute.Get_Type, Representation);
 
             if Attribute_Type.all in AMF.CMOF.Classes.CMOF_Class'Class
-              and Representation in Value | Holder
+              and then Representation in Value | Holder
             then
                --  For value and holder representations we use AMF_Link type
                --  for member, while internal type is AMF_Element.
