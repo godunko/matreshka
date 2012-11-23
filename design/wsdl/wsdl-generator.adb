@@ -419,7 +419,7 @@ package body WSDL.Generator is
                 & Input_Message.Element.Namespace_URI
                 & '"');
             Put_Line
-             ("        or Input.Local_Name = +"""
+             ("        and Input.Local_Name = +"""
                 & Input_Message.Element.Local_Name
                 & '"');
             Put_Line ("      then");
