@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
 with Ada.Tags;
 
 with Web_Services.SOAP.Handlers;
@@ -52,9 +53,21 @@ package Web_Services.SOAP.Handler_Registry is
      Handler : not null Web_Services.SOAP.Handlers.SOAP_Message_Handler);
    --  Register handler for the given tag.
 
+   procedure Register
+    (Handler : not null Web_Services.SOAP.Handlers.SOAP_RPC_Handler);
+   --  Register RPC-style handler.
+
    function Resolve
     (Tag : Ada.Tags.Tag)
-       return not null Web_Services.SOAP.Handlers.SOAP_Message_Handler;
+       return Web_Services.SOAP.Handlers.SOAP_Message_Handler;
    --  Returns handler for the given tag.
+
+   package Handler_Vectors is
+     new Ada.Containers.Vectors
+          (Positive,
+           Web_Services.SOAP.Handlers.SOAP_RPC_Handler,
+           Web_Services.SOAP.Handlers."=");
+
+   RPC_Registry : Handler_Vectors.Vector;
 
 end Web_Services.SOAP.Handler_Registry;

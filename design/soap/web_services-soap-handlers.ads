@@ -50,4 +50,10 @@ package Web_Services.SOAP.Handlers is
       (Input_Message  : Web_Services.SOAP.Messages.SOAP_Message_Access;
        Output_Message : out Web_Services.SOAP.Messages.SOAP_Message_Access);
 
+   type SOAP_RPC_Handler is
+     access procedure
+      (Input  : Web_Services.SOAP.Messages.SOAP_Message;
+       Output : out Web_Services.SOAP.Messages.SOAP_Message_Access;
+       Found  : in out Boolean);
+
 end Web_Services.SOAP.Handlers;

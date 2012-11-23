@@ -80,6 +80,7 @@ package body Web_Services.SOAP.Dispatcher is
       Output  : Web_Services.SOAP.Messages.SOAP_Message_Access;
       Handler : Web_Services.SOAP.Handlers.SOAP_Message_Handler;
       Status  : Reply_Streams.Status_Type;
+      Handled : Boolean;
 
    begin
       --  Parse request data.
@@ -97,6 +98,41 @@ package body Web_Services.SOAP.Dispatcher is
          Input.Action := SOAP_Action;
          Input.Output := Stream;
 
+         --  Execute SOAP Modules.
+
+         Web_Services.SOAP.Modules.Registry.Execute_Receive_Request
+          (Input.all, Output);
+
+         if Output /= null then
+            --  Return error when SOAP Module returns fault.
+
+            Status := Reply_Streams.S_400;
+            Stream.Send_Message (Status, Output);
+
+            return;
+         end if;
+
+         --  Process request.
+
+         Handled := False;
+
+         for Handler of Web_Services.SOAP.Handler_Registry.RPC_Registry loop
+            Handler (Input.all, Output, Handled);
+
+            exit when Handled;
+         end loop;
+
+         if Handled then
+            --  Return when request was handled.
+
+            Status := Reply_Streams.S_200;
+            Stream.Send_Message (Status, Output);
+
+            return;
+         end if;
+
+         --  Attempt to handle message using old style handlers.
+
          if Input.Payload = null then
             Handler :=
               Web_Services.SOAP.Handler_Registry.Resolve (Ada.Tags.No_Tag);
@@ -106,23 +142,11 @@ package body Web_Services.SOAP.Dispatcher is
               Web_Services.SOAP.Handler_Registry.Resolve (Input.Payload'Tag);
          end if;
 
-         --  Execute SOAP Modules.
+         --  Execute handler.
 
-         Web_Services.SOAP.Modules.Registry.Execute_Receive_Request
-          (Input.all, Output);
-
-         if Output = null then
-            --  Execute handler.
-
-            Handler (Input, Output);
-            Web_Services.SOAP.Messages.Free (Input);
-            Status := Reply_Streams.S_200;
-
-         else
-            --  Return error when SOAP Module returns fault.
-
-            Status := Reply_Streams.S_400;
-         end if;
+         Handler (Input, Output);
+         Web_Services.SOAP.Messages.Free (Input);
+         Status := Reply_Streams.S_200;
 
       else
          Output := Decoder.Message;

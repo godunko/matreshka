@@ -85,15 +85,33 @@ package body Web_Services.SOAP.Handler_Registry is
       Registry.Insert (Tag, Handler);
    end Register;
 
+   --------------
+   -- Register --
+   --------------
+
+   procedure Register
+    (Handler : not null Web_Services.SOAP.Handlers.SOAP_RPC_Handler) is
+   begin
+      RPC_Registry.Append (Handler);
+   end Register;
+
    -------------
    -- Resolve --
    -------------
 
    function Resolve
     (Tag : Ada.Tags.Tag)
-       return not null Web_Services.SOAP.Handlers.SOAP_Message_Handler is
+       return Web_Services.SOAP.Handlers.SOAP_Message_Handler
+   is
+      Position : constant Tag_Handler_Maps.Cursor := Registry.Find (Tag);
+
    begin
-      return Registry.Element (Tag);
+      if Tag_Handler_Maps.Has_Element (Position) then
+         return Tag_Handler_Maps.Element (Position);
+
+      else
+         return null;
+      end if;
    end Resolve;
 
 end Web_Services.SOAP.Handler_Registry;
