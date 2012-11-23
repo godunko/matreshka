@@ -342,6 +342,7 @@ package body WSDL.Generator is
        ("--------------------------------------------------------------------"
           & "----------");
       Put_Line ("with League.Strings;");
+      Put_Line ("with Web_Services.SOAP.Handler_Registry;");
       Put_Line ("with Web_Services.SOAP.Messages;");
       Put_Line ("with Web_Services.SOAP.Payloads;");
       New_Line;
@@ -517,7 +518,8 @@ package body WSDL.Generator is
       New_Line;
       Put_Line ("   procedure Register_Interface is");
       Put_Line ("   begin");
-      Put_Line ("      null;");
+      Put_Line ("      Web_Services.SOAP.Handler_Registry.Register");
+      Put_Line ("       (Dispatch'Unrestricted_Access);");
       Put_Line ("   end Register_Interface;");
       New_Line;
       Put_Line ("end " & Interface_Package_Name & ";");
