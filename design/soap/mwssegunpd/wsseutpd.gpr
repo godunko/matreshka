@@ -1,0 +1,14 @@
+with "../../../gnat/matreshka_soap.gpr";
+
+project WSSEUTPD is
+
+   for Main use ("wsseutpd.adb");
+   for Object_Dir use ".objs";
+   for Exec_Dir use ".";
+   for Source_Dirs use (".", "../ws-security");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-gnat12");
+   end Compiler;
+
+end WSSEUTPD;
