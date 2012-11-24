@@ -55,6 +55,13 @@ package Web_Services.SOAP.Security.Password_Digest_Utilities is
    function Generate_Created return League.Strings.Universal_String;
    --  Generate image of timestamp for wsu:Created element.
 
+   function Compute_Digest
+    (Password : League.Strings.Universal_String;
+     Nonce    : League.Stream_Element_Vectors.Stream_Element_Vector;
+     Created  : League.Strings.Universal_String)
+       return League.Stream_Element_Vectors.Stream_Element_Vector;
+   --  Computes password digest using specified password, nonce and created.
+
    procedure Initialize;
    --  Initialize internal random number generator.
 

@@ -41,11 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Streams;
-with GNAT.SHA1;
-
 with League.Stream_Element_Vectors;
-with League.Text_Codecs;
 
 with Web_Services.SOAP.Payloads.Faults.Simple;
 with Web_Services.SOAP.Security.Headers;
@@ -58,19 +54,8 @@ package body Web_Services.SOAP.Security.Modules is
      Password : out League.Strings.Universal_String;
      Success  : out Boolean);
 
-   UTF8_Codec : constant League.Text_Codecs.Text_Codec
-     := League.Text_Codecs.Codec
-         (League.Strings.To_Universal_String ("utf-8"));
-   --  Text codec to convert strings into UTF8 representation.
-
    Get_Authentication_Data : Authentication_Data_Provider
      := Default_Provider'Access;
-
-   function To_Binary_Message_Digest
-    (Item : String) return Ada.Streams.Stream_Element_Array;
-   --  Converts string into array of stream elements. Note: this subprogram is
-   --  needed for GNAT GPL 2012 only, because it doesn't provide
-   --  GNAT.SHA1.Digest subprogram which returns Binary_Message_Digest.
 
    procedure Create_Invalid_Security_Token_Fault
     (Output : out Web_Services.SOAP.Messages.SOAP_Message_Access);
@@ -153,7 +138,7 @@ package body Web_Services.SOAP.Security.Modules is
      Message : in out Web_Services.SOAP.Messages.SOAP_Message;
      Output  : in out Web_Services.SOAP.Messages.SOAP_Message_Access)
    is
-      use type Ada.Streams.Stream_Element_Array;
+      use type League.Stream_Element_Vectors.Stream_Element_Vector;
       use type League.Strings.Universal_String;
       use type Web_Services.SOAP.Security.Headers.Username_Token_Header_Access;
 
@@ -218,26 +203,14 @@ package body Web_Services.SOAP.Security.Modules is
             --    Password_Digest =
             --      Base64 ( SHA-1 ( nonce + created + password ) )
 
-            declare
-               use type League.Stream_Element_Vectors.Stream_Element_Vector;
+            if Web_Services.SOAP.Security.Password_Digest_Utilities.
+                 Compute_Digest (Password, Token.Nonce, Token.Created)
+                   /= Token.Digest
+            then
+               Create_Failed_Authentication_Fault (Output);
 
-               Full_Data : constant Ada.Streams.Stream_Element_Array
-                 := Token.Nonce.To_Stream_Element_Array
-                      & UTF8_Codec.Encode
-                         (Token.Created & Password).To_Stream_Element_Array;
-               Digest    : constant Ada.Streams.Stream_Element_Array
-                 := To_Binary_Message_Digest (GNAT.SHA1.Digest (Full_Data));
-               --  GNAT GPL 2012: Use of To_Binary_Message_Digest is not needed
-               --  here, but GNAT GPL 2012 doesn't provide corresponding
-               --  GNAT.SHA1.Digest subprogram.
-
-            begin
-               if Digest /= Token.Digest then
-                  Create_Failed_Authentication_Fault (Output);
-
-                  return;
-               end if;
-            end;
+               return;
+            end if;
       end case;
    end Receive_Request;
 
@@ -256,27 +229,20 @@ package body Web_Services.SOAP.Security.Modules is
       end if;
 
       declare
-         Data   : League.Stream_Element_Vectors.Stream_Element_Vector;
          Header : constant
            Web_Services.SOAP.Security.Headers.Username_Token_Header_Access
              := new Web_Services.SOAP.Security.Headers.Username_Token_Header;
 
       begin
          Header.Username := User;
+         Header.Nonce :=
+           Web_Services.SOAP.Security.Password_Digest_Utilities.Generate_Nonce;
          Header.Created :=
            Web_Services.SOAP.Security.Password_Digest_Utilities.
              Generate_Created;
-         Header.Nonce :=
-           Web_Services.SOAP.Security.Password_Digest_Utilities.Generate_Nonce;
-
-         Data.Append (Header.Nonce);
-         Data.Append (UTF8_Codec.Encode (Header.Created));
-         Data.Append (UTF8_Codec.Encode (Password));
-
          Header.Digest :=
-           League.Stream_Element_Vectors.To_Stream_Element_Vector
-            (To_Binary_Message_Digest
-              (GNAT.SHA1.Digest (Data.To_Stream_Element_Array)));
+           Web_Services.SOAP.Security.Password_Digest_Utilities.Compute_Digest
+            (Password, Header.Nonce, Header.Created);
 
          Message.Headers.Insert (Header.all'Access);
       end;
@@ -291,53 +257,5 @@ package body Web_Services.SOAP.Security.Modules is
    begin
       Get_Authentication_Data := Provider;
    end Set_Authentication_Data_Provider;
-
-   ------------------------------
-   -- To_Binary_Message_Digest --
-   ------------------------------
-
-   function To_Binary_Message_Digest
-    (Item : String) return Ada.Streams.Stream_Element_Array
-   is
-      use type Ada.Streams.Stream_Element;
-      use type Ada.Streams.Stream_Element_Offset;
-
-      function Decode (Item : Character) return Ada.Streams.Stream_Element;
-
-      ------------
-      -- Decode --
-      ------------
-
-      function Decode (Item : Character) return Ada.Streams.Stream_Element is
-      begin
-         case Item is
-            when '0' .. '9' =>
-               return Character'Pos (Item) - Character'Pos ('0');
-
-            when 'a' .. 'f' =>
-               return Character'Pos (Item) - Character'Pos ('a') + 10;
-
-            when 'A' .. 'F' =>
-               return Character'Pos (Item) - Character'Pos ('A') + 10;
-
-            when others =>
-               raise Constraint_Error;
-         end case;
-      end Decode;
-
-      Result : Ada.Streams.Stream_Element_Array (1 .. Item'Length / 2);
-      First  : Natural := Item'First;
-      Unused : Ada.Streams.Stream_Element_Offset := Result'First;
-
-   begin
-      while Item'Last - First > 0 loop
-         Result (Unused) :=
-          (Decode (Item (First)) * 16) or Decode (Item (First + 1));
-         Unused := Unused + 1;
-         First := First + 2;
-      end loop;
-
-      return Result;
-   end To_Binary_Message_Digest;
 
 end Web_Services.SOAP.Security.Modules;

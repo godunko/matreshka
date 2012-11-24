@@ -42,10 +42,13 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Numerics.Discrete_Random;
+with Ada.Streams;
+with GNAT.SHA1;
 with Interfaces;
 
 with League.Calendars.ISO_8601;
 with League.Stream_Element_Vectors.Internals;
+with League.Text_Codecs;
 with Matreshka.Internals.Stream_Element_Vectors;
 
 package body Web_Services.SOAP.Security.Password_Digest_Utilities is
@@ -58,7 +61,41 @@ package body Web_Services.SOAP.Security.Password_Digest_Utilities is
    --  Format of Created field in header, except 'Z' at the end, due to 'Z' is
    --  pattern symbol
 
+   UTF8_Codec : constant League.Text_Codecs.Text_Codec
+     := League.Text_Codecs.Codec
+         (League.Strings.To_Universal_String ("utf-8"));
+   --  Text codec to convert strings into UTF8 representation.
+
    Generator : Unsigned_64_Random.Generator;
+
+   function To_Binary_Message_Digest
+    (Item : String) return Ada.Streams.Stream_Element_Array;
+   --  Converts string into array of stream elements. Note: this subprogram is
+   --  needed for GNAT GPL 2012 only, because it doesn't provide
+   --  GNAT.SHA1.Digest subprogram which returns Binary_Message_Digest.
+
+   --------------------
+   -- Compute_Digest --
+   --------------------
+
+   function Compute_Digest
+    (Password : League.Strings.Universal_String;
+     Nonce    : League.Stream_Element_Vectors.Stream_Element_Vector;
+     Created  : League.Strings.Universal_String)
+       return League.Stream_Element_Vectors.Stream_Element_Vector
+   is
+      Data : League.Stream_Element_Vectors.Stream_Element_Vector;
+
+   begin
+      Data.Append (Nonce);
+      Data.Append (UTF8_Codec.Encode (Created));
+      Data.Append (UTF8_Codec.Encode (Password));
+
+      return
+        League.Stream_Element_Vectors.To_Stream_Element_Vector
+         (To_Binary_Message_Digest
+           (GNAT.SHA1.Digest (Data.To_Stream_Element_Array)));
+   end Compute_Digest;
 
    ----------------------
    -- Generate_Created --
@@ -105,5 +142,53 @@ package body Web_Services.SOAP.Security.Password_Digest_Utilities is
    begin
       Unsigned_64_Random.Reset (Generator);
    end Initialize;
+
+   ------------------------------
+   -- To_Binary_Message_Digest --
+   ------------------------------
+
+   function To_Binary_Message_Digest
+    (Item : String) return Ada.Streams.Stream_Element_Array
+   is
+      use type Ada.Streams.Stream_Element;
+      use type Ada.Streams.Stream_Element_Offset;
+
+      function Decode (Item : Character) return Ada.Streams.Stream_Element;
+
+      ------------
+      -- Decode --
+      ------------
+
+      function Decode (Item : Character) return Ada.Streams.Stream_Element is
+      begin
+         case Item is
+            when '0' .. '9' =>
+               return Character'Pos (Item) - Character'Pos ('0');
+
+            when 'a' .. 'f' =>
+               return Character'Pos (Item) - Character'Pos ('a') + 10;
+
+            when 'A' .. 'F' =>
+               return Character'Pos (Item) - Character'Pos ('A') + 10;
+
+            when others =>
+               raise Constraint_Error;
+         end case;
+      end Decode;
+
+      Result : Ada.Streams.Stream_Element_Array (1 .. Item'Length / 2);
+      First  : Natural := Item'First;
+      Unused : Ada.Streams.Stream_Element_Offset := Result'First;
+
+   begin
+      while Item'Last - First > 0 loop
+         Result (Unused) :=
+          (Decode (Item (First)) * 16) or Decode (Item (First + 1));
+         Unused := Unused + 1;
+         First := First + 2;
+      end loop;
+
+      return Result;
+   end To_Binary_Message_Digest;
 
 end Web_Services.SOAP.Security.Password_Digest_Utilities;
