@@ -65,7 +65,7 @@ package body Web_Services.SOAP.Security.Modules is
 
    Format : constant League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("yyyy-MM-ddTHH:mm:ss");
-   --  Format of Created field in header, except 'Z' at the end, due to 'Z" is
+   --  Format of Created field in header, except 'Z' at the end, due to 'Z' is
    --  pattern symbol
 
    Get_Authentication_Data : Authentication_Data_Provider
@@ -104,6 +104,7 @@ package body Web_Services.SOAP.Security.Modules is
       Result        : League.Stream_Element_Vectors.Stream_Element_Vector;
       Value         : constant Long_Random :=
         Long_Random_Generators.Random (Self.Random);
+
    begin
       Long_Random_IO.Write (Random_Buffer, Value);
       Message_Access_IO.Write (Access_Buffer, Message'Address);
