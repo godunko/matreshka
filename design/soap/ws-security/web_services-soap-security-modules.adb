@@ -248,7 +248,6 @@ package body Web_Services.SOAP.Security.Modules is
         Web_Services.SOAP.Security.Headers.Username_Token_Header_Access;
       Password : League.Strings.Universal_String;
       Success  : Boolean;
-      Digest   : League.Strings.Universal_String;
 
    begin
       --  There is no authentication data provider configured, security is
@@ -321,12 +320,9 @@ package body Web_Services.SOAP.Security.Modules is
       --
       --    Password_Digest = Base64 ( SHA-1 ( nonce + created + password ) )
 
-      Digest := Token.Nonce & Token.Created & Password;
-
       declare
          Full_Data : constant Ada.Streams.Stream_Element_Array
-           := From_Base_64
-               (UTF8_Codec.Encode (Token.Nonce).To_Stream_Element_Array)
+           := Token.Nonce.To_Stream_Element_Array
                 & UTF8_Codec.Encode
                    (Token.Created & Password).To_Stream_Element_Array;
          Digest    : constant League.Strings.Universal_String
@@ -374,24 +370,22 @@ package body Web_Services.SOAP.Security.Modules is
       end if;
 
       declare
-         Data : League.Stream_Element_Vectors.Stream_Element_Vector;
-         Nonce : constant League.Stream_Element_Vectors.Stream_Element_Vector
-           := Self.Create_Nonce (Message);
+         Data    : League.Stream_Element_Vectors.Stream_Element_Vector;
          Created : constant League.Calendars.Date_Time :=
            League.Calendars.Clock;
-         Header : constant Web_Services.SOAP.Security
-           .Headers.Username_Token_Header_Access :=
-             new Web_Services.SOAP.Security .Headers.Username_Token_Header;
+         Header  : constant
+           Web_Services.SOAP.Security.Headers.Username_Token_Header_Access
+             := new Web_Services.SOAP.Security .Headers.Username_Token_Header;
+
       begin
          Header.Username := User;
 
          Header.Created := League.Calendars.ISO_8601.Image (Format, Created);
          Header.Created.Append ('Z');
 
-         Header.Nonce := UTF8_Codec.Decode
-           (To_Base_64 (Nonce.To_Stream_Element_Array));
+         Header.Nonce := Self.Create_Nonce (Message);
 
-         Data.Append (Nonce);
+         Data.Append (Header.Nonce);
          Data.Append (UTF8_Codec.Encode (Header.Created));
          Data.Append (UTF8_Codec.Encode (Password));
 

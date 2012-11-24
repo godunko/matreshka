@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
+with League.Base_64;
 with XML.SAX.Attributes;
 
 with Web_Services.SOAP.Constants;
@@ -74,6 +74,7 @@ package body Web_Services.SOAP.Security.Headers.Encoders is
       Attributes : XML.SAX.Attributes.SAX_Attributes;
       Token      : Username_Token_Header
         renames Username_Token_Header (Header);
+
    begin
       Writer.Start_Prefix_Mapping (WSSE_Namespace_Prefix, WSSE_Namespace_URI);
       Writer.Start_Prefix_Mapping (WSU_Namespace_Prefix, WSU_Namespace_URI);
@@ -102,7 +103,7 @@ package body Web_Services.SOAP.Security.Headers.Encoders is
       Writer.End_Element (WSSE_Namespace_URI, Password_Element);
 
       Writer.Start_Element (WSSE_Namespace_URI, Nonce_Element);
-      Writer.Characters (Token.Nonce);
+      Writer.Characters (League.Base_64.To_Base_64 (Token.Nonce));
       Writer.End_Element (WSSE_Namespace_URI, Nonce_Element);
 
       Writer.Start_Element (WSU_Namespace_URI, Created_Element);

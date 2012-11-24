@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Base_64;
 with Web_Services.SOAP.Security.Constants;
 
 package body Web_Services.SOAP.Security.Headers.Decoders is
@@ -97,7 +98,8 @@ package body Web_Services.SOAP.Security.Headers.Decoders is
             Self.Collect := False;
 
          elsif Local_Name = Nonce_Element then
-            Self.Token.Nonce := Self.Text;
+            Self.Token.Nonce :=
+              League.Base_64.From_Base_64 (Self.Text);
             Self.Text.Clear;
             Self.Collect := False;
          end if;

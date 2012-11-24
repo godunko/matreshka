@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Stream_Element_Vectors;
 with League.Strings;
 
 with Web_Services.SOAP.Headers;
@@ -53,7 +54,7 @@ package Web_Services.SOAP.Security.Headers is
      new Web_Services.SOAP.Headers.Abstract_SOAP_Header with record
       Username : League.Strings.Universal_String;
       Password : League.Strings.Universal_String;
-      Nonce    : League.Strings.Universal_String;
+      Nonce    : League.Stream_Element_Vectors.Stream_Element_Vector;
       Created  : League.Strings.Universal_String;
    end record;
 
