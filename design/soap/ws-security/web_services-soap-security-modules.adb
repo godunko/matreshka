@@ -41,15 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Storage_IO;
+with Ada.Streams;
 with GNAT.SHA1;
 
+with League.Stream_Element_Vectors;
 with League.Text_Codecs;
 with League.Calendars.ISO_8601;
 
 with Web_Services.SOAP.Payloads.Faults.Simple;
 with Web_Services.SOAP.Security.Headers;
-with System.Storage_Elements;
+with Web_Services.SOAP.Security.Password_Digest_Utilities;
 
 package body Web_Services.SOAP.Security.Modules is
 
@@ -76,9 +77,6 @@ package body Web_Services.SOAP.Security.Modules is
    --  Converts string into array of stream elements. Note: this subprogram is
    --  needed for GNAT GPL 2012 only, because it doesn't provide
    --  GNAT.SHA1.Digest subprogram which returns Binary_Message_Digest.
-
-   package Long_Random_IO is new Ada.Storage_IO (Long_Random);
-   package Message_Access_IO is new Ada.Storage_IO (System.Address);
 
    procedure Create_Invalid_Security_Token_Fault
     (Output : out Web_Services.SOAP.Messages.SOAP_Message_Access);
@@ -130,38 +128,6 @@ package body Web_Services.SOAP.Security.Modules is
 --                 League.Strings.To_Universal_String ("wsse"),
 --                 League.Strings.To_Universal_String ("InvalidSecurityToken")
    end Create_Invalid_Security_Token_Fault;
-
-   ------------------
-   -- Create_Nonce --
-   ------------------
-
-   not overriding function Create_Nonce
-     (Self     : in out Security_Module;
-      Message  : Web_Services.SOAP.Messages.SOAP_Message)
-      return League.Stream_Element_Vectors.Stream_Element_Vector
-   is
-      use type System.Storage_Elements.Storage_Array;
-
-      Random_Buffer : Long_Random_IO.Buffer_Type;
-      Access_Buffer : Message_Access_IO.Buffer_Type;
-      Result        : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Value         : constant Long_Random :=
-        Long_Random_Generators.Random (Self.Random);
-
-   begin
-      Long_Random_IO.Write (Random_Buffer, Value);
-      Message_Access_IO.Write (Access_Buffer, Message'Address);
-
-      for X of Random_Buffer loop
-         Result.Append (Ada.Streams.Stream_Element (X));
-      end loop;
-
-      for X of Access_Buffer loop
-         Result.Append (Ada.Streams.Stream_Element (X));
-      end loop;
-
-      return Result;
-   end Create_Nonce;
 
    ----------------------
    -- Default_Provider --
@@ -309,7 +275,8 @@ package body Web_Services.SOAP.Security.Modules is
          Header.Created := League.Calendars.ISO_8601.Image (Format, Created);
          Header.Created.Append ('Z');
 
-         Header.Nonce := Self.Create_Nonce (Message);
+         Header.Nonce :=
+           Web_Services.SOAP.Security.Password_Digest_Utilities.Generate_Nonce;
 
          Data.Append (Header.Nonce);
          Data.Append (UTF8_Codec.Encode (Header.Created));

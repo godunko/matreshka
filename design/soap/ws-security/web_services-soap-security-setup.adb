@@ -48,6 +48,7 @@ with Web_Services.SOAP.Security.Constants;
 with Web_Services.SOAP.Security.Headers.Encoders;
 with Web_Services.SOAP.Security.Headers.Decoders;
 with Web_Services.SOAP.Security.Modules;
+with Web_Services.SOAP.Security.Password_Digest_Utilities;
 
 package body Web_Services.SOAP.Security.Setup is
 
@@ -61,4 +62,5 @@ begin
     (Web_Services.SOAP.Security.Headers.Username_Token_Header'Tag,
      Web_Services.SOAP.Security.Headers.Encoders.Security_Header_Encoder'Tag);
    Web_Services.SOAP.Modules.Registry.Register (Module'Access);
+   Web_Services.SOAP.Security.Password_Digest_Utilities.Initialize;
 end Web_Services.SOAP.Security.Setup;
