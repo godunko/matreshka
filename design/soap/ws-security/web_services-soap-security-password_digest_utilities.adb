@@ -44,6 +44,7 @@
 with Ada.Numerics.Discrete_Random;
 with Interfaces;
 
+with League.Calendars.ISO_8601;
 with League.Stream_Element_Vectors.Internals;
 with Matreshka.Internals.Stream_Element_Vectors;
 
@@ -52,7 +53,26 @@ package body Web_Services.SOAP.Security.Password_Digest_Utilities is
    package Unsigned_64_Random is
      new Ada.Numerics.Discrete_Random (Interfaces.Unsigned_64);
 
+   Format : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("yyyy-MM-ddTHH:mm:ss");
+   --  Format of Created field in header, except 'Z' at the end, due to 'Z' is
+   --  pattern symbol
+
    Generator : Unsigned_64_Random.Generator;
+
+   ----------------------
+   -- Generate_Created --
+   ----------------------
+
+   function Generate_Created return League.Strings.Universal_String is
+   begin
+      return Result : League.Strings.Universal_String do
+         Result :=
+           League.Calendars.ISO_8601.Image
+            (Format, League.Calendars.Clock);
+         Result.Append ('Z');
+      end return;
+   end Generate_Created;
 
    --------------------
    -- Generate_Nonce --

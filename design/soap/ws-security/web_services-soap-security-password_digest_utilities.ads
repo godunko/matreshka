@@ -44,12 +44,16 @@
 --  Utilities package for WS-Security UsernameToken digest password.
 ------------------------------------------------------------------------------
 with League.Stream_Element_Vectors;
+with League.Strings;
 
 package Web_Services.SOAP.Security.Password_Digest_Utilities is
 
    function Generate_Nonce
      return League.Stream_Element_Vectors.Stream_Element_Vector;
    --  Generate Nonce.
+
+   function Generate_Created return League.Strings.Universal_String;
+   --  Generate image of timestamp for wsu:Created element.
 
    procedure Initialize;
    --  Initialize internal random number generator.

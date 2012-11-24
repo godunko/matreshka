@@ -46,7 +46,6 @@ with GNAT.SHA1;
 
 with League.Stream_Element_Vectors;
 with League.Text_Codecs;
-with League.Calendars.ISO_8601;
 
 with Web_Services.SOAP.Payloads.Faults.Simple;
 with Web_Services.SOAP.Security.Headers;
@@ -63,11 +62,6 @@ package body Web_Services.SOAP.Security.Modules is
      := League.Text_Codecs.Codec
          (League.Strings.To_Universal_String ("utf-8"));
    --  Text codec to convert strings into UTF8 representation.
-
-   Format : constant League.Strings.Universal_String :=
-     League.Strings.To_Universal_String ("yyyy-MM-ddTHH:mm:ss");
-   --  Format of Created field in header, except 'Z' at the end, due to 'Z' is
-   --  pattern symbol
 
    Get_Authentication_Data : Authentication_Data_Provider
      := Default_Provider'Access;
@@ -262,19 +256,16 @@ package body Web_Services.SOAP.Security.Modules is
       end if;
 
       declare
-         Data    : League.Stream_Element_Vectors.Stream_Element_Vector;
-         Created : constant League.Calendars.Date_Time :=
-           League.Calendars.Clock;
-         Header  : constant
+         Data   : League.Stream_Element_Vectors.Stream_Element_Vector;
+         Header : constant
            Web_Services.SOAP.Security.Headers.Username_Token_Header_Access
-             := new Web_Services.SOAP.Security .Headers.Username_Token_Header;
+             := new Web_Services.SOAP.Security.Headers.Username_Token_Header;
 
       begin
          Header.Username := User;
-
-         Header.Created := League.Calendars.ISO_8601.Image (Format, Created);
-         Header.Created.Append ('Z');
-
+         Header.Created :=
+           Web_Services.SOAP.Security.Password_Digest_Utilities.
+             Generate_Created;
          Header.Nonce :=
            Web_Services.SOAP.Security.Password_Digest_Utilities.Generate_Nonce;
 
