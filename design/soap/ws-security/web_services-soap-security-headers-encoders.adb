@@ -99,7 +99,7 @@ package body Web_Services.SOAP.Security.Headers.Encoders is
       Attributes.Set_Value (Type_Attribute, PasswordDigest);
 
       Writer.Start_Element (WSSE_Namespace_URI, Password_Element, Attributes);
-      Writer.Characters (Token.Password);
+      Writer.Characters (League.Base_64.To_Base_64 (Token.Password));
       Writer.End_Element (WSSE_Namespace_URI, Password_Element);
 
       Writer.Start_Element (WSSE_Namespace_URI, Nonce_Element);

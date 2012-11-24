@@ -321,14 +321,14 @@ package body Web_Services.SOAP.Security.Modules is
       --    Password_Digest = Base64 ( SHA-1 ( nonce + created + password ) )
 
       declare
+         use type League.Stream_Element_Vectors.Stream_Element_Vector;
+
          Full_Data : constant Ada.Streams.Stream_Element_Array
            := Token.Nonce.To_Stream_Element_Array
                 & UTF8_Codec.Encode
                    (Token.Created & Password).To_Stream_Element_Array;
-         Digest    : constant League.Strings.Universal_String
-           := UTF8_Codec.Decode
-               (To_Base_64
-                 (To_Binary_Message_Digest (GNAT.SHA1.Digest (Full_Data))));
+         Digest    : constant Ada.Streams.Stream_Element_Array
+           := To_Binary_Message_Digest (GNAT.SHA1.Digest (Full_Data));
          --  GNAT GPL 2012: Use of To_Binary_Message_Digest is not needed here,
          --  but GNAT GPL 2012 doesn't provide corresponding GNAT.SHA1.Digest
          --  subprogram.
@@ -389,9 +389,10 @@ package body Web_Services.SOAP.Security.Modules is
          Data.Append (UTF8_Codec.Encode (Header.Created));
          Data.Append (UTF8_Codec.Encode (Password));
 
-         Header.Password := UTF8_Codec.Decode
-           (To_Base_64 (To_Binary_Message_Digest
-              (GNAT.SHA1.Digest (Data.To_Stream_Element_Array))));
+         Header.Password :=
+           League.Stream_Element_Vectors.To_Stream_Element_Vector
+            (To_Binary_Message_Digest
+              (GNAT.SHA1.Digest (Data.To_Stream_Element_Array)));
 
          Message.Headers.Insert (Header.all'Access);
       end;

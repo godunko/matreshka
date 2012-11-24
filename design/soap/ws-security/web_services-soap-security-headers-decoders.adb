@@ -93,15 +93,32 @@ package body Web_Services.SOAP.Security.Headers.Decoders is
             Self.Collect := False;
 
          elsif Local_Name = Password_Element then
-            Self.Token.Password := Self.Text;
-            Self.Text.Clear;
-            Self.Collect := False;
+            begin
+               Self.Token.Password := League.Base_64.From_Base_64 (Self.Text);
+               Self.Text.Clear;
+               Self.Collect := False;
+
+            exception
+               when Constraint_Error =>
+                  --  Constraint_Error can be raised by From_Base_64 function
+                  --  when source data is mailformed.
+
+                  Success := False;
+            end;
 
          elsif Local_Name = Nonce_Element then
-            Self.Token.Nonce :=
-              League.Base_64.From_Base_64 (Self.Text);
-            Self.Text.Clear;
-            Self.Collect := False;
+            begin
+               Self.Token.Nonce := League.Base_64.From_Base_64 (Self.Text);
+               Self.Text.Clear;
+               Self.Collect := False;
+
+            exception
+               when Constraint_Error =>
+                  --  Constraint_Error can be raised by From_Base_64 function
+                  --  when source data is mailformed.
+
+                  Success := False;
+            end;
          end if;
 
       elsif Namespace_URI = WSU_Namespace_URI then
