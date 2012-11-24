@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
 with Web_Services.SOAP.Headers.Encoders;
 
 with XML.SAX.Writers;
@@ -55,12 +54,8 @@ package Web_Services.SOAP.Security.Headers.Encoders is
 private
 
    type Security_Header_Encoder is
-     limited new Web_Services.SOAP.Headers.Encoders.SOAP_Header_Encoder with
-   record
-      Token   : Username_Token_Header_Access;
-      Collect : Boolean := False;
-      Text    : League.Strings.Universal_String;
-   end record;
+     limited new Web_Services.SOAP.Headers.Encoders.SOAP_Header_Encoder
+       with null record;
 
    overriding function Create
     (Dummy : not null access Boolean)
