@@ -88,6 +88,57 @@ package body Web_Services.SOAP.Security.Modules is
    package Long_Random_IO is new Ada.Storage_IO (Long_Random);
    package Message_Access_IO is new Ada.Storage_IO (System.Address);
 
+   procedure Create_Invalid_Security_Token_Fault
+    (Output : out Web_Services.SOAP.Messages.SOAP_Message_Access);
+
+   procedure Create_Failed_Authentication_Fault
+    (Output : out Web_Services.SOAP.Messages.SOAP_Message_Access);
+
+   ----------------------------------------
+   -- Create_Failed_Authentication_Fault --
+   ----------------------------------------
+
+   procedure Create_Failed_Authentication_Fault
+    (Output : out Web_Services.SOAP.Messages.SOAP_Message_Access) is
+   begin
+      Output :=
+        new Web_Services.SOAP.Messages.SOAP_Message'
+         (Payload =>
+            Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
+             (League.Strings.To_Universal_String ("Sender"),
+              League.Strings.To_Universal_String ("en-US"),
+              League.Strings.To_Universal_String
+               ("The security token could not be authenticated"
+                  & " or authorized")),
+          others => <>);
+--  XXX Fault/Code/Subcode/Value must be set to:
+--                 WSSE_Namespace_URI,
+--                 League.Strings.To_Universal_String ("wsse"),
+--                 League.Strings.To_Universal_String ("FailedAuthentication")
+   end Create_Failed_Authentication_Fault;
+
+   -----------------------------------------
+   -- Create_Invalid_Security_Token_Fault --
+   -----------------------------------------
+
+   procedure Create_Invalid_Security_Token_Fault
+    (Output : out Web_Services.SOAP.Messages.SOAP_Message_Access) is
+   begin
+      Output :=
+        new Web_Services.SOAP.Messages.SOAP_Message'
+         (Payload =>
+            Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
+             (League.Strings.To_Universal_String ("Sender"),
+              League.Strings.To_Universal_String ("en-US"),
+              League.Strings.To_Universal_String
+               ("An invalid security token was provided")),
+          others => <>);
+--  XXX Fault/Code/Subcode/Value must be set to:
+--                 WSSE_Namespace_URI,
+--                 League.Strings.To_Universal_String ("wsse"),
+--                 League.Strings.To_Universal_String ("InvalidSecurityToken")
+   end Create_Invalid_Security_Token_Fault;
+
    ------------------
    -- Create_Nonce --
    ------------------
@@ -274,19 +325,7 @@ package body Web_Services.SOAP.Security.Modules is
       --  Authentication token is not provided, return fault.
 
       if Token = null then
-         Output :=
-           new Web_Services.SOAP.Messages.SOAP_Message'
-            (Payload =>
-               Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
-                (League.Strings.To_Universal_String ("Sender"),
-                 League.Strings.To_Universal_String ("en-US"),
-                 League.Strings.To_Universal_String
-                  ("An invalid security token was provided")),
-             others => <>);
---  XXX Fault/Code/Subcode/Value must be set to:
---                 WSSE_Namespace_URI,
---                 League.Strings.To_Universal_String ("wsse"),
---                 League.Strings.To_Universal_String ("InvalidSecurityToken")
+         Create_Invalid_Security_Token_Fault (Output);
 
          return;
       end if;
@@ -296,63 +335,48 @@ package body Web_Services.SOAP.Security.Modules is
       Get_Authentication_Data (Token.Username, Password, Success);
 
       if not Success then
-         Output :=
-           new Web_Services.SOAP.Messages.SOAP_Message'
-            (Payload =>
-               Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
-                (League.Strings.To_Universal_String ("Sender"),
-                 League.Strings.To_Universal_String ("en-US"),
-                 League.Strings.To_Universal_String
-                  ("The security token could not be authenticated"
-                     & " or authorized")),
-             others => <>);
---  XXX Fault/Code/Subcode/Value must be set to:
---                 WSSE_Namespace_URI,
---                 League.Strings.To_Universal_String ("wsse"),
---                 League.Strings.To_Universal_String ("FailedAuthentication")
+         Create_Failed_Authentication_Fault (Output);
 
          return;
       end if;
 
       --  Check password.
-      --
-      --  Password digest is calculated as:
-      --
-      --    Password_Digest = Base64 ( SHA-1 ( nonce + created + password ) )
 
-      declare
-         use type League.Stream_Element_Vectors.Stream_Element_Vector;
+      case Token.Mode is
+         when Web_Services.SOAP.Security.Headers.Text =>
+            if Password /= Token.Password then
+               Create_Failed_Authentication_Fault (Output);
 
-         Full_Data : constant Ada.Streams.Stream_Element_Array
-           := Token.Nonce.To_Stream_Element_Array
-                & UTF8_Codec.Encode
-                   (Token.Created & Password).To_Stream_Element_Array;
-         Digest    : constant Ada.Streams.Stream_Element_Array
-           := To_Binary_Message_Digest (GNAT.SHA1.Digest (Full_Data));
-         --  GNAT GPL 2012: Use of To_Binary_Message_Digest is not needed here,
-         --  but GNAT GPL 2012 doesn't provide corresponding GNAT.SHA1.Digest
-         --  subprogram.
+               return;
+            end if;
 
-      begin
-         if Digest /= Token.Password then
-            Output :=
-              new Web_Services.SOAP.Messages.SOAP_Message'
-               (Payload =>
-                  Web_Services.SOAP.Payloads.Faults.Simple.Create_SOAP_Fault
-                   (League.Strings.To_Universal_String ("Sender"),
-                    League.Strings.To_Universal_String ("en-US"),
-                    League.Strings.To_Universal_String
-                     ("The security token could not be authenticated"
-                        & " or authorized")),
-                others => <>);
---  XXX Fault/Code/Subcode/Value must be set to:
---                 WSSE_Namespace_URI,
---                 League.Strings.To_Universal_String ("wsse"),
---                 League.Strings.To_Universal_String ("FailedAuthentication")
+         when Web_Services.SOAP.Security.Headers.Digest =>
+            --  Password digest is calculated as:
+            --
+            --    Password_Digest =
+            --      Base64 ( SHA-1 ( nonce + created + password ) )
 
-            return;
-         end if;
-      end;
+            declare
+               use type League.Stream_Element_Vectors.Stream_Element_Vector;
+
+               Full_Data : constant Ada.Streams.Stream_Element_Array
+                 := Token.Nonce.To_Stream_Element_Array
+                      & UTF8_Codec.Encode
+                         (Token.Created & Password).To_Stream_Element_Array;
+               Digest    : constant Ada.Streams.Stream_Element_Array
+                 := To_Binary_Message_Digest (GNAT.SHA1.Digest (Full_Data));
+               --  GNAT GPL 2012: Use of To_Binary_Message_Digest is not needed
+               --  here, but GNAT GPL 2012 doesn't provide corresponding
+               --  GNAT.SHA1.Digest subprogram.
+
+            begin
+               if Digest /= Token.Digest then
+                  Create_Failed_Authentication_Fault (Output);
+
+                  return;
+               end if;
+            end;
+      end case;
    end Receive_Request;
 
    ------------------
@@ -389,7 +413,7 @@ package body Web_Services.SOAP.Security.Modules is
          Data.Append (UTF8_Codec.Encode (Header.Created));
          Data.Append (UTF8_Codec.Encode (Password));
 
-         Header.Password :=
+         Header.Digest :=
            League.Stream_Element_Vectors.To_Stream_Element_Vector
             (To_Binary_Message_Digest
               (GNAT.SHA1.Digest (Data.To_Stream_Element_Array)));

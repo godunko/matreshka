@@ -81,13 +81,13 @@ package body Web_Services.SOAP.Security.Headers.Encoders is
 
       Attributes.Set_Value
         (SOAP_Envelope_URI, SOAP_Must_Understand_Name, SOAP_True_Literal);
-
       Writer.Start_Element (WSSE_Namespace_URI, Security_Element, Attributes);
+
+      --  Username token.
 
       Attributes.Clear;
       Attributes.Set_Value
         (WSU_Namespace_URI, Id_Attribute, Id_Attribute_Value);
-
       Writer.Start_Element
         (WSSE_Namespace_URI, Username_Token_Element, Attributes);
 
@@ -95,22 +95,38 @@ package body Web_Services.SOAP.Security.Headers.Encoders is
       Writer.Characters (Token.Username);
       Writer.End_Element (WSSE_Namespace_URI, Username_Element);
 
-      Attributes.Clear;
-      Attributes.Set_Value (Type_Attribute, PasswordDigest);
+      case Token.Mode is
+         when Text =>
+            --  Serialize wsse:Password only.
 
-      Writer.Start_Element (WSSE_Namespace_URI, Password_Element, Attributes);
-      Writer.Characters (League.Base_64.To_Base_64 (Token.Password));
-      Writer.End_Element (WSSE_Namespace_URI, Password_Element);
+            Attributes.Clear;
+            Attributes.Set_Value (Type_Attribute, Password_Text_URI);
+            Writer.Start_Element
+             (WSSE_Namespace_URI, Password_Element, Attributes);
+            Writer.Characters (Token.Password);
+            Writer.End_Element (WSSE_Namespace_URI, Password_Element);
 
-      Writer.Start_Element (WSSE_Namespace_URI, Nonce_Element);
-      Writer.Characters (League.Base_64.To_Base_64 (Token.Nonce));
-      Writer.End_Element (WSSE_Namespace_URI, Nonce_Element);
+         when Digest =>
+            --  Serialize wsse:Password, wsse:Nonce and wsu:Created.
 
-      Writer.Start_Element (WSU_Namespace_URI, Created_Element);
-      Writer.Characters (Token.Created);
-      Writer.End_Element (WSU_Namespace_URI, Created_Element);
+            Attributes.Clear;
+            Attributes.Set_Value (Type_Attribute, Password_Digest_URI);
+            Writer.Start_Element
+             (WSSE_Namespace_URI, Password_Element, Attributes);
+            Writer.Characters (League.Base_64.To_Base_64 (Token.Digest));
+            Writer.End_Element (WSSE_Namespace_URI, Password_Element);
+
+            Writer.Start_Element (WSSE_Namespace_URI, Nonce_Element);
+            Writer.Characters (League.Base_64.To_Base_64 (Token.Nonce));
+            Writer.End_Element (WSSE_Namespace_URI, Nonce_Element);
+
+            Writer.Start_Element (WSU_Namespace_URI, Created_Element);
+            Writer.Characters (Token.Created);
+            Writer.End_Element (WSU_Namespace_URI, Created_Element);
+      end case;
 
       Writer.End_Element (WSSE_Namespace_URI, Username_Token_Element);
+
       Writer.End_Element (WSSE_Namespace_URI, Security_Element);
    end Encode;
 

@@ -50,10 +50,14 @@ package Web_Services.SOAP.Security.Headers is
 
    pragma Preelaborate;
 
+   type Password_Type is (Text, Digest);
+
    type Username_Token_Header is
      new Web_Services.SOAP.Headers.Abstract_SOAP_Header with record
       Username : League.Strings.Universal_String;
-      Password : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Mode     : Password_Type;
+      Password : League.Strings.Universal_String;
+      Digest   : League.Stream_Element_Vectors.Stream_Element_Vector;
       Nonce    : League.Stream_Element_Vectors.Stream_Element_Vector;
       Created  : League.Strings.Universal_String;
    end record;

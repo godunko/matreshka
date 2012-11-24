@@ -93,18 +93,26 @@ package body Web_Services.SOAP.Security.Headers.Decoders is
             Self.Collect := False;
 
          elsif Local_Name = Password_Element then
-            begin
-               Self.Token.Password := League.Base_64.From_Base_64 (Self.Text);
-               Self.Text.Clear;
-               Self.Collect := False;
+            case Self.Token.Mode is
+               when Text =>
+                  Self.Token.Password := Self.Text;
 
-            exception
-               when Constraint_Error =>
-                  --  Constraint_Error can be raised by From_Base_64 function
-                  --  when source data is mailformed.
+               when Digest =>
+                  begin
+                     Self.Token.Digest :=
+                       League.Base_64.From_Base_64 (Self.Text);
 
-                  Success := False;
-            end;
+                  exception
+                     when Constraint_Error =>
+                        --  Constraint_Error can be raised by From_Base_64
+                        --  function when source data is mailformed.
+
+                        Success := False;
+                  end;
+            end case;
+
+            Self.Text.Clear;
+            Self.Collect := False;
 
          elsif Local_Name = Nonce_Element then
             begin
@@ -150,7 +158,10 @@ package body Web_Services.SOAP.Security.Headers.Decoders is
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is
+     Success        : in out Boolean)
+   is
+      Value : League.Strings.Universal_String;
+
    begin
       if Namespace_URI = WSSE_Namespace_URI then
          if Local_Name = Security_Element then
@@ -164,8 +175,24 @@ package body Web_Services.SOAP.Security.Headers.Decoders is
             Self.Text.Clear;
 
          elsif Local_Name = Password_Element then
-            Self.Collect := True;
-            Self.Text.Clear;
+            Value := Attributes.Value (Type_Attribute);
+
+            if Value = Password_Text_URI then
+               Self.Token.Mode := Text;
+               Self.Collect := True;
+               Self.Text.Clear;
+
+            elsif Value = Password_Digest_URI then
+               Self.Token.Mode := Digest;
+               Self.Collect := True;
+               Self.Text.Clear;
+
+            else
+               --  Type of wsse:Password is not known, stop processing and
+               --  report error.
+
+               Success := False;
+            end if;
 
          elsif Local_Name = Nonce_Element then
             Self.Collect := True;

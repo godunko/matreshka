@@ -45,18 +45,22 @@ with League.Strings;
 
 package Web_Services.SOAP.Security.Constants is
 
-   WSSE_Namespace_URI : constant League.Strings.Universal_String
+   WSSE_Namespace_URI  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://docs.oasis-open.org/wss/2004/01/"
             & "oasis-200401-wss-wssecurity-secext-1.0.xsd");
-   WSU_Namespace_URI  : constant League.Strings.Universal_String
+   WSU_Namespace_URI   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://docs.oasis-open.org/wss/2004/01/"
             & "oasis-200401-wss-wssecurity-utility-1.0.xsd");
-   PasswordDigest         : constant League.Strings.Universal_String
+   Password_Digest_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
        ("http://docs.oasis-open.org/wss/2004/01/"
             & "oasis-200401-wss-username-token-profile-1.0#PasswordDigest");
+   Password_Text_URI   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+       ("http://docs.oasis-open.org/wss/2004/01/"
+            & "oasis-200401-wss-username-token-profile-1.0#PasswordText");
 
    WSSE_Namespace_Prefix : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("wsse");
