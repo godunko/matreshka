@@ -70,11 +70,15 @@ private
      Attribute_Group_Declaration,
      Complex_Content,
      Complex_Type,
+     Complex_Type_Extension,
      Complex_Type_Restriction,
      Document,
      Enumeration,
-     Complex_Type_Extension,
+     Choice,
+     Model_Group_Definition,
      Schema,
+     Sequence,
+     Sequence_Element,
      Simple_Type,
      Simple_Type_Restriction,
      Union);
@@ -89,6 +93,9 @@ private
         Matreshka.XML_Schema.AST.Types.Attribute_Group_Definition_Access;
       Last_Complex_Type_Definition :
         Matreshka.XML_Schema.AST.Types.Complex_Type_Definition_Access;
+      Last_Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+      Last_Model_Definition :
+        Matreshka.XML_Schema.AST.Types.Model_Group_Definition_Access;
    end record;
 
    package State_Vectors is

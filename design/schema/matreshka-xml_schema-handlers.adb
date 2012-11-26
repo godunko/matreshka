@@ -48,6 +48,8 @@ with Matreshka.XML_Schema.AST.Attribute_Groups;
 with Matreshka.XML_Schema.AST.Attribute_Uses;
 with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Constraining_Facets;
+with Matreshka.XML_Schema.AST.Model_Groups;
+with Matreshka.XML_Schema.AST.Particles;
 with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Wildcards;
@@ -69,18 +71,26 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("attribute");
    Attribute_Group_Element_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("attributeGroup");
+   Choice_Element_Name               : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("choice");
    Complex_Content_Element_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("complexContent");
    Complex_Type_Element_Name         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("complexType");
    Enumeration_Element_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("enumeration");
+   Element_Element_Name              : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("element");
    Extension_Element_Name            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("extension");
+   Group_Element_Name                : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("group");
    Restriction_Element_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("restriction");
    Schema_Element_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schema");
+   Sequence_Element_Name             : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("sequence");
    Simple_Type_Element_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("simpleType");
    Union_Element_Name                : constant League.Strings.Universal_String
@@ -93,6 +103,8 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("base");
    Block_Default_Attribute_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("blockDefault");
+   Default_Attribute_Name            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("default");
    Default_Attributes_Attribute_Name : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("defaultAttributes");
    Element_Form_Default_Attribute_Name :
@@ -102,10 +114,14 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("final");
    Final_Default_Attribute_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("finalDefault");
+   Fixed_Attribute_Name            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("fixed");
    Form_Attribute_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("form");
    Id_Attribute_Name                 : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("id");
+   Inheritable_Attribute_Name        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("inheritable");
    Name_Attribute_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("name");
    Namespace_Attribute_Name          : constant League.Strings.Universal_String
@@ -116,6 +132,10 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("notQName");
    Member_Types_Attribute_Name       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("memberTypes");
+   Max_Occurs_Attribute_Name         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("maxOccurs");
+   Min_Occurs_Attribute_Name         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("minOccurs");
    Process_Contents_Attribute_Name   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("processContents");
    Ref_Attribute_Name                : constant League.Strings.Universal_String
@@ -177,6 +197,26 @@ package body Matreshka.XML_Schema.Handlers is
          Success    : in out Boolean);
       --  Process start of 'attribute' element nested in 'attributeGroup'
 
+      procedure Start_Top_Level_Model_Definition_Element
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Success    : in out Boolean);
+      --  Process start of 'group' element
+
+      procedure End_Model_Definition_Element
+        (Self       : in out XML_Schema_Handler;
+         Success    : in out Boolean) is null;
+
+      procedure Start_Group_Level_Choice_Element
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Success    : in out Boolean);
+      --  Process start of 'choice' element
+
+      procedure End_Choice_Element
+        (Self       : in out XML_Schema_Handler;
+         Success    : in out Boolean) is null;
+
    end Declarations;
 
    package XSD_Attribute is
@@ -196,6 +236,14 @@ package body Matreshka.XML_Schema.Handlers is
          Title      : String);
       --  Check if attr with given Name absent.
       --  Raise exception otherwise, pointing element's Title.
+
+      function To_Boolean
+        (Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Name       : League.Strings.Universal_String;
+         Default    : Boolean := False)
+         return Boolean;
+      --  Return value of Boolean attribute with given Name
+
    end XSD_Attribute;
 
    package Facets is
@@ -216,6 +264,13 @@ package body Matreshka.XML_Schema.Handlers is
    package Complex_Types is
 
       --  This package groups subprograms to handle complex type declaration.
+
+      procedure Create_Particle
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access);
+      --  Allocate new Particle and fill it's properties
 
       procedure Start_Top_Level_Complex_Type_Element
        (Self       : in out XML_Schema_Handler;
@@ -261,6 +316,25 @@ package body Matreshka.XML_Schema.Handlers is
       procedure End_Extension_Element
        (Self       : in out XML_Schema_Handler;
         Success    : in out Boolean) is null;
+
+      procedure Start_Sequence_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      procedure End_Sequence_Element
+       (Self       : in out XML_Schema_Handler;
+        Success    : in out Boolean) is null;
+
+      procedure Start_Attribute_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      --        procedure End_Attribute_Element
+      --         (Self       : in out XML_Schema_Handler;
+      --          Success    : in out Boolean)
+      --          renames Declarations.End_Attribute_Element;
 
    end Complex_Types;
 
@@ -321,18 +395,25 @@ package body Matreshka.XML_Schema.Handlers is
 
    end Simple_Types;
 
+   package Particles is
+      --  This package groups subprograms to handle particle components.
+      procedure Start_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      procedure End_Element
+       (Self       : in out XML_Schema_Handler;
+        Success    : in out Boolean) is null;
+
+      procedure Start_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+   end Particles;
+
    package body Complex_Types is
-
-      ------------------------------
-      -- End_Complex_Type_Element --
-      ------------------------------
-
-      procedure End_Complex_Type_Element
-       (Self    : in out XML_Schema_Handler;
-        Success : in out Boolean) is
-      begin
-         null;
-      end End_Complex_Type_Element;
 
       Any_Literal_Image : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("##any");
@@ -346,6 +427,60 @@ package body Matreshka.XML_Schema.Handlers is
         := League.Strings.To_Universal_String ("##defined");
       Defined_Sibling_Literal_Image : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String ("##definedSibling");
+      Unbounded_Literal_Image : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("unbounded");
+      Prohibited_Literal_Image : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("prohibited");
+      Required_Literal_Image : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("required");
+
+      ---------------------
+      -- Create_Particle --
+      ---------------------
+
+      procedure Create_Particle
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access)
+      is
+         Index : Natural;
+      begin
+         Node := new Matreshka.XML_Schema.AST.Particles.Particle_Node;
+
+         --  @minOccurs
+         Index := Attributes.Index (Min_Occurs_Attribute_Name);
+
+         if Index = 0 then
+            Node.Min_Occurs := 1;
+         else
+            Node.Min_Occurs := Natural'Wide_Wide_Value
+              (Attributes.Value (Index).To_Wide_Wide_String);
+         end if;
+
+         --  @maxOccurs
+         Index := Attributes.Index (Max_Occurs_Attribute_Name);
+
+         if Index = 0 then
+            Node.Max_Occurs := 1;
+         elsif Attributes.Value (Index) = Unbounded_Literal_Image then
+            Node.Max_Occurs := Natural'Last;
+         else
+            Node.Max_Occurs := Natural'Wide_Wide_Value
+              (Attributes.Value (Index).To_Wide_Wide_String);
+         end if;
+      end Create_Particle;
+
+      ------------------------------
+      -- End_Complex_Type_Element --
+      ------------------------------
+
+      procedure End_Complex_Type_Element
+       (Self    : in out XML_Schema_Handler;
+        Success : in out Boolean) is
+      begin
+         null;
+      end End_Complex_Type_Element;
 
       ---------------------------------
       -- Start_Any_Attribute_Element --
@@ -457,6 +592,85 @@ package body Matreshka.XML_Schema.Handlers is
            Node;
       end Start_Any_Attribute_Element;
 
+      -----------------------------
+      -- Start_Attribute_Element --
+      -----------------------------
+
+      procedure Start_Attribute_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Index     : Natural := Attributes.Index (Ref_Attribute_Name);
+         Has_Res   : constant Boolean := Index /= 0;
+         Use_Attr  : constant League.Strings.Universal_String :=
+           Attributes.Value (Use_Attribute_Name);
+         Use_Node  : Matreshka.XML_Schema.AST.Types.Attribute_Use_Access;
+         Decl_Node : Matreshka.XML_Schema.AST.Types
+           .Attribute_Declaration_Access;
+      begin
+         if Attributes.Value (Use_Attribute_Name)
+           = Prohibited_Literal_Image
+         then
+            --  If the <attribute> element information item has
+            --  use='prohibited', then it does not map to, or correspond to,
+            --  any schema component at all.
+
+            --  Shall we keep them somewhere???
+            return;
+         end if;
+
+         if Has_Res then
+            --  Attribute Use
+            Use_Node := new Matreshka.XML_Schema.AST.Attribute_Uses
+              .Attribute_Use_Node;
+
+            Use_Node.Ref := Attributes.Value (Ref_Attribute_Name);
+
+            raise Program_Error;
+         else --  not Has_Ref
+            --  maps both to an Attribute Declaration and to an Attribute Use
+            Use_Node := new Matreshka.XML_Schema.AST.Attribute_Uses
+              .Attribute_Use_Node;
+
+            Use_Node.Required := Use_Attr = Required_Literal_Image;
+
+            if Attributes.Index (Default_Attribute_Name) /= 0
+              or Attributes.Index (Fixed_Attribute_Name) /= 0
+            then
+               raise Program_Error with "unimplemented";
+            end if;
+
+            Use_Node.Inheritable := XSD_Attribute.To_Boolean
+              (Attributes, Inheritable_Attribute_Name);
+
+            --  Attribute Declaration
+            Decl_Node := new Matreshka.XML_Schema.AST.Attribute_Declarations
+              .Attribute_Declaration_Node;
+
+            XSD_Attribute.Required
+              (Name_Attribute_Name,
+               Decl_Node.Name,
+               Attributes,
+               "local attribute declaration");
+
+            Decl_Node.Type_Name := Attributes.Value (Type_Attribute_Name);
+
+            Decl_Node.Scope :=
+              (Variety => Matreshka.XML_Schema.AST.Types.Local,
+               Parent  => Matreshka.XML_Schema.AST.Types.Abstract_Node_Access
+                 (Self.Top_State.Last_Complex_Type_Definition));
+
+            Decl_Node.Inheritable := XSD_Attribute.To_Boolean
+              (Attributes, Inheritable_Attribute_Name);
+
+            Use_Node.Attribute_Declaration := Decl_Node;
+         end if;
+
+         Self.Top_State.Last_Complex_Type_Definition.Attribute_Uses
+           .Append (Use_Node);
+      end Start_Attribute_Element;
+
       -----------------------------------
       -- Start_Complex_Content_Element --
       -----------------------------------
@@ -483,6 +697,8 @@ package body Matreshka.XML_Schema.Handlers is
             Self.Top_State.Last_Complex_Type_Definition.Extension_Base,
             Attributes,
             "extension");
+         Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
+           AST.Extension;
       end Start_Extension_Element;
 
       -------------------------------
@@ -496,7 +712,41 @@ package body Matreshka.XML_Schema.Handlers is
       begin
          Self.Top_State.Last_Complex_Type_Definition.Restriction_Base :=
            Attributes.Value (XML_Schema_Namespace_URI, Base_Attribute_Name);
+         Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
+           AST.Restriction;
       end Start_Restriction_Element;
+
+      ----------------------------
+      -- Start_Sequence_Element --
+      ----------------------------
+
+      procedure Start_Sequence_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+      begin
+         Create_Particle
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Model := new Matreshka.XML_Schema.AST.Model_Groups.Model_Group_Node;
+
+         Model.Compositor := AST.Model_Groups.Sequence;
+
+         Node.Term := AST.Types.Term_Access (Model);
+
+         Self.Top_State.Last_Model := Model;
+
+         Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
+           (Variety      => AST.Complex_Types.Element_Only,
+            Particle     => Node,
+            Open_Content => <>);
+      end Start_Sequence_Element;
 
       ------------------------------------------
       -- Start_Top_Level_Complex_Type_Element --
@@ -584,6 +834,34 @@ package body Matreshka.XML_Schema.Handlers is
            (Node);
       end Start_Group_Level_Attribute_Element;
 
+      --------------------------------------
+      -- Start_Group_Level_Choice_Element --
+      --------------------------------------
+
+      procedure Start_Group_Level_Choice_Element
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+      begin
+         Complex_Types.Create_Particle
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Model := new Matreshka.XML_Schema.AST.Model_Groups.Model_Group_Node;
+
+         Model.Compositor := AST.Model_Groups.Choice;
+
+         Node.Term := AST.Types.Term_Access (Model);
+
+         Self.Top_State.Last_Model := Model;
+         Self.Top_State.Last_Model_Definition.Model_Group := Model;
+      end Start_Group_Level_Choice_Element;
+
       ---------------------------------------
       -- Start_Top_Level_Attribute_Element --
       ---------------------------------------
@@ -645,17 +923,56 @@ package body Matreshka.XML_Schema.Handlers is
            (Name_Attribute_Name,
             Node.Name,
             Attributes,
-            "top-level attribute group dedefinition");
+            "top-level attribute group definition");
 
          XSD_Attribute.Prohibited
            (Ref_Attribute_Name,
             Attributes,
-            "top-level attribute group dedefinition");
+            "top-level attribute group definition");
 
          Self.Top_State.Last_Attribute_Group_Definition := Node;
 
          Self.Schema.Attribute_Group_Definitions.Insert (Node.Name, Node);
       end Start_Top_Level_Attribute_Group_Element;
+
+      ----------------------------------------------
+      -- Start_Top_Level_Model_Definition_Element --
+      ----------------------------------------------
+
+      procedure Start_Top_Level_Model_Definition_Element
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Success    : in out Boolean)
+      is
+         Node  : AST.Types.Model_Group_Definition_Access;
+      begin
+         Node := new AST.Model_Groups.Model_Group_Definition_Node;
+
+         XSD_Attribute.Required
+           (Name_Attribute_Name,
+            Node.Name,
+            Attributes,
+            "top-level group definition element");
+
+         XSD_Attribute.Prohibited
+           (Ref_Attribute_Name,
+            Attributes,
+            "top-level group definition element");
+
+         XSD_Attribute.Prohibited
+           (Min_Occurs_Attribute_Name,
+            Attributes,
+            "top-level group definition element");
+
+         XSD_Attribute.Prohibited
+           (Max_Occurs_Attribute_Name,
+            Attributes,
+            "top-level group definition element");
+
+         Self.Top_State.Last_Model_Definition := Node;
+
+         Self.Schema.Model_Group_Definitions.Insert (Node.Name, Node);
+      end Start_Top_Level_Model_Definition_Element;
 
    end Declarations;
 
@@ -690,6 +1007,10 @@ package body Matreshka.XML_Schema.Handlers is
             Declarations.End_Attribute_Group_Element (Self, Success);
             Self.Pop;
 
+         elsif Local_Name = Choice_Element_Name then
+            Declarations.End_Choice_Element (Self, Success);
+            Self.Pop;
+
          elsif Local_Name = Complex_Content_Element_Name then
             Complex_Types.End_Complex_Content_Element (Self, Success);
             Self.Pop;
@@ -698,12 +1019,20 @@ package body Matreshka.XML_Schema.Handlers is
             Complex_Types.End_Complex_Type_Element (Self, Success);
             Self.Pop;
 
+         elsif Local_Name = Element_Element_Name then
+            Particles.End_Element (Self, Success);
+            Self.Pop;
+
          elsif Local_Name = Enumeration_Element_Name then
             Facets.End_Enumeration_Element (Self, Success);
             Self.Pop;
 
          elsif Local_Name = Extension_Element_Name then
             Complex_Types.End_Extension_Element (Self, Success);
+            Self.Pop;
+
+         elsif Local_Name = Group_Element_Name then
+            Declarations.End_Model_Definition_Element (Self, Success);
             Self.Pop;
 
          elsif Local_Name = Restriction_Element_Name then
@@ -721,6 +1050,10 @@ package body Matreshka.XML_Schema.Handlers is
 
          elsif Local_Name = Schema_Element_Name then
 --            End_Schema_Element (Self, Success);
+            Self.Pop;
+
+         elsif Local_Name = Sequence_Element_Name then
+            Complex_Types.End_Sequence_Element (Self, Success);
             Self.Pop;
 
          elsif Local_Name = Simple_Type_Element_Name then
@@ -789,6 +1122,56 @@ package body Matreshka.XML_Schema.Handlers is
       end End_Enumeration_Element;
 
    end Facets;
+
+   ---------------
+   -- Particles --
+   ---------------
+
+   package body Particles is
+
+      -------------------
+      -- Start_Element --
+      -------------------
+
+      procedure Start_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+      begin
+         Complex_Types.Create_Particle
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Node.Element_Ref := Attributes.Value (Ref_Attribute_Name);
+         Self.Top_State.Last_Model.Particles.Append (Node);
+      end Start_Element;
+
+      -------------------------
+      -- Start_Group_Element --
+      -------------------------
+
+      procedure Start_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+      begin
+         Complex_Types.Create_Particle
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Node.Group_Ref := Attributes.Value (Ref_Attribute_Name);
+         Self.Top_State.Last_Model.Particles.Append (Node);
+      end Start_Group_Element;
+
+   end Particles;
 
    ---------
    -- Pop --
@@ -1078,6 +1461,11 @@ package body Matreshka.XML_Schema.Handlers is
                Declarations.Start_Group_Level_Attribute_Element
                 (Self, Attributes, Success);
 
+            elsif Self.Current = Complex_Type_Extension then
+               Self.Push (Attribute_Declaration);
+               Complex_Types.Start_Attribute_Element
+                (Self, Attributes, Success);
+
             else
                raise Program_Error;
             end if;
@@ -1088,6 +1476,15 @@ package body Matreshka.XML_Schema.Handlers is
                Declarations.Start_Top_Level_Attribute_Group_Element
                 (Self, Attributes, Success);
 
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = Choice_Element_Name then
+            if Self.Current = Model_Group_Definition then
+               Self.Push (Choice);
+               Declarations.Start_Group_Level_Choice_Element
+                (Self, Attributes, Success);
             else
                raise Program_Error;
             end if;
@@ -1122,10 +1519,34 @@ package body Matreshka.XML_Schema.Handlers is
                raise Program_Error;
             end if;
 
+         elsif Local_Name = Element_Element_Name then
+            if Self.Current in Sequence | Choice then
+               Self.Push (Sequence_Element);
+               Particles.Start_Element
+                 (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
+
          elsif Local_Name = Extension_Element_Name then
             if Self.Current = Complex_Content then
                Self.Push (Complex_Type_Extension);
                Complex_Types.Start_Extension_Element
+                 (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
+         elsif Local_Name = Group_Element_Name then
+            if Self.Current = Schema then
+               Self.Push (Model_Group_Definition);
+               Declarations.Start_Top_Level_Model_Definition_Element
+                (Self, Attributes, Success);
+
+            elsif Self.Current in Sequence | Choice then
+               Self.Push (Sequence_Element);
+               Particles.Start_Group_Element
                  (Self, Attributes, Success);
 
             else
@@ -1155,6 +1576,16 @@ package body Matreshka.XML_Schema.Handlers is
             else
                raise Program_Error;
             end if;
+         elsif Local_Name = Sequence_Element_Name then
+            if Self.Current = Complex_Type_Extension then
+               Self.Push (Sequence);
+               Complex_Types.Start_Sequence_Element
+                 (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
+
 
          elsif Local_Name = Simple_Type_Element_Name then
             if Self.Current = Schema then
@@ -1346,6 +1777,28 @@ package body Matreshka.XML_Schema.Handlers is
 
          Value := Attributes.Value (Index);
       end Required;
+
+      ----------------
+      -- To_Boolean --
+      ----------------
+
+      function To_Boolean
+        (Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Name       : League.Strings.Universal_String;
+         Default    : Boolean := False)
+         return Boolean
+      is
+         Index : Natural;
+      begin
+         Index := Attributes.Index (Name);
+
+         if Index = 0 then
+            return Default;
+         else
+            return Boolean'Wide_Wide_Value
+              (Attributes.Value (Index).To_Wide_Wide_String);
+         end if;
+      end To_Boolean;
 
    end XSD_Attribute;
 

@@ -68,6 +68,13 @@ package Matreshka.XML_Schema.AST.Particles is
       Annotations : Types.Annotation_Lists.List;
       --  {annotations}
       --  A sequence of Annotation components.
+
+      --  Internal data.
+
+      Element_Ref : League.Strings.Universal_String;
+      --  element/@ref
+      Group_Ref : League.Strings.Universal_String;
+      --  group/@ref
    end record;
 
 end Matreshka.XML_Schema.AST.Particles;
