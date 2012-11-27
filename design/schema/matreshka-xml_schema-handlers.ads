@@ -80,6 +80,7 @@ private
      Sequence,
      Sequence_Element,
      Simple_Type,
+     Simple_Type_List,
      Simple_Type_Restriction,
      Union);
 

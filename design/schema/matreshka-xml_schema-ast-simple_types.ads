@@ -141,6 +141,8 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  restriction/@base
       Member_Types     : League.Strings.Universal_String;
       --  union/@memberTypes
+      Item_Type     : League.Strings.Universal_String;
+      --  list/@itemType
    end record;
 
    type Simple_Type_Definition_Access is

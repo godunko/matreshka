@@ -85,6 +85,8 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("extension");
    Group_Element_Name                : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("group");
+   List_Element_Name                 : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("list");
    Restriction_Element_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("restriction");
    Schema_Element_Name               : constant League.Strings.Universal_String
@@ -122,6 +124,8 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("id");
    Inheritable_Attribute_Name        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("inheritable");
+   Item_Type_Attribute_Name         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("itemType");
    Name_Attribute_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("name");
    Namespace_Attribute_Name          : constant League.Strings.Universal_String
@@ -392,6 +396,17 @@ package body Matreshka.XML_Schema.Handlers is
        (Self    : in out XML_Schema_Handler;
         Success : in out Boolean);
       --  Process end of 'union' element.
+
+      procedure Start_List_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+      --  Process start of 'list' element.
+
+      procedure End_List_Element
+       (Self    : in out XML_Schema_Handler;
+        Success : in out Boolean) is null;
+      --  Process end of 'list' element.
 
    end Simple_Types;
 
@@ -1035,6 +1050,10 @@ package body Matreshka.XML_Schema.Handlers is
             Declarations.End_Model_Definition_Element (Self, Success);
             Self.Pop;
 
+         elsif Local_Name = List_Element_Name then
+            Simple_Types.End_List_Element (Self, Success);
+            Self.Pop;
+
          elsif Local_Name = Restriction_Element_Name then
             if Self.Current = Simple_Type_Restriction then
                Simple_Types.End_Restriction_Element (Self, Success);
@@ -1250,6 +1269,21 @@ package body Matreshka.XML_Schema.Handlers is
          end if;
       end Start_Attribute_Level_Simple_Type_Element;
 
+      ------------------------
+      -- Start_List_Element --
+      ------------------------
+
+      procedure Start_List_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean) is
+      begin
+         Self.Top_State.Last_Simple_Type_Definition.Variety :=
+           Matreshka.XML_Schema.AST.List;
+         Self.Top_State.Last_Simple_Type_Definition.Item_Type :=
+           Attributes.Value (Item_Type_Attribute_Name);
+      end Start_List_Element;
+
       -------------------------------------
       -- Start_Local_Simple_Type_Element --
       -------------------------------------
@@ -1378,6 +1412,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean) is
       begin
+         Self.Top_State.Last_Simple_Type_Definition.Variety :=
+           Matreshka.XML_Schema.AST.Union;
          Self.Top_State.Last_Simple_Type_Definition.Member_Types :=
            Attributes.Value (Member_Types_Attribute_Name);
       end Start_Union_Element;
@@ -1548,6 +1584,16 @@ package body Matreshka.XML_Schema.Handlers is
                Self.Push (Sequence_Element);
                Particles.Start_Group_Element
                  (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
+
+         elsif Local_Name = List_Element_Name then
+            if Self.Current = Simple_Type then
+               Self.Push (Simple_Type_List);
+               Simple_Types.Start_List_Element
+                (Self, Attributes, Success);
 
             else
                raise Program_Error;
@@ -1776,6 +1822,10 @@ package body Matreshka.XML_Schema.Handlers is
          end if;
 
          Value := Attributes.Value (Index);
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           ("Required: " & Name.To_Wide_Wide_String
+            & " = " & Value.To_Wide_Wide_String);
       end Required;
 
       ----------------
