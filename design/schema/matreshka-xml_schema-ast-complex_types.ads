@@ -155,6 +155,8 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  extension/@base
       Attribute_Group_References : Types.Attribute_Group_Reference_Lists.List;
       --  list of attributeGroup
+      Any_Type_Restriction : Boolean := False;
+      --  Marker for implicit restriction of xs:anyType
    end record;
 
 end Matreshka.XML_Schema.AST.Complex_Types;

@@ -65,10 +65,12 @@ package Matreshka.XML_Schema.Handlers is
 private
 
    type States is
-    (Any_Attribute,
+    (Any,
+     Any_Attribute,
      Attribute_Declaration,
      Attribute_Group_Declaration,
      Attribute_Group_Reference,
+     Choice,
      Complex_Content,
      Complex_Type,
      Complex_Type_Extension,
@@ -76,9 +78,12 @@ private
      Document,
      Element_Declaration,
      Enumeration,
-     Choice,
+     Field,
+     Group,
      Key,
+     Min_Length,
      Model_Group_Definition,
+     Notation,
      Schema,
      Selector,
      Sequence,

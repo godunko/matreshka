@@ -49,7 +49,9 @@ package Matreshka.XML_Schema.AST.Constraining_Facets is
 
    pragma Preelaborate;
 
-   type Enumeration_Node is new Abstract_Node with record
+   type Constraining_Facet_Node is abstract new Abstract_Node with null record;
+
+   type Enumeration_Node is new Constraining_Facet_Node with record
       --  Properties:
       --
 
@@ -62,6 +64,24 @@ package Matreshka.XML_Schema.AST.Constraining_Facets is
       --  {value}
       --
       --  A set of values from the ·value space· of the {base type definition}.
-  end record;
+   end record;
+
+   type Min_Length_Node is new Constraining_Facet_Node with record
+      --  Properties:
+      --
+
+      Annotations : Types.Annotation_Lists.List;
+      --  {annotations}
+      --  A sequence of Annotation components.
+
+      Value : Natural;
+
+      --  {value}
+      --  An xs:nonNegativeInteger value. Required.
+
+      Fixed : Boolean;
+      --  {fixed}
+      --  An xs:boolean value. Required.
+   end record;
 
 end Matreshka.XML_Schema.AST.Constraining_Facets;

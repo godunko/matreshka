@@ -108,6 +108,9 @@ package Matreshka.XML_Schema.AST.Types is
    type Identity_Constraint_Definition_Access is
      access all Identity_Constraints.Identity_Constraint_Definition_Node'Class;
 
+   type Min_Length_Access is
+     access all Constraining_Facets.Min_Length_Node'Class;
+
    type Model_Group_Definition_Access is
      access all Model_Groups.Model_Group_Definition_Node'Class;
 
