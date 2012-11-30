@@ -122,6 +122,11 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
       --  {abstract}
       --  An xs:boolean value. Required.
 
+      --  Internal data.
+
+      Type_Name : League.Strings.Universal_String;
+      --  @type
+
    end record;
 
 end Matreshka.XML_Schema.AST.Element_Declarations;
