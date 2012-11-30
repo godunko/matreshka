@@ -90,6 +90,9 @@ package Matreshka.XML_Schema.AST.Types is
    type Attribute_Group_Definition_Access is
      access all Attribute_Groups.Attribute_Group_Definition_Node'Class;
 
+   type Attribute_Group_Reference_Access is
+     access all Attribute_Groups.Attribute_Group_Reference_Node'Class;
+
    type Attribute_Use_Access is
      access all Attribute_Uses.Attribute_Use_Node'Class;
 
@@ -267,5 +270,8 @@ package Matreshka.XML_Schema.AST.Types is
 
    package Facet_Sets is
      new Ada.Containers.Doubly_Linked_Lists (Abstract_Node_Access);
+
+   package Attribute_Group_Reference_Lists is
+     new Ada.Containers.Doubly_Linked_Lists (Attribute_Group_Reference_Access);
 
 end Matreshka.XML_Schema.AST.Types;

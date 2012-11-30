@@ -74,4 +74,14 @@ package Matreshka.XML_Schema.AST.Attribute_Groups is
       --  A Wildcard component. Optional.
    end record;
 
+   type Attribute_Group_Reference_Node is new Abstract_Node with record
+      --  Internal data.
+
+      Ref : League.Strings.Universal_String;
+      --  @ref
+   end record;
+   --  Attribute_Group_Reference_Node is internal purpose type to represent
+   --  references to attribute group inside complexType. After name resolution
+   --  the group will populate {attribute_uses}
+
 end Matreshka.XML_Schema.AST.Attribute_Groups;

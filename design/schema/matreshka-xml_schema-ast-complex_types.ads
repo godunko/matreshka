@@ -153,6 +153,8 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  restriction/@base
       Extension_Base : League.Strings.Universal_String;
       --  extension/@base
+      Attribute_Group_References : Types.Attribute_Group_Reference_Lists.List;
+      --  list of attributeGroup
    end record;
 
 end Matreshka.XML_Schema.AST.Complex_Types;

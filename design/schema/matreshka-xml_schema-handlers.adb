@@ -188,6 +188,12 @@ package body Matreshka.XML_Schema.Handlers is
    package Declarations is
       --  This package groups subprograms to handle declarative component.
 
+      procedure Create_Model_Group
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Compositor : AST.Model_Groups.Compositor_Kind;
+         Success    : in out Boolean);
+
       procedure Start_Top_Level_Attribute_Element
         (Self       : in out XML_Schema_Handler;
          Attributes : XML.SAX.Attributes.SAX_Attributes;
@@ -234,6 +240,12 @@ package body Matreshka.XML_Schema.Handlers is
       procedure End_Choice_Element
         (Self       : in out XML_Schema_Handler;
          Success    : in out Boolean) is null;
+
+      procedure Start_Group_Level_Sequence_Element
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Success    : in out Boolean);
+      --  Process start of 'sequence' element inside 'group'
 
       procedure Start_Top_Level_Element
         (Self       : in out XML_Schema_Handler;
@@ -364,17 +376,6 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Sequence_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access);
-
-      procedure Start_Type_Level_Sequence_Element
-       (Self       : in out XML_Schema_Handler;
-        Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean);
-
-      procedure Start_Model_Level_Sequence_Element
-       (Self       : in out XML_Schema_Handler;
-        Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean);
 
       procedure End_Sequence_Element
@@ -390,6 +391,20 @@ package body Matreshka.XML_Schema.Handlers is
       --         (Self       : in out XML_Schema_Handler;
       --          Success    : in out Boolean)
       --          renames Declarations.End_Attribute_Element;
+
+      procedure Start_Attribute_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      procedure End_Attribute_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Success    : in out Boolean) is null;
+
+      procedure Start_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
 
       procedure Start_Element_Level_Complex_Type_Element
        (Self       : in out XML_Schema_Handler;
@@ -481,6 +496,34 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Group_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      procedure Start_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Success    : in out Boolean);
+
+      procedure Start_Choice_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      procedure Start_Choice_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Success    : in out Boolean);
+
+      procedure Start_Sequence_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      procedure Start_Sequence_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
         Success    : in out Boolean);
 
    end Particles;
@@ -756,11 +799,40 @@ package body Matreshka.XML_Schema.Handlers is
               (Attributes, Inheritable_Attribute_Name);
 
             Use_Node.Attribute_Declaration := Decl_Node;
+            Self.Top_State.Last_Attribute_Declaration := Decl_Node;
          end if;
 
          Self.Top_State.Last_Complex_Type_Definition.Attribute_Uses
            .Append (Use_Node);
       end Start_Attribute_Element;
+
+      -----------------------------------
+      -- Start_Attribute_Group_Element --
+      -----------------------------------
+
+      procedure Start_Attribute_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node  : AST.Types.Attribute_Group_Reference_Access;
+      begin
+         Node := new AST.Attribute_Groups.Attribute_Group_Reference_Node;
+
+         XSD_Attribute.Required
+           (Ref_Attribute_Name,
+            Node.Ref,
+            Attributes,
+            "attribute group reference");
+
+         XSD_Attribute.Prohibited
+           (Name_Attribute_Name,
+            Attributes,
+            "attribute group reference");
+
+         Self.Top_State.Last_Complex_Type_Definition.Attribute_Group_References
+           .Append (Node);
+      end Start_Attribute_Group_Element;
 
       -----------------------------------
       -- Start_Complex_Content_Element --
@@ -832,23 +904,28 @@ package body Matreshka.XML_Schema.Handlers is
            AST.Extension;
       end Start_Extension_Element;
 
-      ----------------------------------------
-      -- Start_Model_Level_Sequence_Element --
-      ----------------------------------------
+      -------------------------
+      -- Start_Group_Element --
+      -------------------------
 
-      procedure Start_Model_Level_Sequence_Element
+      procedure Start_Group_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
          Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
       begin
-         Start_Sequence_Element (Self, Attributes, Success, Node);
+         Particles.Start_Group_Element
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
 
-         if Success then
-            Self.Top_State.Last_Model.Particles.Append (Node);
-         end if;
-      end Start_Model_Level_Sequence_Element;
+         Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
+           (Variety      => AST.Complex_Types.Element_Only,
+            Particle     => Node,
+            Open_Content => <>);
+      end Start_Group_Element;
 
       -------------------------------
       -- Start_Restriction_Element --
@@ -859,8 +936,11 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean) is
       begin
-         Self.Top_State.Last_Complex_Type_Definition.Restriction_Base :=
-           Attributes.Value (XML_Schema_Namespace_URI, Base_Attribute_Name);
+         XSD_Attribute.Required
+           (Base_Attribute_Name,
+            Self.Top_State.Last_Complex_Type_Definition.Restriction_Base,
+            Attributes,
+            "restriction element");
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
            AST.Restriction;
       end Start_Restriction_Element;
@@ -872,46 +952,21 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Sequence_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access)
+        Success    : in out Boolean)
       is
-         Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
       begin
-         Create_Particle
+         Particles.Start_Sequence_Element
            (Self       => Self,
             Attributes => Attributes,
             Success    => Success,
             Node       => Node);
 
-         Model := new Matreshka.XML_Schema.AST.Model_Groups.Model_Group_Node;
-
-         Model.Compositor := AST.Model_Groups.Sequence;
-
-         Node.Term := AST.Types.Term_Access (Model);
-
-         Self.Top_State.Last_Model := Model;
+         Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
+           (Variety      => AST.Complex_Types.Element_Only,
+            Particle     => Node,
+            Open_Content => <>);
       end Start_Sequence_Element;
-
-      ---------------------------------------
-      -- Start_Type_Level_Sequence_Element --
-      ---------------------------------------
-
-      procedure Start_Type_Level_Sequence_Element
-       (Self       : in out XML_Schema_Handler;
-        Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean)
-      is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
-      begin
-         Start_Sequence_Element (Self, Attributes, Success, Node);
-
-         if Success then
-            Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
-              (Variety      => AST.Complex_Types.Element_Only,
-               Particle     => Node,
-               Open_Content => <>);
-         end if;
-      end Start_Type_Level_Sequence_Element;
 
       ------------------------------------------
       -- Start_Top_Level_Complex_Type_Element --
@@ -956,6 +1011,21 @@ package body Matreshka.XML_Schema.Handlers is
    ------------------
 
    package body Declarations is
+
+      procedure Create_Model_Group
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Compositor : AST.Model_Groups.Compositor_Kind;
+         Success    : in out Boolean)
+      is
+         Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+      begin
+         Model := new Matreshka.XML_Schema.AST.Model_Groups.Model_Group_Node;
+
+         Model.Compositor := Compositor;
+
+         Self.Top_State.Last_Model := Model;
+      end Create_Model_Group;
 
       ---------------------------------
       -- End_Attribute_Group_Element --
@@ -1030,26 +1100,36 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Group_Level_Choice_Element
         (Self       : in out XML_Schema_Handler;
          Attributes : XML.SAX.Attributes.SAX_Attributes;
-         Success    : in out Boolean)
-      is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
-         Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+         Success    : in out Boolean) is
       begin
-         Complex_Types.Create_Particle
+         Create_Model_Group
            (Self       => Self,
             Attributes => Attributes,
             Success    => Success,
-            Node       => Node);
+            Compositor => AST.Model_Groups.Choice);
 
-         Model := new Matreshka.XML_Schema.AST.Model_Groups.Model_Group_Node;
-
-         Model.Compositor := AST.Model_Groups.Choice;
-
-         Node.Term := AST.Types.Term_Access (Model);
-
-         Self.Top_State.Last_Model := Model;
-         Self.Top_State.Last_Model_Definition.Model_Group := Model;
+         Self.Top_State.Last_Model_Definition.Model_Group :=
+           Self.Top_State.Last_Model;
       end Start_Group_Level_Choice_Element;
+
+      ----------------------------------------
+      -- Start_Group_Level_Sequence_Element --
+      ----------------------------------------
+
+      procedure Start_Group_Level_Sequence_Element
+        (Self       : in out XML_Schema_Handler;
+         Attributes : XML.SAX.Attributes.SAX_Attributes;
+         Success    : in out Boolean) is
+      begin
+         Create_Model_Group
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Compositor => AST.Model_Groups.Sequence);
+
+         Self.Top_State.Last_Model_Definition.Model_Group :=
+           Self.Top_State.Last_Model;
+      end Start_Group_Level_Sequence_Element;
 
       ----------------------------
       -- Start_Selector_Element --
@@ -1402,6 +1482,64 @@ package body Matreshka.XML_Schema.Handlers is
 
    package body Particles is
 
+      --------------------------
+      -- Start_Choice_Element --
+      --------------------------
+
+      procedure Start_Choice_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node : Matreshka.XML_Schema.AST.Types.Particle_Access;
+      begin
+         Particles.Start_Choice_Element
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Self.Top_State.Last_Model.Particles.Append (Node);
+      end Start_Choice_Element;
+
+      --------------------------
+      -- Start_Choice_Element --
+      --------------------------
+
+      procedure Start_Choice_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Success    : in out Boolean)
+      is
+         use type Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+      begin
+         XSD_Attribute.Prohibited
+           (Name_Attribute_Name,
+            Attributes,
+            "choice element");
+
+         XSD_Attribute.Prohibited
+           (Ref_Attribute_Name,
+            Attributes,
+            "choice element");
+
+         Complex_Types.Create_Particle
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         --  This will rewrite Self.Top_State.Last_Model
+         Declarations.Create_Model_Group
+           (Self       => Self,
+            Attributes => Attributes,
+            Compositor => AST.Model_Groups.Choice,
+            Success => Success);
+
+         Node.Term := AST.Types.Term_Access (Self.Top_State.Last_Model);
+      end Start_Choice_Element;
+
       -------------------
       -- Start_Element --
       -------------------
@@ -1434,6 +1572,25 @@ package body Matreshka.XML_Schema.Handlers is
       is
          Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
       begin
+         Particles.Start_Group_Element
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Self.Top_State.Last_Model.Particles.Append (Node);
+      end Start_Group_Element;
+
+      -------------------------
+      -- Start_Group_Element --
+      -------------------------
+
+      procedure Start_Group_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Success    : in out Boolean) is
+      begin
          Complex_Types.Create_Particle
            (Self       => Self,
             Attributes => Attributes,
@@ -1441,8 +1598,66 @@ package body Matreshka.XML_Schema.Handlers is
             Node       => Node);
 
          Node.Group_Ref := Attributes.Value (Ref_Attribute_Name);
-         Self.Top_State.Last_Model.Particles.Append (Node);
       end Start_Group_Element;
+
+      ----------------------------
+      -- Start_Sequence_Element --
+      ----------------------------
+
+      procedure Start_Sequence_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+      begin
+         Particles.Start_Sequence_Element
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Self.Top_State.Last_Model.Particles.Append (Node);
+      end Start_Sequence_Element;
+
+      ----------------------------
+      -- Start_Sequence_Element --
+      ----------------------------
+
+      procedure Start_Sequence_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Success    : in out Boolean)
+      is
+         --  Should we share code with Start_Choice_Element???
+         use type Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+      begin
+         XSD_Attribute.Prohibited
+           (Name_Attribute_Name,
+            Attributes,
+            "sequence element");
+
+         XSD_Attribute.Prohibited
+           (Ref_Attribute_Name,
+            Attributes,
+            "sequence element");
+
+         Complex_Types.Create_Particle
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         --  This will rewrite Self.Top_State.Last_Model
+         Declarations.Create_Model_Group
+           (Self       => Self,
+            Attributes => Attributes,
+            Compositor => AST.Model_Groups.Sequence,
+            Success    => Success);
+
+         Node.Term := AST.Types.Term_Access (Self.Top_State.Last_Model);
+      end Start_Sequence_Element;
 
    end Particles;
 
@@ -1732,7 +1947,9 @@ package body Matreshka.XML_Schema.Handlers is
 
             Self.Ignore_Depth := 1;
          elsif Local_Name = Any_Attribute_Element_Name then
-            if Self.Current = Complex_Type_Restriction then
+            if Self.Current in
+              Complex_Type_Extension | Complex_Type_Restriction
+            then
                Self.Push (Any_Attribute);
                Complex_Types.Start_Any_Attribute_Element
                 (Self, Attributes, Success);
@@ -1751,7 +1968,9 @@ package body Matreshka.XML_Schema.Handlers is
                Declarations.Start_Group_Level_Attribute_Element
                 (Self, Attributes, Success);
 
-            elsif Self.Current = Complex_Type_Extension then
+            elsif Self.Current in
+              Complex_Type_Extension | Complex_Type_Restriction
+            then
                Self.Push (Attribute_Declaration);
                Complex_Types.Start_Attribute_Element
                 (Self, Attributes, Success);
@@ -1766,6 +1985,11 @@ package body Matreshka.XML_Schema.Handlers is
                Declarations.Start_Top_Level_Attribute_Group_Element
                 (Self, Attributes, Success);
 
+            elsif Self.Current = Complex_Type_Extension then
+               Self.Push (Attribute_Group_Reference);
+               Complex_Types.Start_Attribute_Group_Element
+                (Self, Attributes, Success);
+
             else
                raise Program_Error;
             end if;
@@ -1775,6 +1999,12 @@ package body Matreshka.XML_Schema.Handlers is
                Self.Push (Choice);
                Declarations.Start_Group_Level_Choice_Element
                 (Self, Attributes, Success);
+
+            elsif Self.Current = Sequence then
+               Self.Push (Choice);
+               Particles.Start_Choice_Element
+                 (Self, Attributes, Success);
+
             else
                raise Program_Error;
             end if;
@@ -1844,8 +2074,15 @@ package body Matreshka.XML_Schema.Handlers is
                Declarations.Start_Top_Level_Model_Definition_Element
                 (Self, Attributes, Success);
 
+            elsif Self.Current in
+              Complex_Type_Extension | Complex_Type_Restriction
+            then
+               Self.Push (Sequence);  --  ????
+               Complex_Types.Start_Group_Element
+                 (Self, Attributes, Success);
+
             elsif Self.Current in Sequence | Choice then
-               Self.Push (Sequence_Element);
+               Self.Push (Sequence_Element);  --  ????
                Particles.Start_Group_Element
                  (Self, Attributes, Success);
 
@@ -1907,15 +2144,21 @@ package body Matreshka.XML_Schema.Handlers is
             end if;
 
          elsif Local_Name = Sequence_Element_Name then
-            if Self.Current = Complex_Type_Extension then
+            if Self.Current in
+              Complex_Type_Extension | Complex_Type_Restriction
+            then
                Self.Push (Sequence);
-               Complex_Types.Start_Type_Level_Sequence_Element
+               Complex_Types.Start_Sequence_Element
                  (Self, Attributes, Success);
 
-            elsif Self.Current = Sequence then
+            elsif Self.Current = Model_Group_Definition then
                Self.Push (Sequence);
-               Complex_Types.Start_Model_Level_Sequence_Element
+               Declarations.Start_Group_Level_Sequence_Element
                  (Self, Attributes, Success);
+
+            elsif Self.Current = Choice then
+               Self.Push (Sequence);
+               Particles.Start_Sequence_Element (Self, Attributes, Success);
 
             else
                raise Program_Error;

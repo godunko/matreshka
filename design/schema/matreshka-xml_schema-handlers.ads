@@ -68,6 +68,7 @@ private
     (Any_Attribute,
      Attribute_Declaration,
      Attribute_Group_Declaration,
+     Attribute_Group_Reference,
      Complex_Content,
      Complex_Type,
      Complex_Type_Extension,
