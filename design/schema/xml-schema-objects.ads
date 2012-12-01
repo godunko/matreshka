@@ -51,6 +51,8 @@ with XML.Schema.Namespace_Items;
 
 package XML.Schema.Objects is
 
+   pragma Preelaborate;
+
    type XS_Object is tagged private;
 
    function Get_Type (Self : XS_Object'Class) return XML_Schema_Component_Type;

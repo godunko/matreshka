@@ -48,6 +48,8 @@
 
 package XML.Schema.Namespace_Items is
 
+   pragma Preelaborate;
+
    type XS_Namespace_Item is tagged null record;
 
 end XML.Schema.Namespace_Items;
