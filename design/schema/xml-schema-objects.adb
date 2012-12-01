@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.Schema.Objects.Terms.Element_Declarations;
 
 package body XML.Schema.Objects is
 
@@ -216,5 +217,21 @@ package body XML.Schema.Objects is
    begin
       return Self.Get_Type = Wildcard;
    end Is_Wildcard;
+
+   ----------------------------
+   -- To_Element_Declaration --
+   ----------------------------
+
+   function To_Element_Declaration
+    (Self : XS_Object'Class)
+       return
+         XML.Schema.Objects.Terms.Element_Declarations.XS_Element_Declaration
+   is
+   begin
+      raise Program_Error;
+      return
+        X :
+          XML.Schema.Objects.Terms.Element_Declarations.XS_Element_Declaration;
+   end To_Element_Declaration;
 
 end XML.Schema.Objects;

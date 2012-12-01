@@ -46,7 +46,7 @@ package XML.Schema is
 
    pragma Pure;
 
-   type XML_Schema_Component_Type is
+   type Extended_XML_Schema_Component_Type is
     (None,
      Attribute_Declaration,
      Element_Declaration,
@@ -61,7 +61,12 @@ package XML.Schema is
      Notation_Declaration,
      Annotation,
      Facet,
-     Multivalue_Facet);
+     Multivalue_Facet,
+     Complex_Type,
+     Simple_Type);
+
+   subtype XML_Schema_Component_Type is Extended_XML_Schema_Component_Type
+     range None .. Multivalue_Facet;
    --  This type is not part of official specification and introduced to follow
    --  Ada best practice. None is a special value to be used when where is no
    --  component present.
