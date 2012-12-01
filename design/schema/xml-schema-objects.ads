@@ -47,7 +47,7 @@ private with Ada.Finalization;
 
 with League.Strings;
 
-with XML.Schema.Namespace_Items;
+limited with XML.Schema.Namespace_Items;
 limited with XML.Schema.Objects.Terms.Element_Declarations;
 
 package XML.Schema.Objects is

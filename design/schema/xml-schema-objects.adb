@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.Schema.Namespace_Items;
 with XML.Schema.Objects.Terms.Element_Declarations;
 
 package body XML.Schema.Objects is
