@@ -44,6 +44,8 @@
 
 package XML.Schema.Object_Lists is
 
+   pragma Preelaborate;
+
    type XS_Object_List is tagged null record;
 
 end XML.Schema.Object_Lists;
