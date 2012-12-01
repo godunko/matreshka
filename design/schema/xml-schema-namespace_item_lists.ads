@@ -44,6 +44,8 @@
 
 package XML.Schema.Namespace_Item_Lists is
 
+   pragma Preelaborate;
+
    type XS_Namespace_Item_List is tagged null record;
 
 end XML.Schema.Namespace_Item_Lists;
