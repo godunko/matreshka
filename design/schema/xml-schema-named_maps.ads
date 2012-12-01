@@ -44,6 +44,8 @@
 
 package XML.Schema.Named_Maps is
 
+   pragma Preelaborate;
+
    type XS_Named_Map is tagged null record;
 
 end XML.Schema.Named_Maps;
