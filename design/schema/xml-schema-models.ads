@@ -60,6 +60,8 @@ with XML.Schema.Type_Definitions;
 
 package XML.Schema.Models is
 
+   pragma Preelaborate;
+
    type XS_Model is tagged private;
 
    function Get_Namespaces
