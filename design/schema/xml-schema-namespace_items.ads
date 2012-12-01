@@ -41,29 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  The interface represents the namespace schema information information item.
+--  Each namespace schema information information item corresponds to an XML
+--  Schema with a unique namespace name.
+------------------------------------------------------------------------------
 
-package XML.Schema is
+package XML.Schema.Namespace_Items is
 
-   pragma Pure;
+   type XS_Namespace_Item is tagged null record;
 
-   type XML_Schema_Component_Type is
-    (None,
-     Attribute_Declaration,
-     Element_Declaration,
-     Type_Definition,
-     Attribute_Use,
-     Attribute_Group,
-     Model_Group_Definition,
-     Model_Group,
-     Particle,
-     Wildcard,
-     Identity_Constraint,
-     Notation_Declaration,
-     Annotation,
-     Facet,
-     Multivalue_Facet);
-   --  This type is not part of official specification and introduced to follow
-   --  Ada best practice. None is a special value to be used when where is no
-   --  component present.
-
-end XML.Schema;
+end XML.Schema.Namespace_Items;

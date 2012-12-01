@@ -41,29 +41,62 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  The XSObject is a base object for the XML Schema component model.
+------------------------------------------------------------------------------
+private with Ada.Finalization;
 
-package XML.Schema is
+with League.Strings;
 
-   pragma Pure;
+with XML.Schema.Namespace_Items;
 
-   type XML_Schema_Component_Type is
-    (None,
-     Attribute_Declaration,
-     Element_Declaration,
-     Type_Definition,
-     Attribute_Use,
-     Attribute_Group,
-     Model_Group_Definition,
-     Model_Group,
-     Particle,
-     Wildcard,
-     Identity_Constraint,
-     Notation_Declaration,
-     Annotation,
-     Facet,
-     Multivalue_Facet);
-   --  This type is not part of official specification and introduced to follow
-   --  Ada best practice. None is a special value to be used when where is no
-   --  component present.
+package XML.Schema.Objects is
 
-end XML.Schema;
+   type XS_Object is tagged private;
+
+   function Get_Type (Self : XS_Object'Class) return XML_Schema_Component_Type;
+   --  The type of this object, i.e. ELEMENT_DECLARATION.
+
+   function Get_Name
+    (Self : XS_Object'Class) return League.Strings.Universal_String;
+   --  The name of type NCName, as defined in XML Namespaces, of this
+   --  declaration specified in the {name} property of the component or null if
+   --  the definition of this component does not have a {name} property. For
+   --  anonymous types, the processor must construct and expose an anonymous
+   --  type name that is distinct from the name of every named type and the
+   --  name of every other anonymous type.
+
+   function Get_Namespace
+    (Self : XS_Object'Class) return League.Strings.Universal_String;
+   --  The [target namespace] of this object, or null if it is unspecified.
+
+   function Get_Namespace_Item
+    (Self : XS_Object'Class)
+       return XML.Schema.Namespace_Items.XS_Namespace_Item;
+   --  A namespace schema information item corresponding to the target
+   --  namespace of the component, if it is globally declared; or null
+   --  otherwise.
+
+   --  Object type classification subprograms.
+
+   function Is_Attribute_Declaration (Self : XS_Object'Class) return Boolean;
+   function Is_Element_Declaration (Self : XS_Object'Class) return Boolean;
+   function Is_Type_Definition (Self : XS_Object'Class) return Boolean;
+   function Is_Attribute_Use (Self : XS_Object'Class) return Boolean;
+   function Is_Attribute_Group (Self : XS_Object'Class) return Boolean;
+   function Is_Model_Group_Definition (Self : XS_Object'Class) return Boolean;
+   function Is_Model_Group (Self : XS_Object'Class) return Boolean;
+   function Is_Particle (Self : XS_Object'Class) return Boolean;
+   function Is_Wildcard (Self : XS_Object'Class) return Boolean;
+   function Is_Identity_Constraint (Self : XS_Object'Class) return Boolean;
+   function Is_Notation_Declaration (Self : XS_Object'Class) return Boolean;
+   function Is_Annotation (Self : XS_Object'Class) return Boolean;
+   function Is_Facet (Self : XS_Object'Class) return Boolean;
+   function Is_Multivalue_Facet (Self : XS_Object'Class) return Boolean;
+
+   --  Object type conversion subprograms.
+
+private
+
+   type XS_Object is new Ada.Finalization.Controlled with null record;
+
+end XML.Schema.Objects;
