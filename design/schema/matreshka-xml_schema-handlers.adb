@@ -248,7 +248,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       procedure End_Attribute_Element
         (Self    : in out XML_Schema_Handler;
-         Success : in out Boolean);
+         Success : in out Boolean) is null;
       --  Process end of 'attribute' element.
 
       procedure Start_Top_Level_Attribute_Group_Element
@@ -259,7 +259,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       procedure End_Attribute_Group_Element
         (Self    : in out XML_Schema_Handler;
-         Success : in out Boolean);
+         Success : in out Boolean) is null;
 
       procedure Start_Group_Level_Attribute_Element
         (Self       : in out XML_Schema_Handler;
@@ -385,7 +385,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       procedure End_Enumeration_Element
        (Self       : in out XML_Schema_Handler;
-        Success    : in out Boolean);
+        Success    : in out Boolean) is null;
 
       procedure Start_Min_Length_Element
        (Self       : in out XML_Schema_Handler;
@@ -409,6 +409,13 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean;
         Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access);
       --  Allocate new Particle and fill it's properties
+
+      procedure Create_Wildcard
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean;
+        Node       : out Matreshka.XML_Schema.AST.Types.Wildcard_Access);
+      --  Allocate new Wildcard and fill it's properties
 
       procedure Start_Top_Level_Complex_Type_Element
        (Self       : in out XML_Schema_Handler;
@@ -647,6 +654,11 @@ package body Matreshka.XML_Schema.Handlers is
         Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
         Success    : in out Boolean);
 
+      procedure Start_Any_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
    end Particles;
 
    package body Complex_Types is
@@ -688,25 +700,15 @@ package body Matreshka.XML_Schema.Handlers is
          end if;
       end Create_Particle;
 
-      ------------------------------
-      -- End_Complex_Type_Element --
-      ------------------------------
+      ---------------------
+      -- Create_Wildcard --
+      ---------------------
 
-      procedure End_Complex_Type_Element
-       (Self    : in out XML_Schema_Handler;
-        Success : in out Boolean) is
-      begin
-         null;
-      end End_Complex_Type_Element;
-
-      ---------------------------------
-      -- Start_Any_Attribute_Element --
-      ---------------------------------
-
-      procedure Start_Any_Attribute_Element
+      procedure Create_Wildcard
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean)
+        Success    : in out Boolean;
+        Node       : out Matreshka.XML_Schema.AST.Types.Wildcard_Access)
       is
          use all type Matreshka.XML_Schema.AST.Wildcards
            .Namespace_Constraint_Variety;
@@ -717,7 +719,6 @@ package body Matreshka.XML_Schema.Handlers is
 
          URIs  : League.String_Vectors.Universal_String_Vector;
          Index : Natural;
-         Node  : Matreshka.XML_Schema.AST.Types.Wildcard_Access;
       begin
          Node := new Matreshka.XML_Schema.AST.Wildcards.Wildcard_Node;
 
@@ -805,6 +806,32 @@ package body Matreshka.XML_Schema.Handlers is
             Node.Process_Contents := Strict;
          end if;
 
+      end Create_Wildcard;
+
+      ------------------------------
+      -- End_Complex_Type_Element --
+      ------------------------------
+
+      procedure End_Complex_Type_Element
+       (Self    : in out XML_Schema_Handler;
+        Success : in out Boolean) is
+      begin
+         null;
+      end End_Complex_Type_Element;
+
+      ---------------------------------
+      -- Start_Any_Attribute_Element --
+      ---------------------------------
+
+      procedure Start_Any_Attribute_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Wildcard_Access;
+      begin
+         Create_Wildcard (Self, Attributes, Success, Node);
+
          Self.Top_State.Last_Complex_Type_Definition.Attribute_Wildcard :=
            Node;
       end Start_Any_Attribute_Element;
@@ -816,9 +843,14 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Any_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean) is
+        Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Wildcard_Access;
       begin
-         Start_Any_Attribute_Element (Self, Attributes, Success);
+         Create_Wildcard (Self, Attributes, Success, Node);
+
+         Self.Top_State.Last_Complex_Type_Definition.Attribute_Wildcard :=
+           Node;
       end Start_Any_Element;
 
       -----------------------------
@@ -1185,28 +1217,6 @@ package body Matreshka.XML_Schema.Handlers is
 
          Self.Top_State.Last_Model := Model;
       end Create_Model_Group;
-
-      ---------------------------------
-      -- End_Attribute_Group_Element --
-      ---------------------------------
-
-      procedure End_Attribute_Group_Element
-        (Self    : in out XML_Schema_Handler;
-         Success : in out Boolean) is
-      begin
-         null;
-      end End_Attribute_Group_Element;
-
-      ---------------------------
-      -- End_Attribute_Element --
-      ---------------------------
-
-      procedure End_Attribute_Element
-        (Self    : in out XML_Schema_Handler;
-         Success : in out Boolean) is
-      begin
-         null;
-      end End_Attribute_Element;
 
       -----------------------------
       -- Local_Attribute_Element --
@@ -1781,17 +1791,6 @@ package body Matreshka.XML_Schema.Handlers is
            (AST.Types.Abstract_Node_Access (Node));
       end Start_Min_Length_Element;
 
-      -----------------------------
-      -- End_Enumeration_Element --
-      -----------------------------
-
-      procedure End_Enumeration_Element
-       (Self       : in out XML_Schema_Handler;
-        Success    : in out Boolean) is
-      begin
-         null;
-      end End_Enumeration_Element;
-
    end Facets;
 
    ---------------
@@ -1799,6 +1798,35 @@ package body Matreshka.XML_Schema.Handlers is
    ---------------
 
    package body Particles is
+
+      -----------------------
+      -- Start_Any_Element --
+      -----------------------
+
+      procedure Start_Any_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Term  : Matreshka.XML_Schema.AST.Types.Wildcard_Access;
+      begin
+         Complex_Types.Create_Particle
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Complex_Types.Create_Wildcard
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Term);
+
+         Node.Term := AST.Types.Term_Access (Term);
+
+         Self.Top_State.Last_Model.Particles.Append (Node);
+      end Start_Any_Element;
 
       --------------------------
       -- Start_Choice_Element --
@@ -2116,6 +2144,21 @@ package body Matreshka.XML_Schema.Handlers is
          end if;
       end Start_Attribute_Level_Simple_Type_Element;
 
+      ------------------------
+      -- Start_List_Element --
+      ------------------------
+
+      procedure Start_List_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean) is
+      begin
+         Self.Top_State.Last_Simple_Type_Definition.Variety :=
+           Matreshka.XML_Schema.AST.List;
+         Self.Top_State.Last_Simple_Type_Definition.Item_Type :=
+           Attributes.Value (Item_Type_Attribute_Name);
+      end Start_List_Element;
+
       ------------------------------------------
       -- Start_List_Level_Simple_Type_Element --
       ------------------------------------------
@@ -2133,21 +2176,6 @@ package body Matreshka.XML_Schema.Handlers is
                 (Self.Top_State.Last_Simple_Type_Definition);
          end if;
       end Start_List_Level_Simple_Type_Element;
-
-      ------------------------
-      -- Start_List_Element --
-      ------------------------
-
-      procedure Start_List_Element
-       (Self       : in out XML_Schema_Handler;
-        Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean) is
-      begin
-         Self.Top_State.Last_Simple_Type_Definition.Variety :=
-           Matreshka.XML_Schema.AST.List;
-         Self.Top_State.Last_Simple_Type_Definition.Item_Type :=
-           Attributes.Value (Item_Type_Attribute_Name);
-      end Start_List_Element;
 
       -------------------------------------
       -- Start_Local_Simple_Type_Element --
@@ -2360,10 +2388,9 @@ package body Matreshka.XML_Schema.Handlers is
             end if;
 
          elsif Local_Name = Any_Element_Name then
-            if Self.Current = Sequence then
+            if Self.Current in Sequence | Choice then
                Self.Push (Any);
-               Complex_Types.Start_Any_Element
-                (Self, Attributes, Success);
+               Particles.Start_Any_Element (Self, Attributes, Success);
             else
                raise Program_Error;
             end if;
