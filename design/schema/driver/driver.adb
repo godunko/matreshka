@@ -1,16 +1,12 @@
 with League.Application;
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
 
-with Matreshka.XML_Schema.Handlers;
+with XML.Schema.Models;
+with XML.Schema.Utilities;
 
 procedure Driver is
-   Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-   Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler;
-   Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+   Model : XML.Schema.Models.XS_Model;
 
 begin
-   Reader.Set_Content_Handler (Handler'Unchecked_Access);
-   Source.Open_By_File_Name (League.Application.Arguments.Element (1));
-   Reader.Parse (Source'Unchecked_Access);
+   Model :=
+     XML.Schema.Utilities.Load (League.Application.Arguments.Element (1));
 end Driver;
