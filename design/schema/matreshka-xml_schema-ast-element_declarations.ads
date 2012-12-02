@@ -44,6 +44,7 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
+with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Element_Declarations is
 
@@ -128,5 +129,9 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
       --  @type
 
    end record;
+
+   overriding function Get_Type
+    (Self : not null access Element_Declaration_Node)
+       return XML.Schema.Component_Type;
 
 end Matreshka.XML_Schema.AST.Element_Declarations;

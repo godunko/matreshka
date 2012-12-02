@@ -41,56 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-with Matreshka.XML_Schema.AST.Types;
-with XML.Schema;
+package body Matreshka.XML_Schema.AST.Model_Groups is
 
-package Matreshka.XML_Schema.AST.Model_Groups is
-
-   pragma Preelaborate;
-
-   type Model_Group_Definition_Node is new Abstract_Node with record
-      --  Properties:
-      --
-
-      Annotations : Types.Annotation_Lists.List;
-      --  {annotations}
-      --  A sequence of Annotation components.
-
-      Name  : League.Strings.Universal_String;
-      --  {name}
-      --  An xs:NCName value. Required.
-
-      Target_Namespace  : League.Strings.Universal_String;
-      --  {target namespace}
-      --  An xs:anyURI value. Optional.
-
-      Model_Group : Types.Model_Group_Access;
-      --  {model group}
-      --  A Model Group component. Required.
-   end record;
-
-   type Compositor_Kind is (Al1, Choice, Sequence);
-
-   type Model_Group_Node is new Types.Term_Node with record
-      --  Properties:
-      --
-
-      Annotations : Types.Annotation_Lists.List;
-      --  {annotations}
-      --  A sequence of Annotation components.
-
-      Compositor : Compositor_Kind;
-      --  {compositor}
-      --  One of {all, choice, sequence}. Required.
-
-      Particles : Types.Particle_Lists.List;
-      --  {particles}
-      --  A sequence of Particle components.
-   end record;
+   --------------
+   -- Get_Type --
+   --------------
 
    overriding function Get_Type
-    (Self : not null access Model_Group_Node) return XML.Schema.Component_Type;
+    (Self : not null access Model_Group_Node) return XML.Schema.Component_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.Schema.Model_Group;
+   end Get_Type;
 
 end Matreshka.XML_Schema.AST.Model_Groups;

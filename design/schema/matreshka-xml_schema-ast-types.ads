@@ -72,7 +72,9 @@ package Matreshka.XML_Schema.AST.Types is
 
    type Abstract_Node_Access is access all Abstract_Node'Class;
 
-   type Term_Node is abstract new Abstract_Node with null record;
+   type Term_Node is
+     abstract new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node
+       with null record;
 
    type Term_Access is access all Term_Node'Class;
 

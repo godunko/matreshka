@@ -45,6 +45,7 @@ with League.Strings;
 with League.String_Vectors;
 
 with Matreshka.XML_Schema.AST.Types;
+with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Wildcards is
 
@@ -97,5 +98,8 @@ package Matreshka.XML_Schema.AST.Wildcards is
       --  {process contents}
       --  One of {skip, strict, lax}. Required.
    end record;
+
+   overriding function Get_Type
+    (Self : not null access Wildcard_Node) return XML.Schema.Component_Type;
 
 end Matreshka.XML_Schema.AST.Wildcards;
