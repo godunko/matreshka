@@ -41,100 +41,109 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  The interface represents the Attribute Declaration schema component.
-------------------------------------------------------------------------------
-with League.Holders;
 
-with XML.Schema.Annotations;
-with XML.Schema.Complex_Type_Definitions;
-with XML.Schema.Simple_Type_Definitions;
+package body XML.Schema.Objects.Attribute_Declarations is
 
-package XML.Schema.Objects.Attribute_Declarations is
+   -------------------
+   -- Get_Actual_VC --
+   -------------------
 
-   pragma Preelaborate;
+   function Get_Actual_VC
+    (Self : XS_Attribute_Declaration'Class) return League.Holders.Holder is
+   begin
+      raise Program_Error;
+      return League.Holders.Empty_Holder;
+   end Get_Actual_VC;
 
-   type XS_Attribute_Declaration is new XS_Object with private;
+   ------------------------
+   -- Get_Actual_VC_Type --
+   ------------------------
 
-   function Get_Type_Definition
+   function Get_Actual_VC_Type
+    (Self : XS_Attribute_Declaration'Class) return XML.Schema.Built_In_Type is
+   begin
+      raise Program_Error;
+      return XML.Schema.Unavailable_DT;
+   end Get_Actual_VC_Type;
+
+   --------------------
+   -- Get_Annotation --
+   --------------------
+
+   function Get_Annotation
     (Self : XS_Attribute_Declaration'Class)
-       return XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
-   --  [type definition]: A simple type definition.
+       return XML.Schema.Annotations.XS_Annotation is
+   begin
+      raise Program_Error;
+      return X : XML.Schema.Annotations.XS_Annotation;
+   end Get_Annotation;
 
-   function Get_Scope
-    (Self : XS_Attribute_Declaration'Class) return XML.Schema.Scope;
-   --  [scope]. One of SCOPE_GLOBAL, SCOPE_LOCAL, or SCOPE_ABSENT. If the scope
-   --  is local, then the enclosingCTDefinition is present.
-
-   function Get_Enclosing_CT_Definition
-    (Self : XS_Attribute_Declaration'Class)
-       return XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-   --  The complex type definition for locally scoped declarations (see scope),
-   --  otherwise null if no such definition exists.
+   -------------------------
+   -- Get_Constraint_Type --
+   -------------------------
 
    function Get_Constraint_Type
-    (Self : XS_Attribute_Declaration'Class) return XML.Schema.Value_Constraint;
-   --  Value constraint: one of VC_NONE, VC_DEFAULT, VC_FIXED.
+    (Self : XS_Attribute_Declaration'Class)
+       return XML.Schema.Value_Constraint is
+   begin
+      raise Program_Error;
+      return VC_None;
+   end Get_Constraint_Type;
+
+   --------------------------
+   -- Get_Constraint_Value --
+   --------------------------
 
    function Get_Constraint_Value
     (Self : XS_Attribute_Declaration'Class)
-       return League.Strings.Universal_String;
-   --  Value constraint: The constraint value with respect to the [type
-   --  definition], otherwise null.
+       return League.Strings.Universal_String is
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Constraint_Value;
 
-   function Get_Actual_VC
-    (Self : XS_Attribute_Declaration'Class) return League.Holders.Holder;
-   --  Value Constraint: Binding specific actual constraint value or null if
-   --  the value is in error or there is no value constraint.
-   --
-   --  Exceptions
-   --
-   --    XSException
-   --      NOT_SUPPORTED_ERR: Raised if the implementation does not support
-   --      this method.
+   ---------------------------------
+   -- Get_Enclosing_CT_Definition --
+   ---------------------------------
 
-   function Get_Actual_VC_Type
-    (Self : XS_Attribute_Declaration'Class) return XML.Schema.Built_In_Type;
-   --  The actual constraint value built-in datatype, e.g. STRING_DT, SHORT_DT.
-   --  If the type definition of this value is a list type definition, this
-   --  method returns LIST_DT. If the type definition of this value is a list
-   --  type definition whose item type is a union type definition, this method
-   --  returns LISTOFUNION_DT. To query the actual constraint value of the list
-   --  or list of union type definitions use itemValueTypes. If the actualValue
-   --  is null, this method returns UNAVAILABLE_DT.
-   --
-   --  Exceptions
-   --
-   --    XSException
-   --
-   --      NOT_SUPPORTED_ERR: Raised if the implementation does not support
-   --      this method.
+   function Get_Enclosing_CT_Definition
+    (Self : XS_Attribute_Declaration'Class)
+       return XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition is
+   begin
+      raise Program_Error;
+      return
+        X : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+   end Get_Enclosing_CT_Definition;
+
+   --------------------------
+   -- Get_Item_Value_Types --
+   --------------------------
 
 --   function Get_Item_Value_Types
 --    (Self : XS_Attribute_Declaration'Class)
 --       return XML.Schema.Built_In_Type_List;
-   --  In the case the actual constraint value represents a list, i.e. the
-   --  actualValueType is LIST_DT, the returned array consists of one type kind
-   --  which represents the itemType. If the actual constraint value represents
-   --  a list type definition whose item type is a union type definition, i.e.
-   --  LISTOFUNION_DT, for each actual constraint value in the list the array
-   --  contains the corresponding memberType kind. For examples, see
-   --  ItemPSVI.itemValueTypes.
-   --
-   --  Exceptions
-   --
-   --    XSException
-   --   
-   --
-   --      NOT_SUPPORTED_ERR: Raised if the implementation does not support
-   --      this method.
 
-   function Get_Annotation
+   ---------------
+   -- Get_Scope --
+   ---------------
+
+   function Get_Scope
+    (Self : XS_Attribute_Declaration'Class) return XML.Schema.Scope is
+   begin
+      raise Program_Error;
+      return Scope_Absent;
+   end Get_Scope;
+
+   -------------------------
+   -- Get_Type_Definition --
+   -------------------------
+
+   function Get_Type_Definition
     (Self : XS_Attribute_Declaration'Class)
-       return XML.Schema.Annotations.XS_Annotation;
-   --  An annotation if it exists, otherwise null.
-
-private
-
-   type XS_Attribute_Declaration is new XS_Object with null record;
+       return XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition is
+   begin
+      raise Program_Error;
+      return X : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
+   end Get_Type_Definition;
 
 end XML.Schema.Objects.Attribute_Declarations;

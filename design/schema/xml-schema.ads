@@ -71,4 +71,88 @@ package XML.Schema is
    --  Ada best practice. None is a special value to be used when where is no
    --  component present.
 
+   -----------
+   -- Scope --
+   -----------
+
+   type Scope is
+    (Scope_Absent,
+     --  The scope of a declaration within named model groups or attribute
+     --  groups is absent. The scope of such a declaration is determined when
+     --  it is used in the construction of complex type definitions.
+
+     Scope_Global,
+     --  A scope of global identifies top-level declarations.
+
+     Scope_Local);
+     --  Locally scoped declarations are available for use only within the
+     --  complex type.
+
+   ----------------------
+   -- Value Constraint --
+   ----------------------
+
+   type Value_Constraint is
+    (VC_None,
+     --  Indicates that the component does not have any value constraint.
+
+     VC_Default,
+     --  Indicates that there is a default value constraint.
+
+     VC_Fixed);
+     --  Indicates that there is a fixed value constraint for this attribute.
+
+   -------------------------------------------
+   -- Built-in types: primitive and derived --
+   -------------------------------------------
+
+   type Built_In_Type is
+    (Any_Simple_Type_DT,       --  anySimpleType
+     String_DT,                --  string
+     Boolean_DT,               --  boolean
+     Decimal_DT,               --  decimal
+     Float_DT,                 --  float
+     Double_DT,                --  double
+     Duration_DT,              --  duration
+     Date_Time_DT,             --  dateTime
+     Time_DT,                  --  time
+     Date_DT,                  --  date
+     G_Year_Month_DT,          --  gYearMonth
+     G_Year_DT,                --  gYear
+     G_Month_Day_DT,           --  gMonthDay
+     G_Day_DT,                 --  gDay
+     G_Month_DT,               --  gMonth
+     Hex_Binary_DT,            --  hexBinary
+     Base64_Binary_DT,         --  base64Binary
+     Any_URI_DT,               --  anyURI
+     Q_Name_DT,                --  QName
+     Notation_DT,              --  NOTATION
+     Normalized_String_DT,     --  normalizedString
+     Token_DT,                 --  token
+     Language_DT,              --  language
+     NMToken_DT,               --  NMTOKEN
+     Name_DT,                  --  Name
+     NC_Name_DT,               --  NCName
+     Id_DT,                    --  ID
+     Id_Ref_DT,                --  IDREF
+     Entity_DT,                --  ENTITY
+     Integer_DT,               --  integer
+     Non_Positive_Integer_DT,  --  nonPositiveInteger
+     Negative_Integer_DT,      --  negativeInteger
+     Long_DT,                  --  long
+     Int_DT,                   --  int
+     Short_DT,                 --  short
+     Byte_DT,                  --  byte
+     Non_Negative_Integer_DT,  --  nonNegativeInteger
+     Unsigned_Long_DT,         --  unsignedLong
+     Unsigned_Int_DT,          --  unsignedInt
+     Unsigned_Short_DT,        --  unsignedShort
+     Unsigned_Byte_DT,         --  unsignedByte
+     Positive_Integer_DT,      --  positiveInteger
+     List_Of_Union_DT,         --  The type represents a list type definition
+                               --  whose item type (itemType) is a union type
+                               --  definition
+     List_DT,                  --  The type represents a list type definition.
+     Unavailable_DT);          --  The built-in type category is not available.
+
 end XML.Schema;
