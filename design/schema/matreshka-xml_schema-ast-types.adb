@@ -58,4 +58,16 @@ package body Matreshka.XML_Schema.AST.Types is
       return XML.Schema.Type_Definition;
    end Get_Type;
 
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Self : Namespace_Binding) return Ada.Containers.Hash_Type is
+      use type Ada.Containers.Hash_Type;
+
+   begin
+      return
+        League.Strings.Hash (Self.Name) + League.Strings.Hash (Self.Namespace);
+   end Hash;
+
 end Matreshka.XML_Schema.AST.Types;

@@ -243,10 +243,7 @@ package Matreshka.XML_Schema.AST.Types is
       --  An xs:anyURI value. Required.
    end record;
 
-   use type Ada.Containers.Hash_Type;
-
-   function Hash (Self : Namespace_Binding) return Ada.Containers.Hash_Type is
-      (League.Strings.Hash (Self.Name) + League.Strings.Hash (Self.Namespace));
+   function Hash (Self : Namespace_Binding) return Ada.Containers.Hash_Type;
 
    package Namespace_Binding_Sets is
      new Ada.Containers.Hashed_Sets (Namespace_Binding, Hash, "=");
