@@ -41,12 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Containers.Hashed_Maps;
 with Ada.Containers.Hashed_Sets;
 
-with League.Strings;
 with League.Strings.Hash;
 
 limited with Matreshka.XML_Schema.AST.Annotations;
@@ -61,10 +59,12 @@ limited with Matreshka.XML_Schema.AST.Identity_Constraints;
 limited with Matreshka.XML_Schema.AST.Model_Groups;
 limited with Matreshka.XML_Schema.AST.Notation_Declarations;
 limited with Matreshka.XML_Schema.AST.Particles;
+with Matreshka.XML_Schema.AST.Objects;
 limited with Matreshka.XML_Schema.AST.Schemas;
 limited with Matreshka.XML_Schema.AST.Simple_Types;
 limited with Matreshka.XML_Schema.AST.Type_Alternatives;
 limited with Matreshka.XML_Schema.AST.Wildcards;
+with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Types is
 
@@ -76,7 +76,9 @@ package Matreshka.XML_Schema.AST.Types is
 
    type Term_Access is access all Term_Node'Class;
 
-   type Type_Definition_Node is abstract new Abstract_Node with null record;
+   type Type_Definition_Node is
+     abstract new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node
+       with null record;
 
    type Type_Definition_Access is access all Type_Definition_Node'Class;
 
@@ -276,5 +278,9 @@ package Matreshka.XML_Schema.AST.Types is
 
    package Attribute_Group_Reference_Lists is
      new Ada.Containers.Doubly_Linked_Lists (Attribute_Group_Reference_Access);
+
+   overriding function Get_Type
+    (Self : not null access Type_Definition_Node)
+      return XML.Schema.Component_Type;
 
 end Matreshka.XML_Schema.AST.Types;

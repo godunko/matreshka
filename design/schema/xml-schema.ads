@@ -65,7 +65,7 @@ package XML.Schema is
      Complex_Type,
      Simple_Type);
 
-   subtype XML_Schema_Component_Type is Extended_XML_Schema_Component_Type
+   subtype Component_Type is Extended_XML_Schema_Component_Type
      range None .. Multivalue_Facet;
    --  This type is not part of official specification and introduced to follow
    --  Ada best practice. None is a special value to be used when where is no

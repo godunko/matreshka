@@ -46,6 +46,8 @@ with XML.Schema.Objects.Terms.Element_Declarations;
 
 package body XML.Schema.Objects is
 
+   use type Matreshka.XML_Schema.AST.Objects.Object_Access;
+
    --------------
    -- Get_Name --
    --------------
@@ -85,11 +87,14 @@ package body XML.Schema.Objects is
    --------------
 
    function Get_Type
-    (Self : XS_Object'Class) return XML_Schema_Component_Type is
+    (Self : XS_Object'Class) return XML.Schema.Component_Type is
    begin
-      raise Program_Error;
+      if Self.Node = null then
+         return None;
 
-      return None;
+      else
+         return Self.Node.Get_Type;
+      end if;
    end Get_Type;
 
    -------------------
