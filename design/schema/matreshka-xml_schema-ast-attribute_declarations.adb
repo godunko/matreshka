@@ -41,57 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-with Matreshka.XML_Schema.AST.Objects;
-with Matreshka.XML_Schema.AST.Types;
-with XML.Schema;
+package body Matreshka.XML_Schema.AST.Attribute_Declarations is
 
-package Matreshka.XML_Schema.AST.Attribute_Declarations is
-
-   pragma Preelaborate;
-
-   type Attribute_Declaration_Node is
-     new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node with
-   record
-      --  Properties:
-      --
-      Annotations : Types.Annotation_Lists.List;
-      --  {annotations}
-      --  A sequence of Annotation components.
-
-      Name  : League.Strings.Universal_String;
-      --  {name}
-      --  An xs:NCName value. Required.
-
-      Target_Namespace  : League.Strings.Universal_String;
-      --  {target namespace}
-      --  An xs:anyURI value. Optional.
-
-      Type_Definition : Types.Simple_Type_Definition_Access;
-      --  {type definition}
-      --  A Simple Type Definition component. Required.
-
-      Scope : Types.Scope;
-      --  {scope}
-      --  A Scope property record. Required.
-
-      Value_Constraint : Types.Value_Constraint;
-      --  {value constraint}
-      --  A Value Constraint property record. Optional.
-
-      Inheritable : Boolean;
-      --  {inheritable}
-      --  An xs:boolean value. Required.
-
-      --  Internal data.
-
-      Type_Name : League.Strings.Universal_String;
-      --  @type
-   end record;
+   --------------
+   -- Get_Type --
+   --------------
 
    overriding function Get_Type
     (Self : not null access Attribute_Declaration_Node)
-       return XML.Schema.Component_Type;
+       return XML.Schema.Component_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.Schema.Attribute_Declaration;
+   end Get_Type;
 
 end Matreshka.XML_Schema.AST.Attribute_Declarations;
