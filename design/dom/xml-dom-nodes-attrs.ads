@@ -125,7 +125,7 @@ package XML.DOM.Nodes.Attrs is
    --  value) then it is set to True. The implementation may handle attributes
    --  with default values from other schemas similarly but applications should
    --  use Document.normalizeDocument() to guarantee this information is
-   --  up-to-date. 
+   --  up-to-date.
 
    function Value (Self : DOM_Attribute'Class) return DOM_String;
    --  The value of the attribute is returned as a string. Character and
@@ -156,7 +156,7 @@ package XML.DOM.Nodes.Attrs is
    --  The type information associated with this attribute. While the type
    --  information contained in this attribute is guarantee to be correct after
    --  loading the document or invoking Document.normalizeDocument(),
-   --  schemaTypeInfo may not be reliable if the node was moved. 
+   --  schemaTypeInfo may not be reliable if the node was moved.
 
    function Is_Id (Self : DOM_Attribute'Class) return Boolean;
    --  Returns whether this attribute is known to be of type ID (i.e. to

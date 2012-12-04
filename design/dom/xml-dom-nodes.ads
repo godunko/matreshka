@@ -54,14 +54,14 @@
 --  attributes for a specific nodeType (e.g., nodeValue for an Element or
 --  attributes for a Comment), this returns null. Note that the specialized
 --  interfaces may contain additional and more convenient mechanisms to get and
---  set the relevant information. 
+--  set the relevant information.
 ------------------------------------------------------------------------------
 private with Ada.Finalization;
 
 limited with XML.DOM.Nodes.Attrs;
-with XML.DOM.Documents;
+limited with XML.DOM.Nodes.Documents;
 limited with XML.DOM.Nodes.Elements;
-with XML.DOM.Named_Node_Maps;
+limited with XML.DOM.Named_Node_Maps;
 limited with XML.DOM.Node_Lists;
 
 private with Matreshka.XML.DOM_Nodes;
@@ -108,7 +108,7 @@ package XML.DOM.Nodes is
    --  The parent of this node. All nodes, except Attr, Document,
    --  DocumentFragment, Entity, and Notation may have a parent. However, if a
    --  node has just been created and not yet added to the tree, or if it has
-   --  been removed from the tree, this is null. 
+   --  been removed from the tree, this is null.
 
    function Child_Nodes
     (Self : DOM_Node'Class) return XML.DOM.Node_Lists.DOM_Node_List;
@@ -137,7 +137,7 @@ package XML.DOM.Nodes is
    --  Element) or null otherwise.
 
    function Owner_Document
-    (Self : DOM_Node'Class) return XML.DOM.Documents.DOM_Document;
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Documents.DOM_Document;
    --  The Document object associated with this node. This is also the Document
    --  object used to create new nodes. When this node is a Document or a
    --  DocumentType which is not used with any Document yet, this is null.
@@ -449,7 +449,7 @@ package XML.DOM.Nodes is
     (Self : DOM_Node'Class; Namespace_URI : DOM_String) return Boolean;
    --  This method checks if the specified Namespace_URI is the default
    --  namespace or not. Returns True if the specified Namespace_URI is the
-   --  default namespace, False otherwise. 
+   --  default namespace, False otherwise.
 
    function Lookup_Namespace_URI
     (Self : DOM_Node'Class; Prefix : DOM_String) return DOM_String;
@@ -514,11 +514,11 @@ package XML.DOM.Nodes is
    --  expected to be updated accordingly.
 
 --    // Introduced in DOM Level 3:
---    DOMObject          getFeature(in DOMString feature, 
+--    DOMObject          getFeature(in DOMString feature,
 --                                  in DOMString version);
 --    // Introduced in DOM Level 3:
---    DOMUserData        setUserData(in DOMString key, 
---                                   in DOMUserData data, 
+--    DOMUserData        setUserData(in DOMString key,
+--                                   in DOMUserData data,
 --                                   in UserDataHandler handler);
 --    // Introduced in DOM Level 3:
 --    DOMUserData        getUserData(in DOMString key);
@@ -559,7 +559,7 @@ package XML.DOM.Nodes is
 --   function To_Comment
 --    (Self : DOM_Node'Class) return XML.DOM.Comments.DOM_Comment;
    function To_Document
-    (Self : DOM_Node'Class) return XML.DOM.Documents.DOM_Document;
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Documents.DOM_Document;
 --   function To_Document_Type
 --    (Self : DOM_Node'Class) return XML.DOM.Document_Types.DOM_Document_Type;
 --   function To_Document_Fragment
