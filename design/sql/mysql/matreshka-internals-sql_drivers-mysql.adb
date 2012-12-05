@@ -41,61 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides implementation of Query abstraction for MySQL.
-------------------------------------------------------------------------------
-limited with Matreshka.Internals.SQL_Drivers.MySQL.Databases;
-private with Matreshka.Internals.SQL_Parameter_Sets;
+with System.Storage_Elements;
 
-package Matreshka.Internals.SQL_Drivers.MySQL.Queries is
+package body Matreshka.Internals.SQL_Drivers.MySQL is
 
-   type MySQL_Query is new Abstract_Query with private;
+   ----------------
+   -- Initialize --
+   ----------------
 
-   procedure Initialize
-    (Self     : not null access MySQL_Query'Class;
-     Database : not null access Databases.MySQL_Database'Class);
+   procedure Initialize (Item : in out MYSQL_BIND_Array) is
+      use type System.Storage_Elements.Storage_Offset;
 
-private
+      Aux : System.Storage_Elements.Storage_Array
+             (1 .. Item'Size / System.Storage_Elements.Storage_Element'Size);
+      for Aux'Address use Item'Address;
+      pragma Import (Ada, Aux);
 
-   type MySQL_Query is new Abstract_Query with record
-      Handle     : MYSQL_STMT_Access;
-      Error      : League.Strings.Universal_String;
-      Parameters : Matreshka.Internals.SQL_Parameter_Sets.Parameter_Set;
-   end record;
+   begin
+      Aux := (others => 0);
+   end Initialize;
 
-   overriding procedure Bind_Value
-    (Self      : not null access MySQL_Query;
-     Name      : League.Strings.Universal_String;
-     Value     : League.Holders.Holder;
-     Direction : SQL.Parameter_Directions);
-
-   overriding function Bound_Value
-    (Self : not null access MySQL_Query;
-     Name : League.Strings.Universal_String)
-       return League.Holders.Holder;
-
-   overriding function Error_Message
-    (Self : not null access MySQL_Query)
-       return League.Strings.Universal_String;
-
-   overriding function Execute
-    (Self : not null access MySQL_Query) return Boolean;
-
-   overriding procedure Finish (Self : not null access MySQL_Query);
-
-   overriding procedure Invalidate (Self : not null access MySQL_Query);
-
-   overriding function Is_Active
-    (Self : not null access MySQL_Query) return Boolean;
-
-   overriding function Next
-    (Self : not null access MySQL_Query) return Boolean;
-
-   overriding function Prepare
-    (Self  : not null access MySQL_Query;
-     Query : League.Strings.Universal_String) return Boolean;
-
-   overriding function Value
-    (Self  : not null access MySQL_Query;
-     Index : Positive) return League.Holders.Holder;
-
-end Matreshka.Internals.SQL_Drivers.MySQL.Queries;
+end Matreshka.Internals.SQL_Drivers.MySQL;

@@ -41,61 +41,27 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides implementation of Query abstraction for MySQL.
+--  This package provides implementation of SQL statement parameter rewriter
+--  for MySQL: every :name parameter placeholder is replaced by '?' parameter
+--  placeholder. Note, duplicate names are not supported now, because this
+--  required to bind internal data more than once.
 ------------------------------------------------------------------------------
-limited with Matreshka.Internals.SQL_Drivers.MySQL.Databases;
-private with Matreshka.Internals.SQL_Parameter_Sets;
 
-package Matreshka.Internals.SQL_Drivers.MySQL.Queries is
+package Matreshka.Internals.SQL_Parameter_Rewriters.MySQL is
 
-   type MySQL_Query is new Abstract_Query with private;
+   pragma Preelaborate;
 
-   procedure Initialize
-    (Self     : not null access MySQL_Query'Class;
-     Database : not null access Databases.MySQL_Database'Class);
+   type MySQL_Parameter_Rewriter is
+     new Abstract_Parameter_Rewriter with null record;
 
-private
+   overriding procedure Database_Placeholder
+    (Self        : MySQL_Parameter_Rewriter;
+     Name        : League.Strings.Universal_String;
+     Number      : Positive;
+     Placeholder : out League.Strings.Universal_String;
+     Parameters  : in out SQL_Parameter_Sets.Parameter_Set);
+   --  Sets Placeholder to database specific placeholder for parameter with
+   --  Name and number Number. Implementation must modify Parameters
+   --  accordingly.
 
-   type MySQL_Query is new Abstract_Query with record
-      Handle     : MYSQL_STMT_Access;
-      Error      : League.Strings.Universal_String;
-      Parameters : Matreshka.Internals.SQL_Parameter_Sets.Parameter_Set;
-   end record;
-
-   overriding procedure Bind_Value
-    (Self      : not null access MySQL_Query;
-     Name      : League.Strings.Universal_String;
-     Value     : League.Holders.Holder;
-     Direction : SQL.Parameter_Directions);
-
-   overriding function Bound_Value
-    (Self : not null access MySQL_Query;
-     Name : League.Strings.Universal_String)
-       return League.Holders.Holder;
-
-   overriding function Error_Message
-    (Self : not null access MySQL_Query)
-       return League.Strings.Universal_String;
-
-   overriding function Execute
-    (Self : not null access MySQL_Query) return Boolean;
-
-   overriding procedure Finish (Self : not null access MySQL_Query);
-
-   overriding procedure Invalidate (Self : not null access MySQL_Query);
-
-   overriding function Is_Active
-    (Self : not null access MySQL_Query) return Boolean;
-
-   overriding function Next
-    (Self : not null access MySQL_Query) return Boolean;
-
-   overriding function Prepare
-    (Self  : not null access MySQL_Query;
-     Query : League.Strings.Universal_String) return Boolean;
-
-   overriding function Value
-    (Self  : not null access MySQL_Query;
-     Index : Positive) return League.Holders.Holder;
-
-end Matreshka.Internals.SQL_Drivers.MySQL.Queries;
+end Matreshka.Internals.SQL_Parameter_Rewriters.MySQL;

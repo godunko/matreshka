@@ -41,17 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Text_IO;
+with Ada.Unchecked_Conversion;
+
 with Matreshka.Internals.SQL_Drivers.MySQL.Databases;
+with Matreshka.Internals.SQL_Parameter_Rewriters.MySQL;
 
 package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
 
    use type Interfaces.C.int;
 
+   type Value_Record is record
+      Integer_Value : aliased Interfaces.C.long;
+      Double_Value  : aliased Interfaces.C.double;
+      Length_Value  : aliased Interfaces.C.unsigned_long;
+   end record;
+
+   type Value_Array is array (Positive range <>) of Value_Record;
+
    procedure Set_MySQL_Stmt_Error (Self : not null access MySQL_Query'Class);
    --  Sets error message to reported by database.
 
---   procedure Set_MySQL_Error (Self : not null access MySQL_Database'Class);
-   --  Sets error message to reported by database.
+   function To_Address is
+     new Ada.Unchecked_Conversion
+          (Interfaces.C.Strings.chars_ptr, System.Address);
+   function To_chars_ptr is
+     new Ada.Unchecked_Conversion
+          (System.Address, Interfaces.C.Strings.chars_ptr);
+
+   Rewriter : SQL_Parameter_Rewriters.MySQL.MySQL_Parameter_Rewriter;
+   --  SQL statement parameter rewriter.
 
    ----------------
    -- Bind_Value --
@@ -63,7 +82,7 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
      Value     : League.Holders.Holder;
      Direction : SQL.Parameter_Directions) is
    begin
-      raise Program_Error;
+      Self.Parameters.Set_Value (Name, Value);
    end Bind_Value;
 
    -----------------
@@ -95,9 +114,77 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
    -------------
 
    overriding function Execute
-    (Self : not null access MySQL_Query) return Boolean is
+    (Self : not null access MySQL_Query) return Boolean
+   is
+      Value  : League.Holders.Holder;
+      Binds  : MYSQL_BIND_Array (1 .. Self.Parameters.Number_Of_Positional);
+      Values : Value_Array (1 .. Self.Parameters.Number_Of_Positional);
+      Aux    : Interfaces.C.Strings.chars_ptr;
+      Result : Interfaces.C.int;
+
    begin
-      if mysql_stmt_execute (Self.Handle) /= 0 then
+      --  Prepare data for parameters when necessary.
+
+      for J in Binds'Range loop
+         Value := Self.Parameters.Value (J);
+
+         if League.Holders.Is_Empty (Value) then
+            Binds (J).buffer_type := MYSQL_TYPE_NULL;
+
+         elsif League.Holders.Is_Universal_String (Value) then
+            Aux :=
+              Interfaces.C.Strings.New_String
+               (League.Holders.Element (Value).To_UTF_8_String);
+            Values (J).Length_Value :=
+              Interfaces.C.unsigned_long
+               (Interfaces.C.Strings.Strlen (Aux));
+            Binds (J).buffer_type := MYSQL_TYPE_STRING;
+            Binds (J).buffer := To_Address (Aux);
+            Binds (J).length := Values (J).Length_Value'Unchecked_Access;
+
+         elsif League.Holders.Is_Abstract_Integer (Value) then
+            Values (J).Integer_Value :=
+              Interfaces.C.long
+               (League.Holders.Universal_Integer'
+                 (League.Holders.Element (Value)));
+            Binds (J).buffer_type := MYSQL_TYPE_LONGLONG;
+            Binds (J).buffer := Values (J).Integer_Value'Address;
+
+         elsif League.Holders.Is_Abstract_Float (Value) then
+            Values (J).Double_Value :=
+              Interfaces.C.double
+               (League.Holders.Universal_Float'
+                 (League.Holders.Element (Value)));
+            Binds (J).buffer_type := MYSQL_TYPE_DOUBLE;
+            Binds (J).buffer := Values (J).Double_Value'Address;
+         end if;
+      end loop;
+
+      --  Bind data for parameters when necessary
+
+      if Binds'Length /= 0 then
+         if mysql_stmt_bind_param (Self.Handle, Binds (1)'Access) /= 0 then
+            Self.Set_MySQL_Stmt_Error;
+
+            return False;
+         end if;
+      end if;
+
+      Result := mysql_stmt_execute (Self.Handle);
+
+      --  Cleanup data for parameters.
+
+      for J in Binds'Range loop
+         --  Actual data is allocated dynamically for string only, release all
+         --  used memory.
+
+         if Binds (J).buffer_type = MYSQL_TYPE_STRING then
+            Aux := To_chars_ptr (Binds (J).buffer);
+            Interfaces.C.Strings.Free (Aux);
+         end if;
+      end loop;
+
+      if Result /= 0 then
          Self.Set_MySQL_Stmt_Error;
 
          return False;
@@ -173,10 +260,19 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
     (Self  : not null access MySQL_Query;
      Query : League.Strings.Universal_String) return Boolean
    is
-      C_Query : Interfaces.C.Strings.chars_ptr
-        := Interfaces.C.Strings.New_String (Query.To_UTF_8_String);
+      Rewritten : League.Strings.Universal_String;
+      C_Query   : Interfaces.C.Strings.chars_ptr;
+      Count     : Natural;
 
    begin
+      --  Rewrite statement and prepare set of parameters.
+
+      Rewriter.Rewrite (Query, Rewritten, Self.Parameters);
+
+      --  Convert rewrittent statement into string in client library format.
+
+      C_Query := Interfaces.C.Strings.New_String (Rewritten.To_UTF_8_String);
+
       --  Allocate statement.
 
       Self.Handle :=
@@ -205,20 +301,20 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
 
       Interfaces.C.Strings.Free (C_Query);
 
+      --  Check number of parameters.
+
+      Count := Natural (mysql_stmt_param_count (Self.Handle));
+
+      if Count /= Self.Parameters.Number_Of_Positional then
+         Self.Error :=
+           League.Strings.To_Universal_String
+            ("invalid use of parameter placeholder");
+
+         return False;
+      end if;
+
       return True;
    end Prepare;
-
---   ---------------------
---   -- Set_MySQL_Error --
---   ---------------------
---
---   procedure Set_MySQL_Error (Self : not null access MySQL_Query'Class) is
---      Error : constant String
---        := Interfaces.C.Strings.Value (mysql_error (Self.Database.Handle));
---
---   begin
---      Self.Error := League.Strings.From_UTF_8_String (Error);
---   end Set_MySQL_Error;
 
    --------------------------
    -- Set_MySQL_Stmt_Error --

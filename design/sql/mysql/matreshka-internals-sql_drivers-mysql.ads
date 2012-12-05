@@ -46,6 +46,8 @@
 ------------------------------------------------------------------------------
 pragma Ada_2012;
 
+with System;
+
 with Interfaces.C.Strings;
 
 package Matreshka.Internals.SQL_Drivers.MySQL is
@@ -94,6 +96,92 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
      MYSQL_PLUGIN_DIR,
      MYSQL_DEFAULT_AUTH)
        with Convention => C;
+
+   type enum_field_types is
+    (MYSQL_TYPE_DECIMAL,
+     MYSQL_TYPE_TINY,
+     MYSQL_TYPE_SHORT,
+     MYSQL_TYPE_LONG,
+     MYSQL_TYPE_FLOAT,
+     MYSQL_TYPE_DOUBLE,
+     MYSQL_TYPE_NULL,
+     MYSQL_TYPE_TIMESTAMP,
+     MYSQL_TYPE_LONGLONG,
+     MYSQL_TYPE_INT24,
+     MYSQL_TYPE_DATE,
+     MYSQL_TYPE_TIME,
+     MYSQL_TYPE_DATETIME,
+     MYSQL_TYPE_YEAR,
+     MYSQL_TYPE_NEWDATE,
+     MYSQL_TYPE_VARCHAR,
+     MYSQL_TYPE_BIT,
+     MYSQL_TYPE_NEWDECIMAL,
+     MYSQL_TYPE_ENUM,
+     MYSQL_TYPE_SET,
+     MYSQL_TYPE_TINY_BLOB,
+     MYSQL_TYPE_MEDIUM_BLOB,
+     MYSQL_TYPE_LONG_BLOB,
+     MYSQL_TYPE_BLOB,
+     MYSQL_TYPE_VAR_STRING,
+     MYSQL_TYPE_STRING,
+     MYSQL_TYPE_GEOMETRY)
+       with Convention => C;
+   for enum_field_types use
+    (MYSQL_TYPE_DECIMAL     => 0,
+     MYSQL_TYPE_TINY        => 1,
+     MYSQL_TYPE_SHORT       => 2,
+     MYSQL_TYPE_LONG        => 3,
+     MYSQL_TYPE_FLOAT       => 4,
+     MYSQL_TYPE_DOUBLE      => 5,
+     MYSQL_TYPE_NULL        => 6,
+     MYSQL_TYPE_TIMESTAMP   => 7,
+     MYSQL_TYPE_LONGLONG    => 8,
+     MYSQL_TYPE_INT24       => 9,
+     MYSQL_TYPE_DATE        => 10,
+     MYSQL_TYPE_TIME        => 11,
+     MYSQL_TYPE_DATETIME    => 12,
+     MYSQL_TYPE_YEAR        => 13,
+     MYSQL_TYPE_NEWDATE     => 14,
+     MYSQL_TYPE_VARCHAR     => 15,
+     MYSQL_TYPE_BIT         => 16,
+     MYSQL_TYPE_NEWDECIMAL  => 246,
+     MYSQL_TYPE_ENUM        => 247,
+     MYSQL_TYPE_SET         => 248,
+     MYSQL_TYPE_TINY_BLOB   => 249,
+     MYSQL_TYPE_MEDIUM_BLOB => 250,
+     MYSQL_TYPE_LONG_BLOB   => 251,
+     MYSQL_TYPE_BLOB        => 252,
+     MYSQL_TYPE_VAR_STRING  => 253,
+     MYSQL_TYPE_STRING      => 254,
+     MYSQL_TYPE_GEOMETRY    => 255);
+
+   type MYSQL_BIND is limited record
+      length           : access Interfaces.C.unsigned_long;
+      is_null          : access my_bool;
+      buffer           : System.Address;
+      error            : access my_bool;
+      row_ptr          : access Interfaces.C.unsigned_char;
+      store_param_func : System.Address;
+      fetch_result     : System.Address;
+      skip_result      : System.Address;
+      buffer_length    : Interfaces.C.unsigned_long;
+      offset           : Interfaces.C.unsigned_long;
+      length_value     : Interfaces.C.unsigned_long;
+      param_number     : Interfaces.C.unsigned;
+      pack_length      : Interfaces.C.unsigned;
+      buffer_type      : enum_field_types;
+      error_value      : my_bool;
+      is_unsigned      : my_bool;
+      long_data_used   : my_bool;
+      is_null_value    : my_bool;
+      extension        : System.Address;
+   end record
+     with Convention => C;
+
+   type MYSQL_BIND_Array is array (Positive range <>) of aliased MYSQL_BIND
+     with Convention => C;
+
+   type MYSQL_BIND_Array_Access is access all MYSQL_BIND_Array;
 
    -----------------
    -- Subprograms --
@@ -145,6 +233,13 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
             Import     => True,
             Link_Name  => "mysql_real_connect";
 
+   function mysql_stmt_bind_param
+    (handle : not null access MYSQL_STMT;
+     bind   : access MYSQL_BIND) return my_bool
+       with Convention => C,
+            Import     => True,
+            Link_Name  => "mysql_stmt_bind_param";
+
    function mysql_stmt_close
     (handle : not null access MYSQL_STMT) return my_bool
        with Convention => C,
@@ -169,6 +264,12 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
             Import     => True,
             Link_Name  => "mysql_stmt_init";
 
+   function mysql_stmt_param_count
+    (handle : not null access MYSQL_STMT) return Interfaces.C.unsigned_long
+       with Convention => C,
+            Import     => True,
+            Link_Name  => "mysql_stmt_param_count";
+
    function mysql_stmt_prepare
     (handle   : not null access MYSQL_STMT;
      stmt_str : Interfaces.C.Strings.chars_ptr;
@@ -176,6 +277,13 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
        with Convention => C,
             Import     => True,
             Link_Name  => "mysql_stmt_prepare";
+
+   ---------------
+   -- Utilities --
+   ---------------
+
+   procedure Initialize (Item : in out MYSQL_BIND_Array);
+   --  Fills memory by zero.
 
 private
 
