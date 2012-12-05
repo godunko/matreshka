@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Unchecked_Conversion;
+with Ada.Unchecked_Deallocation;
 
 with Matreshka.Internals.SQL_Drivers.MySQL.Databases;
 with Matreshka.Internals.SQL_Parameter_Rewriters.MySQL;
@@ -59,6 +60,13 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
    function To_chars_ptr is
      new Ada.Unchecked_Conversion
           (System.Address, Interfaces.C.Strings.chars_ptr);
+
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (MYSQL_BIND_Array, MYSQL_BIND_Array_Access);
+
+   procedure Free is
+     new Ada.Unchecked_Deallocation (Value_Array, Value_Array_Access);
 
    Rewriter : SQL_Parameter_Rewriters.MySQL.MySQL_Parameter_Rewriter;
    --  SQL statement parameter rewriter.
@@ -213,11 +221,29 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
    ----------------
 
    overriding procedure Invalidate (Self : not null access MySQL_Query) is
+      Aux : Interfaces.C.Strings.chars_ptr;
+
    begin
       if Self.Database /= null and Self.Handle /= null then
          if mysql_stmt_close (Self.Handle) /= 0 then
             Self.Set_MySQL_Stmt_Error;
+            Self.Handle := null;
          end if;
+
+         Self.Parameters.Clear;
+
+         if Self.Result /= null then
+            for J in Self.Result'Range loop
+               if Self.Result (J).buffer_type = MYSQL_TYPE_VAR_STRING then
+                  Aux := To_chars_ptr (Self.Result (J).buffer);
+                  Interfaces.C.Strings.Free (Aux);
+               end if;
+            end loop;
+
+            Free (Self.Result);
+         end if;
+
+         Free (Self.Buffer);
       end if;
 
       --  Call Invalidate of parent tagged type.

@@ -45,8 +45,10 @@ with Matreshka.Internals.SQL_Drivers.MySQL.Queries;
 
 package body Matreshka.Internals.SQL_Drivers.MySQL.Databases is
 
+   use type Interfaces.C.char_array;
+
    UTF8_Encoding : constant Interfaces.C.char_array
-     := Interfaces.C.To_C ("utf8");
+     := "utf8" & Interfaces.C.nul;
 
    procedure Set_MySQL_Error (Self : not null access MySQL_Database'Class);
    --  Sets error message to reported by database.
