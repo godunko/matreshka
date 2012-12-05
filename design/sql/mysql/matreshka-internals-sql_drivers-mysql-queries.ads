@@ -56,10 +56,24 @@ package Matreshka.Internals.SQL_Drivers.MySQL.Queries is
 
 private
 
+   type Value_Record is record
+      Integer_Value : aliased Interfaces.C.long;
+      Double_Value  : aliased Interfaces.C.double;
+      Length_Value  : aliased Interfaces.C.unsigned_long;
+      Null_Value    : aliased my_bool;
+   end record;
+
+   type Value_Array is array (Positive range <>) of Value_Record;
+
+   type Value_Array_Access is access all Value_Array;
+
    type MySQL_Query is new Abstract_Query with record
       Handle     : MYSQL_STMT_Access;
       Error      : League.Strings.Universal_String;
       Parameters : Matreshka.Internals.SQL_Parameter_Sets.Parameter_Set;
+      Result     : MYSQL_BIND_Array_Access;
+      Buffer     : Value_Array_Access;
+      Is_Active  : Boolean := False;
    end record;
 
    overriding procedure Bind_Value

@@ -68,6 +68,10 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
    type MYSQL_STMT_Access is access all MYSQL_STMT
      with Convention => C;
 
+   type MYSQL_RES is limited private;
+
+   type MYSQL_RES_Access is access all MYSQL_RES;
+
    type my_bool is new Interfaces.C.signed_char;
 
    type mysql_option is
@@ -183,6 +187,36 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
 
    type MYSQL_BIND_Array_Access is access all MYSQL_BIND_Array;
 
+   type MYSQL_FIELD is record
+      name             : Interfaces.C.Strings.chars_ptr;
+      org_name         : Interfaces.C.Strings.chars_ptr;
+      table            : Interfaces.C.Strings.chars_ptr;
+      org_table        : Interfaces.C.Strings.chars_ptr;
+      db               : Interfaces.C.Strings.chars_ptr;
+      catalog          : Interfaces.C.Strings.chars_ptr;
+      def              : Interfaces.C.Strings.chars_ptr;
+      length           : Interfaces.C.unsigned_long;
+      max_length       : Interfaces.C.unsigned_long;
+      name_length      : Interfaces.C.unsigned;
+      org_name_length  : Interfaces.C.unsigned;
+      table_length     : Interfaces.C.unsigned;
+      org_table_length : Interfaces.C.unsigned;
+      db_length        : Interfaces.C.unsigned;
+      catalog_length   : Interfaces.C.unsigned;
+      def_length       : Interfaces.C.unsigned;
+      flags            : Interfaces.C.unsigned;
+      decimals         : Interfaces.C.unsigned;
+      charsetnr        : Interfaces.C.unsigned;
+      field_type       : enum_field_types;
+      extension        : System.Address;
+   end record
+     with Convention => C;
+
+   type MYSQL_FIELD_Access is access all MYSQL_FIELD;
+
+   MYSQL_NO_DATA        : constant := 100;
+   MYSQL_DATA_TRUNCATED : constant := 101;
+
    -----------------
    -- Subprograms --
    -----------------
@@ -198,6 +232,17 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
             Import     => True,
             Link_Name  => "mysql_error";
 
+   procedure mysql_free_result (handle : not null access MYSQL_RES)
+     with Convention => C,
+          Import     => True,
+          Link_Name  => "mysql_free_result";
+
+   function mysql_fetch_field
+    (handle : not null access MYSQL_RES) return MYSQL_FIELD_Access
+       with Convention => C,
+            Import     => True,
+            Link_Name  => "mysql_fetch_field";
+
    function mysql_init (handle : access MYSQL) return MYSQL_Access
      with Convention => C,
           Import     => True,
@@ -211,6 +256,12 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
             Import     => True,
             Link_Name  => "mysql_server_init";
    --  MySQL defines mysql_library_init as alias of mysql_server_init.
+
+   function mysql_num_fields
+    (handle : not null access MYSQL_RES) return Interfaces.C.unsigned
+       with Convention => C,
+            Import     => True,
+            Link_Name  => "mysql_num_fields";
 
    function mysql_options
     (handle : not null access MYSQL;
@@ -240,6 +291,13 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
             Import     => True,
             Link_Name  => "mysql_stmt_bind_param";
 
+   function mysql_stmt_bind_result
+    (handle : not null access MYSQL_STMT;
+     bind   : access MYSQL_BIND) return my_bool
+       with Convention => C,
+            Import     => True,
+            Link_Name  => "mysql_stmt_bind_result";
+
    function mysql_stmt_close
     (handle : not null access MYSQL_STMT) return my_bool
        with Convention => C,
@@ -257,6 +315,12 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
        with Convention => C,
             Import     => True,
             Link_Name  => "mysql_stmt_execute";
+
+   function mysql_stmt_fetch
+    (handle : not null access MYSQL_STMT) return Interfaces.C.int
+       with Convention => C,
+            Import     => True,
+            Link_Name  => "mysql_stmt_fetch";
 
    function mysql_stmt_init
     (handle : not null access MYSQL) return MYSQL_STMT_Access
@@ -278,6 +342,12 @@ package Matreshka.Internals.SQL_Drivers.MySQL is
             Import     => True,
             Link_Name  => "mysql_stmt_prepare";
 
+   function mysql_stmt_result_metadata
+    (handle : not null access MYSQL_STMT) return MYSQL_RES_Access
+       with Convention => C,
+            Import     => True,
+            Link_Name  => "mysql_stmt_result_metadata";
+
    ---------------
    -- Utilities --
    ---------------
@@ -290,5 +360,7 @@ private
    type MYSQL is limited null record;
 
    type MYSQL_STMT is limited null record;
+
+   type MYSQL_RES is limited null record;
 
 end Matreshka.Internals.SQL_Drivers.MySQL;

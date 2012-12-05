@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
 with Matreshka.Internals.SQL_Drivers.MySQL.Databases;
@@ -50,14 +49,6 @@ with Matreshka.Internals.SQL_Parameter_Rewriters.MySQL;
 package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
 
    use type Interfaces.C.int;
-
-   type Value_Record is record
-      Integer_Value : aliased Interfaces.C.long;
-      Double_Value  : aliased Interfaces.C.double;
-      Length_Value  : aliased Interfaces.C.unsigned_long;
-   end record;
-
-   type Value_Array is array (Positive range <>) of Value_Record;
 
    procedure Set_MySQL_Stmt_Error (Self : not null access MySQL_Query'Class);
    --  Sets error message to reported by database.
@@ -147,7 +138,7 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
               Interfaces.C.long
                (League.Holders.Universal_Integer'
                  (League.Holders.Element (Value)));
-            Binds (J).buffer_type := MYSQL_TYPE_LONGLONG;
+            Binds (J).buffer_type := MYSQL_TYPE_LONG;
             Binds (J).buffer := Values (J).Integer_Value'Address;
 
          elsif League.Holders.Is_Abstract_Float (Value) then
@@ -190,6 +181,8 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
          return False;
       end if;
 
+      Self.Is_Active := True;
+
       return True;
    end Execute;
 
@@ -211,6 +204,8 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
      Database : not null access Databases.MySQL_Database'Class) is
    begin
       SQL_Drivers.Initialize (Self, Database_Access (Database));
+
+      Self.Is_Active := False;
    end Initialize;
 
    ----------------
@@ -237,8 +232,7 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
    overriding function Is_Active
     (Self : not null access MySQL_Query) return Boolean is
    begin
-      raise Program_Error;
-      return False;
+      return Self.Is_Active;
    end Is_Active;
 
    ----------
@@ -246,10 +240,28 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
    ----------
 
    overriding function Next
-    (Self : not null access MySQL_Query) return Boolean is
+    (Self : not null access MySQL_Query) return Boolean
+   is
+      Result : Interfaces.C.int;
+
    begin
-      raise Program_Error;
-      return False;
+      if Self.Result = null then
+         return False;
+      end if;
+
+      Result := mysql_stmt_fetch (Self.Handle);
+
+      if Result = 0 then
+         return True;
+
+      elsif Result = MYSQL_NO_Data then
+         return False;
+
+      else
+         Self.Set_MySQL_Stmt_Error;
+
+         return False;
+      end if;
    end Next;
 
    -------------
@@ -263,13 +275,15 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
       Rewritten : League.Strings.Universal_String;
       C_Query   : Interfaces.C.Strings.chars_ptr;
       Count     : Natural;
+      Result    : MYSQL_RES_Access;
+      Field     : MYSQL_FIELD_Access;
 
    begin
       --  Rewrite statement and prepare set of parameters.
 
       Rewriter.Rewrite (Query, Rewritten, Self.Parameters);
 
-      --  Convert rewrittent statement into string in client library format.
+      --  Convert rewritten statement into string in client library format.
 
       C_Query := Interfaces.C.Strings.New_String (Rewritten.To_UTF_8_String);
 
@@ -313,6 +327,136 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
          return False;
       end if;
 
+      --  Prepare storage for result.
+
+      Result := mysql_stmt_result_metadata (Self.Handle);
+
+      if Result /= null then
+         Count := Natural (mysql_num_fields (Result));
+
+         Self.Result := new MYSQL_BIND_Array (1 .. Count);
+         Initialize (Self.Result.all);
+         Self.Buffer := new Value_Array (1 .. Count);
+
+         for J in Self.Result'Range loop
+            Field := mysql_fetch_field (Result);
+
+            case Field.field_type is
+               when MYSQL_TYPE_DECIMAL =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_TINY =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_SHORT =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_LONG =>
+                  Self.Result (J).is_null :=
+                    Self.Buffer (J).Null_Value'Access;
+                  Self.Result (J).buffer_type := MYSQL_TYPE_LONG;
+                  Self.Result (J).buffer :=
+                    Self.Buffer (J).Integer_Value'Address;
+                  Self.Result (J).buffer_length := 0;
+
+               when MYSQL_TYPE_FLOAT =>
+                  Self.Result (J).is_null :=
+                    Self.Buffer (J).Null_Value'Access;
+                  Self.Result (J).buffer_type := MYSQL_TYPE_DOUBLE;
+                  Self.Result (J).buffer :=
+                    Self.Buffer (J).Double_Value'Address;
+                  Self.Result (J).buffer_length := 0;
+
+               when MYSQL_TYPE_DOUBLE =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_NULL =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_TIMESTAMP =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_LONGLONG =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_INT24 =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_DATE =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_TIME =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_DATETIME =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_YEAR =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_NEWDATE =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_VARCHAR =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_BIT =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_NEWDECIMAL =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_ENUM =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_SET =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_TINY_BLOB =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_MEDIUM_BLOB =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_LONG_BLOB =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_BLOB =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_VAR_STRING =>
+                  Self.Result (J).is_null :=
+                    Self.Buffer (J).Null_Value'Access;
+                  Self.Result (J).buffer_type := MYSQL_TYPE_VAR_STRING;
+                  Self.Result (J).buffer :=
+                    To_Address
+                     (Interfaces.C.Strings.New_String
+                       ((1 .. Natural (Field.length) => ' ')));
+                  Self.Result (J).buffer_length := Field.length;
+                  Self.Result (J).length :=
+                    Self.Buffer (J).Length_Value'Unchecked_Access;
+
+               when MYSQL_TYPE_STRING =>
+                  raise Program_Error;
+
+               when MYSQL_TYPE_GEOMETRY =>
+                  raise Program_Error;
+            end case;
+         end loop;
+
+         mysql_free_result (Result);
+
+         --  Bind buffers.
+
+         if mysql_stmt_bind_result
+             (Self.Handle, Self.Result (1)'Access) /= 0
+         then
+            Self.Set_MySQL_Stmt_Error;
+
+            return False;
+         end if;
+      end if;
+
       return True;
    end Prepare;
 
@@ -334,10 +478,64 @@ package body Matreshka.Internals.SQL_Drivers.MySQL.Queries is
 
    overriding function Value
     (Self  : not null access MySQL_Query;
-     Index : Positive) return League.Holders.Holder is
+     Index : Positive) return League.Holders.Holder
+   is
+      Value : League.Holders.Holder;
+
    begin
-      raise Program_Error;
-      return League.Holders.Empty_Holder;
+      --  Return empty holder when there is not data or index is out of range.
+
+      if Self.Result = null
+        or Index > Self.Result'Last
+      then
+         return League.Holders.Empty_Holder;
+      end if;
+
+      --  Extract requested value.
+
+      if Self.Result (Index).buffer_type = MYSQL_TYPE_VAR_STRING then
+         --  Process text data.
+
+         League.Holders.Set_Tag
+          (Value, League.Holders.Universal_String_Tag);
+
+         if Self.Buffer (Index).Null_Value = 0 then
+            League.Holders.Replace_Element
+             (Value,
+              League.Strings.From_UTF_8_String
+               (Interfaces.C.Strings.Value
+                 (To_chars_ptr (Self.Result (Index).buffer),
+                  Interfaces.C.size_t (Self.Buffer (Index).Length_Value))));
+         end if;
+
+      elsif Self.Result (Index).buffer_type = MYSQL_TYPE_LONG then
+         --  Process integer data.
+
+         League.Holders.Set_Tag
+          (Value, League.Holders.Universal_Integer_Tag);
+
+         if Self.Buffer (Index).Null_Value = 0 then
+            League.Holders.Replace_Element
+             (Value,
+              League.Holders.Universal_Integer
+               (Self.Buffer (Index).Integer_Value));
+         end if;
+
+      elsif Self.Result (Index).buffer_type = MYSQL_TYPE_DOUBLE then
+         --  Process float data.
+
+         League.Holders.Set_Tag
+          (Value, League.Holders.Universal_Float_Tag);
+
+         if Self.Buffer (Index).Null_Value = 0 then
+            League.Holders.Replace_Element
+             (Value,
+              League.Holders.Universal_Float
+               (Self.Buffer (Index).Double_Value));
+         end if;
+      end if;
+
+      return Value;
    end Value;
 
 end Matreshka.Internals.SQL_Drivers.MySQL.Queries;
