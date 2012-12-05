@@ -282,4 +282,11 @@ package Matreshka.XML_Schema.AST.Types is
     (Self : not null access Type_Definition_Node)
       return XML.Schema.Component_Type;
 
+   package Schema_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Schema_Access,
+           League.Strings.Hash,
+           League.Strings."=");
+
 end Matreshka.XML_Schema.AST.Types;

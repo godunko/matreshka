@@ -50,7 +50,8 @@
 ------------------------------------------------------------------------------
 private with Ada.Containers.Vectors;
 
-private with League.Strings;
+with League.Strings;
+with Matreshka.XML_Schema.AST.Models;
 private with Matreshka.XML_Schema.AST.Schemas;
 private with Matreshka.XML_Schema.AST.Simple_Types;
 private with Matreshka.XML_Schema.AST.Types;
@@ -61,6 +62,11 @@ package Matreshka.XML_Schema.Handlers is
 
    type XML_Schema_Handler is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+
+   procedure Load_Schema
+     (Location  : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String;
+      Model     : Matreshka.XML_Schema.AST.Models.Model_Node_Access);
 
 private
 
@@ -80,6 +86,7 @@ private
      Enumeration,
      Field,
      Group,
+     Import,
      Key,
      Min_Length,
      Model_Group_Definition,
@@ -117,7 +124,8 @@ private
 
    type XML_Schema_Handler is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Schema       : Matreshka.XML_Schema.AST.Schemas.Schema_Access;
+      Schema       : Matreshka.XML_Schema.AST.Types.Schema_Access;
+      Model        : Matreshka.XML_Schema.AST.Models.Model_Node_Access;
       Ignore_Depth : Natural := 0;
       States       : State_Vectors.Vector;  --  Stack of states except top
 

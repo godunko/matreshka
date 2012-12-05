@@ -42,6 +42,8 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.String_Vectors;
+with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Simple_Readers;
 
 with Matreshka.XML_Schema.AST.Attribute_Declarations;
 with Matreshka.XML_Schema.AST.Attribute_Groups;
@@ -57,6 +59,9 @@ with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Wildcards;
 with Ada.Wide_Wide_Text_IO;
+
+with Matreshka.XML_Schema.URI_Rewriter;
+with Matreshka.XML_Schema.AST.Schemas;
 
 package body Matreshka.XML_Schema.Handlers is
 
@@ -92,6 +97,8 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("field");
    Group_Element_Name                : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("group");
+   Import_Element_Name               : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("import");
    Key_Element_Name                  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("key");
    List_Element_Name                 : constant League.Strings.Universal_String
@@ -167,6 +174,8 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("ref");
    Substitution_Group_Attribute_Name : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("substitutionGroup");
+   Schema_Location_Attribute_Name    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("schemaLocation");
    Target_Namespace_Attribute_Name   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("targetNamespace");
    Type_Attribute_Name               : constant League.Strings.Universal_String
@@ -214,6 +223,12 @@ package body Matreshka.XML_Schema.Handlers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean);
    --  Process start of 'schema' element.
+
+   procedure Start_Import_Element
+    (Self       : in out XML_Schema_Handler;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean);
+   --  Process start of 'import' element.
 
    procedure Get_Value_Constant
      (Node       : in out AST.Types.Value_Constraint;
@@ -2067,6 +2082,41 @@ package body Matreshka.XML_Schema.Handlers is
       end if;
    end Get_Value_Constant;
 
+   -----------------
+   -- Load_Schema --
+   -----------------
+
+   procedure Load_Schema
+     (Location  : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String;
+      Model     : Matreshka.XML_Schema.AST.Models.Model_Node_Access)
+   is
+      use type Matreshka.XML_Schema.AST.Types.Schema_Access;
+
+      Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler;
+      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+   begin
+      if Model.Schemas.Contains (Namespace) then
+         if Model.Schemas (Namespace) = null then
+            raise Program_Error with "circular schema import";
+         else
+            return;
+         end if;
+      else
+         Model.Schemas.Insert (Namespace, null);
+      end if;
+
+      Handler.Model := Model;
+      Reader.Set_Content_Handler (Handler'Unchecked_Access);
+      Source.Open_By_File_Name (Location);
+      Reader.Parse (Source'Unchecked_Access);
+
+      if Handler.Schema.Target_Namespace /= Namespace then
+         raise Program_Error with "unexpected schema in import";
+      end if;
+   end Load_Schema;
+
    ---------
    -- Pop --
    ---------
@@ -2551,7 +2601,16 @@ package body Matreshka.XML_Schema.Handlers is
                raise Program_Error;
             end if;
 
-         elsif Local_Name = Key_Element_Name then
+         elsif Local_Name = Import_Element_Name then
+            if Self.Current = Schema then
+               Self.Push (Import);
+               Start_Import_Element (Self, Attributes, Success);
+
+            else
+               raise Program_Error;
+            end if;
+
+      elsif Local_Name = Key_Element_Name then
             if Self.Current = Element_Declaration then
                Self.Push (Key);
                Declarations.Start_Constraint_Element
@@ -2693,6 +2752,37 @@ package body Matreshka.XML_Schema.Handlers is
    end Start_Element;
 
    --------------------------
+   -- Start_Import_Element --
+   --------------------------
+
+   procedure Start_Import_Element
+    (Self       : in out XML_Schema_Handler;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean)
+   is
+      Namespace       :  League.Strings.Universal_String;
+      Namespace_Index : constant Natural :=
+        Attributes.Index (Namespace_Attribute_Name);
+      Location  : constant League.Strings.Universal_String :=
+        Attributes.Value (Schema_Location_Attribute_Name);
+   begin
+      if Namespace_Index > 0 then
+         Namespace := Attributes.Value (Namespace_Index);
+
+         if Namespace = Self.Schema.Target_Namespace then
+            raise Program_Error;
+         end if;
+      elsif not Self.Schema.Target_Namespace_Defined then
+         raise Program_Error;
+      end if;
+
+      Load_Schema
+        (Namespace => Namespace,
+         Location  => Location,
+         Model     => Self.Model);
+   end Start_Import_Element;
+
+   --------------------------
    -- Start_Schema_Element --
    --------------------------
 
@@ -2701,6 +2791,8 @@ package body Matreshka.XML_Schema.Handlers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean)
    is
+      use type Matreshka.XML_Schema.AST.Models.Model_Node_Access;
+
       Index : Natural;
 
    begin
@@ -2737,6 +2829,13 @@ package body Matreshka.XML_Schema.Handlers is
 
       --  XXX  xml:lang
 
+      if Self.Model = null then
+         Self.Model := new Matreshka.XML_Schema.AST.Models.Model_Node;
+         Self.Model.Schemas.Insert (Self.Schema.Target_Namespace, Self.Schema);
+      else
+         Self.Model.Schemas.Include
+           (Self.Schema.Target_Namespace, Self.Schema);
+      end if;
    end Start_Schema_Element;
 
    All_Literal_Image         : constant League.Strings.Universal_String

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,61 +41,84 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
+with Ada.Exceptions;
+with Ada.Text_IO;
 
-with League.Strings.Hash;
+with League.Application;
+with Matreshka.XML_Catalogs.Entry_Files;
+with Matreshka.XML_Catalogs.Loader;
+with Matreshka.XML_Catalogs.Resolver;
 
-with Matreshka.XML_Schema.AST.Types;
+package body Matreshka.XML_Schema.URI_Rewriter is
 
-package Matreshka.XML_Schema.AST.Schemas is
+   use type League.Strings.Universal_String;
 
-   pragma Preelaborate;
+   function "+"
+    (Item : Wide_Wide_String) return League.Strings.Universal_String
+       renames League.Strings.To_Universal_String;
 
-   type Schema_Node is new Abstract_Node with record
-      --  Properties:
-      --
+   Namespace_Rules : aliased
+     Matreshka.XML_Catalogs.Entry_Files.Catalog_Entry_File_List;
+   Document_Rules  : aliased
+     Matreshka.XML_Catalogs.Entry_Files.Catalog_Entry_File_List;
+   --  Rules to rewrite URIs of namespaces and documents.
 
-      Annotations : Types.Annotation_Lists.List;
-      --  {annotations}
-      --  A sequence of Annotation components.
+   ----------------
+   -- Initialize --
+   ----------------
 
-      Type_Definitions : Types.Type_Definition_Maps.Map;
-      --  {type definitions}
-      --  A set of Type Definition components.
+   procedure Initialize is
+   begin
+      --  Load schemas mappings.
 
-      Attribute_Declarations : Types.Attribute_Declaration_Maps.Map;
-      --  {attribute declarations}
-      --  A set of Attribute Declaration components.
+      begin
+         Namespace_Rules.Catalog_Entry_Files.Append
+          (Matreshka.XML_Catalogs.Loader.Load_By_File_Name
+            (League.Application.Environment.Value (+"AMF_DATA_DIR", +".")
+               & "/schemas/namespaces.xml",
+             Matreshka.XML_Catalogs.Entry_Files.Public));
 
-      Element_Declarations : Types.Element_Declaration_Maps.Map;
-      --  {element declarations}
-      --  A set of Element Declaration components.
+         Document_Rules.Catalog_Entry_Files.Append
+          (Matreshka.XML_Catalogs.Loader.Load_By_File_Name
+            (League.Application.Environment.Value (+"AMF_DATA_DIR", +".")
+               & "/schemas/mapping.xml",
+             Matreshka.XML_Catalogs.Entry_Files.System));
 
-      Attribute_Group_Definitions : Types.Attribute_Group_Maps.Map;
-      --  {attribute group definitions}
-      --  A set of Attribute Group Definition components.
+      exception
+         when E : others =>
+            Ada.Text_IO.Put_Line
+             (Ada.Text_IO.Standard_Error,
+              Ada.Exceptions.Exception_Information (E));
+      end;
 
-      Model_Group_Definitions : Types.Model_Group_Definition_Maps.Map;
-      --  {model group definitions}
-      --  A set of Model Group Definition components.
+   end Initialize;
 
-      Notation_Declarations : Types.Notation_Declaration_Maps.Map;
-      --  {notation declarations}
-      --  A set of Notation Declaration components.
+   ------------------------
+   -- Rewrite_Schema_URI --
+   ------------------------
 
-      Identity_Constraint_Definitions :
-        Types.Identity_Constraint_Definition_Sets.List;
-      --  {identity-constraint definitions}
-      --  A set of Identity-Constraint Definition components.
+   function Rewrite_Schema_URI
+     (Namespace : League.Strings.Universal_String;
+      Location  : League.Strings.Universal_String)
+       return League.Strings.Universal_String
+   is
+      Resolved : League.Strings.Universal_String;
+      Success  : Boolean;
 
-      --  Internal data.
+   begin
+      Matreshka.XML_Catalogs.Resolver.Resolve_URI
+       (Namespace_Rules'Access, Namespace, Resolved, Success);
 
-      Final_Default            : Matreshka.XML_Schema.AST.Derivation_Set;
+      if not Success then
+         Matreshka.XML_Catalogs.Resolver.Resolve_URI
+           (Document_Rules'Access, Location, Resolved, Success);
 
-      Target_Namespace         : League.Strings.Universal_String;
-      Target_Namespace_Defined : Boolean;
-   end record;
+         if not Success then
+            Resolved := Location;
+         end if;
+      end if;
 
---   type Schema_Access is access all Schema_Node'Class;
+      return Resolved;
+   end Rewrite_Schema_URI;
 
-end Matreshka.XML_Schema.AST.Schemas;
+end Matreshka.XML_Schema.URI_Rewriter;
