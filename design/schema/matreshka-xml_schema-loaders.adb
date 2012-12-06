@@ -44,6 +44,7 @@
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
+with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.Handlers;
 with Matreshka.XML_Schema.URI_Rewriter;
 
@@ -92,6 +93,7 @@ package body Matreshka.XML_Schema.Loaders is
       Schema  : Matreshka.XML_Schema.AST.Types.Schema_Access;
       Next    : Document_Access;
       Failure : Boolean;
+      Model   : Matreshka.XML_Schema.AST.Model_Access;
 
    begin
       --  Load root document.
@@ -99,6 +101,7 @@ package body Matreshka.XML_Schema.Loaders is
       Reader.Set_Content_Handler (Handler'Unchecked_Access);
       Source.Open_By_File_Name (URI);
       Reader.Parse (Source'Unchecked_Access);
+      Source.Close;
       Schema := Handler.Get_Schema;
 
       --  Register root document.
@@ -138,6 +141,7 @@ package body Matreshka.XML_Schema.Loaders is
 
             if not Failure then
                Reader.Parse (Source'Unchecked_Access);
+               Source.Close;
                Schema := Handler.Get_Schema;
             end if;
          end if;
@@ -149,13 +153,16 @@ package body Matreshka.XML_Schema.Loaders is
              (Matreshka.XML_Schema.URI_Rewriter.Rewrite_URI (Next.URI));
             Source.Set_System_Id (Next.URI);
             Reader.Parse (Source'Unchecked_Access);
+            Source.Close;
             Schema := Handler.Get_Schema;
          end if;
 
          Next.Schema := Schema;
       end loop;
 
-      return null;
+      Model := new Matreshka.XML_Schema.AST.Models.Model_Node;
+
+      return Model;
    end Load;
 
 end Matreshka.XML_Schema.Loaders;
