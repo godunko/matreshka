@@ -2801,10 +2801,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       --  targetNamespace
 
-      Index :=
-        Attributes.Index
-         (XML_Schema_Namespace_URI, Target_Namespace_Attribute_Name);
-
+      Index := Attributes.Index (Target_Namespace_Attribute_Name);
 
       if Index /= 0 then
          Self.Schema.Target_Namespace := Attributes.Value (Index);
