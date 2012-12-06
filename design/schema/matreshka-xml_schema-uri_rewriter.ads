@@ -43,7 +43,6 @@
 ------------------------------------------------------------------------------
 --  This package provides capability to rewrite schemas URIs
 ------------------------------------------------------------------------------
-
 with League.Strings;
 
 package Matreshka.XML_Schema.URI_Rewriter is
@@ -51,9 +50,8 @@ package Matreshka.XML_Schema.URI_Rewriter is
    procedure Initialize;
    --  Initialize internal data structures and load mapping data.
 
-   function Rewrite_Schema_URI
-     (Namespace : League.Strings.Universal_String;
-      Location  : League.Strings.Universal_String)
+   function Rewrite_URI
+    (URI : League.Strings.Universal_String)
        return League.Strings.Universal_String;
    --  Rewrites schema's URI.
 

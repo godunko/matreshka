@@ -57,11 +57,7 @@ package body Matreshka.XML_Schema.URI_Rewriter is
     (Item : Wide_Wide_String) return League.Strings.Universal_String
        renames League.Strings.To_Universal_String;
 
-   Namespace_Rules : aliased
-     Matreshka.XML_Catalogs.Entry_Files.Catalog_Entry_File_List;
-   Document_Rules  : aliased
-     Matreshka.XML_Catalogs.Entry_Files.Catalog_Entry_File_List;
-   --  Rules to rewrite URIs of namespaces and documents.
+   Rules : aliased Matreshka.XML_Catalogs.Entry_Files.Catalog_Entry_File_List;
 
    ----------------
    -- Initialize --
@@ -72,17 +68,11 @@ package body Matreshka.XML_Schema.URI_Rewriter is
       --  Load schemas mappings.
 
       begin
-         Namespace_Rules.Catalog_Entry_Files.Append
+         Rules.Catalog_Entry_Files.Append
           (Matreshka.XML_Catalogs.Loader.Load_By_File_Name
             (League.Application.Environment.Value (+"AMF_DATA_DIR", +".")
                & "/schemas/namespaces.xml",
              Matreshka.XML_Catalogs.Entry_Files.Public));
-
-         Document_Rules.Catalog_Entry_Files.Append
-          (Matreshka.XML_Catalogs.Loader.Load_By_File_Name
-            (League.Application.Environment.Value (+"AMF_DATA_DIR", +".")
-               & "/schemas/mapping.xml",
-             Matreshka.XML_Catalogs.Entry_Files.System));
 
       exception
          when E : others =>
@@ -90,16 +80,14 @@ package body Matreshka.XML_Schema.URI_Rewriter is
              (Ada.Text_IO.Standard_Error,
               Ada.Exceptions.Exception_Information (E));
       end;
-
    end Initialize;
 
-   ------------------------
-   -- Rewrite_Schema_URI --
-   ------------------------
+   -----------------
+   -- Rewrite_URI --
+   -----------------
 
-   function Rewrite_Schema_URI
-     (Namespace : League.Strings.Universal_String;
-      Location  : League.Strings.Universal_String)
+   function Rewrite_URI
+    (URI : League.Strings.Universal_String)
        return League.Strings.Universal_String
    is
       Resolved : League.Strings.Universal_String;
@@ -107,18 +95,9 @@ package body Matreshka.XML_Schema.URI_Rewriter is
 
    begin
       Matreshka.XML_Catalogs.Resolver.Resolve_URI
-       (Namespace_Rules'Access, Namespace, Resolved, Success);
-
-      if not Success then
-         Matreshka.XML_Catalogs.Resolver.Resolve_URI
-           (Document_Rules'Access, Location, Resolved, Success);
-
-         if not Success then
-            Resolved := Location;
-         end if;
-      end if;
+       (Rules'Access, URI, Resolved, Success);
 
       return Resolved;
-   end Rewrite_Schema_URI;
+   end Rewrite_URI;
 
 end Matreshka.XML_Schema.URI_Rewriter;

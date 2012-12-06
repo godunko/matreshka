@@ -45,6 +45,7 @@ with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
 with Matreshka.XML_Schema.Handlers;
+with Matreshka.XML_Schema.URI_Rewriter;
 
 package body Matreshka.XML_Schema.Loaders is
 
@@ -125,7 +126,9 @@ package body Matreshka.XML_Schema.Loaders is
 
          if not Next.Hint.Is_Empty then
             begin
-               Source.Open_By_URI (Next.Hint);
+               Source.Open_By_URI
+                (Matreshka.XML_Schema.URI_Rewriter.Rewrite_URI (Next.Hint));
+               Source.Set_System_Id (Next.Hint);
                Failure := False;
 
             exception
@@ -142,7 +145,9 @@ package body Matreshka.XML_Schema.Loaders is
          --  Load document by URI.
 
          if Schema = null then
-            Source.Open_By_URI (Next.URI);
+            Source.Open_By_URI
+             (Matreshka.XML_Schema.URI_Rewriter.Rewrite_URI (Next.URI));
+            Source.Set_System_Id (Next.URI);
             Reader.Parse (Source'Unchecked_Access);
             Schema := Handler.Get_Schema;
          end if;
