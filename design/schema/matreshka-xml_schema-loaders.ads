@@ -41,25 +41,43 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Containers.Hashed_Maps;
+
+with League.Strings;
+private with League.Strings.Hash;
+
 with Matreshka.XML_Schema.AST;
-with Matreshka.XML_Schema.Loaders;
+private with Matreshka.XML_Schema.AST.Types;
 
-package body XML.Schema.Utilities is
+package Matreshka.XML_Schema.Loaders is
 
-   ----------
-   -- Load --
-   ----------
+   type Model_Loader is tagged limited private;
 
    function Load
-    (URI : League.Strings.Universal_String) return XML.Schema.Models.XS_Model
-   is
-      Loader : Matreshka.XML_Schema.Loaders.Model_Loader;
-      Model  : Matreshka.XML_Schema.AST.Model_Access;
+    (Self : in out Model_Loader'Class;
+     URI  : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Model_Access;
+   --  Loads complete schema from the specified URI.
 
-   begin
-      Model := Loader.Load (URI);
+private
 
-      return X : XML.Schema.Models.XS_Model;
-   end Load;
+   type Document_Record is record
+      Namespace_URI : League.Strings.Universal_String;
+      Location_Hint : League.Strings.Universal_String;
+      Schema        : Matreshka.XML_Schema.AST.Types.Schema_Access;
+   end record;
 
-end XML.Schema.Utilities;
+   type Document_Access is access all Document_Record;
+
+   package Document_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Document_Access,
+           League.Strings.Hash,
+           League.Strings."=");
+
+   type Model_Loader is tagged limited record
+      Documents : Document_Maps.Map;
+   end record;
+
+end Matreshka.XML_Schema.Loaders;

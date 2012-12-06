@@ -41,25 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.AST;
-with Matreshka.XML_Schema.Loaders;
+with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Simple_Readers;
 
-package body XML.Schema.Utilities is
+with Matreshka.XML_Schema.Handlers;
+
+package body Matreshka.XML_Schema.Loaders is
 
    ----------
    -- Load --
    ----------
 
    function Load
-    (URI : League.Strings.Universal_String) return XML.Schema.Models.XS_Model
+    (Self : in out Model_Loader'Class;
+     URI  : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Model_Access
    is
-      Loader : Matreshka.XML_Schema.Loaders.Model_Loader;
-      Model  : Matreshka.XML_Schema.AST.Model_Access;
+      Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler;
+      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
 
    begin
-      Model := Loader.Load (URI);
+      Reader.Set_Content_Handler (Handler'Unchecked_Access);
+      Source.Open_By_File_Name (URI);
+      Reader.Parse (Source'Unchecked_Access);
 
-      return X : XML.Schema.Models.XS_Model;
+      return null;
    end Load;
 
-end XML.Schema.Utilities;
+end Matreshka.XML_Schema.Loaders;

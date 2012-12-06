@@ -41,10 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+limited with Matreshka.XML_Schema.AST.Models;
 
 package Matreshka.XML_Schema.AST is
 
-   pragma Pure;
+   pragma Preelaborate;
 
    type Abstract_Node is abstract tagged limited null record;
 
@@ -55,5 +56,8 @@ package Matreshka.XML_Schema.AST is
    pragma Pack (Derivation_Set);
 
    type Simple_Type_Variety is (Absent, Atomic, List, Union);
+
+   type Model_Access is
+     access all Matreshka.XML_Schema.AST.Models.Model_Node'Class;
 
 end Matreshka.XML_Schema.AST;
