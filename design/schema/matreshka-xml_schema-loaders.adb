@@ -48,6 +48,19 @@ with Matreshka.XML_Schema.Handlers;
 
 package body Matreshka.XML_Schema.Loaders is
 
+   ----------------------
+   -- Enqueue_Document --
+   ----------------------
+
+   procedure Enqueue_Document
+    (Self            : in out Model_Loader'Class;
+     Namespace_URI   : League.Strings.Universal_String;
+     Base_URI        : League.IRIs.IRI;
+     Schema_Location : League.Strings.Universal_String) is
+   begin
+      null;
+   end Enqueue_Document;
+
    ----------
    -- Load --
    ----------
@@ -58,7 +71,7 @@ package body Matreshka.XML_Schema.Loaders is
        return Matreshka.XML_Schema.AST.Model_Access
    is
       Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler;
+      Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler (Self'Access);
       Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
 
    begin

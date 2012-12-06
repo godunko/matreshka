@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 private with Ada.Containers.Hashed_Maps;
 
+with League.IRIs;
 with League.Strings;
 private with League.Strings.Hash;
 
@@ -58,6 +59,13 @@ package Matreshka.XML_Schema.Loaders is
      URI  : League.Strings.Universal_String)
        return Matreshka.XML_Schema.AST.Model_Access;
    --  Loads complete schema from the specified URI.
+
+   procedure Enqueue_Document
+    (Self            : in out Model_Loader'Class;
+     Namespace_URI   : League.Strings.Universal_String;
+     Base_URI        : League.IRIs.IRI;
+     Schema_Location : League.Strings.Universal_String);
+   --  Add document to be loaded.
 
 private
 

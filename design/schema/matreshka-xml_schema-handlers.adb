@@ -55,13 +55,12 @@ with Matreshka.XML_Schema.AST.Identity_Constraints;
 with Matreshka.XML_Schema.AST.Model_Groups;
 with Matreshka.XML_Schema.AST.Notation_Declarations;
 with Matreshka.XML_Schema.AST.Particles;
+with Matreshka.XML_Schema.AST.Schemas;
 with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Wildcards;
 with Ada.Wide_Wide_Text_IO;
 
-with Matreshka.XML_Schema.URI_Rewriter;
-with Matreshka.XML_Schema.AST.Schemas;
 
 package body Matreshka.XML_Schema.Handlers is
 
@@ -2082,41 +2081,6 @@ package body Matreshka.XML_Schema.Handlers is
       end if;
    end Get_Value_Constant;
 
-   -----------------
-   -- Load_Schema --
-   -----------------
-
-   procedure Load_Schema
-     (Location  : League.Strings.Universal_String;
-      Namespace : League.Strings.Universal_String;
-      Model     : Matreshka.XML_Schema.AST.Models.Model_Node_Access)
-   is
-      use type Matreshka.XML_Schema.AST.Types.Schema_Access;
-
-      Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler;
-      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-   begin
-      if Model.Schemas.Contains (Namespace) then
-         if Model.Schemas (Namespace) = null then
-            raise Program_Error with "circular schema import";
-         else
-            return;
-         end if;
-      else
-         Model.Schemas.Insert (Namespace, null);
-      end if;
-
-      Handler.Model := Model;
-      Reader.Set_Content_Handler (Handler'Unchecked_Access);
-      Source.Open_By_File_Name (Location);
-      Reader.Parse (Source'Unchecked_Access);
-
-      if Handler.Schema.Target_Namespace /= Namespace then
-         raise Program_Error with "unexpected schema in import";
-      end if;
-   end Load_Schema;
-
    ---------
    -- Pop --
    ---------
@@ -2136,6 +2100,17 @@ package body Matreshka.XML_Schema.Handlers is
       Self.States.Append (Self.Top_State);
       Self.Top_State.State := State;
    end Push;
+
+   --------------------------
+   -- Set_Document_Locator --
+   --------------------------
+
+   overriding procedure Set_Document_Locator
+    (Self    : in out XML_Schema_Handler;
+     Locator : XML.SAX.Locators.SAX_Locator) is
+   begin
+      Self.Locator := Locator;
+   end Set_Document_Locator;
 
    ------------------
    -- Simple_Types --
@@ -2772,14 +2747,13 @@ package body Matreshka.XML_Schema.Handlers is
          if Namespace = Self.Schema.Target_Namespace then
             raise Program_Error;
          end if;
+
       elsif not Self.Schema.Target_Namespace_Defined then
          raise Program_Error;
       end if;
 
-      Load_Schema
-        (Namespace => Namespace,
-         Location  => Location,
-         Model     => Self.Model);
+      Self.Loader.Enqueue_Document
+       (Namespace, Self.Locator.Base_URI, Location);
    end Start_Import_Element;
 
    --------------------------

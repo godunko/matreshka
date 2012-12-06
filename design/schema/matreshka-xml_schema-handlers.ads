@@ -55,18 +55,17 @@ with Matreshka.XML_Schema.AST.Models;
 private with Matreshka.XML_Schema.AST.Schemas;
 private with Matreshka.XML_Schema.AST.Simple_Types;
 private with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.Loaders;
 private with XML.SAX.Attributes;
+private with XML.SAX.Locators;
 with XML.SAX.Content_Handlers;
 
 package Matreshka.XML_Schema.Handlers is
 
-   type XML_Schema_Handler is
+   type XML_Schema_Handler
+         (Loader : not null access
+            Matreshka.XML_Schema.Loaders.Model_Loader'Class) is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
-
-   procedure Load_Schema
-     (Location  : League.Strings.Universal_String;
-      Namespace : League.Strings.Universal_String;
-      Model     : Matreshka.XML_Schema.AST.Models.Model_Node_Access);
 
 private
 
@@ -122,8 +121,11 @@ private
    package State_Vectors is
      new Ada.Containers.Vectors (Positive, State_Value);
 
-   type XML_Schema_Handler is
+   type XML_Schema_Handler
+         (Loader : not null access
+            Matreshka.XML_Schema.Loaders.Model_Loader'Class) is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
+      Locator      : XML.SAX.Locators.SAX_Locator;
       Schema       : Matreshka.XML_Schema.AST.Types.Schema_Access;
       Model        : Matreshka.XML_Schema.AST.Models.Model_Node_Access;
       Ignore_Depth : Natural := 0;
@@ -154,6 +156,10 @@ private
    overriding procedure Start_Document
     (Self    : in out XML_Schema_Handler;
      Success : in out Boolean);
+
+   overriding procedure Set_Document_Locator
+    (Self    : in out XML_Schema_Handler;
+     Locator : XML.SAX.Locators.SAX_Locator);
 
    overriding procedure Start_Element
     (Self           : in out XML_Schema_Handler;
