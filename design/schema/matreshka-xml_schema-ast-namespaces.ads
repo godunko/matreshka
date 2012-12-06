@@ -41,30 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
+--  Namespace_Node is synthetic node which represents all XML Schema components
+--  from one namespace.
+------------------------------------------------------------------------------
+with League.Strings;
 
-with League.Strings.Hash;
-
-with Matreshka.XML_Schema.AST.Namespaces;
-with Matreshka.XML_Schema.AST.Types;
-
-package Matreshka.XML_Schema.AST.Models is
+package Matreshka.XML_Schema.AST.Namespaces is
 
    pragma Preelaborate;
 
-   package Namespace_Maps is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           Matreshka.XML_Schema.AST.Namespaces.Namespace_Access,
-           League.Strings.Hash,
-           League.Strings."=",
-           Matreshka.XML_Schema.AST.Namespaces."=");
-
-   type Model_Node is new Abstract_Node with record
-      Schemas    : Types.Schema_Maps.Map;
-      Namespaces : Namespace_Maps.Map;
+   type Namespace_Node is new Abstract_Node with record
+      Namespace_URI : League.Strings.Universal_String;
    end record;
 
-   type Model_Node_Access is access all Model_Node;
+   type Namespace_Access is access all Namespace_Node;
 
-end Matreshka.XML_Schema.AST.Models;
+end Matreshka.XML_Schema.AST.Namespaces;
