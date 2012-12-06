@@ -70,9 +70,9 @@ package Matreshka.XML_Schema.Loaders is
 private
 
    type Document_Record is record
-      Namespace_URI : League.Strings.Universal_String;
-      Location_Hint : League.Strings.Universal_String;
-      Schema        : Matreshka.XML_Schema.AST.Types.Schema_Access;
+      URI    : League.Strings.Universal_String;
+      Hint   : League.Strings.Universal_String;
+      Schema : Matreshka.XML_Schema.AST.Types.Schema_Access;
    end record;
 
    type Document_Access is access all Document_Record;

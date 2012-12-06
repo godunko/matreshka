@@ -56,9 +56,21 @@ package body Matreshka.XML_Schema.Loaders is
     (Self            : in out Model_Loader'Class;
      Namespace_URI   : League.Strings.Universal_String;
      Base_URI        : League.IRIs.IRI;
-     Schema_Location : League.Strings.Universal_String) is
+     Schema_Location : League.Strings.Universal_String)
+   is
+      Location_Hint : League.Strings.Universal_String;
+
    begin
-      null;
+      if not Schema_Location.Is_Empty then
+         Location_Hint :=
+           Base_URI.Resolve
+            (League.IRIs.From_Universal_String
+              (Schema_Location)).To_Universal_String;
+      end if;
+
+      Self.Documents.Insert
+       (Namespace_URI,
+        new Document_Record'(Namespace_URI, Location_Hint, null));
    end Enqueue_Document;
 
    ----------
@@ -70,14 +82,73 @@ package body Matreshka.XML_Schema.Loaders is
      URI  : League.Strings.Universal_String)
        return Matreshka.XML_Schema.AST.Model_Access
    is
+      use type Matreshka.XML_Schema.AST.Types.Schema_Access;
+
       Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler (Self'Access);
+      Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler
+                         (Self'Access);
       Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Schema  : Matreshka.XML_Schema.AST.Types.Schema_Access;
+      Next    : Document_Access;
+      Failure : Boolean;
 
    begin
+      --  Load root document.
+
       Reader.Set_Content_Handler (Handler'Unchecked_Access);
       Source.Open_By_File_Name (URI);
       Reader.Parse (Source'Unchecked_Access);
+      Schema := Handler.Get_Schema;
+
+      --  Register root document.
+
+      Self.Documents.Insert
+       (Schema.Target_Namespace,
+        new Document_Record'(Schema.Target_Namespace, URI, Schema));
+
+      loop
+         Next := null;
+
+         for Document of Self.Documents loop
+            if Document.Schema = null then
+               Next := Document;
+
+               exit;
+            end if;
+         end loop;
+
+         exit when Next = null;
+
+         Schema := null;
+
+         --  Try to open document by location hint.
+
+         if not Next.Hint.Is_Empty then
+            begin
+               Source.Open_By_URI (Next.Hint);
+               Failure := False;
+
+            exception
+               when others =>
+                  Failure := True;
+            end;
+
+            if not Failure then
+               Reader.Parse (Source'Unchecked_Access);
+               Schema := Handler.Get_Schema;
+            end if;
+         end if;
+
+         --  Load document by URI.
+
+         if Schema = null then
+            Source.Open_By_URI (Next.URI);
+            Reader.Parse (Source'Unchecked_Access);
+            Schema := Handler.Get_Schema;
+         end if;
+
+         Next.Schema := Schema;
+      end loop;
 
       return null;
    end Load;

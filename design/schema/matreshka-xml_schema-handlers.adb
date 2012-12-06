@@ -1807,6 +1807,17 @@ package body Matreshka.XML_Schema.Handlers is
 
    end Facets;
 
+   ----------------
+   -- Get_Schema --
+   ----------------
+
+   function Get_Schema
+    (Self : XML_Schema_Handler)
+       return Matreshka.XML_Schema.AST.Types.Schema_Access is
+   begin
+      return Self.Schema;
+   end Get_Schema;
+
    ---------------
    -- Particles --
    ---------------
@@ -2735,11 +2746,12 @@ package body Matreshka.XML_Schema.Handlers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean)
    is
+      Namespace_Index : constant Natural
+        := Attributes.Index (Namespace_Attribute_Name);
+      Location        : constant League.Strings.Universal_String
+        := Attributes.Value (Schema_Location_Attribute_Name);
       Namespace       :  League.Strings.Universal_String;
-      Namespace_Index : constant Natural :=
-        Attributes.Index (Namespace_Attribute_Name);
-      Location  : constant League.Strings.Universal_String :=
-        Attributes.Value (Schema_Location_Attribute_Name);
+
    begin
       if Namespace_Index > 0 then
          Namespace := Attributes.Value (Namespace_Index);

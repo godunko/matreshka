@@ -54,7 +54,7 @@ with League.Strings;
 with Matreshka.XML_Schema.AST.Models;
 private with Matreshka.XML_Schema.AST.Schemas;
 private with Matreshka.XML_Schema.AST.Simple_Types;
-private with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.Loaders;
 private with XML.SAX.Attributes;
 private with XML.SAX.Locators;
@@ -66,6 +66,11 @@ package Matreshka.XML_Schema.Handlers is
          (Loader : not null access
             Matreshka.XML_Schema.Loaders.Model_Loader'Class) is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+
+   function Get_Schema
+    (Self : XML_Schema_Handler)
+       return Matreshka.XML_Schema.AST.Types.Schema_Access;
+   --  Returns constructed schema.
 
 private
 
