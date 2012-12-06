@@ -2782,8 +2782,6 @@ package body Matreshka.XML_Schema.Handlers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean)
    is
-      use type Matreshka.XML_Schema.AST.Models.Model_Node_Access;
-
       Index : Natural;
 
    begin
@@ -2807,6 +2805,7 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes.Index
          (XML_Schema_Namespace_URI, Target_Namespace_Attribute_Name);
 
+
       if Index /= 0 then
          Self.Schema.Target_Namespace := Attributes.Value (Index);
          Self.Schema.Target_Namespace_Defined := True;
@@ -2819,14 +2818,6 @@ package body Matreshka.XML_Schema.Handlers is
       --  XXX  xpathDefaultNamespace
 
       --  XXX  xml:lang
-
-      if Self.Model = null then
-         Self.Model := new Matreshka.XML_Schema.AST.Models.Model_Node;
-         Self.Model.Schemas.Insert (Self.Schema.Target_Namespace, Self.Schema);
-      else
-         Self.Model.Schemas.Include
-           (Self.Schema.Target_Namespace, Self.Schema);
-      end if;
    end Start_Schema_Element;
 
    All_Literal_Image         : constant League.Strings.Universal_String

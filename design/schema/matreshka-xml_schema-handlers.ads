@@ -51,7 +51,6 @@
 private with Ada.Containers.Vectors;
 
 with League.Strings;
-with Matreshka.XML_Schema.AST.Models;
 private with Matreshka.XML_Schema.AST.Schemas;
 private with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
@@ -132,7 +131,6 @@ private
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
       Locator      : XML.SAX.Locators.SAX_Locator;
       Schema       : Matreshka.XML_Schema.AST.Types.Schema_Access;
-      Model        : Matreshka.XML_Schema.AST.Models.Model_Node_Access;
       Ignore_Depth : Natural := 0;
       States       : State_Vectors.Vector;  --  Stack of states except top
 
