@@ -1686,6 +1686,9 @@ package body Matreshka.XML_Schema.Handlers is
             Declarations.End_Model_Definition_Element (Self, Success);
             Self.Pop;
 
+         elsif Local_Name = Import_Element_Name then
+            Self.Pop;
+
          elsif Local_Name = Key_Element_Name then
             Declarations.End_Constraint_Element (Self, Success);
             Self.Pop;
@@ -1736,6 +1739,8 @@ package body Matreshka.XML_Schema.Handlers is
             Self.Pop;
 
          else
+            Ada.Wide_Wide_Text_IO.Put_Line
+              ("End_Element:" & Local_Name.To_Wide_Wide_String);
             raise Program_Error;
          end if;
       end if;
