@@ -41,8 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Models;
 
 package body XML.Schema.Models is
+
+   use type Matreshka.XML_Schema.AST.Model_Access;
 
    ---------------------
    -- Get_Annotations --
@@ -162,8 +165,15 @@ package body XML.Schema.Models is
     (Self : XS_Model'Class)
        return League.String_Vectors.Universal_String_Vector is
    begin
-      raise Program_Error;
-      return League.String_Vectors.Empty_Universal_String_Vector;
+      if Self.Node = null then
+         return League.String_Vectors.Empty_Universal_String_Vector;
+      end if;
+
+      return Result : League.String_Vectors.Universal_String_Vector do
+         for Item of Self.Node.Namespaces loop
+            Result.Append (Item.Namespace_URI);
+         end loop;
+      end return;
    end Get_Namespaces;
 
    ------------------------------
@@ -193,5 +203,14 @@ package body XML.Schema.Models is
       raise Program_Error;
       return X : XML.Schema.Type_Definitions.XS_Type_Definition;
    end Get_Type_Definition;
+
+   -------------
+   -- Is_Null --
+   -------------
+
+   function Is_Null (Self : XS_Model) return Boolean is
+   begin
+      return Self.Node = null;
+   end Is_Null;
 
 end XML.Schema.Models;

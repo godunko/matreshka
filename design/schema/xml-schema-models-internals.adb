@@ -41,26 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.AST;
-with Matreshka.XML_Schema.Loaders;
-with XML.Schema.Models.Internals;
 
-package body XML.Schema.Utilities is
+package body XML.Schema.Models.Internals is
 
-   ----------
-   -- Load --
-   ----------
+   ------------
+   -- Create --
+   ------------
 
-   function Load
-    (URI : League.Strings.Universal_String) return XML.Schema.Models.XS_Model
-   is
-      Loader : Matreshka.XML_Schema.Loaders.Model_Loader;
-      Model  : Matreshka.XML_Schema.AST.Model_Access;
-
+   function Create
+    (Node : Matreshka.XML_Schema.AST.Model_Access) return XS_Model is
    begin
-      Model := Loader.Load (URI);
+      return (Ada.Finalization.Controlled with Node => Node);
+   end Create;
 
-      return XML.Schema.Models.Internals.Create (Model);
-   end Load;
-
-end XML.Schema.Utilities;
+end XML.Schema.Models.Internals;

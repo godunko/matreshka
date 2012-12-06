@@ -48,6 +48,7 @@ private with Ada.Finalization;
 with League.String_Vectors;
 with League.Strings;
 
+private with Matreshka.XML_Schema.AST;
 with XML.Schema.Attribute_Declarations;
 with XML.Schema.Attribute_Group_Definitions;
 with XML.Schema.Element_Declarations;
@@ -63,6 +64,10 @@ package XML.Schema.Models is
    pragma Preelaborate;
 
    type XS_Model is tagged private;
+
+   Null_Model : constant XS_Model;
+
+   function Is_Null (Self : XS_Model) return Boolean;
 
    function Get_Namespaces
     (Self : XS_Model'Class)
@@ -252,6 +257,11 @@ package XML.Schema.Models is
 
 private
 
-   type XS_Model is new Ada.Finalization.Controlled with null record;
+   type XS_Model is new Ada.Finalization.Controlled with record
+      Node : Matreshka.XML_Schema.AST.Model_Access;
+   end record;
+
+   Null_Model : constant XS_Model
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Models;

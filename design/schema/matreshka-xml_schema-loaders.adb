@@ -45,6 +45,7 @@ with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
 with Matreshka.XML_Schema.AST.Models;
+with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.Handlers;
 with Matreshka.XML_Schema.URI_Rewriter;
 
@@ -160,7 +161,18 @@ package body Matreshka.XML_Schema.Loaders is
          Next.Schema := Schema;
       end loop;
 
+      --  Allocate Model.
+
       Model := new Matreshka.XML_Schema.AST.Models.Model_Node;
+
+      --  Create NamespaceItems.
+
+      for Document of Self.Documents loop
+         Model.Namespaces.Insert
+          (Document.Schema.Target_Namespace,
+           new Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'
+                (Namespace_URI => Document.Schema.Target_Namespace));
+      end loop;
 
       return Model;
    end Load;
