@@ -54,6 +54,23 @@ package Matreshka.XML_Schema.AST.Namespaces is
       Namespace_URI : League.Strings.Universal_String;
    end record;
 
-   type Namespace_Access is access all Namespace_Node;
+   overriding procedure Enter_Node
+    (Self    : not null access Namespace_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Namespace_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Namespace_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Namespaces;

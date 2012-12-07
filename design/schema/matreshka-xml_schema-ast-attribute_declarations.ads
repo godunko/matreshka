@@ -64,11 +64,11 @@ package Matreshka.XML_Schema.AST.Attribute_Declarations is
       --  {name}
       --  An xs:NCName value. Required.
 
-      Target_Namespace  : League.Strings.Universal_String;
+      Target_Namespace : League.Strings.Universal_String;
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
-      Type_Definition : Types.Simple_Type_Definition_Access;
+      Type_Definition : Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
       --  {type definition}
       --  A Simple Type Definition component. Required.
 
@@ -93,5 +93,24 @@ package Matreshka.XML_Schema.AST.Attribute_Declarations is
    overriding function Get_Type
     (Self : not null access Attribute_Declaration_Node)
        return XML.Schema.Component_Type;
+
+   overriding procedure Enter_Node
+    (Self    : not null access Attribute_Declaration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Attribute_Declaration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Attribute_Declaration_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Attribute_Declarations;

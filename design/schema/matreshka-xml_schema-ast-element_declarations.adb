@@ -41,8 +41,22 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.AST.Element_Declarations is
+
+   ----------------
+   -- Enter_Node --
+   ----------------
+
+   overriding procedure Enter_Node
+    (Self    : not null access Element_Declaration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Element_Declaration
+       (Matreshka.XML_Schema.AST.Element_Declaration_Access (Self), Control);
+   end Enter_Node;
 
    --------------
    -- Get_Type --
@@ -57,5 +71,32 @@ package body Matreshka.XML_Schema.AST.Element_Declarations is
    begin
       return XML.Schema.Element_Declaration;
    end Get_Type;
+
+   ----------------
+   -- Leave_Node --
+   ----------------
+
+   overriding procedure Leave_Node
+    (Self    : not null access Element_Declaration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Element_Declaration
+       (Matreshka.XML_Schema.AST.Element_Declaration_Access (Self), Control);
+   end Leave_Node;
+
+   ----------------
+   -- Visit_Node --
+   ----------------
+
+   overriding procedure Visit_Node
+    (Self     : not null access Element_Declaration_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Element_Declaration
+       (Visitor, Matreshka.XML_Schema.AST.Element_Declaration_Access (Self), Control);
+   end Visit_Node;
 
 end Matreshka.XML_Schema.AST.Element_Declarations;

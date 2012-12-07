@@ -245,13 +245,13 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Common_Element_Declaration
         (Self       : in out XML_Schema_Handler;
          Attributes : XML.SAX.Attributes.SAX_Attributes;
-         Node       : AST.Types.Element_Declaration_Access;
+         Node       : Matreshka.XML_Schema.AST.Element_Declaration_Access;
          Success    : in out Boolean);
 
       procedure Local_Attribute_Element
         (Self       : in out XML_Schema_Handler;
          Attributes : XML.SAX.Attributes.SAX_Attributes;
-         Node       : out Matreshka.XML_Schema.AST.Types.Attribute_Use_Access;
+         Node       : out Matreshka.XML_Schema.AST.Attribute_Use_Access;
          Success    : in out Boolean);
 
       procedure Start_Top_Level_Attribute_Element
@@ -421,14 +421,14 @@ package body Matreshka.XML_Schema.Handlers is
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access);
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access);
       --  Allocate new Particle and fill it's properties
 
       procedure Create_Wildcard
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean;
-        Node       : out Matreshka.XML_Schema.AST.Types.Wildcard_Access);
+        Node       : out Matreshka.XML_Schema.AST.Wildcard_Access);
       --  Allocate new Wildcard and fill it's properties
 
       procedure Start_Top_Level_Complex_Type_Element
@@ -643,7 +643,7 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Group_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access;
         Success    : in out Boolean);
 
       procedure Start_Choice_Element
@@ -654,7 +654,7 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Choice_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access;
         Success    : in out Boolean);
 
       procedure Start_Sequence_Element
@@ -665,7 +665,7 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Sequence_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access;
         Success    : in out Boolean);
 
       procedure Start_Any_Element
@@ -685,9 +685,10 @@ package body Matreshka.XML_Schema.Handlers is
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access)
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access)
       is
          Index : Natural;
+
       begin
          Node := new Matreshka.XML_Schema.AST.Particles.Particle_Node;
 
@@ -722,7 +723,7 @@ package body Matreshka.XML_Schema.Handlers is
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean;
-        Node       : out Matreshka.XML_Schema.AST.Types.Wildcard_Access)
+        Node       : out Matreshka.XML_Schema.AST.Wildcard_Access)
       is
          use all type Matreshka.XML_Schema.AST.Wildcards
            .Namespace_Constraint_Variety;
@@ -842,7 +843,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Wildcard_Access;
+         Node : Matreshka.XML_Schema.AST.Wildcard_Access;
+
       begin
          Create_Wildcard (Self, Attributes, Success, Node);
 
@@ -859,7 +861,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Wildcard_Access;
+         Node : Matreshka.XML_Schema.AST.Wildcard_Access;
+
       begin
          Create_Wildcard (Self, Attributes, Success, Node);
 
@@ -876,7 +879,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Attribute_Use_Access;
+         Node : Matreshka.XML_Schema.AST.Attribute_Use_Access;
+
       begin
          Declarations.Local_Attribute_Element
            (Self, Attributes, Node, Success);
@@ -894,9 +898,12 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : AST.Types.Attribute_Group_Reference_Access;
+         Node : Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access;
+
       begin
-         Node := new AST.Attribute_Groups.Attribute_Group_Reference_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Attribute_Groups
+                 .Attribute_Group_Reference_Node;
 
          XSD_Attribute.Required
            (Ref_Attribute_Name,
@@ -922,7 +929,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
       begin
          Particles.Start_Choice_Element
            (Self       => Self,
@@ -957,10 +965,12 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Complex_Type_Definition_Access;
+         Node : Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Complex_Types
-           .Complex_Type_Definition_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Complex_Types
+                 .Complex_Type_Definition_Node;
 
          XSD_Attribute.Prohibited
            (Name_Attribute_Name,
@@ -983,7 +993,8 @@ package body Matreshka.XML_Schema.Handlers is
             "local complex type definition");
 
          Self.States.Last_Element.Last_Element_Declaration
-           .Type_Definition := AST.Types.Type_Definition_Access (Node);
+           .Type_Definition :=
+             Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node);
 
          Self.Top_State.Last_Complex_Type_Definition := Node;
       end Start_Element_Level_Complex_Type_Element;
@@ -1015,7 +1026,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
       begin
          Particles.Start_Group_Element
            (Self       => Self,
@@ -1056,7 +1068,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
       begin
          Particles.Start_Sequence_Element
            (Self       => Self,
@@ -1079,10 +1092,12 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Complex_Type_Definition_Access;
+         Node : Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Complex_Types
-           .Complex_Type_Definition_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Complex_Types
+                 .Complex_Type_Definition_Node;
 
          XSD_Attribute.Required
            (Name_Attribute_Name,
@@ -1124,7 +1139,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Attribute_Use_Access;
+         Node : Matreshka.XML_Schema.AST.Attribute_Use_Access;
+
       begin
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
            AST.Restriction;
@@ -1148,7 +1164,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
       begin
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
            AST.Restriction;
@@ -1199,7 +1216,7 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Common_Element_Declaration
         (Self       : in out XML_Schema_Handler;
          Attributes : XML.SAX.Attributes.SAX_Attributes;
-         Node       : AST.Types.Element_Declaration_Access;
+         Node       : Matreshka.XML_Schema.AST.Element_Declaration_Access;
          Success    : in out Boolean) is
       begin
          Node.Name := Attributes.Value (Name_Attribute_Name);
@@ -1223,7 +1240,8 @@ package body Matreshka.XML_Schema.Handlers is
          Compositor : AST.Model_Groups.Compositor_Kind;
          Success    : in out Boolean)
       is
-         Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+         Model : Matreshka.XML_Schema.AST.Model_Group_Access;
+
       begin
          Model := new Matreshka.XML_Schema.AST.Model_Groups.Model_Group_Node;
 
@@ -1239,15 +1257,15 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Local_Attribute_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Node       : out Matreshka.XML_Schema.AST.Types.Attribute_Use_Access;
+        Node       : out Matreshka.XML_Schema.AST.Attribute_Use_Access;
         Success    : in out Boolean)
       is
          Index     : Natural := Attributes.Index (Ref_Attribute_Name);
          Has_Ref   : constant Boolean := Index /= 0;
          Use_Attr  : constant League.Strings.Universal_String :=
            Attributes.Value (Use_Attribute_Name);
-         Decl_Node : Matreshka.XML_Schema.AST.Types
-           .Attribute_Declaration_Access;
+         Decl_Node : Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+
       begin
          if Attributes.Value (Use_Attribute_Name)
            = Prohibited_Literal_Image
@@ -1286,8 +1304,9 @@ package body Matreshka.XML_Schema.Handlers is
 
             Decl_Node.Scope :=
               (Variety => Matreshka.XML_Schema.AST.Types.Local,
-               Parent  => Matreshka.XML_Schema.AST.Types.Abstract_Node_Access
-                 (Self.Top_State.Last_Complex_Type_Definition));
+               Parent  =>
+                 Matreshka.XML_Schema.AST.Node_Access
+                  (Self.Top_State.Last_Complex_Type_Definition));
 
             Decl_Node.Inheritable := XSD_Attribute.To_Boolean
               (Attributes, Inheritable_Attribute_Name);
@@ -1329,10 +1348,12 @@ package body Matreshka.XML_Schema.Handlers is
          Category   : AST.Identity_Constraints.Category;
          Success    : in out Boolean)
       is
-         Node : AST.Types.Identity_Constraint_Definition_Access;
+         Node : Matreshka.XML_Schema.AST.Identity_Constraint_Definition_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Identity_Constraints.
-           Identity_Constraint_Definition_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Identity_Constraints
+                 .Identity_Constraint_Definition_Node;
 
          Node.Name := Attributes.Value (Name_Attribute_Name);
          Node.Identity_Constraint_Category := Category;
@@ -1368,7 +1389,8 @@ package body Matreshka.XML_Schema.Handlers is
          Attributes : XML.SAX.Attributes.SAX_Attributes;
          Success    : in out Boolean)
       is
-         Node : Matreshka.XML_Schema.AST.Types.Attribute_Use_Access;
+         Node : Matreshka.XML_Schema.AST.Attribute_Use_Access;
+
       begin
          Declarations.Local_Attribute_Element
            (Self, Attributes, Node, Success);
@@ -1428,10 +1450,12 @@ package body Matreshka.XML_Schema.Handlers is
          Attributes : XML.SAX.Attributes.SAX_Attributes;
          Success    : in out Boolean)
       is
-         Node : AST.Types.Notation_Declaration_Access;
+         Node : Matreshka.XML_Schema.AST.Notation_Declaration_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Notation_Declarations
-           .Notation_Declaration_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Notation_Declarations
+                 .Notation_Declaration_Node;
 
          XSD_Attribute.Required
            (Name_Attribute_Name,
@@ -1466,7 +1490,8 @@ package body Matreshka.XML_Schema.Handlers is
          Attributes : XML.SAX.Attributes.SAX_Attributes;
          Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Attribute_Declaration_Access;
+         Node : Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+
       begin
          Node := new Matreshka.XML_Schema.AST.Attribute_Declarations
            .Attribute_Declaration_Node;
@@ -1509,10 +1534,12 @@ package body Matreshka.XML_Schema.Handlers is
          Attributes : XML.SAX.Attributes.SAX_Attributes;
          Success    : in out Boolean)
       is
-         Node  : AST.Types.Attribute_Group_Definition_Access;
+         Node : Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Attribute_Groups
-           .Attribute_Group_Definition_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Attribute_Groups
+                 .Attribute_Group_Definition_Node;
 
          XSD_Attribute.Required
            (Name_Attribute_Name,
@@ -1539,10 +1566,12 @@ package body Matreshka.XML_Schema.Handlers is
          Attributes : XML.SAX.Attributes.SAX_Attributes;
          Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Element_Declaration_Access;
+         Node : Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Element_Declarations
-           .Element_Declaration_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Element_Declarations
+                 .Element_Declaration_Node;
 
          XSD_Attribute.Required
            (Name_Attribute_Name,
@@ -1587,9 +1616,12 @@ package body Matreshka.XML_Schema.Handlers is
          Attributes : XML.SAX.Attributes.SAX_Attributes;
          Success    : in out Boolean)
       is
-         Node  : AST.Types.Model_Group_Definition_Access;
+         Node : Matreshka.XML_Schema.AST.Model_Group_Definition_Access;
+
       begin
-         Node := new AST.Model_Groups.Model_Group_Definition_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Model_Groups
+                 .Model_Group_Definition_Node;
 
          XSD_Attribute.Required
            (Name_Attribute_Name,
@@ -1771,10 +1803,11 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node : Matreshka.XML_Schema.AST.Types.Enumeration_Access;
+         Node : Matreshka.XML_Schema.AST.Enumeration_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Constraining_Facets
-           .Enumeration_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Constraining_Facets.Enumeration_Node;
 
          XSD_Attribute.Required
            (Value_Attribute_Name,
@@ -1783,7 +1816,7 @@ package body Matreshka.XML_Schema.Handlers is
             "enumeration element");
 
          Self.Top_State.Last_Simple_Type_Definition.Facets.Append
-           (AST.Types.Abstract_Node_Access (Node));
+           (Matreshka.XML_Schema.AST.Node_Access (Node));
       end Start_Enumeration_Element;
 
       ------------------------------
@@ -1795,10 +1828,11 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node : Matreshka.XML_Schema.AST.Types.Min_Length_Access;
+         Node : Matreshka.XML_Schema.AST.Min_Length_Access;
+
       begin
-         Node := new Matreshka.XML_Schema.AST.Constraining_Facets
-           .Min_Length_Node;
+         Node :=
+           new Matreshka.XML_Schema.AST.Constraining_Facets.Min_Length_Node;
 
          XSD_Attribute.Required
            (Value_Attribute_Name,
@@ -1807,7 +1841,7 @@ package body Matreshka.XML_Schema.Handlers is
             "minLength element");
 
          Self.Top_State.Last_Simple_Type_Definition.Facets.Append
-           (AST.Types.Abstract_Node_Access (Node));
+           (Matreshka.XML_Schema.AST.Node_Access (Node));
       end Start_Min_Length_Element;
 
    end Facets;
@@ -1818,7 +1852,7 @@ package body Matreshka.XML_Schema.Handlers is
 
    function Get_Schema
     (Self : XML_Schema_Handler)
-       return Matreshka.XML_Schema.AST.Types.Schema_Access is
+       return Matreshka.XML_Schema.AST.Schema_Access is
    begin
       return Self.Schema;
    end Get_Schema;
@@ -1838,8 +1872,9 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
-         Term  : Matreshka.XML_Schema.AST.Types.Wildcard_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+         Term : Matreshka.XML_Schema.AST.Wildcard_Access;
+
       begin
          Complex_Types.Create_Particle
            (Self       => Self,
@@ -1867,7 +1902,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
       begin
          Particles.Start_Choice_Element
            (Self       => Self,
@@ -1885,10 +1921,8 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Choice_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
-        Success    : in out Boolean)
-      is
-         use type Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access;
+        Success    : in out Boolean) is
       begin
          XSD_Attribute.Prohibited
            (Name_Attribute_Name,
@@ -1911,7 +1945,7 @@ package body Matreshka.XML_Schema.Handlers is
            (Self       => Self,
             Attributes => Attributes,
             Compositor => AST.Model_Groups.Choice,
-            Success => Success);
+            Success    => Success);
 
          Node.Term := AST.Types.Term_Access (Self.Top_State.Last_Model);
       end Start_Choice_Element;
@@ -1925,9 +1959,10 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
-         Term  : Matreshka.XML_Schema.AST.Types.Element_Declaration_Access;
+         Node  : Matreshka.XML_Schema.AST.Particle_Access;
+         Term  : Matreshka.XML_Schema.AST.Element_Declaration_Access;
          Index : Natural;
+
       begin
          Complex_Types.Create_Particle
            (Self       => Self,
@@ -1979,7 +2014,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
       begin
          Particles.Start_Group_Element
            (Self       => Self,
@@ -1997,7 +2033,7 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Group_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access;
         Success    : in out Boolean) is
       begin
          Complex_Types.Create_Particle
@@ -2018,7 +2054,8 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  : Matreshka.XML_Schema.AST.Types.Particle_Access;
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
       begin
          Particles.Start_Sequence_Element
            (Self       => Self,
@@ -2036,11 +2073,8 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Sequence_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Node       : out Matreshka.XML_Schema.AST.Types.Particle_Access;
-        Success    : in out Boolean)
-      is
-         --  Should we share code with Start_Choice_Element???
-         use type Matreshka.XML_Schema.AST.Types.Model_Group_Access;
+        Node       : out Matreshka.XML_Schema.AST.Particle_Access;
+        Success    : in out Boolean) is
       begin
          XSD_Attribute.Prohibited
            (Name_Attribute_Name,
@@ -2180,8 +2214,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          if Success then
             Self.Top_State.Last_Attribute_Declaration.Type_Definition :=
-              Matreshka.XML_Schema.AST.Types.Simple_Type_Definition_Access
-                (Self.Top_State.Last_Simple_Type_Definition);
+              Self.Top_State.Last_Simple_Type_Definition;
          end if;
       end Start_Attribute_Level_Simple_Type_Element;
 
@@ -2213,8 +2246,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          if Success then
             Self.Top_State.Last_Simple_Type_Definition.Item_Type_Definition :=
-              Matreshka.XML_Schema.AST.Types.Simple_Type_Definition_Access
-                (Self.Top_State.Last_Simple_Type_Definition);
+              Self.Top_State.Last_Simple_Type_Definition;
          end if;
       end Start_List_Level_Simple_Type_Element;
 
@@ -2227,13 +2259,12 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean)
       is
-         Node  :
-           Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Access;
+         Node : Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
 
       begin
          Node :=
-           new
-             Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Node;
+           new Matreshka.XML_Schema.AST.Simple_Types
+                 .Simple_Type_Definition_Node;
 
          XSD_Attribute.Prohibited
            (Final_Attribute_Name,
@@ -2274,13 +2305,12 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean)
       is
          Index : Natural;
-         Node  :
-           Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Access;
+         Node  : Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
 
       begin
          Node :=
-           new
-             Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Node;
+           new Matreshka.XML_Schema.AST.Simple_Types
+                 .Simple_Type_Definition_Node;
 
          --  {final}
          --
@@ -2366,8 +2396,7 @@ package body Matreshka.XML_Schema.Handlers is
          if Success then
             Self.States.Last_Element.Last_Simple_Type_Definition
               .Member_Type_Definitions.Append
-                (Matreshka.XML_Schema.AST.Types.Simple_Type_Definition_Access
-                     (Self.Top_State.Last_Simple_Type_Definition));
+                (Self.Top_State.Last_Simple_Type_Definition);
          end if;
       end Start_Union_Level_Simple_Type_Element;
 

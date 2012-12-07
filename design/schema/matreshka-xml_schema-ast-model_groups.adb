@@ -41,8 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.AST.Model_Groups is
+
+   ----------------
+   -- Enter_Node --
+   ----------------
+
+   overriding procedure Enter_Node
+    (Self    : not null access Model_Group_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Model_Group_Definition
+       (Matreshka.XML_Schema.AST.Model_Group_Definition_Access (Self), Control);
+   end Enter_Node;
+
+   ----------------
+   -- Enter_Node --
+   ----------------
+
+   overriding procedure Enter_Node
+    (Self    : not null access Model_Group_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Model_Group
+       (Matreshka.XML_Schema.AST.Model_Group_Access (Self), Control);
+   end Enter_Node;
 
    --------------
    -- Get_Type --
@@ -56,5 +83,59 @@ package body Matreshka.XML_Schema.AST.Model_Groups is
    begin
       return XML.Schema.Model_Group;
    end Get_Type;
+
+   ----------------
+   -- Leave_Node --
+   ----------------
+
+   overriding procedure Leave_Node
+    (Self    : not null access Model_Group_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Model_Group_Definition
+       (Matreshka.XML_Schema.AST.Model_Group_Definition_Access (Self), Control);
+   end Leave_Node;
+
+   ----------------
+   -- Leave_Node --
+   ----------------
+
+   overriding procedure Leave_Node
+    (Self    : not null access Model_Group_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Model_Group
+       (Matreshka.XML_Schema.AST.Model_Group_Access (Self), Control);
+   end Leave_Node;
+
+   ----------------
+   -- Visit_Node --
+   ----------------
+
+   overriding procedure Visit_Node
+    (Self     : not null access Model_Group_Definition_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Model_Group_Definition
+       (Visitor, Matreshka.XML_Schema.AST.Model_Group_Definition_Access (Self), Control);
+   end Visit_Node;
+
+   ----------------
+   -- Visit_Node --
+   ----------------
+
+   overriding procedure Visit_Node
+    (Self     : not null access Model_Group_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Model_Group
+       (Visitor, Matreshka.XML_Schema.AST.Model_Group_Access (Self), Control);
+   end Visit_Node;
 
 end Matreshka.XML_Schema.AST.Model_Groups;

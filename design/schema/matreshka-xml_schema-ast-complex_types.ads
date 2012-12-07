@@ -56,7 +56,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {mode}
       --  One of {interleave, suffix}. Required.
 
-      Wildcard : Types.Wildcard_Access;
+      Wildcard : Matreshka.XML_Schema.AST.Wildcard_Access;
       --  {wildcard}
       --  A Wildcard component. Required.
    end record;
@@ -69,7 +69,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
 
       case Variety is
          when Element_Only | Mixed =>
-            Particle : Types.Particle_Access;
+            Particle     : Matreshka.XML_Schema.AST.Particle_Access;
             --  {particle}
             --  A Particle component. Required if {variety} is element-only or
             --  mixed, otherwise must be ·absent·.
@@ -80,10 +80,12 @@ package Matreshka.XML_Schema.AST.Complex_Types is
             --  element-only or mixed, otherwise must be ·absent·.
 
          when Simple =>
-            Simple_Type_Definition : Types.Simple_Type_Definition_Access;
+            Simple_Type_Definition :
+              Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
             --  {simple type definition}
             --  A Simple Type Definition component. Required if {variety} is
             --  simple, otherwise must be ·absent·.
+
          when Empty =>
             null;
       end case;
@@ -114,7 +116,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {final}
       --  A subset of {extension, restriction}.
 
-      Context : Types.Abstract_Node_Access;
+      Context : Matreshka.XML_Schema.AST.Node_Access;
       --  {context}
       --  Required if {name} is ·absent·, otherwise must be ·absent·.
       --  Either an Element Declaration or a Complex Type Definition.
@@ -131,7 +133,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {attribute uses}
       --  A set of Attribute Use components.
 
-      Attribute_Wildcard : Types.Wildcard_Access;
+      Attribute_Wildcard : Matreshka.XML_Schema.AST.Wildcard_Access;
       --  {attribute wildcard}
       --  A Wildcard component. Optional.
 
@@ -158,5 +160,24 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       Any_Type_Restriction : Boolean := False;
       --  Marker for implicit restriction of xs:anyType
    end record;
+
+   overriding procedure Enter_Node
+    (Self    : not null access Complex_Type_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Complex_Type_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Complex_Type_Definition_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Complex_Types;

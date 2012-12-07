@@ -46,6 +46,7 @@ with XML.SAX.Simple_Readers;
 
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
+with Matreshka.XML_Schema.AST.Schemas;
 with Matreshka.XML_Schema.Handlers;
 with Matreshka.XML_Schema.URI_Rewriter;
 
@@ -85,13 +86,13 @@ package body Matreshka.XML_Schema.Loaders is
      URI  : League.Strings.Universal_String)
        return Matreshka.XML_Schema.AST.Model_Access
    is
-      use type Matreshka.XML_Schema.AST.Types.Schema_Access;
+      use type Matreshka.XML_Schema.AST.Schema_Access;
 
       Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
       Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler
                          (Self'Access);
       Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      Schema  : Matreshka.XML_Schema.AST.Types.Schema_Access;
+      Schema  : Matreshka.XML_Schema.AST.Schema_Access;
       Next    : Document_Access;
       Failure : Boolean;
       Model   : Matreshka.XML_Schema.AST.Model_Access;

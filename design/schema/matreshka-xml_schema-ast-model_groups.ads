@@ -54,22 +54,41 @@ package Matreshka.XML_Schema.AST.Model_Groups is
       --  Properties:
       --
 
-      Annotations : Types.Annotation_Lists.List;
+      Annotations      : Types.Annotation_Lists.List;
       --  {annotations}
       --  A sequence of Annotation components.
 
-      Name  : League.Strings.Universal_String;
+      Name             : League.Strings.Universal_String;
       --  {name}
       --  An xs:NCName value. Required.
 
-      Target_Namespace  : League.Strings.Universal_String;
+      Target_Namespace : League.Strings.Universal_String;
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
-      Model_Group : Types.Model_Group_Access;
+      Model_Group      : Matreshka.XML_Schema.AST.Model_Group_Access;
       --  {model group}
       --  A Model Group component. Required.
    end record;
+
+   overriding procedure Enter_Node
+    (Self    : not null access Model_Group_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Model_Group_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Model_Group_Definition_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
    type Compositor_Kind is (Al1, Choice, Sequence);
 
@@ -92,5 +111,24 @@ package Matreshka.XML_Schema.AST.Model_Groups is
 
    overriding function Get_Type
     (Self : not null access Model_Group_Node) return XML.Schema.Component_Type;
+
+   overriding procedure Enter_Node
+    (Self    : not null access Model_Group_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Model_Group_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Model_Group_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Model_Groups;

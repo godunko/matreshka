@@ -69,10 +69,29 @@ package Matreshka.XML_Schema.AST.Attribute_Groups is
       --  {attribute uses}
       --  A set of Attribute Use components.
 
-      Attribute_Wildcard : Types.Wildcard_Access;
+      Attribute_Wildcard : Matreshka.XML_Schema.AST.Wildcard_Access;
       --  {attribute wildcard}
       --  A Wildcard component. Optional.
    end record;
+
+   overriding procedure Enter_Node
+    (Self    : not null access Attribute_Group_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Attribute_Group_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Attribute_Group_Definition_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
    type Attribute_Group_Reference_Node is new Abstract_Node with record
       --  Internal data.
@@ -83,5 +102,24 @@ package Matreshka.XML_Schema.AST.Attribute_Groups is
    --  Attribute_Group_Reference_Node is internal purpose type to represent
    --  references to attribute group inside complexType. After name resolution
    --  the group will populate {attribute_uses}
+
+   overriding procedure Enter_Node
+    (Self    : not null access Attribute_Group_Reference_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Attribute_Group_Reference_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Attribute_Group_Reference_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Attribute_Groups;

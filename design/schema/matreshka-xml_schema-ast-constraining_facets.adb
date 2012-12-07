@@ -41,50 +41,88 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Hashed_Maps;
+with Matreshka.XML_Schema.Visitors;
 
-with League.IRIs;
-with League.Strings;
-private with League.Strings.Hash;
+package body Matreshka.XML_Schema.AST.Constraining_Facets is
 
-with Matreshka.XML_Schema.AST;
+   ----------------
+   -- Enter_Node --
+   ----------------
 
-package Matreshka.XML_Schema.Loaders is
+   overriding procedure Enter_Node
+    (Self    : not null access Enumeration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Enumeration
+       (Matreshka.XML_Schema.AST.Enumeration_Access (Self), Control);
+   end Enter_Node;
 
-   type Model_Loader is tagged limited private;
+   ----------------
+   -- Enter_Node --
+   ----------------
 
-   function Load
-    (Self : in out Model_Loader'Class;
-     URI  : League.Strings.Universal_String)
-       return Matreshka.XML_Schema.AST.Model_Access;
-   --  Loads complete schema from the specified URI.
+   overriding procedure Enter_Node
+    (Self    : not null access Min_Length_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Min_Length
+       (Matreshka.XML_Schema.AST.Min_Length_Access (Self), Control);
+   end Enter_Node;
 
-   procedure Enqueue_Document
-    (Self            : in out Model_Loader'Class;
-     Namespace_URI   : League.Strings.Universal_String;
-     Base_URI        : League.IRIs.IRI;
-     Schema_Location : League.Strings.Universal_String);
-   --  Add document to be loaded.
+   ----------------
+   -- Leave_Node --
+   ----------------
 
-private
+   overriding procedure Leave_Node
+    (Self    : not null access Enumeration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Enumeration
+       (Matreshka.XML_Schema.AST.Enumeration_Access (Self), Control);
+   end Leave_Node;
 
-   type Document_Record is record
-      URI    : League.Strings.Universal_String;
-      Hint   : League.Strings.Universal_String;
-      Schema : Matreshka.XML_Schema.AST.Schema_Access;
-   end record;
+   ----------------
+   -- Leave_Node --
+   ----------------
 
-   type Document_Access is access all Document_Record;
+   overriding procedure Leave_Node
+    (Self    : not null access Min_Length_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Min_Length
+       (Matreshka.XML_Schema.AST.Min_Length_Access (Self), Control);
+   end Leave_Node;
 
-   package Document_Maps is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           Document_Access,
-           League.Strings.Hash,
-           League.Strings."=");
+   ----------------
+   -- Visit_Node --
+   ----------------
 
-   type Model_Loader is tagged limited record
-      Documents : Document_Maps.Map;
-   end record;
+   overriding procedure Visit_Node
+    (Self     : not null access Enumeration_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Enumeration
+       (Visitor, Matreshka.XML_Schema.AST.Enumeration_Access (Self), Control);
+   end Visit_Node;
 
-end Matreshka.XML_Schema.Loaders;
+   ----------------
+   -- Visit_Node --
+   ----------------
+
+   overriding procedure Visit_Node
+    (Self     : not null access Min_Length_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Min_Length
+       (Visitor, Matreshka.XML_Schema.AST.Min_Length_Access (Self), Control);
+   end Visit_Node;
+
+end Matreshka.XML_Schema.AST.Constraining_Facets;

@@ -51,9 +51,7 @@
 private with Ada.Containers.Vectors;
 
 with League.Strings;
-private with Matreshka.XML_Schema.AST.Schemas;
-private with Matreshka.XML_Schema.AST.Simple_Types;
-with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.AST;
 with Matreshka.XML_Schema.Loaders;
 private with XML.SAX.Attributes;
 private with XML.SAX.Locators;
@@ -67,8 +65,7 @@ package Matreshka.XML_Schema.Handlers is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
 
    function Get_Schema
-    (Self : XML_Schema_Handler)
-       return Matreshka.XML_Schema.AST.Types.Schema_Access;
+    (Self : XML_Schema_Handler) return Matreshka.XML_Schema.AST.Schema_Access;
    --  Returns constructed schema.
 
 private
@@ -104,22 +101,23 @@ private
      Union);
 
    type State_Value is record
-      State                       : States;
-      Last_Simple_Type_Definition :
-        Matreshka.XML_Schema.AST.Simple_Types.Simple_Type_Definition_Access;
-      Last_Attribute_Declaration  :
-        Matreshka.XML_Schema.AST.Types.Attribute_Declaration_Access;
+      State                           : States;
+      Last_Simple_Type_Definition     :
+        Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
+      Last_Attribute_Declaration      :
+        Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
       Last_Attribute_Group_Definition :
-        Matreshka.XML_Schema.AST.Types.Attribute_Group_Definition_Access;
-      Last_Complex_Type_Definition :
-        Matreshka.XML_Schema.AST.Types.Complex_Type_Definition_Access;
-      Last_Element_Declaration  :
-        Matreshka.XML_Schema.AST.Types.Element_Declaration_Access;
-      Last_Model : Matreshka.XML_Schema.AST.Types.Model_Group_Access;
-      Last_Model_Definition :
-        Matreshka.XML_Schema.AST.Types.Model_Group_Definition_Access;
-      Last_Constraint :
-        Matreshka.XML_Schema.AST.Types.Identity_Constraint_Definition_Access;
+        Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access;
+      Last_Complex_Type_Definition    :
+        Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+      Last_Element_Declaration        :
+        Matreshka.XML_Schema.AST.Element_Declaration_Access;
+      Last_Model                      :
+        Matreshka.XML_Schema.AST.Model_Group_Access;
+      Last_Model_Definition           :
+        Matreshka.XML_Schema.AST.Model_Group_Definition_Access;
+      Last_Constraint                 :
+        Matreshka.XML_Schema.AST.Identity_Constraint_Definition_Access;
    end record;
 
    package State_Vectors is
@@ -130,7 +128,7 @@ private
             Matreshka.XML_Schema.Loaders.Model_Loader'Class) is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
       Locator      : XML.SAX.Locators.SAX_Locator;
-      Schema       : Matreshka.XML_Schema.AST.Types.Schema_Access;
+      Schema       : Matreshka.XML_Schema.AST.Schema_Access;
       Ignore_Depth : Natural := 0;
       States       : State_Vectors.Vector;  --  Stack of states except top
 

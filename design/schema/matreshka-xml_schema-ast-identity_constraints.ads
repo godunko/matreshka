@@ -79,7 +79,8 @@ package Matreshka.XML_Schema.AST.Identity_Constraints is
       --  {fields}
       --  A sequence of XPath Expression property records.
 
-      Referenced_Key : Types.Identity_Constraint_Definition_Access;
+      Referenced_Key :
+        Matreshka.XML_Schema.AST.Identity_Constraint_Definition_Access;
       --  {referenced key}
       --  An Identity-Constraint Definition component. Required
       --  if {identity-constraint category} is keyref,
@@ -88,5 +89,24 @@ package Matreshka.XML_Schema.AST.Identity_Constraints is
       --  If a value is present, its {identity-constraint category} must be
       --  key or unique.
    end record;
+
+   overriding procedure Enter_Node
+    (Self    : not null access Identity_Constraint_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Identity_Constraint_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Identity_Constraint_Definition_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Identity_Constraints;

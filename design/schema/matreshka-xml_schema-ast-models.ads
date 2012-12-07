@@ -45,7 +45,6 @@ with Ada.Containers.Hashed_Maps;
 
 with League.Strings.Hash;
 
-with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Types;
 
 package Matreshka.XML_Schema.AST.Models is
@@ -55,16 +54,33 @@ package Matreshka.XML_Schema.AST.Models is
    package Namespace_Maps is
      new Ada.Containers.Hashed_Maps
           (League.Strings.Universal_String,
-           Matreshka.XML_Schema.AST.Namespaces.Namespace_Access,
+           Matreshka.XML_Schema.AST.Namespace_Access,
            League.Strings.Hash,
            League.Strings."=",
-           Matreshka.XML_Schema.AST.Namespaces."=");
+           Matreshka.XML_Schema.AST."=");
 
    type Model_Node is new Abstract_Node with record
       Schemas    : Types.Schema_Maps.Map;
       Namespaces : Namespace_Maps.Map;
    end record;
 
-   type Model_Node_Access is access all Model_Node;
+   overriding procedure Enter_Node
+    (Self    : not null access Model_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Model_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Model_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Models;

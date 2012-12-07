@@ -70,7 +70,7 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  {final}
       --  A subset of {extension, restriction, list, union}.
 
-      Context : Types.Abstract_Node_Access;
+      Context : Matreshka.XML_Schema.AST.Node_Access;
       --  {context}
       --  Required if {name} is ·absent·, otherwise must be ·absent·.
       --
@@ -103,7 +103,8 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  Definitions except ·xs:anySimpleType·, in which it is ·absent·.
       --
 
-      Simple_Type_Definition : Types.Simple_Type_Definition_Access;
+      Simple_Type_Definition :
+        Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
       --  {primitive type definition}
       --  A Simple Type Definition component. With one exception, required if
       --  {variety} is atomic, otherwise must be ·absent·. The exception is
@@ -112,7 +113,8 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  If non-·absent·, must be a primitive definition.
       --
 
-      Item_Type_Definition : Types.Simple_Type_Definition_Access;
+      Item_Type_Definition :
+        Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
       --  {item type definition}
       --  A Simple Type Definition component. Required if {variety} is list,
       --  otherwise must be ·absent·.
@@ -145,7 +147,23 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  list/@itemType
    end record;
 
-   type Simple_Type_Definition_Access is
-     access all Simple_Type_Definition_Node'Class;
+   overriding procedure Enter_Node
+    (Self    : not null access Simple_Type_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Simple_Type_Definition_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Simple_Type_Definition_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Simple_Types;

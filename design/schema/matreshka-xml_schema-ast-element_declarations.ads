@@ -57,7 +57,8 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
             --  {alternatives}
             --  A sequence of Type Alternative components.
 
-            Default_Type_Definition : Types.Type_Alternative_Access;
+            Default_Type_Definition :
+              Matreshka.XML_Schema.AST.Type_Alternative_Access;
             --  {default type definition}
             --  A Type Alternative component. Required.
          when True =>
@@ -133,5 +134,24 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
    overriding function Get_Type
     (Self : not null access Element_Declaration_Node)
        return XML.Schema.Component_Type;
+
+   overriding procedure Enter_Node
+    (Self    : not null access Element_Declaration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Node
+    (Self    : not null access Element_Declaration_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Node
+    (Self     : not null access Element_Declaration_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST.Element_Declarations;

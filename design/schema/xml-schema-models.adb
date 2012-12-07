@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.XML_Schema.AST.Models;
+with Matreshka.XML_Schema.AST.Namespaces;
 
 package body XML.Schema.Models is
 
