@@ -71,6 +71,9 @@ package XML.Schema is
    --  Ada best practice. None is a special value to be used when where is no
    --  component present.
 
+   subtype Type_Category is Extended_XML_Schema_Component_Type
+     range Complex_Type .. Simple_Type;
+
    -----------
    -- Scope --
    -----------

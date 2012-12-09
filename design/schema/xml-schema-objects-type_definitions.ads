@@ -41,12 +41,100 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This interface represents a complex or simple type definition.
+------------------------------------------------------------------------------
 
 package XML.Schema.Objects.Type_Definitions is
 
    pragma Preelaborate;
 
    type XS_Type_Definition is new XS_Object with private;
+
+   function Get_Type_Category
+    (Self : XS_Type_Definition'Class) return XML.Schema.Type_Category;
+   --  Return whether this type definition is a simple type or complex type.
+
+   function Get_Base_Type
+    (Self : XS_Type_Definition'Class) return XS_Type_Definition;
+   --  {base type definition}: either a simple type definition or a complex
+   --  type definition.
+
+   function Is_Final
+    (Self        : XS_Type_Definition'Class;
+     Restriction : XML.Schema.Type_Derivation_Control) return Boolean;
+   --  {final}. For a complex type definition it is a subset of {extension,
+   --  restriction}. For a simple type definition it is a subset of {extension,
+   --  list, restriction, union}.
+   --
+   --  Parameters
+   --
+   --    restriction of type unsigned short
+   --
+   --      Extension, restriction, list, union constants (defined in
+   --      XSConstants).
+   --
+   --  Return Value
+   --
+   --    True if restriction is in the final set, otherwise false.
+
+   function Get_Final
+    (Self : XS_Type_Definition'Class) return XML.Schema.Derivation_Set;
+   --  For complex types the returned value is a bit combination of the subset
+   --  of {DERIVATION_EXTENSION, DERIVATION_RESTRICTION} corresponding to final
+   --  set of this type or DERIVATION_NONE. For simple types the returned value
+   --  is a bit combination of the subset of { DERIVATION_RESTRICTION,
+   --  DERIVATION_EXTENSION, DERIVATION_UNION, DERIVATION_LIST} corresponding
+   --  to final set of this type or DERIVATION_NONE. 
+
+   function Get_Anonymous (Self : XS_Type_Definition'Class) return Boolean;
+   --  Convenience attribute. A boolean that specifies if the type definition
+   --  is anonymous.
+
+   function Derived_From_Type
+    (Self              : XS_Type_Definition'Class;
+     Ancestor_Type     : XS_Type_Definition'Class;
+     Derivation_Method : XML.Schema.Derivation_Set) return Boolean;
+   --  Convenience method which checks if this type is derived from the given
+   --  ancestorType.
+   --
+   --  Parameters
+   --
+   --    ancestorType of type XSTypeDefinition
+   --      An ancestor type definition.
+   --
+   --    derivationMethod of type unsigned short
+   --      A bit combination representing a subset of {DERIVATION_RESTRICTION,
+   --      DERIVATION_EXTENSION, DERIVATION_UNION, DERIVATION_LIST}.
+   --
+   --  Return Value
+   --
+   --    True if this type is derived from ancestorType using only derivation
+   --    methods from the derivationMethod. 
+
+   function Derived_From
+    (Self              : XS_Type_Definition'Class;
+     Namespace         : League.Strings.Universal_String;
+     Name              : League.Strings.Universal_String;
+     Derivation_Method : XML.Schema.Derivation_Set) return Boolean;
+   --  Convenience method which checks if this type is derived from the given
+   --  ancestor type.
+   --
+   --  Parameters
+   --
+   --    namespace of type GenericString
+   --      An ancestor type namespace.
+   --
+   --    name of type GenericString
+   --      An ancestor type name.
+   --
+   --    derivationMethod of type unsigned short
+   --      A bit combination representing a subset of {DERIVATION_RESTRICTION,
+   --      DERIVATION_EXTENSION, DERIVATION_UNION, DERIVATION_LIST}.
+   --
+   --  Return Value
+   --
+   --    True if this type is derived from ancestorType using only derivation
+   --    methods from the derivationMethod. 
 
 private
 
