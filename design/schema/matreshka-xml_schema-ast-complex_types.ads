@@ -44,6 +44,7 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
+with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Complex_Types is
 
@@ -112,7 +113,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {base type definition}
       --  A type definition component. Required.
 
-      Final : Derivation_Set;
+      Final : XML.Schema.Derivation_Set;
       --  {final}
       --  A subset of {extension, restriction}.
 
@@ -121,7 +122,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  Required if {name} is ·absent·, otherwise must be ·absent·.
       --  Either an Element Declaration or a Complex Type Definition.
 
-      Derivation_Method : Type_Derivation_Control;
+      Derivation_Method : XML.Schema.Type_Derivation_Control;
       --  {derivation method}
       --  One of {extension, restriction}. Required.
 
@@ -141,7 +142,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {content type}
       --  A Content Type property record. Required.
 
-      Prohibited_Substitutions : Derivation_Set;
+      Prohibited_Substitutions : XML.Schema.Derivation_Set;
       --  {prohibited substitutions}
       --  A subset of {extension, restriction}.
 

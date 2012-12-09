@@ -112,11 +112,11 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
       --  {substitution group affiliations}
       --  A set of Element Declaration components.
 
-      Substitution_Group_Exclusions : Derivation_Set;
+      Substitution_Group_Exclusions : XML.Schema.Derivation_Set;
       --  {substitution group exclusions}
       --  A subset of {extension, restriction}.
 
-      Disallowed_Substitutions : Derivation_Set;
+      Disallowed_Substitutions : XML.Schema.Derivation_Set;
       --  {disallowed substitutions}
       --  A subset of {substitution, extension, restriction}.
 

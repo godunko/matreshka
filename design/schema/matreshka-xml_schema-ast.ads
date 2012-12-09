@@ -65,12 +65,6 @@ package Matreshka.XML_Schema.AST is
 
    pragma Preelaborate;
 
-   type Type_Derivation_Control is
-     (Extension, Restriction, List, Union, Substitution);
-
-   type Derivation_Set is array (Type_Derivation_Control) of Boolean;
-   pragma Pack (Derivation_Set);
-
    type Simple_Type_Variety is (Absent, Atomic, List, Union);
 
    -------------------

@@ -44,6 +44,7 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
+with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Simple_Types is
 
@@ -66,7 +67,7 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
-      Final : Matreshka.XML_Schema.AST.Derivation_Set;
+      Final : XML.Schema.Derivation_Set;
       --  {final}
       --  A subset of {extension, restriction, list, union}.
 

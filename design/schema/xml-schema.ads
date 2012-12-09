@@ -102,6 +102,22 @@ package XML.Schema is
      VC_Fixed);
      --  Indicates that there is a fixed value constraint for this attribute.
 
+   ------------------------
+   -- Derivation Control --
+   ------------------------
+
+   type Type_Derivation_Control is
+     (Derivation_Extension,
+      Derivation_Restriction,
+      Derivation_Substitution,
+      Derivation_Union,
+      Derivation_List);
+
+   type Derivation_Set is array (Type_Derivation_Control) of Boolean;
+   pragma Pack (Derivation_Set);
+
+   Derivation_None : constant Derivation_Set := (others => False);
+
    -------------------------------------------
    -- Built-in types: primitive and derived --
    -------------------------------------------

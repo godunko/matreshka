@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Wide_Wide_Text_IO;
+
 with League.String_Vectors;
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
@@ -59,8 +61,7 @@ with Matreshka.XML_Schema.AST.Schemas;
 with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Wildcards;
-with Ada.Wide_Wide_Text_IO;
-
+with XML.Schema;
 
 package body Matreshka.XML_Schema.Handlers is
 
@@ -211,8 +212,7 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("required");
 
    function To_Derivation_Set
-    (Image : League.Strings.Universal_String)
-       return Matreshka.XML_Schema.AST.Derivation_Set;
+    (Image : League.Strings.Universal_String) return XML.Schema.Derivation_Set;
    --  Converts textual representation of fullDerivationSet datatype into
    --  internal representation. It assumes that textual representation is
    --  normalized according to XML rules.
@@ -1014,7 +1014,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "extension");
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
-           AST.Extension;
+           XML.Schema.Derivation_Extension;
       end Start_Extension_Element;
 
       -------------------------
@@ -1056,7 +1056,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "restriction element");
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
-           AST.Restriction;
+           XML.Schema.Derivation_Restriction;
       end Start_Restriction_Element;
 
       ----------------------------
@@ -1122,7 +1122,7 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean) is
       begin
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
-           AST.Restriction;
+           XML.Schema.Derivation_Restriction;
 
          Self.Top_State.Last_Complex_Type_Definition.Any_Type_Restriction :=
            True;
@@ -1143,7 +1143,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       begin
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
-           AST.Restriction;
+           XML.Schema.Derivation_Restriction;
 
          Self.Top_State.Last_Complex_Type_Definition.Any_Type_Restriction :=
            True;
@@ -1168,7 +1168,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       begin
          Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
-           AST.Restriction;
+           XML.Schema.Derivation_Restriction;
 
          Self.Top_State.Last_Complex_Type_Definition.Any_Type_Restriction :=
            True;
@@ -1436,10 +1436,6 @@ package body Matreshka.XML_Schema.Handlers is
          Self.Top_State.Last_Model_Definition.Model_Group :=
            Self.Top_State.Last_Model;
       end Start_Group_Level_Sequence_Element;
-
-      ----------------------------
-      -- Start_Notation_Element --
-      ----------------------------
 
       ----------------------------
       -- Start_Notation_Element --
@@ -2863,7 +2859,7 @@ package body Matreshka.XML_Schema.Handlers is
 
    function To_Derivation_Set
     (Image : League.Strings.Universal_String)
-       return Matreshka.XML_Schema.AST.Derivation_Set is
+       return XML.Schema.Derivation_Set is
    begin
       --  Check for '#all' literal.
 
@@ -2877,7 +2873,7 @@ package body Matreshka.XML_Schema.Handlers is
       declare
          Items   : constant League.String_Vectors.Universal_String_Vector
            := Image.Split (' ');
-         Result  : Matreshka.XML_Schema.AST.Derivation_Set := (others => False);
+         Result  : XML.Schema.Derivation_Set := (others => False);
          Element : League.Strings.Universal_String;
 
       begin
@@ -2885,16 +2881,16 @@ package body Matreshka.XML_Schema.Handlers is
             Element := Items.Element (J);
 
             if Element = Restriction_Literal_Image then
-               Result (Matreshka.XML_Schema.AST.Restriction) := True;
+               Result (XML.Schema.Derivation_Restriction) := True;
 
             elsif Element = Extension_Literal_Image then
-               Result (Matreshka.XML_Schema.AST.Extension) := True;
+               Result (XML.Schema.Derivation_Extension) := True;
 
             elsif Element = List_Literal_Image then
-               Result (Matreshka.XML_Schema.AST.List) := True;
+               Result (XML.Schema.Derivation_List) := True;
 
             elsif Element = Union_Literal_Image then
-               Result (Matreshka.XML_Schema.AST.Union) := True;
+               Result (XML.Schema.Derivation_Union) := True;
             end if;
          end loop;
 

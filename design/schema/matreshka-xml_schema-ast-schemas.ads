@@ -46,6 +46,7 @@ with Ada.Containers.Hashed_Maps;
 with League.Strings.Hash;
 
 with Matreshka.XML_Schema.AST.Types;
+with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Schemas is
 
@@ -90,7 +91,7 @@ package Matreshka.XML_Schema.AST.Schemas is
 
       --  Internal data.
 
-      Final_Default            : Matreshka.XML_Schema.AST.Derivation_Set;
+      Final_Default            : XML.Schema.Derivation_Set;
 
       Target_Namespace         : League.Strings.Universal_String;
       Target_Namespace_Defined : Boolean;
