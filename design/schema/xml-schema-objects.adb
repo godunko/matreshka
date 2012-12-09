@@ -48,6 +48,24 @@ package body XML.Schema.Objects is
 
    use type Matreshka.XML_Schema.AST.Objects.Object_Access;
 
+   ---------
+   -- "=" --
+   ---------
+
+   function "=" (Left : XS_Object; Right : XS_Object) return Boolean is
+   begin
+      return Left.Node = Right.Node;
+   end "=";
+
+   ---------
+   -- "=" --
+   ---------
+
+   function "=" (Left : XS_Object; Right : XS_Object'Class) return Boolean is
+   begin
+      return Left.Node = Right.Node;
+   end "=";
+
    --------------
    -- Get_Name --
    --------------

@@ -104,6 +104,9 @@ package XML.Schema.Objects is
        return
          XML.Schema.Objects.Terms.Element_Declarations.XS_Element_Declaration;
 
+   function "=" (Left : XS_Object; Right : XS_Object) return Boolean;
+   function "=" (Left : XS_Object; Right : XS_Object'Class) return Boolean;
+
 private
 
    type XS_Object is new Ada.Finalization.Controlled with record
