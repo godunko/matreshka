@@ -176,7 +176,8 @@ package body Matreshka.XML_Schema.Loaders is
          Model.Namespaces.Insert
           (Document.Schema.Target_Namespace,
            new Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'
-                (Namespace_URI => Document.Schema.Target_Namespace));
+                (Namespace_URI        => Document.Schema.Target_Namespace,
+                 Element_Declarations => <>));
 
          --  Construct namespace.
 

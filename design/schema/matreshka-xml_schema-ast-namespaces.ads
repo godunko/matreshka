@@ -46,12 +46,18 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
+with Matreshka.XML_Schema.AST.Types;
+
 package Matreshka.XML_Schema.AST.Namespaces is
 
    pragma Preelaborate;
 
    type Namespace_Node is new Abstract_Node with record
-      Namespace_URI : League.Strings.Universal_String;
+      Namespace_URI        : League.Strings.Universal_String;
+
+      Element_Declarations :
+        Matreshka.XML_Schema.AST.Types.Element_Declaration_Maps.Map;
+      --  A set of Element Declaration components.
    end record;
 
    function Get_Element_Declaration
