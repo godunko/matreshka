@@ -1,6 +1,10 @@
 <?xml version='1.0'?>
 
+<!--  XXX This declaration is commented out to avoid resolve of external DTD
+      by Matreshka SAX_Simple_Reader.
 <!DOCTYPE xs:schema PUBLIC "-//W3C//DTD XSD 1.1//EN" "XMLSchema.dtd" [
+-->
+<!DOCTYPE xs:schema [
 
 <!-- provide ID type information even for parsers which only read the
      internal subset -->
