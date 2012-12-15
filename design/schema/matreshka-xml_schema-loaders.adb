@@ -47,8 +47,11 @@ with XML.SAX.Simple_Readers;
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Schemas;
+with Matreshka.XML_Schema.Containment_Iterators;
 with Matreshka.XML_Schema.Handlers;
+with Matreshka.XML_Schema.Namespace_Builders;
 with Matreshka.XML_Schema.URI_Rewriter;
+with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.Loaders is
 
@@ -174,6 +177,25 @@ package body Matreshka.XML_Schema.Loaders is
           (Document.Schema.Target_Namespace,
            new Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'
                 (Namespace_URI => Document.Schema.Target_Namespace));
+
+         --  Construct namespace.
+
+         declare
+            Iterator :
+              Matreshka.XML_Schema.Containment_Iterators.Containment_Iterator;
+            Visitor  :
+              Matreshka.XML_Schema.Namespace_Builders.Namespace_Builder;
+            Control  : Matreshka.XML_Schema.Visitors.Traverse_Control
+              := Matreshka.XML_Schema.Visitors.Continue;
+
+         begin
+            Matreshka.XML_Schema.Visitors.Visit
+             (Iterator,
+              Visitor,
+              Matreshka.XML_Schema.AST.Node_Access (Document.Schema),
+              Control);
+         end;
+
       end loop;
 
       return Model;
