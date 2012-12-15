@@ -675,6 +675,10 @@ package body Matreshka.XML_Schema.Handlers is
 
    end Particles;
 
+   -------------------
+   -- Complex_Types --
+   -------------------
+
    package body Complex_Types is
 
       ---------------------
@@ -1647,6 +1651,17 @@ package body Matreshka.XML_Schema.Handlers is
 
    end Declarations;
 
+   ------------------
+   -- End_Document --
+   ------------------
+
+   overriding procedure End_Document
+    (Self    : in out XML_Schema_Handler;
+     Success : in out Boolean) is
+   begin
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Integer'Wide_Wide_Image (Integer (Self.States.Length)));
+   end End_Document;
 
    -----------------
    -- End_Element --

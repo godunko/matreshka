@@ -131,7 +131,6 @@ private
       Schema       : Matreshka.XML_Schema.AST.Schema_Access;
       Ignore_Depth : Natural := 0;
       States       : State_Vectors.Vector;  --  Stack of states except top
-
       Top_State    : State_Value;  --  Separate top item of stack
    end record;
 
@@ -155,6 +154,10 @@ private
     (Self : XML_Schema_Handler) return League.Strings.Universal_String;
 
    overriding procedure Start_Document
+    (Self    : in out XML_Schema_Handler;
+     Success : in out Boolean);
+
+   overriding procedure End_Document
     (Self    : in out XML_Schema_Handler;
      Success : in out Boolean);
 
