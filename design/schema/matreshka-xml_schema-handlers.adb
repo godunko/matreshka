@@ -351,7 +351,6 @@ package body Matreshka.XML_Schema.Handlers is
         (Self       : in out XML_Schema_Handler;
          Success    : in out Boolean) is null;
 
-
    end Declarations;
 
    package XSD_Attribute is
@@ -1281,6 +1280,7 @@ package body Matreshka.XML_Schema.Handlers is
          if Has_Ref then
             --  Attribute Use
             Node.Ref := Attributes.Value (Index);
+
          else --  not Has_Ref
             --  maps both to an Attribute Declaration and to an Attribute Use
             Decl_Node := new Matreshka.XML_Schema.AST.Attribute_Declarations
@@ -1304,12 +1304,10 @@ package body Matreshka.XML_Schema.Handlers is
               (Attributes, Inheritable_Attribute_Name);
 
             Node.Attribute_Declaration := Decl_Node;
+
+            Self.Mutate (Attribute_Declaration);
             Self.State.Last_Attribute_Declaration := Decl_Node;
-
-            --  Fix top state
-            Self.State.State := Attribute_Declaration;
          end if;
-
       end Local_Attribute_Element;
 
       ----------------
@@ -1993,10 +1991,10 @@ package body Matreshka.XML_Schema.Handlers is
                Parent  => null);  --  Not so easy to get parent here
 
             Node.Term := AST.Types.Term_Access (Term);
+
+            Self.Mutate (Element_Declaration);
             Self.State.Last_Element_Declaration := Term;
 
-            --  Fix top state
-            Self.State.State := Element_Declaration;
          else
             Node.Element_Ref := Attributes.Value (Index);
          end if;
@@ -2130,6 +2128,33 @@ package body Matreshka.XML_Schema.Handlers is
       end if;
    end Get_Value_Constant;
 
+   ------------
+   -- Mutate --
+   ------------
+
+   procedure Mutate (Self : in out XML_Schema_Handler'Class; State : States) is
+   begin
+      case State is
+         when Attribute_Declaration =>
+            Self.State :=
+             (State                           => State,
+              Last_Attribute_Group_Definition =>
+                Self.State.Last_Attribute_Group_Definition,
+              Last_Complex_Type_Definition    =>
+                Self.State.Last_Complex_Type_Definition,
+              others                          => <>);
+
+         when Element_Declaration =>
+            Self.State :=
+             (State      => State,
+              Last_Model => Self.State.Last_Model,
+              others     => <>);
+
+         when others =>
+            Self.State := (State, others => <>);
+      end case;
+   end Mutate;
+
    ---------
    -- Pop --
    ---------
@@ -2145,9 +2170,203 @@ package body Matreshka.XML_Schema.Handlers is
    ----------
 
    procedure Push (Self : in out XML_Schema_Handler'Class; State : States) is
+      use type Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+
    begin
       Self.States.Append (Self.State);
-      Self.State.State := State;
+
+      case State is
+         when Any =>
+            --  Propagate current model group, which is created in Sequence
+            --  state.
+
+            Self.State :=
+             (State,
+              Last_Model => Self.State.Last_Model,
+              others => <>);
+
+         when Any_Attribute =>
+            --  Propagate current complex type definition.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              others => <>);
+
+         when Attribute_Declaration =>
+            --  Propagate current complex type definition and attribute group
+            --  definition.
+
+            Self.State :=
+             (State,
+              Last_Attribute_Group_Definition =>
+                Self.State.Last_Attribute_Group_Definition,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              others => <>);
+
+         when Attribute_Group_Reference =>
+            --  Propagate current complex type definition.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              others => <>);
+
+         when Choice =>
+            --  Propagate current complext type definition and model group
+            --  definition.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              Last_Model_Definition => Self.State.Last_Model_Definition,
+              others => <>);
+
+         when Complex_Content =>
+            --  Propagate current complex type definition, it is used later in
+            --  Attribute_Declaration, Complex_Type_Restriction,
+            --  Complex_Type_Extension and Any_Attribute, Sequence states.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              others => <>);
+
+         when Complex_Type_Extension =>
+            --  Propagate current complex type definition.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              others => <>);
+
+         when Complex_Type_Restriction =>
+            --  Propagate current complex type definition.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              others => <>);
+
+         when Enumeration =>
+            --  Propagate current simple type definition.
+
+            Self.State :=
+             (State,
+              Last_Simple_Type_Definition =>
+                Self.State.Last_Simple_Type_Definition,
+              others => <>);
+
+         when Field =>
+            --  Propagate current constraint.
+
+            Self.State :=
+             (State,
+              Last_Constraint => Self.State.Last_Constraint,
+              others => <>);
+
+         when Group =>
+            --  Propagate current complext type definition and model group
+            --  (which is created in Choice state).
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              Last_Model => Self.State.Last_Model,
+              others => <>);
+
+         when Key =>
+            --  Propagate current element declaration.
+
+            Self.State :=
+             (State,
+              Last_Element_Declaration => Self.State.Last_Element_Declaration,
+              others => <>);
+
+         when Min_Length =>
+            --  Propagate current simple type definition.
+
+            Self.State :=
+             (State,
+              Last_Simple_Type_Definition =>
+                Self.State.Last_Simple_Type_Definition,
+              others => <>);
+
+         when Selector =>
+            --  Propagate current constraint.
+
+            Self.State :=
+             (State,
+              Last_Constraint => Self.State.Last_Constraint,
+              others => <>);
+
+         when Sequence =>
+            --  Propagate current complex type definition and model group
+            --  definition.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              Last_Model_Definition => Self.State.Last_Model_Definition,
+              others => <>);
+
+         when Sequence_Element =>
+            --  Propagate current model group, which is created in Sequence
+            --  state.
+
+            Self.State :=
+             (State,
+              Last_Model => Self.State.Last_Model,
+              others => <>);
+
+         when Simple_Type =>
+            --  Propagate current attribute declaration.
+
+            Self.State :=
+             (State,
+              Last_Attribute_Declaration =>
+                Self.State.Last_Attribute_Declaration,
+              others => <>);
+
+         when Simple_Type_List =>
+            --  Propagate current simple type definition.
+
+            Self.State :=
+             (State,
+              Last_Simple_Type_Definition =>
+                Self.State.Last_Simple_Type_Definition,
+              others => <>);
+
+         when Simple_Type_Restriction =>
+            --  Propagate current simple type definition.
+
+            Self.State :=
+             (State,
+              Last_Simple_Type_Definition =>
+                Self.State.Last_Simple_Type_Definition,
+              others => <>);
+
+         when Union =>
+            --  Propagate current simple type definition.
+
+            Self.State :=
+             (State,
+              Last_Simple_Type_Definition =>
+                Self.State.Last_Simple_Type_Definition,
+              others => <>);
+
+         when others =>
+            Self.State := (State, others => <>);
+      end case;
    end Push;
 
    --------------------------
@@ -2287,8 +2506,7 @@ package body Matreshka.XML_Schema.Handlers is
       procedure Start_Restriction_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
-        Success    : in out Boolean)
-      is
+        Success    : in out Boolean) is
       begin
          Self.State.Last_Simple_Type_Definition.Restriction_Base :=
            Attributes.Value (XML_Schema_Namespace_URI, Base_Attribute_Name);

@@ -71,7 +71,8 @@ package Matreshka.XML_Schema.Handlers is
 private
 
    type States is
-    (Any,
+    (None,
+     Any,
      Any_Attribute,
      Attribute_Declaration,
      Attribute_Group_Declaration,
@@ -100,8 +101,7 @@ private
      Simple_Type_Restriction,
      Union);
 
-   type State_Value is record
-      State                           : States;
+   type State_Value (State : States := None) is record
       Last_Simple_Type_Definition     :
         Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
       Last_Attribute_Declaration      :
@@ -139,6 +139,9 @@ private
 
    procedure Pop (Self : in out XML_Schema_Handler'Class);
    --  Pop state from the state stack.
+
+   procedure Mutate (Self : in out XML_Schema_Handler'Class; State : States);
+   --  Mutate state of top element of state stack. All members are resets.
 
    function Current (Self : XML_Schema_Handler'Class) return States;
    --  Returns current state.
