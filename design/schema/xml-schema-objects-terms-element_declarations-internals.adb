@@ -41,20 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Element_Declarations;
 
-package XML.Schema.Objects.Terms.Element_Declarations is
+package body XML.Schema.Objects.Terms.Element_Declarations.Internals is
 
-   pragma Preelaborate;
+   ------------
+   -- Create --
+   ------------
 
-   type XS_Element_Declaration is new XS_Term with private;
+   function Create
+    (Node : Matreshka.XML_Schema.AST.Element_Declaration_Access)
+       return XS_Element_Declaration is
+   begin
+      return
+       (Ada.Finalization.Controlled with
+          Node => Matreshka.XML_Schema.AST.Objects.Object_Access (Node));
+   end Create;
 
-   Null_XS_Element_Declaration : constant XS_Element_Declaration;
-
-private
-
-   type XS_Element_Declaration is new XS_Term with null record;
-
-   Null_XS_Element_Declaration : constant XS_Element_Declaration
-     := (Ada.Finalization.Controlled with Node => null);
-
-end XML.Schema.Objects.Terms.Element_Declarations;
+end XML.Schema.Objects.Terms.Element_Declarations.Internals;

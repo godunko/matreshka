@@ -2,7 +2,9 @@ with Ada.Wide_Wide_Text_IO;
 
 with League.Application;
 with League.String_Vectors;
+with League.Strings;
 
+with XML.Schema.Element_Declarations;
 with XML.Schema.Models;
 with XML.Schema.Utilities;
 
@@ -31,4 +33,18 @@ begin
           & Namespaces (J).To_Wide_Wide_String
           & ''');
    end loop;
+
+   --  Lookup for element declaration.
+
+   declare
+      Namespace : League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("http://www.actforex.com/iats");
+      Name      : League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("OpenSessionResponse");
+      Decl      : XML.Schema.Element_Declarations.XS_Element_Declaration
+        := Model.Get_Element_Declaration (Name, Namespace);
+
+   begin
+      null;
+   end;
 end Driver;

@@ -64,6 +64,12 @@ package Matreshka.XML_Schema.AST.Models is
       Namespaces : Namespace_Maps.Map;
    end record;
 
+   function Get_Namespace
+    (Self      : not null access constant Model_Node'Class;
+     Namespace : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Namespace_Access;
+   --  Returns namespace item or null if such namespace doesn't exists.
+
    overriding procedure Enter_Node
     (Self    : not null access Model_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;

@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
+with XML.Schema.Element_Declarations.Internals;
 
 package body XML.Schema.Models is
 
@@ -126,10 +127,28 @@ package body XML.Schema.Models is
     (Self      : XS_Model'Class;
      Name      : League.Strings.Universal_String;
      Namespace : League.Strings.Universal_String)
-       return XML.Schema.Element_Declarations.XS_Element_Declaration is
+       return XML.Schema.Element_Declarations.XS_Element_Declaration
+   is
+      use type Matreshka.XML_Schema.AST.Namespace_Access;
+
+      Item : Matreshka.XML_Schema.AST.Namespace_Access;
+
    begin
-      raise Program_Error;
-      return X : XML.Schema.Element_Declarations.XS_Element_Declaration;
+      if Self.Node /= null then
+         --  Lookup for namespace.
+
+         Item := Self.Node.Get_Namespace (Namespace);
+
+         if Item /= null then
+            --  Lookup for element declaration.
+
+            return
+              XML.Schema.Element_Declarations.Internals.Create
+               (Item.Get_Element_Declaration (Name));
+         end if;
+      end if;
+
+      return XML.Schema.Element_Declarations.Null_XS_Element_Declaration;
    end Get_Element_Declaration;
 
    --------------------------------

@@ -54,6 +54,12 @@ package Matreshka.XML_Schema.AST.Namespaces is
       Namespace_URI : League.Strings.Universal_String;
    end record;
 
+   function Get_Element_Declaration
+    (Self : not null access constant Namespace_Node'Class;
+     Name : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Element_Declaration_Access;
+   --  Returns element declaration node or null if no such element declaration.
+
    overriding procedure Enter_Node
     (Self    : not null access Namespace_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;

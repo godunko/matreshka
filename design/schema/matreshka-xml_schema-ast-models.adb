@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.AST.Models is
@@ -57,6 +58,27 @@ package body Matreshka.XML_Schema.AST.Models is
       Visitor.Enter_Model
        (Matreshka.XML_Schema.AST.Model_Access (Self), Control);
    end Enter_Node;
+
+   -------------------
+   -- Get_Namespace --
+   -------------------
+
+   function Get_Namespace
+    (Self      : not null access constant Model_Node'Class;
+     Namespace : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Namespace_Access
+   is
+      use type League.Strings.Universal_String;
+
+   begin
+      for Item of Self.Namespaces loop
+         if Item.Namespace_URI = Namespace then
+            return Item;
+         end if;
+      end loop;
+
+      return null;
+   end Get_Namespace;
 
    ----------------
    -- Leave_Node --
