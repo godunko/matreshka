@@ -277,21 +277,20 @@ package Matreshka.XML_Schema.Visitors is
    type Abstract_Iterator is limited interface;
    --  Abstract interface of iterator.
 
---   procedure Visit
---    (Self    : in out Abstract_Iterator'Class;
---     Visitor : in out Abstract_Visitor'Class;
---     Element : not null Matreshka.XML_Schema.AST.Node_Access;
---     Control : in out Traverse_Control);
---   --  Visit specified element by calling:
---   --
---   --   - Enter_<Class> operation on visitor;
---   --
---   --   - Visit_<Class> operation on iterator;
---   --
---   --   - Leave_<Class> operation on visitor.
---   --
---   --  Internal double dispatching mechanism is used by implementation, so it
---   --  works on elements of any metamodel.
+   procedure Visit
+    (Self    : in out Abstract_Iterator'Class;
+     Visitor : in out Abstract_Visitor'Class;
+     Element : not null Matreshka.XML_Schema.AST.Node_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Visit specified element by calling:
+   --
+   --   - Enter_<Class> operation on visitor;
+   --
+   --   - Visit_<Class> operation on iterator;
+   --
+   --   - Leave_<Class> operation on visitor.
+   --
+   --  Internal double dispatching mechanism is used by implementation.
 
    not overriding procedure Visit_Annotation
     (Self    : Abstract_Iterator;
