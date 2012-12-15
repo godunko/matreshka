@@ -1646,8 +1646,10 @@ package body Matreshka.XML_Schema.Handlers is
     (Self    : in out XML_Schema_Handler;
      Success : in out Boolean) is
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Integer'Wide_Wide_Image (Integer (Self.States.Length)));
+      --  Release state stack.
+
+      Self.States.Clear;
+      Self.State := (None, others => <>);
    end End_Document;
 
    -----------------
@@ -1666,7 +1668,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       elsif Namespace_URI = XML_Schema_Namespace_URI then
          if Local_Name = Annotation_Element_Name then
-            null;
+            raise Program_Error;
 
          elsif Local_Name = Any_Attribute_Element_Name then
             Complex_Types.End_Any_Attribute_Element (Self, Success);
@@ -1773,6 +1775,11 @@ package body Matreshka.XML_Schema.Handlers is
               ("End_Element:" & Local_Name.To_Wide_Wide_String);
             raise Program_Error;
          end if;
+
+      else
+         Ada.Wide_Wide_Text_IO.Put_Line
+           ("End_Element:" & Local_Name.To_Wide_Wide_String);
+         raise Program_Error;
       end if;
    end End_Element;
 
@@ -2693,6 +2700,7 @@ package body Matreshka.XML_Schema.Handlers is
             --  XXX Check for actual state must be added.
 
             Self.Ignore_Depth := 1;
+
          elsif Local_Name = Any_Attribute_Element_Name then
             if Self.Current in
               Complex_Type_Extension | Complex_Type_Restriction
