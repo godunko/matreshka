@@ -851,9 +851,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       begin
          Create_Wildcard (Self, Attributes, Success, Node);
-
-         Self.Top_State.Last_Complex_Type_Definition.Attribute_Wildcard :=
-           Node;
+         Self.State.Last_Complex_Type_Definition.Attribute_Wildcard := Node;
       end Start_Any_Attribute_Element;
 
       -----------------------
@@ -869,9 +867,7 @@ package body Matreshka.XML_Schema.Handlers is
 
       begin
          Create_Wildcard (Self, Attributes, Success, Node);
-
-         Self.Top_State.Last_Complex_Type_Definition.Attribute_Wildcard :=
-           Node;
+         Self.State.Last_Complex_Type_Definition.Attribute_Wildcard := Node;
       end Start_Any_Element;
 
       -----------------------------
@@ -889,8 +885,7 @@ package body Matreshka.XML_Schema.Handlers is
          Declarations.Local_Attribute_Element
            (Self, Attributes, Node, Success);
 
-         Self.Top_State.Last_Complex_Type_Definition.Attribute_Uses.Append
-           (Node);
+         Self.State.Last_Complex_Type_Definition.Attribute_Uses.Append (Node);
       end Start_Attribute_Element;
 
       -----------------------------------
@@ -920,7 +915,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "attribute group reference");
 
-         Self.Top_State.Last_Complex_Type_Definition.Attribute_Group_References
+         Self.State.Last_Complex_Type_Definition.Attribute_Group_References
            .Append (Node);
       end Start_Attribute_Group_Element;
 
@@ -942,7 +937,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
+         Self.State.Last_Complex_Type_Definition.Content_Type :=
            (Variety      => AST.Complex_Types.Element_Only,
             Particle     => Node,
             Open_Content => <>);
@@ -996,11 +991,10 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "local complex type definition");
 
-         Self.States.Last_Element.Last_Element_Declaration
-           .Type_Definition :=
-             Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node);
+         Self.States.Last_Element.Last_Element_Declaration.Type_Definition :=
+           Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node);
 
-         Self.Top_State.Last_Complex_Type_Definition := Node;
+         Self.State.Last_Complex_Type_Definition := Node;
       end Start_Element_Level_Complex_Type_Element;
 
       -----------------------------
@@ -1014,10 +1008,10 @@ package body Matreshka.XML_Schema.Handlers is
       begin
          XSD_Attribute.Required
            (Base_Attribute_Name,
-            Self.Top_State.Last_Complex_Type_Definition.Extension_Base,
+            Self.State.Last_Complex_Type_Definition.Extension_Base,
             Attributes,
             "extension");
-         Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
+         Self.State.Last_Complex_Type_Definition.Derivation_Method :=
            XML.Schema.Derivation_Extension;
       end Start_Extension_Element;
 
@@ -1039,7 +1033,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
+         Self.State.Last_Complex_Type_Definition.Content_Type :=
            (Variety      => AST.Complex_Types.Element_Only,
             Particle     => Node,
             Open_Content => <>);
@@ -1056,10 +1050,10 @@ package body Matreshka.XML_Schema.Handlers is
       begin
          XSD_Attribute.Required
            (Base_Attribute_Name,
-            Self.Top_State.Last_Complex_Type_Definition.Restriction_Base,
+            Self.State.Last_Complex_Type_Definition.Restriction_Base,
             Attributes,
             "restriction element");
-         Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
+         Self.State.Last_Complex_Type_Definition.Derivation_Method :=
            XML.Schema.Derivation_Restriction;
       end Start_Restriction_Element;
 
@@ -1081,7 +1075,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
+         Self.State.Last_Complex_Type_Definition.Content_Type :=
            (Variety      => AST.Complex_Types.Element_Only,
             Particle     => Node,
             Open_Content => <>);
@@ -1113,7 +1107,7 @@ package body Matreshka.XML_Schema.Handlers is
           (Node.Name,
            Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node));
 
-         Self.Top_State.Last_Complex_Type_Definition := Node;
+         Self.State.Last_Complex_Type_Definition := Node;
       end Start_Top_Level_Complex_Type_Element;
 
       --------------------------------------------
@@ -1125,11 +1119,9 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean) is
       begin
-         Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
+         Self.State.Last_Complex_Type_Definition.Derivation_Method :=
            XML.Schema.Derivation_Restriction;
-
-         Self.Top_State.Last_Complex_Type_Definition.Any_Type_Restriction :=
-           True;
+         Self.State.Last_Complex_Type_Definition.Any_Type_Restriction := True;
 
          Start_Any_Attribute_Element (Self, Attributes, Success);
       end Start_Type_Level_Any_Attribute_Element;
@@ -1146,16 +1138,14 @@ package body Matreshka.XML_Schema.Handlers is
          Node : Matreshka.XML_Schema.AST.Attribute_Use_Access;
 
       begin
-         Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
+         Self.State.Last_Complex_Type_Definition.Derivation_Method :=
            XML.Schema.Derivation_Restriction;
-
-         Self.Top_State.Last_Complex_Type_Definition.Any_Type_Restriction :=
-           True;
+         Self.State.Last_Complex_Type_Definition.Any_Type_Restriction := True;
 
          Declarations.Local_Attribute_Element
            (Self, Attributes, Node, Success);
 
-         Self.Top_State.Last_Complex_Type_Definition.Attribute_Uses.Append
+         Self.State.Last_Complex_Type_Definition.Attribute_Uses.Append
            (Node);
       end Start_Type_Level_Attribute_Element;
 
@@ -1171,11 +1161,9 @@ package body Matreshka.XML_Schema.Handlers is
          Node : Matreshka.XML_Schema.AST.Particle_Access;
 
       begin
-         Self.Top_State.Last_Complex_Type_Definition.Derivation_Method :=
+         Self.State.Last_Complex_Type_Definition.Derivation_Method :=
            XML.Schema.Derivation_Restriction;
-
-         Self.Top_State.Last_Complex_Type_Definition.Any_Type_Restriction :=
-           True;
+         Self.State.Last_Complex_Type_Definition.Any_Type_Restriction := True;
 
          Particles.Start_Sequence_Element
            (Self       => Self,
@@ -1183,7 +1171,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.Top_State.Last_Complex_Type_Definition.Content_Type :=
+         Self.State.Last_Complex_Type_Definition.Content_Type :=
            (Variety      => AST.Complex_Types.Element_Only,
             Particle     => Node,
             Open_Content => <>);
@@ -1197,7 +1185,7 @@ package body Matreshka.XML_Schema.Handlers is
 
    function Current (Self : XML_Schema_Handler'Class) return States is
    begin
-      return Self.Top_State.State;
+      return Self.State.State;
    end Current;
 
    ------------------
@@ -1251,7 +1239,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          Model.Compositor := Compositor;
 
-         Self.Top_State.Last_Model := Model;
+         Self.State.Last_Model := Model;
       end Create_Model_Group;
 
       -----------------------------
@@ -1310,16 +1298,16 @@ package body Matreshka.XML_Schema.Handlers is
               (Variety => Matreshka.XML_Schema.AST.Types.Local,
                Parent  =>
                  Matreshka.XML_Schema.AST.Node_Access
-                  (Self.Top_State.Last_Complex_Type_Definition));
+                  (Self.State.Last_Complex_Type_Definition));
 
             Decl_Node.Inheritable := XSD_Attribute.To_Boolean
               (Attributes, Inheritable_Attribute_Name);
 
             Node.Attribute_Declaration := Decl_Node;
-            Self.Top_State.Last_Attribute_Declaration := Decl_Node;
+            Self.State.Last_Attribute_Declaration := Decl_Node;
 
             --  Fix top state
-            Self.Top_State.State := Attribute_Declaration;
+            Self.State.State := Attribute_Declaration;
          end if;
 
       end Local_Attribute_Element;
@@ -1362,9 +1350,9 @@ package body Matreshka.XML_Schema.Handlers is
          Node.Name := Attributes.Value (Name_Attribute_Name);
          Node.Identity_Constraint_Category := Category;
 
-         Self.Top_State.Last_Constraint := Node;
+         Self.State.Last_Constraint := Node;
 
-         Self.Top_State.Last_Element_Declaration
+         Self.State.Last_Element_Declaration
            .Identity_Constraint_Definitions.Append (Node);
       end Start_Constraint_Element;
 
@@ -1378,10 +1366,11 @@ package body Matreshka.XML_Schema.Handlers is
          Success    : in out Boolean)
       is
          Node : Matreshka.XML_Schema.AST.Types.XPath_Expression;
+
       begin
          Read_XPath (Self, Attributes, Node, "field element", Success);
 
-         Self.Top_State.Last_Constraint.Fields.Append (Node);
+         Self.State.Last_Constraint.Fields.Append (Node);
       end Start_Field_Element;
 
       -----------------------------------------
@@ -1399,7 +1388,7 @@ package body Matreshka.XML_Schema.Handlers is
          Declarations.Local_Attribute_Element
            (Self, Attributes, Node, Success);
 
-         Self.Top_State.Last_Attribute_Group_Definition.Attribute_Uses.Append
+         Self.State.Last_Attribute_Group_Definition.Attribute_Uses.Append
            (Node);
       end Start_Group_Level_Attribute_Element;
 
@@ -1418,8 +1407,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Compositor => AST.Model_Groups.Choice);
 
-         Self.Top_State.Last_Model_Definition.Model_Group :=
-           Self.Top_State.Last_Model;
+         Self.State.Last_Model_Definition.Model_Group := Self.State.Last_Model;
       end Start_Group_Level_Choice_Element;
 
       ----------------------------------------
@@ -1437,8 +1425,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Compositor => AST.Model_Groups.Sequence);
 
-         Self.Top_State.Last_Model_Definition.Model_Group :=
-           Self.Top_State.Last_Model;
+         Self.State.Last_Model_Definition.Model_Group := Self.State.Last_Model;
       end Start_Group_Level_Sequence_Element;
 
       ----------------------------
@@ -1475,8 +1462,9 @@ package body Matreshka.XML_Schema.Handlers is
          Attributes : XML.SAX.Attributes.SAX_Attributes;
          Success    : in out Boolean)
       is
-         Node : AST.Types.XPath_Expression renames
-           Self.Top_State.Last_Constraint.Selector;
+         Node : AST.Types.XPath_Expression
+           renames Self.State.Last_Constraint.Selector;
+
       begin
          Read_XPath (Self, Attributes, Node, "selector element", Success);
       end Start_Selector_Element;
@@ -1522,7 +1510,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          Self.Schema.Attribute_Declarations.Insert (Node.Name, Node);
 
-         Self.Top_State.Last_Attribute_Declaration := Node;
+         Self.State.Last_Attribute_Declaration := Node;
       end Start_Top_Level_Attribute_Element;
 
       ---------------------------------------------
@@ -1552,7 +1540,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "top-level attribute group definition");
 
-         Self.Top_State.Last_Attribute_Group_Definition := Node;
+         Self.State.Last_Attribute_Group_Definition := Node;
 
          Self.Schema.Attribute_Group_Definitions.Insert (Node.Name, Node);
       end Start_Top_Level_Attribute_Group_Element;
@@ -1602,7 +1590,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          Common_Element_Declaration (Self, Attributes, Node, Success);
 
-         Self.Top_State.Last_Element_Declaration := Node;
+         Self.State.Last_Element_Declaration := Node;
 
          Self.Schema.Element_Declarations.Insert (Node.Name, Node);
       end Start_Top_Level_Element;
@@ -1644,7 +1632,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "top-level group definition element");
 
-         Self.Top_State.Last_Model_Definition := Node;
+         Self.State.Last_Model_Definition := Node;
 
          Self.Schema.Model_Group_Definitions.Insert (Node.Name, Node);
       end Start_Top_Level_Model_Definition_Element;
@@ -1826,7 +1814,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "enumeration element");
 
-         Self.Top_State.Last_Simple_Type_Definition.Facets.Append
+         Self.State.Last_Simple_Type_Definition.Facets.Append
            (Matreshka.XML_Schema.AST.Node_Access (Node));
       end Start_Enumeration_Element;
 
@@ -1851,7 +1839,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "minLength element");
 
-         Self.Top_State.Last_Simple_Type_Definition.Facets.Append
+         Self.State.Last_Simple_Type_Definition.Facets.Append
            (Matreshka.XML_Schema.AST.Node_Access (Node));
       end Start_Min_Length_Element;
 
@@ -1901,7 +1889,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          Node.Term := AST.Types.Term_Access (Term);
 
-         Self.Top_State.Last_Model.Particles.Append (Node);
+         Self.State.Last_Model.Particles.Append (Node);
       end Start_Any_Element;
 
       --------------------------
@@ -1922,7 +1910,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.Top_State.Last_Model.Particles.Append (Node);
+         Self.State.Last_Model.Particles.Append (Node);
       end Start_Choice_Element;
 
       --------------------------
@@ -1958,7 +1946,7 @@ package body Matreshka.XML_Schema.Handlers is
             Compositor => AST.Model_Groups.Choice,
             Success    => Success);
 
-         Node.Term := AST.Types.Term_Access (Self.Top_State.Last_Model);
+         Node.Term := AST.Types.Term_Access (Self.State.Last_Model);
       end Start_Choice_Element;
 
       -------------------
@@ -2005,15 +1993,15 @@ package body Matreshka.XML_Schema.Handlers is
                Parent  => null);  --  Not so easy to get parent here
 
             Node.Term := AST.Types.Term_Access (Term);
-            Self.Top_State.Last_Element_Declaration := Term;
+            Self.State.Last_Element_Declaration := Term;
 
             --  Fix top state
-            Self.Top_State.State := Element_Declaration;
+            Self.State.State := Element_Declaration;
          else
             Node.Element_Ref := Attributes.Value (Index);
          end if;
 
-         Self.Top_State.Last_Model.Particles.Append (Node);
+         Self.State.Last_Model.Particles.Append (Node);
       end Start_Element;
 
       -------------------------
@@ -2034,7 +2022,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.Top_State.Last_Model.Particles.Append (Node);
+         Self.State.Last_Model.Particles.Append (Node);
       end Start_Group_Element;
 
       -------------------------
@@ -2074,7 +2062,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.Top_State.Last_Model.Particles.Append (Node);
+         Self.State.Last_Model.Particles.Append (Node);
       end Start_Sequence_Element;
 
       ----------------------------
@@ -2110,7 +2098,7 @@ package body Matreshka.XML_Schema.Handlers is
             Compositor => AST.Model_Groups.Sequence,
             Success    => Success);
 
-         Node.Term := AST.Types.Term_Access (Self.Top_State.Last_Model);
+         Node.Term := AST.Types.Term_Access (Self.State.Last_Model);
       end Start_Sequence_Element;
 
    end Particles;
@@ -2148,7 +2136,7 @@ package body Matreshka.XML_Schema.Handlers is
 
    procedure Pop (Self : in out XML_Schema_Handler'Class) is
    begin
-      Self.Top_State := Self.States.Last_Element;
+      Self.State := Self.States.Last_Element;
       Self.States.Delete_Last;
    end Pop;
 
@@ -2158,8 +2146,8 @@ package body Matreshka.XML_Schema.Handlers is
 
    procedure Push (Self : in out XML_Schema_Handler'Class; State : States) is
    begin
-      Self.States.Append (Self.Top_State);
-      Self.Top_State.State := State;
+      Self.States.Append (Self.State);
+      Self.State.State := State;
    end Push;
 
    --------------------------
@@ -2224,8 +2212,8 @@ package body Matreshka.XML_Schema.Handlers is
          Start_Local_Simple_Type_Element (Self, Attributes,Success);
 
          if Success then
-            Self.Top_State.Last_Attribute_Declaration.Type_Definition :=
-              Self.Top_State.Last_Simple_Type_Definition;
+            Self.State.Last_Attribute_Declaration.Type_Definition :=
+              Self.State.Last_Simple_Type_Definition;
          end if;
       end Start_Attribute_Level_Simple_Type_Element;
 
@@ -2238,9 +2226,9 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean) is
       begin
-         Self.Top_State.Last_Simple_Type_Definition.Variety :=
+         Self.State.Last_Simple_Type_Definition.Variety :=
            Matreshka.XML_Schema.AST.List;
-         Self.Top_State.Last_Simple_Type_Definition.Item_Type :=
+         Self.State.Last_Simple_Type_Definition.Item_Type :=
            Attributes.Value (Item_Type_Attribute_Name);
       end Start_List_Element;
 
@@ -2256,8 +2244,8 @@ package body Matreshka.XML_Schema.Handlers is
          Start_Local_Simple_Type_Element (Self, Attributes,Success);
 
          if Success then
-            Self.Top_State.Last_Simple_Type_Definition.Item_Type_Definition :=
-              Self.Top_State.Last_Simple_Type_Definition;
+            Self.State.Last_Simple_Type_Definition.Item_Type_Definition :=
+              Self.State.Last_Simple_Type_Definition;
          end if;
       end Start_List_Level_Simple_Type_Element;
 
@@ -2289,7 +2277,7 @@ package body Matreshka.XML_Schema.Handlers is
             Attributes,
             "local simple type definition");
 
-         Self.Top_State.Last_Simple_Type_Definition := Node;
+         Self.State.Last_Simple_Type_Definition := Node;
       end Start_Local_Simple_Type_Element;
 
       -------------------------------
@@ -2302,7 +2290,7 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean)
       is
       begin
-         Self.Top_State.Last_Simple_Type_Definition.Restriction_Base :=
+         Self.State.Last_Simple_Type_Definition.Restriction_Base :=
            Attributes.Value (XML_Schema_Namespace_URI, Base_Attribute_Name);
       end Start_Restriction_Element;
 
@@ -2375,7 +2363,7 @@ package body Matreshka.XML_Schema.Handlers is
           (Node.Name,
            Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node));
 
-         Self.Top_State.Last_Simple_Type_Definition := Node;
+         Self.State.Last_Simple_Type_Definition := Node;
       end Start_Top_Level_Simple_Type_Element;
 
       -------------------------
@@ -2387,9 +2375,9 @@ package body Matreshka.XML_Schema.Handlers is
         Attributes : XML.SAX.Attributes.SAX_Attributes;
         Success    : in out Boolean) is
       begin
-         Self.Top_State.Last_Simple_Type_Definition.Variety :=
+         Self.State.Last_Simple_Type_Definition.Variety :=
            Matreshka.XML_Schema.AST.Union;
-         Self.Top_State.Last_Simple_Type_Definition.Member_Types :=
+         Self.State.Last_Simple_Type_Definition.Member_Types :=
            Attributes.Value (Member_Types_Attribute_Name);
       end Start_Union_Element;
 
@@ -2407,7 +2395,7 @@ package body Matreshka.XML_Schema.Handlers is
          if Success then
             Self.States.Last_Element.Last_Simple_Type_Definition
               .Member_Type_Definitions.Append
-                (Self.Top_State.Last_Simple_Type_Definition);
+                (Self.State.Last_Simple_Type_Definition);
          end if;
       end Start_Union_Level_Simple_Type_Element;
 

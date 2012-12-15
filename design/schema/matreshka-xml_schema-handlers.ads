@@ -131,7 +131,7 @@ private
       Schema       : Matreshka.XML_Schema.AST.Schema_Access;
       Ignore_Depth : Natural := 0;
       States       : State_Vectors.Vector;  --  Stack of states except top
-      Top_State    : State_Value;  --  Separate top item of stack
+      State        : State_Value;  --  Separate top item of stack
    end record;
 
    procedure Push (Self : in out XML_Schema_Handler'Class; State : States);
