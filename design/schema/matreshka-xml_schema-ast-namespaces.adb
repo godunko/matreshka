@@ -41,9 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Namespace_Node is synthetic node which represents all XML Schema components
---  from one namespace.
-------------------------------------------------------------------------------
 with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.AST.Namespaces is
@@ -70,8 +67,12 @@ package body Matreshka.XML_Schema.AST.Namespaces is
      Name : League.Strings.Universal_String)
        return Matreshka.XML_Schema.AST.Element_Declaration_Access is
    begin
-      raise Program_Error;
-      return null;
+      if Self.Element_Declarations.Contains (Name) then
+         return Self.Element_Declarations.Element (Name);
+
+      else
+         return null;
+      end if;
    end Get_Element_Declaration;
 
    ----------------
