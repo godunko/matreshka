@@ -215,6 +215,15 @@ package body XML.Schema.Objects is
       return Self.Get_Type = Notation_Declaration;
    end Is_Notation_Declaration;
 
+   -------------
+   -- Is_Null --
+   -------------
+
+   function Is_Null (Self : XS_Object'Class) return Boolean is
+   begin
+      return Self.Node = null;
+   end Is_Null;
+
    -----------------
    -- Is_Particle --
    -----------------
