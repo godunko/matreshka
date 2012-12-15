@@ -41,35 +41,50 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.AST;
-with Matreshka.XML_Schema.Visitors;
+with Matreshka.XML_Schema.AST.Element_Declarations;
+with Matreshka.XML_Schema.AST.Namespaces;
+with Matreshka.XML_Schema.AST.Schemas;
 
-package Matreshka.XML_Schema.Namespace_Builders is
+package body Matreshka.XML_Schema.Namespace_Builders is
 
-   pragma Preelaborate;
-
-   type Namespace_Builder is
-     limited new Matreshka.XML_Schema.Visitors.Abstract_Visitor with private;
-
-   function Get_Namespace
-    (Self : Namespace_Builder'Class)
-       return Matreshka.XML_Schema.AST.Namespace_Access;
-
-private
-
-   type Namespace_Builder is
-     limited new Matreshka.XML_Schema.Visitors.Abstract_Visitor with record
-      Namespace : Matreshka.XML_Schema.AST.Namespace_Access;
-   end record;
+   -------------------------------
+   -- Enter_Element_Declaration --
+   -------------------------------
 
    overriding procedure Enter_Element_Declaration
     (Self    : in out Namespace_Builder;
      Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      --  XXX Only global element declarations must be processed.
+
+      Self.Namespace.Element_Declarations.Insert (Node.Name, Node);
+   end Enter_Element_Declaration;
+
+   ------------------
+   -- Enter_Schema --
+   ------------------
 
    overriding procedure Enter_Schema
     (Self    : in out Namespace_Builder;
      Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Self.Namespace :=
+        new Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'
+             (Namespace_URI        => Node.Target_Namespace,
+              Element_Declarations => <>);
+   end Enter_Schema;
+
+   -------------------
+   -- Get_Namespace --
+   -------------------
+
+   function Get_Namespace
+    (Self : Namespace_Builder'Class)
+       return Matreshka.XML_Schema.AST.Namespace_Access is
+   begin
+      return Self.Namespace;
+   end Get_Namespace;
 
 end Matreshka.XML_Schema.Namespace_Builders;

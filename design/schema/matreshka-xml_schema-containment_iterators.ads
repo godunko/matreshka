@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Matreshka.XML_Schema.AST;
 with Matreshka.XML_Schema.Visitors;
 
 package Matreshka.XML_Schema.Containment_Iterators is
@@ -55,5 +56,11 @@ private
    type Containment_Iterator is
      limited new Matreshka.XML_Schema.Visitors.Abstract_Iterator
        with null record;
+
+   overriding procedure Visit_Schema
+    (Self    : in out Containment_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
 end Matreshka.XML_Schema.Containment_Iterators;

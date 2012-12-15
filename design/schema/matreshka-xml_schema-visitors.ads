@@ -293,131 +293,131 @@ package Matreshka.XML_Schema.Visitors is
    --  Internal double dispatching mechanism is used by implementation.
 
    not overriding procedure Visit_Annotation
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Annotation_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Assertion
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Assertion_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Attribute_Declaration
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Attribute_Group_Definition
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    :
        not null Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Attribute_Group_Reference
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    :
        not null Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Attribute_Use
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Attribute_Use_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Complex_Type_Definition
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    :
        not null Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Element_Declaration
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Enumeration
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Enumeration_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Identity_Constraint_Definition
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    :
        not null Matreshka.XML_Schema.AST.Identity_Constraint_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Min_Length
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Min_Length_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Model
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Model_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Model_Group
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Model_Group_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Model_Group_Definition
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Model_Group_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Namespace
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Notation_Declaration
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Notation_Declaration_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Particle
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Particle_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Schema
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Simple_Type_Definition
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Type_Alternative
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Type_Alternative_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Wildcard
-    (Self    : Abstract_Iterator;
+    (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Wildcard_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;

@@ -173,12 +173,6 @@ package body Matreshka.XML_Schema.Loaders is
       --  Create NamespaceItems.
 
       for Document of Self.Documents loop
-         Model.Namespaces.Insert
-          (Document.Schema.Target_Namespace,
-           new Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'
-                (Namespace_URI        => Document.Schema.Target_Namespace,
-                 Element_Declarations => <>));
-
          --  Construct namespace.
 
          declare
@@ -195,8 +189,9 @@ package body Matreshka.XML_Schema.Loaders is
               Visitor,
               Matreshka.XML_Schema.AST.Node_Access (Document.Schema),
               Control);
+            Model.Namespaces.Insert
+             (Document.Schema.Target_Namespace, Visitor.Get_Namespace);
          end;
-
       end loop;
 
       return Model;

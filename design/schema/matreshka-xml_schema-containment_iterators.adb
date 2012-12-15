@@ -41,35 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.AST;
-with Matreshka.XML_Schema.Visitors;
+with Matreshka.XML_Schema.AST.Element_Declarations;
+with Matreshka.XML_Schema.AST.Schemas;
 
-package Matreshka.XML_Schema.Namespace_Builders is
+package body Matreshka.XML_Schema.Containment_Iterators is
 
-   pragma Preelaborate;
+   ------------------
+   -- Visit_Schema --
+   ------------------
 
-   type Namespace_Builder is
-     limited new Matreshka.XML_Schema.Visitors.Abstract_Visitor with private;
-
-   function Get_Namespace
-    (Self : Namespace_Builder'Class)
-       return Matreshka.XML_Schema.AST.Namespace_Access;
-
-private
-
-   type Namespace_Builder is
-     limited new Matreshka.XML_Schema.Visitors.Abstract_Visitor with record
-      Namespace : Matreshka.XML_Schema.AST.Namespace_Access;
-   end record;
-
-   overriding procedure Enter_Element_Declaration
-    (Self    : in out Namespace_Builder;
-     Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-
-   overriding procedure Enter_Schema
-    (Self    : in out Namespace_Builder;
+   overriding procedure Visit_Schema
+    (Self    : in out Containment_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
+   is
+      use type Matreshka.XML_Schema.Visitors.Traverse_Control;
 
-end Matreshka.XML_Schema.Namespace_Builders;
+   begin
+      --  Visit element declarations.
+
+      for Item of Node.Element_Declarations loop
+         Matreshka.XML_Schema.Visitors.Visit
+          (Self,
+           Visitor,
+           Matreshka.XML_Schema.AST.Node_Access (Item),
+           Control);
+
+         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
+      end loop;
+   end Visit_Schema;
+
+end Matreshka.XML_Schema.Containment_Iterators;
