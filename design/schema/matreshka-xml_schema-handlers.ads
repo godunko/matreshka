@@ -56,13 +56,16 @@ with Matreshka.XML_Schema.Loaders;
 private with XML.SAX.Attributes;
 private with XML.SAX.Locators;
 with XML.SAX.Content_Handlers;
+with XML.SAX.Error_Handlers;
+private with XML.SAX.Parse_Exceptions;
 
 package Matreshka.XML_Schema.Handlers is
 
    type XML_Schema_Handler
          (Loader : not null access
             Matreshka.XML_Schema.Loaders.Model_Loader'Class) is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
+       and XML.SAX.Error_Handlers.SAX_Error_Handler with private;
 
    function Get_Schema
     (Self : XML_Schema_Handler) return Matreshka.XML_Schema.AST.Schema_Access;
@@ -126,7 +129,8 @@ private
    type XML_Schema_Handler
          (Loader : not null access
             Matreshka.XML_Schema.Loaders.Model_Loader'Class) is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
+     limited new XML.SAX.Content_Handlers.SAX_Content_Handler
+       and XML.SAX.Error_Handlers.SAX_Error_Handler with record
       Locator      : XML.SAX.Locators.SAX_Locator;
       Schema       : Matreshka.XML_Schema.AST.Schema_Access;
       Ignore_Depth : Natural := 0;
@@ -181,5 +185,19 @@ private
 --     Prefix        : League.Strings.Universal_String;
 --     Namespace_URI : League.Strings.Universal_String;
 --     Success       : in out Boolean);
+
+   overriding procedure Error
+    (Self       : in out XML_Schema_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+     Success    : in out Boolean);
+
+   overriding procedure Fatal_Error
+    (Self       : in out XML_Schema_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception);
+
+   overriding procedure Warning
+    (Self       : in out XML_Schema_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+     Success    : in out Boolean);
 
 end Matreshka.XML_Schema.Handlers;

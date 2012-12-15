@@ -101,6 +101,7 @@ package body Matreshka.XML_Schema.Loaders is
       --  Load root document.
 
       Reader.Set_Content_Handler (Handler'Unchecked_Access);
+      Reader.Set_Error_Handler (Handler'Unchecked_Access);
       Source.Open_By_File_Name (URI);
       Reader.Parse (Source'Unchecked_Access);
       Source.Close;

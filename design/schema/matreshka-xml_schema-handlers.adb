@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Strings.Wide_Wide_Fixed;
 with Ada.Wide_Wide_Text_IO;
 
 with League.String_Vectors;
@@ -1775,6 +1776,18 @@ package body Matreshka.XML_Schema.Handlers is
       end if;
    end End_Element;
 
+   -----------
+   -- Error --
+   -----------
+
+   overriding procedure Error
+    (Self       : in out XML_Schema_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+     Success    : in out Boolean) is
+   begin
+      Ada.Wide_Wide_Text_IO.Put_Line (">>>>> ERROR <<<<<");
+   end Error;
+
    ------------------
    -- Error_String --
    ------------------
@@ -1842,6 +1855,29 @@ package body Matreshka.XML_Schema.Handlers is
       end Start_Min_Length_Element;
 
    end Facets;
+
+   -----------------
+   -- Fatal_Error --
+   -----------------
+
+   overriding procedure Fatal_Error
+    (Self       : in out XML_Schema_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception) is
+   begin
+      Ada.Wide_Wide_Text_IO.Put_Line (">>>>> FATAL ERROR <<<<<");
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Occurrence.System_Id.To_Wide_Wide_String
+          & ':'
+          & Ada.Strings.Wide_Wide_Fixed.Trim
+             (Integer'Wide_Wide_Image (Occurrence.Line),
+              Ada.Strings.Both)
+          & ':'
+          & Ada.Strings.Wide_Wide_Fixed.Trim
+             (Integer'Wide_Wide_Image (Occurrence.Column),
+              Ada.Strings.Both)
+          & ": "
+          & Occurrence.Message.To_Wide_Wide_String);
+   end Fatal_Error;
 
    ----------------
    -- Get_Schema --
@@ -3118,6 +3154,18 @@ package body Matreshka.XML_Schema.Handlers is
          return Result;
       end;
    end To_Derivation_Set;
+
+   -------------
+   -- Warning --
+   -------------
+
+   overriding procedure Warning
+    (Self       : in out XML_Schema_Handler;
+     Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
+     Success    : in out Boolean) is
+   begin
+      Ada.Wide_Wide_Text_IO.Put_Line (">>>>> WARNING <<<<<");
+   end Warning;
 
    -------------------
    -- XSD_Attribute --
