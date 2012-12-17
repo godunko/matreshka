@@ -41,6 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package provides namespace builder. It accepts root Schema_Node for
+--  some namespace and constructs Namespace_Node by processing all owned and
+--  imported components.
+------------------------------------------------------------------------------
 with Matreshka.XML_Schema.AST;
 with Matreshka.XML_Schema.Visitors;
 
@@ -62,6 +66,12 @@ private
       Namespace : Matreshka.XML_Schema.AST.Namespace_Access;
    end record;
 
+   overriding procedure Enter_Complex_Type_Definition
+    (Self    : in out Namespace_Builder;
+     Node    :
+       not null Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
    overriding procedure Enter_Element_Declaration
     (Self    : in out Namespace_Builder;
      Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
@@ -70,6 +80,11 @@ private
    overriding procedure Enter_Schema
     (Self    : in out Namespace_Builder;
      Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Simple_Type_Definition
+    (Self    : in out Namespace_Builder;
+     Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
 end Matreshka.XML_Schema.Namespace_Builders;

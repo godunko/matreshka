@@ -41,11 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Element_Declarations;
 with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Schemas;
+with Matreshka.XML_Schema.AST.Simple_Types;
 
 package body Matreshka.XML_Schema.Namespace_Builders is
+
+   -----------------------------------
+   -- Enter_Complex_Type_Definition --
+   -----------------------------------
+
+   overriding procedure Enter_Complex_Type_Definition
+    (Self    : in out Namespace_Builder;
+     Node    :
+       not null Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      --  XXX Only global type definitions must be processed.
+
+      Self.Namespace.Type_Definitions.Insert
+       (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
+   end Enter_Complex_Type_Definition;
 
    -------------------------------
    -- Enter_Element_Declaration --
@@ -73,8 +91,24 @@ package body Matreshka.XML_Schema.Namespace_Builders is
       Self.Namespace :=
         new Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'
              (Namespace_URI        => Node.Target_Namespace,
+              Type_Definitions     => <>,
               Element_Declarations => <>);
    end Enter_Schema;
+
+   ----------------------------------
+   -- Enter_Simple_Type_Definition --
+   ----------------------------------
+
+   overriding procedure Enter_Simple_Type_Definition
+    (Self    : in out Namespace_Builder;
+     Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      --  XXX Only global type definitions must be processed.
+
+      Self.Namespace.Type_Definitions.Insert
+       (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
+   end Enter_Simple_Type_Definition;
 
    -------------------
    -- Get_Namespace --

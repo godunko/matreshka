@@ -41,94 +41,86 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Wide_Wide_Text_IO;
+
 with Matreshka.XML_Schema.AST.Element_Declarations;
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
-with Matreshka.XML_Schema.AST.Schemas;
+with Matreshka.XML_Schema.AST.Types;
 
-package body Matreshka.XML_Schema.Containment_Iterators is
+package body Matreshka.XML_Schema.Name_Resolvers is
 
-   use type Matreshka.XML_Schema.Visitors.Traverse_Control;
+   -------------------------------
+   -- Enter_Element_Declaration --
+   -------------------------------
+
+   overriding procedure Enter_Element_Declaration
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
+   is
+      use type Matreshka.XML_Schema.AST.Namespace_Access;
+      use type Matreshka.XML_Schema.AST.Type_Definition_Access;
+      use type Matreshka.XML_Schema.AST.Types.Scope_Variety;
+
+      Namespace : Matreshka.XML_Schema.AST.Namespace_Access;
+
+   begin
+      if Node.Scope.Variety = Matreshka.XML_Schema.AST.Types.Global then
+         if Node.Type_Definition = null
+           and then not (Node.Type_Name.Namespace_URI.Is_Empty
+                           and Node.Type_Name.Local_Name.Is_Empty)
+         then
+            --  Type of global element declaration is not defined inside
+            --  element declaration itself and need to be resolved when 'type'
+            --  attribute is present.
+            --
+            --  XXX Check for namespaceURI is added to process 'facet' element
+            --  decalration only. Can non-abstract element declarations be used
+            --  without type declaration?
+
+            Ada.Wide_Wide_Text_IO.Put_Line (Node.Name.To_Wide_Wide_String);
+            Ada.Wide_Wide_Text_IO.Put_Line
+             ('{'
+                & Node.Type_Name.Namespace_URI.To_Wide_Wide_String
+                & '}'
+                & Node.Type_Name.Local_Name.To_Wide_Wide_String);
+
+            Namespace :=
+              Self.Model.Get_Namespace (Node.Type_Name.Namespace_URI);
+
+            if Namespace = null then
+               raise Program_Error;
+            end if;
+
+            Node.Type_Definition :=
+              Namespace.Get_Type_Definition (Node.Type_Name.Local_Name);
+
+            if Node.Type_Definition = null then
+               raise Program_Error;
+            end if;
+         end if;
+
+      else
+         --  XXX Non-global scope not need to be processed. Exception is raised
+         --  for debug purposes only.
+
+         Ada.Wide_Wide_Text_IO.Put_Line (Node.Name.To_Wide_Wide_String);
+
+         raise Program_Error;
+      end if;
+   end Enter_Element_Declaration;
 
    -----------------
-   -- Visit_Model --
+   -- Enter_Model --
    -----------------
 
-   overriding procedure Visit_Model
-    (Self    : in out Containment_Iterator;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+   overriding procedure Enter_Model
+    (Self    : in out Name_Resolver;
      Node    : not null Matreshka.XML_Schema.AST.Model_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
    begin
-      --  Visit namespaces.
+      Self.Model := Node;
+   end Enter_Model;
 
-      for Item of Node.Namespaces loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
-
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-   end Visit_Model;
-
-   ---------------------
-   -- Visit_Namespace --
-   ---------------------
-
-   overriding procedure Visit_Namespace
-    (Self    : in out Containment_Iterator;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      --  Visit element declarations.
-
-      for Item of Node.Element_Declarations loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
-
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-   end Visit_Namespace;
-
-   ------------------
-   -- Visit_Schema --
-   ------------------
-
-   overriding procedure Visit_Schema
-    (Self    : in out Containment_Iterator;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      --  Visit type definitions.
-
-      for Item of Node.Type_Definitions loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
-
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-
-      --  Visit element declarations.
-
-      for Item of Node.Element_Declarations loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
-
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-   end Visit_Schema;
-
-end Matreshka.XML_Schema.Containment_Iterators;
+end Matreshka.XML_Schema.Name_Resolvers;

@@ -55,6 +55,10 @@ package Matreshka.XML_Schema.AST.Namespaces is
    type Namespace_Node is new Abstract_Node with record
       Namespace_URI        : League.Strings.Universal_String;
 
+      Type_Definitions     :
+        Matreshka.XML_Schema.AST.Types.Type_Definition_Maps.Map;
+      --  A set of Type Definition components.
+
       Element_Declarations :
         Matreshka.XML_Schema.AST.Types.Element_Declaration_Maps.Map;
       --  A set of Element Declaration components.
@@ -65,6 +69,12 @@ package Matreshka.XML_Schema.AST.Namespaces is
      Name : League.Strings.Universal_String)
        return Matreshka.XML_Schema.AST.Element_Declaration_Access;
    --  Returns element declaration node or null if no such element declaration.
+
+   function Get_Type_Definition
+    (Self : not null access constant Namespace_Node'Class;
+     Name : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Type_Definition_Access;
+   --  Returns type definition node or null if no such type definition.
 
    overriding procedure Enter_Node
     (Self    : not null access Namespace_Node;

@@ -41,6 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package provides AST iterator based on containment of nodes. Two
+--  synthetic nodes - Model_Node and Namespace_Node - are handled in the
+--  special way: they are 'contain' all global components of the corresponding
+--  model or namespace. Note, they are not contain Schema_Nodes.
+------------------------------------------------------------------------------
 private with Matreshka.XML_Schema.AST;
 with Matreshka.XML_Schema.Visitors;
 
@@ -56,6 +61,18 @@ private
    type Containment_Iterator is
      limited new Matreshka.XML_Schema.Visitors.Abstract_Iterator
        with null record;
+
+   overriding procedure Visit_Model
+    (Self    : in out Containment_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Node    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Namespace
+    (Self    : in out Containment_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
    overriding procedure Visit_Schema
     (Self    : in out Containment_Iterator;

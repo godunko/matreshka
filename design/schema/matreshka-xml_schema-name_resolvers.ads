@@ -41,94 +41,41 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.AST.Element_Declarations;
-with Matreshka.XML_Schema.AST.Models;
-with Matreshka.XML_Schema.AST.Namespaces;
-with Matreshka.XML_Schema.AST.Schemas;
+--  This package provides name resolver, which resolves references between
+--  components. It accepts complete Model_Node constructed by applying
+--  namespace builder to each root Schema_Node.
+------------------------------------------------------------------------------
+private with Matreshka.XML_Schema.AST;
+with Matreshka.XML_Schema.Visitors;
 
-package body Matreshka.XML_Schema.Containment_Iterators is
+package Matreshka.XML_Schema.Name_Resolvers is
 
-   use type Matreshka.XML_Schema.Visitors.Traverse_Control;
+--   pragma Preelaborate;
 
-   -----------------
-   -- Visit_Model --
-   -----------------
+   type Name_Resolver is
+     limited new Matreshka.XML_Schema.Visitors.Abstract_Visitor with private;
 
-   overriding procedure Visit_Model
-    (Self    : in out Containment_Iterator;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+private
+
+   type Name_Resolver is
+     limited new Matreshka.XML_Schema.Visitors.Abstract_Visitor with
+   record
+      Model : Matreshka.XML_Schema.AST.Model_Access;
+   end record;
+
+   overriding procedure Enter_Element_Declaration
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Model
+    (Self    : in out Name_Resolver;
      Node    : not null Matreshka.XML_Schema.AST.Model_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      --  Visit namespaces.
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
-      for Item of Node.Namespaces loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
+--   overriding procedure Enter_Schema
+--    (Self    : in out Name_Resolver;
+--     Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
+--     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-   end Visit_Model;
-
-   ---------------------
-   -- Visit_Namespace --
-   ---------------------
-
-   overriding procedure Visit_Namespace
-    (Self    : in out Containment_Iterator;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      --  Visit element declarations.
-
-      for Item of Node.Element_Declarations loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
-
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-   end Visit_Namespace;
-
-   ------------------
-   -- Visit_Schema --
-   ------------------
-
-   overriding procedure Visit_Schema
-    (Self    : in out Containment_Iterator;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      --  Visit type definitions.
-
-      for Item of Node.Type_Definitions loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
-
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-
-      --  Visit element declarations.
-
-      for Item of Node.Element_Declarations loop
-         Matreshka.XML_Schema.Visitors.Visit
-          (Self,
-           Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
-           Control);
-
-         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
-      end loop;
-   end Visit_Schema;
-
-end Matreshka.XML_Schema.Containment_Iterators;
+end Matreshka.XML_Schema.Name_Resolvers;

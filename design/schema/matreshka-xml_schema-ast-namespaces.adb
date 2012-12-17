@@ -75,6 +75,23 @@ package body Matreshka.XML_Schema.AST.Namespaces is
       end if;
    end Get_Element_Declaration;
 
+   -------------------------
+   -- Get_Type_Definition --
+   -------------------------
+
+   function Get_Type_Definition
+    (Self : not null access constant Namespace_Node'Class;
+     Name : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Type_Definition_Access is
+   begin
+      if Self.Type_Definitions.Contains (Name) then
+         return Self.Type_Definitions.Element (Name);
+
+      else
+         return null;
+      end if;
+   end Get_Type_Definition;
+
    ----------------
    -- Leave_Node --
    ----------------

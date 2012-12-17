@@ -49,6 +49,7 @@ with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Schemas;
 with Matreshka.XML_Schema.Containment_Iterators;
 with Matreshka.XML_Schema.Handlers;
+with Matreshka.XML_Schema.Name_Resolvers;
 with Matreshka.XML_Schema.Namespace_Builders;
 with Matreshka.XML_Schema.URI_Rewriter;
 with Matreshka.XML_Schema.Visitors;
@@ -193,6 +194,23 @@ package body Matreshka.XML_Schema.Loaders is
              (Document.Schema.Target_Namespace, Visitor.Get_Namespace);
          end;
       end loop;
+
+      --  Resolve names.
+
+      declare
+         Iterator :
+           Matreshka.XML_Schema.Containment_Iterators.Containment_Iterator;
+         Visitor  : Matreshka.XML_Schema.Name_Resolvers.Name_Resolver;
+         Control  : Matreshka.XML_Schema.Visitors.Traverse_Control
+           := Matreshka.XML_Schema.Visitors.Continue;
+
+      begin
+         Matreshka.XML_Schema.Visitors.Visit
+          (Iterator,
+           Visitor,
+           Matreshka.XML_Schema.AST.Node_Access (Model),
+           Control);
+      end;
 
       return Model;
    end Load;
