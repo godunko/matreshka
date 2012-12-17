@@ -1588,6 +1588,8 @@ package body Matreshka.XML_Schema.Handlers is
 
          Common_Element_Declaration (Self, Attributes, Node, Success);
 
+         Node.Scope := (Variety => Matreshka.XML_Schema.AST.Types.Global);
+
          Self.State.Last_Element_Declaration := Node;
 
          Self.Schema.Element_Declarations.Insert (Node.Name, Node);
