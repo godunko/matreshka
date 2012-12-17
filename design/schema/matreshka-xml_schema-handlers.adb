@@ -1223,12 +1223,19 @@ package body Matreshka.XML_Schema.Handlers is
          Success    : in out Boolean) is
       begin
          Node.Name := Attributes.Value (Name_Attribute_Name);
-         Node.Type_Name := Attributes.Value (Type_Attribute_Name);
 
-         Node.Nillable := XSD_Attribute.To_Boolean
-           (Attributes, Nillable_Attribute_Name);
-         Node.Is_Abstract := XSD_Attribute.To_Boolean
-           (Attributes, Abstract_Attribute_Name);
+         if Attributes.Is_Specified (Type_Attribute_Name) then
+            --  'type' attribute is optional when actual type is declared
+            --  locally inside the element declaration.
+
+            Node.Type_Name   :=
+              Self.To_Qualified_Name (Attributes.Value (Type_Attribute_Name));
+         end if;
+
+         Node.Nillable    :=
+           XSD_Attribute.To_Boolean (Attributes, Nillable_Attribute_Name);
+         Node.Is_Abstract :=
+           XSD_Attribute.To_Boolean (Attributes, Abstract_Attribute_Name);
 
          Get_Value_Constant (Node.Value_Constraint, Attributes);
       end Common_Element_Declaration;

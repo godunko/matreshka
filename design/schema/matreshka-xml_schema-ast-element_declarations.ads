@@ -126,9 +126,8 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
 
       --  Internal data.
 
-      Type_Name : League.Strings.Universal_String;
+      Type_Name : Matreshka.XML_Schema.AST.Qualified_Name;
       --  @type
-
    end record;
 
    overriding function Get_Type
