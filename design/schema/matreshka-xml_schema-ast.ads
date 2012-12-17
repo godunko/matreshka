@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 limited with Matreshka.XML_Schema.AST.Annotations;
 limited with Matreshka.XML_Schema.AST.Assertions;
 limited with Matreshka.XML_Schema.AST.Attribute_Declarations;
@@ -67,6 +69,11 @@ package Matreshka.XML_Schema.AST is
    pragma Preelaborate;
 
    type Simple_Type_Variety is (Absent, Atomic, List, Union);
+
+   type Qualified_Name is record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
 
    -------------------
    -- Abstract_Node --

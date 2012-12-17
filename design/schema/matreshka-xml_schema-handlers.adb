@@ -218,6 +218,13 @@ package body Matreshka.XML_Schema.Handlers is
    --  internal representation. It assumes that textual representation is
    --  normalized according to XML rules.
 
+   function To_Qualified_Name
+    (Self : XML_Schema_Handler'Class;
+     Name : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Qualified_Name;
+   --  Maps prefix:localName to namespaceURI:local_name using collected
+   --  mappings.
+
    procedure Start_Schema_Element
     (Self       : in out XML_Schema_Handler;
      Attributes : XML.SAX.Attributes.SAX_Attributes;
@@ -1651,6 +1658,12 @@ package body Matreshka.XML_Schema.Handlers is
 
       Self.States.Clear;
       Self.State := (None, others => <>);
+
+      --  Clear namespace prefix mapping.
+      --
+      --  XXX This is not necessary once End_Prefix_Mapping is implemented.
+
+      Self.Namespaces.Clear;
    end End_Document;
 
    -----------------
@@ -3064,6 +3077,28 @@ package body Matreshka.XML_Schema.Handlers is
    end Start_Import_Element;
 
    --------------------------
+   -- Start_Prefix_Mapping --
+   --------------------------
+
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out XML_Schema_Handler;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean) is
+   begin
+      Self.Namespaces.Insert (Prefix, Namespace_URI);
+
+   exception
+      when others =>
+      Ada.Wide_Wide_Text_IO.Put_Line
+       ("HERE "
+          & Prefix.To_Wide_Wide_String
+          & " "
+          & Namespace_URI.To_Wide_Wide_String);
+      raise;
+   end Start_Prefix_Mapping;
+
+   --------------------------
    -- Start_Schema_Element --
    --------------------------
 
@@ -3163,6 +3198,27 @@ package body Matreshka.XML_Schema.Handlers is
       end;
    end To_Derivation_Set;
 
+   -----------------------
+   -- To_Qualified_Name --
+   -----------------------
+
+   function To_Qualified_Name
+    (Self : XML_Schema_Handler'Class;
+     Name : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Qualified_Name
+   is
+      Index : constant Natural := Name.Index (':');
+
+   begin
+      if Index = 0 then
+         Ada.Wide_Wide_Text_IO.Put_Line (">>>>> To_Qualified_Name <<<<< '" & Name.To_Wide_Wide_String & ''');
+      end if;
+
+      return
+       (Namespace_URI => Self.Namespaces.Element (Name.Slice (1, Index - 1)),
+        Local_Name    => Name.Slice (Index + 1, Name.Length));
+   end To_Qualified_Name;
+
    -------------
    -- Warning --
    -------------
@@ -3173,6 +3229,18 @@ package body Matreshka.XML_Schema.Handlers is
      Success    : in out Boolean) is
    begin
       Ada.Wide_Wide_Text_IO.Put_Line (">>>>> WARNING <<<<<");
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Occurrence.System_Id.To_Wide_Wide_String
+          & ':'
+          & Ada.Strings.Wide_Wide_Fixed.Trim
+             (Integer'Wide_Wide_Image (Occurrence.Line),
+              Ada.Strings.Both)
+          & ':'
+          & Ada.Strings.Wide_Wide_Fixed.Trim
+             (Integer'Wide_Wide_Image (Occurrence.Column),
+              Ada.Strings.Both)
+          & ": "
+          & Occurrence.Message.To_Wide_Wide_String);
    end Warning;
 
    -------------------

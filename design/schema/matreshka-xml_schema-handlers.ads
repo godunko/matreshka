@@ -48,9 +48,11 @@
 --  values. This handler can be used as 'subhandler' to process larger XML
 --  documents which include XML Schema part, for example WSDL documents.
 ------------------------------------------------------------------------------
+private with Ada.Containers.Hashed_Maps;
 private with Ada.Containers.Vectors;
 
 with League.Strings;
+private with League.Strings.Hash;
 with Matreshka.XML_Schema.AST;
 with Matreshka.XML_Schema.Loaders;
 private with XML.SAX.Attributes;
@@ -126,6 +128,14 @@ private
    package State_Vectors is
      new Ada.Containers.Vectors (Positive, State_Value);
 
+   package Namespace_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           League.Strings.Universal_String,
+           League.Strings.Hash,
+           League.Strings."=",
+           League.Strings."=");
+
    type XML_Schema_Handler
          (Loader : not null access
             Matreshka.XML_Schema.Loaders.Model_Loader'Class) is
@@ -135,7 +145,9 @@ private
       Schema       : Matreshka.XML_Schema.AST.Schema_Access;
       Ignore_Depth : Natural := 0;
       States       : State_Vectors.Vector;  --  Stack of states except top
-      State        : State_Value;  --  Separate top item of stack
+      State        : State_Value;           --  Separate top item of stack
+      Namespaces   : Namespace_Maps.Map;
+      --  Mapping from namespace prefix to namespace URI.
    end record;
 
    procedure Push (Self : in out XML_Schema_Handler'Class; State : States);
@@ -180,11 +192,12 @@ private
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean);
 
---   overriding procedure Start_Prefix_Mapping
---    (Self          : in out XML_Schema_Handler;
---     Prefix        : League.Strings.Universal_String;
---     Namespace_URI : League.Strings.Universal_String;
---     Success       : in out Boolean);
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out XML_Schema_Handler;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean);
+   --  Manage internal mapping from namespace prefix to namespace URI.
 
    overriding procedure Error
     (Self       : in out XML_Schema_Handler;
