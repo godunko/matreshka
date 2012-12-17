@@ -708,9 +708,11 @@ package body Matreshka.XML_Schema.Handlers is
 
          if Index = 0 then
             Node.Min_Occurs := 1;
+
          else
-            Node.Min_Occurs := Natural'Wide_Wide_Value
-              (Attributes.Value (Index).To_Wide_Wide_String);
+            Node.Min_Occurs :=
+              Natural'Wide_Wide_Value
+               (Attributes.Value (Index).To_Wide_Wide_String);
          end if;
 
          --  @maxOccurs
@@ -718,11 +720,14 @@ package body Matreshka.XML_Schema.Handlers is
 
          if Index = 0 then
             Node.Max_Occurs := 1;
+
          elsif Attributes.Value (Index) = Unbounded_Literal_Image then
             Node.Max_Occurs := Natural'Last;
+
          else
-            Node.Max_Occurs := Natural'Wide_Wide_Value
-              (Attributes.Value (Index).To_Wide_Wide_String);
+            Node.Max_Occurs :=
+              Natural'Wide_Wide_Value
+               (Attributes.Value (Index).To_Wide_Wide_String);
          end if;
       end Create_Particle;
 
