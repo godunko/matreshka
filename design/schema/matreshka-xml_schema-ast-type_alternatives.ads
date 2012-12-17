@@ -61,7 +61,7 @@ package Matreshka.XML_Schema.AST.Type_Alternatives is
       --  {test}
       --  An XPath Expression property record. Optional.
 
-      Type_Definition : Types.Type_Definition_Access;
+      Type_Definition : Matreshka.XML_Schema.AST.Type_Definition_Access;
       --  {type definition}
       --  A Type Definition component. Required.
    end record;

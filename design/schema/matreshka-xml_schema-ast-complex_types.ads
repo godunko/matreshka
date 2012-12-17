@@ -109,7 +109,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
-      Base_Type_Definition : Types.Type_Definition_Access;
+      Base_Type_Definition : Matreshka.XML_Schema.AST.Type_Definition_Access;
       --  {base type definition}
       --  A type definition component. Required.
 

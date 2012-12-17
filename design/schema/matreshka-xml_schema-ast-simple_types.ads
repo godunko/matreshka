@@ -78,8 +78,7 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  Either an Attribute Declaration, an Element Declaration, a Complex
       --  Type Definition, or a Simple Type Definition.
 
-
-      Base_Type_Definition : Types.Type_Definition_Access;
+      Base_Type_Definition : Matreshka.XML_Schema.AST.Type_Definition_Access;
       --  {base type definition}
       --  A Type Definition component. Required.
       --

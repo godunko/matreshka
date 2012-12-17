@@ -65,8 +65,6 @@ package Matreshka.XML_Schema.AST.Types is
      abstract new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node
        with null record;
 
-   type Type_Definition_Access is access all Type_Definition_Node'Class;
-
    package Annotation_Lists is
      new Ada.Containers.Doubly_Linked_Lists (Annotation_Access);
 
@@ -125,10 +123,10 @@ package Matreshka.XML_Schema.AST.Types is
    package Type_Definition_Maps is
      new Ada.Containers.Hashed_Maps
           (League.Strings.Universal_String,
-           Matreshka.XML_Schema.AST.Types.Type_Definition_Access,
+           Matreshka.XML_Schema.AST.Type_Definition_Access,
            League.Strings.Hash,
            League.Strings."=",
-           Matreshka.XML_Schema.AST.Types."=");
+           Matreshka.XML_Schema.AST."=");
 
    package Element_Declaration_Maps is
      new Ada.Containers.Hashed_Maps

@@ -83,7 +83,7 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
-      Type_Definition : Types.Type_Definition_Access;
+      Type_Definition : Matreshka.XML_Schema.AST.Type_Definition_Access;
       --  {type definition}
       --  A Type Definition component. Required.
 

@@ -992,7 +992,7 @@ package body Matreshka.XML_Schema.Handlers is
             "local complex type definition");
 
          Self.States.Last_Element.Last_Element_Declaration.Type_Definition :=
-           Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node);
+           Matreshka.XML_Schema.AST.Type_Definition_Access (Node);
 
          Self.State.Last_Complex_Type_Definition := Node;
       end Start_Element_Level_Complex_Type_Element;
@@ -1104,8 +1104,7 @@ package body Matreshka.XML_Schema.Handlers is
             "top-level complex type definition");
 
          Self.Schema.Type_Definitions.Insert
-          (Node.Name,
-           Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node));
+          (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
 
          Self.State.Last_Complex_Type_Definition := Node;
       end Start_Top_Level_Complex_Type_Element;
@@ -2621,8 +2620,7 @@ package body Matreshka.XML_Schema.Handlers is
             "top-level simple type definition");
 
          Self.Schema.Type_Definitions.Insert
-          (Node.Name,
-           Matreshka.XML_Schema.AST.Types.Type_Definition_Access (Node));
+          (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
 
          Self.State.Last_Simple_Type_Definition := Node;
       end Start_Top_Level_Simple_Type_Element;

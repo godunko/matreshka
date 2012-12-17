@@ -58,6 +58,7 @@ limited with Matreshka.XML_Schema.AST.Particles;
 limited with Matreshka.XML_Schema.AST.Schemas;
 limited with Matreshka.XML_Schema.AST.Simple_Types;
 limited with Matreshka.XML_Schema.AST.Type_Alternatives;
+limited with Matreshka.XML_Schema.AST.Types;
 limited with Matreshka.XML_Schema.AST.Wildcards;
 limited with Matreshka.XML_Schema.Visitors;
 
@@ -133,6 +134,7 @@ package Matreshka.XML_Schema.AST is
      access all Simple_Types.Simple_Type_Definition_Node'Class;
    type Type_Alternative_Access is
      access all Type_Alternatives.Type_Alternative_Node'Class;
+   type Type_Definition_Access is access all Types.Type_Definition_Node'Class;
    type Wildcard_Access is access all Wildcards.Wildcard_Node'Class;
 
 end Matreshka.XML_Schema.AST;
