@@ -152,11 +152,11 @@ package Matreshka.XML_Schema.AST.Complex_Types is
 
       --  Internal data.
 
-      Restriction_Base : League.Strings.Universal_String;
+      Restriction_Base : Matreshka.XML_Schema.AST.Qualified_Name;
       --  restriction/@base
-      Extension_Base : League.Strings.Universal_String;
+      Extension_Base : Matreshka.XML_Schema.AST.Qualified_Name;
       --  extension/@base
-      Attribute_Group_References : Types.Attribute_Group_Reference_Lists.List;
+      Attribute_Group_References : XML_Schema.AST.Qualified_Name_Vector;
       --  list of attributeGroup
       Any_Type_Restriction : Boolean := False;
       --  Marker for implicit restriction of xs:anyType

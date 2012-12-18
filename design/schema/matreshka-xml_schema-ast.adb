@@ -41,76 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-with Matreshka.XML_Schema.AST.Objects;
-with Matreshka.XML_Schema.AST.Types;
-with XML.Schema;
+package body Matreshka.XML_Schema.AST is
 
-package Matreshka.XML_Schema.AST.Attribute_Declarations is
+   --------------
+   -- Is_Empty --
+   --------------
 
-   pragma Preelaborate;
+   function Is_Empty (Self : Qualified_Name) return Boolean is
+   begin
+      return Self.Local_Name.Is_Empty;
+   end Is_Empty;
 
-   type Attribute_Declaration_Node is
-     new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node with
-   record
-      --  Properties:
-      --
-      Annotations : Types.Annotation_Lists.List;
-      --  {annotations}
-      --  A sequence of Annotation components.
-
-      Name  : League.Strings.Universal_String;
-      --  {name}
-      --  An xs:NCName value. Required.
-
-      Target_Namespace : League.Strings.Universal_String;
-      --  {target namespace}
-      --  An xs:anyURI value. Optional.
-
-      Type_Definition : Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
-      --  {type definition}
-      --  A Simple Type Definition component. Required.
-
-      Scope : Types.Scope;
-      --  {scope}
-      --  A Scope property record. Required.
-
-      Value_Constraint : Types.Value_Constraint;
-      --  {value constraint}
-      --  A Value Constraint property record. Optional.
-
-      Inheritable : Boolean;
-      --  {inheritable}
-      --  An xs:boolean value. Required.
-
-      --  Internal data.
-
-      Type_Name : Matreshka.XML_Schema.AST.Qualified_Name;
-      --  @type
-   end record;
-
-   overriding function Get_Type
-    (Self : not null access Attribute_Declaration_Node)
-       return XML.Schema.Component_Type;
-
-   overriding procedure Enter_Node
-    (Self    : not null access Attribute_Declaration_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Leave_Node
-    (Self    : not null access Attribute_Declaration_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Node
-    (Self     : not null access Attribute_Declaration_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-end Matreshka.XML_Schema.AST.Attribute_Declarations;
+end Matreshka.XML_Schema.AST;

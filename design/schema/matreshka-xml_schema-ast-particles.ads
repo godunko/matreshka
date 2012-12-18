@@ -71,9 +71,9 @@ package Matreshka.XML_Schema.AST.Particles is
 
       --  Internal data.
 
-      Element_Ref : League.Strings.Universal_String;
+      Element_Ref : Matreshka.XML_Schema.AST.Qualified_Name;
       --  element/@ref
-      Group_Ref : League.Strings.Universal_String;
+      Group_Ref : Matreshka.XML_Schema.AST.Qualified_Name;
       --  group/@ref
    end record;
 

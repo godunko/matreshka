@@ -76,7 +76,7 @@ package Matreshka.XML_Schema.AST.Attribute_Uses is
 
       --  Internal data.
 
-      Ref : League.Strings.Universal_String;
+      Ref : Matreshka.XML_Schema.AST.Qualified_Name;
       --  @ref
    end record;
 

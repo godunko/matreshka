@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
+
 with League.Strings;
 
 limited with Matreshka.XML_Schema.AST.Annotations;
@@ -75,6 +77,14 @@ package Matreshka.XML_Schema.AST is
       Namespace_URI : League.Strings.Universal_String;
       Local_Name    : League.Strings.Universal_String;
    end record;
+
+   function Is_Empty (Self : Qualified_Name) return Boolean;
+
+   package Qualified_Name_Vectors is
+     new Ada.Containers.Vectors (Positive, Qualified_Name);
+
+   type Qualified_Name_Vector is new Qualified_Name_Vectors.Vector
+     with null record;
 
    -------------------
    -- Abstract_Node --
@@ -114,8 +124,6 @@ package Matreshka.XML_Schema.AST is
      access all Attribute_Declarations.Attribute_Declaration_Node'Class;
    type Attribute_Group_Definition_Access is
      access all Attribute_Groups.Attribute_Group_Definition_Node'Class;
-   type Attribute_Group_Reference_Access is
-     access all Attribute_Groups.Attribute_Group_Reference_Node'Class;
    type Attribute_Use_Access is
      access all Attribute_Uses.Attribute_Use_Node'Class;
    type Complex_Type_Definition_Access is

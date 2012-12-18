@@ -139,11 +139,11 @@ package Matreshka.XML_Schema.AST.Simple_Types is
 
       --  Internal data.
 
-      Restriction_Base : League.Strings.Universal_String;
+      Restriction_Base : Matreshka.XML_Schema.AST.Qualified_Name;
       --  restriction/@base
-      Member_Types     : League.Strings.Universal_String;
+      Member_Types     : Matreshka.XML_Schema.AST.Qualified_Name_Vector;
       --  union/@memberTypes
-      Item_Type     : League.Strings.Universal_String;
+      Item_Type        : Matreshka.XML_Schema.AST.Qualified_Name;
       --  list/@itemType
    end record;
 
