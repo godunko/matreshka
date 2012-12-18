@@ -61,8 +61,11 @@ package body Matreshka.XML_Schema.Namespace_Builders is
    begin
       --  XXX Only global type definitions must be processed.
 
-      Self.Namespace.Type_Definitions.Insert
-       (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
+      --  Global type definition has name
+      if not Node.Name.Is_Empty then
+         Self.Namespace.Type_Definitions.Insert
+           (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
+      end if;
    end Enter_Complex_Type_Definition;
 
    -------------------------------
@@ -106,8 +109,11 @@ package body Matreshka.XML_Schema.Namespace_Builders is
    begin
       --  XXX Only global type definitions must be processed.
 
-      Self.Namespace.Type_Definitions.Insert
-       (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
+      --  Global type definition has name
+      if not Node.Name.Is_Empty then
+         Self.Namespace.Type_Definitions.Insert
+           (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
+      end if;
    end Enter_Simple_Type_Definition;
 
    -------------------
