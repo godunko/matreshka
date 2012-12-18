@@ -55,7 +55,7 @@ package body XML.Schema.Objects.Terms.Element_Declarations.Internals is
    begin
       return
        (Ada.Finalization.Controlled with
-          Node => Matreshka.XML_Schema.AST.Objects.Object_Access (Node));
+          Node => Matreshka.XML_Schema.AST.Object_Access (Node));
    end Create;
 
 end XML.Schema.Objects.Terms.Element_Declarations.Internals;

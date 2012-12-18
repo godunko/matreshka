@@ -56,6 +56,7 @@ limited with Matreshka.XML_Schema.AST.Models;
 limited with Matreshka.XML_Schema.AST.Model_Groups;
 limited with Matreshka.XML_Schema.AST.Namespaces;
 limited with Matreshka.XML_Schema.AST.Notation_Declarations;
+limited with Matreshka.XML_Schema.AST.Objects;
 limited with Matreshka.XML_Schema.AST.Particles;
 limited with Matreshka.XML_Schema.AST.Schemas;
 limited with Matreshka.XML_Schema.AST.Simple_Types;
@@ -135,6 +136,7 @@ package Matreshka.XML_Schema.AST is
    type Notation_Declaration_Access is
      access all Notation_Declarations.Notation_Declaration_Node'Class;
    type Node_Access is access all Abstract_Node'Class;
+   type Object_Access is access all Objects.Abstract_Object_Node'Class;
    type Particle_Access is access all Particles.Particle_Node'Class;
    type Schema_Access is access all Schemas.Schema_Node'Class;
    type Simple_Type_Definition_Access is

@@ -41,18 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides base tagged type to interface with XS_Object API.
-------------------------------------------------------------------------------
-with XML.Schema;
+with Matreshka.XML_Schema.AST;
 
-package Matreshka.XML_Schema.AST.Objects is
+package XML.Schema.Objects.Type_Definitions.Internals is
 
    pragma Preelaborate;
 
-   type Abstract_Object_Node is abstract new Abstract_Node with null record;
+   function Create
+    (Node : Matreshka.XML_Schema.AST.Type_Definition_Access)
+       return XS_Type_Definition;
 
-   not overriding function Get_Type
-    (Self : not null access Abstract_Object_Node)
-      return XML.Schema.Component_Type is abstract;
-
-end Matreshka.XML_Schema.AST.Objects;
+end XML.Schema.Objects.Type_Definitions.Internals;

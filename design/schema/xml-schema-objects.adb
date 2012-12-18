@@ -41,12 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Objects;
 with XML.Schema.Namespace_Items;
 with XML.Schema.Objects.Terms.Element_Declarations;
 
 package body XML.Schema.Objects is
 
-   use type Matreshka.XML_Schema.AST.Objects.Object_Access;
+   use type Matreshka.XML_Schema.AST.Object_Access;
 
    ---------
    -- "=" --

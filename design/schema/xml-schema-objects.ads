@@ -47,7 +47,7 @@ private with Ada.Finalization;
 
 with League.Strings;
 
-private with Matreshka.XML_Schema.AST.Objects;
+private with Matreshka.XML_Schema.AST;
 limited with XML.Schema.Namespace_Items;
 limited with XML.Schema.Objects.Terms.Element_Declarations;
 
@@ -112,7 +112,7 @@ package XML.Schema.Objects is
 private
 
    type XS_Object is new Ada.Finalization.Controlled with record
-      Node : Matreshka.XML_Schema.AST.Objects.Object_Access;
+      Node : Matreshka.XML_Schema.AST.Object_Access;
    end record;
 
 end XML.Schema.Objects;

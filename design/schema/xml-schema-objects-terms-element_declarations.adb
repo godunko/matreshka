@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Element_Declarations;
+with XML.Schema.Type_Definitions.Internals;
 
 package body XML.Schema.Objects.Terms.Element_Declarations is
 
@@ -196,10 +198,20 @@ package body XML.Schema.Objects.Terms.Element_Declarations is
 
    function Get_Type_Definition
     (Self : XS_Element_Declaration'Class)
-       return XML.Schema.Type_Definitions.XS_Type_Definition is
+       return XML.Schema.Type_Definitions.XS_Type_Definition
+   is
+      use type Matreshka.XML_Schema.AST.Object_Access;
+
    begin
-      raise Program_Error;
-      return X : XML.Schema.Type_Definitions.XS_Type_Definition;
+      if Self.Node = null then
+         return XML.Schema.Type_Definitions.Null_XS_Type_Definition;
+
+      else
+         return
+           XML.Schema.Type_Definitions.Internals.Create
+            (Matreshka.XML_Schema.AST.Element_Declaration_Access
+              (Self.Node).Type_Definition);
+      end if;
    end Get_Type_Definition;
 
 end XML.Schema.Objects.Terms.Element_Declarations;

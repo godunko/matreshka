@@ -50,6 +50,8 @@ package XML.Schema.Objects.Type_Definitions is
 
    type XS_Type_Definition is new XS_Object with private;
 
+   Null_XS_Type_Definition : constant XS_Type_Definition;
+
    function Get_Type_Category
     (Self : XS_Type_Definition'Class) return XML.Schema.Type_Category;
    --  Return whether this type definition is a simple type or complex type.
@@ -139,5 +141,8 @@ package XML.Schema.Objects.Type_Definitions is
 private
 
    type XS_Type_Definition is new XS_Object with null record;
+
+   Null_XS_Type_Definition : constant XS_Type_Definition
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Objects.Type_Definitions;
