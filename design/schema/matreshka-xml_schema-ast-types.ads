@@ -206,9 +206,6 @@ package Matreshka.XML_Schema.AST.Types is
      new Ada.Containers.Doubly_Linked_Lists
           (Matreshka.XML_Schema.AST.Node_Access);
 
-   package Attribute_Group_Reference_Lists is
-     new Ada.Containers.Doubly_Linked_Lists (Attribute_Group_Reference_Access);
-
    overriding function Get_Type
     (Self : not null access Type_Definition_Node)
       return XML.Schema.Component_Type;

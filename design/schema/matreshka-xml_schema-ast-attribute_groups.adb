@@ -59,19 +59,6 @@ package body Matreshka.XML_Schema.AST.Attribute_Groups is
    end Enter_Node;
 
    ----------------
-   -- Enter_Node --
-   ----------------
-
-   overriding procedure Enter_Node
-    (Self    : not null access Attribute_Group_Reference_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Enter_Attribute_Group_Reference
-       (Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access (Self), Control);
-   end Enter_Node;
-
-   ----------------
    -- Leave_Node --
    ----------------
 
@@ -82,19 +69,6 @@ package body Matreshka.XML_Schema.AST.Attribute_Groups is
    begin
       Visitor.Leave_Attribute_Group_Definition
        (Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access (Self), Control);
-   end Leave_Node;
-
-   ----------------
-   -- Leave_Node --
-   ----------------
-
-   overriding procedure Leave_Node
-    (Self    : not null access Attribute_Group_Reference_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Attribute_Group_Reference
-       (Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access (Self), Control);
    end Leave_Node;
 
    ----------------
@@ -109,20 +83,6 @@ package body Matreshka.XML_Schema.AST.Attribute_Groups is
    begin
       Iterator.Visit_Attribute_Group_Definition
        (Visitor, Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access (Self), Control);
-   end Visit_Node;
-
-   ----------------
-   -- Visit_Node --
-   ----------------
-
-   overriding procedure Visit_Node
-    (Self     : not null access Attribute_Group_Reference_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Attribute_Group_Reference
-       (Visitor, Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access (Self), Control);
    end Visit_Node;
 
 end Matreshka.XML_Schema.AST.Attribute_Groups;

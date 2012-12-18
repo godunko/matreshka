@@ -98,18 +98,6 @@ package Matreshka.XML_Schema.Visitors is
        not null Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
-   not overriding procedure Enter_Attribute_Group_Reference
-    (Self    : in out Abstract_Visitor;
-     Node    :
-       not null Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
-
-   not overriding procedure Leave_Attribute_Group_Reference
-    (Self    : in out Abstract_Visitor;
-     Node    :
-       not null Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
-
    not overriding procedure Enter_Attribute_Use
     (Self    : in out Abstract_Visitor;
      Node    : not null Matreshka.XML_Schema.AST.Attribute_Use_Access;
@@ -315,13 +303,6 @@ package Matreshka.XML_Schema.Visitors is
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    :
        not null Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
-
-   not overriding procedure Visit_Attribute_Group_Reference
-    (Self    : in out Abstract_Iterator;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Node    :
-       not null Matreshka.XML_Schema.AST.Attribute_Group_Reference_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Attribute_Use
