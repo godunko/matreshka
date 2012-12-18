@@ -63,6 +63,35 @@ private
       Model : Matreshka.XML_Schema.AST.Model_Access;
    end record;
 
+   not overriding function Resolve_Type
+    (Self    : in out Name_Resolver;
+     Name    : Matreshka.XML_Schema.AST.Qualified_Name)
+     return Matreshka.XML_Schema.AST.Type_Definition_Access;
+   --  Resolve given type name
+
+   not overriding function Resolve_Simple_Type
+    (Self    : in out Name_Resolver;
+     Name    : Matreshka.XML_Schema.AST.Qualified_Name)
+     return Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
+   --  The same, but simple type expected
+
+   not overriding function Resolve_Element
+    (Self    : in out Name_Resolver;
+     Name    : Matreshka.XML_Schema.AST.Qualified_Name)
+     return Matreshka.XML_Schema.AST.Element_Declaration_Access;
+   --  Resolve given element name
+
+   overriding procedure Enter_Attribute_Declaration
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Complex_Type_Definition
+    (Self    : in out Name_Resolver;
+     Node    :
+       not null Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
    overriding procedure Enter_Element_Declaration
     (Self    : in out Name_Resolver;
      Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
@@ -71,6 +100,16 @@ private
    overriding procedure Enter_Model
     (Self    : in out Name_Resolver;
      Node    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Particle
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Particle_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Simple_Type_Definition
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
 --   overriding procedure Enter_Schema
