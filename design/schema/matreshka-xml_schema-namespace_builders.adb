@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.XML_Schema.AST.Attribute_Declarations;
+with Matreshka.XML_Schema.AST.Attribute_Groups;
 with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Element_Declarations;
 with Matreshka.XML_Schema.AST.Namespaces;
@@ -66,6 +67,19 @@ package body Matreshka.XML_Schema.Namespace_Builders is
          Self.Namespace.Attribute_Declarations.Insert (Node.Name, Node);
       end if;
    end Enter_Attribute_Declaration;
+
+   --------------------------------------
+   -- Enter_Attribute_Group_Definition --
+   --------------------------------------
+
+   overriding procedure Enter_Attribute_Group_Definition
+    (Self    : in out Namespace_Builder;
+     Node    :
+       not null Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Self.Namespace.Attribute_Group_Definitions.Insert (Node.Name, Node);
+   end Enter_Attribute_Group_Definition;
 
    -----------------------------------
    -- Enter_Complex_Type_Definition --
@@ -117,7 +131,8 @@ package body Matreshka.XML_Schema.Namespace_Builders is
              (Namespace_URI          => Node.Target_Namespace,
               Type_Definitions       => <>,
               Element_Declarations   => <>,
-              Attribute_Declarations => <>);
+              Attribute_Declarations => <>,
+              Attribute_Group_Definitions => <>);
    end Enter_Schema;
 
    ----------------------------------

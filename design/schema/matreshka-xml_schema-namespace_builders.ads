@@ -71,6 +71,12 @@ private
      Node    : not null Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
+   overriding procedure Enter_Attribute_Group_Definition
+    (Self    : in out Namespace_Builder;
+     Node    :
+       not null Matreshka.XML_Schema.AST.Attribute_Group_Definition_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
    overriding procedure Enter_Complex_Type_Definition
     (Self    : in out Namespace_Builder;
      Node    :
