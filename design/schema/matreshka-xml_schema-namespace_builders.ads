@@ -88,6 +88,11 @@ private
      Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
+   overriding procedure Enter_Model_Group_Definition
+    (Self    : in out Namespace_Builder;
+     Node    : not null Matreshka.XML_Schema.AST.Model_Group_Definition_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
    overriding procedure Enter_Schema
     (Self    : in out Namespace_Builder;
      Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
