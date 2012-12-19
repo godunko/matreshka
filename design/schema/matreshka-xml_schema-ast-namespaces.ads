@@ -62,12 +62,22 @@ package Matreshka.XML_Schema.AST.Namespaces is
       Element_Declarations :
         Matreshka.XML_Schema.AST.Types.Element_Declaration_Maps.Map;
       --  A set of Element Declaration components.
+
+      Attribute_Declarations :
+        Matreshka.XML_Schema.AST.Types.Attribute_Declaration_Maps.Map;
+      --  A set of Attribute Declaration components.
    end record;
 
    function Get_Element_Declaration
     (Self : not null access constant Namespace_Node'Class;
      Name : League.Strings.Universal_String)
        return Matreshka.XML_Schema.AST.Element_Declaration_Access;
+   --  Returns element declaration node or null if no such element declaration.
+
+   function Get_Attribute_Declaration
+    (Self : not null access constant Namespace_Node'Class;
+     Name : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
    --  Returns element declaration node or null if no such element declaration.
 
    function Get_Type_Definition

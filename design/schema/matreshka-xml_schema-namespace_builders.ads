@@ -66,6 +66,11 @@ private
       Namespace : Matreshka.XML_Schema.AST.Namespace_Access;
    end record;
 
+   overriding procedure Enter_Attribute_Declaration
+    (Self    : in out Namespace_Builder;
+     Node    : not null Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
    overriding procedure Enter_Complex_Type_Definition
     (Self    : in out Namespace_Builder;
      Node    :

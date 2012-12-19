@@ -1556,6 +1556,8 @@ package body Matreshka.XML_Schema.Handlers is
          Node.Type_Name :=
            Self.To_Qualified_Name (Attributes.Value (Type_Attribute_Name));
 
+         Node.Scope := (Variety => Matreshka.XML_Schema.AST.Types.Global);
+
          Self.Schema.Attribute_Declarations.Insert (Node.Name, Node);
 
          Self.State.Last_Attribute_Declaration := Node;

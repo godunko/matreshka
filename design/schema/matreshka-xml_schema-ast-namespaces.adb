@@ -58,6 +58,23 @@ package body Matreshka.XML_Schema.AST.Namespaces is
        (Matreshka.XML_Schema.AST.Namespace_Access (Self), Control);
    end Enter_Node;
 
+   -------------------------------
+   -- Get_Attribute_Declaration --
+   -------------------------------
+
+   function Get_Attribute_Declaration
+    (Self : not null access constant Namespace_Node'Class;
+     Name : League.Strings.Universal_String)
+       return Matreshka.XML_Schema.AST.Attribute_Declaration_Access is
+   begin
+      if Self.Attribute_Declarations.Contains (Name) then
+         return Self.Attribute_Declarations.Element (Name);
+
+      else
+         return null;
+      end if;
+   end Get_Attribute_Declaration;
+
    -----------------------------
    -- Get_Element_Declaration --
    -----------------------------

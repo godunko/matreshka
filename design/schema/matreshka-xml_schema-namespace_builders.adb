@@ -41,13 +41,31 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Attribute_Declarations;
 with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Element_Declarations;
 with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Schemas;
 with Matreshka.XML_Schema.AST.Simple_Types;
+with Matreshka.XML_Schema.AST.Types;
 
 package body Matreshka.XML_Schema.Namespace_Builders is
+
+   ---------------------------------
+   -- Enter_Attribute_Declaration --
+   ---------------------------------
+
+   overriding procedure Enter_Attribute_Declaration
+    (Self    : in out Namespace_Builder;
+     Node    : not null Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
+   is
+      use type Matreshka.XML_Schema.AST.Types.Scope_Variety;
+   begin
+      if Node.Scope.Variety = AST.Types.Global then
+         Self.Namespace.Attribute_Declarations.Insert (Node.Name, Node);
+      end if;
+   end Enter_Attribute_Declaration;
 
    -----------------------------------
    -- Enter_Complex_Type_Definition --
@@ -79,7 +97,10 @@ package body Matreshka.XML_Schema.Namespace_Builders is
    begin
       --  XXX Only global element declarations must be processed.
 
-      Self.Namespace.Element_Declarations.Insert (Node.Name, Node);
+      --  Global element declaration has name
+      if not Node.Name.Is_Empty then
+         Self.Namespace.Element_Declarations.Insert (Node.Name, Node);
+      end if;
    end Enter_Element_Declaration;
 
    ------------------
@@ -93,9 +114,10 @@ package body Matreshka.XML_Schema.Namespace_Builders is
    begin
       Self.Namespace :=
         new Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'
-             (Namespace_URI        => Node.Target_Namespace,
-              Type_Definitions     => <>,
-              Element_Declarations => <>);
+             (Namespace_URI          => Node.Target_Namespace,
+              Type_Definitions       => <>,
+              Element_Declarations   => <>,
+              Attribute_Declarations => <>);
    end Enter_Schema;
 
    ----------------------------------
