@@ -108,12 +108,11 @@ package body Matreshka.XML_Schema.Namespace_Builders is
    overriding procedure Enter_Element_Declaration
     (Self    : in out Namespace_Builder;
      Node    : not null Matreshka.XML_Schema.AST.Element_Declaration_Access;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
+   is
+      use type Matreshka.XML_Schema.AST.Types.Scope_Variety;
    begin
-      --  XXX Only global element declarations must be processed.
-
-      --  Global element declaration has name
-      if not Node.Name.Is_Empty then
+      if Node.Scope.Variety = AST.Types.Global then
          Self.Namespace.Element_Declarations.Insert (Node.Name, Node);
       end if;
    end Enter_Element_Declaration;

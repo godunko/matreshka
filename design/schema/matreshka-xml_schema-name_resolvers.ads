@@ -81,9 +81,20 @@ private
      return Matreshka.XML_Schema.AST.Element_Declaration_Access;
    --  Resolve given element name
 
+   not overriding function Resolve_Attribute
+    (Self    : in out Name_Resolver;
+     Name    : Matreshka.XML_Schema.AST.Qualified_Name)
+     return Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+   --  Resolve given attribute name
+
    overriding procedure Enter_Attribute_Declaration
     (Self    : in out Name_Resolver;
      Node    : not null Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Attribute_Use
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Attribute_Use_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
 
    overriding procedure Enter_Complex_Type_Definition

@@ -44,6 +44,7 @@
 with Ada.Wide_Wide_Text_IO;
 
 with Matreshka.XML_Schema.AST.Attribute_Declarations;
+with Matreshka.XML_Schema.AST.Attribute_Uses;
 with Matreshka.XML_Schema.AST.Element_Declarations;
 with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Models;
@@ -82,6 +83,21 @@ package body Matreshka.XML_Schema.Name_Resolvers is
          Node.Type_Definition := Self.Resolve_Simple_Type (Node.Type_Name);
       end if;
    end Enter_Attribute_Declaration;
+
+   -------------------------
+   -- Enter_Attribute_Use --
+   -------------------------
+
+   overriding procedure Enter_Attribute_Use
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Attribute_Use_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      if not AST.Is_Empty (Node.Ref) then
+         -- XXX should we check Node.Attribute_Declaration = null here?
+         Node.Attribute_Declaration := Self.Resolve_Attribute (Node.Ref);
+      end if;
+   end Enter_Attribute_Use;
 
    -----------------------------------
    -- Enter_Complex_Type_Definition --
@@ -203,6 +219,41 @@ package body Matreshka.XML_Schema.Name_Resolvers is
            Self.Resolve_Simple_Type (Node.Item_Type);
       end if;
    end Enter_Simple_Type_Definition;
+
+   -----------------------
+   -- Resolve_Attribute --
+   -----------------------
+
+   not overriding function Resolve_Attribute
+    (Self    : in out Name_Resolver;
+     Name    : Matreshka.XML_Schema.AST.Qualified_Name)
+     return Matreshka.XML_Schema.AST.Attribute_Declaration_Access
+   is
+      use type Matreshka.XML_Schema.AST.Namespace_Access;
+      use type Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+
+      Result    : Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
+      Namespace : constant Matreshka.XML_Schema.AST.Namespace_Access :=
+        Self.Model.Get_Namespace (Name.Namespace_URI);
+   begin
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ('('
+         & Name.Namespace_URI.To_Wide_Wide_String
+         & ')'
+         & Name.Local_Name.To_Wide_Wide_String);
+
+      if Namespace = null then
+         raise Program_Error;
+      end if;
+
+      Result := Namespace.Get_Attribute_Declaration (Name.Local_Name);
+
+      if Result = null then
+         raise Program_Error;
+      end if;
+
+      return Result;
+   end Resolve_Attribute;
 
    ---------------------
    -- Resolve_Element --
