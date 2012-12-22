@@ -299,18 +299,21 @@ package body Matreshka.XML_Schema.Name_Resolvers is
      Name    : Matreshka.XML_Schema.AST.Qualified_Name)
      return Matreshka.XML_Schema.AST.Simple_Type_Definition_Access
    is
-      Result : Matreshka.XML_Schema.AST.Type_Definition_Access :=
-        Self.Resolve_Type (Name);
+      Result : Matreshka.XML_Schema.AST.Type_Definition_Access
+        := Self.Resolve_Type (Name);
+
    begin
-      if Result.all in Matreshka.XML_Schema.AST.Simple_Types
-        .Simple_Type_Definition_Node'Class
+      if Result.all
+           in Matreshka.XML_Schema.AST.Simple_Types
+                .Simple_Type_Definition_Node'Class
       then
          return
            Matreshka.XML_Schema.AST.Simple_Type_Definition_Access
              (Result);
+
       else
-         raise Constraint_Error with
-           "Unable to resolve type to simple type";
+         raise Constraint_Error
+           with "Unable to resolve type to simple type";
       end if;
    end Resolve_Simple_Type;
 
