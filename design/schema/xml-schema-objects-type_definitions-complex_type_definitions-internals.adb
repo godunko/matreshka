@@ -41,21 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Complex_Types;
 
-package XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
+package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions.Internals is
 
-   pragma Preelaborate;
+   ------------
+   -- Create --
+   ------------
 
-   type XS_Complex_Type_Definition is new XS_Type_Definition with private;
+   function Create
+    (Node : Matreshka.XML_Schema.AST.Complex_Type_Definition_Access)
+       return XS_Complex_Type_Definition is
+   begin
+      return
+       (Ada.Finalization.Controlled with
+          Node => Matreshka.XML_Schema.AST.Object_Access (Node));
+   end Create;
 
-   Null_XS_Complex_Type_Definition : constant XS_Complex_Type_Definition;
-
-private
-
-   type XS_Complex_Type_Definition is
-     new XS_Type_Definition with null record;
-
-   Null_XS_Complex_Type_Definition : constant XS_Complex_Type_Definition
-     := (Ada.Finalization.Controlled with Node => null);
-
-end XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
+end XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions.Internals;

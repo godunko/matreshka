@@ -48,9 +48,14 @@ package XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions is
 
    type XS_Simple_Type_Definition is new XS_Type_Definition with private;
 
+   Null_XS_Simple_Type_Definition : constant XS_Simple_Type_Definition;
+
 private
 
    type XS_Simple_Type_Definition is
      new XS_Type_Definition with null record;
+
+   Null_XS_Simple_Type_Definition : constant XS_Simple_Type_Definition
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions;

@@ -50,6 +50,9 @@ with League.Strings;
 private with Matreshka.XML_Schema.AST;
 limited with XML.Schema.Namespace_Items;
 limited with XML.Schema.Objects.Terms.Element_Declarations;
+limited with XML.Schema.Objects.Type_Definitions;
+limited with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
+limited with XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions;
 
 package XML.Schema.Objects is
 
@@ -82,27 +85,42 @@ package XML.Schema.Objects is
 
    --  Object type classification subprograms.
 
-   function Is_Attribute_Declaration (Self : XS_Object'Class) return Boolean;
-   function Is_Element_Declaration (Self : XS_Object'Class) return Boolean;
-   function Is_Type_Definition (Self : XS_Object'Class) return Boolean;
-   function Is_Attribute_Use (Self : XS_Object'Class) return Boolean;
-   function Is_Attribute_Group (Self : XS_Object'Class) return Boolean;
-   function Is_Model_Group_Definition (Self : XS_Object'Class) return Boolean;
-   function Is_Model_Group (Self : XS_Object'Class) return Boolean;
-   function Is_Particle (Self : XS_Object'Class) return Boolean;
-   function Is_Wildcard (Self : XS_Object'Class) return Boolean;
-   function Is_Identity_Constraint (Self : XS_Object'Class) return Boolean;
-   function Is_Notation_Declaration (Self : XS_Object'Class) return Boolean;
    function Is_Annotation (Self : XS_Object'Class) return Boolean;
+   function Is_Attribute_Declaration (Self : XS_Object'Class) return Boolean;
+   function Is_Attribute_Group (Self : XS_Object'Class) return Boolean;
+   function Is_Attribute_Use (Self : XS_Object'Class) return Boolean;
+   function Is_Complex_Type_Definition (Self : XS_Object'Class) return Boolean;
+   function Is_Element_Declaration (Self : XS_Object'Class) return Boolean;
    function Is_Facet (Self : XS_Object'Class) return Boolean;
+   function Is_Identity_Constraint (Self : XS_Object'Class) return Boolean;
+   function Is_Model_Group (Self : XS_Object'Class) return Boolean;
+   function Is_Model_Group_Definition (Self : XS_Object'Class) return Boolean;
    function Is_Multivalue_Facet (Self : XS_Object'Class) return Boolean;
+   function Is_Notation_Declaration (Self : XS_Object'Class) return Boolean;
+   function Is_Particle (Self : XS_Object'Class) return Boolean;
+   function Is_Simple_Type_Definition (Self : XS_Object'Class) return Boolean;
+   function Is_Type_Definition (Self : XS_Object'Class) return Boolean;
+   function Is_Wildcard (Self : XS_Object'Class) return Boolean;
 
    --  Object type conversion subprograms.
 
+   function To_Complex_Type_Definition
+    (Self : XS_Object'Class)
+       return
+         XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions
+           .XS_Complex_Type_Definition;
    function To_Element_Declaration
     (Self : XS_Object'Class)
        return
          XML.Schema.Objects.Terms.Element_Declarations.XS_Element_Declaration;
+   function To_Simple_Type_Definition
+    (Self : XS_Object'Class)
+       return
+         XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions
+           .XS_Simple_Type_Definition;
+   function To_Type_Definition
+    (Self : XS_Object'Class)
+       return XML.Schema.Objects.Type_Definitions.XS_Type_Definition;
 
    function "=" (Left : XS_Object; Right : XS_Object) return Boolean;
    function "=" (Left : XS_Object; Right : XS_Object'Class) return Boolean;

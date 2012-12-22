@@ -41,9 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Objects;
+with Matreshka.XML_Schema.AST.Simple_Types;
+with Matreshka.XML_Schema.AST.Types;
 with XML.Schema.Namespace_Items;
 with XML.Schema.Objects.Terms.Element_Declarations;
+with XML.Schema.Objects.Type_Definitions.Internals;
+with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions.Internals;
+with XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions.Internals;
 
 package body XML.Schema.Objects is
 
@@ -152,6 +158,20 @@ package body XML.Schema.Objects is
       return Self.Get_Type = Attribute_Use;
    end Is_Attribute_Use;
 
+   --------------------------------
+   -- Is_Complex_Type_Definition --
+   --------------------------------
+
+   function Is_Complex_Type_Definition
+    (Self : XS_Object'Class) return Boolean is
+   begin
+      return
+        Self.Get_Type = Type_Definition
+          and then Self.Node.all
+                     in Matreshka.XML_Schema.AST.Complex_Types
+                          .Complex_Type_Definition_Node'Class;
+   end Is_Complex_Type_Definition;
+
    ----------------------------
    -- Is_Element_Declaration --
    ----------------------------
@@ -234,6 +254,20 @@ package body XML.Schema.Objects is
       return Self.Get_Type = Particle;
    end Is_Particle;
 
+   -------------------------------
+   -- Is_Simple_Type_Definition --
+   -------------------------------
+
+   function Is_Simple_Type_Definition
+    (Self : XS_Object'Class) return Boolean is
+   begin
+      return
+        Self.Get_Type = Type_Definition
+          and then Self.Node.all
+                     in Matreshka.XML_Schema.AST.Simple_Types
+                          .Simple_Type_Definition_Node'Class;
+   end Is_Simple_Type_Definition;
+
    ------------------------
    -- Is_Type_Definition --
    ------------------------
@@ -252,6 +286,30 @@ package body XML.Schema.Objects is
       return Self.Get_Type = Wildcard;
    end Is_Wildcard;
 
+   --------------------------------
+   -- To_Complex_Type_Definition --
+   --------------------------------
+
+   function To_Complex_Type_Definition
+    (Self : XS_Object'Class)
+       return
+         XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions
+           .XS_Complex_Type_Definition is
+   begin
+      if Self.Is_Null or else not Self.Is_Complex_Type_Definition then
+         return
+           XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions
+             .Null_XS_Complex_Type_Definition;
+
+      else
+         return
+           XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions
+             .Internals.Create
+               (Matreshka.XML_Schema.AST.Complex_Type_Definition_Access
+                 (Self.Node));
+      end if;
+   end To_Complex_Type_Definition;
+
    ----------------------------
    -- To_Element_Declaration --
    ----------------------------
@@ -267,5 +325,47 @@ package body XML.Schema.Objects is
         X :
           XML.Schema.Objects.Terms.Element_Declarations.XS_Element_Declaration;
    end To_Element_Declaration;
+
+   -------------------------------
+   -- To_Simple_Type_Definition --
+   -------------------------------
+
+   function To_Simple_Type_Definition
+    (Self : XS_Object'Class)
+       return
+         XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions
+           .XS_Simple_Type_Definition is
+   begin
+      if Self.Is_Null or else not Self.Is_Simple_Type_Definition then
+         return
+           XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions
+             .Null_XS_Simple_Type_Definition;
+
+      else
+         return
+           XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions
+             .Internals.Create
+               (Matreshka.XML_Schema.AST.Simple_Type_Definition_Access
+                 (Self.Node));
+      end if;
+   end To_Simple_Type_Definition;
+
+   ------------------------
+   -- To_Type_Definition --
+   ------------------------
+
+   function To_Type_Definition
+    (Self : XS_Object'Class)
+       return XML.Schema.Objects.Type_Definitions.XS_Type_Definition is
+   begin
+      if Self.Is_Null or else not Self.Is_Complex_Type_Definition then
+         return XML.Schema.Objects.Type_Definitions.Null_XS_Type_Definition;
+
+      else
+         return
+           XML.Schema.Objects.Type_Definitions.Internals.Create
+            (Matreshka.XML_Schema.AST.Type_Definition_Access (Self.Node));
+      end if;
+   end To_Type_Definition;
 
 end XML.Schema.Objects;

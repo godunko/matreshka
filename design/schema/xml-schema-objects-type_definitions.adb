@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Complex_Types;
+with Matreshka.XML_Schema.AST.Simple_Types;
 
 package body XML.Schema.Objects.Type_Definitions is
 
@@ -110,8 +112,24 @@ package body XML.Schema.Objects.Type_Definitions is
    function Get_Type_Category
     (Self : XS_Type_Definition'Class) return XML.Schema.Type_Category is
    begin
-      raise Program_Error;
-      return Simple_Type;
+      if Self.Is_Null then
+         return XML.Schema.None;
+
+      elsif Self.Node.all
+              in Matreshka.XML_Schema.AST.Complex_Types
+                   .Complex_Type_Definition_Node'Class
+      then
+         return XML.Schema.Complex_Type;
+
+      elsif Self.Node.all
+              in Matreshka.XML_Schema.AST.Simple_Types
+                   .Simple_Type_Definition_Node'Class
+      then
+         return XML.Schema.Simple_Type;
+
+      else
+         raise Program_Error;
+      end if;
    end Get_Type_Category;
 
    --------------
