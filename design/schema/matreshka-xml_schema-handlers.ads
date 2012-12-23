@@ -101,6 +101,7 @@ private
      Selector,
      Sequence,
      Sequence_Element,
+     Simple_Content,
      Simple_Type,
      Simple_Type_List,
      Simple_Type_Restriction,

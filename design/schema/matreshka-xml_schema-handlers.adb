@@ -119,6 +119,8 @@ package body Matreshka.XML_Schema.Handlers is
      := League.Strings.To_Universal_String ("selector");
    Sequence_Element_Name             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("sequence");
+   Simple_Content_Name               : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("simpleContent");
    Simple_Type_Element_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("simpleType");
    Union_Element_Name                : constant League.Strings.Universal_String
@@ -575,6 +577,14 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean);
       --  'anyAttribute' element inside 'complexType'
 
+      procedure Start_Simple_Content_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+
+      procedure End_Simple_Content_Element
+       (Self       : in out XML_Schema_Handler;
+        Success    : in out Boolean) is null;
    end Complex_Types;
 
    package Simple_Types is
@@ -1115,6 +1125,21 @@ package body Matreshka.XML_Schema.Handlers is
             Particle     => Node,
             Open_Content => <>);
       end Start_Sequence_Element;
+
+      ----------------------------------
+      -- Start_Simple_Content_Element --
+      ----------------------------------
+
+      procedure Start_Simple_Content_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean) is
+      begin
+         --  XXX Check where Simple_Type_Definition should be filled
+         Self.State.Last_Complex_Type_Definition.Content_Type :=
+           (Variety                => AST.Complex_Types.Simple,
+            Simple_Type_Definition => null);
+      end Start_Simple_Content_Element;
 
       ------------------------------------------
       -- Start_Top_Level_Complex_Type_Element --
@@ -1821,6 +1846,10 @@ package body Matreshka.XML_Schema.Handlers is
             Complex_Types.End_Sequence_Element (Self, Success);
             Self.Pop;
 
+         elsif Local_Name = Simple_Content_Name then
+            Complex_Types.End_Simple_Content_Element (Self, Success);
+            Self.Pop;
+
          elsif Local_Name = Simple_Type_Element_Name then
             Simple_Types.End_Simple_Type_Element (Self, Success);
             Self.Pop;
@@ -2432,6 +2461,16 @@ package body Matreshka.XML_Schema.Handlers is
               Last_Model => Self.State.Last_Model,
               others => <>);
 
+         when Simple_Content =>
+            --  Propagate current complex type definition, it is used later in
+            --  Complex_Type_Restriction, Complex_Type_Extension states.
+
+            Self.State :=
+             (State,
+              Last_Complex_Type_Definition =>
+                Self.State.Last_Complex_Type_Definition,
+              others => <>);
+
          when Simple_Type =>
             --  Propagate current attribute declaration.
 
@@ -2907,7 +2946,7 @@ package body Matreshka.XML_Schema.Handlers is
             end if;
 
          elsif Local_Name = Extension_Element_Name then
-            if Self.Current = Complex_Content then
+            if Self.Current in Complex_Content | Simple_Content then
                Self.Push (Complex_Type_Extension);
                Complex_Types.Start_Extension_Element
                  (Self, Attributes, Success);
@@ -3055,7 +3094,15 @@ package body Matreshka.XML_Schema.Handlers is
             else
                raise Program_Error;
             end if;
+         elsif Local_Name = Simple_Content_Name then
+            if Self.Current = Complex_Type then
+               Self.Push (Simple_Content);
 
+               Complex_Types.Start_Simple_Content_Element
+                (Self, Attributes, Success);
+            else
+               raise Program_Error;
+            end if;
          elsif Local_Name = Simple_Type_Element_Name then
             if Self.Current = Schema then
                Self.Push (Simple_Type);
