@@ -1950,5 +1950,150 @@ use</xs:documentation>
   </xs:annotation>
 
 
+  <!-- XML Schema schema for XML Schemas: Part 2: Datatypes -->
+  <!-- Id: XMLSchema-datatypes.xsd,v 1.5 2001/03/16 20:53:32 ht Exp -->
+  <!--
+     Note this schema is NOT a normative schema - -
+     It contains types derived from all the builtin simple type definitions
+     with the same local name but in a distinct namespace, for use
+     by applications which do no wish to import the full XMLSchema
+     schema.  Since derivation is not symmetric, unexpected results may
+     follow from mixing references to these definitions with references
+     to the definitions in the XMLSchema namespace.  For example,
+     although dt:positiveInteger is derived from xs:integer, the converse
+     does not hold.
+   -->
+  <xs:simpleType name="string">
+   <xs:restriction base="string"/>
+  </xs:simpleType>
+  <xs:simpleType name="boolean">
+   <xs:restriction base="boolean"/>
+  </xs:simpleType>
+  <xs:simpleType name="float">
+   <xs:restriction base="float"/>
+  </xs:simpleType>
+  <xs:simpleType name="double">
+   <xs:restriction base="double"/>
+  </xs:simpleType>
+  <xs:simpleType name="decimal">
+   <xs:restriction base="decimal"/>
+  </xs:simpleType>
+  <xs:simpleType name="dateTime">
+   <xs:restriction base="dateTime"/>
+  </xs:simpleType>
+  <xs:simpleType name="duration">
+   <xs:restriction base="duration"/>
+  </xs:simpleType>
+  <xs:simpleType name="hexBinary">
+   <xs:restriction base="hexBinary"/>
+  </xs:simpleType>
+  <xs:simpleType name="base64Binary">
+   <xs:restriction base="base64Binary"/>
+  </xs:simpleType>
+  <xs:simpleType name="anyURI">
+   <xs:restriction base="anyURI"/>
+  </xs:simpleType>
+  <xs:simpleType name="ID">
+   <xs:restriction base="ID"/>
+  </xs:simpleType>
+  <xs:simpleType name="IDREF">
+   <xs:restriction base="IDREF"/>
+  </xs:simpleType>
+  <xs:simpleType name="ENTITY">
+   <xs:restriction base="ENTITY"/>
+  </xs:simpleType>
+  <xs:simpleType name="NOTATION">
+   <xs:restriction base="NOTATION"/>
+  </xs:simpleType>
+  <xs:simpleType name="normalizedString">
+   <xs:restriction base="normalizedString"/>
+  </xs:simpleType>
+  <xs:simpleType name="token">
+   <xs:restriction base="token"/>
+  </xs:simpleType>
+  <xs:simpleType name="language">
+   <xs:restriction base="language"/>
+  </xs:simpleType>
+  <xs:simpleType name="IDREFS">
+   <xs:restriction base="IDREFS"/>
+  </xs:simpleType>
+  <xs:simpleType name="ENTITIES">
+   <xs:restriction base="ENTITIES"/>
+  </xs:simpleType>
+  <xs:simpleType name="NMTOKEN">
+   <xs:restriction base="NMTOKEN"/>
+  </xs:simpleType>
+  <xs:simpleType name="NMTOKENS">
+   <xs:restriction base="NMTOKENS"/>
+  </xs:simpleType>
+  <xs:simpleType name="Name">
+   <xs:restriction base="Name"/>
+  </xs:simpleType>
+  <xs:simpleType name="QName">
+   <xs:restriction base="QName"/>
+  </xs:simpleType>
+  <xs:simpleType name="NCName">
+   <xs:restriction base="NCName"/>
+  </xs:simpleType>
+  <xs:simpleType name="integer">
+   <xs:restriction base="integer"/>
+  </xs:simpleType>
+  <xs:simpleType name="nonNegativeInteger">
+   <xs:restriction base="nonNegativeInteger"/>
+  </xs:simpleType>
+  <xs:simpleType name="positiveInteger">
+   <xs:restriction base="positiveInteger"/>
+  </xs:simpleType>
+  <xs:simpleType name="nonPositiveInteger">
+   <xs:restriction base="nonPositiveInteger"/>
+  </xs:simpleType>
+  <xs:simpleType name="negativeInteger">
+   <xs:restriction base="negativeInteger"/>
+  </xs:simpleType>
+  <xs:simpleType name="byte">
+   <xs:restriction base="byte"/>
+  </xs:simpleType>
+  <xs:simpleType name="int">
+   <xs:restriction base="int"/>
+  </xs:simpleType>
+  <xs:simpleType name="long">
+   <xs:restriction base="long"/>
+  </xs:simpleType>
+  <xs:simpleType name="short">
+   <xs:restriction base="short"/>
+  </xs:simpleType>
+  <xs:simpleType name="unsignedByte">
+   <xs:restriction base="unsignedByte"/>
+  </xs:simpleType>
+  <xs:simpleType name="unsignedInt">
+   <xs:restriction base="unsignedInt"/>
+  </xs:simpleType>
+  <xs:simpleType name="unsignedLong">
+   <xs:restriction base="unsignedLong"/>
+  </xs:simpleType>
+  <xs:simpleType name="unsignedShort">
+   <xs:restriction base="unsignedShort"/>
+  </xs:simpleType>
+  <xs:simpleType name="date">
+   <xs:restriction base="date"/>
+  </xs:simpleType>
+  <xs:simpleType name="time">
+   <xs:restriction base="time"/>
+  </xs:simpleType>
+  <xs:simpleType name="gYearMonth">
+   <xs:restriction base="gYearMonth"/>
+  </xs:simpleType>
+  <xs:simpleType name="gYear">
+   <xs:restriction base="gYear"/>
+  </xs:simpleType>
+  <xs:simpleType name="gMonthDay">
+   <xs:restriction base="gMonthDay"/>
+  </xs:simpleType>
+  <xs:simpleType name="gDay">
+   <xs:restriction base="gDay"/>
+  </xs:simpleType>
+  <xs:simpleType name="gMonth">
+   <xs:restriction base="gMonth"/>
+  </xs:simpleType>
 
 </xs:schema>
