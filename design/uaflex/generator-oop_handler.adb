@@ -59,6 +59,7 @@ package body Generator.OOP_Handler is
    procedure On_Accept
      (Actions : League.String_Vectors.Universal_String_Vector;
       File    : String;
+      Types   : League.Strings.Universal_String;
       Handler : League.Strings.Universal_String;
       Scanner : League.Strings.Universal_String;
       Tokens  : League.Strings.Universal_String)
@@ -87,7 +88,7 @@ package body Generator.OOP_Handler is
            Handler.To_Wide_Wide_String & ".Handler'Class;");
       P ("   Scanner : not null access " &
            Scanner.To_Wide_Wide_String & ".Scanner'Class;");
-      P ("   Rule    : Rule_Index;");
+      P ("   Rule    : " & Types.To_Wide_Wide_String & ".Rule_Index;");
       P ("   Token   : out " & Tokens.To_Wide_Wide_String & ".Token;");
       P ("   Skip    : in out Boolean) is");
       P ("begin");

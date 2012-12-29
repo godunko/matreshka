@@ -44,6 +44,7 @@
 with Nodes;
 with Ada.Containers;
 with Ada.Containers.Ordered_Maps;
+with Ada.Strings.Wide_Wide_Fixed;
 with Ada.Wide_Wide_Text_IO;
 with League.Character_Sets;
 
@@ -89,6 +90,7 @@ package body Generator.Tables is
      (DFA     : Matreshka.Internals.Finite_Automatons.DFA;
       Unit    : League.Strings.Universal_String;
       File    : String;
+      Types   : League.Strings.Universal_String;
       Scanner : League.Strings.Universal_String;
       Classes : Matreshka.Internals.Finite_Automatons.Vectors.Vector)
    is
@@ -103,6 +105,8 @@ package body Generator.Tables is
       function Get_Second (X : First_Stage_Index) return Second_Stage_Array;
 
       Output  : Ada.Wide_Wide_Text_IO.File_Type;
+      Length  : Natural := 0;  --  Length of last output line
+      Indent  : Natural := 0;  --  Last indent
 
       ----------------
       -- Get_Second --
@@ -127,15 +131,32 @@ package body Generator.Tables is
       end Get_Second;
 
       procedure N (Text : Wide_Wide_String) is
+         use Ada.Strings.Wide_Wide_Fixed;
       begin
-         --  Ada.Wide_Wide_Text_IO.Put (Text);
-         Ada.Wide_Wide_Text_IO.Put (Output, Text);
+         if Length = 0 then
+            Indent := Ada.Strings.Wide_Wide_Fixed.Index_Non_Blank
+              (Text & ".");
+         end if;
+
+         if Length + Text'Length > 75 then
+            Ada.Wide_Wide_Text_IO.Put_Line
+              (Output, Trim (Text, Ada.Strings.Right));
+            Ada.Wide_Wide_Text_IO.Put (Output, Indent * ' ');
+            Length := Indent;
+         else
+            Ada.Wide_Wide_Text_IO.Put (Output, Text);
+            Length := Length + Text'Length;
+         end if;
       end N;
 
       procedure P (Text : Wide_Wide_String) is
       begin
-         --  Ada.Wide_Wide_Text_IO.Put_Line (Text);
+         if Length = 0 then
+            Indent := Ada.Strings.Wide_Wide_Fixed.Index_Non_Blank (Text);
+         end if;
+
          Ada.Wide_Wide_Text_IO.Put_Line (Output, Text);
+         Length := 0;
       end P;
 
       procedure Print_Char_Classes is
@@ -248,7 +269,8 @@ package body Generator.Tables is
             Count := Count + 1;
          end Each_Rule;
       begin
-         P ("   Rule_Table : constant array (State) of Rule_Index :=");
+         P ("   Rule_Table : constant array (State) of");
+         P ("     " & Types.To_Wide_Wide_String & ".Rule_Index :=");
          DFA.Final.Iterate (Each_Rule'Access);
          P (", others => 0);");
          P ("");
@@ -303,6 +325,9 @@ package body Generator.Tables is
                if Count /= Positive (Classes.Length) + 1 then
                   if Count = 0 then
                      N ("        (");
+                  elsif Length > 65 then
+                     P ("");
+                     N ("        , ");
                   else
                      N (", ");
                   end if;
@@ -338,8 +363,8 @@ package body Generator.Tables is
       P ("   type Second_Stage_Array_Access is");
       P ("     not null access constant Second_Stage_Array;");
       P ("");
-      P ("   type First_Stage_Array is array (First_Stage_Index) " &
-           "of Second_Stage_Array_Access;");
+      P ("   type First_Stage_Array is");
+      P ("     array (First_Stage_Index) of Second_Stage_Array_Access;");
       P ("");
       Print_Char_Classes;
       Print_Switch;
@@ -356,7 +381,8 @@ package body Generator.Tables is
       P ("      return Element (First, Value);");
       P ("   end To_Class;");
       P ("");
-      P ("   function Rule (S : State) return Rule_Index is");
+      P ("   function Rule (S : State) return " & Types.To_Wide_Wide_String &
+           ".Rule_Index is");
       P ("   begin");
       P ("      return Rule_Table (S);");
       P ("   end Rule;");

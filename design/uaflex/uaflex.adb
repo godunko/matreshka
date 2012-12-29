@@ -317,6 +317,7 @@ begin
         (X,
          +"Tables",
          To_File_Name (Scanner & ".Tables", ".adb"),
+         Types,
          Scanner,
          Classes);
    end;
@@ -331,6 +332,7 @@ begin
    Generator.OOP_Handler.On_Accept
      (Nodes.Actions,
       To_File_Name (Scanner & ".On_Accept", ".adb"),
+      Types,
       Handler,
       Scanner,
       Tokens);

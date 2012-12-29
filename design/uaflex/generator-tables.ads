@@ -50,6 +50,7 @@ package Generator.Tables is
      (DFA     : Matreshka.Internals.Finite_Automatons.DFA;
       Unit    : League.Strings.Universal_String;
       File    : String;
+      Types   : League.Strings.Universal_String;
       Scanner : League.Strings.Universal_String;
       Classes : Matreshka.Internals.Finite_Automatons.Vectors.Vector);
 
