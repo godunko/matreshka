@@ -2,7 +2,7 @@ separate (AAA.Scanners)
 procedure On_Accept
   (Self    : not null access AAA.Handlers.Handler'Class;
    Scanner : not null access AAA.Scanners.Scanner'Class;
-   Rule    : Rule_Index;
+   Rule    : AAA.Rule_Index;
    Token   : out Parser_Tokens.Token;
    Skip    : in out Boolean) is
 begin
