@@ -182,7 +182,16 @@ package body Generator is
              & Right.Get_Name.Value;
 
    begin
-      return L < R;
+      if L /= R then
+         return L < R;
+
+      else
+         return
+           AMF.Internals.Helpers.To_Element
+            (AMF.Elements.Element_Access (Left))
+             < AMF.Internals.Helpers.To_Element
+                (AMF.Elements.Element_Access (Right));
+      end if;
    end Less;
 
    ----------
