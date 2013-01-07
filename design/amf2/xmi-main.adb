@@ -3,7 +3,7 @@ with Ada.Wide_Wide_Text_IO;
 with AMF.Facility;
 with AMF.Elements.Collections;
 with AMF.Extents.Collections;
-with AMF.Internals.Modules.MOF_Module;
+with AMF.Internals.Modules.MOFEXT_Module;
 with AMF.Internals.Modules.OCL_Module;
 with AMF.Internals.Modules.UML_Module;
 with AMF.Internals.Modules.UTP_Module;
