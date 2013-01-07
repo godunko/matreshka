@@ -404,9 +404,12 @@ package body Generator is
           := Attribute.Get_Redefined_Property;
 
    begin
-      if not Redefined_Property.Is_Empty then
-         --  When attribute redefines another attribute alanyze redefined one,
-         --  because redefinition can change multiplicity.
+      if not Redefined_Property.Is_Empty
+        and Attribute_Type.all not in AMF.CMOF.Classes.CMOF_Class'Class
+      then
+         --  Alanyze redefined attribute when current attribute redefines it
+         --  and both have non-Class type, because redefinition can change
+         --  multiplicity.
 
          return Use_Member_Slot (Redefined_Property.Element (1));
 
