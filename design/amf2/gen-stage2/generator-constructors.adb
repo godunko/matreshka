@@ -124,6 +124,7 @@ package body Generator.Constructors is
          Original_Attribute : AMF.CMOF.Properties.CMOF_Property_Access;
          Redefined          : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property;
          Generated          : CMOF_Property_Sets.Set;
+         Generate           : Boolean;
 
       begin
          Unit.Add_Header (Name, 3);
@@ -185,6 +186,7 @@ package body Generator.Constructors is
             Default            := Attribute.Get_Default;
             Original_Attribute := Attribute;
             Redefined          := Original_Attribute.Get_Redefined_Property;
+            Generate           := False;
 
             --  Unwind to original property definition.
 
@@ -193,21 +195,27 @@ package body Generator.Constructors is
                Redefined := Original_Attribute.Get_Redefined_Property;
             end loop;
 
-            --  Attributes of type CMOF::Class never shared slot/collections,
-            --  thus redifinition chain is not important here.
+            --  Attributes of type CMOF::Class never share slots/collections,
+            --  thus redifinition chain is not important here; slot
+            --  initialization is generated when current attribute occupy
+            --  member slot.
 
             if Attribute_Type.all in AMF.CMOF.Classes.CMOF_Class'Class then
                Original_Attribute := Attribute;
+               Generate := Module_Info.Attribute_Member.Contains (Attribute);
+
+            --  Generate slot initialization for attributes of non-CMOF::Class
+            --  type which original attributes occupies member and nor original
+            --  attribute nor current attribute are not redefined.
+
+            elsif not Class.Redefined_Attributes.Contains (Original_Attribute)
+                        or not Class.Redefined_Attributes.Contains (Attribute)
+            then
+              Generate :=
+                Module_Info.Attribute_Member.Contains (Original_Attribute);
             end if;
 
-            --  Generate slot initialization for attributes which original
-            --  attributes occupies member and nor original attribute nor
-            --  current attribute are not redefined.
-
-            if (not Class.Redefined_Attributes.Contains (Original_Attribute)
-                  or else not Class.Redefined_Attributes.Contains (Attribute))
-              and Module_Info.Attribute_Member.Contains (Original_Attribute)
-            then
+            if Generate then
                Image :=
                  League.Strings.To_Universal_String
                   (Integer'Wide_Wide_Image
