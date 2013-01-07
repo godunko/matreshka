@@ -8,7 +8,6 @@ all:
 	gprbuild -p -Pgui/cmof_tree_view/gui.gpr
 	gprbuild -p -Pgui/modeler/modeler.gpr -XBUILD_MODE=MOC
 	gprbuild -p -Pgui/modeler/modeler.gpr -XBUILD_MODE=APP
-#	gprbuild -p -Pgen-stage1/generator.gpr
 	gprbuild -p -Pgen-stage2/gens.gpr
 #	time ./demo-reader data/cmof.cmof
 #	./demo-viewer data/cmof.cmof
@@ -110,7 +109,7 @@ gen-dd-stubs: gens
 	rm -r .new
 
 clean:
-	rm -rf .libs amf/.objs gen-stage1/.objs gen-stage2/.obj uml/.objs gui/cmof_tree_view/.objs gui/cmof_tree_view/.amoc demo-cmof demo-reader demo-viewer
+	rm -rf .libs amf/.objs gen-stage2/.obj uml/.objs gui/cmof_tree_view/.objs gui/cmof_tree_view/.amoc demo-cmof demo-reader demo-viewer
 
 dd:
 	gprbuild -j0 -p -P dd.gpr
