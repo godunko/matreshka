@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -599,19 +599,20 @@ package body Generator.Constructors is
          while CMOF_Property_Sets.Has_Element (Attribute_Position) loop
             Attribute          :=
               CMOF_Property_Sets.Element (Attribute_Position);
-            Original_Attribute := Attribute;
-            Redefined          := Original_Attribute.Get_Redefined_Property;
-
-            --  Unwind to original property definition.
-
-            while not Redefined.Is_Empty loop
-               Original_Attribute := Redefined.Element (1);
-               Redefined := Original_Attribute.Get_Redefined_Property;
-            end loop;
-
-            if Attribute = Original_Attribute
-              and then Module_Info.Attribute_Collection.Contains (Attribute)
-            then
+--            Original_Attribute := Attribute;
+--            Redefined          := Original_Attribute.Get_Redefined_Property;
+--
+--            --  Unwind to original property definition.
+--
+--            while not Redefined.Is_Empty loop
+--               Original_Attribute := Redefined.Element (1);
+--               Redefined := Original_Attribute.Get_Redefined_Property;
+--            end loop;
+--
+--            if Attribute = Original_Attribute
+--              and then Module_Info.Attribute_Collection.Contains (Attribute)
+--            then
+            if Module_Info.Attribute_Collection.Contains (Attribute) then
                Unit.Add_Line;
                Unit.Add_Line ("      --  " & Attribute.Get_Name.Value);
                Unit.Add_Line;
@@ -675,7 +676,7 @@ package body Generator.Constructors is
          return;
       end if;
 
-      Unit.Add_Unit_Header (2010, 2012);
+      Unit.Add_Unit_Header (2010, 2013);
 
       Unit.Add_Line;
       Unit.Add_Line ("package body " & Package_Name & " is");

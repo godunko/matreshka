@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -684,6 +684,7 @@ package body Generator.Analyzer is
          Attributes     : constant
            AMF.CMOF.Properties.Collections.Ordered_Set_Of_CMOF_Property
              := Class.Get_Owned_Attribute;
+         Attribute_Type : AMF.CMOF.Types.CMOF_Type_Access;
          Attribute      : AMF.CMOF.Properties.CMOF_Property_Access;
          Redefines      : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property;
          Attribute_Info : Attribute_Group_Access;
@@ -695,6 +696,7 @@ package body Generator.Analyzer is
 
          for J in 1 .. Attributes.Length loop
             Attribute      := Attributes.Element (J);
+            Attribute_Type := Attribute.Get_Type;
             Attribute_Info := null;
 
             --  Attribute can be analyzed already, skip it then.
@@ -702,43 +704,53 @@ package body Generator.Analyzer is
             if not Attribute_Group.Contains (Attribute) then
                Redefines := Attribute.Get_Redefined_Property;
 
-               if not Redefines.Is_Empty then
-                  --  Attribute redefines another one, use the same attribute
-                  --  information.
+               if Attribute_Type.all
+                    not in AMF.CMOF.Classes.CMOF_Class'Class
+               then
+                  --  For attributes of non-Class type we reused
+                  --  member/collection for redefined and equally named
+                  --  attributes.
 
-                  Attribute_Info :=
-                    Attribute_Group.Element (Redefines.Element (1));
+                  if not Redefines.Is_Empty then
+                     --  Attribute redefines another one, use the same
+                     --  attribute information.
 
-               else
-                  --  Lookup for another analyzed attribute which is not
-                  --  distinguishable as Ada subprogram.
+                     Attribute_Info :=
+                       Attribute_Group.Element (Redefines.Element (1));
 
-                  declare
-                     Position        : Property_Attribute_Group_Maps.Cursor
-                       := Attribute_Group.First;
-                     Other_Attribute : AMF.CMOF.Properties.CMOF_Property_Access;
-                     Other_Class     : AMF.CMOF.Classes.CMOF_Class_Access;
+                  else
+                     --  Lookup for another analyzed attribute which is not
+                     --  distinguishable as Ada subprogram.
 
-                  begin
-                     while
-                       Property_Attribute_Group_Maps.Has_Element (Position)
-                     loop
-                        Other_Attribute :=
-                          Property_Attribute_Group_Maps.Key (Position);
-                        Other_Class := Other_Attribute.Get_Class;
+                     declare
+                        Position        : Property_Attribute_Group_Maps.Cursor
+                          := Attribute_Group.First;
+                        Other_Attribute :
+                          AMF.CMOF.Properties.CMOF_Property_Access;
+                        Other_Class     : AMF.CMOF.Classes.CMOF_Class_Access;
 
-                        if not Attribute_Mapping.Is_Ada_Distinguishable
-                                (Attribute, Other_Attribute, Internal)
-                        then
-                           Attribute_Info :=
-                             Property_Attribute_Group_Maps.Element (Position);
+                     begin
+                        while
+                          Property_Attribute_Group_Maps.Has_Element (Position)
+                        loop
+                           Other_Attribute :=
+                             Property_Attribute_Group_Maps.Key (Position);
+                           Other_Class := Other_Attribute.Get_Class;
 
-                           exit;
-                        end if;
+                           if not Attribute_Mapping.Is_Ada_Distinguishable
+                                   (Attribute, Other_Attribute, Internal)
+                           then
+                              Attribute_Info :=
+                                Property_Attribute_Group_Maps.Element
+                                 (Position);
 
-                        Property_Attribute_Group_Maps.Next (Position);
-                     end loop;
-                  end;
+                              exit;
+                           end if;
+
+                           Property_Attribute_Group_Maps.Next (Position);
+                        end loop;
+                     end;
+                  end if;
                end if;
 
                if Attribute_Info = null then

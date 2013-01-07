@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -67,7 +67,7 @@ package body Generator.Link_Sets is
       The_Class       : AMF.CMOF.Classes.CMOF_Class_Access;
 
    begin
-      Unit.Add_Unit_Header (2012, 2012);
+      Unit.Add_Unit_Header (2012, 2013);
       Unit.Add_Line;
       Unit.Add_Line ("separate (" & Package_Name & ")");
       Unit.Add_Line (+"procedure Construct_Union");
@@ -112,6 +112,8 @@ package body Generator.Link_Sets is
                  := Class_Info.All_Attributes.First;
                The_Property   : AMF.CMOF.Properties.CMOF_Property_Access;
                Subsetted      :
+                 AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property;
+               Redefined      :
                  AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property;
                Union_Property : AMF.CMOF.Properties.CMOF_Property_Access;
                Association    : AMF.CMOF.Associations.CMOF_Association_Access;
@@ -193,6 +195,82 @@ package body Generator.Link_Sets is
 
                         Unit.Add_Line (+"              Link);");
                      end if;
+                  end loop;
+
+                  --  Create set of links for redefined properties.
+                  --
+                  --  XXX This works for one direction only right now, and must
+                  --  be fixed.
+
+                  The_Property := CMOF_Property_Sets.Element (Position);
+                  Redefined := The_Property.Get_Redefined_Property;
+
+                  for J in 1 .. Redefined.Length loop
+                     Union_Property := Redefined.Element (J);
+
+                     Association := Union_Property.Get_Association;
+                     Member_Ends := Association.Get_Member_End;
+
+                     Unit.Context.Add
+                      (Property_Constant_Package_Name (The_Property));
+
+                     if First_Attribute then
+                        First_Attribute := False;
+
+                        if First_Class then
+                           First_Class := False;
+
+                        else
+                           Unit.Add_Line;
+                        end if;
+
+                        Unit.Add_Line
+                         ("      when AMF.Internals.Tables."
+                            & Module_Info.Ada_Name
+                            & "_Types.E_"
+                            & Owning_Metamodel_Ada_Name (Class_Info.Class)
+                            & '_'
+                            & To_Ada_Identifier
+                               (Class_Info.Class.Get_Name.Value)
+                            & " =>");
+
+                        Unit.Add_Line
+                         ("         if Property = "
+                            & Property_Constant_Qualified_Name
+                               (The_Property)
+                            & " then");
+
+                     elsif J = 1 then
+                        Unit.Add_Line;
+                        Unit.Add_Line
+                         ("         elsif Property = "
+                            & Property_Constant_Qualified_Name
+                               (The_Property)
+                            & " then");
+                     end if;
+
+                     Unit.Add_Line
+                      (+"            AMF.Internals.Links.Create_Link");
+                     Unit.Context.Add
+                      (Association_Constant_Package_Name (Association));
+                     Unit.Add_Line
+                      ("             ("
+                         & Association_Constant_Qualified_Name (Association)
+                         & ",");
+
+                     if Member_Ends.Element (1) = Union_Property then
+                        Unit.Add_Line (+"              Element,");
+                        Unit.Add_Line (+"              Opposite,");
+
+                     elsif Member_Ends.Element (2) = Union_Property then
+                        Unit.Add_Line (+"              Opposite,");
+                        Unit.Add_Line (+"              Element,");
+
+                     else
+                        raise Program_Error;
+                     end if;
+
+                     Unit.Add_Line (+"              Link);");
                   end loop;
 
                   CMOF_Property_Sets.Next (Position);

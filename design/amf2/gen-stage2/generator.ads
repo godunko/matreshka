@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2010-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2010-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -368,5 +368,11 @@ package Generator is
        return CMOF_Element_Sets.Set;
    --  Returns all properties of the specified class (including properties of
    --  superclasses, but except redefined properties).
+
+   function Class_Properties
+    (Self : not null AMF.CMOF.Classes.CMOF_Class_Access)
+       return CMOF_Element_Sets.Set;
+   --  Returns all properties of the specified class (including properties of
+   --  superclasses).
 
 end Generator;

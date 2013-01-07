@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Vectors;
 with Ada.Strings.Wide_Wide_Fixed;
+with Ada.Wide_Wide_Text_IO;
 
 with AMF.CMOF.Associations;
 with AMF.CMOF.Types;
@@ -314,6 +315,8 @@ package body Generator.Attributes is
 
          procedure Generate (Position : Pair_Vectors.Cursor);
 
+         Getter    : constant Homograph_Information_Access
+           := Homograph_Sets.Element (Position);
          Generated : Boolean := False;
 
          --------------
@@ -331,13 +334,36 @@ package body Generator.Attributes is
               := Attribute.Get_Type;
 
          begin
-            if Generated then
+            if Generated and not Getter.Links then
                --  Attribute's getter has been generated already.
+
+               Ada.Wide_Wide_Text_IO.Put_Line
+                (Ada.Wide_Wide_Text_IO.Standard_Error,
+                 "Suppressed for " & Class.Get_Name.Value.To_Wide_Wide_String & "/" & Attribute.Qualified_Name.To_Wide_Wide_String & " " & Boolean'Wide_Wide_Image (Getter.Links));
 
                return;
 
             else
-               Generated := True;
+               Ada.Wide_Wide_Text_IO.Put_Line
+                (Ada.Wide_Wide_Text_IO.Standard_Error,
+                 "Generated  for " & Class.Get_Name.Value.To_Wide_Wide_String & "/" & Attribute.Qualified_Name.To_Wide_Wide_String);
+            end if;
+
+            if Getter.Links then
+               if Generated then
+                  Unit.Add_Line;
+               end if;
+
+               Unit.Context.Add 
+                ("AMF.Internals.Tables." & Module_Info.Ada_Name & "_Types"); 
+               Unit.Add_Line 
+                ("         when AMF.Internals.Tables." 
+                   & Module_Info.Ada_Name 
+                   & "_Types.E_"
+                   & Owning_Metamodel_Ada_Name (Class)
+                   & '_'
+                   & To_Ada_Identifier (Class.Get_Name.Value)
+                   & " =>"); 
             end if;
 
             if Attribute_Type.Get_Name = String_Name then
@@ -387,16 +413,16 @@ package body Generator.Attributes is
             elsif Module_Info.Attribute_Member.Contains (Attribute) then
                if Attribute_Type.all in AMF.CMOF.Classes.CMOF_Class'Class then
                   Unit.Add_Line
-                   (+"      return");
+                   (+"            return");
                   Unit.Context.Add (+"AMF.Internals.Links");
                   Unit.Add_Line
-                   (+"        AMF.Internals.Links.Opposite_Element");
+                   (+"              AMF.Internals.Links.Opposite_Element");
                   Unit.Context.Add
                    ("AMF.Internals.Tables."
                       & Module_Info.Ada_Name
                       & "_Element_Table");
                   Unit.Add
-                   ("         (AMF.Internals.Tables."
+                   ("               (AMF.Internals.Tables."
                       & Module_Info.Ada_Name
                       & "_Element_Table.Table (Self).Member ("
                       & Trim
@@ -437,17 +463,17 @@ package body Generator.Attributes is
                    & Module_Info.Ada_Name
                    & "_Element_Table");
                Unit.Add_Line
-                ("      return AMF.Internals.Tables."
+                ("            return AMF.Internals.Tables."
                    & Module_Info.Ada_Name
                    & "_Element_Table.Table (Self).Member (0).Collection +"
                    & Integer'Wide_Wide_Image
                       (Module_Info.Attribute_Collection.Element (Attribute))
                    & ";");
             end if;
+
+            Generated := True;
          end Generate;
 
-         Getter    : constant Homograph_Information_Access
-           := Homograph_Sets.Element (Position);
          Attribute : AMF.CMOF.Properties.CMOF_Property_Access
            := Getter.Pairs.First_Element.Attribute;
          Redefined : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property
@@ -475,7 +501,26 @@ package body Generator.Attributes is
          Unit.Add_Line (+"   begin");
          Unit.Context.Add
           ("AMF.Internals.Tables." & Module_Info.Ada_Name & "_Element_Table");
+
+         if Getter.Links then
+            Unit.Add_Line
+             ("      case AMF.Internals.Tables."
+                & Module_Info.Ada_Name
+                & "_Element_Table.Table (Self).Kind is");
+         end if;
+
          Getter.Pairs.Iterate (Generate'Access);
+
+         if Getter.Links then
+            if Generated then
+               Unit.Add_Line;
+            end if;
+
+            Unit.Add_Line (+"         when others =>");
+            Unit.Add_Line (+"            raise Program_Error;");
+            Unit.Add_Line (+"      end case;");
+         end if;
+
          Unit.Add_Line ("   end " & Name & ";");
       end Generate_Getter;
 
@@ -837,7 +882,7 @@ package body Generator.Attributes is
          return;
       end if;
 
-      Unit.Add_Unit_Header (2010, 2012);
+      Unit.Add_Unit_Header (2010, 2013);
 
       Unit.Add_Line;
       Unit.Add_Line ("package body " & Package_Name & " is");
@@ -1102,7 +1147,7 @@ package body Generator.Attributes is
          return;
       end if;
 
-      Unit.Add_Unit_Header (2010, 2012);
+      Unit.Add_Unit_Header (2010, 2013);
 
       Unit.Add_Line;
       Unit.Add_Line ("package " & Package_Name & " is");
