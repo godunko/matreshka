@@ -56,7 +56,7 @@ gen-uml: gens
 gen-ocl: gens
 	rm -rf .new
 	mkdir .new
-	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2012 2012 OCL 'http://www.omg.org/spec/OCL/20090501/OCL.cmof' > .new/sources.ada
+	AMF_DATA_DIR=data ./gen-stage2/.obj/gen2 2012 2013 OCL 'http://www.omg.org/spec/OCL/20090501/OCL.cmof' > .new/sources.ada
 	gnatchop -gnat12 -w .new/sources.ada .new
 	ls .new/*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} ../../source/amf/ocl/{}
 	rm -r .new
@@ -113,4 +113,4 @@ clean:
 	rm -rf .libs amf/.objs gen-stage1/.objs gen-stage2/.obj uml/.objs gui/cmof_tree_view/.objs gui/cmof_tree_view/.amoc demo-cmof demo-reader demo-viewer
 
 dd:
-	gprbuild -p -P dd.gpr
+	gprbuild -j0 -p -P dd.gpr
