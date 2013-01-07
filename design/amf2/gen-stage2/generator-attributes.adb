@@ -474,20 +474,26 @@ package body Generator.Attributes is
             Generated := True;
          end Generate;
 
-         Attribute : AMF.CMOF.Properties.CMOF_Property_Access
+         Attribute      : AMF.CMOF.Properties.CMOF_Property_Access
            := Getter.Pairs.First_Element.Attribute;
-         Redefined : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property
+         Attribute_Type : constant AMF.CMOF.Types.CMOF_Type_Access
+           := Attribute.Get_Type;
+         Redefined      : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property
            := Attribute.Get_Redefined_Property;
-         Name      : constant League.Strings.Universal_String
+         Name           : constant League.Strings.Universal_String
            := +"Internal_Get_" & To_Ada_Identifier (Attribute.Get_Name.Value);
 
       begin
-         --  Unwind to original property definition.
+         if Attribute_Type.all not in AMF.CMOF.Classes.CMOF_Class'Class then
+            --  Unwind to original property definition for attributes of
+            --  non-CMOF::Class type because they share slot/collection on
+            --  redefinition.
 
-         while not Redefined.Is_Empty loop
-            Attribute := Redefined.Element (1);
-            Redefined := Attribute.Get_Redefined_Property;
-         end loop;
+            while not Redefined.Is_Empty loop
+               Attribute := Redefined.Element (1);
+               Redefined := Attribute.Get_Redefined_Property;
+            end loop;
+         end if;
 
          Unit.Add_Header (Name, 3);
          Unit.Add_Line;
@@ -1213,27 +1219,33 @@ package body Generator.Attributes is
                 & Attribute.Get_Name.Value);
          end Generate_Usage;
 
-         Getter    : constant Homograph_Information_Access
+         Getter         : constant Homograph_Information_Access
            := Homograph_Sets.Element (Position);
-         Original  : constant AMF.CMOF.Properties.CMOF_Property_Access
+         Original       : constant AMF.CMOF.Properties.CMOF_Property_Access
            := Getter.Pairs.First_Element.Attribute;
-         Attribute : AMF.CMOF.Properties.CMOF_Property_Access
+         Attribute      : AMF.CMOF.Properties.CMOF_Property_Access
            := Original;
-         Redefined : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property
+         Attribute_Type : constant AMF.CMOF.Types.CMOF_Type_Access
+           := Attribute.Get_Type;
+         Redefined      : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property
            := Attribute.Get_Redefined_Property;
-         Get_Name  : constant League.Strings.Universal_String
+         Get_Name       : constant League.Strings.Universal_String
            := +"Internal_Get_" & To_Ada_Identifier (Attribute.Get_Name.Value);
-         Set_Name  : constant League.Strings.Universal_String
+         Set_Name       : constant League.Strings.Universal_String
            := +"Internal_Set_" & To_Ada_Identifier (Attribute.Get_Name.Value);
-         Type_Name : League.Strings.Universal_String;
+         Type_Name      : League.Strings.Universal_String;
 
       begin
-         --  Unwind to original property definition.
+         if Attribute_Type.all not in AMF.CMOF.Classes.CMOF_Class'Class then
+            --  Unwind to original property definition for attributes of
+            --  non-CMOF::Class type because they share slot/collection on
+            --  redefinition.
 
-         while not Redefined.Is_Empty loop
-            Attribute := Redefined.Element (1);
-            Redefined := Attribute.Get_Redefined_Property;
-         end loop;
+            while not Redefined.Is_Empty loop
+               Attribute := Redefined.Element (1);
+               Redefined := Attribute.Get_Redefined_Property;
+            end loop;
+         end if;
 
          Type_Name :=
            Generator.Type_Mapping.Internal_Ada_Type_Qualified_Name

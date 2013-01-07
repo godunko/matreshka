@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -64,6 +64,7 @@ package body Generator.Attribute_Mapping is
       Redefined_2 : AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property;
       Actual_1    : AMF.CMOF.Properties.CMOF_Property_Access;
       Actual_2    : AMF.CMOF.Properties.CMOF_Property_Access;
+      Type_1      : AMF.CMOF.Types.CMOF_Type_Access;
 
    begin
       if Attribute_1.Get_Name /= Attribute_2.Get_Name then
@@ -81,28 +82,32 @@ package body Generator.Attribute_Mapping is
                     (Attribute_2.Get_Type, Representation (Attribute_2));
 
          when Internal =>
-            --  Looking for deepest redefined property for each attribute. This
-            --  allows to detect situation when redefined property has
-            --  multivalued multiplicity but source property is not
-            --  multivalued.
-
             Actual_1 := Attribute_1;
-            Redefined_1 := Attribute_1.Get_Redefined_Property;
-
-            while not Redefined_1.Is_Empty loop
-               Actual_1 := Redefined_1.Element (1);
-
-               Redefined_1 := Actual_1.Get_Redefined_Property;
-            end loop;
-
             Actual_2 := Attribute_2;
-            Redefined_2 := Attribute_2.Get_Redefined_Property;
+            Type_1 := Attribute_1.Get_Type;
 
-            while not Redefined_2.Is_Empty loop
-               Actual_2 := Redefined_2.Element (1);
+            if Type_1.all not in AMF.CMOF.Classes.CMOF_Class'Class then
+               --  Looking for deepest redefined property for each attribute.
+               --  This allows to detect situation when redefined property has
+               --  multivalued multiplicity but source property is not
+               --  multivalued.
 
-               Redefined_2 := Actual_2.Get_Redefined_Property;
-            end loop;
+               Redefined_1 := Attribute_1.Get_Redefined_Property;
+
+               while not Redefined_1.Is_Empty loop
+                  Actual_1 := Redefined_1.Element (1);
+
+                  Redefined_1 := Actual_1.Get_Redefined_Property;
+               end loop;
+
+               Redefined_2 := Attribute_2.Get_Redefined_Property;
+
+               while not Redefined_2.Is_Empty loop
+                  Actual_2 := Redefined_2.Element (1);
+
+                  Redefined_2 := Actual_2.Get_Redefined_Property;
+               end loop;
+            end if;
 
             return
               Type_Mapping.Internal_Ada_Type_Qualified_Name
