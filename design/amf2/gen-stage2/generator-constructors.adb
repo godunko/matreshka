@@ -193,14 +193,20 @@ package body Generator.Constructors is
                Redefined := Original_Attribute.Get_Redefined_Property;
             end loop;
 
+            --  Attributes of type CMOF::Class never shared slot/collections,
+            --  thus redifinition chain is not important here.
+
+            if Attribute_Type.all in AMF.CMOF.Classes.CMOF_Class'Class then
+               Original_Attribute := Attribute;
+            end if;
+
             --  Generate slot initialization for attributes which original
             --  attributes occupies member and nor original attribute nor
             --  current attribute are not redefined.
 
             if (not Class.Redefined_Attributes.Contains (Original_Attribute)
                   or else not Class.Redefined_Attributes.Contains (Attribute))
-              and then Module_Info.Attribute_Member.Contains
-                        (Original_Attribute)
+              and Module_Info.Attribute_Member.Contains (Original_Attribute)
             then
                Image :=
                  League.Strings.To_Universal_String
