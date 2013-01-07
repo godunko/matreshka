@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with AMF.CMOF.Associations;
 with AMF.CMOF.Properties.Collections;
+with AMF.CMOF.Types;
 
 with Generator.Names;
 with Generator.Units;
@@ -111,6 +112,7 @@ package body Generator.Link_Sets is
                Position       : CMOF_Property_Sets.Cursor
                  := Class_Info.All_Attributes.First;
                The_Property   : AMF.CMOF.Properties.CMOF_Property_Access;
+               The_Type       : AMF.CMOF.Types.CMOF_Type_Access;
                Subsetted      :
                  AMF.CMOF.Properties.Collections.Set_Of_CMOF_Property;
                Redefined      :
@@ -203,75 +205,78 @@ package body Generator.Link_Sets is
                   --  be fixed.
 
                   The_Property := CMOF_Property_Sets.Element (Position);
-                  Redefined := The_Property.Get_Redefined_Property;
+                  The_Type     := The_Property.Get_Type;
+                  Redefined    := The_Property.Get_Redefined_Property;
 
-                  for J in 1 .. Redefined.Length loop
-                     Union_Property := Redefined.Element (J);
+                  if The_Type.all in AMF.CMOF.Classes.CMOF_Class'Class then
+                     for J in 1 .. Redefined.Length loop
+                        Union_Property := Redefined.Element (J);
 
-                     Association := Union_Property.Get_Association;
-                     Member_Ends := Association.Get_Member_End;
+                        Association := Union_Property.Get_Association;
+                        Member_Ends := Association.Get_Member_End;
 
-                     Unit.Context.Add
-                      (Property_Constant_Package_Name (The_Property));
+                        Unit.Context.Add
+                         (Property_Constant_Package_Name (The_Property));
 
-                     if First_Attribute then
-                        First_Attribute := False;
+                        if First_Attribute then
+                           First_Attribute := False;
 
-                        if First_Class then
-                           First_Class := False;
+                           if First_Class then
+                              First_Class := False;
 
-                        else
+                           else
+                              Unit.Add_Line;
+                           end if;
+
+                           Unit.Add_Line
+                            ("      when AMF.Internals.Tables."
+                               & Module_Info.Ada_Name
+                               & "_Types.E_"
+                               & Owning_Metamodel_Ada_Name (Class_Info.Class)
+                               & '_'
+                               & To_Ada_Identifier
+                                  (Class_Info.Class.Get_Name.Value)
+                               & " =>");
+
+                           Unit.Add_Line
+                            ("         if Property = "
+                               & Property_Constant_Qualified_Name
+                                  (The_Property)
+                               & " then");
+
+                        elsif J = 1 then
                            Unit.Add_Line;
+                           Unit.Add_Line
+                            ("         elsif Property = "
+                               & Property_Constant_Qualified_Name
+                                  (The_Property)
+                               & " then");
                         end if;
 
                         Unit.Add_Line
-                         ("      when AMF.Internals.Tables."
-                            & Module_Info.Ada_Name
-                            & "_Types.E_"
-                            & Owning_Metamodel_Ada_Name (Class_Info.Class)
-                            & '_'
-                            & To_Ada_Identifier
-                               (Class_Info.Class.Get_Name.Value)
-                            & " =>");
-
+                         (+"            AMF.Internals.Links.Create_Link");
+                        Unit.Context.Add
+                         (Association_Constant_Package_Name (Association));
                         Unit.Add_Line
-                         ("         if Property = "
-                            & Property_Constant_Qualified_Name
-                               (The_Property)
-                            & " then");
+                         ("             ("
+                            & Association_Constant_Qualified_Name (Association)
+                            & ",");
 
-                     elsif J = 1 then
-                        Unit.Add_Line;
-                        Unit.Add_Line
-                         ("         elsif Property = "
-                            & Property_Constant_Qualified_Name
-                               (The_Property)
-                            & " then");
-                     end if;
+                        if Member_Ends.Element (1) = Union_Property then
+                           Unit.Add_Line (+"              Element,");
+                           Unit.Add_Line (+"              Opposite,");
 
-                     Unit.Add_Line
-                      (+"            AMF.Internals.Links.Create_Link");
-                     Unit.Context.Add
-                      (Association_Constant_Package_Name (Association));
-                     Unit.Add_Line
-                      ("             ("
-                         & Association_Constant_Qualified_Name (Association)
-                         & ",");
+                        elsif Member_Ends.Element (2) = Union_Property then
+                           Unit.Add_Line (+"              Opposite,");
+                           Unit.Add_Line (+"              Element,");
 
-                     if Member_Ends.Element (1) = Union_Property then
-                        Unit.Add_Line (+"              Element,");
-                        Unit.Add_Line (+"              Opposite,");
+                        else
+                           raise Program_Error;
+                        end if;
 
-                     elsif Member_Ends.Element (2) = Union_Property then
-                        Unit.Add_Line (+"              Opposite,");
-                        Unit.Add_Line (+"              Element,");
-
-                     else
-                        raise Program_Error;
-                     end if;
-
-                     Unit.Add_Line (+"              Link);");
-                  end loop;
+                        Unit.Add_Line (+"              Link);");
+                     end loop;
+                  end if;
 
                   CMOF_Property_Sets.Next (Position);
                end loop;
