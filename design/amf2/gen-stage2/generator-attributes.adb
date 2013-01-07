@@ -43,7 +43,6 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Vectors;
 with Ada.Strings.Wide_Wide_Fixed;
-with Ada.Wide_Wide_Text_IO;
 
 with AMF.CMOF.Associations;
 with AMF.CMOF.Types;
@@ -337,16 +336,7 @@ package body Generator.Attributes is
             if Generated and not Getter.Links then
                --  Attribute's getter has been generated already.
 
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 "Suppressed for " & Class.Get_Name.Value.To_Wide_Wide_String & "/" & Attribute.Qualified_Name.To_Wide_Wide_String & " " & Boolean'Wide_Wide_Image (Getter.Links));
-
                return;
-
-            else
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 "Generated  for " & Class.Get_Name.Value.To_Wide_Wide_String & "/" & Attribute.Qualified_Name.To_Wide_Wide_String);
             end if;
 
             if Getter.Links then
