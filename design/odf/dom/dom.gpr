@@ -1,10 +1,8 @@
 with "../../gnat/matreshka_league.gpr";
---with "../dom/dom.gpr";
 
-project ODF is
+project DOM is
 
    for Object_Dir use ".objs";
-   for Source_Dirs use (".", "../dom");
 
    package Compiler is
 
@@ -12,4 +10,4 @@ project ODF is
 
    end Compiler;
 
-end ODF;
+end DOM;
