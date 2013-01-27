@@ -41,30 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-package ODF.Constants is
+package ODF.DOM.Elements.Office.Styles is
 
-   Office_URI : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-         ("urn:oasis:names:tc:opendocument:xmlns:office:1.0");
-   Style_URI  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-         ("urn:oasis:names:tc:opendocument:xmlns:style:1.0");
+   type ODF_Office_Styles is new ODF.DOM.Elements.ODF_Element with private;
 
-   Default_Style_Name           : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("default-style");
-   Document_Styles_Name         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("document-styles");
-   Font_Face_Decls_Name         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("font-face-decls");
-   Font_Face_Name               : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("font-face");
-   Graphic_Properties_Name      : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("graphic-properties");
-   Paragraph_Properties_Name    : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("paragraph-properties");
-   Styles_Name                  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("styles");
+   type ODF_Office_Styles_Access is access all ODF_Office_Styles'Class;
 
-end ODF.Constants;
+private
+
+   type ODF_Office_Styles is new ODF.DOM.Elements.ODF_Element with null record;
+
+end ODF.DOM.Elements.Office.Styles;

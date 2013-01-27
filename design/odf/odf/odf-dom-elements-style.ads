@@ -41,30 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-package ODF.Constants is
+package ODF.DOM.Elements.Style is
 
-   Office_URI : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-         ("urn:oasis:names:tc:opendocument:xmlns:office:1.0");
-   Style_URI  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-         ("urn:oasis:names:tc:opendocument:xmlns:style:1.0");
-
-   Default_Style_Name           : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("default-style");
-   Document_Styles_Name         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("document-styles");
-   Font_Face_Decls_Name         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("font-face-decls");
-   Font_Face_Name               : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("font-face");
-   Graphic_Properties_Name      : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("graphic-properties");
-   Paragraph_Properties_Name    : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("paragraph-properties");
-   Styles_Name                  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("styles");
-
-end ODF.Constants;
+end ODF.DOM.Elements.Style;

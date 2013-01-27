@@ -42,7 +42,6 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with ODF.Constants;
-with ODF.DOM.Elements.Office.Document_Styles;
 
 package body ODF.DOM.Documents is
 
@@ -71,14 +70,44 @@ package body ODF.DOM.Documents is
    begin
       if Namespace_URI = Office_URI then
          if Local_Name = Document_Styles_Name then
-            declare
-               Aux : constant
-                 ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles_Access
-                   := Self.Create_Office_Document_Styles;
+            return
+              XML.DOM.Nodes.Elements.DOM_Element_Access
+               (Self.Create_Office_Document_Styles);
 
-            begin
-               return XML.DOM.Nodes.Elements.DOM_Element_Access (Aux);
-            end;
+         elsif Local_Name = Font_Face_Decls_Name then
+            return
+              XML.DOM.Nodes.Elements.DOM_Element_Access
+               (Self.Create_Office_Font_Face_Decls);
+
+         elsif Local_Name = Styles_Name then
+            return
+              XML.DOM.Nodes.Elements.DOM_Element_Access
+               (Self.Create_Office_Styles);
+
+         else
+            raise Program_Error;
+         end if;
+
+      elsif Namespace_URI = Style_URI then
+         if Local_Name = Default_Style_Name then
+            return
+              XML.DOM.Nodes.Elements.DOM_Element_Access
+               (Self.Create_Style_Default_Style);
+
+         elsif Local_Name = Font_Face_Name then
+            return
+              XML.DOM.Nodes.Elements.DOM_Element_Access
+               (Self.Create_Style_Font_Face);
+
+         elsif Local_Name = Graphic_Properties_Name then
+            return
+              XML.DOM.Nodes.Elements.DOM_Element_Access
+               (Self.Create_Style_Graphic_Properties);
+
+         elsif Local_Name = Paragraph_Properties_Name then
+            return
+              XML.DOM.Nodes.Elements.DOM_Element_Access
+               (Self.Create_Style_Paragraph_Properties);
 
          else
             raise Program_Error;
@@ -93,14 +122,84 @@ package body ODF.DOM.Documents is
    -- Create_Office_Document_Styles --
    -----------------------------------
 
-   not overriding function Create_Office_Document_Styles
-    (Self : not null access ODF_Document)
+   function Create_Office_Document_Styles
+    (Self : not null access ODF_Document'Class)
        return
          ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles_Access is
    begin
       return
         new ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles;
    end Create_Office_Document_Styles;
+
+   -----------------------------------
+   -- Create_Office_Font_Face_Decls --
+   -----------------------------------
+
+   function Create_Office_Font_Face_Decls
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Font_Face_Decls.ODF_Office_Font_Face_Decls_Access is
+   begin
+      return
+        new ODF.DOM.Elements.Office.Font_Face_Decls.ODF_Office_Font_Face_Decls;
+   end Create_Office_Font_Face_Decls;
+
+   --------------------------
+   -- Create_Office_Styles --
+   --------------------------
+
+   function Create_Office_Styles
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Styles.ODF_Office_Styles_Access is
+   begin
+      return new ODF.DOM.Elements.Office.Styles.ODF_Office_Styles;
+   end Create_Office_Styles;
+
+   --------------------------------
+   -- Create_Style_Default_Style --
+   --------------------------------
+
+   function Create_Style_Default_Style
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access is
+   begin
+      return new ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style;
+   end Create_Style_Default_Style;
+
+   ----------------------------
+   -- Create_Style_Font_Face --
+   ----------------------------
+
+   function Create_Style_Font_Face
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face_Access is
+   begin
+      return
+        new ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face;
+   end Create_Style_Font_Face;
+
+   -------------------------------------
+   -- Create_Style_Graphic_Properties --
+   -------------------------------------
+
+   function Create_Style_Graphic_Properties
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Graphic_Properties.ODF_Style_Graphic_Properties_Access is
+   begin
+      return
+        new ODF.DOM.Elements.Style.Graphic_Properties.ODF_Style_Graphic_Properties;
+   end Create_Style_Graphic_Properties;
+
+   ---------------------------------------
+   -- Create_Style_Paragraph_Properties --
+   ---------------------------------------
+
+   function Create_Style_Paragraph_Properties
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access is
+   begin
+      return
+        new ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties;
+   end Create_Style_Paragraph_Properties;
 
    --------------------
    -- Get_Local_Name --

@@ -45,16 +45,46 @@ private with League.Strings;
 with XML.DOM.Nodes.Documents;
 private with XML.DOM.Nodes.Elements;
 
-limited with ODF.DOM.Elements.Office.Document_Styles;
+with ODF.DOM.Elements.Office.Document_Styles;
+with ODF.DOM.Elements.Office.Font_Face_Decls;
+with ODF.DOM.Elements.Office.Styles;
+with ODF.DOM.Elements.Style.Default_Style;
+with ODF.DOM.Elements.Style.Font_Face;
+with ODF.DOM.Elements.Style.Graphic_Properties;
+with ODF.DOM.Elements.Style.Paragraph_Properties;
 
 package ODF.DOM.Documents is
 
    type ODF_Document is new XML.DOM.Nodes.Documents.DOM_Document with private;
 
-   not overriding function Create_Office_Document_Styles
-    (Self : not null access ODF_Document)
+   function Create_Office_Document_Styles
+    (Self : not null access ODF_Document'Class)
        return
          ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles_Access;
+
+   function Create_Office_Font_Face_Decls
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Font_Face_Decls.ODF_Office_Font_Face_Decls_Access;
+
+   function Create_Office_Styles
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Styles.ODF_Office_Styles_Access;
+
+   function Create_Style_Default_Style
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+
+   function Create_Style_Font_Face
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face_Access;
+
+   function Create_Style_Graphic_Properties
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Graphic_Properties.ODF_Style_Graphic_Properties_Access;
+
+   function Create_Style_Paragraph_Properties
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
 
 private
 
