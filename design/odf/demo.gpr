@@ -1,0 +1,9 @@
+with "odf/odf.gpr";
+with "web/web.gpr";
+
+project Demo is
+
+   for Object_Dir use ".objs";
+   for Exec_Dir use ".";
+
+end Demo;
