@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
+with XML.DOM.Nodes.Character_Datas.Texts;
 with XML.DOM.Nodes.Elements;
 with ODF.DOM.Documents;
 
@@ -51,6 +52,23 @@ package body Matreshka.DOM_Builders is
    procedure Push (Self : in out DOM_Builder'Class);
 
    procedure Pop (Self : in out DOM_Builder'Class);
+
+   ----------------
+   -- Characters --
+   ----------------
+
+   overriding procedure Characters
+    (Self    : in out DOM_Builder;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean)
+   is
+      Aux : XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access
+        := Self.Document.Create_Text_Node (Text);
+
+   begin
+      Self.Current.Append_Child (XML.DOM.Nodes.DOM_Node_Access (Aux));
+      XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Aux));
+   end Characters;
 
    -----------------
    -- End_Element --

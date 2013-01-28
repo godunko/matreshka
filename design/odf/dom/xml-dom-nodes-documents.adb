@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Nodes.Character_Datas.Texts;
 with XML.DOM.Nodes.Elements;
 
 package body XML.DOM.Nodes.Documents is
@@ -57,5 +58,23 @@ package body XML.DOM.Nodes.Documents is
    begin
       return null;
    end Create_Element_NS;
+
+   ----------------------
+   -- Create_Text_Node --
+   ----------------------
+
+   not overriding function Create_Text_Node
+    (Self : not null access DOM_Document;
+     Data : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access is
+   begin
+      return Node : constant
+        XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access
+          := new XML.DOM.Nodes.Character_Datas.Texts.DOM_Text
+      do
+         XML.DOM.Nodes.Character_Datas.Texts.Constructors.Initialize
+          (Node, Data);
+      end return;
+   end Create_Text_Node;
 
 end XML.DOM.Nodes.Documents;

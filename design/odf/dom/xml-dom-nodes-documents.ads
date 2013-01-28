@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+limited with XML.DOM.Nodes.Character_Datas.Texts;
 limited with XML.DOM.Nodes.Elements;
 
 package XML.DOM.Nodes.Documents is
@@ -54,6 +55,11 @@ package XML.DOM.Nodes.Documents is
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
        return XML.DOM.Nodes.Elements.DOM_Element_Access;
+
+   not overriding function Create_Text_Node
+    (Self : not null access DOM_Document;
+     Data : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access;
 
 private
 

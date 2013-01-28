@@ -41,63 +41,26 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Vectors;
 
-private with League.Strings;
-with XML.DOM.Nodes.Documents;
-private with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
+package body XML.DOM.Nodes.Character_Datas.Texts is
 
-package Matreshka.DOM_Builders is
+   ------------------
+   -- Constructors --
+   ------------------
 
-   type DOM_Builder is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+   package body Constructors is
 
-   function Get_Document
-    (Self : DOM_Builder'Class)
-       return XML.DOM.Nodes.Documents.DOM_Document_Access;
+      ----------------
+      -- Initialize --
+      ----------------
 
-private
+      procedure Initialize
+       (Self : not null access DOM_Text'Class;
+        Data : League.Strings.Universal_String) is
+      begin
+         Self.Data := Data;
+      end Initialize;
 
-   package Node_Vectors is
-     new Ada.Containers.Vectors
-          (Positive,
-           XML.DOM.Nodes.DOM_Node_Access,
-           XML.DOM.Nodes."=");
+   end Constructors;
 
-   type DOM_Builder is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Document : XML.DOM.Nodes.Documents.DOM_Document_Access;
-      Current  : XML.DOM.Nodes.DOM_Node_Access;
-      Parent   : XML.DOM.Nodes.DOM_Node_Access;
-      Stack    : Node_Vectors.Vector;
-   end record;
-
-   overriding procedure Characters
-    (Self    : in out DOM_Builder;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean);
-
-   overriding procedure End_Element
-    (Self           : in out DOM_Builder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
-
-   overriding function Error_String
-    (Self : DOM_Builder) return League.Strings.Universal_String;
-
-   overriding procedure Start_Document
-    (Self    : in out DOM_Builder;
-     Success : in out Boolean);
-
-   overriding procedure Start_Element
-    (Self           : in out DOM_Builder;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
-
-end Matreshka.DOM_Builders;
+end XML.DOM.Nodes.Character_Datas.Texts;
