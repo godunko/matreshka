@@ -51,14 +51,25 @@ package ODF.Constants is
    Style_URI  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("urn:oasis:names:tc:opendocument:xmlns:style:1.0");
+   Table_URI  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("urn:oasis:names:tc:opendocument:xmlns:table:1.0");
    Text_URI   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("urn:oasis:names:tc:opendocument:xmlns:text:1.0");
 
    Automatic_Styles_Name            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("automatic-styles");
+   Background_Image_Name            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("background-image");
+   Body_Name                        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("body");
+   Covered_Table_Cell_Name          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("covered-table-cell");
    Default_Style_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("default-style");
+   Document_Content_Name             : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("document-content");
    Document_Styles_Name             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("document-styles");
    Font_Face_Decls_Name             : constant League.Strings.Universal_String
@@ -87,22 +98,46 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("outline-style");
    Outline_Level_Style_Name         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("outline-level-style");
+   P_Name                           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("p");
    Page_Layout_Properties_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("page-layout-properties");
    Page_Layout_Name                 : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("page-layout");
    Paragraph_Properties_Name        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("paragraph-properties");
+   Sequence_Decl_Name               : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("sequence-decl");
+   Sequence_Decls_Name              : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("sequence-decls");
+   Scripts_Name                     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("scripts");
+   Span_Name                        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("span");
    Style_Name                       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("style");
    Styles_Name                      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("styles");
    Tab_Stops_Name                   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("tab-stops");
+   Table_Name                       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("table");
+   Table_Cell_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("table-cell");
+   Table_Cell_Properties_Name       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("table-cell-properties");
+   Table_Column_Name                : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("table-column");
+   Table_Column_Properties_Name     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("table-column-properties");
    Table_Properties_Name            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("table-properties");
+   Table_Row_Name                   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("table-row");
    Table_Row_Properties_Name        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("table-row-properties");
+   Text_Name                        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("text");
    Text_Properties_Name             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("text-properties");
 

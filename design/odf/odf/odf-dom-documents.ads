@@ -46,10 +46,15 @@ with XML.DOM.Nodes.Documents;
 private with XML.DOM.Nodes.Elements;
 
 with ODF.DOM.Elements.Office.Automatic_Styles;
+with ODF.DOM.Elements.Office.Bodies;
+with ODF.DOM.Elements.Office.Document_Content;
 with ODF.DOM.Elements.Office.Document_Styles;
 with ODF.DOM.Elements.Office.Font_Face_Decls;
 with ODF.DOM.Elements.Office.Master_Styles;
+with ODF.DOM.Elements.Office.Scripts;
 with ODF.DOM.Elements.Office.Styles;
+with ODF.DOM.Elements.Office.Text;
+with ODF.DOM.Elements.Style.Background_Image;
 with ODF.DOM.Elements.Style.Default_Style;
 with ODF.DOM.Elements.Style.Font_Face;
 with ODF.DOM.Elements.Style.Footer_Style;
@@ -63,13 +68,24 @@ with ODF.DOM.Elements.Style.Page_Layout_Properties;
 with ODF.DOM.Elements.Style.Paragraph_Properties;
 with ODF.DOM.Elements.Style.Style;
 with ODF.DOM.Elements.Style.Tab_Stops;
+with ODF.DOM.Elements.Style.Table_Cell_Properties;
+with ODF.DOM.Elements.Style.Table_Column_Properties;
 with ODF.DOM.Elements.Style.Table_Properties;
 with ODF.DOM.Elements.Style.Table_Row_Properties;
 with ODF.DOM.Elements.Style.Text_Properties;
+with ODF.DOM.Elements.Table.Covered_Table_Cell;
+with ODF.DOM.Elements.Table.Table;
+with ODF.DOM.Elements.Table.Table_Cell;
+with ODF.DOM.Elements.Table.Table_Column;
+with ODF.DOM.Elements.Table.Table_Row;
 with ODF.DOM.Elements.Text.Linenumbering_Configuration;
 with ODF.DOM.Elements.Text.Notes_Configuration;
 with ODF.DOM.Elements.Text.Outline_Level_Style;
 with ODF.DOM.Elements.Text.Outline_Style;
+with ODF.DOM.Elements.Text.P;
+with ODF.DOM.Elements.Text.Sequence_Decl;
+with ODF.DOM.Elements.Text.Sequence_Decls;
+with ODF.DOM.Elements.Text.Span;
 
 package ODF.DOM.Documents is
 
@@ -79,6 +95,15 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return
          ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+
+   function Create_Office_Body
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;
+
+   function Create_Office_Document_Content
+    (Self : not null access ODF_Document'Class)
+       return
+         ODF.DOM.Elements.Office.Document_Content.ODF_Office_Document_Content_Access;
 
    function Create_Office_Document_Styles
     (Self : not null access ODF_Document'Class)
@@ -94,9 +119,21 @@ package ODF.DOM.Documents is
        return
          ODF.DOM.Elements.Office.Master_Styles.ODF_Office_Master_Styles_Access;
 
+   function Create_Office_Scripts
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Scripts.ODF_Office_Scripts_Access;
+
    function Create_Office_Styles
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Office.Styles.ODF_Office_Styles_Access;
+
+   function Create_Office_Text
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
+
+   function Create_Style_Background_Image
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image_Access;
 
    function Create_Style_Default_Style
     (Self : not null access ODF_Document'Class)
@@ -154,6 +191,14 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Table_Properties.ODF_Style_Table_Properties_Access;
 
+   function Create_Style_Table_Cell_Properties
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
+
+   function Create_Style_Table_Column_Properties
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
+
    function Create_Style_Table_Row_Properties
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Table_Row_Properties.ODF_Style_Table_Row_Properties_Access;
@@ -161,6 +206,26 @@ package ODF.DOM.Documents is
    function Create_Style_Text_Properties
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties_Access;
+
+   function Create_Table_Covered_Table_Cell
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell_Access;
+
+   function Create_Table_Table
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
+
+   function Create_Table_Table_Cell
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
+
+   function Create_Table_Table_Column
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+
+   function Create_Table_Table_Row
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
 
    function Create_Text_Linenumbering_Configuration
     (Self : not null access ODF_Document'Class)
@@ -177,6 +242,22 @@ package ODF.DOM.Documents is
    function Create_Text_Outline_Style
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Text.Outline_Style.ODF_Text_Outline_Style_Access;
+
+   function Create_Text_P
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Text.P.ODF_Text_P_Access;
+
+   function Create_Text_Sequence_Decl
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Sequence_Decl.ODF_Text_Sequence_Decl_Access;
+
+   function Create_Text_Sequence_Decls
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Sequence_Decls.ODF_Text_Sequence_Decls_Access;
+
+   function Create_Text_Span
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access;
 
 private
 
