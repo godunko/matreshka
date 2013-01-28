@@ -44,14 +44,51 @@ function OdfTextP (object)
 
 OdfTextP.prototype = new OdfElementBase ();
 OdfTextP.prototype.constructor = OdfTextP;
+OdfTextP.prototype.children = [];
 OdfTextP.prototype.render = function (htmlDocument, parentElement) {
     var element = htmlDocument.createElement ('p');
     parentElement.appendChild (element);
 
-//    for (var i = 0; i < this.children.length; i++)
-//    {
-//        this.children [i].render (htmlDocument, element);
-//    }
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (typeof this.children [i] === 'string')
+	{
+            var text = htmlDocument.createTextNode (this.children [i]);
+	    element.appendChild (text);
+	}
+	else
+	{
+            this.children [i].render (htmlDocument, element);
+	}
+    }
+};
+
+//  OdfTextSpan
+
+function OdfTextSpan (object)
+{
+    OdfElementBase.call (this, object);
+}
+
+OdfTextSpan.prototype = new OdfElementBase ();
+OdfTextSpan.prototype.constructor = OdfTextSpan;
+OdfTextSpan.prototype.children = [];
+OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
+    var element = htmlDocument.createElement ('span');
+    parentElement.appendChild (element);
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (typeof this.children [i] === 'string')
+	{
+            var text = htmlDocument.createTextNode (this.children [i]);
+	    element.appendChild (text);
+	}
+	else
+	{
+            this.children [i].render (htmlDocument, element);
+	}
+    }
 };
 
 //  OdfOfficeText
@@ -105,5 +142,6 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
 
 	        return value;
 	    });
+    console.log (text);
     text.render (doc, doc.body);
 })()

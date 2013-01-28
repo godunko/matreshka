@@ -42,20 +42,17 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package XML.DOM.Nodes.Character_Datas is
+package body XML.DOM.Nodes.Character_Datas is
 
-   type DOM_Character_Data is abstract new DOM_Node with private;
-
-   type DOM_Character_Data_Access is access all DOM_Character_Data'Class;
+   --------------
+   -- Get_Data --
+   --------------
 
    function Get_Data
     (Self : not null access constant DOM_Character_Data'Class)
-       return League.Strings.Universal_String;
-
-private
-
-   type DOM_Character_Data is abstract new DOM_Node with record
-      Data : League.Strings.Universal_String;
-   end record;
+       return League.Strings.Universal_String is
+   begin
+      return Self.Data;
+   end Get_Data;
 
 end XML.DOM.Nodes.Character_Datas;
