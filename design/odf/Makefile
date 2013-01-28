@@ -1,6 +1,7 @@
 
 all:
-	gprbuild -p -P demo.gpr
+	gprbuild -j0 -p -P demo.gpr
+	./demo tmp
 
 clean:
 	rm -rf .objs
