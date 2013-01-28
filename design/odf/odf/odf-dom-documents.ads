@@ -91,6 +91,8 @@ package ODF.DOM.Documents is
 
    type ODF_Document is new XML.DOM.Nodes.Documents.DOM_Document with private;
 
+   type ODF_Document_Access is access all ODF_Document'Class;
+
    function Create_Office_Automatic_Styles
     (Self : not null access ODF_Document'Class)
        return
