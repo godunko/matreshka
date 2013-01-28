@@ -50,9 +50,22 @@ package XML.DOM.Nodes is
 
    type DOM_Node_Access is access all DOM_Node'Class;
 
-   not overriding procedure Append_Child
-    (Self : not null access DOM_Node'Class;
-     Node : not null DOM_Node_Access);
+   function Get_First_Child
+    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
+
+   function Get_Next_Sibling
+    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
+
+   procedure Append_Child
+    (Self : not null access DOM_Node'Class; Node : not null DOM_Node_Access);
+
+   ---------------
+   -- Internals --
+   ---------------
+
+   procedure Dereference (Node : in out DOM_Node_Access);
+   --  Decrements reference counter; deallocate node when counter reachs zero.
+   --  Sets Node to null on return.
 
 private
 
@@ -67,9 +80,5 @@ private
 
    procedure Reference (Node : not null DOM_Node_Access);
    --  Increments reference counter.
-
-   procedure Dereference (Node : in out DOM_Node_Access);
-   --  Decrements reference counter; deallocate node when counter reachs zero.
-   --  Sets Node to null on return.
 
 end XML.DOM.Nodes;

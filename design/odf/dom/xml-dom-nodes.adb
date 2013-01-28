@@ -49,9 +49,8 @@ package body XML.DOM.Nodes is
    -- Append_Child --
    ------------------
 
-   not overriding procedure Append_Child
-    (Self : not null access DOM_Node'Class;
-     Node : not null DOM_Node_Access) is
+   procedure Append_Child
+    (Self : not null access DOM_Node'Class; Node : not null DOM_Node_Access) is
    begin
       Reference (Node);
 
@@ -80,14 +79,59 @@ package body XML.DOM.Nodes is
       procedure Free is
         new Ada.Unchecked_Deallocation (DOM_Node'Class, DOM_Node_Access);
 
+      Child : DOM_Node_Access := Node.First_Child;
+      Next  : DOM_Node_Access;
+
    begin
       if Matreshka.Atomics.Counters.Decrement (Node.Counter) then
+         while Child /= null loop
+            --  Remember next sibling node, because current child node can be
+            --  deallocated during dereferencing.
+
+            Next := Child.Next_Sibling;
+
+            --  Disconnect child node.
+
+            Child.Parent_Node := null;
+            Child.Next_Sibling := null;
+
+            if Next /= null then
+               Next.Previous_Sibling := null;
+            end if;
+
+            --  Dereference child node.
+
+            Dereference (Child);
+
+            Child := Next;
+         end loop;
+
          Free (Node);
 
       else
          Node := null;
       end if;
    end Dereference;
+
+   ---------------------
+   -- Get_First_Child --
+   ---------------------
+
+   function Get_First_Child
+    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access is
+   begin
+      return Self.First_Child;
+   end Get_First_Child;
+
+   ----------------------
+   -- Get_Next_Sibling --
+   ----------------------
+
+   function Get_Next_Sibling
+    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access is
+   begin
+      return Self.Next_Sibling;
+   end Get_Next_Sibling;
 
    ---------------
    -- Reference --

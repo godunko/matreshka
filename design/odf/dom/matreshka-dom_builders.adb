@@ -76,6 +76,17 @@ package body Matreshka.DOM_Builders is
       return League.Strings.Empty_Universal_String;
    end Error_String;
 
+   ------------------
+   -- Get_Document --
+   ------------------
+
+   function Get_Document
+    (Self : DOM_Builder'Class)
+       return XML.DOM.Nodes.Documents.DOM_Document_Access is
+   begin
+      return Self.Document;
+   end Get_Document;
+
    ---------
    -- Pop --
    ---------
@@ -148,6 +159,7 @@ package body Matreshka.DOM_Builders is
            Self.Document.Create_Element_NS (Namespace_URI, Qualified_Name);
          Self.Current := XML.DOM.Nodes.DOM_Node_Access (Aux);
          Self.Parent.Append_Child (Self.Current);
+         XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Aux));
       end if;
    end Start_Element;
 

@@ -44,7 +44,7 @@
 private with Ada.Containers.Vectors;
 
 private with League.Strings;
-private with XML.DOM.Nodes.Documents;
+with XML.DOM.Nodes.Documents;
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 
@@ -52,6 +52,10 @@ package Matreshka.DOM_Builders is
 
    type DOM_Builder is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+
+   function Get_Document
+    (Self : DOM_Builder'Class)
+       return XML.DOM.Nodes.Documents.DOM_Document_Access;
 
 private
 
