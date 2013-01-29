@@ -49,7 +49,11 @@ with XML.DOM.Nodes.Character_Datas.Texts;
 with ODF.DOM.Elements.Office.Bodies;
 with ODF.DOM.Elements.Office.Document_Content;
 with ODF.DOM.Elements.Office.Text;
+with ODF.DOM.Elements.Table.Covered_Table_Cell;
 with ODF.DOM.Elements.Table.Table;
+with ODF.DOM.Elements.Table.Table_Cell;
+with ODF.DOM.Elements.Table.Table_Column;
+with ODF.DOM.Elements.Table.Table_Row;
 with ODF.DOM.Elements.Text.P;
 with ODF.DOM.Elements.Text.Sequence_Decls;
 with ODF.DOM.Elements.Text.Span;
@@ -68,6 +72,14 @@ package body ODF.Web is
 
    procedure To_JSON
     (Node   : not null ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
+     Object : out GNATCOLL.JSON.JSON_Value);
+
+   procedure To_JSON
+    (Node   : not null ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
+     Object : out GNATCOLL.JSON.JSON_Value);
+
+   procedure To_JSON
+    (Node   : not null ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
      Object : out GNATCOLL.JSON.JSON_Value);
 
    procedure To_JSON
@@ -185,10 +197,208 @@ package body ODF.Web is
 
    procedure To_JSON
     (Node   : not null ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
-     Object : out GNATCOLL.JSON.JSON_Value) is
+     Object : out GNATCOLL.JSON.JSON_Value)
+   is
+      Child    : XML.DOM.Nodes.DOM_Node_Access := Node.Get_First_Child;
+      Children : GNATCOLL.JSON.JSON_Array;
+      Aux      : GNATCOLL.JSON.JSON_Value;
+
    begin
       Object := GNATCOLL.JSON.Create_Object;
+
+      while Child /= null loop
+         if Child.all
+           in ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column'Class
+         then
+            null;
+
+         elsif Child.all
+           in ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row'Class
+         then
+            To_JSON
+             (ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access
+               (Child),
+              Aux);
+            GNATCOLL.JSON.Append (Children, Aux);
+
+----         elsif Node.all
+----           in ODF.DOM.Elements.Table.Table.ODF_Table_Table'Class
+----         then
+----            To_JSON
+----             (ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access (Node), Aux);
+----            GNATCOLL.JSON.Append (Children, Aux);
+----
+--         if Child.all in XML.DOM.Nodes.Character_Datas.Texts.DOM_Text'Class then
+--            Aux :=
+--              GNATCOLL.JSON.Create
+--               (XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access
+--                 (Child).Get_Data.To_UTF_8_String);
+--            GNATCOLL.JSON.Append (Children, Aux);
+--
+--         elsif Child.all in ODF.DOM.Elements.Text.Span.ODF_Text_Span'Class then
+--            To_JSON (ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access (Child), Aux);
+--            GNATCOLL.JSON.Append (Children, Aux);
+--
+----         if Child.all in ODF.DOM.Elements.Text.P.ODF_Text_P'Class then
+----            Put_Line ("YES!!!!");
+----            To_JSON (ODF.DOM.Elements.Text.P.ODF_Text_P_Access (Child), Aux);
+----            GNATCOLL.JSON.Append (Children, Aux);
+----
+         else
+            Put_Line (External_Tag (Child'Tag));
+
+            raise Program_Error;
+         end if;
+
+         Child := Child.Get_Next_Sibling;
+      end loop;
+
+      Object.Set_Field ("children", Children);
       Object.Set_Field ("__type", "OdfTableTable");
+   end To_JSON;
+
+   -------------
+   -- To_JSON --
+   -------------
+
+   procedure To_JSON
+    (Node   : not null ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
+     Object : out GNATCOLL.JSON.JSON_Value)
+   is
+      Child    : XML.DOM.Nodes.DOM_Node_Access := Node.Get_First_Child;
+      Children : GNATCOLL.JSON.JSON_Array;
+      Aux      : GNATCOLL.JSON.JSON_Value;
+
+   begin
+      Object := GNATCOLL.JSON.Create_Object;
+
+      while Child /= null loop
+--         if Child.all
+--           in ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell'Class
+--         then
+--            To_JSON
+--             (ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access
+--               (Child),
+--              Aux);
+--            GNATCOLL.JSON.Append (Children, Aux);
+--
+--         elsif Child.all
+--           in ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row'Class
+--         then
+--            To_JSON
+--             (ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access
+--               (Child),
+--              Aux);
+--            GNATCOLL.JSON.Append (Children, Aux);
+--
+         if Child.all
+           in ODF.DOM.Elements.Table.Table.ODF_Table_Table'Class
+         then
+            To_JSON
+             (ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access (Child), Aux);
+            GNATCOLL.JSON.Append (Children, Aux);
+
+----         if Child.all in XML.DOM.Nodes.Character_Datas.Texts.DOM_Text'Class then
+----            Aux :=
+----              GNATCOLL.JSON.Create
+----               (XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access
+----                 (Child).Get_Data.To_UTF_8_String);
+----            GNATCOLL.JSON.Append (Children, Aux);
+----
+----         elsif Child.all in ODF.DOM.Elements.Text.Span.ODF_Text_Span'Class then
+----            To_JSON (ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access (Child), Aux);
+----            GNATCOLL.JSON.Append (Children, Aux);
+
+         elsif Child.all in ODF.DOM.Elements.Text.P.ODF_Text_P'Class then
+            To_JSON (ODF.DOM.Elements.Text.P.ODF_Text_P_Access (Child), Aux);
+            GNATCOLL.JSON.Append (Children, Aux);
+
+         else
+            Put_Line (External_Tag (Child'Tag));
+
+            raise Program_Error;
+         end if;
+
+         Child := Child.Get_Next_Sibling;
+      end loop;
+
+      Object.Set_Field ("children", Children);
+      Object.Set_Field ("__type", "OdfTableTableCell");
+   end To_JSON;
+
+   -------------
+   -- To_JSON --
+   -------------
+
+   procedure To_JSON
+    (Node   : not null ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
+     Object : out GNATCOLL.JSON.JSON_Value)
+   is
+      Child    : XML.DOM.Nodes.DOM_Node_Access := Node.Get_First_Child;
+      Children : GNATCOLL.JSON.JSON_Array;
+      Aux      : GNATCOLL.JSON.JSON_Value;
+
+   begin
+      Object := GNATCOLL.JSON.Create_Object;
+
+      while Child /= null loop
+         if Child.all
+           in ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell'Class
+         then
+            To_JSON
+             (ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access
+               (Child),
+              Aux);
+            GNATCOLL.JSON.Append (Children, Aux);
+
+         elsif Child.all
+           in ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell'Class
+         then
+            null;
+
+--         elsif Child.all
+--           in ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row'Class
+--         then
+--            To_JSON
+--             (ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access
+--               (Child),
+--              Aux);
+--            GNATCOLL.JSON.Append (Children, Aux);
+--
+------         elsif Node.all
+------           in ODF.DOM.Elements.Table.Table.ODF_Table_Table'Class
+------         then
+------            To_JSON
+------             (ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access (Node), Aux);
+------            GNATCOLL.JSON.Append (Children, Aux);
+------
+----         if Child.all in XML.DOM.Nodes.Character_Datas.Texts.DOM_Text'Class then
+----            Aux :=
+----              GNATCOLL.JSON.Create
+----               (XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access
+----                 (Child).Get_Data.To_UTF_8_String);
+----            GNATCOLL.JSON.Append (Children, Aux);
+----
+----         elsif Child.all in ODF.DOM.Elements.Text.Span.ODF_Text_Span'Class then
+----            To_JSON (ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access (Child), Aux);
+----            GNATCOLL.JSON.Append (Children, Aux);
+----
+------         if Child.all in ODF.DOM.Elements.Text.P.ODF_Text_P'Class then
+------            Put_Line ("YES!!!!");
+------            To_JSON (ODF.DOM.Elements.Text.P.ODF_Text_P_Access (Child), Aux);
+------            GNATCOLL.JSON.Append (Children, Aux);
+
+         else
+            Put_Line (External_Tag (Child'Tag));
+
+            raise Program_Error;
+         end if;
+
+         Child := Child.Get_Next_Sibling;
+      end loop;
+
+      Object.Set_Field ("children", Children);
+      Object.Set_Field ("__type", "OdfTableTableRow");
    end To_JSON;
 
    -------------
