@@ -36,6 +36,11 @@ package body Generator.OOP_Handler is
 
       P ("limited with " & Scanner.To_Wide_Wide_String & ";");
       P ("with " & Tokens.To_Wide_Wide_String & ";");
+
+      if not Unit.Starts_With (Types) then
+         P ("with " & Types.To_Wide_Wide_String & ";");
+      end if;
+
       P ("");
       P ("package " & Unit.To_Wide_Wide_String & " is");
       P ("");
