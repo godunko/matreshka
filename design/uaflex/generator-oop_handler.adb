@@ -1,10 +1,17 @@
 with Matreshka.Internals.Finite_Automatons;
 with Ada.Wide_Wide_Text_IO;
+with Nodes;
 
 package body Generator.OOP_Handler is
+
+   --------
+   -- Go --
+   --------
+
    procedure Go
      (Actions : League.String_Vectors.Universal_String_Vector;
       File    : String;
+      Types   : League.Strings.Universal_String;
       Unit    : League.Strings.Universal_String;
       Scanner : League.Strings.Universal_String;
       Tokens  : League.Strings.Universal_String)
@@ -40,6 +47,7 @@ package body Generator.OOP_Handler is
          P ("     (Self    : not null access Handler;");
          P ("      Scanner : not null access " &
               Scanner.To_Wide_Wide_String & ".Scanner'Class;");
+         P ("      Rule    : " & Types.To_Wide_Wide_String & ".Rule_Index;");
          P ("      Token   : out " & Tokens.To_Wide_Wide_String & ".Token;");
          P ("      Skip    : in out Boolean) is abstract;");
          P ("");
@@ -68,6 +76,7 @@ package body Generator.OOP_Handler is
       procedure N (Text : Wide_Wide_String);
 
       Output  : Ada.Wide_Wide_Text_IO.File_Type;
+      First   : Boolean;
 
       procedure N (Text : Wide_Wide_String) is
       begin
@@ -95,9 +104,22 @@ package body Generator.OOP_Handler is
       P ("   case Rule is");
 
       for J in 1 .. Actions.Length loop
-         P ("      when " & Image (J) & " =>");
+         First := True;
+
+         for R in Nodes.Indexes.First_Index .. Nodes.Indexes.Last_Index loop
+            if Nodes.Indexes (R) /= J then
+               null;
+            elsif First then
+               N ("      when " & Image (R));
+               First := False;
+            else
+               N (" | " & Image (R));
+            end if;
+         end loop;
+
+         P (" =>");
          P ("         Self." & Actions.Element (J).To_Wide_Wide_String &
-              " (Scanner, Token, Skip);");
+              " (Scanner, Rule, Token, Skip);");
          P ("");
       end loop;
 

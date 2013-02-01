@@ -119,7 +119,7 @@ procedure UAFLEX is
    begin
       for J in Actions'Range loop
          Rule := Condition.Rules.Element (J);
-         Actions (J) := Nodes.Indexes.Element (Rule);
+         Actions (J) := Rule;
          Reg_Exp_List (J) := Nodes.Regexp (Rule);
       end loop;
 
@@ -325,6 +325,7 @@ begin
    Generator.OOP_Handler.Go
      (Nodes.Actions,
       To_File_Name (Handler, ".ads"),
+      Types,
       Handler,
       Scanner,
       Tokens);

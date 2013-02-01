@@ -22,6 +22,7 @@ package body UAFLEX_Handler is
    procedure End_Of_Macro
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -40,6 +41,7 @@ package body UAFLEX_Handler is
    procedure End_Of_Name_List
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -78,6 +80,7 @@ package body UAFLEX_Handler is
    procedure On_Action
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -96,6 +99,7 @@ package body UAFLEX_Handler is
    procedure On_End_Of_Rule
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -114,6 +118,7 @@ package body UAFLEX_Handler is
    procedure On_Exclusive
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -131,6 +136,7 @@ package body UAFLEX_Handler is
    procedure On_Name
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -148,6 +154,7 @@ package body UAFLEX_Handler is
    procedure On_Name_2
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -165,6 +172,7 @@ package body UAFLEX_Handler is
    procedure On_Regexp
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -182,6 +190,7 @@ package body UAFLEX_Handler is
    procedure On_Regexp_2
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -199,6 +208,7 @@ package body UAFLEX_Handler is
    procedure On_Section_End
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -217,6 +227,7 @@ package body UAFLEX_Handler is
    procedure On_Section_End_2
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -235,6 +246,7 @@ package body UAFLEX_Handler is
    procedure On_Start
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is
@@ -252,6 +264,7 @@ package body UAFLEX_Handler is
    procedure Skip_Line
      (Self    : not null access Handler;
       Scanner : not null access Aaa.Scanners.Scanner'Class;
+      Rule    : AAA.Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean)
    is

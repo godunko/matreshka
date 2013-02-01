@@ -502,7 +502,7 @@ package body Generator.Tables is
 
       P ("");
       P ("   type Rule_Index is range 0 .." &
-           Natural'Wide_Wide_Image (Nodes.Actions.Length) &
+           Natural'Wide_Wide_Image (Nodes.Rules.Length) &
            ";");
       P ("");
       P ("end " & Unit.To_Wide_Wide_String & ";");
