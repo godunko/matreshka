@@ -314,8 +314,8 @@ package body Generator.Tables is
 
                   Print_Classes (Edge.Edge_Id, Count);
 
-                  N (" =>" &
-                       State'Wide_Wide_Image (Edge.Target_Node.Index - 1));
+                  N (" =>");
+                  N (State'Wide_Wide_Image (Edge.Target_Node.Index - 1));
 
                   if K /= L then
                      N (",");
