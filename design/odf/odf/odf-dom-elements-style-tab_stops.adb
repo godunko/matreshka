@@ -96,18 +96,18 @@ package body ODF.DOM.Elements.Style.Tab_Stops is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      if Visitor in ODF.DOM.Iterators.ODF_Iterator'Class then
+      if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
          ODF.DOM.Iterators.ODF_Iterator'Class
-          (Visitor).Visit_Style_Tab_Stops
+          (Iterator).Visit_Style_Tab_Stops
             (Visitor,
              ODF_Style_Tab_Stops_Access (Self),
              Control);
 
       else
          Iterator.Visit_Element
-            (Visitor,
-             XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
-             Control);
+          (Visitor,
+           XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
+           Control);
       end if;
    end Visit_Element;
 

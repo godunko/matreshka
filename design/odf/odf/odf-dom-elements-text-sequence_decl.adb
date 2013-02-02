@@ -96,18 +96,18 @@ package body ODF.DOM.Elements.Text.Sequence_Decl is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      if Visitor in ODF.DOM.Iterators.ODF_Iterator'Class then
+      if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
          ODF.DOM.Iterators.ODF_Iterator'Class
-          (Visitor).Visit_Text_Sequence_Decl
+          (Iterator).Visit_Text_Sequence_Decl
             (Visitor,
              ODF_Text_Sequence_Decl_Access (Self),
              Control);
 
       else
          Iterator.Visit_Element
-            (Visitor,
-             XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
-             Control);
+          (Visitor,
+           XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
+           Control);
       end if;
    end Visit_Element;
 
