@@ -105,9 +105,9 @@ package body ODF.DOM.Elements.Table.Table is
 
       else
          Iterator.Visit_Element
-            (Visitor,
-             XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
-             Control);
+          (Visitor,
+           XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
+           Control);
       end if;
    end Visit_Element;
 
