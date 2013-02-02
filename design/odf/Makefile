@@ -5,5 +5,6 @@ all:
 
 clean:
 	rm -rf .objs
+	rm -rf dom/.objs
 	rm -rf odf/.objs
 	rm -rf web/.objs
