@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Visitors;
 
 package body XML.DOM.Nodes.Character_Datas.Texts is
 
@@ -62,5 +63,42 @@ package body XML.DOM.Nodes.Character_Datas.Texts is
       end Initialize;
 
    end Constructors;
+
+   -------------------
+   -- Enter_Element --
+   -------------------
+
+   overriding procedure Enter_Element
+    (Self    : not null access DOM_Text;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Text (DOM_Text_Access (Self), Control);
+   end Enter_Element;
+
+   -------------------
+   -- Leave_Element --
+   -------------------
+
+   overriding procedure Leave_Element
+    (Self    : not null access DOM_Text;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Text (DOM_Text_Access (Self), Control);
+   end Leave_Element;
+
+   -------------------
+   -- Visit_Element --
+   -------------------
+
+   overriding procedure Visit_Element
+    (Self     : not null access DOM_Text;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Text (Visitor, DOM_Text_Access (Self), Control);
+   end Visit_Element;
 
 end XML.DOM.Nodes.Character_Datas.Texts;

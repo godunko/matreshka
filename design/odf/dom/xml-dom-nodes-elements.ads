@@ -44,13 +44,13 @@
 
 package XML.DOM.Nodes.Elements is
 
-   type DOM_Element is new DOM_Node with private;
+   type DOM_Element is abstract new DOM_Node with private;
 
    type DOM_Element_Access is access all DOM_Element'Class;
 
 private
 
-   type DOM_Element is new DOM_Node with record
+   type DOM_Element is abstract new DOM_Node with record
       null;
    end record;
 

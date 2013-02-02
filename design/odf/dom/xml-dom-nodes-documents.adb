@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with XML.DOM.Nodes.Character_Datas.Texts;
 with XML.DOM.Nodes.Elements;
+with XML.DOM.Visitors;
 
 package body XML.DOM.Nodes.Documents is
 
@@ -76,5 +77,42 @@ package body XML.DOM.Nodes.Documents is
           (Node, Data);
       end return;
    end Create_Text_Node;
+
+   -------------------
+   -- Enter_Element --
+   -------------------
+
+   overriding procedure Enter_Element
+    (Self    : not null access DOM_Document;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Document (DOM_Document_Access (Self), Control);
+   end Enter_Element;
+
+   -------------------
+   -- Leave_Element --
+   -------------------
+
+   overriding procedure Leave_Element
+    (Self    : not null access DOM_Document;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Document (DOM_Document_Access (Self), Control);
+   end Leave_Element;
+
+   -------------------
+   -- Visit_Element --
+   -------------------
+
+   overriding procedure Visit_Element
+    (Self     : not null access DOM_Document;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Document (Visitor, DOM_Document_Access (Self), Control);
+   end Visit_Element;
 
 end XML.DOM.Nodes.Documents;

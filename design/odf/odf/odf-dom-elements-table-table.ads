@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Table.Table is
 
@@ -51,5 +52,24 @@ package ODF.DOM.Elements.Table.Table is
 private
 
    type ODF_Table_Table is new ODF.DOM.Elements.ODF_Element with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access ODF_Table_Table;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access ODF_Table_Table;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access ODF_Table_Table;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end ODF.DOM.Elements.Table.Table;

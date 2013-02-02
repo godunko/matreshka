@@ -44,6 +44,8 @@
 with League.Strings;
 private with Matreshka.Atomics.Counters;
 
+limited with XML.DOM.Visitors;
+
 package XML.DOM.Nodes is
 
    type DOM_Node is abstract tagged limited private;
@@ -66,6 +68,25 @@ package XML.DOM.Nodes is
    procedure Dereference (Node : in out DOM_Node_Access);
    --  Decrements reference counter; deallocate node when counter reachs zero.
    --  Sets Node to null on return.
+
+   not overriding procedure Enter_Element
+    (Self    : not null access DOM_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   not overriding procedure Leave_Element
+    (Self    : not null access DOM_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   not overriding procedure Visit_Element
+    (Self     : not null access DOM_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 private
 
