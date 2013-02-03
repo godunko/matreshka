@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
 private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Style.Master_Page is
@@ -53,7 +52,7 @@ package ODF.DOM.Elements.Style.Master_Page is
 private
 
    type ODF_Style_Master_Page is
-     new ODF.DOM.Elements.ODF_Element with null record;
+     new ODF.DOM.Elements.Style.ODF_Style_Base with null record;
 
    overriding procedure Enter_Element
     (Self    : not null access ODF_Style_Master_Page;

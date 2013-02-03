@@ -41,7 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with League.Strings;
 
 package ODF.DOM.Elements.Style is
+
+private
+
+   type ODF_Style_Base is
+     abstract new ODF.DOM.Elements.ODF_Element with null record;
+
+   overriding function Get_Namespace_URI
+    (Self : not null access constant ODF_Style_Base)
+       return League.Strings.Universal_String;
 
 end ODF.DOM.Elements.Style;

@@ -101,6 +101,17 @@ package body XML.DOM.Nodes.Documents is
       return League.Strings.Empty_Universal_String;
    end Get_Local_Name;
 
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   overriding function Get_Namespace_URI
+    (Self : not null access constant DOM_Document)
+       return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Namespace_URI;
+
    -------------------
    -- Leave_Element --
    -------------------

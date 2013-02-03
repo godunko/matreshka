@@ -77,6 +77,10 @@ private
     (Self : not null access constant DOM_Document)
        return League.Strings.Universal_String;
 
+   overriding function Get_Namespace_URI
+    (Self : not null access constant DOM_Document)
+       return League.Strings.Universal_String;
+
    overriding procedure Leave_Element
     (Self    : not null access DOM_Document;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

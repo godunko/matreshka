@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
 private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Text.Sequence_Decls is
@@ -55,7 +54,7 @@ package ODF.DOM.Elements.Text.Sequence_Decls is
 private
 
    type ODF_Text_Sequence_Decls is
-     new ODF.DOM.Elements.ODF_Element with null record;
+     new ODF.DOM.Elements.Text.ODF_Text_Base with null record;
 
    overriding procedure Enter_Element
     (Self    : not null access ODF_Text_Sequence_Decls;

@@ -62,4 +62,8 @@ private
     (Self : not null access constant DOM_Character_Data)
        return League.Strings.Universal_String;
 
+   overriding function Get_Namespace_URI
+    (Self : not null access constant DOM_Character_Data)
+       return League.Strings.Universal_String;
+
 end XML.DOM.Nodes.Character_Datas;

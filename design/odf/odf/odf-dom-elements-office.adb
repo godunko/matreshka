@@ -41,40 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
+with ODF.Constants;
 
-package ODF.DOM.Elements.Office.Scripts is
+package body ODF.DOM.Elements.Office is
 
-   type ODF_Office_Scripts is new ODF.DOM.Elements.ODF_Element with private;
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
 
-   type ODF_Office_Scripts_Access is access all ODF_Office_Scripts'Class;
+   overriding function Get_Namespace_URI
+    (Self : not null access constant ODF_Office_Base)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Office_URI;
+   end Get_Namespace_URI;
 
-private
-
-   type ODF_Office_Scripts is
-     new ODF.DOM.Elements.Office.ODF_Office_Base with null record;
-
-   overriding procedure Enter_Element
-    (Self    : not null access ODF_Office_Scripts;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Office_Scripts)
-       return League.Strings.Universal_String;
-
-   overriding procedure Leave_Element
-    (Self    : not null access ODF_Office_Scripts;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Element
-    (Self     : not null access ODF_Office_Scripts;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-end ODF.DOM.Elements.Office.Scripts;
+end ODF.DOM.Elements.Office;

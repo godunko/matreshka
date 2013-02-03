@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
 private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Office.Automatic_Styles is
@@ -55,7 +54,7 @@ package ODF.DOM.Elements.Office.Automatic_Styles is
 private
 
    type ODF_Office_Automatic_Styles is
-     new ODF.DOM.Elements.ODF_Element with null record;
+     new ODF.DOM.Elements.Office.ODF_Office_Base with null record;
 
    overriding procedure Enter_Element
     (Self    : not null access ODF_Office_Automatic_Styles;

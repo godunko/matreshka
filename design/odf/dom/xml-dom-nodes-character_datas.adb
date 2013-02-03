@@ -66,4 +66,15 @@ package body XML.DOM.Nodes.Character_Datas is
       return League.Strings.Empty_Universal_String;
    end Get_Local_Name;
 
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   overriding function Get_Namespace_URI
+    (Self : not null access constant DOM_Character_Data)
+       return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Namespace_URI;
+
 end XML.DOM.Nodes.Character_Datas;

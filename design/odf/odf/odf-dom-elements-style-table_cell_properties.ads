@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
 private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Style.Table_Cell_Properties is
@@ -55,7 +54,7 @@ package ODF.DOM.Elements.Style.Table_Cell_Properties is
 private
 
    type ODF_Style_Table_Cell_Properties is
-     new ODF.DOM.Elements.ODF_Element with null record;
+     new ODF.DOM.Elements.Style.ODF_Style_Base with null record;
 
    overriding procedure Enter_Element
     (Self    : not null access ODF_Style_Table_Cell_Properties;

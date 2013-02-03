@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
 private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Office.Font_Face_Decls is
@@ -55,7 +54,7 @@ package ODF.DOM.Elements.Office.Font_Face_Decls is
 private
 
    type ODF_Office_Font_Face_Decls is
-     new ODF.DOM.Elements.ODF_Element with null record;
+     new ODF.DOM.Elements.Office.ODF_Office_Base with null record;
 
    overriding procedure Enter_Element
     (Self    : not null access ODF_Office_Font_Face_Decls;

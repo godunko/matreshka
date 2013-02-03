@@ -59,6 +59,10 @@ package XML.DOM.Nodes is
     (Self : not null access constant DOM_Node)
        return League.Strings.Universal_String is abstract;
 
+   not overriding function Get_Namespace_URI
+    (Self : not null access constant DOM_Node)
+       return League.Strings.Universal_String is abstract;
+
    function Get_Next_Sibling
     (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
 
