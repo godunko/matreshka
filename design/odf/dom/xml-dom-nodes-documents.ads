@@ -73,6 +73,10 @@ private
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
+   overriding function Get_Local_Name
+    (Self : not null access constant DOM_Document)
+       return League.Strings.Universal_String;
+
    overriding procedure Leave_Element
     (Self    : not null access DOM_Document;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

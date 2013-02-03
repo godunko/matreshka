@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
@@ -65,6 +66,17 @@ package body ODF.DOM.Elements.Style.List_Level_Properties is
           (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
       end if;
    end Enter_Element;
+
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   overriding function Get_Local_Name
+    (Self : not null access constant ODF_Style_List_Level_Properties)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.List_Level_Properties_Name;
+   end Get_Local_Name;
 
    -------------------
    -- Leave_Element --

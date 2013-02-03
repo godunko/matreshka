@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with League.Strings;
 private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Table.Table is
@@ -58,6 +59,10 @@ private
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Get_Local_Name
+    (Self : not null access constant ODF_Table_Table)
+       return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
     (Self    : not null access ODF_Table_Table;

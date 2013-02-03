@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with League.Strings;
 private with XML.DOM.Visitors;
 
 package ODF.DOM.Elements.Text.Sequence_Decls is
@@ -74,5 +75,9 @@ private
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   overriding function Get_Local_Name
+    (Self : not null access constant ODF_Text_Sequence_Decls)
+       return League.Strings.Universal_String;
 
 end ODF.DOM.Elements.Text.Sequence_Decls;

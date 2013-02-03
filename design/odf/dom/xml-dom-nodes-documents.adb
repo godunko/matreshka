@@ -90,6 +90,17 @@ package body XML.DOM.Nodes.Documents is
       Visitor.Enter_Document (DOM_Document_Access (Self), Control);
    end Enter_Element;
 
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   overriding function Get_Local_Name
+    (Self : not null access constant DOM_Document)
+       return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Local_Name;
+
    -------------------
    -- Leave_Element --
    -------------------

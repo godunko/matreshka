@@ -55,4 +55,15 @@ package body XML.DOM.Nodes.Character_Datas is
       return Self.Data;
    end Get_Data;
 
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   overriding function Get_Local_Name
+    (Self : not null access constant DOM_Character_Data)
+       return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Local_Name;
+
 end XML.DOM.Nodes.Character_Datas;

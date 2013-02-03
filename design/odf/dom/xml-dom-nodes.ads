@@ -55,6 +55,10 @@ package XML.DOM.Nodes is
    function Get_First_Child
     (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
 
+   not overriding function Get_Local_Name
+    (Self : not null access constant DOM_Node)
+       return League.Strings.Universal_String is abstract;
+
    function Get_Next_Sibling
     (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
 

@@ -58,4 +58,8 @@ private
       Data : League.Strings.Universal_String;
    end record;
 
+   overriding function Get_Local_Name
+    (Self : not null access constant DOM_Character_Data)
+       return League.Strings.Universal_String;
+
 end XML.DOM.Nodes.Character_Datas;
