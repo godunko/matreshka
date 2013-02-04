@@ -42,32 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with XML.DOM.Nodes.Elements;
---with XML.DOM.Visitors;
 
 package ODF.DOM.Elements is
 
    type ODF_Element is abstract new XML.DOM.Nodes.Elements.DOM_Element with private;
 
    type ODF_Element_Access is access all ODF_Element'Class;
-
---   not overriding procedure Enter_Element
---    (Self    : not null access ODF_Element;
---     Visitor : in out ODF.DOM.Visitors.DOM_Visitor'Class;
---     Control : in out ODF.DOM.Visitors.Traverse_Control) is abstract;
---   --  Dispatch call to corresponding subprogram of visitor interface.
---
---   not overriding procedure Leave_Element
---    (Self    : not null access ODF_Element;
---     Visitor : in out ODF.DOM.Visitors.DOM_Visitor'Class;
---     Control : in out ODF.DOM.Visitors.Traverse_Control) is abstract;
---   --  Dispatch call to corresponding subprogram of visitor interface.
---
---   not overriding procedure Visit_Element
---    (Self     : not null access ODF_Element;
---     Iterator : in out ODF.DOM.Visitors.DOM_Iterator'Class;
---     Visitor  : in out ODF.DOM.Visitors.DOM_Visitor'Class;
---     Control  : in out ODF.DOM.Visitors.Traverse_Control) is abstract;
---   --  Dispatch call to corresponding subprogram of iterator interface.
 
 private
 
