@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+limited with XML.DOM.Nodes.Attrs;
 limited with XML.DOM.Nodes.Character_Datas.Texts;
 limited with XML.DOM.Nodes.Elements;
 
@@ -49,6 +50,12 @@ package XML.DOM.Nodes.Documents is
    type DOM_Document is new DOM_Node with private;
 
    type DOM_Document_Access is access all DOM_Document'Class;
+
+   not overriding function Create_Attribute_NS
+    (Self           : not null access DOM_Document;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
 
    not overriding function Create_Element_NS
     (Self           : not null access DOM_Document;

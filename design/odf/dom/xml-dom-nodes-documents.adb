@@ -41,11 +41,25 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Nodes.Attrs;
 with XML.DOM.Nodes.Character_Datas.Texts;
 with XML.DOM.Nodes.Elements;
 with XML.DOM.Visitors;
 
 package body XML.DOM.Nodes.Documents is
+
+   -------------------------
+   -- Create_Attribute_NS --
+   -------------------------
+
+   not overriding function Create_Attribute_NS
+    (Self           : not null access DOM_Document;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Attrs.DOM_Attr_Access is
+   begin
+      return null;
+   end Create_Attribute_NS;
 
    -----------------------
    -- Create_Element_NS --

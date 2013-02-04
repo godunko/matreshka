@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
+with XML.DOM.Nodes.Attrs;
 with XML.DOM.Nodes.Character_Datas.Texts;
 with XML.DOM.Nodes.Elements;
 with ODF.DOM.Documents;
@@ -157,7 +158,8 @@ package body Matreshka.DOM_Builders is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
-      Aux : XML.DOM.Nodes.Elements.DOM_Element_Access;
+      Element   : XML.DOM.Nodes.Elements.DOM_Element_Access;
+      Attribute : XML.DOM.Nodes.Attrs.DOM_Attr_Access;
 
    begin
       Self.Push;
@@ -173,12 +175,29 @@ package body Matreshka.DOM_Builders is
              & Local_Name.To_Wide_Wide_String
              & ' '
              & Qualified_Name.To_Wide_Wide_String);
-         Aux :=
+         Element :=
            Self.Document.Create_Element_NS (Namespace_URI, Qualified_Name);
-         Self.Current := XML.DOM.Nodes.DOM_Node_Access (Aux);
+         Self.Current := XML.DOM.Nodes.DOM_Node_Access (Element);
          Self.Parent.Append_Child (Self.Current);
-         XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Aux));
+         XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Element));
       end if;
+
+      --  Process attributes.
+
+      for J in 1 .. Attributes.Length loop
+         if Attributes.Local_Name (J).Is_Empty then
+            raise Program_Error;
+
+         else
+            Attribute :=
+              Self.Document.Create_Attribute_NS
+               (Attributes.Namespace_URI (J), Attributes.Qualified_Name (J));
+            XML.DOM.Nodes.Elements.DOM_Element_Access
+             (Self.Current).Set_Attribute_Node (Attribute);
+            XML.DOM.Nodes.Dereference
+             (XML.DOM.Nodes.DOM_Node_Access (Attribute));
+         end if;
+      end loop;
    end Start_Element;
 
 end Matreshka.DOM_Builders;

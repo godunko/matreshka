@@ -41,44 +41,78 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Hashed_Maps;
+with League.Strings.Hash;
 
-with XML.DOM.Nodes.Attrs;
+package body XML.DOM.Nodes.Elements is
 
-package XML.DOM.Nodes.Elements is
+   ----------
+   -- Hash --
+   ----------
 
-   type DOM_Element is abstract new DOM_Node with private;
+   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type is
+      use type Ada.Containers.Hash_Type;
 
-   type DOM_Element_Access is access all DOM_Element'Class;
+   begin
+      return
+        League.Strings.Hash (Item.Namespace_URI)
+          + League.Strings.Hash (Item.Local_Name);
+   end Hash;
+
+   ------------------------
+   -- Set_Attribute_Node --
+   ------------------------
 
    function Set_Attribute_Node
     (Self     : not null access DOM_Element'Class;
      New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
-       return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
+       return XML.DOM.Nodes.Attrs.DOM_Attr_Access
+   is
+      Old           : XML.DOM.Nodes.Attrs.DOM_Attr_Access;
+      Position      : Attribute_Maps.Cursor;
+      Key           : Qualified_Name;
+
+   begin
+      --  Construct key to access attribute in the map.
+
+      if New_Attr.Get_Local_Name.Is_Empty then
+         raise Program_Error;
+
+      else
+         Key.Namespace_URI := New_Attr.Get_Namespace_URI;
+         Key.Local_Name := New_Attr.Get_Local_Name;
+      end if;
+
+      --  Lookup for existing attribute.
+
+      Position := Self.Attributes.Find (Key);
+
+      if Attribute_Maps.Has_Element (Position) then
+         Old := Attribute_Maps.Element (Position);
+      end if;
+
+      --  Insert or replace attribute in the map.
+
+      XML.DOM.Nodes.Reference (XML.DOM.Nodes.DOM_Node_Access (New_Attr));
+      Self.Attributes.Include (Key, New_Attr);
+
+      return Old;
+   end Set_Attribute_Node;
+
+   ------------------------
+   -- Set_Attribute_Node --
+   ------------------------
 
    procedure Set_Attribute_Node
     (Self     : not null access DOM_Element'Class;
-     New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access);
+     New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
+   is
+      Aux : XML.DOM.Nodes.DOM_Node_Access
+        := XML.DOM.Nodes.DOM_Node_Access (Self.Set_Attribute_Node (New_Attr));
 
-private
-
-   type Qualified_Name is record
-      Namespace_URI : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
-   end record;
-
-   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type;
-
-   package Attribute_Maps is
-     new Ada.Containers.Hashed_Maps
-          (Qualified_Name,
-           XML.DOM.Nodes.Attrs.DOM_Attr_Access,
-           Hash,
-           "=",
-           XML.DOM.Nodes.Attrs."=");
-
-   type DOM_Element is abstract new DOM_Node with record
-      Attributes : Attribute_Maps.Map;
-   end record;
+   begin
+      if Aux /= null then
+         XML.DOM.Nodes.Dereference (Aux);
+      end if;
+   end Set_Attribute_Node;
 
 end XML.DOM.Nodes.Elements;

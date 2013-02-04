@@ -41,44 +41,45 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Hashed_Maps;
+with XML.DOM.Visitors;
 
-with XML.DOM.Nodes.Attrs;
+package body XML.DOM.Nodes.Attrs is
 
-package XML.DOM.Nodes.Elements is
+   -------------------
+   -- Enter_Element --
+   -------------------
 
-   type DOM_Element is abstract new DOM_Node with private;
+   overriding procedure Enter_Element
+    (Self    : not null access DOM_Attr;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      raise Program_Error;
+   end Enter_Element;
 
-   type DOM_Element_Access is access all DOM_Element'Class;
+   -------------------
+   -- Leave_Element --
+   -------------------
 
-   function Set_Attribute_Node
-    (Self     : not null access DOM_Element'Class;
-     New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
-       return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
+   overriding procedure Leave_Element
+    (Self    : not null access DOM_Attr;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      raise Program_Error;
+   end Leave_Element;
 
-   procedure Set_Attribute_Node
-    (Self     : not null access DOM_Element'Class;
-     New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access);
+   -------------------
+   -- Visit_Element --
+   -------------------
 
-private
+   overriding procedure Visit_Element
+    (Self     : not null access DOM_Attr;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      raise Program_Error;
+   end Visit_Element;
 
-   type Qualified_Name is record
-      Namespace_URI : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
-   end record;
-
-   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type;
-
-   package Attribute_Maps is
-     new Ada.Containers.Hashed_Maps
-          (Qualified_Name,
-           XML.DOM.Nodes.Attrs.DOM_Attr_Access,
-           Hash,
-           "=",
-           XML.DOM.Nodes.Attrs."=");
-
-   type DOM_Element is abstract new DOM_Node with record
-      Attributes : Attribute_Maps.Map;
-   end record;
-
-end XML.DOM.Nodes.Elements;
+end XML.DOM.Nodes.Attrs;
