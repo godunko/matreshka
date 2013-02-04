@@ -41,16 +41,172 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Wide_Wide_Text_IO;
+
 with ODF.Constants;
 
 package body ODF.DOM.Documents is
 
    use ODF.Constants;
+   use type League.Strings.Universal_String;
 
    function Get_Local_Name
     (Qualified_Name : League.Strings.Universal_String)
        return League.Strings.Universal_String;
    --  Returns local name part of the given qualified name.
+
+   -------------------------
+   -- Create_Attribute_NS --
+   -------------------------
+
+   overriding function Create_Attribute_NS
+    (Self           : not null access ODF_Document;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Attrs.DOM_Attr_Access
+   is
+      Local_Name : constant League.Strings.Universal_String
+        := Get_Local_Name (Qualified_Name);
+
+   begin
+      if Namespace_URI = FO_URI then
+         if Local_Name = Background_Color_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_FO_Background_Color);
+
+         elsif Local_Name = Border_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Border);
+
+         elsif Local_Name = Border_Bottom_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Border_Bottom);
+
+         elsif Local_Name = Border_Left_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Border_Left);
+
+         elsif Local_Name = Border_Right_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_FO_Border_Right);
+
+         elsif Local_Name = Border_Top_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Border_Top);
+
+         elsif Local_Name = Country_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Country);
+
+         elsif Local_Name = Font_Weight_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Font_Weight);
+
+         elsif Local_Name = Language_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Language);
+
+         elsif Local_Name = Padding_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Padding);
+
+         elsif Local_Name = Text_Align_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Text_Align);
+         end if;
+
+      elsif Namespace_URI = Office_URI then
+         if Local_Name = Version_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Office_Version);
+         end if;
+
+      elsif Namespace_URI = Style_URI then
+         if Local_Name = Column_Width_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Column_Width);
+
+         elsif Local_Name = Name_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Style_Name);
+
+         elsif Local_Name = Family_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Style_Family);
+
+         elsif Local_Name = Font_Family_Generic_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Font_Family_Generic);
+
+         elsif Local_Name = Font_Pitch_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Font_Pitch);
+
+         elsif Local_Name = Font_Weight_Asian_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Font_Weight_Asian);
+
+         elsif Local_Name = Font_Weight_Complex_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Font_Weight_Complex);
+
+         elsif Local_Name = Justify_Single_Word_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Style_Justify_Single_Word);
+
+         elsif Local_Name = Parent_Style_Name_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Parent_Style_Name);
+
+         elsif Local_Name = Rel_Column_Width_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Rel_Column_Width);
+
+         elsif Local_Name = Vertical_Align_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Vertical_Align);
+
+         elsif Local_Name = Width_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Style_Width);
+         end if;
+
+      elsif Namespace_URI = SVG_URI then
+         if Local_Name = Font_Family_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_SVG_Font_Family);
+         end if;
+
+      elsif Namespace_URI = Table_URI then
+         if Local_Name = Align_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Table_Align);
+         end if;
+      end if;
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Ada.Wide_Wide_Text_IO.Standard_Error,
+        "  {"
+          & Namespace_URI.To_Wide_Wide_String
+          & '}'
+          & Local_Name.To_Wide_Wide_String
+          & ' '
+          & Qualified_Name.To_Wide_Wide_String);
+
+      raise Program_Error;
+   end Create_Attribute_NS;
 
    -----------------------
    -- Create_Element_NS --
@@ -62,8 +218,6 @@ package body ODF.DOM.Documents is
      Qualified_Name : League.Strings.Universal_String)
        return XML.DOM.Nodes.Elements.DOM_Element_Access
    is
-      use type League.Strings.Universal_String;
-
       Local_Name : constant League.Strings.Universal_String
         := Get_Local_Name (Qualified_Name);
 
@@ -298,6 +452,127 @@ package body ODF.DOM.Documents is
       end if;
    end Create_Element_NS;
 
+   --------------------------------
+   -- Create_FO_Background_Color --
+   --------------------------------
+
+   function Create_FO_Background_Color
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color;
+   end Create_FO_Background_Color;
+
+   ----------------------
+   -- Create_FO_Border --
+   ----------------------
+
+   function Create_FO_Border
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border.ODF_FO_Border_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Border.ODF_FO_Border;
+   end Create_FO_Border;
+
+   -----------------------------
+   -- Create_FO_Border_Bottom --
+   -----------------------------
+
+   function Create_FO_Border_Bottom
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Bottom.ODF_FO_Border_Bottom_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Border_Bottom.ODF_FO_Border_Bottom;
+   end Create_FO_Border_Bottom;
+
+   ---------------------------
+   -- Create_FO_Border_Left --
+   ---------------------------
+
+   function Create_FO_Border_Left
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Left.ODF_FO_Border_Left_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Border_Left.ODF_FO_Border_Left;
+   end Create_FO_Border_Left;
+
+   ----------------------------
+   -- Create_FO_Border_Right --
+   ----------------------------
+
+   function Create_FO_Border_Right
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Right.ODF_FO_Border_Right_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Border_Right.ODF_FO_Border_Right;
+   end Create_FO_Border_Right;
+
+   --------------------------
+   -- Create_FO_Border_Top --
+   --------------------------
+
+   function Create_FO_Border_Top
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Top.ODF_FO_Border_Top_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Border_Top.ODF_FO_Border_Top;
+   end Create_FO_Border_Top;
+
+   -----------------------
+   -- Create_FO_Country --
+   -----------------------
+
+   function Create_FO_Country
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Country.ODF_FO_Country_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Country.ODF_FO_Country;
+   end Create_FO_Country;
+
+   ---------------------------
+   -- Create_FO_Font_Weight --
+   ---------------------------
+
+   function Create_FO_Font_Weight
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight;
+   end Create_FO_Font_Weight;
+
+   ------------------------
+   -- Create_FO_Language --
+   ------------------------
+
+   function Create_FO_Language
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Language.ODF_FO_Language_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Language.ODF_FO_Language;
+   end Create_FO_Language;
+
+   -----------------------
+   -- Create_FO_Padding --
+   -----------------------
+
+   function Create_FO_Padding
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding;
+   end Create_FO_Padding;
+
+   --------------------------
+   -- Create_FO_Text_Align --
+   --------------------------
+
+   function Create_FO_Text_Align
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align;
+   end Create_FO_Text_Align;
+
    ------------------------------------
    -- Create_Office_Automatic_Styles --
    ------------------------------------
@@ -406,6 +681,17 @@ package body ODF.DOM.Documents is
       return new ODF.DOM.Elements.Office.Text.ODF_Office_Text;
    end Create_Office_Text;
 
+   ---------------------------
+   -- Create_Office_Version --
+   ---------------------------
+
+   function Create_Office_Version
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Office.Version.ODF_Office_Version_Access is
+   begin
+      return new ODF.DOM.Attributes.Office.Version.ODF_Office_Version;
+   end Create_Office_Version;
+
    -----------------------------------
    -- Create_Style_Background_Image --
    -----------------------------------
@@ -416,6 +702,17 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image;
    end Create_Style_Background_Image;
+
+   -------------------------------
+   -- Create_Style_Column_Width --
+   -------------------------------
+
+   function Create_Style_Column_Width
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width;
+   end Create_Style_Column_Width;
 
    --------------------------------
    -- Create_Style_Default_Style --
@@ -428,6 +725,17 @@ package body ODF.DOM.Documents is
       return new ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style;
    end Create_Style_Default_Style;
 
+   -------------------------
+   -- Create_Style_Family --
+   -------------------------
+
+   function Create_Style_Family
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Family.ODF_Style_Family;
+   end Create_Style_Family;
+
    ----------------------------
    -- Create_Style_Font_Face --
    ----------------------------
@@ -439,6 +747,50 @@ package body ODF.DOM.Documents is
       return
         new ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face;
    end Create_Style_Font_Face;
+
+   --------------------------------------
+   -- Create_Style_Font_Family_Generic --
+   --------------------------------------
+
+   function Create_Style_Font_Family_Generic
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Family_Generic.ODF_Style_Font_Family_Generic_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Font_Family_Generic.ODF_Style_Font_Family_Generic;
+   end Create_Style_Font_Family_Generic;
+
+   -----------------------------
+   -- Create_Style_Font_Pitch --
+   -----------------------------
+
+   function Create_Style_Font_Pitch
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Pitch.ODF_Style_Font_Pitch_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Font_Pitch.ODF_Style_Font_Pitch;
+   end Create_Style_Font_Pitch;
+
+   ------------------------------------
+   -- Create_Style_Font_Weight_Asian --
+   ------------------------------------
+
+   function Create_Style_Font_Weight_Asian
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Weight_Asian.ODF_Style_Font_Weight_Asian_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Font_Weight_Asian.ODF_Style_Font_Weight_Asian;
+   end Create_Style_Font_Weight_Asian;
+
+   --------------------------------------
+   -- Create_Style_Font_Weight_Complex --
+   --------------------------------------
+
+   function Create_Style_Font_Weight_Complex
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Weight_Complex.ODF_Style_Font_Weight_Complex_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Font_Weight_Complex.ODF_Style_Font_Weight_Complex;
+   end Create_Style_Font_Weight_Complex;
 
    -------------------------------
    -- Create_Style_Footer_Style --
@@ -486,6 +838,17 @@ package body ODF.DOM.Documents is
       return new ODF.DOM.Elements.Style.Header_Style.ODF_Style_Header_Style;
    end Create_Style_Header_Style;
 
+   --------------------------------------
+   -- Create_Style_Justify_Single_Word --
+   --------------------------------------
+
+   function Create_Style_Justify_Single_Word
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Justify_Single_Word.ODF_Style_Justify_Single_Word_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Justify_Single_Word.ODF_Style_Justify_Single_Word;
+   end Create_Style_Justify_Single_Word;
+
    ----------------------------------------
    -- Create_Style_List_Level_Properties --
    ----------------------------------------
@@ -509,6 +872,17 @@ package body ODF.DOM.Documents is
       return
         new ODF.DOM.Elements.Style.Master_Page.ODF_Style_Master_Page;
    end Create_Style_Master_Page;
+
+   -----------------------
+   -- Create_Style_Name --
+   -----------------------
+
+   function Create_Style_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Name.ODF_Style_Name;
+   end Create_Style_Name;
 
    ------------------------------
    -- Create_Style_Page_Layout --
@@ -545,6 +919,28 @@ package body ODF.DOM.Documents is
       return
         new ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties;
    end Create_Style_Paragraph_Properties;
+
+   ------------------------------------
+   -- Create_Style_Parent_Style_Name --
+   ------------------------------------
+
+   function Create_Style_Parent_Style_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name;
+   end Create_Style_Parent_Style_Name;
+
+   -----------------------------------
+   -- Create_Style_Rel_Column_Width --
+   -----------------------------------
+
+   function Create_Style_Rel_Column_Width
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Rel_Column_Width.ODF_Style_Rel_Column_Width_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Rel_Column_Width.ODF_Style_Rel_Column_Width;
+   end Create_Style_Rel_Column_Width;
 
    ------------------------
    -- Create_Style_Style --
@@ -628,6 +1024,50 @@ package body ODF.DOM.Documents is
       return
         new ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties;
    end Create_Style_Text_Properties;
+
+   ---------------------------------
+   -- Create_Style_Vertical_Align --
+   ---------------------------------
+
+   function Create_Style_Vertical_Align
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Vertical_Align.ODF_Style_Vertical_Align_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Vertical_Align.ODF_Style_Vertical_Align;
+   end Create_Style_Vertical_Align;
+
+   ------------------------
+   -- Create_Style_Width --
+   ------------------------
+
+   function Create_Style_Width
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Width.ODF_Style_Width_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Width.ODF_Style_Width;
+   end Create_Style_Width;
+
+   ------------------------
+   -- Create_SVG_Version --
+   ------------------------
+
+   function Create_SVG_Font_Family
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.SVG.Font_Family.ODF_SVG_Font_Family_Access is
+   begin
+      return new ODF.DOM.Attributes.SVG.Font_Family.ODF_SVG_Font_Family;
+   end Create_SVG_Font_Family;
+
+   ------------------------
+   -- Create_Table_Align --
+   ------------------------
+
+   function Create_Table_Align
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Align.ODF_Table_Align_Access is
+   begin
+      return new ODF.DOM.Attributes.Table.Align.ODF_Table_Align;
+   end Create_Table_Align;
 
    -------------------------------------
    -- Create_Table_Covered_Table_Cell --
