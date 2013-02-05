@@ -67,6 +67,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String
          ("urn:oasis:names:tc:opendocument:xmlns:text:1.0");
 
+   Adjustment_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("adjustment");
    Align_Name                       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("align");
    Automatic_Styles_Name            : constant League.Strings.Universal_String
@@ -91,6 +93,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("border-top");
    Class_Name                       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("class");
+   Color_Name                       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("color");
    Column_Width_Name                : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("column-width");
    Contextual_Spacing_Name          : constant League.Strings.Universal_String
@@ -109,6 +113,10 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("display-name");
    Display_Outline_Level_Name       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("display-outline-level");
+   Distance_After_Sep_Name          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("distance-after-sep");
+   Distance_Before_Sep_Name         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("distance-before-sep");
    Document_Content_Name            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("document-content");
    Document_Styles_Name             : constant League.Strings.Universal_String
@@ -160,6 +168,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("footer-style");
    Font_Face_Name                   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("font-face");
+   Footnote_Max_Height_Name         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("footnote-max-height");
    Footnote_Sep_Name                : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("footnote-sep");
    Footnotes_Position_Name          : constant League.Strings.Universal_String
@@ -199,12 +209,20 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("line-break");
    Line_Number_Name                 : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("line-number");
+   Line_Style_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("line-style");
    Linenumbering_Configuration_Name : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("linenumbering-configuration");
    List_Level_Properties_Name       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("list-level-properties");
+   Margin_Name                      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("margin");
    Margin_Bottom_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("margin-bottom");
+   Margin_Left_Name                 : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("margin-left");
+   Margin_Right_Name                : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("margin-right");
    Margin_Top_Name                  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("margin-top");
    Master_Page_Name                 : constant League.Strings.Universal_String
@@ -239,18 +257,28 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("p");
    Padding_Name                     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("padding");
+   Page_Height_Name                 : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("page-height");
+   Page_Layout_Name_Name            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("page-layout-name");
    Page_Layout_Properties_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("page-layout-properties");
    Page_Layout_Name                 : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("page-layout");
+   Page_Width_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("page-width");
    Paragraph_Properties_Name        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("paragraph-properties");
    Parent_Style_Name_Name           : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("parent-style-name");
+   Print_Orientation_Name           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("print-orientation");
    Punctuation_Wrap_Name            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("punctuation-wrap");
    Rel_Column_Width_Name            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("rel-column-width");
+   Rel_Width_Name                   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("rel-width");
    Sequence_Decl_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("sequence-decl");
    Sequence_Decls_Name              : constant League.Strings.Universal_String

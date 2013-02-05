@@ -176,10 +176,22 @@ package body ODF.DOM.Documents is
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Language);
 
+         elsif Local_Name = Margin_Name then
+            return XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Margin);
+
          elsif Local_Name = Margin_Bottom_Name then
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access
                (Self.Create_FO_Margin_Bottom);
+
+         elsif Local_Name = Margin_Left_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Margin_Left);
+
+         elsif Local_Name = Margin_Right_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_FO_Margin_Right);
 
          elsif Local_Name = Margin_Top_Name then
             return
@@ -188,6 +200,14 @@ package body ODF.DOM.Documents is
          elsif Local_Name = Padding_Name then
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Padding);
+
+         elsif Local_Name = Page_Height_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Page_Height);
+
+         elsif Local_Name = Page_Width_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_FO_Page_Width);
 
          elsif Local_Name = Text_Align_Name then
             return
@@ -210,9 +230,19 @@ package body ODF.DOM.Documents is
          end if;
 
       elsif Namespace_URI = Style_URI then
-         if Local_Name = Class_Name then
+         if Local_Name = Adjustment_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Adjustment);
+
+         elsif Local_Name = Class_Name then
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Style_Class);
+
+         elsif Local_Name = Color_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Color);
 
          elsif Local_Name = Column_Width_Name then
             return
@@ -238,6 +268,16 @@ package body ODF.DOM.Documents is
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access
                (Self.Create_Style_Display_Name);
+
+         elsif Local_Name = Distance_After_Sep_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Distance_After_Sep);
+
+         elsif Local_Name = Distance_Before_Sep_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Distance_Before_Sep);
 
          elsif Local_Name = Name_Name then
             return
@@ -312,6 +352,11 @@ package body ODF.DOM.Documents is
               XML.DOM.Nodes.Attrs.DOM_Attr_Access
                (Self.Create_Style_Font_Weight_Complex);
 
+         elsif Local_Name = Footnote_Max_Height_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Footnote_Max_Height);
+
          elsif Local_Name = Justify_Single_Word_Name then
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access
@@ -337,18 +382,35 @@ package body ODF.DOM.Documents is
               XML.DOM.Nodes.Attrs.DOM_Attr_Access
                (Self.Create_Style_Line_Break);
 
+         elsif Local_Name = Line_Style_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Line_Style);
+
          elsif Local_Name = Next_Style_Name_Name then
             return
-              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Style_Next_Style_Name);
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Next_Style_Name);
 
          elsif Local_Name = Num_Format_Name then
             return
-              XML.DOM.Nodes.Attrs.DOM_Attr_Access (Self.Create_Style_Num_Format);
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Num_Format);
+
+         elsif Local_Name = Page_Layout_Name_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Page_Layout_Name);
 
          elsif Local_Name = Parent_Style_Name_Name then
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access
                (Self.Create_Style_Parent_Style_Name);
+
+         elsif Local_Name = Print_Orientation_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Print_Orientation);
 
          elsif Local_Name = Punctuation_Wrap_Name then
             return
@@ -359,6 +421,11 @@ package body ODF.DOM.Documents is
             return
               XML.DOM.Nodes.Attrs.DOM_Attr_Access
                (Self.Create_Style_Rel_Column_Width);
+
+         elsif Local_Name = Rel_Width_Name then
+            return
+              XML.DOM.Nodes.Attrs.DOM_Attr_Access
+               (Self.Create_Style_Rel_Width);
 
          elsif Local_Name = Tab_Stop_Distance_Name then
             return
@@ -999,6 +1066,17 @@ package body ODF.DOM.Documents is
       return new ODF.DOM.Attributes.FO.Language.ODF_FO_Language;
    end Create_FO_Language;
 
+   ----------------------
+   -- Create_FO_Margin --
+   ----------------------
+
+   function Create_FO_Margin
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin;
+   end Create_FO_Margin;
+
    -----------------------------
    -- Create_FO_Margin_Bottom --
    -----------------------------
@@ -1009,6 +1087,28 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom;
    end Create_FO_Margin_Bottom;
+
+   ---------------------------
+   -- Create_FO_Margin_Left --
+   ---------------------------
+
+   function Create_FO_Margin_Left
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left;
+   end Create_FO_Margin_Left;
+
+   ----------------------------
+   -- Create_FO_Margin_Right --
+   ----------------------------
+
+   function Create_FO_Margin_Right
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right;
+   end Create_FO_Margin_Right;
 
    --------------------------
    -- Create_FO_Margin_Top --
@@ -1031,6 +1131,28 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding;
    end Create_FO_Padding;
+
+   ---------------------------
+   -- Create_FO_Page_Height --
+   ---------------------------
+
+   function Create_FO_Page_Height
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Page_Height.ODF_FO_Page_Height_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Page_Height.ODF_FO_Page_Height;
+   end Create_FO_Page_Height;
+
+   --------------------------
+   -- Create_FO_Page_Width --
+   --------------------------
+
+   function Create_FO_Page_Width
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Page_Width.ODF_FO_Page_Width_Access is
+   begin
+      return new ODF.DOM.Attributes.FO.Page_Width.ODF_FO_Page_Width;
+   end Create_FO_Page_Width;
 
    --------------------------
    -- Create_FO_Text_Align --
@@ -1184,6 +1306,17 @@ package body ODF.DOM.Documents is
       return new ODF.DOM.Attributes.Office.Version.ODF_Office_Version;
    end Create_Office_Version;
 
+   -----------------------------
+   -- Create_Style_Adjustment --
+   -----------------------------
+
+   function Create_Style_Adjustment
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Adjustment.ODF_Style_Adjustment_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Adjustment.ODF_Style_Adjustment;
+   end Create_Style_Adjustment;
+
    -----------------------------------
    -- Create_Style_Background_Image --
    -----------------------------------
@@ -1205,6 +1338,17 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Attributes.Style.Class.ODF_Style_Class;
    end Create_Style_Class;
+
+   ------------------------
+   -- Create_Style_Color --
+   ------------------------
+
+   function Create_Style_Color
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Color.ODF_Style_Color_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Color.ODF_Style_Color;
+   end Create_Style_Color;
 
    -------------------------------
    -- Create_Style_Column_Width --
@@ -1271,6 +1415,28 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Attributes.Style.Display_Name.ODF_Style_Display_Name;
    end Create_Style_Display_Name;
+
+   -------------------------------------
+   -- Create_Style_Distance_After_Sep --
+   -------------------------------------
+
+   function Create_Style_Distance_After_Sep
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Distance_After_Sep.ODF_Style_Distance_After_Sep_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Distance_After_Sep.ODF_Style_Distance_After_Sep;
+   end Create_Style_Distance_After_Sep;
+
+   --------------------------------------
+   -- Create_Style_Distance_Before_Sep --
+   --------------------------------------
+
+   function Create_Style_Distance_Before_Sep
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Distance_Before_Sep.ODF_Style_Distance_Before_Sep_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Distance_Before_Sep.ODF_Style_Distance_Before_Sep;
+   end Create_Style_Distance_Before_Sep;
 
    -------------------------
    -- Create_Style_Family --
@@ -1449,6 +1615,17 @@ package body ODF.DOM.Documents is
       return new ODF.DOM.Elements.Style.Footer_Style.ODF_Style_Footer_Style;
    end Create_Style_Footer_Style;
 
+   --------------------------------------
+   -- Create_Style_Footnote_Max_Height --
+   --------------------------------------
+
+   function Create_Style_Footnote_Max_Height
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Footnote_Max_Height.ODF_Style_Footnote_Max_Height_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Footnote_Max_Height.ODF_Style_Footnote_Max_Height;
+   end Create_Style_Footnote_Max_Height;
+
    -------------------------------
    -- Create_Style_Footnote_Sep --
    -------------------------------
@@ -1538,6 +1715,17 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Attributes.Style.Line_Break.ODF_Style_Line_Break;
    end Create_Style_Line_Break;
+
+   -----------------------------
+   -- Create_Style_Line_Style --
+   -----------------------------
+
+   function Create_Style_Line_Style
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Line_Style.ODF_Style_Line_Style_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Line_Style.ODF_Style_Line_Style;
+   end Create_Style_Line_Style;
 
    ----------------------------------------
    -- Create_Style_List_Level_Properties --
@@ -1632,6 +1820,17 @@ package body ODF.DOM.Documents is
         new ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties;
    end Create_Style_Paragraph_Properties;
 
+   -----------------------------------
+   -- Create_Style_Page_Layout_Name --
+   -----------------------------------
+
+   function Create_Style_Page_Layout_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Page_Layout_Name.ODF_Style_Page_Layout_Name_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Page_Layout_Name.ODF_Style_Page_Layout_Name;
+   end Create_Style_Page_Layout_Name;
+
    ------------------------------------
    -- Create_Style_Parent_Style_Name --
    ------------------------------------
@@ -1642,6 +1841,17 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name;
    end Create_Style_Parent_Style_Name;
+
+   ------------------------------------
+   -- Create_Style_Print_Orientation --
+   ------------------------------------
+
+   function Create_Style_Print_Orientation
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Print_Orientation.ODF_Style_Print_Orientation_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Print_Orientation.ODF_Style_Print_Orientation;
+   end Create_Style_Print_Orientation;
 
    -----------------------------------
    -- Create_Style_Punctuation_Wrap --
@@ -1664,6 +1874,17 @@ package body ODF.DOM.Documents is
    begin
       return new ODF.DOM.Attributes.Style.Rel_Column_Width.ODF_Style_Rel_Column_Width;
    end Create_Style_Rel_Column_Width;
+
+   ----------------------------
+   -- Create_Style_Rel_Width --
+   ----------------------------
+
+   function Create_Style_Rel_Width
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Rel_Width.ODF_Style_Rel_Width_Access is
+   begin
+      return new ODF.DOM.Attributes.Style.Rel_Width.ODF_Style_Rel_Width;
+   end Create_Style_Rel_Width;
 
    ------------------------
    -- Create_Style_Style --
