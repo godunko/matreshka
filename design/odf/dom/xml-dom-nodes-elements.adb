@@ -45,6 +45,31 @@ with League.Strings.Hash;
 
 package body XML.DOM.Nodes.Elements is
 
+   ---------------------------
+   -- Get_Attribute_Node_NS --
+   ---------------------------
+
+   function Get_Attribute_Node_NS
+    (Self          : not null access DOM_Element'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Attrs.DOM_Attr_Access
+   is
+      Position : Attribute_Maps.Cursor;
+
+   begin
+      --  Lookup for attribute.
+
+      Position := Self.Attributes.Find ((Namespace_URI, Local_Name));
+
+      if Attribute_Maps.Has_Element (Position) then
+         return Attribute_Maps.Element (Position);
+
+      else
+         return null;
+      end if;
+   end Get_Attribute_Node_NS;
+
    ----------
    -- Hash --
    ----------
@@ -67,9 +92,9 @@ package body XML.DOM.Nodes.Elements is
      New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
        return XML.DOM.Nodes.Attrs.DOM_Attr_Access
    is
-      Old           : XML.DOM.Nodes.Attrs.DOM_Attr_Access;
-      Position      : Attribute_Maps.Cursor;
-      Key           : Qualified_Name;
+      Key      : Qualified_Name;
+      Old      : XML.DOM.Nodes.Attrs.DOM_Attr_Access;
+      Position : Attribute_Maps.Cursor;
 
    begin
       --  Construct key to access attribute in the map.

@@ -60,6 +60,12 @@ package XML.DOM.Nodes.Elements is
     (Self     : not null access DOM_Element'Class;
      New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access);
 
+   function Get_Attribute_Node_NS
+    (Self          : not null access DOM_Element'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
+
 private
 
    type Qualified_Name is record
