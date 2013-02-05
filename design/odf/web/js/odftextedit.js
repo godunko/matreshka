@@ -16,6 +16,18 @@ function OdfElementBase (object)
     }
 }
 
+//  OdfDocument
+
+function OdfDocument (object)
+{
+    OdfElementBase.call (this, object);
+}
+
+OdfDocument.prototype = new OdfElementBase ();
+OdfDocument.prototype.constructor = OdfDocument;
+OdfDocument.prototype.styles = [];
+OdfDocument.prototype.content = null;
+
 //  OdfTableTable
 
 function OdfTableTable (object)
@@ -153,7 +165,7 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
 
 (function ()
 {
-    var doc, body, para, text;
+    var doc, body, para, odfDocument;
 
     textView = document.getElementById ('textView');
 
@@ -169,7 +181,7 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
     request = new XMLHttpRequest();
     request.open ('GET', 'getODF', false);
     request.send ();
-    text = JSON.parse (request.response, function (key, value)
+    odfDocument = JSON.parse (request.response, function (key, value)
 	    {
 	        var type;
 
@@ -185,6 +197,6 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
 
 	        return value;
 	    });
-    console.log (text);
-    text.render (doc, doc.body);
+    console.log (odfDocument);
+    odfDocument.content.render (doc, doc.body);
 })()
