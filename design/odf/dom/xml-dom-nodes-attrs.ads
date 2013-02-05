@@ -48,6 +48,20 @@ package XML.DOM.Nodes.Attrs is
 
    type DOM_Attr_Access is access all DOM_Attr'Class;
 
+   not overriding function Get_Value
+    (Self : not null access DOM_Attr)
+       return League.Strings.Universal_String;
+--       return League.Strings.Universal_String is abstract;
+   --  XXX Must be abstract to minimize amount of memory and avoid unused
+   --  controlled components in specialized derived types.
+
+   not overriding procedure Set_Value
+    (Self  : not null access DOM_Attr;
+     Value : League.Strings.Universal_String);
+--     Value : League.Strings.Universal_String) is abstract;
+   --  XXX Must be abstract to minimize amount of memory and avoid unused
+   --  controlled components in specialized derived types.
+
    overriding procedure Enter_Element
     (Self    : not null access DOM_Attr;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
@@ -70,7 +84,9 @@ package XML.DOM.Nodes.Attrs is
 private
 
    type DOM_Attr is abstract new DOM_Node with record
-      null;
+      Value : League.Strings.Universal_String;
+      --  XXX Must be removed to minimize amount of memory and avoid unused
+      --  controlled components in specialized derived types.
    end record;
 
 end XML.DOM.Nodes.Attrs;

@@ -194,6 +194,7 @@ package body Matreshka.DOM_Builders is
                (Attributes.Namespace_URI (J), Attributes.Qualified_Name (J));
             XML.DOM.Nodes.Elements.DOM_Element_Access
              (Self.Current).Set_Attribute_Node_NS (Attribute);
+            Attribute.Set_Value (Attributes.Value (J));
             XML.DOM.Nodes.Dereference
              (XML.DOM.Nodes.DOM_Node_Access (Attribute));
          end if;

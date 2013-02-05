@@ -57,6 +57,17 @@ package body XML.DOM.Nodes.Attrs is
       raise Program_Error;
    end Enter_Element;
 
+   ---------------
+   -- Get_Value --
+   ---------------
+
+   not overriding function Get_Value
+    (Self : not null access DOM_Attr)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Value;
+   end Get_Value;
+
    -------------------
    -- Leave_Element --
    -------------------
@@ -68,6 +79,17 @@ package body XML.DOM.Nodes.Attrs is
    begin
       raise Program_Error;
    end Leave_Element;
+
+   ---------------
+   -- Set_Value --
+   ---------------
+
+   not overriding procedure Set_Value
+    (Self  : not null access DOM_Attr;
+     Value : League.Strings.Universal_String) is
+   begin
+      Self.Value := Value;
+   end Set_Value;
 
    -------------------
    -- Visit_Element --
