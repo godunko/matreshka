@@ -28,6 +28,18 @@ OdfDocument.prototype.constructor = OdfDocument;
 OdfDocument.prototype.styles = [];
 OdfDocument.prototype.content = null;
 
+//  OdfStyleStyle
+
+function OdfStyleStyle (object)
+{
+    OdfElementBase.call (this, object);
+}
+
+OdfStyleStyle.prototype = new OdfElementBase ();
+OdfStyleStyle.prototype.constructor = OdfStyleStyle;
+OdfStyleStyle.prototype.name = "";
+OdfStyleStyle.prototype.textFontWeight = "";
+
 //  OdfTableTable
 
 function OdfTableTable (object)
@@ -106,6 +118,23 @@ OdfTextP.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
 
+    //  Construct CSS
+
+    var style;
+
+    for (i = 0; i < odfDocument.styles.length; i++)
+    {
+        if (odfDocument.styles [i].name == this.styleName)
+	{
+	    style = odfDocument.styles [i];
+	}
+    }
+
+    if (style.textFontWeight !== '')
+    {
+        this.htmlElement.style.fontWeight = style.textFontWeight;
+    }
+
     for (var i = 0; i < this.children.length; i++)
     {
         if (typeof this.children [i] === 'string')
@@ -135,6 +164,23 @@ OdfTextSpan.prototype.children = [];
 OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('span');
     parentElement.appendChild (this.htmlElement);
+
+    //  Construct CSS
+
+    var style;
+
+    for (i = 0; i < odfDocument.styles.length; i++)
+    {
+        if (odfDocument.styles [i].name == this.styleName)
+	{
+	    style = odfDocument.styles [i];
+	}
+    }
+
+    if (style.textFontWeight !== '')
+    {
+        this.htmlElement.style.fontWeight = style.textFontWeight;
+    }
 
     for (var i = 0; i < this.children.length; i++)
     {
@@ -167,9 +213,11 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
+var odfDocument;
+
 (function ()
 {
-    var doc, body, para, odfDocument;
+    var doc, body, para;
 
     textView = document.getElementById ('textView');
 

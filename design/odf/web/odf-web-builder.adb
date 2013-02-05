@@ -42,6 +42,8 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with ODF.Constants;
+with ODF.DOM.Attributes.FO.Font_Weight;
+with ODF.DOM.Attributes.Style.Name;
 with ODF.DOM.Attributes.Text.Style_Name;
 
 package body ODF.Web.Builder is
@@ -58,6 +60,51 @@ package body ODF.Web.Builder is
       Self.Push;
       Self.Current.Object.Set_Field ("__type", "OdfOfficeText");
    end Enter_Office_Text;
+
+   -----------------------
+   -- Enter_Style_Style --
+   -----------------------
+
+   overriding procedure Enter_Style_Style
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Style.ODF_Style_Style_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      Name : constant
+        ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
+          := ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Style_URI, ODF.Constants.Name_Name));
+
+   begin
+      Self.Push;
+      Self.Current.Object.Set_Field ("__type", "OdfStyleStyle");
+      Self.Current.Object.Set_Field ("name", Name.Get_Value.To_UTF_8_String);
+   end Enter_Style_Style;
+
+   ---------------------------------
+   -- Enter_Style_Text_Properties --
+   ---------------------------------
+
+   overriding procedure Enter_Style_Text_Properties
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      use type ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
+
+      Font_Weight : constant
+        ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
+          := ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Font_Weight_Name));
+
+   begin
+      if Font_Weight /= null then
+         Self.Current.Object.Set_Field
+          ("textFontWeight", Font_Weight.Get_Value.To_UTF_8_String);
+      end if;
+   end Enter_Style_Text_Properties;
 
    -----------------------
    -- Enter_Table_Table --
@@ -188,6 +235,19 @@ package body ODF.Web.Builder is
 
       Self.Pop;
    end Leave_Office_Text;
+
+   -----------------------
+   -- Leave_Style_Style --
+   -----------------------
+
+   overriding procedure Leave_Style_Style
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Style.ODF_Style_Style_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      GNATCOLL.JSON.Append (Self.Styles, Self.Current.Object);
+      Self.Pop;
+   end Leave_Style_Style;
 
    -----------------------
    -- Leave_Table_Table --
