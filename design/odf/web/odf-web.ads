@@ -49,11 +49,17 @@ with AWS.Status;
 package ODF.Web is
 
    function To_JSON
-    (Document : not null ODF.DOM.Documents.ODF_Document_Access)
+    (Styles  : not null ODF.DOM.Documents.ODF_Document_Access;
+     Content : not null ODF.DOM.Documents.ODF_Document_Access)
        return String;
 
    function Callback (Request : AWS.Status.Data) return AWS.Response.Data;
 
-   Document : ODF.DOM.Documents.ODF_Document_Access;
+   type ODF_File is record
+      Styles  : ODF.DOM.Documents.ODF_Document_Access;
+      Content : ODF.DOM.Documents.ODF_Document_Access;
+   end record;
+
+   Document : ODF_File;
 
 end ODF.Web;

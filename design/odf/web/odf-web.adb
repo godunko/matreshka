@@ -113,6 +113,10 @@ package body ODF.Web is
 
    procedure Pop (Self : in out JSON_Builder'Class);
 
+   procedure Done (Self : in out JSON_Builder'Class);
+
+   procedure Initialize (Self : in out JSON_Builder'Class);
+
 --       overriding procedure Enter_Office_Automatic_Styles
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
@@ -543,8 +547,19 @@ package body ODF.Web is
 
    function Callback (Request : AWS.Status.Data) return AWS.Response.Data is
    begin
-      return AWS.Response.Build (JSON_Mime_Type, To_JSON (Document));
+      return
+        AWS.Response.Build
+         (JSON_Mime_Type, To_JSON (Document.Styles, Document.Content));
    end Callback;
+
+   ----------
+   -- Done --
+   ----------
+
+   procedure Done (Self : in out JSON_Builder'Class) is
+   begin
+      Self.Current.Object.Set_Field ("children", Self.Current.Children);
+   end Done;
 
    -----------------------
    -- Enter_Office_Text --
@@ -555,9 +570,7 @@ package body ODF.Web is
      Element : not null ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current :=
-       (GNATCOLL.JSON.Create_Object,
-        GNATCOLL.JSON.Empty_Array);
+      Self.Push;
       Self.Current.Object.Set_Field ("__type", "OdfOfficeText");
    end Enter_Office_Text;
 
@@ -640,6 +653,18 @@ package body ODF.Web is
       Self.Current.Object.Set_Field ("__type", "OdfTextSpan");
    end Enter_Text_Span;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize (Self : in out JSON_Builder'Class) is
+   begin
+      Self.Current :=
+       (GNATCOLL.JSON.Create_Object,
+        GNATCOLL.JSON.Empty_Array);
+      Self.Current.Object.Set_Field ("__type", "OdfDocument");
+   end Initialize;
+
    -----------------------
    -- Leave_Office_Text --
    -----------------------
@@ -650,6 +675,8 @@ package body ODF.Web is
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       Self.Current.Object.Set_Field ("children", Self.Current.Children);
+      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Pop;
    end Leave_Office_Text;
 
    -----------------------
@@ -772,49 +799,21 @@ package body ODF.Web is
    -------------
 
    function To_JSON
-    (Document : not null ODF.DOM.Documents.ODF_Document_Access)
+    (Styles  : not null ODF.DOM.Documents.ODF_Document_Access;
+     Content : not null ODF.DOM.Documents.ODF_Document_Access)
        return String
    is
       Builder  : JSON_Builder;
       Iterator : ODF.DOM.Iterators.ODF_Iterator;
       Control  : XML.DOM.Visitors.Traverse_Control
         := XML.DOM.Visitors.Continue;
-      Node     : XML.DOM.Nodes.DOM_Node_Access := Document.Get_First_Child;
 
    begin
-      --  Check for office:document-content element.
-
-      if Node.all
-        not in ODF.DOM.Elements.Office.Document_Content.ODF_Office_Document_Content'Class
-      then
-         raise Program_Error;
-      end if;
-
-      --  Lookop for office:body element.
-
-      Node := Node.Get_First_Child;
-
-      while Node /= null loop
-         exit when Node.all
-           in ODF.DOM.Elements.Office.Bodies.ODF_Office_Body'Class;
-
-         Node := Node.Get_Next_Sibling;
-      end loop;
-
-      --  Lookup for office:text element.
-
-      Node := Node.Get_First_Child;
-
-      while Node /= null loop
-         exit when Node.all
-           in ODF.DOM.Elements.Office.Text.ODF_Office_Text'Class;
-
-         Node := Node.Get_Next_Sibling;
-      end loop;
-
-      --  Execute DOM builder on office:text element.
-
-      Iterator.Visit (Builder, Node, Control);
+      Builder.Initialize;
+      Iterator.Visit (Builder, Styles.Get_First_Child, Control);
+      Iterator.Visit (Builder, Content.Get_First_Child, Control);
+      Builder.Done;
+      --  XXX It is better to use 'element' instead of 'firstChild'.
 
       return GNATCOLL.JSON.Write (Builder.Current.Object);
    end To_JSON;
