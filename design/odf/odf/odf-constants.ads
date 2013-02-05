@@ -86,12 +86,14 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("border-top");
    Column_Width_Name                : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("column-width");
-   Country_Name                      : constant League.Strings.Universal_String
+   Country_Name                     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("country");
    Covered_Table_Cell_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("covered-table-cell");
    Default_Style_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("default-style");
+   Display_Outline_Level_Name       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("display-outline-level");
    Document_Content_Name            : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("document-content");
    Document_Styles_Name             : constant League.Strings.Universal_String
@@ -104,8 +106,22 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("font-family");
    Font_Family_Generic_Name         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("font-family-generic");
+   Font_Name_Name                   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("font-name");
    Font_Pitch_Name                  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("font-pitch");
+   Font_Size_Name                   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("font-size");
+   Font_Size_Asian_Name             : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("font-size-asian");
+   Font_Size_Complex_Name           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("font-size-complex");
+   Font_Style_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("font-style");
+   Font_Style_Asian_Name            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("font-style-asian");
+   Font_Style_Complex_Name          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("font-style-complex");
    Font_Weight_Name                 : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("font-weight");
    Font_Weight_Asian_Name           : constant League.Strings.Universal_String
@@ -138,6 +154,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("name");
    Notes_Configuration_Name         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("notes-configuration");
+   Number_Columns_Spanned_Name      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("number-columns-spanned");
    Outline_Style_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("outline-style");
    Outline_Level_Style_Name         : constant League.Strings.Universal_String
@@ -166,6 +184,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("span");
    Style_Name                       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("style");
+   Style_Name_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("style-name");
    Styles_Name                      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("styles");
    Tab_Stops_Name                   : constant League.Strings.Universal_String
@@ -192,6 +212,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("text-align");
    Text_Properties_Name             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("text-properties");
+   Value_Type_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("value-type");
    Version_Name                     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("version");
    Vertical_Align_Name              : constant League.Strings.Universal_String

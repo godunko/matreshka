@@ -53,15 +53,23 @@ with ODF.DOM.Attributes.FO.Border_Left;
 with ODF.DOM.Attributes.FO.Border_Right;
 with ODF.DOM.Attributes.FO.Border_Top;
 with ODF.DOM.Attributes.FO.Country;
+with ODF.DOM.Attributes.FO.Font_Size;
+with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
 with ODF.DOM.Attributes.FO.Language;
 with ODF.DOM.Attributes.FO.Padding;
 with ODF.DOM.Attributes.FO.Text_Align;
+with ODF.DOM.Attributes.Office.Value_Type;
 with ODF.DOM.Attributes.Office.Version;
 with ODF.DOM.Attributes.Style.Column_Width;
 with ODF.DOM.Attributes.Style.Family;
 with ODF.DOM.Attributes.Style.Font_Family_Generic;
+with ODF.DOM.Attributes.Style.Font_Name;
 with ODF.DOM.Attributes.Style.Font_Pitch;
+with ODF.DOM.Attributes.Style.Font_Size_Asian;
+with ODF.DOM.Attributes.Style.Font_Size_Complex;
+with ODF.DOM.Attributes.Style.Font_Style_Asian;
+with ODF.DOM.Attributes.Style.Font_Style_Complex;
 with ODF.DOM.Attributes.Style.Font_Weight_Asian;
 with ODF.DOM.Attributes.Style.Font_Weight_Complex;
 with ODF.DOM.Attributes.Style.Justify_Single_Word;
@@ -72,6 +80,12 @@ with ODF.DOM.Attributes.Style.Vertical_Align;
 with ODF.DOM.Attributes.Style.Width;
 with ODF.DOM.Attributes.SVG.Font_Family;
 with ODF.DOM.Attributes.Table.Align;
+with ODF.DOM.Attributes.Table.Name;
+with ODF.DOM.Attributes.Table.Number_Columns_Spanned;
+with ODF.DOM.Attributes.Table.Style_Name;
+with ODF.DOM.Attributes.Text.Display_Outline_Level;
+with ODF.DOM.Attributes.Text.Name;
+with ODF.DOM.Attributes.Text.Style_Name;
 with ODF.DOM.Elements.Office.Automatic_Styles;
 with ODF.DOM.Elements.Office.Bodies;
 with ODF.DOM.Elements.Office.Document_Content;
@@ -148,6 +162,14 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.FO.Country.ODF_FO_Country_Access;
 
+   function Create_FO_Font_Size
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access;
+
+   function Create_FO_Font_Style
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access;
+
    function Create_FO_Font_Weight
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
@@ -204,6 +226,10 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
 
+   function Create_Office_Value_Type
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Office.Value_Type.ODF_Office_Value_Type_Access;
+
    function Create_Office_Version
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Office.Version.ODF_Office_Version_Access;
@@ -232,9 +258,29 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Font_Family_Generic.ODF_Style_Font_Family_Generic_Access;
 
+   function Create_Style_Font_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Name.ODF_Style_Font_Name_Access;
+
    function Create_Style_Font_Pitch
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Font_Pitch.ODF_Style_Font_Pitch_Access;
+
+   function Create_Style_Font_Size_Asian
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Size_Asian.ODF_Style_Font_Size_Asian_Access;
+
+   function Create_Style_Font_Size_Complex
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Size_Complex.ODF_Style_Font_Size_Complex_Access;
+
+   function Create_Style_Font_Style_Asian
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Style_Asian.ODF_Style_Font_Style_Asian_Access;
+
+   function Create_Style_Font_Style_Complex
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Style_Complex.ODF_Style_Font_Style_Complex_Access;
 
    function Create_Style_Font_Weight_Asian
     (Self : not null access ODF_Document'Class)
@@ -344,6 +390,18 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell_Access;
 
+   function Create_Table_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Name.ODF_Table_Name_Access;
+
+   function Create_Table_Number_Columns_Spanned
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access;
+
+   function Create_Table_Style_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access;
+
    function Create_Table_Table
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
@@ -360,9 +418,17 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
 
+   function Create_Text_Display_Outline_Level
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Display_Outline_Level.ODF_Text_Display_Outline_Level_Access;
+
    function Create_Text_Linenumbering_Configuration
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Text.Linenumbering_Configuration.ODF_Text_Linenumbering_Configuration_Access;
+
+   function Create_Text_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Name.ODF_Text_Name_Access;
 
    function Create_Text_Notes_Configuration
     (Self : not null access ODF_Document'Class)
@@ -391,6 +457,10 @@ package ODF.DOM.Documents is
    function Create_Text_Span
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access;
+
+   function Create_Text_Style_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access;
 
 private
 
