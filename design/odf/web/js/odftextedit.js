@@ -99,21 +99,23 @@ function OdfTextP (object)
 
 OdfTextP.prototype = new OdfElementBase ();
 OdfTextP.prototype.constructor = OdfTextP;
+OdfTextP.prototype.styleName = "";
+OdfTextP.prototype.htmlElement = null;
 OdfTextP.prototype.children = [];
 OdfTextP.prototype.render = function (htmlDocument, parentElement) {
-    var element = htmlDocument.createElement ('p');
-    parentElement.appendChild (element);
+    this.htmlElement = htmlDocument.createElement ('p');
+    parentElement.appendChild (this.htmlElement);
 
     for (var i = 0; i < this.children.length; i++)
     {
         if (typeof this.children [i] === 'string')
 	{
             var text = htmlDocument.createTextNode (this.children [i]);
-	    element.appendChild (text);
+	    this.htmlElement.appendChild (text);
 	}
 	else
 	{
-            this.children [i].render (htmlDocument, element);
+            this.children [i].render (htmlDocument, this.htmlElement);
 	}
     }
 };
@@ -127,21 +129,23 @@ function OdfTextSpan (object)
 
 OdfTextSpan.prototype = new OdfElementBase ();
 OdfTextSpan.prototype.constructor = OdfTextSpan;
+OdfTextSpan.prototype.styleName = "";
+OdfTextSpan.prototype.htmlElement = null;
 OdfTextSpan.prototype.children = [];
 OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
-    var element = htmlDocument.createElement ('span');
-    parentElement.appendChild (element);
+    this.htmlElement = htmlDocument.createElement ('span');
+    parentElement.appendChild (this.htmlElement);
 
     for (var i = 0; i < this.children.length; i++)
     {
         if (typeof this.children [i] === 'string')
 	{
             var text = htmlDocument.createTextNode (this.children [i]);
-	    element.appendChild (text);
+	    this.htmlElement.appendChild (text);
 	}
 	else
 	{
-            this.children [i].render (htmlDocument, element);
+            this.children [i].render (htmlDocument, this.htmlElement);
 	}
     }
 };
