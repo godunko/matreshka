@@ -193,7 +193,7 @@ package body Matreshka.DOM_Builders is
               Self.Document.Create_Attribute_NS
                (Attributes.Namespace_URI (J), Attributes.Qualified_Name (J));
             XML.DOM.Nodes.Elements.DOM_Element_Access
-             (Self.Current).Set_Attribute_Node (Attribute);
+             (Self.Current).Set_Attribute_Node_NS (Attribute);
             XML.DOM.Nodes.Dereference
              (XML.DOM.Nodes.DOM_Node_Access (Attribute));
          end if;

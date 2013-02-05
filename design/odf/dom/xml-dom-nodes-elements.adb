@@ -58,11 +58,11 @@ package body XML.DOM.Nodes.Elements is
           + League.Strings.Hash (Item.Local_Name);
    end Hash;
 
-   ------------------------
-   -- Set_Attribute_Node --
-   ------------------------
+   ---------------------------
+   -- Set_Attribute_Node_NS --
+   ---------------------------
 
-   function Set_Attribute_Node
+   function Set_Attribute_Node_NS
     (Self     : not null access DOM_Element'Class;
      New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
        return XML.DOM.Nodes.Attrs.DOM_Attr_Access
@@ -74,13 +74,8 @@ package body XML.DOM.Nodes.Elements is
    begin
       --  Construct key to access attribute in the map.
 
-      if New_Attr.Get_Local_Name.Is_Empty then
-         raise Program_Error;
-
-      else
-         Key.Namespace_URI := New_Attr.Get_Namespace_URI;
-         Key.Local_Name := New_Attr.Get_Local_Name;
-      end if;
+      Key.Namespace_URI := New_Attr.Get_Namespace_URI;
+      Key.Local_Name := New_Attr.Get_Local_Name;
 
       --  Lookup for existing attribute.
 
@@ -96,23 +91,24 @@ package body XML.DOM.Nodes.Elements is
       Self.Attributes.Include (Key, New_Attr);
 
       return Old;
-   end Set_Attribute_Node;
+   end Set_Attribute_Node_NS;
 
-   ------------------------
-   -- Set_Attribute_Node --
-   ------------------------
+   ---------------------------
+   -- Set_Attribute_Node_NS --
+   ---------------------------
 
-   procedure Set_Attribute_Node
+   procedure Set_Attribute_Node_NS
     (Self     : not null access DOM_Element'Class;
      New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
    is
       Aux : XML.DOM.Nodes.DOM_Node_Access
-        := XML.DOM.Nodes.DOM_Node_Access (Self.Set_Attribute_Node (New_Attr));
+        := XML.DOM.Nodes.DOM_Node_Access
+            (Self.Set_Attribute_Node_NS (New_Attr));
 
    begin
       if Aux /= null then
          XML.DOM.Nodes.Dereference (Aux);
       end if;
-   end Set_Attribute_Node;
+   end Set_Attribute_Node_NS;
 
 end XML.DOM.Nodes.Elements;

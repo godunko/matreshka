@@ -51,12 +51,12 @@ package XML.DOM.Nodes.Elements is
 
    type DOM_Element_Access is access all DOM_Element'Class;
 
-   function Set_Attribute_Node
+   function Set_Attribute_Node_NS
     (Self     : not null access DOM_Element'Class;
      New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
        return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
 
-   procedure Set_Attribute_Node
+   procedure Set_Attribute_Node_NS
     (Self     : not null access DOM_Element'Class;
      New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access);
 
