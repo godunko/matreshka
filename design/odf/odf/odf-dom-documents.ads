@@ -46,6 +46,12 @@ private with XML.DOM.Nodes.Attrs;
 with XML.DOM.Nodes.Documents;
 private with XML.DOM.Nodes.Elements;
 
+with ODF.DOM.Attributes.Draw.End_Line_Spacing_Horizontal;
+with ODF.DOM.Attributes.Draw.End_Line_Spacing_Vertical;
+with ODF.DOM.Attributes.Draw.Shadow_Offset_X;
+with ODF.DOM.Attributes.Draw.Shadow_Offset_Y;
+with ODF.DOM.Attributes.Draw.Start_Line_Spacing_Horizontal;
+with ODF.DOM.Attributes.Draw.Start_Line_Spacing_Vertical;
 with ODF.DOM.Attributes.FO.Background_Color;
 with ODF.DOM.Attributes.FO.Border;
 with ODF.DOM.Attributes.FO.Border_Bottom;
@@ -56,15 +62,33 @@ with ODF.DOM.Attributes.FO.Country;
 with ODF.DOM.Attributes.FO.Font_Size;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
+with ODF.DOM.Attributes.FO.Hyphenate;
+with ODF.DOM.Attributes.FO.Hyphenation_Ladder_Count;
+with ODF.DOM.Attributes.FO.Hyphenation_Push_Char_Count;
+with ODF.DOM.Attributes.FO.Hyphenation_Remain_Char_Count;
+with ODF.DOM.Attributes.FO.Keep_Together;
+with ODF.DOM.Attributes.FO.Keep_With_Next;
 with ODF.DOM.Attributes.FO.Language;
+with ODF.DOM.Attributes.FO.Margin_Bottom;
+with ODF.DOM.Attributes.FO.Margin_Top;
 with ODF.DOM.Attributes.FO.Padding;
 with ODF.DOM.Attributes.FO.Text_Align;
+with ODF.DOM.Attributes.FO.Wrap_Option;
 with ODF.DOM.Attributes.Office.Value_Type;
 with ODF.DOM.Attributes.Office.Version;
+with ODF.DOM.Attributes.Style.Class;
 with ODF.DOM.Attributes.Style.Column_Width;
+with ODF.DOM.Attributes.Style.Contextual_Spacing;
+with ODF.DOM.Attributes.Style.Country_Asian;
+with ODF.DOM.Attributes.Style.Country_Complex;
+with ODF.DOM.Attributes.Style.Display_Name;
 with ODF.DOM.Attributes.Style.Family;
+with ODF.DOM.Attributes.Style.Flow_With_Text;
 with ODF.DOM.Attributes.Style.Font_Family_Generic;
+with ODF.DOM.Attributes.Style.Font_Independent_Line_Spacing;
 with ODF.DOM.Attributes.Style.Font_Name;
+with ODF.DOM.Attributes.Style.Font_Name_Asian;
+with ODF.DOM.Attributes.Style.Font_Name_Complex;
 with ODF.DOM.Attributes.Style.Font_Pitch;
 with ODF.DOM.Attributes.Style.Font_Size_Asian;
 with ODF.DOM.Attributes.Style.Font_Size_Complex;
@@ -73,18 +97,41 @@ with ODF.DOM.Attributes.Style.Font_Style_Complex;
 with ODF.DOM.Attributes.Style.Font_Weight_Asian;
 with ODF.DOM.Attributes.Style.Font_Weight_Complex;
 with ODF.DOM.Attributes.Style.Justify_Single_Word;
+with ODF.DOM.Attributes.Style.Language_Asian;
+with ODF.DOM.Attributes.Style.Language_Complex;
+with ODF.DOM.Attributes.Style.Letter_Kerning;
+with ODF.DOM.Attributes.Style.Line_Break;
 with ODF.DOM.Attributes.Style.Name;
+with ODF.DOM.Attributes.Style.Next_Style_Name;
+with ODF.DOM.Attributes.Style.Num_Format;
 with ODF.DOM.Attributes.Style.Parent_Style_Name;
+with ODF.DOM.Attributes.Style.Punctuation_Wrap;
 with ODF.DOM.Attributes.Style.Rel_Column_Width;
+with ODF.DOM.Attributes.Style.Tab_Stop_Distance;
+with ODF.DOM.Attributes.Style.Text_Autospace;
+with ODF.DOM.Attributes.Style.Use_Window_Font_Color;
 with ODF.DOM.Attributes.Style.Vertical_Align;
 with ODF.DOM.Attributes.Style.Width;
+with ODF.DOM.Attributes.Style.Writing_Mode;
 with ODF.DOM.Attributes.SVG.Font_Family;
 with ODF.DOM.Attributes.Table.Align;
+with ODF.DOM.Attributes.Table.Border_Model;
 with ODF.DOM.Attributes.Table.Name;
 with ODF.DOM.Attributes.Table.Number_Columns_Spanned;
 with ODF.DOM.Attributes.Table.Style_Name;
 with ODF.DOM.Attributes.Text.Display_Outline_Level;
+with ODF.DOM.Attributes.Text.Footnotes_Position;
+with ODF.DOM.Attributes.Text.Increment;
+with ODF.DOM.Attributes.Text.Level;
+with ODF.DOM.Attributes.Text.Line_Number;
+with ODF.DOM.Attributes.Text.Min_Label_Distance;
 with ODF.DOM.Attributes.Text.Name;
+with ODF.DOM.Attributes.Text.Note_Class;
+with ODF.DOM.Attributes.Text.Number_Lines;
+with ODF.DOM.Attributes.Text.Number_Position;
+with ODF.DOM.Attributes.Text.Offset;
+with ODF.DOM.Attributes.Text.Start_Numbering_At;
+with ODF.DOM.Attributes.Text.Start_Value;
 with ODF.DOM.Attributes.Text.Style_Name;
 with ODF.DOM.Elements.Office.Automatic_Styles;
 with ODF.DOM.Elements.Office.Bodies;
@@ -134,6 +181,30 @@ package ODF.DOM.Documents is
 
    type ODF_Document_Access is access all ODF_Document'Class;
 
+   function Create_Draw_End_Line_Spacing_Horizontal
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.End_Line_Spacing_Horizontal.ODF_Draw_End_Line_Spacing_Horizontal_Access;
+
+   function Create_Draw_End_Line_Spacing_Vertical
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.End_Line_Spacing_Vertical.ODF_Draw_End_Line_Spacing_Vertical_Access;
+
+   function Create_Draw_Shadow_Offset_X
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Shadow_Offset_X.ODF_Draw_Shadow_Offset_X_Access;
+
+   function Create_Draw_Shadow_Offset_Y
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Shadow_Offset_Y.ODF_Draw_Shadow_Offset_Y_Access;
+
+   function Create_Draw_Start_Line_Spacing_Horizontal
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Start_Line_Spacing_Horizontal.ODF_Draw_Start_Line_Spacing_Horizontal_Access;
+
+   function Create_Draw_Start_Line_Spacing_Vertical
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Start_Line_Spacing_Vertical.ODF_Draw_Start_Line_Spacing_Vertical_Access;
+
    function Create_FO_Background_Color
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access;
@@ -174,9 +245,41 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
 
+   function Create_FO_Hyphenate
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenate.ODF_FO_Hyphenate_Access;
+
+   function Create_FO_Hyphenation_Ladder_Count
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenation_Ladder_Count.ODF_FO_Hyphenation_Ladder_Count_Access;
+
+   function Create_FO_Hyphenation_Push_Char_Count
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenation_Push_Char_Count.ODF_FO_Hyphenation_Push_Char_Count_Access;
+
+   function Create_FO_Hyphenation_Remain_Char_Count
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenation_Remain_Char_Count.ODF_FO_Hyphenation_Remain_Char_Count_Access;
+
+   function Create_FO_Keep_Together
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Keep_Together.ODF_FO_Keep_Together_Access;
+
+   function Create_FO_Keep_With_Next
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Keep_With_Next.ODF_FO_Keep_With_Next_Access;
+
    function Create_FO_Language
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.FO.Language.ODF_FO_Language_Access;
+
+   function Create_FO_Margin_Bottom
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access;
+
+   function Create_FO_Margin_Top
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access;
 
    function Create_FO_Padding
     (Self : not null access ODF_Document'Class)
@@ -185,6 +288,10 @@ package ODF.DOM.Documents is
    function Create_FO_Text_Align
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access;
+
+   function Create_FO_Wrap_Option
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Wrap_Option.ODF_FO_Wrap_Option_Access;
 
    function Create_Office_Automatic_Styles
     (Self : not null access ODF_Document'Class)
@@ -238,17 +345,41 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image_Access;
 
+   function Create_Style_Class
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Class.ODF_Style_Class_Access;
+
    function Create_Style_Column_Width
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access;
+
+   function Create_Style_Contextual_Spacing
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Contextual_Spacing.ODF_Style_Contextual_Spacing_Access;
+
+   function Create_Style_Country_Asian
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Country_Asian.ODF_Style_Country_Asian_Access;
+
+   function Create_Style_Country_Complex
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Country_Complex.ODF_Style_Country_Complex_Access;
 
    function Create_Style_Default_Style
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
 
+   function Create_Style_Display_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Display_Name.ODF_Style_Display_Name_Access;
+
    function Create_Style_Family
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access;
+
+   function Create_Style_Flow_With_Text
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Flow_With_Text.ODF_Style_Flow_With_Text_Access;
 
    function Create_Style_Font_Face
     (Self : not null access ODF_Document'Class)
@@ -258,9 +389,21 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Font_Family_Generic.ODF_Style_Font_Family_Generic_Access;
 
+   function Create_Style_Font_Independent_Line_Spacing
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Independent_Line_Spacing.ODF_Style_Font_Independent_Line_Spacing_Access;
+
    function Create_Style_Font_Name
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Font_Name.ODF_Style_Font_Name_Access;
+
+   function Create_Style_Font_Name_Asian
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Name_Asian.ODF_Style_Font_Name_Asian_Access;
+
+   function Create_Style_Font_Name_Complex
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Name_Complex.ODF_Style_Font_Name_Complex_Access;
 
    function Create_Style_Font_Pitch
     (Self : not null access ODF_Document'Class)
@@ -310,6 +453,22 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Justify_Single_Word.ODF_Style_Justify_Single_Word_Access;
 
+   function Create_Style_Language_Asian
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Language_Asian.ODF_Style_Language_Asian_Access;
+
+   function Create_Style_Language_Complex
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Language_Complex.ODF_Style_Language_Complex_Access;
+
+   function Create_Style_Letter_Kerning
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Letter_Kerning.ODF_Style_Letter_Kerning_Access;
+
+   function Create_Style_Line_Break
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Line_Break.ODF_Style_Line_Break_Access;
+
    function Create_Style_List_Level_Properties
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.List_Level_Properties.ODF_Style_List_Level_Properties_Access;
@@ -321,6 +480,14 @@ package ODF.DOM.Documents is
    function Create_Style_Name
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access;
+
+   function Create_Style_Next_Style_Name
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Next_Style_Name.ODF_Style_Next_Style_Name_Access;
+
+   function Create_Style_Num_Format
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Num_Format.ODF_Style_Num_Format_Access;
 
    function Create_Style_Page_Layout
     (Self : not null access ODF_Document'Class)
@@ -338,6 +505,10 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access;
 
+   function Create_Style_Punctuation_Wrap
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Punctuation_Wrap.ODF_Style_Punctuation_Wrap_Access;
+
    function Create_Style_Rel_Column_Width
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Rel_Column_Width.ODF_Style_Rel_Column_Width_Access;
@@ -345,6 +516,10 @@ package ODF.DOM.Documents is
    function Create_Style_Style
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Style.ODF_Style_Style_Access;
+
+   function Create_Style_Tab_Stop_Distance
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Tab_Stop_Distance.ODF_Style_Tab_Stop_Distance_Access;
 
    function Create_Style_Tab_Stops
     (Self : not null access ODF_Document'Class)
@@ -366,9 +541,17 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Table_Row_Properties.ODF_Style_Table_Row_Properties_Access;
 
+   function Create_Style_Text_Autospace
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Text_Autospace.ODF_Style_Text_Autospace_Access;
+
    function Create_Style_Text_Properties
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties_Access;
+
+   function Create_Style_Use_Window_Font_Color
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Use_Window_Font_Color.ODF_Style_Use_Window_Font_Color_Access;
 
    function Create_Style_Vertical_Align
     (Self : not null access ODF_Document'Class)
@@ -378,6 +561,10 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Style.Width.ODF_Style_Width_Access;
 
+   function Create_Style_Writing_Mode
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Writing_Mode.ODF_Style_Writing_Mode_Access;
+
    function Create_SVG_Font_Family
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.SVG.Font_Family.ODF_SVG_Font_Family_Access;
@@ -385,6 +572,10 @@ package ODF.DOM.Documents is
    function Create_Table_Align
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Table.Align.ODF_Table_Align_Access;
+
+   function Create_Table_Border_Model
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Border_Model.ODF_Table_Border_Model_Access;
 
    function Create_Table_Covered_Table_Cell
     (Self : not null access ODF_Document'Class)
@@ -422,9 +613,29 @@ package ODF.DOM.Documents is
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Attributes.Text.Display_Outline_Level.ODF_Text_Display_Outline_Level_Access;
 
+   function Create_Text_Footnotes_Position
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Footnotes_Position.ODF_Text_Footnotes_Position_Access;
+
+   function Create_Text_Increment
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Increment.ODF_Text_Increment_Access;
+
+   function Create_Text_Level
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Level.ODF_Text_Level_Access;
+
+   function Create_Text_Line_Number
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Line_Number.ODF_Text_Line_Number_Access;
+
    function Create_Text_Linenumbering_Configuration
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Text.Linenumbering_Configuration.ODF_Text_Linenumbering_Configuration_Access;
+
+   function Create_Text_Min_Label_Distance
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Min_Label_Distance.ODF_Text_Min_Label_Distance_Access;
 
    function Create_Text_Name
     (Self : not null access ODF_Document'Class)
@@ -433,6 +644,22 @@ package ODF.DOM.Documents is
    function Create_Text_Notes_Configuration
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Text.Notes_Configuration.ODF_Text_Notes_Configuration_Access;
+
+   function Create_Text_Note_Class
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Note_Class.ODF_Text_Note_Class_Access;
+
+   function Create_Text_Number_Lines
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Number_Lines.ODF_Text_Number_Lines_Access;
+
+   function Create_Text_Number_Position
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Number_Position.ODF_Text_Number_Position_Access;
+
+   function Create_Text_Offset
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Offset.ODF_Text_Offset_Access;
 
    function Create_Text_Outline_Level_Style
     (Self : not null access ODF_Document'Class)
@@ -457,6 +684,14 @@ package ODF.DOM.Documents is
    function Create_Text_Span
     (Self : not null access ODF_Document'Class)
        return ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access;
+
+   function Create_Text_Start_Numbering_At
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Start_Numbering_At.ODF_Text_Start_Numbering_At_Access;
+
+   function Create_Text_Start_Value
+    (Self : not null access ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Start_Value.ODF_Text_Start_Value_Access;
 
    function Create_Text_Style_Name
     (Self : not null access ODF_Document'Class)
