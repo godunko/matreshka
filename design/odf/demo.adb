@@ -1,17 +1,12 @@
 with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Tags;    use Ada.Tags;
 
 with League.Application;
 with League.Strings;
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
-with ODF.Internals.Reader;
-
 with XML.DOM.Nodes.Documents;
---with XML.DOM.Nodes.Elements;
 with ODF.DOM.Documents;
-with ODF.DOM.Elements;
 with Matreshka.DOM_Builders;
 
 with ODF.Web;
@@ -24,22 +19,6 @@ with AWS.Services.Page_Server;
 procedure Demo is
 
    use type League.Strings.Universal_String;
-
-   procedure Process (Node : XML.DOM.Nodes.DOM_Node_Access);
-
-   procedure Process (Node : XML.DOM.Nodes.DOM_Node_Access) is
-      use type XML.DOM.Nodes.DOM_Node_Access;
-
-      Child : XML.DOM.Nodes.DOM_Node_Access := Node.Get_First_Child;
-
-   begin
-      Put_Line (External_Tag (Node'Tag));
-
-      while Child /= null loop
-         Process (Child);
-         Child := Child.Get_Next_Sibling;
-      end loop;
-   end Process;
 
    Styles  : XML.DOM.Nodes.Documents.DOM_Document_Access;
    Content : XML.DOM.Nodes.Documents.DOM_Document_Access;
@@ -60,7 +39,6 @@ begin
       Source.Close;
 
       Styles := Handler.Get_Document;
-      Process (XML.DOM.Nodes.DOM_Node_Access (Styles));
    end;
 
    --  Build DOM tree.
@@ -78,7 +56,6 @@ begin
       Source.Close;
 
       Content := Handler.Get_Document;
-      Process (XML.DOM.Nodes.DOM_Node_Access (Content));
    end;
 
    --  Debug output.
