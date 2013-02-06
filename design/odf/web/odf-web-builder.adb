@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with ODF.Constants;
+with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
 with ODF.DOM.Attributes.Style.Name;
 with ODF.DOM.Attributes.Text.Style_Name;
@@ -91,8 +92,14 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
+      use type ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access;
       use type ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
 
+      Font_Style  : constant
+        ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
+          := ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Font_Style_Name));
       Font_Weight : constant
         ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
           := ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
@@ -100,6 +107,11 @@ package body ODF.Web.Builder is
                 (ODF.Constants.FO_URI, ODF.Constants.Font_Weight_Name));
 
    begin
+      if Font_Style /= null then
+         Self.Current.Object.Set_Field
+          ("textFontStyle", Font_Style.Get_Value.To_UTF_8_String);
+      end if;
+
       if Font_Weight /= null then
          Self.Current.Object.Set_Field
           ("textFontWeight", Font_Weight.Get_Value.To_UTF_8_String);

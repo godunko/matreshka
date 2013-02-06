@@ -38,6 +38,7 @@ function OdfStyleStyle (object)
 OdfStyleStyle.prototype = new OdfElementBase ();
 OdfStyleStyle.prototype.constructor = OdfStyleStyle;
 OdfStyleStyle.prototype.name = "";
+OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
 
 //  OdfTableTable
@@ -130,6 +131,11 @@ OdfTextH.prototype.render = function (htmlDocument, parentElement) {
 	}
     }
 
+    if (style.textFontStyle !== '')
+    {
+        this.htmlElement.style.fontStyle = style.textFontStyle;
+    }
+
     if (style.textFontWeight !== '')
     {
         this.htmlElement.style.fontWeight = style.textFontWeight;
@@ -177,6 +183,11 @@ OdfTextP.prototype.render = function (htmlDocument, parentElement) {
 	}
     }
 
+    if (style.textFontStyle !== '')
+    {
+        this.htmlElement.style.fontStyle = style.textFontStyle;
+    }
+
     if (style.textFontWeight !== '')
     {
         this.htmlElement.style.fontWeight = style.textFontWeight;
@@ -222,6 +233,11 @@ OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
 	{
 	    style = odfDocument.styles [i];
 	}
+    }
+
+    if (style.textFontStyle !== '')
+    {
+        this.htmlElement.style.fontStyle = style.textFontStyle;
     }
 
     if (style.textFontWeight !== '')
