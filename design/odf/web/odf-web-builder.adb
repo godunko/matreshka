@@ -45,6 +45,7 @@ with ODF.Constants;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
 with ODF.DOM.Attributes.Style.Name;
+with ODF.DOM.Attributes.Style.Text_Underline_Style;
 with ODF.DOM.Attributes.Text.Style_Name;
 
 package body ODF.Web.Builder is
@@ -94,17 +95,23 @@ package body ODF.Web.Builder is
    is
       use type ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access;
       use type ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
+      use type ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access;
 
-      Font_Style  : constant
+      Font_Style           : constant
         ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
           := ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
               (Element.Get_Attribute_Node_NS
                 (ODF.Constants.FO_URI, ODF.Constants.Font_Style_Name));
-      Font_Weight : constant
+      Font_Weight          : constant
         ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
           := ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
               (Element.Get_Attribute_Node_NS
                 (ODF.Constants.FO_URI, ODF.Constants.Font_Weight_Name));
+      Text_Underline_Style : constant
+        ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access
+          := ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Style_URI, ODF.Constants.Text_Underline_Style_Name));
 
    begin
       if Font_Style /= null then
@@ -115,6 +122,11 @@ package body ODF.Web.Builder is
       if Font_Weight /= null then
          Self.Current.Object.Set_Field
           ("textFontWeight", Font_Weight.Get_Value.To_UTF_8_String);
+      end if;
+
+      if Text_Underline_Style /= null then
+         Self.Current.Object.Set_Field
+          ("textUnderlineStyle", Text_Underline_Style.Get_Value.To_UTF_8_String);
       end if;
    end Enter_Style_Text_Properties;
 

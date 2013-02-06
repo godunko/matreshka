@@ -40,6 +40,7 @@ OdfStyleStyle.prototype.constructor = OdfStyleStyle;
 OdfStyleStyle.prototype.name = "";
 OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
+OdfStyleStyle.prototype.textUnderlineStyle = "";
 
 //  OdfTableTable
 
@@ -141,6 +142,13 @@ OdfTextH.prototype.render = function (htmlDocument, parentElement) {
         this.htmlElement.style.fontWeight = style.textFontWeight;
     }
 
+    if (style.textUnderlineStyle !== '')
+    {
+        this.htmlElement.style.textDecoration = 'underline';
+//        this.htmlElement.style.textDecorationLine = 'underline';
+//        this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
+    }
+
     for (var i = 0; i < this.children.length; i++)
     {
         if (typeof this.children [i] === 'string')
@@ -193,6 +201,13 @@ OdfTextP.prototype.render = function (htmlDocument, parentElement) {
         this.htmlElement.style.fontWeight = style.textFontWeight;
     }
 
+    if (style.textUnderlineStyle !== '')
+    {
+        this.htmlElement.style.textDecoration = 'underline';
+//        this.htmlElement.style.textDecorationLine = 'underline';
+//	this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
+    }
+
     for (var i = 0; i < this.children.length; i++)
     {
         if (typeof this.children [i] === 'string')
@@ -243,6 +258,13 @@ OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
     if (style.textFontWeight !== '')
     {
         this.htmlElement.style.fontWeight = style.textFontWeight;
+    }
+
+    if (style.textUnderlineStyle !== '')
+    {
+        this.htmlElement.style.textDecoration = 'underline';
+//        this.htmlElement.style.textDecorationLine = 'underline';
+//        this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
     }
 
     for (var i = 0; i < this.children.length; i++)
