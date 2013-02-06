@@ -102,6 +102,53 @@ OdfTableTableRow.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
+//  OdfTextH
+
+function OdfTextH (object)
+{
+    OdfElementBase.call (this, object);
+}
+
+OdfTextH.prototype = new OdfElementBase ();
+OdfTextH.prototype.constructor = OdfTextH;
+OdfTextH.prototype.styleName = "";
+OdfTextH.prototype.htmlElement = null;
+OdfTextH.prototype.children = [];
+OdfTextH.prototype.render = function (htmlDocument, parentElement) {
+    this.htmlElement = htmlDocument.createElement ('p');
+    parentElement.appendChild (this.htmlElement);
+
+    //  Construct CSS
+
+    var style;
+
+    for (i = 0; i < odfDocument.styles.length; i++)
+    {
+        if (odfDocument.styles [i].name == this.styleName)
+	{
+	    style = odfDocument.styles [i];
+	}
+    }
+
+    if (style.textFontWeight !== '')
+    {
+        this.htmlElement.style.fontWeight = style.textFontWeight;
+    }
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (typeof this.children [i] === 'string')
+	{
+            var text = htmlDocument.createTextNode (this.children [i]);
+	    this.htmlElement.appendChild (text);
+	}
+	else
+	{
+            this.children [i].render (htmlDocument, this.htmlElement);
+	}
+    }
+};
+
 //  OdfTextP
 
 function OdfTextP (object)

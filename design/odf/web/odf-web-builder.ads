@@ -85,6 +85,7 @@ private with ODF.DOM.Elements.Table.Table;
 private with ODF.DOM.Elements.Table.Table_Cell;
 ----    with ODF.DOM.Elements.Table.Table_Column;
 private with ODF.DOM.Elements.Table.Table_Row;
+private with ODF.DOM.Elements.Text.H;
 ----    with ODF.DOM.Elements.Text.Linenumbering_Configuration;
 ----    with ODF.DOM.Elements.Text.Notes_Configuration;
 ----    with ODF.DOM.Elements.Text.Outline_Level_Style;
@@ -464,6 +465,16 @@ private
    overriding procedure Leave_Table_Table_Row
     (Self    : in out JSON_Builder;
      Element : not null ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Text_H
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Leave_Text_H
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control);
 
 --       overriding procedure Enter_Text_Linenumbering_Configuration

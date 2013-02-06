@@ -160,6 +160,28 @@ package body ODF.Web.Builder is
    end Enter_Text;
 
    ------------------
+   -- Enter_Text_H --
+   ------------------
+
+   overriding procedure Enter_Text_H
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      Style_Name : constant
+        ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+          := ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
+
+   begin
+      Self.Push;
+      Self.Current.Object.Set_Field ("__type", "OdfTextH");
+      Self.Current.Object.Set_Field
+       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
+   end Enter_Text_H;
+
+   ------------------
    -- Enter_Text_P --
    ------------------
 
@@ -303,6 +325,20 @@ package body ODF.Web.Builder is
       GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
       Self.Pop;
    end Leave_Text;
+
+   ------------------
+   -- Leave_Text_H --
+   ------------------
+
+   overriding procedure Leave_Text_H
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Current.Object.Set_Field ("children", Self.Current.Children);
+      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Pop;
+   end Leave_Text_H;
 
    ------------------
    -- Leave_Text_P --
