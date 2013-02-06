@@ -41,31 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 
-package ODF.DOM.Attributes.Text.Style_Name is
+package body ODF.DOM.Attributes.SVG.Stroke_Color is
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Text_Style_Name_Access is access all ODF_Text_Style_Name'Class;
-
-private
-
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with record
-      Value : League.Strings.Universal_String;
-   end record;
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
+    (Self : not null access constant ODF_SVG_Stroke_Color)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Stroke_Color_Name;
+   end Get_Local_Name;
 
-   overriding function Get_Value
-    (Self : not null access ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
-
-   overriding procedure Set_Value
-    (Self  : not null access ODF_Text_Style_Name;
-     Value : League.Strings.Universal_String);
-
-end ODF.DOM.Attributes.Text.Style_Name;
+end ODF.DOM.Attributes.SVG.Stroke_Color;

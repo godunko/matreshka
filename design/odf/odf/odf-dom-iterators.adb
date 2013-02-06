@@ -289,6 +289,20 @@ package body ODF.DOM.Iterators is
        (Visitor, XML.DOM.Nodes.Elements.DOM_Element_Access (Element), Control);
    end Visit_Style_Header_Style;
 
+   --------------------------------------------
+   -- Visit_Style_List_Level_Label_Alignment --
+   --------------------------------------------
+
+   not overriding procedure Visit_Style_List_Level_Label_Alignment
+    (Self    : in out ODF_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null ODF.DOM.Elements.Style.List_Level_Label_Alignment.ODF_Style_List_Level_Label_Alignment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Visit_Element
+       (Visitor, XML.DOM.Nodes.Elements.DOM_Element_Access (Element), Control);
+   end Visit_Style_List_Level_Label_Alignment;
+
    ---------------------------------------
    -- Visit_Style_List_Level_Properties --
    ---------------------------------------
@@ -526,6 +540,20 @@ package body ODF.DOM.Iterators is
       Self.Visit_Element
        (Visitor, XML.DOM.Nodes.Elements.DOM_Element_Access (Element), Control);
    end Visit_Table_Table_Row;
+
+   ------------------
+   -- Visit_Text_H --
+   ------------------
+
+   not overriding procedure Visit_Text_H
+    (Self    : in out ODF_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Visit_Element
+       (Visitor, XML.DOM.Nodes.Elements.DOM_Element_Access (Element), Control);
+   end Visit_Text_H;
 
    --------------------------------------------
    -- Visit_Text_Linenumbering_Configuration --

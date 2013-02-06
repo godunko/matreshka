@@ -42,30 +42,21 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes.Text.Style_Name is
+package ODF.DOM.Attributes.Text.List_Level_Position_And_Space_Mode is
 
-   type ODF_Text_Style_Name is
+   type ODF_Text_List_Level_Position_And_Space_Mode is
      new ODF.DOM.Attributes.ODF_Attribute with private;
 
-   type ODF_Text_Style_Name_Access is access all ODF_Text_Style_Name'Class;
+   type ODF_Text_List_Level_Position_And_Space_Mode_Access is
+     access all ODF_Text_List_Level_Position_And_Space_Mode'Class;
 
 private
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with record
-      Value : League.Strings.Universal_String;
-   end record;
+   type ODF_Text_List_Level_Position_And_Space_Mode is
+     new ODF.DOM.Attributes.Text.ODF_Text_Base with null record;
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Style_Name)
+    (Self : not null access constant ODF_Text_List_Level_Position_And_Space_Mode)
        return League.Strings.Universal_String;
 
-   overriding function Get_Value
-    (Self : not null access ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
-
-   overriding procedure Set_Value
-    (Self  : not null access ODF_Text_Style_Name;
-     Value : League.Strings.Universal_String);
-
-end ODF.DOM.Attributes.Text.Style_Name;
+end ODF.DOM.Attributes.Text.List_Level_Position_And_Space_Mode;

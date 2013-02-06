@@ -59,6 +59,7 @@ with ODF.DOM.Elements.Style.Footer_Style;
 with ODF.DOM.Elements.Style.Footnote_Sep;
 with ODF.DOM.Elements.Style.Graphic_Properties;
 with ODF.DOM.Elements.Style.Header_Style;
+with ODF.DOM.Elements.Style.List_Level_Label_Alignment;
 with ODF.DOM.Elements.Style.List_Level_Properties;
 with ODF.DOM.Elements.Style.Master_Page;
 with ODF.DOM.Elements.Style.Page_Layout;
@@ -76,6 +77,7 @@ with ODF.DOM.Elements.Table.Table;
 with ODF.DOM.Elements.Table.Table_Cell;
 with ODF.DOM.Elements.Table.Table_Column;
 with ODF.DOM.Elements.Table.Table_Row;
+with ODF.DOM.Elements.Text.H;
 with ODF.DOM.Elements.Text.Linenumbering_Configuration;
 with ODF.DOM.Elements.Text.Notes_Configuration;
 with ODF.DOM.Elements.Text.Outline_Level_Style;
@@ -249,6 +251,16 @@ package ODF.DOM.Visitors is
      Element : not null ODF.DOM.Elements.Style.Header_Style.ODF_Style_Header_Style_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
+   not overriding procedure Enter_Style_List_Level_Label_Alignment
+    (Self    : in out ODF_Visitor;
+     Element : not null ODF.DOM.Elements.Style.List_Level_Label_Alignment.ODF_Style_List_Level_Label_Alignment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Style_List_Level_Label_Alignment
+    (Self    : in out ODF_Visitor;
+     Element : not null ODF.DOM.Elements.Style.List_Level_Label_Alignment.ODF_Style_List_Level_Label_Alignment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
    not overriding procedure Enter_Style_List_Level_Properties
     (Self    : in out ODF_Visitor;
      Element : not null ODF.DOM.Elements.Style.List_Level_Properties.ODF_Style_List_Level_Properties_Access;
@@ -417,6 +429,16 @@ package ODF.DOM.Visitors is
    not overriding procedure Leave_Table_Table_Row
     (Self    : in out ODF_Visitor;
      Element : not null ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Text_H
+    (Self    : in out ODF_Visitor;
+     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Text_H
+    (Self    : in out ODF_Visitor;
+     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Enter_Text_Linenumbering_Configuration

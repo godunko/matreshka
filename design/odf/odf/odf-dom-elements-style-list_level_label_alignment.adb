@@ -41,31 +41,86 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
+with ODF.DOM.Iterators;
+with ODF.DOM.Visitors;
 
-package ODF.DOM.Attributes.Text.Style_Name is
+package body ODF.DOM.Elements.Style.List_Level_Label_Alignment is
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
+   -------------------
+   -- Enter_Element --
+   -------------------
 
-   type ODF_Text_Style_Name_Access is access all ODF_Text_Style_Name'Class;
+   overriding procedure Enter_Element
+    (Self    : not null access ODF_Style_List_Level_Label_Alignment;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
+         ODF.DOM.Visitors.ODF_Visitor'Class
+          (Visitor).Enter_Style_List_Level_Label_Alignment
+            (ODF_Style_List_Level_Label_Alignment_Access (Self), Control);
 
-private
+      else
+         Visitor.Enter_Element
+          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
+      end if;
+   end Enter_Element;
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with record
-      Value : League.Strings.Universal_String;
-   end record;
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
+    (Self : not null access constant ODF_Style_List_Level_Label_Alignment)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.List_Level_Label_Alignment_Name;
+   end Get_Local_Name;
 
-   overriding function Get_Value
-    (Self : not null access ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
+   -------------------
+   -- Leave_Element --
+   -------------------
 
-   overriding procedure Set_Value
-    (Self  : not null access ODF_Text_Style_Name;
-     Value : League.Strings.Universal_String);
+   overriding procedure Leave_Element
+    (Self    : not null access ODF_Style_List_Level_Label_Alignment;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
+         ODF.DOM.Visitors.ODF_Visitor'Class
+          (Visitor).Leave_Style_List_Level_Label_Alignment
+            (ODF_Style_List_Level_Label_Alignment_Access (Self), Control);
 
-end ODF.DOM.Attributes.Text.Style_Name;
+      else
+         Visitor.Leave_Element
+          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
+      end if;
+   end Leave_Element;
+
+   -------------------
+   -- Visit_Element --
+   -------------------
+
+   overriding procedure Visit_Element
+    (Self     : not null access ODF_Style_List_Level_Label_Alignment;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
+         ODF.DOM.Iterators.ODF_Iterator'Class
+          (Iterator).Visit_Style_List_Level_Label_Alignment
+            (Visitor,
+             ODF_Style_List_Level_Label_Alignment_Access (Self),
+             Control);
+
+      else
+         Iterator.Visit_Element
+          (Visitor,
+           XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
+           Control);
+      end if;
+   end Visit_Element;
+
+end ODF.DOM.Elements.Style.List_Level_Label_Alignment;

@@ -42,30 +42,20 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes.Text.Style_Name is
+package ODF.DOM.Attributes.Draw.Fill_Color is
 
-   type ODF_Text_Style_Name is
+   type ODF_Draw_Fill_Color is
      new ODF.DOM.Attributes.ODF_Attribute with private;
 
-   type ODF_Text_Style_Name_Access is access all ODF_Text_Style_Name'Class;
+   type ODF_Draw_Fill_Color_Access is access all ODF_Draw_Fill_Color'Class;
 
 private
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with record
-      Value : League.Strings.Universal_String;
-   end record;
+   type ODF_Draw_Fill_Color is
+     new ODF.DOM.Attributes.Draw.ODF_Draw_Base with null record;
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Style_Name)
+    (Self : not null access constant ODF_Draw_Fill_Color)
        return League.Strings.Universal_String;
 
-   overriding function Get_Value
-    (Self : not null access ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
-
-   overriding procedure Set_Value
-    (Self  : not null access ODF_Text_Style_Name;
-     Value : League.Strings.Universal_String);
-
-end ODF.DOM.Attributes.Text.Style_Name;
+end ODF.DOM.Attributes.Draw.Fill_Color;

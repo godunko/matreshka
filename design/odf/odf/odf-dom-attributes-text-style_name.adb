@@ -56,4 +56,26 @@ package body ODF.DOM.Attributes.Text.Style_Name is
       return ODF.Constants.Style_Name_Name;
    end Get_Local_Name;
 
+   ---------------
+   -- Get_Value --
+   ---------------
+
+   overriding function Get_Value
+    (Self : not null access ODF_Text_Style_Name)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Value;
+   end Get_Value;
+
+   ---------------
+   -- Set_Value --
+   ---------------
+
+   overriding procedure Set_Value
+    (Self  : not null access ODF_Text_Style_Name;
+     Value : League.Strings.Universal_String) is
+   begin
+      Self.Value := Value;
+   end Set_Value;
+
 end ODF.DOM.Attributes.Text.Style_Name;

@@ -41,31 +41,42 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with XML.DOM.Visitors;
 
-package ODF.DOM.Attributes.Text.Style_Name is
+package ODF.DOM.Elements.Style.List_Level_Label_Alignment is
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
+   type ODF_Style_List_Level_Label_Alignment is
+     new ODF.DOM.Elements.ODF_Element with private;
 
-   type ODF_Text_Style_Name_Access is access all ODF_Text_Style_Name'Class;
+   type ODF_Style_List_Level_Label_Alignment_Access is
+     access all ODF_Style_List_Level_Label_Alignment'Class;
 
 private
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with record
-      Value : League.Strings.Universal_String;
-   end record;
+   type ODF_Style_List_Level_Label_Alignment is
+     new ODF.DOM.Elements.Style.ODF_Style_Base with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access ODF_Style_List_Level_Label_Alignment;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Style_Name)
+    (Self : not null access constant ODF_Style_List_Level_Label_Alignment)
        return League.Strings.Universal_String;
 
-   overriding function Get_Value
-    (Self : not null access ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
+   overriding procedure Leave_Element
+    (Self    : not null access ODF_Style_List_Level_Label_Alignment;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Set_Value
-    (Self  : not null access ODF_Text_Style_Name;
-     Value : League.Strings.Universal_String);
+   overriding procedure Visit_Element
+    (Self     : not null access ODF_Style_List_Level_Label_Alignment;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
-end ODF.DOM.Attributes.Text.Style_Name;
+end ODF.DOM.Elements.Style.List_Level_Label_Alignment;

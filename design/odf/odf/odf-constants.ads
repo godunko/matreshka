@@ -107,6 +107,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("country-complex");
    Covered_Table_Cell_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("covered-table-cell");
+   Default_Outline_Level_Name       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("default-outline-level");
    Default_Style_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("default-style");
    Display_Name_Name               : constant League.Strings.Universal_String
@@ -127,6 +129,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("end-line-spacing-vertical");
    Family_Name                      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("family");
+   Fill_Color_Name                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("fill-color");
    Flow_With_Text_Name              : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("flow-with-text");
    Font_Face_Decls_Name             : constant League.Strings.Universal_String
@@ -176,6 +180,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("footnotes-position");
    Graphic_Properties_Name          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("graphic-properties");
+   H_Name                           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("h");
    Header_Style_Name                : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("header-style");
    Hyphenate_Name                   : constant League.Strings.Universal_String
@@ -193,8 +199,10 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("justify-single-word");
    Keep_Together_Name               : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("keep-together");
-   Keep_With_Next_Name               : constant League.Strings.Universal_String
+   Keep_With_Next_Name              : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("keep-with-next");
+   Label_Followed_By_Name           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("label-followed-by");
    Language_Name                    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("language");
    Language_Asian_Name              : constant League.Strings.Universal_String
@@ -213,8 +221,16 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("line-style");
    Linenumbering_Configuration_Name : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("linenumbering-configuration");
+   List_Level_Label_Alignment_Name  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("list-level-label-alignment");
+   List_Level_Position_And_Space_Mode_Name :
+     constant League.Strings.Universal_String
+       := League.Strings.To_Universal_String
+           ("list-level-position-and-space-mode");
    List_Level_Properties_Name       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("list-level-properties");
+   List_Tab_Stop_Position_Name      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("list-tab-stop-position");
    Margin_Name                      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("margin");
    Margin_Bottom_Name               : constant League.Strings.Universal_String
@@ -249,10 +265,12 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("number-position");
    Offset_Name                      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("offset");
-   Outline_Style_Name               : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("outline-style");
+   Outline_Level_Name               : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("outline-level");
    Outline_Level_Style_Name         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("outline-level-style");
+   Outline_Style_Name               : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("outline-style");
    P_Name                           : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("p");
    Padding_Name                     : constant League.Strings.Universal_String
@@ -300,6 +318,8 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("start-numbering-at");
    Start_Value_Name                 : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("start-value");
+   Stroke_Color_Name                : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("stroke-color");
    Style_Name                       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("style");
    Style_Name_Name                  : constant League.Strings.Universal_String
@@ -328,12 +348,20 @@ package ODF.Constants is
      := League.Strings.To_Universal_String ("table-row-properties");
    Text_Name                        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("text");
+   Text_Indent_Name                 : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("text-indent");
    Text_Align_Name                  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("text-align");
    Text_Autospace_Name              : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("text-autospace");
    Text_Properties_Name             : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("text-properties");
+   Text_Underline_Color_Name        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("text-underline-color");
+   Text_Underline_Style_Name        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("text-underline-style");
+   Text_Underline_Width_Name        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("text-underline-width");
    Use_Window_Font_Color_Name       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("use-window-font-color");
    Value_Type_Name                  : constant League.Strings.Universal_String

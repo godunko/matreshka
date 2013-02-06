@@ -42,30 +42,21 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes.Text.Style_Name is
+package ODF.DOM.Attributes.Style.Text_Underline_Width is
 
-   type ODF_Text_Style_Name is
+   type ODF_Style_Text_Underline_Width is
      new ODF.DOM.Attributes.ODF_Attribute with private;
 
-   type ODF_Text_Style_Name_Access is access all ODF_Text_Style_Name'Class;
+   type ODF_Style_Text_Underline_Width_Access is
+     access all ODF_Style_Text_Underline_Width'Class;
 
 private
 
-   type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with record
-      Value : League.Strings.Universal_String;
-   end record;
+   type ODF_Style_Text_Underline_Width is
+     new ODF.DOM.Attributes.Style.ODF_Style_Base with null record;
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Style_Name)
+    (Self : not null access constant ODF_Style_Text_Underline_Width)
        return League.Strings.Universal_String;
 
-   overriding function Get_Value
-    (Self : not null access ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
-
-   overriding procedure Set_Value
-    (Self  : not null access ODF_Text_Style_Name;
-     Value : League.Strings.Universal_String);
-
-end ODF.DOM.Attributes.Text.Style_Name;
+end ODF.DOM.Attributes.Style.Text_Underline_Width;
