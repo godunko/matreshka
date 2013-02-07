@@ -28,6 +28,10 @@ OdfDocument.prototype.constructor = OdfDocument;
 OdfDocument.prototype.styles = [];
 OdfDocument.prototype.content = null;
 
+OdfDocument.prototype.showCursor = function (cursor) {
+    this.content.showCursor (cursor);
+}
+
 //  OdfStyleStyle
 
 function OdfStyleStyle (object)
@@ -64,6 +68,15 @@ OdfTableTable.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
+OdfTableTable.prototype.showCursor = function (cursor) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children [i].showCursor (cursor)) {
+            break;
+        }
+    }
+}
+
 //  OdfTableTableCell
 
 function OdfTableTableCell (object)
@@ -84,6 +97,15 @@ OdfTableTableCell.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
+OdfTableTableCell.prototype.showCursor = function (cursor) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children [i].showCursor (cursor)) {
+            break;
+        }
+    }
+}
+
 //  OdfTableTableRow
 
 function OdfTableTableRow (object)
@@ -103,6 +125,15 @@ OdfTableTableRow.prototype.render = function (htmlDocument, parentElement) {
         this.children [i].render (htmlDocument, element);
     }
 };
+
+OdfTableTableRow.prototype.showCursor = function (cursor) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children [i].showCursor (cursor)) {
+            break;
+        }
+    }
+}
 
 //  OdfTextH
 
@@ -163,6 +194,25 @@ OdfTextH.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
+OdfTextH.prototype.showCursor = function (cursor) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (typeof this.children [i] === 'string') {
+            this.htmlElement.contentEditable = true;
+            this.htmlElement.focus ();
+            this.htmlElement.style.outline = 'none';
+            //  "outline: none;" in CSS doesn't work for Firefox and Chrome.
+//            this.htmlElement.selectionStart = 0;
+//            this.htmlElement.selectionEnd = 0;
+            return true;
+        } else {
+            if (this.children [i].showCursor (cursor)) {
+                break;
+            }
+        }
+    }
+}
+
 //  OdfTextP
 
 function OdfTextP (object)
@@ -221,6 +271,20 @@ OdfTextP.prototype.render = function (htmlDocument, parentElement) {
 	}
     }
 };
+
+OdfTextP.prototype.showCursor = function (cursor) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (typeof this.children [i] === 'string') {
+            this.htmlElement.insertBefore (cursor, this.htmlElement.firstChild);
+            return true;
+        } else {
+            if (this.children [i].showCursor (cursor)) {
+                break;
+            }
+        }
+    }
+}
 
 //  OdfTextSpan
 
@@ -281,6 +345,20 @@ OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
+OdfTextSpan.prototype.showCursor = function (cursor) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (typeof this.children [i] === 'string') {
+            this.htmlElement.insertBefore (cursor, this.htmlElement.firstChild);
+            return true;
+        } else {
+            if (this.children [i].showCursor (cursor)) {
+                break;
+            }
+        }
+    }
+}
+
 //  OdfOfficeText
 
 function OdfOfficeText (object)
@@ -298,6 +376,15 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
+OdfOfficeText.prototype.showCursor = function (cursor) {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        if (this.children [i].showCursor (cursor)) {
+            break;
+        }
+    }
+}
+
 var odfDocument;
 
 //  OdfTextEdit
@@ -313,7 +400,11 @@ function OdfTextEdit (iframe) {
 
     htmlDocument = iframe.contentDocument;
     htmlDocument.open();
-    htmlDocument.write ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"></head><body></body></html>');
+    htmlDocument.write
+        ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+         + '<html xmlns="http://www.w3.org/1999/xhtml">'
+         + '<head></head>'
+         + '<body id="OdfTextEdit"></body></html>');
     htmlDocument.close();
 
     //  Link HTML element and OdfTextEdit.
@@ -348,7 +439,19 @@ function OdfTextEdit (iframe) {
     console.log (this.odfDocument);
     odfDocument = this.odfDocument;  //  XXX Must be removed.
     this.odfDocument.content.render (htmlDocument, htmlDocument.body);
+
+    this.odfDocument.showCursor (null);
+
+    this.htmlElement.onkeydown = this.onKeyPress;
 }
+
+OdfTextEdit.prototype.onKeyPress = function (event) {
+    if (event.keyCode === 13) {
+        event.stopPropagation ();
+        console.log (event);
+        return false;
+    }
+};
 
 (function ()
 {
