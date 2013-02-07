@@ -300,40 +300,61 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
 
 var odfDocument;
 
-(function ()
-{
-    var doc, body, para;
+//  OdfTextEdit
 
-    textView = document.getElementById ('textView');
+OdfTextEdit.prototype.htmlElement = null;
+OdfTextEdit.prototype.odfDocument = null;
+
+function OdfTextEdit (iframe) {
+    var htmlDocument;
+    var request;
 
     //  Create empty document inside iframe.
 
-    doc = textView.contentDocument;
-    doc.open();
-    doc.write ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"></head><body></body></html>');
-    doc.close();
+    htmlDocument = iframe.contentDocument;
+    htmlDocument.open();
+    htmlDocument.write ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"></head><body></body></html>');
+    htmlDocument.close();
+
+    //  Link HTML element and OdfTextEdit.
+
+    this.htmlElement = htmlDocument.body;
+    this.htmlElement.odfTextEdit = this;
 
     //  Load document.
 
     request = new XMLHttpRequest();
     request.open ('GET', 'getODF', false);
     request.send ();
-    odfDocument = JSON.parse (request.response, function (key, value)
-	    {
-	        var type;
+    this.odfDocument = JSON.parse (request.response, function (key, value)
+        {
+            var type;
 
-	        if (value && typeof value === 'object')
-	        {
-                    type = value.__type;
+            if (value && typeof value === 'object')
+            {
+                type = value.__type;
 
-                    if (typeof type === 'string' && typeof window[type] === 'function')
-                    {
-                        return new (window[type])(value);
-                    }
-	        }
+                if (typeof type === 'string' && typeof window[type] === 'function')
+                {
+                    return new (window[type])(value);
+                }
+            }
 
-	        return value;
-	    });
-    console.log (odfDocument);
-    odfDocument.content.render (doc, doc.body);
+            return value;
+        });
+
+    //  Render document.
+
+    console.log (this.odfDocument);
+    odfDocument = this.odfDocument;  //  XXX Must be removed.
+    this.odfDocument.content.render (htmlDocument, htmlDocument.body);
+}
+
+(function ()
+{
+    var doc, body, para;
+
+    textView = document.getElementById ('textView');
+
+    editor = new OdfTextEdit (textView);
 })()
