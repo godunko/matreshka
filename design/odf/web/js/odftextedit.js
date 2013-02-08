@@ -151,34 +151,7 @@ OdfTextH.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
 
-    //  Construct CSS
-
-    var style;
-
-    for (i = 0; i < odfDocument.styles.length; i++)
-    {
-        if (odfDocument.styles [i].name == this.styleName)
-	{
-	    style = odfDocument.styles [i];
-	}
-    }
-
-    if (style.textFontStyle !== '')
-    {
-        this.htmlElement.style.fontStyle = style.textFontStyle;
-    }
-
-    if (style.textFontWeight !== '')
-    {
-        this.htmlElement.style.fontWeight = style.textFontWeight;
-    }
-
-    if (style.textUnderlineStyle !== '')
-    {
-        this.htmlElement.style.textDecoration = 'underline';
-//        this.htmlElement.style.textDecorationLine = 'underline';
-//        this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
-    }
+    SetCSS (this);
 
     for (var i = 0; i < this.children.length; i++)
     {
@@ -226,34 +199,7 @@ OdfTextP.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
 
-    //  Construct CSS
-
-    var style;
-
-    for (i = 0; i < odfDocument.styles.length; i++)
-    {
-        if (odfDocument.styles [i].name == this.styleName)
-	{
-	    style = odfDocument.styles [i];
-	}
-    }
-
-    if (style.textFontStyle !== '')
-    {
-        this.htmlElement.style.fontStyle = style.textFontStyle;
-    }
-
-    if (style.textFontWeight !== '')
-    {
-        this.htmlElement.style.fontWeight = style.textFontWeight;
-    }
-
-    if (style.textUnderlineStyle !== '')
-    {
-        this.htmlElement.style.textDecoration = 'underline';
-//        this.htmlElement.style.textDecorationLine = 'underline';
-//	this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
-    }
+    SetCSS (this);
 
     for (var i = 0; i < this.children.length; i++)
     {
@@ -299,34 +245,7 @@ OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('span');
     parentElement.appendChild (this.htmlElement);
 
-    //  Construct CSS
-
-    var style;
-
-    for (i = 0; i < odfDocument.styles.length; i++)
-    {
-        if (odfDocument.styles [i].name == this.styleName)
-	{
-	    style = odfDocument.styles [i];
-	}
-    }
-
-    if (style.textFontStyle !== '')
-    {
-        this.htmlElement.style.fontStyle = style.textFontStyle;
-    }
-
-    if (style.textFontWeight !== '')
-    {
-        this.htmlElement.style.fontWeight = style.textFontWeight;
-    }
-
-    if (style.textUnderlineStyle !== '')
-    {
-        this.htmlElement.style.textDecoration = 'underline';
-//        this.htmlElement.style.textDecorationLine = 'underline';
-//        this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
-    }
+    SetCSS (this);
 
     for (var i = 0; i < this.children.length; i++)
     {
@@ -458,3 +377,33 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
 
     editor = new OdfTextEdit (textView);
 })()
+
+function SetCSS (odfElement) {
+    var style;
+
+    for (i = 0; i < odfDocument.styles.length; i++)
+    {
+        if (odfDocument.styles [i].name == odfElement.styleName)
+	{
+	    style = odfDocument.styles [i];
+	}
+    }
+
+    if (style.textFontStyle !== '')
+    {
+        odfElement.htmlElement.style.fontStyle = style.textFontStyle;
+    }
+
+    if (style.textFontWeight !== '')
+    {
+        odfElement.htmlElement.style.fontWeight = style.textFontWeight;
+    }
+
+    if (style.textUnderlineStyle !== '')
+    {
+        odfElement.htmlElement.style.textDecoration = 'underline';
+//        this.htmlElement.style.textDecorationLine = 'underline';
+//        this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
+    }
+}
+
