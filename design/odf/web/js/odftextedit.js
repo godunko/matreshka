@@ -198,10 +198,7 @@ OdfTextH.prototype.showCursor = function (cursor) {
     for (var i = 0; i < this.children.length; i++)
     {
         if (typeof this.children [i] === 'string') {
-            this.htmlElement.contentEditable = true;
             this.htmlElement.focus ();
-            this.htmlElement.style.outline = 'none';
-            //  "outline: none;" in CSS doesn't work for Firefox and Chrome.
 //            this.htmlElement.selectionStart = 0;
 //            this.htmlElement.selectionEnd = 0;
             return true;
@@ -404,7 +401,7 @@ function OdfTextEdit (iframe) {
         ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
          + '<html xmlns="http://www.w3.org/1999/xhtml">'
          + '<head></head>'
-         + '<body id="OdfTextEdit"></body></html>');
+         + '<body id="OdfTextEdit" contentEditable="true"></body></html>');
     htmlDocument.close();
 
     //  Link HTML element and OdfTextEdit.
