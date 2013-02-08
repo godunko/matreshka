@@ -52,7 +52,7 @@ with GNATCOLL.JSON;
 private with XML.DOM.Nodes.Character_Datas.Texts;
 private with XML.DOM.Visitors;
 
-----    with ODF.DOM.Elements.Office.Automatic_Styles;
+private with ODF.DOM.Elements.Office.Automatic_Styles;
 --with ODF.DOM.Elements.Office.Bodies;
 --with ODF.DOM.Elements.Office.Document_Content;
 ----    with ODF.DOM.Elements.Office.Document_Styles;
@@ -126,27 +126,28 @@ private
      new Ada.Containers.Vectors (Positive, State_Record);
    
    type JSON_Builder is limited new ODF.DOM.Visitors.ODF_Visitor with record
-      Current  : State_Record;
-      Previous : State_Record;
-      Stack    : State_Vectors.Vector;
-      Styles   : GNATCOLL.JSON.JSON_Array;
-      Content  : GNATCOLL.JSON.JSON_Value;
+      Inside_Automatic : Boolean := False;
+      Current          : State_Record;
+      Previous         : State_Record;
+      Stack            : State_Vectors.Vector;
+      Styles           : GNATCOLL.JSON.JSON_Array;
+      Content          : GNATCOLL.JSON.JSON_Value;
    end record;
 
    procedure Push (Self : in out JSON_Builder'Class);
 
    procedure Pop (Self : in out JSON_Builder'Class);
 
---       overriding procedure Enter_Office_Automatic_Styles
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Leave_Office_Automatic_Styles
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
+   overriding procedure Enter_Office_Automatic_Styles
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Leave_Office_Automatic_Styles
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
 --       overriding procedure Enter_Office_Body
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;

@@ -41,7 +41,10 @@ function OdfStyleStyle (object)
 
 OdfStyleStyle.prototype = new OdfElementBase ();
 OdfStyleStyle.prototype.constructor = OdfStyleStyle;
+OdfStyleStyle.prototype.kind = "automatic";
 OdfStyleStyle.prototype.name = "";
+OdfStyleStyle.prototype.family = "";
+OdfStyleStyle.prototype.parentStyleName = "";
 OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
 OdfStyleStyle.prototype.textUnderlineStyle = "";

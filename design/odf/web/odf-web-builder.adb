@@ -44,11 +44,37 @@
 with ODF.Constants;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
+with ODF.DOM.Attributes.Style.Family;
 with ODF.DOM.Attributes.Style.Name;
+with ODF.DOM.Attributes.Style.Parent_Style_Name;
 with ODF.DOM.Attributes.Style.Text_Underline_Style;
 with ODF.DOM.Attributes.Text.Style_Name;
 
 package body ODF.Web.Builder is
+
+   -----------------------------------
+   -- Enter_Office_Automatic_Styles --
+   -----------------------------------
+
+   overriding procedure Enter_Office_Automatic_Styles
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Inside_Automatic := True;
+   end Enter_Office_Automatic_Styles;
+
+   -----------------------------------
+   -- Leave_Office_Automatic_Styles --
+   -----------------------------------
+
+   overriding procedure Leave_Office_Automatic_Styles
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Inside_Automatic := False;
+   end Leave_Office_Automatic_Styles;
 
    -----------------------
    -- Enter_Office_Text --
@@ -72,16 +98,38 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Style.Style.ODF_Style_Style_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      Name : constant
+      use type ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access;
+
+      Name   : constant
         ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
           := ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
               (Element.Get_Attribute_Node_NS
                 (ODF.Constants.Style_URI, ODF.Constants.Name_Name));
+      Family : constant
+        ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+          := ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Style_URI, ODF.Constants.Family_Name));
+      Parent : constant
+        ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access
+          := ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Style_URI, ODF.Constants.Parent_Style_Name_Name));
 
    begin
       Self.Push;
       Self.Current.Object.Set_Field ("__type", "OdfStyleStyle");
       Self.Current.Object.Set_Field ("name", Name.Get_Value.To_UTF_8_String);
+      Self.Current.Object.Set_Field ("family", Family.Get_Value.To_UTF_8_String);
+
+      if not Self.Inside_Automatic then
+         Self.Current.Object.Set_Field ("kind", "common");
+      end if;
+
+      if Parent /= null then
+         Self.Current.Object.Set_Field
+          ("parentStyleName", Parent.Get_Value.To_UTF_8_String);
+      end if;
    end Enter_Style_Style;
 
    ---------------------------------
