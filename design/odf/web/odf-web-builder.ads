@@ -72,7 +72,7 @@ private with ODF.DOM.Elements.Office.Text;
 ----    with ODF.DOM.Elements.Style.Master_Page;
 ----    with ODF.DOM.Elements.Style.Page_Layout;
 ----    with ODF.DOM.Elements.Style.Page_Layout_Properties;
-----    with ODF.DOM.Elements.Style.Paragraph_Properties;
+private with ODF.DOM.Elements.Style.Paragraph_Properties;
 private with ODF.DOM.Elements.Style.Style;
 ----    with ODF.DOM.Elements.Style.Tab_Stops;
 ----    with ODF.DOM.Elements.Style.Table_Cell_Properties;
@@ -337,16 +337,16 @@ private
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Style.Page_Layout_Properties.ODF_Style_Page_Layout_Properties_Access;
 --         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Enter_Style_Paragraph_Properties
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Leave_Style_Paragraph_Properties
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Style_Paragraph_Properties
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+--   overriding procedure Leave_Style_Paragraph_Properties
+--    (Self    : in out JSON_Builder;
+--     Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
+--     Control : in out XML.DOM.Visitors.Traverse_Control);
 
    overriding procedure Enter_Style_Style
     (Self    : in out JSON_Builder;

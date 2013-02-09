@@ -41,6 +41,7 @@ OdfStyleStyle.prototype.kind = "automatic";
 OdfStyleStyle.prototype.name = "";
 OdfStyleStyle.prototype.family = "";
 OdfStyleStyle.prototype.parentStyleName = "";
+OdfStyleStyle.prototype.paragraphTextAlign = "";
 OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
 OdfStyleStyle.prototype.textUnderlineStyle = "";
@@ -349,14 +350,15 @@ function SetCSS (odfElement) {
     function lookupProperty (styles, name) {
         for (style = null, i = 0; i < styles.length; i++) {
             //  Check whether given property is defined and non-empty.
-            if (styles [0][name] && styles [0][name] !== '') {
-                return styles [0];
+            if (styles [i][name] && styles [i][name] !== '') {
+                return styles [i][name];
             }
         }
     }
 
     var style = lookupStyle (odfElement.styleName);
     var styles = new Array;
+    var value;
 
     while (style) {
         styles.push (style);
@@ -368,25 +370,25 @@ function SetCSS (odfElement) {
     if (styles [0].family === 'text' || styles [0].family === 'paragraph') {
         //  Construct 'font-style' property.
 
-        style = lookupProperty (styles, 'textFontStyle');
+        value = lookupProperty (styles, 'textFontStyle');
 
-        if (style) {
-            odfElement.htmlElement.style.fontStyle = style.textFontStyle;
+        if (value) {
+            odfElement.htmlElement.style.fontStyle = value;
         }
 
         //  Construct 'font-weight' property.
 
-        style = lookupProperty (styles, 'textFontWeight');
+        value = lookupProperty (styles, 'textFontWeight');
 
-        if (style) {
-            odfElement.htmlElement.style.fontWeight = style.textFontWeight;
+        if (value) {
+            odfElement.htmlElement.style.fontWeight = value;
         }
 
         //  Construct 'textDecoration' property.
 
-        style = lookupProperty (styles, 'textUnderlineStyle');
+        value = lookupProperty (styles, 'textUnderlineStyle');
 
-        if (style)
+        if (value)
         {
             odfElement.htmlElement.style.textDecoration = 'underline';
     //        this.htmlElement.style.textDecorationLine = 'underline';
@@ -397,6 +399,27 @@ function SetCSS (odfElement) {
     //  Apply paragraph style.
 
     if (styles [0].family === 'paragraph') {
+        //  Analyze 'fo:text-align' attribute.
+
+        value = lookupProperty (styles, 'paragraphTextAlign');
+
+        if (!value) {
+            //  Default value is 'start'.
+
+            value = 'start';
+        }
+
+        if (value === 'start') {
+            //  XXX LTR language assumed.
+
+            odfElement.htmlElement.style.textAlign = 'left';
+        } else if (value === 'end') {
+            //  XXX LTR language assumed.
+
+            odfElement.htmlElement.style.textAlign = 'right';
+        } else {
+            odfElement.htmlElement.style.textAlign = value;
+        }
     }
 }
 

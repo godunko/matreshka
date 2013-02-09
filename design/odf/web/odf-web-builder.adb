@@ -44,6 +44,7 @@
 with ODF.Constants;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
+with ODF.DOM.Attributes.FO.Text_Align;
 with ODF.DOM.Attributes.Style.Family;
 with ODF.DOM.Attributes.Style.Name;
 with ODF.DOM.Attributes.Style.Parent_Style_Name;
@@ -88,6 +89,30 @@ package body ODF.Web.Builder is
       Self.Push;
       Self.Current.Object.Set_Field ("__type", "OdfOfficeText");
    end Enter_Office_Text;
+
+   --------------------------------------
+   -- Enter_Style_Paragraph_Properties --
+   --------------------------------------
+
+   overriding procedure Enter_Style_Paragraph_Properties
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      use type ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access;
+
+      Text_Align : constant
+        ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
+          := ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Text_Align_Name));
+
+   begin
+      if Text_Align /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphTextAlign", Text_Align.Get_Value.To_UTF_8_String);
+      end if;
+   end Enter_Style_Paragraph_Properties;
 
    -----------------------
    -- Enter_Style_Style --
