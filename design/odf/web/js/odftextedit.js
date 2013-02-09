@@ -55,15 +55,15 @@ function OdfTableTable (object)
 OdfTableTable.prototype = new OdfElementBase ();
 OdfTableTable.prototype.constructor = OdfTableTable;
 OdfTableTable.prototype.children = [];
-OdfTableTable.prototype.render = function (htmlDocument, parentElement) {
-    var tableElement = htmlDocument.createElement ('table');
-    var tbodyElement = htmlDocument.createElement ('tbody');
+OdfTableTable.prototype.render = function (parentElement) {
+    var tableElement = parentElement.ownerDocument.createElement ('table');
+    var tbodyElement = parentElement.ownerDocument.createElement ('tbody');
     parentElement.appendChild (tableElement);
     tableElement.appendChild (tbodyElement);
 
     for (var i = 0; i < this.children.length; i++)
     {
-        this.children [i].render (htmlDocument, tbodyElement);
+        this.children [i].render (tbodyElement);
     }
 };
 
@@ -77,13 +77,13 @@ function OdfTableTableCell (object)
 OdfTableTableCell.prototype = new OdfElementBase ();
 OdfTableTableCell.prototype.constructor = OdfTableTableCell;
 OdfTableTableCell.prototype.children = [];
-OdfTableTableCell.prototype.render = function (htmlDocument, parentElement) {
-    var element = htmlDocument.createElement ('td');
+OdfTableTableCell.prototype.render = function (parentElement) {
+    var element = parentElement.ownerDocument.createElement ('td');
     parentElement.appendChild (element);
 
     for (var i = 0; i < this.children.length; i++)
     {
-        this.children [i].render (htmlDocument, element);
+        this.children [i].render (element);
     }
 };
 
@@ -97,13 +97,13 @@ function OdfTableTableRow (object)
 OdfTableTableRow.prototype = new OdfElementBase ();
 OdfTableTableRow.prototype.constructor = OdfTableTableRow;
 OdfTableTableRow.prototype.children = [];
-OdfTableTableRow.prototype.render = function (htmlDocument, parentElement) {
-    var element = htmlDocument.createElement ('tr');
+OdfTableTableRow.prototype.render = function (parentElement) {
+    var element = parentElement.ownerDocument.createElement ('tr');
     parentElement.appendChild (element);
 
     for (var i = 0; i < this.children.length; i++)
     {
-        this.children [i].render (htmlDocument, element);
+        this.children [i].render (element);
     }
 };
 
@@ -119,8 +119,8 @@ OdfTextH.prototype.constructor = OdfTextH;
 OdfTextH.prototype.styleName = "";
 OdfTextH.prototype.htmlElement = null;
 OdfTextH.prototype.children = [];
-OdfTextH.prototype.render = function (htmlDocument, parentElement) {
-    this.htmlElement = htmlDocument.createElement ('p');
+OdfTextH.prototype.render = function (parentElement) {
+    this.htmlElement = parentElement.ownerDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
 //    this.htmlElement.contentEditable = true;
 
@@ -130,12 +130,12 @@ OdfTextH.prototype.render = function (htmlDocument, parentElement) {
     {
         if (typeof this.children [i] === 'string')
 	{
-            var text = htmlDocument.createTextNode (this.children [i]);
+            var text = parentElement.ownerDocument.createTextNode (this.children [i]);
 	    this.htmlElement.appendChild (text);
 	}
 	else
 	{
-            this.children [i].render (htmlDocument, this.htmlElement);
+            this.children [i].render (this.htmlElement);
 	}
     }
 };
@@ -152,8 +152,8 @@ OdfTextP.prototype.constructor = OdfTextP;
 OdfTextP.prototype.styleName = "";
 OdfTextP.prototype.htmlElement = null;
 OdfTextP.prototype.children = [];
-OdfTextP.prototype.render = function (htmlDocument, parentElement) {
-    this.htmlElement = htmlDocument.createElement ('p');
+OdfTextP.prototype.render = function (parentElement) {
+    this.htmlElement = parentElement.ownerDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
 //    this.htmlElement.contentEditable = true;
 
@@ -163,12 +163,12 @@ OdfTextP.prototype.render = function (htmlDocument, parentElement) {
     {
         if (typeof this.children [i] === 'string')
 	{
-            var text = htmlDocument.createTextNode (this.children [i]);
+            var text = parentElement.ownerDocument.createTextNode (this.children [i]);
 	    this.htmlElement.appendChild (text);
 	}
 	else
 	{
-            this.children [i].render (htmlDocument, this.htmlElement);
+            this.children [i].render (this.htmlElement);
 	}
     }
 };
@@ -185,8 +185,8 @@ OdfTextSpan.prototype.constructor = OdfTextSpan;
 OdfTextSpan.prototype.styleName = "";
 OdfTextSpan.prototype.htmlElement = null;
 OdfTextSpan.prototype.children = [];
-OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
-    this.htmlElement = htmlDocument.createElement ('span');
+OdfTextSpan.prototype.render = function (parentElement) {
+    this.htmlElement = parentElement.ownerDocument.createElement ('span');
     parentElement.appendChild (this.htmlElement);
 //    this.htmlElement.contentEditable = true;
 
@@ -196,12 +196,12 @@ OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
     {
         if (typeof this.children [i] === 'string')
 	{
-            var text = htmlDocument.createTextNode (this.children [i]);
+            var text = parentElement.ownerDocument.createTextNode (this.children [i]);
 	    this.htmlElement.appendChild (text);
 	}
 	else
 	{
-            this.children [i].render (htmlDocument, this.htmlElement);
+            this.children [i].render (this.htmlElement);
 	}
     }
 };
@@ -216,10 +216,10 @@ function OdfOfficeText (object)
 OdfOfficeText.prototype = new OdfElementBase ();
 OdfOfficeText.prototype.constructor = OdfOfficeText;
 OdfOfficeText.prototype.children = [];
-OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
+OdfOfficeText.prototype.render = function (parentElement) {
     for (var i = 0; i < this.children.length; i++)
     {
-        this.children [i].render (htmlDocument, parentElement);
+        this.children [i].render (parentElement);
     }
 };
 
@@ -230,35 +230,15 @@ var odfDocument;
 OdfTextEdit.prototype.htmlElement = null;
 OdfTextEdit.prototype.odfDocument = null;
 
-function OdfTextEdit (iframe) {
-    var htmlDocument;
+function OdfTextEdit (rootElement) {
     var request;
-
-    //  Create empty document inside iframe.
-
-    htmlDocument = document;
-//    htmlDocument = iframe.contentDocument;
-//    htmlDocument.open();
-//    htmlDocument.write
-//        ('<!DOCTYPE html>'
-//         + '<html xmlns="http://www.w3.org/1999/xhtml">'
-//         + '<head></head>'
-////         + '<body>'
-////         + '<div id="OdfTextEdit"/></body></html>');
-////         + '<div id="OdfTextEdit" contentEditable="true"/></body></html>');
-//         + '<body id="OdfTextEdit" contentEditable="true"></body></html>');
-//    htmlDocument.close();
 
     //  Link HTML element and OdfTextEdit.
 
-    this.htmlElement = htmlDocument.getElementById ('OdfTextEdit');
-//    this.htmlElement = htmlDocument.body;
+    this.htmlElement = rootElement;
     this.htmlElement.odfTextEdit = this;
 
-//    iframe.focus ();
-//    this.htmlElement.focus ();
-
-    //  Load document.
+    //  Load ODF document.
 
     request = new XMLHttpRequest();
     request.open ('GET', 'getODF', false);
@@ -284,12 +264,14 @@ function OdfTextEdit (iframe) {
 
     console.log (this.odfDocument);
     odfDocument = this.odfDocument;  //  XXX Must be removed.
-//    this.htmlElement.contentEditable = true;
-    this.odfDocument.content.render (htmlDocument, this.htmlElement);
+    this.odfDocument.content.render (this.htmlElement);
+
+    //  Move focus into editor.
 
     this.htmlElement.focus ();
 
-//    this.htmlElement.contentEditable = true;
+    //  Setup even handlers.
+
     this.htmlElement.onkeydown = this.onKeyDown;
     this.htmlElement.onkeypress = this.onKeyPress;
 }
@@ -349,8 +331,8 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
 //    editor = new OdfTextEdit (textView);
 //})()
 
-function setupOdfTextEdit () {
-    var editor = new OdfTextEdit (document.body);
+function setupOdfTextEdit (id) {
+    var editor = new OdfTextEdit (document.getElementById (id));
 }
 
 function SetCSS (odfElement) {
