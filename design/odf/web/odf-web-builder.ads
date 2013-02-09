@@ -75,7 +75,7 @@ private with ODF.DOM.Elements.Style.Default_Style;
 private with ODF.DOM.Elements.Style.Paragraph_Properties;
 private with ODF.DOM.Elements.Style.Style;
 ----    with ODF.DOM.Elements.Style.Tab_Stops;
-----    with ODF.DOM.Elements.Style.Table_Cell_Properties;
+private with ODF.DOM.Elements.Style.Table_Cell_Properties;
 ----    with ODF.DOM.Elements.Style.Table_Column_Properties;
 ----    with ODF.DOM.Elements.Style.Table_Properties;
 ----    with ODF.DOM.Elements.Style.Table_Row_Properties;
@@ -367,17 +367,17 @@ private
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Style.Tab_Stops.ODF_Style_Tab_Stops_Access;
 --         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Enter_Style_Table_Cell_Properties
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Leave_Style_Table_Cell_Properties
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
+
+   overriding procedure Enter_Style_Table_Cell_Properties
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+--   overriding procedure Leave_Style_Table_Cell_Properties
+--    (Self    : in out JSON_Builder;
+--     Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
+--     Control : in out XML.DOM.Visitors.Traverse_Control);
+
 --       overriding procedure Enter_Style_Table_Column_Properties
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;

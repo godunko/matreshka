@@ -46,6 +46,10 @@ OdfStyleStyle.prototype.paragraphMarginLeft = "";
 OdfStyleStyle.prototype.paragraphMarginRight = "";
 OdfStyleStyle.prototype.paragraphMarginTop = "";
 OdfStyleStyle.prototype.paragraphTextAlign = "";
+OdfStyleStyle.prototype.cellPaddingBottom = "";
+OdfStyleStyle.prototype.cellPaddingLeft = "";
+OdfStyleStyle.prototype.cellPaddingRight = "";
+OdfStyleStyle.prototype.cellPaddingTop = "";
 OdfStyleStyle.prototype.textFontSize = "";
 OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
@@ -90,15 +94,18 @@ function OdfTableTableCell (object)
 
 OdfTableTableCell.prototype = new OdfElementBase ();
 OdfTableTableCell.prototype.constructor = OdfTableTableCell;
+OdfTableTableCell.prototype.htmlElement = null;
 OdfTableTableCell.prototype.children = [];
 OdfTableTableCell.prototype.styleName = "";
 OdfTableTableCell.prototype.render = function (parentElement) {
-    var element = parentElement.ownerDocument.createElement ('td');
-    parentElement.appendChild (element);
+    this.htmlElement = parentElement.ownerDocument.createElement ('td');
+    parentElement.appendChild (this.htmlElement);
+
+    SetCSS (this);
 
     for (var i = 0; i < this.children.length; i++)
     {
-        this.children [i].render (element);
+        this.children [i].render (this.htmlElement);
     }
 };
 
@@ -579,6 +586,42 @@ function SetCSS (odfElement) {
 
         if (value) {
             odfElement.htmlElement.style.marginTop = value;
+        }
+    }
+
+    //  Apply cell style.
+
+    if (styles [0].family === 'table-cell') {
+        //  Analyze 'fo:padding-bottom' attribute.
+
+        value = lookupProperty (styles, 'cellPaddingBottom');
+
+        if (value) {
+            odfElement.htmlElement.style.paddingBottom = value;
+        }
+
+        //  Analyze 'fo:padding-left' attribute.
+
+        value = lookupProperty (styles, 'cellPaddingLeft');
+
+        if (value) {
+            odfElement.htmlElement.style.paddingLeft = value;
+        }
+
+        //  Analyze 'fo:padding-right' attribute.
+
+        value = lookupProperty (styles, 'cellPaddingRight');
+
+        if (value) {
+            odfElement.htmlElement.style.paddingRight = value;
+        }
+
+        //  Analyze 'fo:padding-top' attribute.
+
+        value = lookupProperty (styles, 'cellPaddingTop');
+
+        if (value) {
+            odfElement.htmlElement.style.paddingTop = value;
         }
     }
 }

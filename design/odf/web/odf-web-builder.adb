@@ -45,10 +45,16 @@ with ODF.Constants;
 with ODF.DOM.Attributes.FO.Font_Size;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
+with ODF.DOM.Attributes.FO.Margin;
 with ODF.DOM.Attributes.FO.Margin_Bottom;
 with ODF.DOM.Attributes.FO.Margin_Left;
 with ODF.DOM.Attributes.FO.Margin_Right;
 with ODF.DOM.Attributes.FO.Margin_Top;
+with ODF.DOM.Attributes.FO.Padding;
+--with ODF.DOM.Attributes.FO.Padding_Bottom;
+--with ODF.DOM.Attributes.FO.Padding_Left;
+--with ODF.DOM.Attributes.FO.Padding_Right;
+--with ODF.DOM.Attributes.FO.Padding_Top;
 with ODF.DOM.Attributes.FO.Text_Align;
 with ODF.DOM.Attributes.Style.Family;
 with ODF.DOM.Attributes.Style.Name;
@@ -127,12 +133,18 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
+      use type ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access;
       use type ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access;
       use type ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access;
       use type ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access;
       use type ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access;
       use type ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access;
 
+      Margin        : constant
+        ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access
+          := ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Margin_Name));
       Margin_Bottom : constant
         ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
           := ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
@@ -163,21 +175,37 @@ package body ODF.Web.Builder is
       if Margin_Bottom /= null then
          Self.Current.Object.Set_Field
           ("paragraphMarginBottom", Margin_Bottom.Get_Value.To_UTF_8_String);
+
+      elsif Margin /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginBottom", Margin.Get_Value.To_UTF_8_String);
       end if;
 
       if Margin_Left /= null then
          Self.Current.Object.Set_Field
           ("paragraphMarginLeft", Margin_Left.Get_Value.To_UTF_8_String);
+
+      elsif Margin /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginLeft", Margin.Get_Value.To_UTF_8_String);
       end if;
 
       if Margin_Right /= null then
          Self.Current.Object.Set_Field
           ("paragraphMarginRight", Margin_Right.Get_Value.To_UTF_8_String);
+
+      elsif Margin /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginRight", Margin.Get_Value.To_UTF_8_String);
       end if;
 
       if Margin_Top /= null then
          Self.Current.Object.Set_Field
           ("paragraphMarginTop", Margin_Top.Get_Value.To_UTF_8_String);
+
+      elsif Margin /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginTop", Margin.Get_Value.To_UTF_8_String);
       end if;
 
       if Text_Align /= null then
@@ -228,6 +256,89 @@ package body ODF.Web.Builder is
           ("parentStyleName", Parent.Get_Value.To_UTF_8_String);
       end if;
    end Enter_Style_Style;
+
+   ---------------------------------------
+   -- Enter_Style_Table_Cell_Properties --
+   ---------------------------------------
+
+   overriding procedure Enter_Style_Table_Cell_Properties
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      use type ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access;
+--      use type ODF.DOM.Attributes.FO.Padding_Bottom.ODF_FO_Padding_Bottom_Access;
+--      use type ODF.DOM.Attributes.FO.Padding_Left.ODF_FO_Padding_Left_Access;
+--      use type ODF.DOM.Attributes.FO.Padding_Right.ODF_FO_Padding_Right_Access;
+--      use type ODF.DOM.Attributes.FO.Padding_Top.ODF_FO_Padding_Top_Access;
+
+      Padding        : constant
+        ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
+          := ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Padding_Name));
+--      Padding_Bottom : constant
+--        ODF.DOM.Attributes.FO.Padding_Bottom.ODF_FO_Padding_Bottom_Access
+--          := ODF.DOM.Attributes.FO.Padding_Bottom.ODF_FO_Padding_Bottom_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Padding_Bottom_Name));
+--      Padding_Left   : constant
+--        ODF.DOM.Attributes.FO.Padding_Left.ODF_FO_Padding_Left_Access
+--          := ODF.DOM.Attributes.FO.Padding_Left.ODF_FO_Padding_Left_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Padding_Left_Name));
+--      Padding_Right  : constant
+--        ODF.DOM.Attributes.FO.Padding_Right.ODF_FO_Padding_Right_Access
+--          := ODF.DOM.Attributes.FO.Padding_Right.ODF_FO_Padding_Right_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Padding_Right_Name));
+--      Padding_Top    : constant
+--        ODF.DOM.Attributes.FO.Padding_Top.ODF_FO_Padding_Top_Access
+--          := ODF.DOM.Attributes.FO.Padding_Top.ODF_FO_Padding_Top_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Padding_Top_Name));
+
+   begin
+--      if Padding_Bottom /= null then
+--         Self.Current.Object.Set_Field
+--          ("cellPaddingBottom", Padding_Bottom.Get_Value.To_UTF_8_String);
+--
+--      elsif Padding /= null then
+      if Padding /= null then
+         Self.Current.Object.Set_Field
+          ("cellPaddingBottom", Padding.Get_Value.To_UTF_8_String);
+      end if;
+
+--      if Padding_Left /= null then
+--         Self.Current.Object.Set_Field
+--          ("cellPaddingLeft", Padding_Left.Get_Value.To_UTF_8_String);
+--
+--      elsif Padding /= null then
+      if Padding /= null then
+         Self.Current.Object.Set_Field
+          ("cellPaddingLeft", Padding.Get_Value.To_UTF_8_String);
+      end if;
+
+--      if Padding_Right /= null then
+--         Self.Current.Object.Set_Field
+--          ("cellPaddingRight", Padding_Right.Get_Value.To_UTF_8_String);
+--
+--      elsif Padding /= null then
+      if Padding /= null then
+         Self.Current.Object.Set_Field
+          ("cellPaddingRight", Padding.Get_Value.To_UTF_8_String);
+      end if;
+
+--      if Padding_Top /= null then
+--         Self.Current.Object.Set_Field
+--          ("cellPaddingTop", Padding_Top.Get_Value.To_UTF_8_String);
+--
+--      elsif Padding /= null then
+      if Padding /= null then
+         Self.Current.Object.Set_Field
+          ("cellPaddingTop", Padding.Get_Value.To_UTF_8_String);
+      end if;
+   end Enter_Style_Table_Cell_Properties;
 
    ---------------------------------
    -- Enter_Style_Text_Properties --
