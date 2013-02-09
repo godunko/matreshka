@@ -153,6 +153,7 @@ OdfTextH.prototype.children = [];
 OdfTextH.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
+//    this.htmlElement.contentEditable = true;
 
     SetCSS (this);
 
@@ -174,9 +175,22 @@ OdfTextH.prototype.showCursor = function (cursor) {
     for (var i = 0; i < this.children.length; i++)
     {
         if (typeof this.children [i] === 'string') {
-            this.htmlElement.focus ();
+//            this.htmlElement.contentEditable = true;
+//            console.log ('Focus');
+//            console.log (this.htmlElement);
+//            this.htmlElement.focus ();
+//            this.htmlElement.contents().focus ();
+//            console.log (this.htmlElement.childNodes [i]);
+//            this.htmlElement.childNodes [i].focus ();
+//            this.htmlElement.onkeydown = function (e) { console.log ('key press'); console.log (e); };
 //            this.htmlElement.selectionStart = 0;
 //            this.htmlElement.selectionEnd = 0;
+//            var range = document.createRange ();
+//            range.setStart (this.htmlElement.childNodes [i], 3);
+//            range.collapse (true);
+//            window.getSelection ().removeAllRanges ();
+//            window.getSelection ().addRange (range);
+//            this.htmlElement.setSelectionRange (1, 1);
             return true;
         } else {
             if (this.children [i].showCursor (cursor)) {
@@ -201,6 +215,7 @@ OdfTextP.prototype.children = [];
 OdfTextP.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
+//    this.htmlElement.contentEditable = true;
 
     SetCSS (this);
 
@@ -247,6 +262,7 @@ OdfTextSpan.prototype.children = [];
 OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
     this.htmlElement = htmlDocument.createElement ('span');
     parentElement.appendChild (this.htmlElement);
+//    this.htmlElement.contentEditable = true;
 
     SetCSS (this);
 
@@ -317,19 +333,27 @@ function OdfTextEdit (iframe) {
 
     //  Create empty document inside iframe.
 
-    htmlDocument = iframe.contentDocument;
-    htmlDocument.open();
-    htmlDocument.write
-        ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-         + '<html xmlns="http://www.w3.org/1999/xhtml">'
-         + '<head></head>'
-         + '<body id="OdfTextEdit" contentEditable="true"></body></html>');
-    htmlDocument.close();
+    htmlDocument = document;
+//    htmlDocument = iframe.contentDocument;
+//    htmlDocument.open();
+//    htmlDocument.write
+//        ('<!DOCTYPE html>'
+//         + '<html xmlns="http://www.w3.org/1999/xhtml">'
+//         + '<head></head>'
+////         + '<body>'
+////         + '<div id="OdfTextEdit"/></body></html>');
+////         + '<div id="OdfTextEdit" contentEditable="true"/></body></html>');
+//         + '<body id="OdfTextEdit" contentEditable="true"></body></html>');
+//    htmlDocument.close();
 
     //  Link HTML element and OdfTextEdit.
 
-    this.htmlElement = htmlDocument.body;
+    this.htmlElement = htmlDocument.getElementById ('OdfTextEdit');
+//    this.htmlElement = htmlDocument.body;
     this.htmlElement.odfTextEdit = this;
+
+//    iframe.focus ();
+//    this.htmlElement.focus ();
 
     //  Load document.
 
@@ -357,29 +381,77 @@ function OdfTextEdit (iframe) {
 
     console.log (this.odfDocument);
     odfDocument = this.odfDocument;  //  XXX Must be removed.
-    this.odfDocument.content.render (htmlDocument, htmlDocument.body);
+//    this.htmlElement.contentEditable = true;
+    this.odfDocument.content.render (htmlDocument, this.htmlElement);
 
     this.odfDocument.showCursor (null);
+//    viewO = this.htmlElement;
+//    iframe.focus ();
+    this.htmlElement.focus ();
 
-    this.htmlElement.onkeydown = this.onKeyPress;
+//    this.htmlElement.contentEditable = true;
+    this.htmlElement.onkeydown = this.onKeyDown;
+    this.htmlElement.onkeypress = this.onKeyPress;
 }
 
-OdfTextEdit.prototype.onKeyPress = function (event) {
+OdfTextEdit.prototype.onKeyDown = function (event) {
     if (event.keyCode === 13) {
-        event.stopPropagation ();
+        console.log ('keyDone: body');
+//        event.stopPropagation ();
         console.log (event);
-        return false;
+//        return false;
+        event.preventDefault ();
+//        console.log (document.selection);
+//        viewO.focus ();
+//        console.log (window.getSelection ());
+        console.log (window.getSelection ().getRangeAt(0));
+//        console.log (window.getSelection ().getRangeAt(0).commonAncestorContainer);
+//        console.log (window.getSelection ().getRangeAt(0).startContainer);
+//        console.log (window.getSelection ().getRangeAt(0).startOffset);
+//        console.log (window.getSelection ().getRangeAt(0).endContainer);
+//        console.log (window.getSelection ().getRangeAt(0).endOffset);
+//        console.log (window.getSelection ().getRangeAt(0).collapsed);
+//        console.log (window.getSelection ().rangeCount);
+//        console.log (window.getSelection().anchorNode.parentNode.tagName);
+
+//        var el = document.getElementById ('OdfTextEdit');
+//        console.log (document);
+//        el.focus ();
+//        console.log (el.selectionStart);
+//        console.log (viewO);
+//        viewO.focus ();
+//        console.log (viewO.selectionStart);
     }
 };
 
-(function ()
-{
-    var doc, body, para;
+OdfTextEdit.prototype.onKeyPress = function (event) {
+    if (event.keyCode === 13) {
+//        console.log ('keyPress: body');
+//        event.stopPropagation ();
+//        console.log (event);
+//        return false;
+//        event.preventDefault ();
+//        console.log (document.selection);
+//        console.log (window.getSelection ());
+//        console.log (window.getSelection ().getRangeAt(0));
+//        console.log (window.getSelection ().rangeCount);
+//        console.log (window.getSelection().anchorNode.parentNode.tagName);
+    }
+};
 
-    textView = document.getElementById ('textView');
+//(function ()
+//{
+//    var doc, body, para;
+//
+//    textView = document.getElementById ('textView');
+//    console.log (textView);
+//
+//    editor = new OdfTextEdit (textView);
+//})()
 
-    editor = new OdfTextEdit (textView);
-})()
+function setupOdfTextEdit () {
+    var editor = new OdfTextEdit (document.body);
+}
 
 function SetCSS (odfElement) {
     var style;
