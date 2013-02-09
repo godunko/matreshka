@@ -41,6 +41,10 @@ OdfStyleStyle.prototype.kind = "automatic";
 OdfStyleStyle.prototype.name = "";
 OdfStyleStyle.prototype.family = "";
 OdfStyleStyle.prototype.parentStyleName = "";
+OdfStyleStyle.prototype.paragraphMarginBottom = "";
+OdfStyleStyle.prototype.paragraphMarginLeft = "";
+OdfStyleStyle.prototype.paragraphMarginRight = "";
+OdfStyleStyle.prototype.paragraphMarginTop = "";
 OdfStyleStyle.prototype.paragraphTextAlign = "";
 OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
@@ -404,7 +408,7 @@ function SetCSS (odfElement) {
         value = lookupProperty (styles, 'paragraphTextAlign');
 
         if (!value) {
-            //  Default value is 'start'.
+            //  Default value is 'start' (reqired by specification).
 
             value = 'start';
         }
@@ -419,6 +423,46 @@ function SetCSS (odfElement) {
             odfElement.htmlElement.style.textAlign = 'right';
         } else {
             odfElement.htmlElement.style.textAlign = value;
+        }
+
+        //  Analyze 'fo:margin-bottom' attribute.
+        //
+        //  XXX Percent value doesn't supported.
+
+        value = lookupProperty (styles, 'paragraphMarginBottom');
+
+        if (value) {
+            odfElement.htmlElement.style.marginBottom = value;
+        }
+
+        //  Analyze 'fo:margin-left' attribute.
+        //
+        //  XXX Percent value doesn't supported.
+
+        value = lookupProperty (styles, 'paragraphMarginLeft');
+
+        if (value) {
+            odfElement.htmlElement.style.marginLeft = value;
+        }
+
+        //  Analyze 'fo:margin-right' attribute.
+        //
+        //  XXX Percent value doesn't supported.
+
+        value = lookupProperty (styles, 'paragraphMarginRight');
+
+        if (value) {
+            odfElement.htmlElement.style.marginRight = value;
+        }
+
+        //  Analyze 'fo:margin-top' attribute.
+        //
+        //  XXX Percent value doesn't supported.
+
+        value = lookupProperty (styles, 'paragraphMarginTop');
+
+        if (value) {
+            odfElement.htmlElement.style.marginTop = value;
         }
     }
 }

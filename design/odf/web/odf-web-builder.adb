@@ -44,6 +44,10 @@
 with ODF.Constants;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
+with ODF.DOM.Attributes.FO.Margin_Bottom;
+with ODF.DOM.Attributes.FO.Margin_Left;
+with ODF.DOM.Attributes.FO.Margin_Right;
+with ODF.DOM.Attributes.FO.Margin_Top;
 with ODF.DOM.Attributes.FO.Text_Align;
 with ODF.DOM.Attributes.Style.Family;
 with ODF.DOM.Attributes.Style.Name;
@@ -99,15 +103,59 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
+      use type ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access;
+      use type ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access;
+      use type ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access;
+      use type ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access;
       use type ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access;
 
-      Text_Align : constant
+      Margin_Bottom : constant
+        ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
+          := ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Margin_Bottom_Name));
+      Margin_Left   : constant
+        ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access
+          := ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Margin_Left_Name));
+      Margin_Right  : constant
+        ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access
+          := ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Margin_Right_Name));
+      Margin_Top    : constant
+        ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access
+          := ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Margin_Top_Name));
+      Text_Align    : constant
         ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
           := ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
               (Element.Get_Attribute_Node_NS
                 (ODF.Constants.FO_URI, ODF.Constants.Text_Align_Name));
 
    begin
+      if Margin_Bottom /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginBottom", Margin_Bottom.Get_Value.To_UTF_8_String);
+      end if;
+
+      if Margin_Left /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginLeft", Margin_Left.Get_Value.To_UTF_8_String);
+      end if;
+
+      if Margin_Right /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginRight", Margin_Right.Get_Value.To_UTF_8_String);
+      end if;
+
+      if Margin_Top /= null then
+         Self.Current.Object.Set_Field
+          ("paragraphMarginTop", Margin_Top.Get_Value.To_UTF_8_String);
+      end if;
+
       if Text_Align /= null then
          Self.Current.Object.Set_Field
           ("paragraphTextAlign", Text_Align.Get_Value.To_UTF_8_String);
