@@ -336,31 +336,67 @@ function setupOdfTextEdit (id) {
 }
 
 function SetCSS (odfElement) {
-    var style;
-
-    for (i = 0; i < odfDocument.styles.length; i++)
-    {
-        if (odfDocument.styles [i].name == odfElement.styleName)
-	{
-	    style = odfDocument.styles [i];
-	}
+    function lookupStyle (name) {
+        for (i = 0; i < odfDocument.styles.length; i++)
+        {
+            if (odfDocument.styles [i].name == name)
+            {
+                return odfDocument.styles [i];
+            }
+        }
     }
 
-    if (style.textFontStyle !== '')
-    {
-        odfElement.htmlElement.style.fontStyle = style.textFontStyle;
+    function lookupProperty (styles, name) {
+        for (style = null, i = 0; i < styles.length; i++) {
+            //  Check whether given property is defined and non-empty.
+            if (styles [0][name] && styles [0][name] !== '') {
+                return styles [0];
+            }
+        }
     }
 
-    if (style.textFontWeight !== '')
-    {
-        odfElement.htmlElement.style.fontWeight = style.textFontWeight;
+    var style = lookupStyle (odfElement.styleName);
+    var styles = new Array;
+
+    while (style) {
+        styles.push (style);
+        style = lookupStyle (style.parentStyleName)
     }
 
-    if (style.textUnderlineStyle !== '')
-    {
-        odfElement.htmlElement.style.textDecoration = 'underline';
-//        this.htmlElement.style.textDecorationLine = 'underline';
-//        this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
+    //  Apply text style.
+
+    if (styles [0].family === 'text' || styles [0].family === 'paragraph') {
+        //  Construct 'font-style' property.
+
+        style = lookupProperty (styles, 'textFontStyle');
+
+        if (style) {
+            odfElement.htmlElement.style.fontStyle = style.textFontStyle;
+        }
+
+        //  Construct 'font-weight' property.
+
+        style = lookupProperty (styles, 'textFontWeight');
+
+        if (style) {
+            odfElement.htmlElement.style.fontWeight = style.textFontWeight;
+        }
+
+        //  Construct 'textDecoration' property.
+
+        style = lookupProperty (styles, 'textUnderlineStyle');
+
+        if (style)
+        {
+            odfElement.htmlElement.style.textDecoration = 'underline';
+    //        this.htmlElement.style.textDecorationLine = 'underline';
+    //        this.htmlElement.style.textDecorationStyle = style.textUnderlineStyle;
+        }
+    }
+
+    //  Apply paragraph style.
+
+    if (styles [0].family === 'paragraph') {
     }
 }
 
