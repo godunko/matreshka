@@ -159,6 +159,8 @@ OdfTextP.prototype.styleName = "";
 OdfTextP.prototype.htmlElement = null;
 OdfTextP.prototype.children = [];
 OdfTextP.prototype.render = function (parentElement) {
+    var text;
+
     this.htmlElement = parentElement.ownerDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
 //    this.htmlElement.contentEditable = true;
@@ -169,13 +171,21 @@ OdfTextP.prototype.render = function (parentElement) {
     {
         if (typeof this.children [i] === 'string')
 	{
-            var text = parentElement.ownerDocument.createTextNode (this.children [i]);
+            text = parentElement.ownerDocument.createTextNode (this.children [i]);
 	    this.htmlElement.appendChild (text);
 	}
 	else
 	{
             this.children [i].render (this.htmlElement);
 	}
+    }
+
+    if (this.children.length == 0) {
+        //  When paragraph doesn't have any children insert dummy non-break
+        //  space character to save formatting of the paragraph.
+
+        text = parentElement.ownerDocument.createTextNode ('\u00A0');
+        this.htmlElement.appendChild (text);
     }
 };
 
