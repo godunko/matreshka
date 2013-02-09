@@ -28,10 +28,6 @@ OdfDocument.prototype.constructor = OdfDocument;
 OdfDocument.prototype.styles = [];
 OdfDocument.prototype.content = null;
 
-OdfDocument.prototype.showCursor = function (cursor) {
-    this.content.showCursor (cursor);
-}
-
 //  OdfStyleStyle
 
 function OdfStyleStyle (object)
@@ -71,15 +67,6 @@ OdfTableTable.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
-OdfTableTable.prototype.showCursor = function (cursor) {
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (this.children [i].showCursor (cursor)) {
-            break;
-        }
-    }
-}
-
 //  OdfTableTableCell
 
 function OdfTableTableCell (object)
@@ -100,15 +87,6 @@ OdfTableTableCell.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
-OdfTableTableCell.prototype.showCursor = function (cursor) {
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (this.children [i].showCursor (cursor)) {
-            break;
-        }
-    }
-}
-
 //  OdfTableTableRow
 
 function OdfTableTableRow (object)
@@ -128,15 +106,6 @@ OdfTableTableRow.prototype.render = function (htmlDocument, parentElement) {
         this.children [i].render (htmlDocument, element);
     }
 };
-
-OdfTableTableRow.prototype.showCursor = function (cursor) {
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (this.children [i].showCursor (cursor)) {
-            break;
-        }
-    }
-}
 
 //  OdfTextH
 
@@ -171,35 +140,6 @@ OdfTextH.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
-OdfTextH.prototype.showCursor = function (cursor) {
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (typeof this.children [i] === 'string') {
-//            this.htmlElement.contentEditable = true;
-//            console.log ('Focus');
-//            console.log (this.htmlElement);
-//            this.htmlElement.focus ();
-//            this.htmlElement.contents().focus ();
-//            console.log (this.htmlElement.childNodes [i]);
-//            this.htmlElement.childNodes [i].focus ();
-//            this.htmlElement.onkeydown = function (e) { console.log ('key press'); console.log (e); };
-//            this.htmlElement.selectionStart = 0;
-//            this.htmlElement.selectionEnd = 0;
-//            var range = document.createRange ();
-//            range.setStart (this.htmlElement.childNodes [i], 3);
-//            range.collapse (true);
-//            window.getSelection ().removeAllRanges ();
-//            window.getSelection ().addRange (range);
-//            this.htmlElement.setSelectionRange (1, 1);
-            return true;
-        } else {
-            if (this.children [i].showCursor (cursor)) {
-                break;
-            }
-        }
-    }
-}
-
 //  OdfTextP
 
 function OdfTextP (object)
@@ -232,20 +172,6 @@ OdfTextP.prototype.render = function (htmlDocument, parentElement) {
 	}
     }
 };
-
-OdfTextP.prototype.showCursor = function (cursor) {
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (typeof this.children [i] === 'string') {
-            this.htmlElement.insertBefore (cursor, this.htmlElement.firstChild);
-            return true;
-        } else {
-            if (this.children [i].showCursor (cursor)) {
-                break;
-            }
-        }
-    }
-}
 
 //  OdfTextSpan
 
@@ -280,20 +206,6 @@ OdfTextSpan.prototype.render = function (htmlDocument, parentElement) {
     }
 };
 
-OdfTextSpan.prototype.showCursor = function (cursor) {
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (typeof this.children [i] === 'string') {
-            this.htmlElement.insertBefore (cursor, this.htmlElement.firstChild);
-            return true;
-        } else {
-            if (this.children [i].showCursor (cursor)) {
-                break;
-            }
-        }
-    }
-}
-
 //  OdfOfficeText
 
 function OdfOfficeText (object)
@@ -310,15 +222,6 @@ OdfOfficeText.prototype.render = function (htmlDocument, parentElement) {
         this.children [i].render (htmlDocument, parentElement);
     }
 };
-
-OdfOfficeText.prototype.showCursor = function (cursor) {
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (this.children [i].showCursor (cursor)) {
-            break;
-        }
-    }
-}
 
 var odfDocument;
 
@@ -384,9 +287,6 @@ function OdfTextEdit (iframe) {
 //    this.htmlElement.contentEditable = true;
     this.odfDocument.content.render (htmlDocument, this.htmlElement);
 
-    this.odfDocument.showCursor (null);
-//    viewO = this.htmlElement;
-//    iframe.focus ();
     this.htmlElement.focus ();
 
 //    this.htmlElement.contentEditable = true;
