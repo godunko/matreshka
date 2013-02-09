@@ -56,6 +56,10 @@ OdfStyleStyle.prototype.textUnderlineStyle = "";
 function OdfTableTable (object)
 {
     OdfElementBase.call (this, object);
+
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].parentElement = this;
+    }
 }
 
 OdfTableTable.prototype = new OdfElementBase ();
@@ -78,11 +82,16 @@ OdfTableTable.prototype.render = function (parentElement) {
 function OdfTableTableCell (object)
 {
     OdfElementBase.call (this, object);
+
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].parentElement = this;
+    }
 }
 
 OdfTableTableCell.prototype = new OdfElementBase ();
 OdfTableTableCell.prototype.constructor = OdfTableTableCell;
 OdfTableTableCell.prototype.children = [];
+OdfTableTableCell.prototype.styleName = "";
 OdfTableTableCell.prototype.render = function (parentElement) {
     var element = parentElement.ownerDocument.createElement ('td');
     parentElement.appendChild (element);
@@ -98,6 +107,10 @@ OdfTableTableCell.prototype.render = function (parentElement) {
 function OdfTableTableRow (object)
 {
     OdfElementBase.call (this, object);
+
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].parentElement = this;
+    }
 }
 
 OdfTableTableRow.prototype = new OdfElementBase ();
@@ -118,6 +131,10 @@ OdfTableTableRow.prototype.render = function (parentElement) {
 function OdfTextH (object)
 {
     OdfElementBase.call (this, object);
+
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].parentElement = this;
+    }
 }
 
 OdfTextH.prototype = new OdfElementBase ();
@@ -151,6 +168,10 @@ OdfTextH.prototype.render = function (parentElement) {
 function OdfTextP (object)
 {
     OdfElementBase.call (this, object);
+
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].parentElement = this;
+    }
 }
 
 OdfTextP.prototype = new OdfElementBase ();
@@ -194,6 +215,10 @@ OdfTextP.prototype.render = function (parentElement) {
 function OdfTextSpan (object)
 {
     OdfElementBase.call (this, object);
+
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].parentElement = this;
+    }
 }
 
 OdfTextSpan.prototype = new OdfElementBase ();
@@ -227,6 +252,10 @@ OdfTextSpan.prototype.render = function (parentElement) {
 function OdfOfficeText (object)
 {
     OdfElementBase.call (this, object);
+
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].parentElement = this;
+    }
 }
 
 OdfOfficeText.prototype = new OdfElementBase ();
@@ -388,14 +417,55 @@ function SetCSS (odfElement) {
         }
     }
 
+    var value;
     var style = lookupStyle (odfElement.styleName);
     var styles = new Array;
-    var value;
+
+    //  Construct styles list starting from element's style and adding all
+    //  parent styles.
 
     while (style) {
         styles.push (style);
-        style = lookupStyle (style.parentStyleName)
+        style = lookupStyle (style.parentStyleName);
     }
+
+    //  Process other styles depending of style's family.
+
+    if (styles [0].family == 'text') {
+        style = lookupStyle (odfElement.parentElement.styleName);
+
+        //  Append style and its parent styles of nearest enclosing element
+        //  with 'text' family or 'paragraph' family.
+
+        if (style.family == 'text') {
+            while (style) {
+                styles.push (style);
+                style = lookupStyle (style.parentStyleName);
+            }
+        } else if (style.family == 'paragraph') {
+            while (style) {
+                styles.push (style);
+                style = lookupStyle (style.parentStyleName);
+            }
+        }
+    } else if (styles [0].family == 'paragraph') {
+        //  Append style and its parent styles of enclosing table-cell element.
+
+        if (odfElement.parentElement instanceof OdfTableTableCell) {
+            style = lookupStyle (odfElement.parentElement.styleName);
+
+            while (style) {
+                styles.push (style);
+                style = lookupStyle (style.parentStyleName);
+            }
+
+            //  XXX Lookup of styles from 'table:default-cell-style-name' in
+            //  'table:table-row' and 'table:table-column' elements is not
+            //  implemented.
+        }
+    }
+
+    //  Add default style for family of original style.
 
     style = lookupDefaultStyle (styles [0].family);
 

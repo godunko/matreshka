@@ -54,6 +54,7 @@ with ODF.DOM.Attributes.Style.Family;
 with ODF.DOM.Attributes.Style.Name;
 with ODF.DOM.Attributes.Style.Parent_Style_Name;
 with ODF.DOM.Attributes.Style.Text_Underline_Style;
+with ODF.DOM.Attributes.Table.Style_Name;
 with ODF.DOM.Attributes.Text.Style_Name;
 
 package body ODF.Web.Builder is
@@ -305,10 +306,19 @@ package body ODF.Web.Builder is
    overriding procedure Enter_Table_Table_Cell
     (Self    : in out JSON_Builder;
      Element : not null ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      Style_Name : constant
+        ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+          := ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name));
+
    begin
       Self.Push;
       Self.Current.Object.Set_Field ("__type", "OdfTableTableCell");
+      Self.Current.Object.Set_Field
+       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
    end Enter_Table_Table_Cell;
 
    ---------------------------
