@@ -46,6 +46,7 @@ OdfStyleStyle.prototype.paragraphMarginLeft = "";
 OdfStyleStyle.prototype.paragraphMarginRight = "";
 OdfStyleStyle.prototype.paragraphMarginTop = "";
 OdfStyleStyle.prototype.paragraphTextAlign = "";
+OdfStyleStyle.prototype.textFontSize = "";
 OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
 OdfStyleStyle.prototype.textUnderlineStyle = "";
@@ -342,9 +343,26 @@ function setupOdfTextEdit (id) {
 
 function SetCSS (odfElement) {
     function lookupStyle (name) {
+        if (name == '') {
+            //  Return when name of the style is not specified, thus where are
+            //  no more styles in chain.
+
+            return;
+        }
+
         for (i = 0; i < odfDocument.styles.length; i++)
         {
             if (odfDocument.styles [i].name == name)
+            {
+                return odfDocument.styles [i];
+            }
+        }
+    }
+
+    function lookupDefaultStyle (family) {
+        for (i = 0; i < odfDocument.styles.length; i++)
+        {
+            if (odfDocument.styles [i].kind == 'default' && odfDocument.styles [i].family == family)
             {
                 return odfDocument.styles [i];
             }
@@ -369,9 +387,27 @@ function SetCSS (odfElement) {
         style = lookupStyle (style.parentStyleName)
     }
 
+    style = lookupDefaultStyle (styles [0].family);
+
+    if (style) {
+        //  Default styles must be provided for all style families used in
+        //  document, but sometimes they are missing. In this case we don't
+        //  want to include 'null' into the list of styles.
+
+        styles.push (style);
+    }
+
     //  Apply text style.
 
     if (styles [0].family === 'text' || styles [0].family === 'paragraph') {
+        //  Analyze 'fo:font-size' attribute.
+
+        value = lookupProperty (styles, 'textFontSize');
+
+        if (value) {
+            odfElement.htmlElement.style.fontSize = value;
+        }
+
         //  Construct 'font-style' property.
 
         value = lookupProperty (styles, 'textFontStyle');

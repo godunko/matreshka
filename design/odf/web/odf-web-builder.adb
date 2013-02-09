@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with ODF.Constants;
+with ODF.DOM.Attributes.FO.Font_Size;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
 with ODF.DOM.Attributes.FO.Margin_Bottom;
@@ -93,6 +94,28 @@ package body ODF.Web.Builder is
       Self.Push;
       Self.Current.Object.Set_Field ("__type", "OdfOfficeText");
    end Enter_Office_Text;
+
+   -------------------------------
+   -- Enter_Style_Default_Style --
+   -------------------------------
+
+   overriding procedure Enter_Style_Default_Style
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      Family : constant
+        ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+          := ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Style_URI, ODF.Constants.Family_Name));
+
+   begin
+      Self.Push;
+      Self.Current.Object.Set_Field ("__type", "OdfStyleStyle");
+      Self.Current.Object.Set_Field ("family", Family.Get_Value.To_UTF_8_String);
+      Self.Current.Object.Set_Field ("kind", "default");
+   end Enter_Style_Default_Style;
 
    --------------------------------------
    -- Enter_Style_Paragraph_Properties --
@@ -214,10 +237,16 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
+      use type ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access;
       use type ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access;
       use type ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
       use type ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access;
 
+      Font_Size            : constant
+        ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access
+          := ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Font_Size_Name));
       Font_Style           : constant
         ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
           := ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
@@ -235,6 +264,11 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Style_URI, ODF.Constants.Text_Underline_Style_Name));
 
    begin
+      if Font_Size /= null then
+         Self.Current.Object.Set_Field
+          ("textFontSize", Font_Size.Get_Value.To_UTF_8_String);
+      end if;
+
       if Font_Style /= null then
          Self.Current.Object.Set_Field
           ("textFontStyle", Font_Style.Get_Value.To_UTF_8_String);
@@ -402,6 +436,19 @@ package body ODF.Web.Builder is
 
       Self.Pop;
    end Leave_Office_Text;
+
+   -------------------------------
+   -- Leave_Style_Default_Style --
+   -------------------------------
+
+   overriding procedure Leave_Style_Default_Style
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      GNATCOLL.JSON.Append (Self.Styles, Self.Current.Object);
+      Self.Pop;
+   end Leave_Style_Default_Style;
 
    -----------------------
    -- Leave_Style_Style --

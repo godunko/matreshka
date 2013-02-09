@@ -62,7 +62,7 @@ private with ODF.DOM.Elements.Office.Automatic_Styles;
 ----    with ODF.DOM.Elements.Office.Styles;
 private with ODF.DOM.Elements.Office.Text;
 ----    with ODF.DOM.Elements.Style.Background_Image;
-----    with ODF.DOM.Elements.Style.Default_Style;
+private with ODF.DOM.Elements.Style.Default_Style;
 ----    with ODF.DOM.Elements.Style.Font_Face;
 ----    with ODF.DOM.Elements.Style.Footer_Style;
 ----    with ODF.DOM.Elements.Style.Footnote_Sep;
@@ -237,17 +237,17 @@ private
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image_Access;
 --         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Enter_Style_Default_Style
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Leave_Style_Default_Style
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
+
+   overriding procedure Enter_Style_Default_Style
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Leave_Style_Default_Style
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
 --       overriding procedure Enter_Style_Font_Face
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face_Access;
