@@ -99,8 +99,10 @@ OdfTableTableCell.prototype.constructor = OdfTableTableCell;
 OdfTableTableCell.prototype.htmlElement = null;
 OdfTableTableCell.prototype.children = [];
 OdfTableTableCell.prototype.styleName = "";
+OdfTableTableCell.prototype.columnsSpanned = 1;
 OdfTableTableCell.prototype.render = function (parentElement) {
     this.htmlElement = parentElement.ownerDocument.createElement ('td');
+    this.htmlElement.setAttribute ('colspan', this.columnsSpanned);
     parentElement.appendChild (this.htmlElement);
 
     SetCSS (this);
