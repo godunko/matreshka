@@ -334,13 +334,21 @@ function OdfTextEdit (rootElement) {
     odfDocument = this.odfDocument;  //  XXX Must be removed.
     this.odfDocument.content.render (this.htmlElement);
 
-    //  Move focus into editor.
+    //  Disable table cell controls.
 
-    this.htmlElement.focus ();
+    document.execCommand("enableInlineTableEditing", false, false);
+
+    //  Disable resize controls.
+
+    document.execCommand("enableObjectResizing", false, false);
 
     //  Setup even handlers.
 
     this.htmlElement.onkeypress = this.onKeyPress;
+
+    //  Move focus into editor.
+
+    this.htmlElement.focus ();
 }
 
 OdfTextEdit.prototype.onKeyPress = function (event) {
