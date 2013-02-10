@@ -46,6 +46,7 @@ OdfStyleStyle.prototype.paragraphMarginLeft = "";
 OdfStyleStyle.prototype.paragraphMarginRight = "";
 OdfStyleStyle.prototype.paragraphMarginTop = "";
 OdfStyleStyle.prototype.paragraphTextAlign = "";
+OdfStyleStyle.prototype.cellBackgroundColor = "";
 OdfStyleStyle.prototype.cellPaddingBottom = "";
 OdfStyleStyle.prototype.cellPaddingLeft = "";
 OdfStyleStyle.prototype.cellPaddingRight = "";
@@ -593,6 +594,14 @@ function SetCSS (odfElement) {
     //  Apply cell style.
 
     if (styles [0].family === 'table-cell') {
+        //  Analyze 'fo:background-color' attribute.
+
+        value = lookupProperty (styles, 'cellBackgroundColor');
+
+        if (value) {
+            odfElement.htmlElement.style.backgroundColor = value;
+        }
+
         //  Analyze 'fo:padding-bottom' attribute.
 
         value = lookupProperty (styles, 'cellPaddingBottom');

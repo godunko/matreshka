@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with ODF.Constants;
+with ODF.DOM.Attributes.FO.Background_Color;
 with ODF.DOM.Attributes.FO.Font_Size;
 with ODF.DOM.Attributes.FO.Font_Style;
 with ODF.DOM.Attributes.FO.Font_Weight;
@@ -267,13 +268,19 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
+      use type ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access;
       use type ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Bottom.ODF_FO_Padding_Bottom_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Left.ODF_FO_Padding_Left_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Right.ODF_FO_Padding_Right_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Top.ODF_FO_Padding_Top_Access;
 
-      Padding        : constant
+      Background_Color : constant
+        ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access
+          := ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.FO_URI, ODF.Constants.Background_Color_Name));
+      Padding          : constant
         ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
           := ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
               (Element.Get_Attribute_Node_NS
@@ -300,6 +307,11 @@ package body ODF.Web.Builder is
 --                (ODF.Constants.FO_URI, ODF.Constants.Padding_Top_Name));
 
    begin
+      if Background_Color /= null then
+         Self.Current.Object.Set_Field
+          ("cellBackgroundColor", Background_Color.Get_Value.To_UTF_8_String);
+      end if;
+
 --      if Padding_Bottom /= null then
 --         Self.Current.Object.Set_Field
 --          ("cellPaddingBottom", Padding_Bottom.Get_Value.To_UTF_8_String);
