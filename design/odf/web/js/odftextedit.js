@@ -324,52 +324,48 @@ function OdfTextEdit (rootElement) {
 
     //  Setup even handlers.
 
-    this.htmlElement.onkeydown = this.onKeyDown;
     this.htmlElement.onkeypress = this.onKeyPress;
 }
 
-OdfTextEdit.prototype.onKeyDown = function (event) {
-    if (event.keyCode === 13) {
-        console.log ('keyDone: body');
-//        event.stopPropagation ();
-        console.log (event);
-//        return false;
-        event.preventDefault ();
-//        console.log (document.selection);
-//        viewO.focus ();
-//        console.log (window.getSelection ());
-        console.log (window.getSelection ().getRangeAt(0));
-//        console.log (window.getSelection ().getRangeAt(0).commonAncestorContainer);
-//        console.log (window.getSelection ().getRangeAt(0).startContainer);
-//        console.log (window.getSelection ().getRangeAt(0).startOffset);
-//        console.log (window.getSelection ().getRangeAt(0).endContainer);
-//        console.log (window.getSelection ().getRangeAt(0).endOffset);
-//        console.log (window.getSelection ().getRangeAt(0).collapsed);
-//        console.log (window.getSelection ().rangeCount);
-//        console.log (window.getSelection().anchorNode.parentNode.tagName);
-
-//        var el = document.getElementById ('OdfTextEdit');
-//        console.log (document);
-//        el.focus ();
-//        console.log (el.selectionStart);
-//        console.log (viewO);
-//        viewO.focus ();
-//        console.log (viewO.selectionStart);
-    }
-};
-
 OdfTextEdit.prototype.onKeyPress = function (event) {
     if (event.keyCode === 13) {
-//        console.log ('keyPress: body');
+        //  Enter key.
+
+        event.preventDefault ();
+        console.log ('keyPress');
 //        event.stopPropagation ();
 //        console.log (event);
 //        return false;
-//        event.preventDefault ();
 //        console.log (document.selection);
 //        console.log (window.getSelection ());
 //        console.log (window.getSelection ().getRangeAt(0));
 //        console.log (window.getSelection ().rangeCount);
 //        console.log (window.getSelection().anchorNode.parentNode.tagName);
+    } else if (event.keyCode == 37) {
+        //  Move cursor left.
+
+        console.log (window.getSelection ().getRangeAt(0));
+
+    } else if (event.keyCode == 38) {
+        //  Move cursor up.
+
+        console.log (window.getSelection ().getRangeAt(0));
+
+    } else if (event.keyCode == 39) {
+        //  Move cursor right.
+
+        console.log (window.getSelection ().getRangeAt(0));
+
+    } else if (event.keyCode == 40) {
+        //  Move cursor down.
+
+        console.log (window.getSelection ().getRangeAt(0));
+
+    } else {
+        console.log (event);
+        //console.log (window.getSelection ());
+//        console.log (window.getSelection ().anchorNode);
+        event.preventDefault ();
     }
 };
 
