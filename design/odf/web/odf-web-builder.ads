@@ -76,14 +76,14 @@ private with ODF.DOM.Elements.Style.Paragraph_Properties;
 private with ODF.DOM.Elements.Style.Style;
 ----    with ODF.DOM.Elements.Style.Tab_Stops;
 private with ODF.DOM.Elements.Style.Table_Cell_Properties;
-----    with ODF.DOM.Elements.Style.Table_Column_Properties;
+private with ODF.DOM.Elements.Style.Table_Column_Properties;
 ----    with ODF.DOM.Elements.Style.Table_Properties;
 ----    with ODF.DOM.Elements.Style.Table_Row_Properties;
 private with ODF.DOM.Elements.Style.Text_Properties;
 ----    with ODF.DOM.Elements.Table.Covered_Table_Cell;
 private with ODF.DOM.Elements.Table.Table;
 private with ODF.DOM.Elements.Table.Table_Cell;
-----    with ODF.DOM.Elements.Table.Table_Column;
+private with ODF.DOM.Elements.Table.Table_Column;
 private with ODF.DOM.Elements.Table.Table_Row;
 private with ODF.DOM.Elements.Text.H;
 ----    with ODF.DOM.Elements.Text.Linenumbering_Configuration;
@@ -378,16 +378,16 @@ private
 --     Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
 --     Control : in out XML.DOM.Visitors.Traverse_Control);
 
---       overriding procedure Enter_Style_Table_Column_Properties
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Leave_Style_Table_Column_Properties
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
+   overriding procedure Enter_Style_Table_Column_Properties
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+--   overriding procedure Leave_Style_Table_Column_Properties
+--    (Self    : in out JSON_Builder;
+--     Element : not null ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
+--     Control : in out XML.DOM.Visitors.Traverse_Control);
+
 --       overriding procedure Enter_Style_Table_Properties
 --        (Self    : in out JSON_Builder;
 --         Element : not null ODF.DOM.Elements.Style.Table_Properties.ODF_Style_Table_Properties_Access;
@@ -448,15 +448,15 @@ private
      Element : not null ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control);
 
---       overriding procedure Enter_Table_Table_Column
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
---    
---       overriding procedure Leave_Table_Table_Column
---        (Self    : in out JSON_Builder;
---         Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
---         Control : in out XML.DOM.Visitors.Traverse_Control);
+   overriding procedure Enter_Table_Table_Column
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Leave_Table_Table_Column
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
 
    overriding procedure Enter_Table_Table_Row
     (Self    : in out JSON_Builder;

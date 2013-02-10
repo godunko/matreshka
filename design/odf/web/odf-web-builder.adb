@@ -56,6 +56,7 @@ with ODF.DOM.Attributes.FO.Padding;
 --with ODF.DOM.Attributes.FO.Padding_Right;
 --with ODF.DOM.Attributes.FO.Padding_Top;
 with ODF.DOM.Attributes.FO.Text_Align;
+with ODF.DOM.Attributes.Style.Column_Width;
 with ODF.DOM.Attributes.Style.Family;
 with ODF.DOM.Attributes.Style.Name;
 with ODF.DOM.Attributes.Style.Parent_Style_Name;
@@ -340,6 +341,26 @@ package body ODF.Web.Builder is
       end if;
    end Enter_Style_Table_Cell_Properties;
 
+   -----------------------------------------
+   -- Enter_Style_Table_Column_Properties --
+   -----------------------------------------
+
+   overriding procedure Enter_Style_Table_Column_Properties
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      Width : constant
+        ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access
+          := ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Style_URI, ODF.Constants.Column_Width_Name));
+
+   begin
+      Self.Current.Object.Set_Field
+       ("columnWidth", Width.Get_Value.To_UTF_8_String);
+   end Enter_Style_Table_Column_Properties;
+
    ---------------------------------
    -- Enter_Style_Text_Properties --
    ---------------------------------
@@ -431,6 +452,28 @@ package body ODF.Web.Builder is
       Self.Current.Object.Set_Field
        ("styleName", Style_Name.Get_Value.To_UTF_8_String);
    end Enter_Table_Table_Cell;
+
+   ------------------------------
+   -- Enter_Table_Table_Column --
+   ------------------------------
+
+   overriding procedure Enter_Table_Table_Column
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      Style_Name : constant
+        ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+          := ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+              (Element.Get_Attribute_Node_NS
+                (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name));
+
+   begin
+      Self.Push;
+      Self.Current.Object.Set_Field ("__type", "OdfTableTableColumn");
+      Self.Current.Object.Set_Field
+       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
+   end Enter_Table_Table_Column;
 
    ---------------------------
    -- Enter_Table_Table_Row --
@@ -611,6 +654,20 @@ package body ODF.Web.Builder is
       GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
       Self.Pop;
    end Leave_Table_Table_Cell;
+
+   ------------------------------
+   -- Leave_Table_Table_Column --
+   ------------------------------
+
+   overriding procedure Leave_Table_Table_Column
+    (Self    : in out JSON_Builder;
+     Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Current.Object.Set_Field ("children", Self.Current.Children);
+      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Pop;
+   end Leave_Table_Table_Column;
 
    ---------------------------
    -- Leave_Table_Table_Row --

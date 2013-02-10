@@ -50,6 +50,7 @@ OdfStyleStyle.prototype.cellPaddingBottom = "";
 OdfStyleStyle.prototype.cellPaddingLeft = "";
 OdfStyleStyle.prototype.cellPaddingRight = "";
 OdfStyleStyle.prototype.cellPaddingTop = "";
+OdfStyleStyle.prototype.columnWidth = "";
 OdfStyleStyle.prototype.textFontSize = "";
 OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
@@ -108,6 +109,20 @@ OdfTableTableCell.prototype.render = function (parentElement) {
         this.children [i].render (this.htmlElement);
     }
 };
+
+//  OdfTableTableColumn
+
+function OdfTableTableColumn (object)
+{
+    OdfElementBase.call (this, object);
+}
+
+OdfTableTableColumn.prototype = new OdfElementBase ();
+OdfTableTableColumn.prototype.constructor = OdfTableTableColumn;
+//OdfTableTableCell.prototype.htmlElement = null;
+//OdfTableTableCell.prototype.children = [];
+OdfTableTableColumn.prototype.styleName = "";
+OdfTableTableColumn.prototype.render = function (parentElement) {};
 
 //  OdfTableTableRow
 
@@ -369,16 +384,6 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
     }
 };
 
-//(function ()
-//{
-//    var doc, body, para;
-//
-//    textView = document.getElementById ('textView');
-//    console.log (textView);
-//
-//    editor = new OdfTextEdit (textView);
-//})()
-
 function setupOdfTextEdit (id) {
     var editor = new OdfTextEdit (document.getElementById (id));
 }
@@ -619,6 +624,36 @@ function SetCSS (odfElement) {
         if (value) {
             odfElement.htmlElement.style.paddingTop = value;
         }
+
+        var index = odfElement.parentElement.children.indexOf (odfElement);
+        var table = odfElement.parentElement.parentElement;
+        var current = 0;
+        var column;
+
+        for (var i = 0; i < table.children.length; i++) {
+            if (table.children [i] instanceof OdfTableTableColumn) {
+                if (current == index) {
+                    column = table.children [i];
+                    break;
+                }
+                current += 1;
+            }
+        }
+
+        styles = new Array;
+        styles.push (lookupStyle (column.styleName));
+        value = lookupProperty (styles, 'columnWidth');
+    }
+
+    //  Apply column style.
+
+    if (styles [0].family === 'table-column') {
+        //  Analyze 'style:column-width' attribute.
+
+        value = lookupProperty (styles, 'columnWidth');
+
+        if (value) {
+            odfElement.htmlElement.style.width = value;
+        }
     }
 }
-
