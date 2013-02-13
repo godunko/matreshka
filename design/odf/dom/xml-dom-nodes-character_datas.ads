@@ -52,6 +52,11 @@ package XML.DOM.Nodes.Character_Datas is
     (Self : not null access constant DOM_Character_Data'Class)
        return League.Strings.Universal_String;
 
+   procedure Insert_Data
+    (Self   : not null access DOM_Character_Data'Class;
+     Offset : Positive;
+     Arg    : League.Strings.Universal_String);
+
 private
 
    type DOM_Character_Data is abstract new DOM_Node with record

@@ -77,4 +77,16 @@ package body XML.DOM.Nodes.Character_Datas is
       return League.Strings.Empty_Universal_String;
    end Get_Namespace_URI;
 
+   -----------------
+   -- Insert_Data --
+   -----------------
+
+   procedure Insert_Data
+    (Self   : not null access DOM_Character_Data'Class;
+     Offset : Positive;
+     Arg    : League.Strings.Universal_String) is
+   begin
+      Self.Data.Replace (Offset, Offset - 1, Arg);
+   end Insert_Data;
+
 end XML.DOM.Nodes.Character_Datas;
