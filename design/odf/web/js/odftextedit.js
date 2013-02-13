@@ -398,6 +398,39 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
     } else if (event.keyCode == 40) {
         //  Move cursor down - let browser to handle it.
 
+    } else if (event.keyCode == 46) {
+        //  Delete key.
+
+        var htmlElement, position;
+
+        event.preventDefault ();
+
+        htmlElement = window.getSelection ().getRangeAt (0).startContainer;
+        position = window.getSelection ().getRangeAt (0).startOffset;
+
+        //  Delete character from display data.
+
+        htmlElement.deleteData (position, 1);
+
+        //  Set text cursor position after inserted character.
+
+        var selection = window.getSelection ();
+        var range = selection.getRangeAt (0);
+        range.setStart (range.startContainer, position);
+        range.setEnd (range.startContainer, position);
+        selection.addRange (range);
+
+        //  Notify server.
+
+        var change = new OdfTextChanged ({
+            identifier: htmlElement.odfElement.identifier,
+            start: position,
+            length: 1,
+            characters: ""});
+        var request = new XMLHttpRequest();
+        request.open ('POST', 'changeODF', false);
+        request.send (JSON.stringify (change));
+
     } else if (event.keyCode == 0 && !event.ctrlKey && !event.altKey) {
         var htmlElement, position;
 
