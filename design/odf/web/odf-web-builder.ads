@@ -134,7 +134,10 @@ private
       Content          : GNATCOLL.JSON.JSON_Value;
    end record;
 
-   procedure Push (Self : in out JSON_Builder'Class);
+   procedure Push
+    (Self     : in out JSON_Builder'Class;
+     The_Type : String;
+     Node     : XML.DOM.Nodes.DOM_Node_Access);
 
    procedure Pop (Self : in out JSON_Builder'Class);
 

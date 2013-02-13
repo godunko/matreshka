@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Strings.Fixed;
+
 with ODF.Constants;
 with ODF.DOM.Attributes.FO.Background_Color;
 with ODF.DOM.Attributes.FO.Font_Size;
@@ -67,6 +69,21 @@ with ODF.DOM.Attributes.Table.Style_Name;
 with ODF.DOM.Attributes.Text.Style_Name;
 
 package body ODF.Web.Builder is
+
+--   procedure Initialize_Object
+--    (Self     : in out JSON_Builder'Class;
+--     The_Type : String;
+--     Element  : ODF.DOM.Elements.ODF_Element_Access);
+--   --  Initialize current JSON object by setting its type and allocating id.
+--
+--   -----------------------
+--   -- Initialize_Object --
+--   -----------------------
+--
+--   procedure Initialize_Object
+--    (Self     : in out JSON_Builder'Class;
+--     The_Type : String;
+--     Element  : ODF.DOM.Elements.ODF_Element_Access);
 
    -----------------------------------
    -- Enter_Office_Automatic_Styles --
@@ -101,8 +118,7 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfOfficeText");
+      Self.Push ("OdfOfficeText", XML.DOM.Nodes.DOM_Node_Access (Element));
    end Enter_Office_Text;
 
    -------------------------------
@@ -121,8 +137,7 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Style_URI, ODF.Constants.Family_Name));
 
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfStyleStyle");
+      Self.Push ("OdfStyleStyle", XML.DOM.Nodes.DOM_Node_Access (Element));
       Self.Current.Object.Set_Field ("family", Family.Get_Value.To_UTF_8_String);
       Self.Current.Object.Set_Field ("kind", "default");
    end Enter_Style_Default_Style;
@@ -245,8 +260,7 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Style_URI, ODF.Constants.Parent_Style_Name_Name));
 
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfStyleStyle");
+      Self.Push ("OdfStyleStyle", XML.DOM.Nodes.DOM_Node_Access (Element));
       Self.Current.Object.Set_Field ("name", Name.Get_Value.To_UTF_8_String);
       Self.Current.Object.Set_Field ("family", Family.Get_Value.To_UTF_8_String);
 
@@ -440,8 +454,7 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfTableTable");
+      Self.Push ("OdfTableTable", XML.DOM.Nodes.DOM_Node_Access (Element));
    end Enter_Table_Table;
 
    ----------------------------
@@ -467,8 +480,7 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Table_URI, ODF.Constants.Number_Columns_Spanned_Name));
 
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfTableTableCell");
+      Self.Push ("OdfTableTableCell", XML.DOM.Nodes.DOM_Node_Access (Element));
       Self.Current.Object.Set_Field
        ("styleName", Style_Name.Get_Value.To_UTF_8_String);
 
@@ -494,8 +506,7 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name));
 
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfTableTableColumn");
+      Self.Push ("OdfTableTableColumn", XML.DOM.Nodes.DOM_Node_Access (Element));
       Self.Current.Object.Set_Field
        ("styleName", Style_Name.Get_Value.To_UTF_8_String);
    end Enter_Table_Table_Column;
@@ -509,8 +520,7 @@ package body ODF.Web.Builder is
      Element : not null ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfTableTableRow");
+      Self.Push ("OdfTableTableRow", XML.DOM.Nodes.DOM_Node_Access (Element));
    end Enter_Table_Table_Row;
 
    ----------------
@@ -522,9 +532,9 @@ package body ODF.Web.Builder is
      Element : not null XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push;
-      Self.Current.Object :=
-        GNATCOLL.JSON.Create (Element.Get_Data.To_UTF_8_String);
+      Self.Push ("OdfDomText", XML.DOM.Nodes.DOM_Node_Access (Element));
+      Self.Current.Object.Set_Field
+        ("characters", Element.Get_Data.To_UTF_8_String);
    end Enter_Text;
 
    ------------------
@@ -543,8 +553,7 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
 
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfTextH");
+      Self.Push ("OdfTextH", XML.DOM.Nodes.DOM_Node_Access (Element));
       Self.Current.Object.Set_Field
        ("styleName", Style_Name.Get_Value.To_UTF_8_String);
    end Enter_Text_H;
@@ -565,8 +574,7 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
 
    begin
-      Self.Push;
-      Self.Current.Object.Set_Field ("__type", "OdfTextP");
+      Self.Push ("OdfTextP", XML.DOM.Nodes.DOM_Node_Access (Element));
       Self.Current.Object.Set_Field
        ("styleName", Style_Name.Get_Value.To_UTF_8_String);
    end Enter_Text_P;
@@ -587,7 +595,7 @@ package body ODF.Web.Builder is
                 (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
 
    begin
-      Self.Push;
+      Self.Push ("OdfTextSpan", XML.DOM.Nodes.DOM_Node_Access (Element));
       Self.Current.Object.Set_Field ("__type", "OdfTextSpan");
       Self.Current.Object.Set_Field
        ("styleName", Style_Name.Get_Value.To_UTF_8_String);
@@ -784,7 +792,10 @@ package body ODF.Web.Builder is
    -- Push --
    ----------
 
-   procedure Push (Self : in out JSON_Builder'Class) is
+   procedure Push
+    (Self     : in out JSON_Builder'Class;
+     The_Type : String;
+     Node     : XML.DOM.Nodes.DOM_Node_Access) is
    begin
       Self.Stack.Append (Self.Previous);
       Self.Previous := Self.Current;
@@ -792,6 +803,13 @@ package body ODF.Web.Builder is
        (Element,
         GNATCOLL.JSON.Create_Object,
         GNATCOLL.JSON.Empty_Array);
+
+      Self.Current.Object.Set_Field ("__type", The_Type);
+      Self.Current.Object.Set_Field
+        ("identifier",
+         Ada.Strings.Fixed.Trim (Integer'Image (Unused_Id), Ada.Strings.Both));
+      To_Node.Insert (Unused_Id, Node);
+      Unused_Id := Unused_Id + 1;
    end Push;
 
 end ODF.Web.Builder;

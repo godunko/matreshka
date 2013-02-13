@@ -41,10 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.DOM.Documents;
+with Ada.Containers.Hashed_Maps;
 
 with AWS.Response;
 with AWS.Status;
+
+with ODF.DOM.Documents;
+with XML.DOM.Nodes;
 
 package ODF.Web is
 
@@ -60,6 +63,18 @@ package ODF.Web is
       Content : ODF.DOM.Documents.ODF_Document_Access;
    end record;
 
-   Document : ODF_File;
+   function Hash (Item : Positive) return Ada.Containers.Hash_Type;
+
+   package Node_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Positive,
+           XML.DOM.Nodes.DOM_Node_Access,
+           Hash,
+           "=",
+           XML.DOM.Nodes."=");
+
+   Document  : ODF_File;
+   To_Node   : Node_Maps.Map;
+   Unused_Id : Positive := 1;
 
 end ODF.Web;

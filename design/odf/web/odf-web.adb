@@ -64,6 +64,15 @@ package body ODF.Web is
          (JSON_Mime_Type, To_JSON (Document.Styles, Document.Content));
    end Callback;
 
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Item : Positive) return Ada.Containers.Hash_Type is
+   begin
+      return Ada.Containers.Hash_Type (Item);
+   end Hash;
+
    -------------
    -- To_JSON --
    -------------

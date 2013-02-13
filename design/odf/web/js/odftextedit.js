@@ -57,6 +57,21 @@ OdfStyleStyle.prototype.textFontStyle = "";
 OdfStyleStyle.prototype.textFontWeight = "";
 OdfStyleStyle.prototype.textUnderlineStyle = "";
 
+//  OdfDomText
+
+function OdfDomText (object) {
+    OdfElementBase.call (this, object);
+}
+
+OdfDomText.prototype = new OdfElementBase ();
+OdfDomText.prototype.constructor = OdfDomText;
+OdfDomText.prototype.htmlElement = null;
+OdfDomText.prototype.characters = "";
+OdfDomText.prototype.render = function (parentElement) {
+    this.htmlElement = parentElement.ownerDocument.createTextNode (this.characters);
+    parentElement.appendChild (this.htmlElement);
+}
+
 //  OdfTableTable
 
 function OdfTableTable (object)
@@ -145,8 +160,7 @@ OdfTableTableRow.prototype.render = function (parentElement) {
     var element = parentElement.ownerDocument.createElement ('tr');
     parentElement.appendChild (element);
 
-    for (var i = 0; i < this.children.length; i++)
-    {
+    for (var i = 0; i < this.children.length; i++) {
         this.children [i].render (element);
     }
 };
@@ -170,21 +184,10 @@ OdfTextH.prototype.children = [];
 OdfTextH.prototype.render = function (parentElement) {
     this.htmlElement = parentElement.ownerDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
-//    this.htmlElement.contentEditable = true;
-
     SetCSS (this);
 
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (typeof this.children [i] === 'string')
-	{
-            var text = parentElement.ownerDocument.createTextNode (this.children [i]);
-	    this.htmlElement.appendChild (text);
-	}
-	else
-	{
-            this.children [i].render (this.htmlElement);
-	}
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].render (this.htmlElement);
     }
 };
 
@@ -205,25 +208,12 @@ OdfTextP.prototype.styleName = "";
 OdfTextP.prototype.htmlElement = null;
 OdfTextP.prototype.children = [];
 OdfTextP.prototype.render = function (parentElement) {
-    var text;
-
     this.htmlElement = parentElement.ownerDocument.createElement ('p');
     parentElement.appendChild (this.htmlElement);
-//    this.htmlElement.contentEditable = true;
-
     SetCSS (this);
 
-    for (var i = 0; i < this.children.length; i++)
-    {
-        if (typeof this.children [i] === 'string')
-	{
-            text = parentElement.ownerDocument.createTextNode (this.children [i]);
-	    this.htmlElement.appendChild (text);
-	}
-	else
-	{
-            this.children [i].render (this.htmlElement);
-	}
+    for (var i = 0; i < this.children.length; i++) {
+        this.children [i].render (this.htmlElement);
     }
 
     if (this.children.length == 0) {
@@ -254,21 +244,11 @@ OdfTextSpan.prototype.children = [];
 OdfTextSpan.prototype.render = function (parentElement) {
     this.htmlElement = parentElement.ownerDocument.createElement ('span');
     parentElement.appendChild (this.htmlElement);
-//    this.htmlElement.contentEditable = true;
-
     SetCSS (this);
 
     for (var i = 0; i < this.children.length; i++)
     {
-        if (typeof this.children [i] === 'string')
-	{
-            var text = parentElement.ownerDocument.createTextNode (this.children [i]);
-	    this.htmlElement.appendChild (text);
-	}
-	else
-	{
-            this.children [i].render (this.htmlElement);
-	}
+        this.children [i].render (this.htmlElement);
     }
 };
 
@@ -386,6 +366,28 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
         //  Move cursor down.
 
         console.log (window.getSelection ().getRangeAt(0));
+
+    } else if (event.keyCode == 0 && !event.ctrlKey && !event.altKey) {
+        var text;
+
+        event.preventDefault ();
+
+//        text = window.getSelection ().getRangeAt (0).startContainer;
+//        position = window.getSelection ().getRangeAt (0).startOffset;
+//
+//        text.insertData (position, String.fromCharCode (event.charCode));
+//        var selection = window.getSelection ();
+//        var range = selection.getRangeAt (0);
+//        range.setStart (range.startContainer, position + 1);
+//        range.setEnd (range.startContainer, position + 1);
+//        selection.addRange (range);
+//        console.log (selection);
+//
+////        window.getSelection ().getRangeAt (0).startOffset =
+////            window.getSelection ().getRangeAt (0).startOffset + 1;
+//        console.log (window.getSelection ().getRangeAt(0));
+//        console.log (text);
+//        console.log (event);
 
     } else {
         console.log (event);
