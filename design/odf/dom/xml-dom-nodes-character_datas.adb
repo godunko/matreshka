@@ -89,4 +89,17 @@ package body XML.DOM.Nodes.Character_Datas is
       Self.Data.Replace (Offset, Offset - 1, Arg);
    end Insert_Data;
 
+   ------------------
+   -- Replace_Data --
+   ------------------
+
+   procedure Replace_Data
+    (Self   : not null access DOM_Character_Data'Class;
+     Offset : Positive;
+     Count  : Natural;
+     Arg    : League.Strings.Universal_String) is
+   begin
+      Self.Data.Replace (Offset, Offset + Count - 1, Arg);
+   end Replace_Data;
+
 end XML.DOM.Nodes.Character_Datas;

@@ -57,6 +57,12 @@ package XML.DOM.Nodes.Character_Datas is
      Offset : Positive;
      Arg    : League.Strings.Universal_String);
 
+   procedure Replace_Data
+    (Self   : not null access DOM_Character_Data'Class;
+     Offset : Positive;
+     Count  : Natural;
+     Arg    : League.Strings.Universal_String);
+
 private
 
    type DOM_Character_Data is abstract new DOM_Node with record
