@@ -41,6 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Strings.Hash;
+with System.Address_Image;
+
 with GNATCOLL.JSON;
 
 with XML.DOM.Visitors;
@@ -71,6 +74,24 @@ package body ODF.Web is
    function Hash (Item : Positive) return Ada.Containers.Hash_Type is
    begin
       return Ada.Containers.Hash_Type (Item);
+   end Hash;
+
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash
+    (Item : XML.DOM.Nodes.DOM_Node_Access) return Ada.Containers.Hash_Type
+   is
+      use type XML.DOM.Nodes.DOM_Node_Access;
+
+   begin
+      if Item = null then
+         return 0;
+
+      else
+         return Ada.Strings.Hash (System.Address_Image (Item.all'Address));
+      end if;
    end Hash;
 
    -------------

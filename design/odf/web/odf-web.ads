@@ -65,7 +65,10 @@ package ODF.Web is
 
    function Hash (Item : Positive) return Ada.Containers.Hash_Type;
 
-   package Node_Maps is
+   function Hash
+    (Item : XML.DOM.Nodes.DOM_Node_Access) return Ada.Containers.Hash_Type;
+
+   package Identifier_Node_Maps is
      new Ada.Containers.Hashed_Maps
           (Positive,
            XML.DOM.Nodes.DOM_Node_Access,
@@ -73,8 +76,16 @@ package ODF.Web is
            "=",
            XML.DOM.Nodes."=");
 
-   Document  : ODF_File;
-   To_Node   : Node_Maps.Map;
-   Unused_Id : Positive := 1;
+   package Node_Identifier_Maps is
+     new Ada.Containers.Hashed_Maps
+          (XML.DOM.Nodes.DOM_Node_Access,
+           Positive,
+           Hash,
+           XML.DOM.Nodes."=");
+
+   Document      : ODF_File;
+   To_Node       : Identifier_Node_Maps.Map;
+   To_Identifier : Node_Identifier_Maps.Map;
+   Unused_Id     : Positive := 1;
 
 end ODF.Web;

@@ -805,11 +805,21 @@ package body ODF.Web.Builder is
         GNATCOLL.JSON.Empty_Array);
 
       Self.Current.Object.Set_Field ("__type", The_Type);
-      Self.Current.Object.Set_Field
-        ("identifier",
-         Ada.Strings.Fixed.Trim (Integer'Image (Unused_Id), Ada.Strings.Both));
-      To_Node.Insert (Unused_Id, Node);
-      Unused_Id := Unused_Id + 1;
+
+      if To_Identifier.Contains (Node) then
+         Self.Current.Object.Set_Field
+           ("identifier",
+            Ada.Strings.Fixed.Trim
+             (Integer'Image (To_Identifier.Element (Node)), Ada.Strings.Both));
+
+      else
+         Self.Current.Object.Set_Field
+           ("identifier",
+            Ada.Strings.Fixed.Trim (Integer'Image (Unused_Id), Ada.Strings.Both));
+         To_Node.Insert (Unused_Id, Node);
+         To_Identifier.Insert (Node, Unused_Id);
+         Unused_Id := Unused_Id + 1;
+      end if;
    end Push;
 
 end ODF.Web.Builder;
