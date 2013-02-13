@@ -41,97 +41,26 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Strings.Hash;
-with System.Address_Image;
+with League.Strings;
 
-with AWS.Translator;
-with GNATCOLL.JSON;
+with XML.DOM.Nodes.Character_Datas.Texts;
 
-with XML.DOM.Visitors;
+package body ODF.Web.Applier is
 
-with ODF.DOM.Iterators;
+   -----------
+   -- Apply --
+   -----------
 
-with ODF.Web.Applier;
-with ODF.Web.Builder;
-
-package body ODF.Web is
-
-   Json_Mime_Type : constant String := "application/json";
-   Text_Mime_Type : constant String := "text/text";
-
-   ---------------------
-   -- Change_Callback --
-   ---------------------
-
-   function Change_Callback
-    (Request : AWS.Status.Data) return AWS.Response.Data is
-   begin
-      ODF.Web.Applier.Apply
-       (GNATCOLL.JSON.Read
-         (AWS.Translator.To_String (AWS.Status.Binary_Data (Request)), ""));
-
-      return AWS.Response.Build (Text_Mime_Type, "OK");
-   end Change_Callback;
-
-   ------------------
-   -- Get_Callback --
-   ------------------
-
-   function Get_Callback
-    (Request : AWS.Status.Data) return AWS.Response.Data is
-   begin
-      return
-        AWS.Response.Build
-         (JSON_Mime_Type, To_JSON (Document.Styles, Document.Content));
-   end Get_Callback;
-
-   ----------
-   -- Hash --
-   ----------
-
-   function Hash (Item : Positive) return Ada.Containers.Hash_Type is
-   begin
-      return Ada.Containers.Hash_Type (Item);
-   end Hash;
-
-   ----------
-   -- Hash --
-   ----------
-
-   function Hash
-    (Item : XML.DOM.Nodes.DOM_Node_Access) return Ada.Containers.Hash_Type
-   is
-      use type XML.DOM.Nodes.DOM_Node_Access;
+   procedure Apply (Change : GNATCOLL.JSON.JSON_Value) is
+      Identifier : constant Positive := Change.Get ("identifier");
+      Position   : constant Natural  := Change.Get ("position");
+      Characters : constant League.Strings.Universal_String
+        := League.Strings.From_UTF_8_String (Change.Get ("characters"));
 
    begin
-      if Item = null then
-         return 0;
+      XML.DOM.Nodes.Character_Datas.Texts.Dom_Text'Class
+       (To_Node.Element (Identifier).all).Insert_Data
+         (Position + 1, Characters);
+   end Apply;
 
-      else
-         return Ada.Strings.Hash (System.Address_Image (Item.all'Address));
-      end if;
-   end Hash;
-
-   -------------
-   -- To_JSON --
-   -------------
-
-   function To_JSON
-    (Styles  : not null ODF.DOM.Documents.ODF_Document_Access;
-     Content : not null ODF.DOM.Documents.ODF_Document_Access)
-       return String
-   is
-      Builder  : ODF.Web.Builder.JSON_Builder;
-      Iterator : ODF.DOM.Iterators.ODF_Iterator;
-      Control  : XML.DOM.Visitors.Traverse_Control
-        := XML.DOM.Visitors.Continue;
-
-   begin
-      Iterator.Visit (Builder, Styles.Get_First_Child, Control);
-      Iterator.Visit (Builder, Content.Get_First_Child, Control);
-      --  XXX It is better to use 'element' instead of 'firstChild'.
-
-      return GNATCOLL.JSON.Write (Builder.Get_Document);
-   end To_JSON;
-
-end ODF.Web;
+end ODF.Web.Applier;

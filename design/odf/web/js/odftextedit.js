@@ -65,10 +65,12 @@ function OdfDomText (object) {
 
 OdfDomText.prototype = new OdfElementBase ();
 OdfDomText.prototype.constructor = OdfDomText;
+OdfDomText.prototype.identifier = 0;
 OdfDomText.prototype.htmlElement = null;
 OdfDomText.prototype.characters = "";
 OdfDomText.prototype.render = function (parentElement) {
     this.htmlElement = parentElement.ownerDocument.createTextNode (this.characters);
+    this.htmlElement.odfElement = this;
     parentElement.appendChild (this.htmlElement);
 }
 
@@ -368,26 +370,31 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
         console.log (window.getSelection ().getRangeAt(0));
 
     } else if (event.keyCode == 0 && !event.ctrlKey && !event.altKey) {
-        var text;
+        var htmlElement, position;
 
         event.preventDefault ();
 
-//        text = window.getSelection ().getRangeAt (0).startContainer;
-//        position = window.getSelection ().getRangeAt (0).startOffset;
-//
-//        text.insertData (position, String.fromCharCode (event.charCode));
-//        var selection = window.getSelection ();
-//        var range = selection.getRangeAt (0);
-//        range.setStart (range.startContainer, position + 1);
-//        range.setEnd (range.startContainer, position + 1);
-//        selection.addRange (range);
-//        console.log (selection);
-//
-////        window.getSelection ().getRangeAt (0).startOffset =
-////            window.getSelection ().getRangeAt (0).startOffset + 1;
-//        console.log (window.getSelection ().getRangeAt(0));
-//        console.log (text);
-//        console.log (event);
+        htmlElement = window.getSelection ().getRangeAt (0).startContainer;
+        position = window.getSelection ().getRangeAt (0).startOffset;
+
+        //  Insert character into display data.
+
+        htmlElement.insertData (position, String.fromCharCode (event.charCode));
+
+        //  Set text cursor position after inserted character.
+
+        var selection = window.getSelection ();
+        var range = selection.getRangeAt (0);
+        range.setStart (range.startContainer, position + 1);
+        range.setEnd (range.startContainer, position + 1);
+        selection.addRange (range);
+
+        //  Notify server.
+
+        var change = new OdfTextChanged ({identifier: htmlElement.odfElement.identifier, position: position, characters: String.fromCharCode (event.charCode)});
+        var request = new XMLHttpRequest();
+        request.open ('POST', 'changeODF', false);
+        request.send (JSON.stringify (change));
 
     } else {
         console.log (event);
@@ -678,3 +685,15 @@ function SetCSS (odfElement) {
         }
     }
 }
+
+//  OdfTextChanged
+
+function OdfTextChanged (object) {
+    OdfElementBase.call (this, object);
+}
+
+OdfTextChanged.prototype = new OdfElementBase ();
+OdfTextChanged.prototype.constructor = OdfTextChanged;
+OdfTextChanged.prototype.identifier = 0;
+OdfTextChanged.prototype.position = 0;
+OdfTextChanged.prototype.characters = "";

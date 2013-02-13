@@ -79,7 +79,8 @@ begin
       AWS.Config.Set.WWW_Root (Config, "web");
       AWS.Config.Set.Reuse_Address (Config, True);
 
-      Dispatcher.Register ("/getODF", ODF.Web.Callback'Access);
+      Dispatcher.Register ("/getODF", ODF.Web.Get_Callback'Access);
+      Dispatcher.Register ("/changeODF", ODF.Web.Change_Callback'Access);
       Dispatcher.Register_Regexp
        ("/.*", AWS.Services.Page_Server.Callback'Access);
 

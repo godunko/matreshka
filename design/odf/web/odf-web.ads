@@ -56,7 +56,10 @@ package ODF.Web is
      Content : not null ODF.DOM.Documents.ODF_Document_Access)
        return String;
 
-   function Callback (Request : AWS.Status.Data) return AWS.Response.Data;
+   function Get_Callback (Request : AWS.Status.Data) return AWS.Response.Data;
+
+   function Change_Callback
+    (Request : AWS.Status.Data) return AWS.Response.Data;
 
    type ODF_File is record
       Styles  : ODF.DOM.Documents.ODF_Document_Access;
