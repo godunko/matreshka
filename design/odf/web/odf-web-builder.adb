@@ -41,8 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Strings.Fixed;
-
 with ODF.Constants;
 with ODF.DOM.Attributes.FO.Background_Color;
 with ODF.DOM.Attributes.FO.Font_Size;
@@ -808,14 +806,10 @@ package body ODF.Web.Builder is
 
       if To_Identifier.Contains (Node) then
          Self.Current.Object.Set_Field
-           ("identifier",
-            Ada.Strings.Fixed.Trim
-             (Integer'Image (To_Identifier.Element (Node)), Ada.Strings.Both));
+           ("identifier", To_Identifier.Element (Node));
 
       else
-         Self.Current.Object.Set_Field
-           ("identifier",
-            Ada.Strings.Fixed.Trim (Integer'Image (Unused_Id), Ada.Strings.Both));
+         Self.Current.Object.Set_Field ("identifier", Unused_Id);
          To_Node.Insert (Unused_Id, Node);
          To_Identifier.Insert (Node, Unused_Id);
          Unused_Id := Unused_Id + 1;
