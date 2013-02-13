@@ -53,14 +53,15 @@ package body ODF.Web.Applier is
 
    procedure Apply (Change : GNATCOLL.JSON.JSON_Value) is
       Identifier : constant Positive := Change.Get ("identifier");
-      Position   : constant Natural  := Change.Get ("position");
+      Start      : constant Natural  := Change.Get ("start") + 1;
+      Length     : constant Natural  := Change.Get ("length");
       Characters : constant League.Strings.Universal_String
         := League.Strings.From_UTF_8_String (Change.Get ("characters"));
 
    begin
       XML.DOM.Nodes.Character_Datas.Texts.Dom_Text'Class
-       (To_Node.Element (Identifier).all).Insert_Data
-         (Position + 1, Characters);
+       (To_Node.Element (Identifier).all).Replace_Data
+         (Start, Length, Characters);
    end Apply;
 
 end ODF.Web.Applier;

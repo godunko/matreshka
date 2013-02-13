@@ -336,7 +336,38 @@ function OdfTextEdit (rootElement) {
 }
 
 OdfTextEdit.prototype.onKeyPress = function (event) {
-    if (event.keyCode === 13) {
+    if (event.keyCode === 8) {
+        var htmlElement, position;
+
+        event.preventDefault ();
+
+        htmlElement = window.getSelection ().getRangeAt (0).startContainer;
+        position = window.getSelection ().getRangeAt (0).startOffset;
+
+        //  Insert character into display data.
+
+        htmlElement.deleteData (position - 1, 1);
+
+        //  Set text cursor position after inserted character.
+
+        var selection = window.getSelection ();
+        var range = selection.getRangeAt (0);
+        range.setStart (range.startContainer, position - 1);
+        range.setEnd (range.startContainer, position - 1);
+        selection.addRange (range);
+
+        //  Notify server.
+
+        var change = new OdfTextChanged ({
+            identifier: htmlElement.odfElement.identifier,
+            start: position - 1,
+            length: 1,
+            characters: ""});
+        var request = new XMLHttpRequest();
+        request.open ('POST', 'changeODF', false);
+        request.send (JSON.stringify (change));
+
+    } else if (event.keyCode === 13) {
         //  Enter key.
 
         event.preventDefault ();
@@ -391,7 +422,11 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
 
         //  Notify server.
 
-        var change = new OdfTextChanged ({identifier: htmlElement.odfElement.identifier, position: position, characters: String.fromCharCode (event.charCode)});
+        var change = new OdfTextChanged ({
+            identifier: htmlElement.odfElement.identifier,
+            start: position,
+            length: 0,
+            characters: String.fromCharCode (event.charCode)});
         var request = new XMLHttpRequest();
         request.open ('POST', 'changeODF', false);
         request.send (JSON.stringify (change));
@@ -695,5 +730,6 @@ function OdfTextChanged (object) {
 OdfTextChanged.prototype = new OdfElementBase ();
 OdfTextChanged.prototype.constructor = OdfTextChanged;
 OdfTextChanged.prototype.identifier = 0;
-OdfTextChanged.prototype.position = 0;
+OdfTextChanged.prototype.start = 0;
+OdfTextChanged.prototype.length = 0;
 OdfTextChanged.prototype.characters = "";
