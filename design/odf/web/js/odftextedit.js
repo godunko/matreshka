@@ -380,25 +380,23 @@ OdfTextEdit.prototype.onKeyPress = function (event) {
 //        console.log (window.getSelection ().getRangeAt(0));
 //        console.log (window.getSelection ().rangeCount);
 //        console.log (window.getSelection().anchorNode.parentNode.tagName);
-    } else if (event.keyCode == 37) {
-        //  Move cursor left.
+    } else if (event.keyCode == 35) {
+        //  Move cursor end - let browser to handle it.
 
-        console.log (window.getSelection ().getRangeAt(0));
+    } else if (event.keyCode == 36) {
+        //  Move cursor home - let browser to handle it.
+
+    } else if (event.keyCode == 37) {
+        //  Move cursor left - let browser to handle it.
 
     } else if (event.keyCode == 38) {
-        //  Move cursor up.
-
-        console.log (window.getSelection ().getRangeAt(0));
+        //  Move cursor up - let browser to handle it.
 
     } else if (event.keyCode == 39) {
-        //  Move cursor right.
-
-        console.log (window.getSelection ().getRangeAt(0));
+        //  Move cursor right - let browser to handle it.
 
     } else if (event.keyCode == 40) {
-        //  Move cursor down.
-
-        console.log (window.getSelection ().getRangeAt(0));
+        //  Move cursor down - let browser to handle it.
 
     } else if (event.keyCode == 0 && !event.ctrlKey && !event.altKey) {
         var htmlElement, position;
