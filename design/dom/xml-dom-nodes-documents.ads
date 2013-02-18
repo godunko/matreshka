@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,16 +41,135 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Nodes;
+with XML.DOM.Elements;
 
 package XML.DOM.Nodes.Documents is
 
    pragma Preelaborate;
 
+--  interface Document : Node {
+--    // Modified in DOM Level 3:
+--    readonly attribute DocumentType    doctype;
+--    readonly attribute DOMImplementation implementation;
+--    readonly attribute Element         documentElement;
+--    Element            createElement(in DOMString tagName)
+--                                        raises(DOMException);
+--    DocumentFragment   createDocumentFragment();
+--    Text               createTextNode(in DOMString data);
+--    Comment            createComment(in DOMString data);
+--    CDATASection       createCDATASection(in DOMString data)
+--                                        raises(DOMException);
+--    ProcessingInstruction createProcessingInstruction(in DOMString target, 
+--                                                      in DOMString data)
+--                                        raises(DOMException);
+--    Attr               createAttribute(in DOMString name)
+--                                        raises(DOMException);
+--    EntityReference    createEntityReference(in DOMString name)
+--                                        raises(DOMException);
+--    NodeList           getElementsByTagName(in DOMString tagname);
+--    // Introduced in DOM Level 2:
+--    Node               importNode(in Node importedNode, 
+--                                  in boolean deep)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 2:
+--    Attr               createAttributeNS(in DOMString namespaceURI, 
+--                                         in DOMString qualifiedName)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 2:
+--    NodeList           getElementsByTagNameNS(in DOMString namespaceURI, 
+--                                              in DOMString localName);
+--    // Introduced in DOM Level 2:
+--    Element            getElementById(in DOMString elementId);
+--    // Introduced in DOM Level 3:
+--    readonly attribute DOMString       inputEncoding;
+--    // Introduced in DOM Level 3:
+--    readonly attribute DOMString       xmlEncoding;
+--    // Introduced in DOM Level 3:
+--             attribute boolean         xmlStandalone;
+--                                        // raises(DOMException) on setting
+--
+--    // Introduced in DOM Level 3:
+--             attribute DOMString       xmlVersion;
+--                                        // raises(DOMException) on setting
+--
+--    // Introduced in DOM Level 3:
+--             attribute boolean         strictErrorChecking;
+--    // Introduced in DOM Level 3:
+--             attribute DOMString       documentURI;
+--    // Introduced in DOM Level 3:
+--    Node               adoptNode(in Node source)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 3:
+--    readonly attribute DOMConfiguration domConfig;
+--    // Introduced in DOM Level 3:
+--    void               normalizeDocument();
+--    // Introduced in DOM Level 3:
+--    Node               renameNode(in Node n, 
+--                                  in DOMString namespaceURI, 
+--                                  in DOMString qualifiedName)
+--                                        raises(DOMException);
+--  };
+
+   type DOM_Document is new XML.DOM.Nodes.DOM_Node with private;
+   Null_DOM_Document : constant DOM_Document;
+
+   function Create_Element_NS
+    (Self           : in out DOM_Document'Class;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return XML.DOM.Elements.DOM_Element;
+   --  Creates an element of the given qualified name and namespace URI.
+   --
+   --  Per [XML Namespaces], applications must use the value null as the
+   --  namespaceURI parameter for methods if they wish to have no namespace.
+   --
+   --  Parameters
+   --
+   --    namespaceURI of type DOMString
+   --
+   --      The namespace URI of the element to create.
+   --
+   --    qualifiedName of type DOMString
+   --
+   --      The qualified name of the element type to instantiate.
+   --
+   --  Return Value
+   --
+   --    A new Element object with the following attributes:
+   --
+   --           Attribute       Value
+   --           Node.nodeName   qualifiedName
+   --           Node.namespaceURI       namespaceURI
+   --           Node.prefix     prefix, extracted from qualifiedName, or null if there is no prefix
+   --           Node.localName  local name, extracted from qualifiedName
+   --           Element.tagName qualifiedName
+   --
+   --  Exceptions
+   --
+   --    DOMException
+   --
+   --      INVALID_CHARACTER_ERR: Raised if the specified qualifiedName is not
+   --      an XML name according to the XML version in use specified in the
+   --      Document.xmlVersion attribute.
+   --
+   --      NAMESPACE_ERR: Raised if the qualifiedName is a malformed qualified
+   --      name, if the qualifiedName has a prefix and the namespaceURI is
+   --      null, or if the qualifiedName has a prefix that is "xml" and the
+   --      namespaceURI is different from
+   --      "http://www.w3.org/XML/1998/namespace" [XML Namespaces], or if the
+   --      qualifiedName or its prefix is "xmlns" and the namespaceURI is
+   --      different from "http://www.w3.org/2000/xmlns/", or if the
+   --      namespaceURI is "http://www.w3.org/2000/xmlns/" and neither the
+   --      qualifiedName nor its prefix is "xmlns".
+   --
+   --      NOT_SUPPORTED_ERR: Always thrown if the current document does not
+   --      support the "XML" feature, since namespaces were defined by XML.
+
+private
+
    type DOM_Document is new XML.DOM.Nodes.DOM_Node with null record;
 
-   function Create_Element
-    (Self : in out DOM_Document'Class; Tag_Name : DOM_String)
-       return DOM_String;
+   Null_DOM_Document : constant DOM_Document :=
+    (Ada.Finalization.Controlled with Node => null);
 
 end XML.DOM.Nodes.Documents;

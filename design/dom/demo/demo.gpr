@@ -1,0 +1,12 @@
+with "../dom.gpr";
+
+project Demo is
+
+   for Main use ("demo.adb");
+   for Object_Dir use ".objs";
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g", "-gnat12");
+   end Compiler;
+
+end Demo;

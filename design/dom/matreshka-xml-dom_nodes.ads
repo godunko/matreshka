@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,15 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.Atomics.Counters;
+with Matreshka.XML.Counters;
+with Matreshka.XML.DOM_Types;
 
 package Matreshka.XML.DOM_Nodes is
 
    pragma Preelaborate;
 
-   type Node is tagged;
+   type Abstract_Node is abstract tagged;
 
-   type Node_Access is access all Node'Class;
+   type Node_Access is access all Abstract_Node'Class;
 
    procedure Reference (Self : not null Node_Access);
    pragma Inline (Reference);
@@ -59,13 +60,23 @@ package Matreshka.XML.DOM_Nodes is
    --  Decrements reference counter; deallocate object when its value went to
    --  zero.
 
-   type Node is tagged limited record
-      Counter  : aliased Matreshka.Atomics.Counters.Counter;
+   type Abstract_Node is abstract tagged limited record
+      Counter  : aliased Matreshka.XML.Counters.Counter;
+      Is_Root  : Boolean := True;
+      --  Node is root node of subtree, associated with document but not part
+      --  of it.
       Owner    : Node_Access;
+      --  Parent node or associated document when Is_Root set to True.
       Previous : Node_Access;
       Next     : Node_Access;
+      First    : Node_Access;
+      Last     : Node_Access;
    end record;
 
-   not overriding procedure Finalize (Self : not null access Node);
+   not overriding procedure Finalize (Self : not null access Abstract_Node);
+
+   procedure Initialize
+    (Self     : not null access Abstract_Node'Class;
+     Document : Matreshka.XML.DOM_Types.Document_Access);
 
 end Matreshka.XML.DOM_Nodes;

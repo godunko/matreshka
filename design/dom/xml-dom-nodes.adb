@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,118 +41,40 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Unchecked_Deallocation;
 
-with Matreshka.XML.DOM_Documents;
+package body XML.DOM.Nodes is
 
-package body Matreshka.XML.DOM_Nodes is
+   use type Matreshka.XML.Dom_Nodes.Node_Access;
 
-   -----------------
-   -- Dereference --
-   -----------------
+   ------------
+   -- Adjust --
+   ------------
 
-   procedure Dereference (Self : in out Node_Access) is
-
-      procedure Free is
-        new Ada.Unchecked_Deallocation (Abstract_Node'Class, Node_Access);
-
-      Is_Root : constant Boolean := Self.Is_Root;
-      Owner   : Node_Access := Self.Owner;
-
+   overriding procedure Adjust (Self : in out DOM_Node) is
    begin
-      if Matreshka.XML.Counters.Decrement (Self.Counter) then
-         Self.Finalize;
-         Free (Self);
-
-         if Is_Root and Owner /= null then
-            Dereference (Owner);
-         end if;
-
-      else
-         if not Self.Is_Root then
-            Dereference (Self.Owner);
-         end if;
-
-         Self := null;
+      if Self.Node /= null then
+         Matreshka.XML.Dom_Nodes.Reference (Self.Node);
       end if;
-   end Dereference;
+   end Adjust;
 
    --------------
    -- Finalize --
    --------------
 
-   not overriding procedure Finalize (Self : not null access Abstract_Node) is
-      Current : Node_Access := Self.First;
-
+   overriding procedure Finalize (Self : in out DOM_Node) is
    begin
-      while Current /= null loop
-         Dereference (Current);
-         Current := Self.First;
-      end loop;
-
-      if Self.Owner /= null then
-         if Self.Owner.First = Self then
-            Self.Owner.First := Self.Next;
-         end if;
-
-         if Self.Owner.Last = Self then
-            Self.Owner.Last := Self.Previous;
-         end if;
-
-         if Self.Previous /= null then
-            Self.Previous.Next := Self.Next;
-         end if;
-
-         if Self.Next /= null then
-            Self.Next.Previous := Self.Previous;
-         end if;
-
-         Self.Owner := null;
-         Self.Next := null;
-         Self.Previous := null;
+      if Self.Node /= null then
+         Matreshka.XML.Dom_Nodes.Dereference (Self.Node);
       end if;
    end Finalize;
 
-   ----------------
-   -- Initialize --
-   ----------------
+   -------------
+   -- Is_Null --
+   -------------
 
-   procedure Initialize
-    (Self     : not null access Abstract_Node'Class;
-     Document : Matreshka.XML.DOM_Types.Document_Access) is
+   function Is_Null (Self : DOM_Node'Class) return Boolean is
    begin
-      --  Set node's owner.
+      return Self.Node = null;
+   end Is_Null;
 
-      Self.Owner := Node_Access (Document);
-
-      --  Insert node into parent's list of nodes.
-
-      if Document.First = null then
-         --  First node in the list.
-
-         Document.First := Node_Access (Self);
-         Document.Last := Node_Access (Self);
-
-      else
-         Document.Last.Next := Node_Access (Self);
-         Self.Previous := Document.Last;
-         Document.Last := Node_Access (Self);
-      end if;
-
-      Reference (Node_Access (Document));
-   end Initialize;
-
-   ---------------
-   -- Reference --
-   ---------------
-
-   procedure Reference (Self : not null Node_Access) is
-   begin
-      if not Self.Is_Root then
-         Reference (Self.Owner);
-      end if;
-
-      Matreshka.XML.Counters.Increment (Self.Counter);
-   end Reference;
-
-end Matreshka.XML.DOM_Nodes;
+end XML.DOM.Nodes;
