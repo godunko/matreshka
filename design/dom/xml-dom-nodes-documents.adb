@@ -43,9 +43,26 @@
 ------------------------------------------------------------------------------
 with Matreshka.XML.DOM_Documents;
 with Matreshka.XML.DOM_Types;
+with XML.DOM.Nodes.Attributes.Internals;
 with XML.DOM.Nodes.Elements.Internals;
 
 package body XML.DOM.Nodes.Documents is
+
+   -------------------------
+   -- Create_Attribute_NS --
+   -------------------------
+
+   function Create_Attribute_NS
+    (Self           : in out DOM_Document'Class;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return XML.DOM.Attributes.DOM_Attribute is
+   begin
+      return
+        XML.DOM.Nodes.Attributes.Internals.Wrap
+         (Matreshka.XML.DOM_Types.Document_Access
+           (Self.Node).Create_Attribute (Namespace_URI, Qualified_Name));
+   end Create_Attribute_NS;
 
    -----------------------
    -- Create_Element_NS --

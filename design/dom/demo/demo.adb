@@ -1,4 +1,5 @@
 with League.Strings;
+with XML.DOM.Attributes;
 with XML.DOM.Documents;
 with XML.DOM.Elements;
 with XML.DOM.Implementations;
@@ -15,6 +16,10 @@ procedure Demo is
      := Document.Create_Element_NS
          (League.Strings.Empty_Universal_String,
           League.Strings.To_Universal_String ("demo"));
+   Attribute_1    : XML.DOM.Attributes.DOM_Attribute
+     := Document.Create_Attribute_NS
+         (League.Strings.Empty_Universal_String,
+          League.Strings.To_Universal_String ("demoAttr"));
 
 begin
 --   Element := XML.DOM.Elements.Null_DOM_Element;

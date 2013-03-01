@@ -41,12 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+limited with Matreshka.XML.DOM_Attributes;
 limited with Matreshka.XML.DOM_Documents;
 limited with Matreshka.XML.DOM_Elements;
 
 package Matreshka.XML.DOM_Types is
 
    pragma Preelaborate;
+
+   type Attribute_Access is
+     access all Matreshka.XML.DOM_Attributes.Attribute_Node'Class;
 
    type Document_Access is
      access all Matreshka.XML.DOM_Documents.Document_Node'Class;

@@ -53,6 +53,12 @@ package Matreshka.XML.DOM_Documents is
    type Document_Node is
      new Matreshka.XML.DOM_Nodes.Abstract_Node with null record;
 
+   not overriding function Create_Attribute
+    (Self           : not null access Document_Node;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.XML.DOM_Types.Attribute_Access;
+
    not overriding function Create_Element
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;

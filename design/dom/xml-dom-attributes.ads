@@ -41,6 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Nodes.Attrs;
+with XML.DOM.Nodes.Attributes;
 
-package XML.DOM.Attributes renames XML.DOM.Nodes.Attrs;
+package XML.DOM.Attributes renames XML.DOM.Nodes.Attributes;

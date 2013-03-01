@@ -41,65 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Attributes;
-with Matreshka.XML.DOM_Elements;
+with Matreshka.XML.DOM_Types;
 
-package body Matreshka.XML.DOM_Documents is
+package XML.DOM.Nodes.Attributes.Internals is
 
-   ----------------------
-   -- Create_Attribute --
-   ----------------------
+   pragma Preelaborate;
 
-   not overriding function Create_Attribute
-    (Self           : not null access Document_Node;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Types.Attribute_Access is
-   begin
-      return Result :
-        constant not null Matreshka.XML.DOM_Types.Attribute_Access
-          := new Matreshka.XML.DOM_Attributes.Attribute_Node
-      do
-         declare
-            Node : Matreshka.XML.DOM_Attributes.Attribute_Node
-              renames Matreshka.XML.DOM_Attributes.Attribute_Node (Result.all);
+   function Wrap
+    (Node : Matreshka.XML.DOM_Types.Attribute_Access)
+       return XML.DOM.Nodes.Attributes.DOM_Attribute;
 
-         begin
-            Matreshka.XML.DOM_Attributes.Initialize
-             (Node'Access,
-              Self,
-              Namespace_URI,
-              Qualified_Name);
-         end;
-      end return;
-   end Create_Attribute;
-
-   --------------------
-   -- Create_Element --
-   --------------------
-
-   not overriding function Create_Element
-    (Self           : not null access Document_Node;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Types.Element_Access is
-   begin
-      return Result :
-        constant not null Matreshka.XML.DOM_Types.Element_Access
-          := new Matreshka.XML.DOM_Elements.Element_Node
-      do
-         declare
-            Node : Matreshka.XML.DOM_Elements.Element_Node
-              renames Matreshka.XML.DOM_Elements.Element_Node (Result.all);
-
-         begin
-            Matreshka.XML.DOM_Elements.Initialize
-             (Node'Access,
-              Self,
-              Namespace_URI,
-              Qualified_Name);
-         end;
-      end return;
-   end Create_Element;
-
-end Matreshka.XML.DOM_Documents;
+end XML.DOM.Nodes.Attributes.Internals;
