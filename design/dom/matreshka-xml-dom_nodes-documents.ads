@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,24 +41,30 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-with Matreshka.XML.DOM_Types;
-with Matreshka.XML.DOM_Nodes;
-
-package Matreshka.XML.DOM_Elements is
+package Matreshka.XML.DOM_Nodes.Documents is
 
    pragma Preelaborate;
 
-   type Abstract_Element is
-     abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with null record;
+   type Document_Node is
+     new Matreshka.XML.DOM_Nodes.Abstract_Node with record
+      First_Detached : Matreshka.XML.DOM_Nodes.Node_Access;
+      Last_Detached  : Matreshka.XML.DOM_Nodes.Node_Access;
+      --  List of nodes which is not direct or indirect children of root node
+      --  of document or document's document type node. All created nodes are
+      --  added to this list.
+   end record;
 
-   type Element_Node is new Abstract_Element with null record;
-
-   procedure Initialize
-    (Self           : not null access Element_Node'Class;
-     Document       : not null Matreshka.XML.DOM_Types.Document_Access;
+   not overriding function Create_Attribute
+    (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String);
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.XML.DOM_Nodes.Attribute_Access;
 
-end Matreshka.XML.DOM_Elements;
+   not overriding function Create_Element
+    (Self           : not null access Document_Node;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.XML.DOM_Nodes.Element_Access;
+
+end Matreshka.XML.DOM_Nodes.Documents;

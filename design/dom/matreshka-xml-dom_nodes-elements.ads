@@ -41,21 +41,41 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-limited with Matreshka.XML.DOM_Attributes;
-limited with Matreshka.XML.DOM_Documents;
-limited with Matreshka.XML.DOM_Elements;
 
-package Matreshka.XML.DOM_Types is
+package Matreshka.XML.DOM_Nodes.Elements is
 
    pragma Preelaborate;
 
-   type Attribute_Access is
-     access all Matreshka.XML.DOM_Attributes.Attribute_Node'Class;
+   ----------------------
+   -- Abstract_Element --
+   ----------------------
 
-   type Document_Access is
-     access all Matreshka.XML.DOM_Documents.Document_Node'Class;
+   type Abstract_Element is
+     abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with record
+      First_Attribute : Matreshka.XML.DOM_Nodes.Node_Access;
+      Last_Attribute  : Matreshka.XML.DOM_Nodes.Node_Access;
+   end record;
 
-   type Element_Access is
-     access all Matreshka.XML.DOM_Elements.Abstract_Element'Class;
+   function Set_Attribute_Node
+    (Self : in out Abstract_Element'Class;
+     Attr : Matreshka.XML.DOM_Nodes.Attribute_Access)
+       return Matreshka.XML.DOM_Nodes.Attribute_Access;
+   --  Adds new attribute or replace existing attribute by specified. Returns
+   --  replaced attribute. Caller is responsible to dereference returned value.
 
-end Matreshka.XML.DOM_Types;
+   overriding procedure Finalize (Self : not null access Abstract_Element);
+   --  Release attribute nodes owned by element.
+
+   ------------------
+   -- Element_Node --
+   ------------------
+
+   type Element_Node is new Abstract_Element with null record;
+
+   procedure Initialize
+    (Self           : not null access Element_Node'Class;
+     Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String);
+
+end Matreshka.XML.DOM_Nodes.Elements;

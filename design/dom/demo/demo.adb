@@ -12,17 +12,20 @@ procedure Demo is
      := Document.Create_Element_NS
          (League.Strings.Empty_Universal_String,
           League.Strings.To_Universal_String ("demo"));
-   Element_2      : XML.DOM.Elements.DOM_Element
-     := Document.Create_Element_NS
-         (League.Strings.Empty_Universal_String,
-          League.Strings.To_Universal_String ("demo"));
+--   Element_2      : XML.DOM.Elements.DOM_Element
+--     := Document.Create_Element_NS
+--         (League.Strings.Empty_Universal_String,
+--          League.Strings.To_Universal_String ("demo"));
    Attribute_1    : XML.DOM.Attributes.DOM_Attribute
      := Document.Create_Attribute_NS
          (League.Strings.Empty_Universal_String,
           League.Strings.To_Universal_String ("demoAttr"));
+   Aux_Attribute  : XML.DOM.Attributes.DOM_Attribute;
 
 begin
---   Element := XML.DOM.Elements.Null_DOM_Element;
+   Aux_Attribute := Element_1.Set_Attribute_Node_NS (Attribute_1);
+   Element_1 := XML.DOM.Elements.Null_DOM_Element;
+   Attribute_1 := XML.DOM.Attributes.Null_DOM_Attribute;
    null;
    Document := XML.DOM.Documents.Null_DOM_Document;
 end Demo;

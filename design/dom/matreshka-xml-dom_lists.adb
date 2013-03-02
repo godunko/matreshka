@@ -41,24 +41,86 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Interfaces;
+with Matreshka.XML.Counters;
+with Matreshka.XML.DOM_Nodes.Attributes;
+with Matreshka.XML.DOM_Nodes.Documents;
+with Matreshka.XML.DOM_Nodes.Elements;
 
-package Matreshka.XML.Counters is
+package body Matreshka.XML.DOM_Lists is
 
-   pragma Pure;
+   use type Matreshka.XML.DOM_Nodes.Node_Access;
 
-   type Counter is limited private;
+   ---------------------------
+   -- Append_Attribute_Node --
+   ---------------------------
 
-   procedure Increment (Self : in out Counter);
+   procedure Append_Attribute_Node
+    (Element   : not null Matreshka.XML.DOM_Nodes.Element_Access;
+     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access)
+   is
+      Owner_Document : Matreshka.XML.DOM_Nodes.Node_Access := Attribute.Owner;
 
-   function Decrement (Self : in out Counter) return Boolean;
+   begin
+      Attribute.Remove_From_Parent;
 
-   function Is_Zero (Self : Counter) return Boolean;
+      --  Set owner of attribute node.
 
-private
+      Attribute.Is_Root := False;
+      Attribute.Owner := Matreshka.XML.DOM_Nodes.Node_Access (Element);
 
-   type Counter is record
-      Value : Interfaces.Unsigned_32 := 1;
-   end record;
+      --  Append to the list of attribute nodes.
 
-end Matreshka.XML.Counters;
+      if Element.First_Attribute = null then
+         --  First attribute of the list.
+
+         Element.First_Attribute :=
+           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+         Element.Last_Attribute :=
+           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+
+      else
+         Element.Last_Attribute.Next :=
+           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+         Attribute.Previous := Element.Last_Attribute;
+         Element.Last_Attribute :=
+           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+      end if;
+
+      --  Update reference counters.
+
+      Matreshka.XML.Counters.Increment (Attribute.Counter);
+--      Matreshka.XML.DOM_Nodes.Reference
+--       (Matreshka.XML.DOM_Nodes.Node_Access (Attribute));
+      Matreshka.XML.DOM_Nodes.Reference
+       (Matreshka.XML.DOM_Nodes.Node_Access (Element));
+      Matreshka.XML.DOM_Nodes.Dereference (Owner_Document);
+   end Append_Attribute_Node;
+
+   --------------------------
+   -- Append_Detached_Node --
+   --------------------------
+
+   procedure Append_Detached_Node
+    (Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
+     Node     : not null Matreshka.XML.DOM_Nodes.Node_Access) is
+   begin
+      --  Set node's owner.
+
+      Node.Owner := Matreshka.XML.DOM_Nodes.Node_Access (Document);
+
+      --  Insert node into documents's list of detached nodes.
+
+      if Document.First_Detached = null then
+         --  First node in the list.
+
+         Document.First_Detached := Node;
+         Document.Last_Detached := Node;
+
+      else
+         Document.Last_Detached.Next := Node;
+         Node.Previous := Document.Last_Detached;
+         Document.Last_Detached := Node;
+      end if;
+   end Append_Detached_Node;
+
+end Matreshka.XML.DOM_Lists;

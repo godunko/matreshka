@@ -56,7 +56,7 @@
 --  Note: In DOM Level 2, the method normalize is inherited from the Node
 --  interface where it was moved.
 ------------------------------------------------------------------------------
---limited with XML.DOM.Nodes.Attrs;
+limited with XML.DOM.Nodes.Attributes;
 --with XML.DOM.Node_Lists;
 --with XML.DOM.Nodes;
 --with XML.DOM.Type_Infos;
@@ -67,6 +67,94 @@ package XML.DOM.Nodes.Elements is
 
    type DOM_Element is new XML.DOM.Nodes.DOM_Node with private;
    Null_DOM_Element : constant DOM_Element;
+
+-- interface Element : Node {
+--    readonly attribute DOMString       tagName;
+--    DOMString          getAttribute(in DOMString name);
+--    void               setAttribute(in DOMString name, 
+--                                    in DOMString value)
+--                                        raises(DOMException);
+--    void               removeAttribute(in DOMString name)
+--                                        raises(DOMException);
+--    Attr               getAttributeNode(in DOMString name);
+--    Attr               setAttributeNode(in Attr newAttr)
+--                                        raises(DOMException);
+--    Attr               removeAttributeNode(in Attr oldAttr)
+--                                        raises(DOMException);
+--    NodeList           getElementsByTagName(in DOMString name);
+--    // Introduced in DOM Level 2:
+--    DOMString          getAttributeNS(in DOMString namespaceURI, 
+--                                      in DOMString localName)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 2:
+--    void               setAttributeNS(in DOMString namespaceURI, 
+--                                      in DOMString qualifiedName, 
+--                                      in DOMString value)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 2:
+--    void               removeAttributeNS(in DOMString namespaceURI, 
+--                                         in DOMString localName)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 2:
+--    Attr               getAttributeNodeNS(in DOMString namespaceURI, 
+--                                          in DOMString localName)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 2:
+--    NodeList           getElementsByTagNameNS(in DOMString namespaceURI, 
+--                                              in DOMString localName)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 2:
+--    boolean            hasAttribute(in DOMString name);
+--    // Introduced in DOM Level 2:
+--    boolean            hasAttributeNS(in DOMString namespaceURI, 
+--                                      in DOMString localName)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 3:
+--    readonly attribute TypeInfo        schemaTypeInfo;
+--    // Introduced in DOM Level 3:
+--    void               setIdAttribute(in DOMString name, 
+--                                      in boolean isId)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 3:
+--    void               setIdAttributeNS(in DOMString namespaceURI, 
+--                                        in DOMString localName, 
+--                                        in boolean isId)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 3:
+--    void               setIdAttributeNode(in Attr idAttr, 
+--                                          in boolean isId)
+--                                        raises(DOMException);
+--  };
+
+   function Set_Attribute_Node_NS
+    (Self : in out DOM_Element'Class;
+     Attr : XML.DOM.Nodes.Attributes.DOM_Attribute)
+       return XML.DOM.Nodes.Attributes.DOM_Attribute;
+   --  Adds a new attribute. If an attribute with that local name and that
+   --  namespace URI is already present in the element, it is replaced by the
+   --  new one. Replacing an attribute node by itself has no effect.
+   --
+   --  If the newAttr attribute replaces an existing attribute with the same
+   --  local name and namespace URI, the replaced Attr node is returned,
+   --  otherwise null is returned.
+   --
+   --  Per [XML Namespaces], applications must use the value null as the
+   --  namespaceURI parameter for methods if they wish to have no namespace.
+   --
+   --  Raises DOM_Exception:
+   --
+   --   - WRONG_DOCUMENT_ERR: Raised if newAttr was created from a different
+   --     document than the one that created the element.
+   --
+   --   - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+   --
+   --   - INUSE_ATTRIBUTE_ERR: Raised if newAttr is already an attribute of
+   --     another Element object. The DOM user must explicitly clone Attr nodes
+   --     to re-use them in other elements.
+   --
+   --   - NOT_SUPPORTED_ERR: May be raised if the implementation does not
+   --     support the feature "XML" and the language exposed through the
+   --     Document does not support XML Namespaces (such as [HTML 4.01]).
 
 --   function Tag_Name (Self : DOM_Element'Class) return DOM_String;
 --   --  The name of the element. If Node.localName is different from null, this
@@ -276,36 +364,6 @@ package XML.DOM.Nodes.Elements is
 --   --  namespaceURI parameter for methods if they wish to have no namespace.
 --   --
 --   --  Raises DOM_Exception:
---   --
---   --   - NOT_SUPPORTED_ERR: May be raised if the implementation does not
---   --     support the feature "XML" and the language exposed through the
---   --     Document does not support XML Namespaces (such as [HTML 4.01]).
---
---   function Set_Attribute_Node_NS
---    (Self : in out DOM_Element'Class;
---     Attr : XML.DOM.Nodes.Attrs.DOM_Attribute)
---       return XML.DOM.Nodes.Attrs.DOM_Attribute;
---   --  Adds a new attribute. If an attribute with that local name and that
---   --  namespace URI is already present in the element, it is replaced by the
---   --  new one. Replacing an attribute node by itself has no effect.
---   --
---   --  If the newAttr attribute replaces an existing attribute with the same
---   --  local name and namespace URI, the replaced Attr node is returned,
---   --  otherwise null is returned.
---   --
---   --  Per [XML Namespaces], applications must use the value null as the
---   --  namespaceURI parameter for methods if they wish to have no namespace.
---   --
---   --  Raises DOM_Exception:
---   --
---   --   - WRONG_DOCUMENT_ERR: Raised if newAttr was created from a different
---   --     document than the one that created the element.
---   --
---   --   - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
---   --
---   --   - INUSE_ATTRIBUTE_ERR: Raised if newAttr is already an attribute of
---   --     another Element object. The DOM user must explicitly clone Attr nodes
---   --     to re-use them in other elements.
 --   --
 --   --   - NOT_SUPPORTED_ERR: May be raised if the implementation does not
 --   --     support the feature "XML" and the language exposed through the

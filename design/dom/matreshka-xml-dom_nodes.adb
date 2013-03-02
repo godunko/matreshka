@@ -43,7 +43,8 @@
 ------------------------------------------------------------------------------
 with Ada.Unchecked_Deallocation;
 
-with Matreshka.XML.DOM_Documents;
+with Matreshka.XML.DOM_Lists;
+with Matreshka.XML.DOM_Nodes.Documents;
 
 package body Matreshka.XML.DOM_Nodes is
 
@@ -69,8 +70,14 @@ package body Matreshka.XML.DOM_Nodes is
          end if;
 
       else
-         if not Self.Is_Root then
-            Dereference (Self.Owner);
+         if not Is_Root
+           and then Owner /= null
+           and then not Matreshka.XML.Counters.Is_Zero (Owner.Counter)
+         then
+            --  Counter of owner node equal to zero means what owner is in
+            --  destruction, otherwise dereference owner node.
+
+            Dereference (Owner);
          end if;
 
          Self := null;
@@ -85,32 +92,16 @@ package body Matreshka.XML.DOM_Nodes is
       Current : Node_Access := Self.First;
 
    begin
+      --  Remove children nodes.
+
       while Current /= null loop
          Dereference (Current);
          Current := Self.First;
       end loop;
 
-      if Self.Owner /= null then
-         if Self.Owner.First = Self then
-            Self.Owner.First := Self.Next;
-         end if;
+      --  Remove node from parent's list of nodes.
 
-         if Self.Owner.Last = Self then
-            Self.Owner.Last := Self.Previous;
-         end if;
-
-         if Self.Previous /= null then
-            Self.Previous.Next := Self.Next;
-         end if;
-
-         if Self.Next /= null then
-            Self.Next.Previous := Self.Previous;
-         end if;
-
-         Self.Owner := null;
-         Self.Next := null;
-         Self.Previous := null;
-      end if;
+      Abstract_Node'Class (Self.all).Remove_From_Parent;
    end Finalize;
 
    ----------------
@@ -119,27 +110,11 @@ package body Matreshka.XML.DOM_Nodes is
 
    procedure Initialize
     (Self     : not null access Abstract_Node'Class;
-     Document : Matreshka.XML.DOM_Types.Document_Access) is
+     Document : Matreshka.XML.DOM_Nodes.Document_Access) is
    begin
-      --  Set node's owner.
-
-      Self.Owner := Node_Access (Document);
-
-      --  Insert node into parent's list of nodes.
-
-      if Document.First = null then
-         --  First node in the list.
-
-         Document.First := Node_Access (Self);
-         Document.Last := Node_Access (Self);
-
-      else
-         Document.Last.Next := Node_Access (Self);
-         Self.Previous := Document.Last;
-         Document.Last := Node_Access (Self);
-      end if;
-
-      Reference (Node_Access (Document));
+      Matreshka.XML.DOM_Nodes.Reference
+       (Matreshka.XML.DOM_Nodes.Node_Access (Document));
+      Matreshka.XML.DOM_Lists.Append_Detached_Node (Document, Self);
    end Initialize;
 
    ---------------
@@ -154,5 +129,55 @@ package body Matreshka.XML.DOM_Nodes is
 
       Matreshka.XML.Counters.Increment (Self.Counter);
    end Reference;
+
+   ------------------------
+   -- Remove_From_Parent --
+   ------------------------
+
+   not overriding procedure Remove_From_Parent
+    (Self : not null access Abstract_Node)
+   is
+      Owner_Document : Matreshka.XML.DOM_Nodes.Document_Access;
+
+   begin
+      if Self.Owner /= null then
+         if Self.Is_Root then
+            --  Root elements are attached to the list of detached nodes of
+            --  document.
+
+            Owner_Document :=
+              Matreshka.XML.DOM_Nodes.Document_Access (Self.Owner);
+
+            if Owner_Document.First_Detached = Self then
+               Owner_Document.First_Detached := Self.Next;
+            end if;
+
+            if Owner_Document.Last_Detached = Self then
+               Owner_Document.Last_Detached := Self.Previous;
+            end if;
+
+         else
+            if Self.Owner.First = Self then
+               Self.Owner.First := Self.Next;
+            end if;
+
+            if Self.Owner.Last = Self then
+               Self.Owner.Last := Self.Previous;
+            end if;
+         end if;
+
+         if Self.Previous /= null then
+            Self.Previous.Next := Self.Next;
+         end if;
+
+         if Self.Next /= null then
+            Self.Next.Previous := Self.Previous;
+         end if;
+
+         Self.Owner    := null;
+         Self.Next     := null;
+         Self.Previous := null;
+      end if;
+   end Remove_From_Parent;
 
 end Matreshka.XML.DOM_Nodes;

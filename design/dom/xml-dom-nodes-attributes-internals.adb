@@ -41,16 +41,27 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Attributes;
+with Matreshka.XML.DOM_Nodes.Attributes;
 
 package body XML.DOM.Nodes.Attributes.Internals is
+
+   --------------
+   -- Internal --
+   --------------
+
+   function Internal
+    (Node : XML.DOM.Nodes.Attributes.DOM_Attribute)
+       return Matreshka.XML.DOM_Nodes.Attribute_Access is
+   begin
+      return Matreshka.XML.DOM_Nodes.Attribute_Access (Node.Node);
+   end Internal;
 
    ----------
    -- Wrap --
    ----------
 
    function Wrap
-    (Node : Matreshka.XML.DOM_Types.Attribute_Access)
+    (Node : Matreshka.XML.DOM_Nodes.Attribute_Access)
        return XML.DOM.Nodes.Attributes.DOM_Attribute is
    begin
       return

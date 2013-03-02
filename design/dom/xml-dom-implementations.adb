@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Documents;
+with Matreshka.XML.DOM_Nodes.Documents;
 with XML.DOM.Nodes.Documents.Internals;
 
 package body XML.DOM.Implementations is
@@ -71,7 +71,7 @@ package body XML.DOM.Implementations is
 
       return
         XML.DOM.Nodes.Documents.Internals.Wrap
-         (new Matreshka.XML.DOM_Documents.Document_Node);
+         (new Matreshka.XML.DOM_Nodes.Documents.Document_Node);
    end Create_Document;
 
 end XML.DOM.Implementations;

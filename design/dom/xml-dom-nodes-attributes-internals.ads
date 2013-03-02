@@ -41,14 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Types;
+with Matreshka.XML.DOM_Nodes;
 
 package XML.DOM.Nodes.Attributes.Internals is
 
    pragma Preelaborate;
 
    function Wrap
-    (Node : Matreshka.XML.DOM_Types.Attribute_Access)
+    (Node : Matreshka.XML.DOM_Nodes.Attribute_Access)
        return XML.DOM.Nodes.Attributes.DOM_Attribute;
+
+   function Internal
+    (Node : XML.DOM.Nodes.Attributes.DOM_Attribute)
+       return Matreshka.XML.DOM_Nodes.Attribute_Access;
 
 end XML.DOM.Nodes.Attributes.Internals;

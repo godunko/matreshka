@@ -41,8 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with Matreshka.XML.Counters;
-with Matreshka.XML.DOM_Types;
+limited with Matreshka.XML.DOM_Nodes.Attributes;
+limited with Matreshka.XML.DOM_Nodes.Documents;
+limited with Matreshka.XML.DOM_Nodes.Elements;
 
 package Matreshka.XML.DOM_Nodes is
 
@@ -50,6 +54,14 @@ package Matreshka.XML.DOM_Nodes is
 
    type Abstract_Node is abstract tagged;
 
+   --  Access types for all type of DOM nodes.
+
+   type Attribute_Access is
+     access all Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node'Class;
+   type Document_Access is
+     access all Matreshka.XML.DOM_Nodes.Documents.Document_Node'Class;
+   type Element_Access is
+     access all Matreshka.XML.DOM_Nodes.Elements.Abstract_Element'Class;
    type Node_Access is access all Abstract_Node'Class;
 
    procedure Reference (Self : not null Node_Access);
@@ -75,8 +87,14 @@ package Matreshka.XML.DOM_Nodes is
 
    not overriding procedure Finalize (Self : not null access Abstract_Node);
 
+   not overriding procedure Remove_From_Parent
+    (Self : not null access Abstract_Node);
+   --  Removes node from the corresponding list of nodes of node's parent.
+   --  This subprogram is overridden by Abstract_Attribute type to remove
+   --  attribute node from list of attributes of parent element node.
+
    procedure Initialize
     (Self     : not null access Abstract_Node'Class;
-     Document : Matreshka.XML.DOM_Types.Document_Access);
+     Document : Matreshka.XML.DOM_Nodes.Document_Access);
 
 end Matreshka.XML.DOM_Nodes;

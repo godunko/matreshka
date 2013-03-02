@@ -41,8 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Documents;
-with Matreshka.XML.DOM_Types;
+with Matreshka.XML.DOM_Nodes.Documents;
 with XML.DOM.Nodes.Attributes.Internals;
 with XML.DOM.Nodes.Elements.Internals;
 
@@ -60,7 +59,7 @@ package body XML.DOM.Nodes.Documents is
    begin
       return
         XML.DOM.Nodes.Attributes.Internals.Wrap
-         (Matreshka.XML.DOM_Types.Document_Access
+         (Matreshka.XML.DOM_Nodes.Document_Access
            (Self.Node).Create_Attribute (Namespace_URI, Qualified_Name));
    end Create_Attribute_NS;
 
@@ -76,7 +75,7 @@ package body XML.DOM.Nodes.Documents is
    begin
       return
         XML.DOM.Nodes.Elements.Internals.Wrap
-         (Matreshka.XML.DOM_Types.Document_Access
+         (Matreshka.XML.DOM_Nodes.Document_Access
            (Self.Node).Create_Element (Namespace_URI, Qualified_Name));
    end Create_Element_NS;
 

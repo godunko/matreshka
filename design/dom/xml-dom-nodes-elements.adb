@@ -41,24 +41,25 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Interfaces;
+with Matreshka.XML.DOM_Nodes.Elements;
+with XML.DOM.Nodes.Attributes.Internals;
 
-package Matreshka.XML.Counters is
+package body XML.DOM.Nodes.Elements is
 
-   pragma Pure;
+   ---------------------------
+   -- Set_Attribute_Node_NS --
+   ---------------------------
 
-   type Counter is limited private;
+   function Set_Attribute_Node_NS
+    (Self : in out DOM_Element'Class;
+     Attr : XML.DOM.Nodes.Attributes.DOM_Attribute)
+       return XML.DOM.Nodes.Attributes.DOM_Attribute is
+   begin
+      return
+        XML.DOM.Nodes.Attributes.Internals.Wrap
+         (Matreshka.XML.DOM_Nodes.Elements.Abstract_Element'Class
+           (Self.Node.all).Set_Attribute_Node
+             (XML.DOM.Nodes.Attributes.Internals.Internal (Attr)));
+   end Set_Attribute_Node_NS;
 
-   procedure Increment (Self : in out Counter);
-
-   function Decrement (Self : in out Counter) return Boolean;
-
-   function Is_Zero (Self : Counter) return Boolean;
-
-private
-
-   type Counter is record
-      Value : Interfaces.Unsigned_32 := 1;
-   end record;
-
-end Matreshka.XML.Counters;
+end XML.DOM.Nodes.Elements;

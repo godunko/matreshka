@@ -66,4 +66,13 @@ package body Matreshka.XML.Counters is
       Self.Value := Self.Value + 1;
    end Increment;
 
+   -------------
+   -- Is_Zero --
+   -------------
+
+   function Is_Zero (Self : Counter) return Boolean is
+   begin
+      return Self.Value = 0;
+   end Is_Zero;
+
 end Matreshka.XML.Counters;

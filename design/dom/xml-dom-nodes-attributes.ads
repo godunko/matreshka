@@ -113,6 +113,7 @@ package XML.DOM.Nodes.Attributes is
    pragma Preelaborate;
 
    type DOM_Attribute is new XML.DOM.Nodes.DOM_Node with private;
+   Null_DOM_Attribute : constant DOM_Attribute;
 
 --   function Name (Self : DOM_Attribute'Class) return DOM_String;
 --   --  Returns the name of this attribute. If Node.localName is different from
@@ -193,5 +194,8 @@ package XML.DOM.Nodes.Attributes is
 private
 
    type DOM_Attribute is new XML.DOM.Nodes.DOM_Node with null record;
+
+   Null_DOM_Attribute : constant DOM_Attribute
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.DOM.Nodes.Attributes;

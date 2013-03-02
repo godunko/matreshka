@@ -41,12 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Types;
+with Matreshka.XML.DOM_Nodes;
 
 package XML.DOM.Nodes.Documents.Internals is
 
    function Wrap
-    (Node : Matreshka.XML.DOM_Types.Document_Access)
+    (Node : Matreshka.XML.DOM_Nodes.Document_Access)
        return XML.DOM.Nodes.Documents.DOM_Document;
 
 end XML.DOM.Nodes.Documents.Internals;

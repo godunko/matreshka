@@ -41,65 +41,34 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Attributes;
-with Matreshka.XML.DOM_Elements;
 
-package body Matreshka.XML.DOM_Documents is
+package Matreshka.XML.DOM_Nodes.Attributes is
 
-   ----------------------
-   -- Create_Attribute --
-   ----------------------
+   pragma Preelaborate;
 
-   not overriding function Create_Attribute
-    (Self           : not null access Document_Node;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Types.Attribute_Access is
-   begin
-      return Result :
-        constant not null Matreshka.XML.DOM_Types.Attribute_Access
-          := new Matreshka.XML.DOM_Attributes.Attribute_Node
-      do
-         declare
-            Node : Matreshka.XML.DOM_Attributes.Attribute_Node
-              renames Matreshka.XML.DOM_Attributes.Attribute_Node (Result.all);
+   ------------------------
+   -- Abstract_Attribute --
+   ------------------------
 
-         begin
-            Matreshka.XML.DOM_Attributes.Initialize
-             (Node'Access,
-              Self,
-              Namespace_URI,
-              Qualified_Name);
-         end;
-      end return;
-   end Create_Attribute;
+   type Abstract_Attribute is
+     abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with null record;
+
+   overriding procedure Remove_From_Parent
+    (Self : not null access Abstract_Attribute);
+   --  Removes attribute node from corresponding list of nodes of parent node.
+   --  In addition to default implementation it removes attribute node from
+   --  the list of attribute nodes of parent element node.
 
    --------------------
-   -- Create_Element --
+   -- Attribute_Node --
    --------------------
 
-   not overriding function Create_Element
-    (Self           : not null access Document_Node;
+   type Attribute_Node is new Abstract_Attribute with null record;
+
+   procedure Initialize
+    (Self           : not null access Attribute_Node'Class;
+     Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
      Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Types.Element_Access is
-   begin
-      return Result :
-        constant not null Matreshka.XML.DOM_Types.Element_Access
-          := new Matreshka.XML.DOM_Elements.Element_Node
-      do
-         declare
-            Node : Matreshka.XML.DOM_Elements.Element_Node
-              renames Matreshka.XML.DOM_Elements.Element_Node (Result.all);
+     Qualified_Name : League.Strings.Universal_String);
 
-         begin
-            Matreshka.XML.DOM_Elements.Initialize
-             (Node'Access,
-              Self,
-              Namespace_URI,
-              Qualified_Name);
-         end;
-      end return;
-   end Create_Element;
-
-end Matreshka.XML.DOM_Documents;
+end Matreshka.XML.DOM_Nodes.Attributes;

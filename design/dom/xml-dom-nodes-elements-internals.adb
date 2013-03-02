@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Elements;
+with Matreshka.XML.DOM_Nodes.Elements;
 
 package body XML.DOM.Nodes.Elements.Internals is
 
@@ -50,7 +50,7 @@ package body XML.DOM.Nodes.Elements.Internals is
    ----------
 
    function Wrap
-    (Node : Matreshka.XML.DOM_Types.Element_Access)
+    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
        return XML.DOM.Nodes.Elements.DOM_Element is
    begin
       return

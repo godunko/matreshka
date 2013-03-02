@@ -41,20 +41,69 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package provides implementation of doubly linked lists of nodes and
+--  attributes.
+------------------------------------------------------------------------------
+with Matreshka.XML.DOM_Nodes;
 
-package body Matreshka.XML.DOM_Elements is
+package Matreshka.XML.DOM_Lists is
 
-   ----------------
-   -- Initialize --
-   ----------------
+   pragma Preelaborate;
 
-   procedure Initialize
-    (Self           : not null access Element_Node'Class;
-     Document       : not null Matreshka.XML.DOM_Types.Document_Access;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String) is
-   begin
-      Matreshka.XML.DOM_Nodes.Initialize (Self, Document);
-   end Initialize;
+   procedure Append_Detached_Node
+    (Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
+     Node     : not null Matreshka.XML.DOM_Nodes.Node_Access);
+   --  Appends detached (newly created) node to the list of detaches nodes of
+   --  the document.
 
-end Matreshka.XML.DOM_Elements;
+   procedure Append_Attribute_Node
+    (Element   : not null Matreshka.XML.DOM_Nodes.Element_Access;
+     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access);
+   --  Append attribute node to the list of attribute nodes of element node.
+   --  Attribute node must be detached node.
+
+--   ---------------
+--   -- Node_List --
+--   ---------------
+--
+--   type Node_List is private;
+--
+--   type Node_List_Entry is private;
+--
+----   procedure Append
+----    (Owner : not null Matreshka.XML.DOM_Nodes.Node_Access;
+----     List  : in out Node_List;
+----     Node  : not null Matreshka.XML.DOM_Nodes.Node_Access;
+----     Item  : in out Node_List_Entry);
+--
+--   --------------------
+--   -- Attribute_List --
+--   --------------------
+--
+--   type Attribute_List is private;
+--
+--   type Attribute_List_Entry is private;
+--
+--private
+--
+--   type Node_List is record
+--      First : Matreshka.XML.DOM_Nodes.Node_Access;
+--      Last  : Matreshka.XML.DOM_Nodes.Node_Access;
+--   end record;
+--
+--   type Node_List_Entry is record
+--      Previous : Matreshka.XML.DOM_Nodes.Node_Access;
+--      Next     : Matreshka.XML.DOM_Nodes.Node_Access;
+--   end record;
+--
+--   type Attribute_List is record
+--      First : Matreshka.XML.DOM_Nodes.Attribute_Access;
+--      Last  : Matreshka.XML.DOM_Nodes.Attribute_Access;
+--   end record;
+--
+--   type Attribute_List_Entry is record
+--      Previous : Matreshka.XML.DOM_Nodes.Attribute_Access;
+--      Next     : Matreshka.XML.DOM_Nodes.Attribute_Access;
+--   end record;
+
+end Matreshka.XML.DOM_Lists;

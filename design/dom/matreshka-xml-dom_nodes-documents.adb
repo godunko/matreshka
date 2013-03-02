@@ -41,24 +41,67 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with Matreshka.XML.DOM_Nodes.Attributes;
+with Matreshka.XML.DOM_Nodes.Elements;
 
-with Matreshka.XML.DOM_Types;
-with Matreshka.XML.DOM_Nodes;
+package body Matreshka.XML.DOM_Nodes.Documents is
 
-package Matreshka.XML.DOM_Attributes is
+   ----------------------
+   -- Create_Attribute --
+   ----------------------
 
-   pragma Preelaborate;
-
-   type Abstract_Attribute is
-     abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with null record;
-
-   type Attribute_Node is new Abstract_Attribute with null record;
-
-   procedure Initialize
-    (Self           : not null access Attribute_Node'Class;
-     Document       : not null Matreshka.XML.DOM_Types.Document_Access;
+   not overriding function Create_Attribute
+    (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String);
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.XML.DOM_Nodes.Attribute_Access is
+   begin
+      return Result :
+        constant not null Matreshka.XML.DOM_Nodes.Attribute_Access
+          := new Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node
+      do
+         declare
+            Node : Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node
+              renames Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node
+                       (Result.all);
 
-end Matreshka.XML.DOM_Attributes;
+         begin
+            Matreshka.XML.DOM_Nodes.Attributes.Initialize
+             (Node'Access,
+              Self,
+              Namespace_URI,
+              Qualified_Name);
+         end;
+      end return;
+   end Create_Attribute;
+
+   --------------------
+   -- Create_Element --
+   --------------------
+
+   not overriding function Create_Element
+    (Self           : not null access Document_Node;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.XML.DOM_Nodes.Element_Access is
+   begin
+      return Result :
+        constant not null Matreshka.XML.DOM_Nodes.Element_Access
+          := new Matreshka.XML.DOM_Nodes.Elements.Element_Node
+      do
+         declare
+            Node : Matreshka.XML.DOM_Nodes.Elements.Element_Node
+              renames Matreshka.XML.DOM_Nodes.Elements.Element_Node
+                       (Result.all);
+
+         begin
+            Matreshka.XML.DOM_Nodes.Elements.Initialize
+             (Node'Access,
+              Self,
+              Namespace_URI,
+              Qualified_Name);
+         end;
+      end return;
+   end Create_Element;
+
+end Matreshka.XML.DOM_Nodes.Documents;

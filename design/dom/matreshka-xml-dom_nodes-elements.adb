@@ -41,20 +41,64 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML.DOM_Lists;
 
-package body Matreshka.XML.DOM_Attributes is
+package body Matreshka.XML.DOM_Nodes.Elements is
+
+   --------------
+   -- Finalize --
+   --------------
+
+   overriding procedure Finalize (Self : not null access Abstract_Element) is
+      use type Matreshka.XML.DOM_Nodes.Node_Access;
+
+      Current : Matreshka.XML.DOM_Nodes.Node_Access := Self.First_Attribute;
+
+   begin
+      while Current /= null loop
+         Matreshka.XML.DOM_Nodes.Dereference (Current);
+         Current := Self.First_Attribute;
+      end loop;
+
+      Matreshka.XML.DOM_Nodes.Finalize
+       (Matreshka.XML.DOM_Nodes.Abstract_Node (Self.all)'Access);
+   end Finalize;
 
    ----------------
    -- Initialize --
    ----------------
 
    procedure Initialize
-    (Self           : not null access Attribute_Node'Class;
-     Document       : not null Matreshka.XML.DOM_Types.Document_Access;
+    (Self           : not null access Element_Node'Class;
+     Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String) is
    begin
       Matreshka.XML.DOM_Nodes.Initialize (Self, Document);
    end Initialize;
 
-end Matreshka.XML.DOM_Attributes;
+   ------------------------
+   -- Set_Attribute_Node --
+   ------------------------
+
+   function Set_Attribute_Node
+    (Self : in out Abstract_Element'Class;
+     Attr : Matreshka.XML.DOM_Nodes.Attribute_Access)
+       return Matreshka.XML.DOM_Nodes.Attribute_Access
+   is
+      use type Matreshka.XML.DOM_Nodes.Node_Access;
+
+--      Current : Matreshka.XML.DOM_Nodes.Node_Access := Self.First_Attribute;
+
+   begin
+--      while Current /= null loop
+--         Current := Current.Next;
+--      end loop;
+
+      Matreshka.XML.DOM_Lists.Append_Attribute_Node
+       (Self'Unchecked_Access, Attr);
+
+      return null;
+   end Set_Attribute_Node;
+
+end Matreshka.XML.DOM_Nodes.Elements;
