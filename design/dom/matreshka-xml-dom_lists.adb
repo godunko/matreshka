@@ -56,12 +56,9 @@ package body Matreshka.XML.DOM_Lists is
 
    procedure Append_Attribute_Node
     (Element   : not null Matreshka.XML.DOM_Nodes.Element_Access;
-     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access)
-   is
-      Owner_Document : Matreshka.XML.DOM_Nodes.Node_Access := Attribute.Owner;
-
+     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access) is
    begin
-      Attribute.Remove_From_Parent;
+      Detach_From_Parent (Matreshka.XML.DOM_Nodes.Node_Access (Attribute));
 
       --  Set owner of attribute node.
 
@@ -93,7 +90,6 @@ package body Matreshka.XML.DOM_Lists is
 --       (Matreshka.XML.DOM_Nodes.Node_Access (Attribute));
       Matreshka.XML.DOM_Nodes.Reference
        (Matreshka.XML.DOM_Nodes.Node_Access (Element));
-      Matreshka.XML.DOM_Nodes.Dereference (Owner_Document);
    end Append_Attribute_Node;
 
    --------------------------
@@ -122,5 +118,61 @@ package body Matreshka.XML.DOM_Lists is
          Document.Last_Detached := Node;
       end if;
    end Append_Detached_Node;
+
+   ------------------------
+   -- Detach_From_Parent --
+   ------------------------
+
+   procedure Detach_From_Parent
+    (Node : not null Matreshka.XML.DOM_Nodes.Node_Access)
+   is
+      Owner : Matreshka.XML.DOM_Nodes.Node_Access := Node.Owner;
+
+   begin
+      Node.Remove_From_Parent;
+
+      if Node.Is_Root then
+         --  When root node has owner node it means what it is detached node of
+         --  the document. Document node's counter need to be decremented by 1.
+
+         if Owner /= null then
+            if Matreshka.XML.Counters.Decrement (Owner.Counter) then
+               --  Must never happen.
+
+               raise Program_Error;
+            end if;
+         end if;
+
+      else
+         --  Decrement counter to remove parent-child dependency.
+
+         if Matreshka.XML.Counters.Decrement (Node.Counter) then
+            --  Must never happen.
+
+            raise Program_Error;
+         end if;
+
+         --  Decrement counters of all parent nodes by value of counter of
+         --  removed node.
+
+         while Owner /= null loop
+            if Matreshka.XML.Counters.Is_Zero (Owner.Counter) then
+               raise Program_Error;
+            end if;
+
+            if Matreshka.XML.Counters.Decrement
+                (Owner.Counter, Node.Counter)
+            then
+               --  Must never happen.
+
+               raise Program_Error;
+            end if;
+
+            exit when Owner.Is_Root;
+
+            Owner := Owner.Owner;
+         end loop;
+      end if;
+   end Detach_From_Parent;
 
 end Matreshka.XML.DOM_Lists;

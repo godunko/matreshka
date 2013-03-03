@@ -58,6 +58,17 @@ package body Matreshka.XML.Counters is
    end Decrement;
 
    ---------------
+   -- Decrement --
+   ---------------
+
+   function Decrement (Self : in out Counter; By : Counter) return Boolean is
+   begin
+      Self.Value := Self.Value - By.Value;
+
+      return Self.Value = 0;
+   end Decrement;
+
+   ---------------
    -- Increment --
    ---------------
 

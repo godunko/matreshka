@@ -53,6 +53,8 @@ package Matreshka.XML.Counters is
 
    function Decrement (Self : in out Counter) return Boolean;
 
+   function Decrement (Self : in out Counter; By : Counter) return Boolean;
+
    function Is_Zero (Self : Counter) return Boolean;
 
 private
