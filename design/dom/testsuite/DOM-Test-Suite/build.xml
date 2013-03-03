@@ -1,0 +1,3634 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Copyright  2001-2005 World Wide Web Consortium,
+(Massachusetts Institute of Technology, European Research Consortium
+for Informatics and Mathematics, Keio University). All
+Rights Reserved. This work is distributed under the W3C Software License [1] in the
+hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+[1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+-->
+<project default="usage" basedir=".">
+    <!--
+       specifying -Dno-network=true on command line
+       should allow building without a network
+       connection as long as all necessary files
+       have previously been downloaded.
+    -->
+    <property name="no-network" value="false"/>
+
+<target name="usage">
+        <echo message="common targets:"/>
+    <echo message="usage                displays this message"/>
+    <echo message="clean                deletes all generated files"/>
+    <echo message="junit-run            builds JUnit adapter for DOM Tests for Java"/>
+    <echo message="dom1-core-jar        builds DOM Level 1 Core tests for Java"/>
+    <echo message="dom1-schema          builds W3C XML Schema for DOM 1 tests"/>
+    <echo message="dom1-core-matrix     builds test matrix for DOM Level 1 Core"/>
+    <echo message="dom1-core-validate-tests"/>
+    <echo message="                     validates DOM Level 1 Core tests against DTD"/>
+    <echo message="dom1-core-gen-jsunit"/>
+    <echo message="                     builds JSUnit adapters for DOM Level 1 Core"/>
+    <echo message="dom1-core-doxygen    builds documentation for DOM Level 1 Core"/>
+    <echo message="dom1-core-dist       builds distribution for DOM Level 1 Core"/>
+    <echo message="dom2-core-*          Same as above but for DOM Level 2 Core"/>
+    <echo message="dom2-html-*          Same as above but for DOM Level 2 Core"/>
+        <echo message=""/>
+</target>
+
+<target name="init">
+        <property name="specs.dir" value="./lib/specs"/>
+        <property name="transforms.dir" value="./transforms"/>
+        <property name="build.dir" value="./build"/>
+        <property name="java.build.dir" value="./build/java"/>
+        <property name="tests.dir" value="./tests"/>
+        <property name="metadata.dir" value="./build/metadata"/>
+        <property name="dist.dir" value="./dist"/>
+        <property name="lib.dir" value="./lib"/>
+        <!--  any jar that contains org.w3c.dom and javax.xml.parsers classes  -->
+        <property name="jaxp.jar" value="d:/ant1.4/lib/xerces.jar"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <property name="junit.version" value="3.8.1"/>
+        <available property="junit-available" file="${lib.dir}/junit${junit.version}/junit.jar"/>
+        <available property="junit-license-available" file="${lib.dir}/junit-license.html"/>
+        <available property="xhtml1-dtd-available" file="${lib.dir}/xhtml1-dtd/xhtml1-frameset.dtd"/>
+        <available property="jtidy-available" classname="org.w3c.tidy.Tidy"/>
+        <available property="junit-in-classpath" classname="junit.framework.TestCase"/>
+        <condition property="ant-15" value="true">
+                <contains string="${ant.version}" substring="1.5"/>
+        </condition>
+</target>
+
+
+
+<target name="clean" depends="init">
+        <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+    <delete>
+        <fileset dir="tests" includes="**/dom?.dtd **/dom?.xsd **/test-to-html.xsl"/>
+    </delete>
+</target>
+
+<target name="check-schema-support" depends="init" if="ant-15">
+        <fail if="ant-15" message="Schema validation requires Ant 1.6 or later."/>
+</target>
+
+
+<target name="gen-java">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+    <property name="import-html" value=""/>
+    <mkdir dir="${build.dir}/java/org/w3c/domts/level${level}/${module}"/>
+
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${java.build.dir}/org/w3c/domts/level${level}/${module}"
+                   includes="*.xml"
+           excludes="metadata.xml"
+               style="${transforms.dir}/test-to-java.xsl"
+               extension=".java">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom${level}-interfaces.xml"/>
+                <param name="package"
+                       expression="org.w3c.domts.level${level}.${module}"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level${level}/${module}/"/>
+                <param name="import-html"
+                       expression="${import-html}"/>
+        </style>
+</target>
+
+
+
+
+<target name="gen-jsunit-no-validation" depends="get-xhtml1-dtd">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+    <property name="hideHTML" value="no"/>
+    <property name="hideSVG" value="no"/>
+
+    <mkdir dir="${build.dir}/ecmascript/level${level}/${module}/files"/>
+        <copy todir="${build.dir}/ecmascript/level${level}/${module}">
+        <fileset dir="ecmascript" includes="DOMTest*.js"/>
+    </copy>
+    <copy todir="${build.dir}/ecmascript/level${level}/${module}/files">
+                <fileset dir="tests/level${level}/${module}/files" includes="**/*" excludes="*.bak"/>
+    </copy>
+    <!--  copy XHTML 1.0 DTD's to output directory   -->
+    <copy todir="${build.dir}/ecmascript/level${level}/${module}/files">
+                <fileset dir="${lib.dir}/xhtml1-dtd"/>
+    </copy>
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${build.dir}/ecmascript/level${level}/${module}"
+                   includes="*.xml"
+           excludes="metadata.xml"
+               style="${transforms.dir}/test-to-jsunit.xsl"
+               extension=".html">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom${level}-interfaces.xml"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level${level}/${module}/"/>
+        <param name="testpath" expression="../level${level}/${module}/"/>
+        <param name="hideHTML" expression="${hideHTML}"/>
+        <param name="hideSVG" expression="${hideSVG}"/>
+        </style>
+
+        <!--  Bad HTML serialization can put Acirc; in document -->
+    <replace
+                   dir="${build.dir}/ecmascript/level${level}/${module}"
+                   includes="*.html"
+                   token="&amp;Acirc;"
+                   value=""/>
+</target>
+
+
+<target name="gen-jsunit">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+    <property name="hideHTML" value="no"/>
+    <property name="hideSVG" value="no"/>
+
+        <antcall target="gen-jsunit-no-validation">
+                <param name="level" value="${level}"/>
+                <param name="module" value="${module}"/>
+                <param name="hideHTML" value="${hideHTML}"/>
+                <param name="hideSVG" value="${hideSVG}"/>
+        </antcall>
+        <!-- check that generated HTML passes JTidy   -->
+    <antcall target="validate-html">
+        <param name="dir" value="${build.dir}/ecmascript/level${level}/${module}"/>
+    </antcall>
+
+</target>
+
+
+<!--
+Tests contain an xml-stylesheet processing instruction
+This target checks that the output of that implied transform is valid HTML
+-->
+<target name="validate-test-html" depends="init">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+
+    <mkdir dir="${build.dir}/html/level${level}/${module}/files"/>
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${build.dir}/html/level${level}/${module}"
+                   includes="*.xml"
+           excludes="metadata.xml"
+               style="${transforms.dir}/test-to-html.xsl"
+               extension=".html">
+        </style>
+
+        <!-- check that generated HTML passes JTidy   -->
+    <antcall target="validate-html">
+        <param name="dir" value="${build.dir}/html/level${level}/${module}"/>
+    </antcall>
+
+</target>
+
+
+
+
+
+<target name="gen-svgunit">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+        <property name="dst.dir" value="${build.dir}/self-hosted/svg/level${level}/${module}"/>
+
+        <copy todir="${dst.dir}">
+        <fileset dir="ecmascript" includes="svgunit.js"/>
+    </copy>
+    <copy todir="${dst.dir}">
+        <fileset dir="tests/level${level}/${module}/files"
+            excludes="*.bak *.html *.xml *.xhtml *.svg *.js"/>
+    </copy>
+        <style basedir="${tests.dir}/level${level}/${module}"
+               destdir="${dst.dir}"
+               includes="*.xml"
+               excludes="metadata.xml alltests.xml"
+               style="${transforms.dir}/test-to-svgunit.xsl"
+               extension=".js">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom${level}-interfaces.xml"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level${level}/${module}/"/>
+                <param name="testpath" expression="../level${level}/${module}/"/>
+        </style>
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${dst.dir}"
+                   includes="alltests.xml"
+               style="${transforms.dir}/suite-to-svgunit.xsl"
+               extension=".ant">
+        </style>
+
+        <!--  a suite creates an Ant file that is executed to fixup the filenames  -->
+        <ant antfile="${dst.dir}/alltests.ant">
+                <property name="svg.dir" value="${dst.dir}"/>
+                <property name="files.dir" value="${tests.dir}/level${level}/${module}/files"/>
+                <property name="ecmascript.dir" location="ecmascript"/>
+        </ant>
+
+</target>
+
+
+
+<target name="gen-selfhtml">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+        <property name="dst.dir" value="${build.dir}/self-hosted/html/level${level}/${module}"/>
+
+    <mkdir dir="${dst.dir}"/>
+        <copy todir="${dst.dir}">
+        <fileset dir="ecmascript" includes="selfhtml.js alltests.html alltests_html.js alltests.js"/>
+    </copy>
+    <replace file="${dst.dir}/alltests.html"
+         token="SuiteName" value="DOM Level ${level} ${module} - HTML"/>
+    <copy todir="${dst.dir}">
+        <fileset dir="docs/resources" includes="COPYRIGHT.html"/>
+    </copy>
+    <replace file="${dst.dir}/COPYRIGHT.html"
+         token="Level 1 Core" value="Level ${level} ${module}"/>
+    <copy todir="${dst.dir}">
+         <fileset dir="tests/level${level}/${module}/files"
+             excludes="*.bak *.html *.xml *.xhtml *.svg *.js"/>
+    </copy>
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${dst.dir}"
+                   includes="*.xml"
+           excludes="metadata.xml alltests.xml"
+               style="${transforms.dir}/test-to-selfhtml.xsl"
+               extension=".js">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom${level}-interfaces.xml"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level${level}/${module}/"/>
+        <param name="testpath" expression="../level${level}/${module}/"/>
+        </style>
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${dst.dir}"
+                   includes="alltests.xml"
+               style="${transforms.dir}/suite-to-selfhtml_ant.xsl"
+               extension=".ant">
+               <param name="level" expression="${level}"/>
+               <param name="module" expression="${module}"/>
+        </style>
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${dst.dir}"
+                   includes="alltests.xml"
+               style="${transforms.dir}/suite-to-selfhtml_html.xsl"
+               extension=".frame.html">
+        <param name="title" expression="DOM Level ${level} ${module} Test Suite - HTML"/>
+        </style>
+
+        <!--  a suite creates an Ant file that is executed to fixup the filenames  -->
+        <ant antfile="${dst.dir}/alltests.ant">
+                <property name="html.dir" value="${dst.dir}"/>
+                <property name="files.dir" value="${tests.dir}/level${level}/${module}/files"/>
+                <property name="l1files.dir" value="${tests.dir}/level1/${module}/files"/>
+                <property name="ecmascript.dir" location="ecmascript"/>
+        </ant>
+
+    <antcall target="validate-html">
+        <param name="dir" value="${dst.dir}"/>
+    </antcall>
+
+
+</target>
+
+<target name="gen-selfxhtml" depends="get-xhtml1-dtd">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+        <property name="dst.dir" value="${build.dir}/self-hosted/xhtml/level${level}/${module}"/>
+
+    <mkdir dir="${dst.dir}"/>
+        <copy todir="${dst.dir}">
+        <fileset dir="ecmascript" includes="selfxhtml.js alltests.xhtml alltests_xhtml.js alltests.js"/>
+    </copy>
+    <replace file="${dst.dir}/alltests.xhtml"
+         token="SuiteName" value="DOM Level ${level} ${module} - XHTML"/>
+    <copy todir="${dst.dir}">
+        <fileset dir="docs/resources" includes="COPYRIGHT.xhtml"/>
+    </copy>
+    <replace file="${dst.dir}/COPYRIGHT.xhtml"
+         token="Level 1 Core" value="Level ${level} ${module}"/>
+    <copy todir="${dst.dir}">
+         <fileset dir="tests/level${level}/${module}/files"
+             excludes="*.bak *.html *.xml *.xhtml *.svg *.js xhtml*.dtd"/>
+    </copy>
+    <copy todir="${dst.dir}">
+                <fileset dir="lib/xhtml1-dtd"/>
+    </copy>
+
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${dst.dir}"
+                   includes="*.xml"
+           excludes="metadata.xml alltests.xml"
+               style="${transforms.dir}/test-to-selfhtml.xsl"
+               extension=".js">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom${level}-interfaces.xml"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level${level}/${module}/"/>
+        <param name="testpath" expression="../level${level}/${module}/"/>
+        </style>
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${dst.dir}"
+                   includes="alltests.xml"
+               style="${transforms.dir}/suite-to-selfhtml_ant.xsl"
+               extension=".ant">
+               <param name="level" expression="${level}"/>
+               <param name="module" expression="${module}"/>
+               <param name="extension" expression=".xhtml"/>
+        </style>
+
+        <style basedir="${tests.dir}/level${level}/${module}"
+                   destdir="${dst.dir}"
+                   includes="alltests.xml"
+               style="${transforms.dir}/suite-to-selfxhtml_xhtml.xsl"
+               extension=".frame.xhtml">
+        <param name="title" expression="DOM Level ${level} ${module} Test Suite - XHTML"/>
+        </style>
+
+        <!--  a suite creates an Ant file that is executed to fixup the filenames  -->
+        <ant antfile="${dst.dir}/alltests.ant">
+                <property name="html.dir" value="${dst.dir}"/>
+                <property name="files.dir" value="${tests.dir}/level${level}/${module}/files"/>
+                <property name="l1files.dir" value="${tests.dir}/level1/${module}/files"/>
+                <property name="ecmascript.dir" location="ecmascript"/>
+        </ant>
+
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${dst.dir}" includes="*.xhtml">
+                        <exclude name="documentgetdoctypenodtd.xhtml"/>
+                        <exclude name="attrgetschematypeinfo06.xhtml"/>
+                        <exclude name="elementgetschematypeinfo03.xhtml"/>
+                        <exclude name="canonicalform08.xhtml"/>
+                        <exclude name="canonicalform09.xhtml"/>
+                        <exclude name="canonicalform10.xhtml"/>
+                        <exclude name="canonicalform11.xhtml"/>
+                        <exclude name="documentgetxmlstandalone04.xhtml"/>
+                </fileset>
+        </xmlvalidate>
+
+
+</target>
+
+
+
+
+<target name="jar">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+        <property name="jarfile" value="dom${level}-${module}.jar"/>
+        <jar jarfile="${build.dir}/${jarfile}"
+                 manifest="java/dom${level}-${module}.mf"
+                 basedir="${java.build.dir}"
+                 includes="org/w3c/domts/* org/w3c/domts/level${level}/${module}/* org/w3c/dom/* org/w3c/dom/${module}/*"
+                 excludes="*.bak">
+                <fileset dir="tests/level${level}/${module}/files" includes="**/*" excludes="*.bak"/>
+                <fileset dir="java" includes="org/w3c/domts/*.java"/>
+        <fileset dir="java" includes="org/**/*.java"/>
+        </jar>
+</target>
+
+<target name="html-jar">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+        <property name="jarfile" value="dom${level}-${module}.jar"/>
+        <jar jarfile="${build.dir}/${jarfile}"
+                 manifest="java/dom${level}-${module}.mf"
+                 basedir="${java.build.dir}"
+                 includes="org/w3c/domts/* org/w3c/domts/level${level}/${module}/* org/w3c/dom/* org/w3c/dom/${module}/*"
+                 excludes="*.bak">
+                <fileset dir="tests/level${level}/${module}/files" excludes="*.bak"/>
+                <fileset dir="java" includes="org/w3c/domts/*.java"/>
+        <fileset dir="java" includes="org/**/*.java"/>
+        <fileset dir="${lib.dir}/xhtml1-dtd"/>
+        </jar>
+</target>
+
+
+<target name="warn-jtidy" depends="init" unless="jtidy-available">
+    <echo message="JTidy is not available, no HTML validation performed."/>
+</target>
+
+<target name="validate-html" depends="warn-jtidy" if="jtidy-available">
+        <property name="dir" value="."/>
+        <property name="file" value="*.html"/>
+        <property name="filespec" location="${dir}/${file}"/>
+        <java classname="org.w3c.tidy.Tidy"
+                failonerror="yes"
+                fork="yes"
+                dir="${dir}"
+                classpath="${java.class.path}">
+                <arg value="-e"/>
+                <arg value="-q"/>
+                <arg value="-utf8"/>
+                <arg value="${file}"/>
+        </java>
+</target>
+
+
+
+<target name="checkstyle-available">
+    <available property="checkstyle-task" resource="checkstyletask.properties"/>
+    <fail unless="checkstyle-task"
+          message="Checkstyle targets require checkstyle-all-2.x.jar from http://checkstyle.sf.net to be in /ant/lib"/>
+</target>
+
+<target name="checkstyle">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+    <taskdef resource="checkstyletask.properties"/>
+
+    <checkstyle>
+        <fileset dir="${java.build.dir}/org/w3c/domts/level${level}/${module}" includes="*.java"/>
+
+        <!-- Allow long lines  -->
+        <property key="checkstyle.maxlinelen" value="1024"/>
+
+        <!-- Allows wildcard imports -->
+        <property key="checkstyle.ignore.imports" value="true"/>
+
+        <!-- Allows test names that start with lowercase -->
+        <property key="checkstyle.pattern.type" value="^[a-zA-Z][a-zA-Z0-9_]*$"/>
+
+        <property key="checkstyle.maxmethodlen" value="5000"/>
+    </checkstyle>
+
+</target>
+
+<target name="dist-prep">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+    <mkdir dir="${build.dir}/level${level}/${module}/resources"/>
+    <mkdir dir="${build.dir}/level${level}/${module}/java"/>
+
+        <antcall target="validate-html">
+                <param name="dir" value="docs/level${level}/${module}"/>
+                <param name="file" value="index.htm"/>
+        </antcall>
+
+
+    <copy file="docs/level${level}/${module}/index.htm" todir="${build.dir}/level${level}/${module}"/>
+    <copy todir="${build.dir}/level${level}/${module}/resources">
+        <fileset dir="docs/resources" excludes="*.bak"/>
+    </copy>
+    <copy file="${build.dir}/dom${level}-${module}.jar" todir="${build.dir}/level${level}/${module}/java"/>
+    <copy file="${build.dir}/junit-run.jar" todir="${build.dir}/level${level}/${module}/java"/>
+    <copy file="${lib.dir}/junit${junit.version}/junit.jar" todir="${build.dir}/level${level}/${module}/java"/>
+    <copy file="${lib.dir}/junit-license.html" todir="${build.dir}/level${level}/${module}/java"/>
+
+    <copy todir="${build.dir}/level${level}/${module}/ecmascript/jsunit">
+        <fileset dir="${build.dir}/ecmascript/jsunit" excludes="*.bak"/>
+    </copy>
+    <copy file="${build.dir}/dom${level}-${module}-matrix.html" todir="${build.dir}/level${level}/${module}"/>
+
+    <mkdir dir="${build.dir}/level${level}/${module}/ecmascript/level${level}/${module}"/>
+    <copy todir="${build.dir}/level${level}/${module}/ecmascript/level${level}/${module}">
+        <fileset dir="${build.dir}/ecmascript/level${level}/${module}"/>
+    </copy>
+
+    <mkdir dir="${build.dir}/level${level}/${module}/tests/files"/>
+    <copy todir="${build.dir}/level${level}/${module}/tests" overwrite="true">
+        <fileset dir="${tests.dir}/level${level}/${module}" includes="*.xml *.ent"/>
+        <fileset dir="${build.dir}" includes="dom${level}.dtd"/>
+        <fileset dir="${build.dir}" includes="dom${level}.xsd"/>
+        <fileset dir="${transforms.dir}" includes="test-to-html.xsl"/>
+    </copy>
+    <copy todir="${build.dir}/level${level}/${module}/tests/files">
+        <fileset dir="${tests.dir}/level${level}/${module}/files" excludes="*.bak"/>
+    </copy>
+
+    <mkdir dir="${build.dir}/level${level}/${module}/survey/transforms"/>
+    <copy tofile="${build.dir}/level${level}/${module}/survey/build.xml"
+        file="runtests.xml"/>
+    <copy todir="${build.dir}/level${level}/${module}/survey/transforms">
+        <fileset dir="${transforms.dir}">
+                <include name="results-matrix.xsl"/>
+                <include name="dom${level}-${module}-results.xml"/>
+        </fileset>
+    </copy>
+    <copy todir="${build.dir}/level${level}/${module}/survey"
+        file="${build.dir}/dom${level}-${module}-metadata.rdf"/>
+
+    <available property="dist-includes-self-hosted-html"
+        file="${build.dir}/self-hosted/html/level${level}/${module}"/>
+    <available property="dist-includes-self-hosted-xhtml"
+        file="${build.dir}/self-hosted/xhtml/level${level}/${module}"/>
+    <available property="dist-includes-self-hosted-svg"
+        file="${build.dir}/self-hosted/svg/level${level}/${module}"/>
+</target>
+
+<target name="dist-prep-self-hosted-html" depends="dist-prep" if="dist-includes-self-hosted-html">
+    <mkdir dir="${build.dir}/level${level}/${module}/self-hosted/html/level${level}/${module}"/>
+    <copy todir="${build.dir}/level${level}/${module}/self-hosted/html/level${level}/${module}">
+        <fileset dir="${build.dir}/self-hosted/html/level${level}/${module}" excludes="*.ant"/>
+    </copy>
+</target>
+
+<target name="dist-prep-self-hosted-xhtml" depends="dist-prep" if="dist-includes-self-hosted-xhtml">
+    <mkdir dir="${build.dir}/level${level}/${module}/self-hosted/xhtml/level${level}/${module}"/>
+    <copy todir="${build.dir}/level${level}/${module}/self-hosted/xhtml/level${level}/${module}">
+        <fileset dir="${build.dir}/self-hosted/xhtml/level${level}/${module}" excludes="*.ant"/>
+    </copy>
+</target>
+
+<target name="dist-prep-self-hosted-svg" depends="dist-prep" if="dist-includes-self-hosted-svg">
+    <mkdir dir="${build.dir}/level${level}/${module}/self-hosted/svg/level${level}/${module}"/>
+    <copy todir="${build.dir}/level${level}/${module}/self-hosted/svg/level${level}/${module}">
+        <fileset dir="${build.dir}/self-hosted/svg/level${level}/${module}" excludes="*.ant"/>
+    </copy>
+</target>
+
+<target name="dist" depends="dist-prep-self-hosted-html, dist-prep-self-hosted-xhtml, dist-prep-self-hosted-svg">
+    <mkdir dir="${dist.dir}"/>
+    <zip  zipfile="${dist.dir}/dom${level}-${module}.zip"
+        basedir="${build.dir}/level${level}/${module}"/>
+    <tar tarfile="${dist.dir}/dom${level}-${module}.tar.gz"
+        basedir="${build.dir}/level${level}/${module}"
+        compression="gzip"/>
+</target>
+
+
+<target name="jsunit-get" depends="init">
+    <unzip dest="${build.dir}/ecmascript" src="${lib.dir}/jsunit20.zip"/>
+</target>
+
+
+
+<target name="common-javac" depends="init">
+        <mkdir dir="${java.build.dir}"/>
+        <javac srcdir="java"
+                   includes="org/w3c/domts/*.java"
+                   excludes="org/w3c/domts/UserData*.java org/w3c/domts/DOMError*.java org/w3c/domts/DOMLocator*.java"
+                   destdir="${java.build.dir}"
+                   classpath="${java.build.dir}"
+                   target="1.1"
+                   source="1.2"
+                   debug="on"
+                   encoding="UTF8"/>
+</target>
+
+
+<target name="common-checkstyle" depends="checkstyle-available, common-javac">
+    <taskdef resource="checkstyletask.properties"/>
+
+    <checkstyle>
+        <fileset dir="java/org/w3c/domts" includes="**/*.java"/>
+    </checkstyle>
+
+</target>
+
+<target name="junit-checkstyle" depends="checkstyle-available, junit-run">
+    <taskdef resource="checkstyletask.properties"/>
+
+    <checkstyle>
+        <fileset dir="java/junit/org/w3c/domts" includes="**/*.java"/>
+    </checkstyle>
+
+</target>
+
+
+<target name="get-junit-license" depends="init" unless="junit-license-available">
+    <get src="http://www.opensource.org/licenses/cpl.php"
+         dest="${lib.dir}/junit-license.html"
+         usetimestamp="true"
+         ignoreerrors="${no-network}"/>
+</target>
+
+
+<target name="get-junit" depends="init" unless="junit-available">
+        <available property="junit.zip-available" file="${lib.dir}/junit${junit.version}.zip"/>
+        <fail unless="junit.zip-available">
+ Download junit${junit.version}.zip from http://www.junit.org and place in DOM-Test-Suite/lib directory.
+ </fail>
+        <unzip src="${lib.dir}/junit${junit.version}.zip" dest="${lib.dir}"/>
+</target>
+
+<target name="get-junit-for-compilation" depends="init" unless="junit-in-classpath">
+        <antcall target="get-junit"/>
+</target>
+
+<target name="junit-run" depends="get-junit-for-compilation">
+    <mkdir dir="${java.build.dir}/junit"/>
+
+    <javac srcdir="java/junit"
+                   includes="org/w3c/domts/**/*.java"
+                   destdir="${java.build.dir}/junit"
+                   classpath="${lib.dir}/junit${junit.version}/junit.jar"
+                   debug="on"
+                   target="1.1"
+                   source="1.2"
+                   encoding="UTF8">
+                   <src path="java/junit"/>
+                   <src path="java"/>
+                   <exclude name="org/w3c/domts/DOMErrorImpl.java"/>
+                   <exclude name="org/w3c/domts/DOMErrorMonitor.java"/>
+                   <exclude name="org/w3c/domts/DOMLocatorImpl.java"/>
+                   <exclude name="org/w3c/domts/UserDataMonitor.java"/>
+        </javac>
+
+
+    <!--  exclude the compiled files from the ./java tree  -->
+    <jar jarfile="${build.dir}/junit-run.jar"
+        manifest="java/junit/junit-run.mf">
+        <fileset dir="${java.build.dir}/junit">
+                <include name="org/w3c/domts/level1/**/*.class"/>
+                <include name="org/w3c/domts/level2/**/*.class"/>
+                <include name="org/w3c/domts/level3/**/*.class"/>
+                <include name="org/w3c/domts/JUnitRunner.class"/>
+                <include name="org/w3c/domts/JUnitTestCaseAdapter.class"/>
+                <include name="org/w3c/domts/JUnitTestSuiteAdapter.class"/>
+        </fileset>
+
+        <!--  include source files for easier debugging  -->
+        <fileset dir="java/junit" includes="**/*.java"/>
+    </jar>
+</target>
+
+
+
+
+
+<!--   DOM L1 Spec    -->
+
+<target name="get-xhtml1-dtd" depends="init" unless="xhtml1-dtd-available">
+    <mkdir dir="${lib.dir}/xhtml1-dtd"/>
+    <get src="http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"
+        dest="${lib.dir}/xhtml1-dtd/xhtml1-frameset.dtd"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+    <get src="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+        dest="${lib.dir}/xhtml1-dtd/xhtml1-transitional.dtd"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+    <get src="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+        dest="${lib.dir}/xhtml1-dtd/xhtml1-strict.dtd"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+    <get src="http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent"
+        dest="${lib.dir}/xhtml1-dtd/xhtml-lat1.ent"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+    <get src="http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent"
+        dest="${lib.dir}/xhtml1-dtd/xhtml-symbol.ent"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+    <get src="http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent"
+        dest="${lib.dir}/xhtml1-dtd/xhtml-special.ent"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<!--  determines if DOM 1 spec files are already available locally  -->
+<target name="dom1-check-spec" depends="init">
+    <available property="dom1-available" file="${specs.dir}/DOM.zip"/>
+</target>
+
+<!--  gets DOM 1 specs unless they are available locally   -->
+<target name="get-dom1" depends="dom1-check-spec" unless="dom1-available">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/Level-1"/>
+        <!--   download DOM 1 spec to specs directory   -->
+        <get src="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/DOM.zip"
+             dest="${specs.dir}/DOM.zip"
+             usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="dom1-init" depends="get-dom1">
+
+        <unzip src="${specs.dir}/DOM.zip" dest="${specs.dir}/Level-1"/>
+        <unzip src="${specs.dir}/Level-1/xml-source.zip" dest="${specs.dir}/Level-1"/>
+
+    <!--  add missing xmlns:xlink attribute    -->
+    <replace file="${specs.dir}/Level-1/xml/wd-dom.xml" token="&lt;spec&gt;"
+        value="&lt;spec xmlns:xlink='http://www.w3.org/1999/xlink'&gt;"/>
+</target>
+
+<target name="dom1-schema" depends="dom1-interfaces">
+        <style basedir="${specs.dir}/Level-1/xml"
+               in="${build.dir}/dom1-interfaces.xml"
+               out="${build.dir}/dom1.xsd"
+               style="${transforms.dir}/dom-to-xsd.xsl">
+                <param name="schema-namespace"
+                   expression="http://www.w3.org/2001/DOM-Test-Suite/Level-1"/>
+        </style>
+
+        <!--  remove leading underscore from _xmlns attribute    -->
+    <replace dir="${build.dir}" includes="dom1.xsd">
+        <replacefilter token="_xmlns" value="xmlns"/>
+        <replacefilter token="xmlns_test" value="xmlns:test"/>
+    </replace>
+
+        <copy file="${build.dir}/dom1.xsd" todir="${tests.dir}/level1/core"/>
+        <copy file="${build.dir}/dom1.xsd" todir="${tests.dir}/level1/html"/>
+
+        <!-- xmlvalidate file="${build.dir}/dom1.xsd" lenient="no"
+             failonerror="yes"
+             classname="org.apache.xerces.parsers.SAXParser"/ -->
+</target>
+
+<target name="dom1-dtd" depends="dom1-interfaces">
+        <style basedir="${specs.dir}/Level-1/xml"
+               in="${build.dir}/dom1-interfaces.xml"
+               out="${build.dir}/dom1.dtd"
+               style="${transforms.dir}/dom-to-dtd.xsl">
+                <param name="schema-namespace"
+                   expression="http://www.w3.org/2001/DOM-Test-Suite/Level-1"/>
+                <param name="schema-location" expression="dom1.xsd"/>
+        </style>
+        <copy file="${build.dir}/dom1.dtd" todir="${tests.dir}/level1/core"/>
+        <copy file="${build.dir}/dom1.dtd" todir="${tests.dir}/level1/html"/>
+</target>
+
+<target name="dom1-subjects" depends="dom1-init">
+        <style basedir="${specs.dir}/Level-1/xml"
+               in="${specs.dir}/Level-1/xml/wd-dom.xml"
+               out="${build.dir}/dom1-subjects.xml"
+               style="${transforms.dir}/subjects.xsl"/>
+</target>
+
+<!--  Saxon 6.5.2 has a problem with relative URL's in entity references
+         and fails to produce this document, so if available
+         a copy from the lib is used     -->
+<target name="dom1-interfaces-init" depends="dom1-init">
+    <available file="patches/dom1-interfaces.xml" property="dom1-interfaces-available"/>
+</target>
+
+<target name="dom1-interfaces-gen" depends="dom1-interfaces-init" unless="dom1-interfaces-available">
+        <style basedir="${specs.dir}/Level-1/xml"
+               in="${specs.dir}/Level-1/xml/wd-dom.xml"
+               out="${build.dir}/dom1-interfaces.xml"
+               style="${transforms.dir}/dom1-errata.xsl"/>
+</target>
+
+<target name="dom1-interfaces-copy" depends="dom1-interfaces-init" if="dom1-interfaces-available">
+    <copy todir="${build.dir}" file="patches/dom1-interfaces.xml"/>
+</target>
+
+<target name="dom1-interfaces" depends="dom1-interfaces-gen, dom1-interfaces-copy">
+</target>
+
+<target name="analyze-names" depends="dom1-interfaces">
+    <mkdir dir="${build.dir}/java/org/w3c/domts/level1/core"/>
+        <style basedir="${tests.dir}/level1/core"
+                   destdir="${java.build.dir}/org/w3c/domts/level1/core"
+                   includes="*.xml"
+               style="${transforms.dir}/check-subjects.xsl"
+               extension=".xml">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom1-interfaces.xml"/>
+                <param name="package"
+                       expression="org.w3c.domts.level1.core"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level1/core/"/>
+        </style>
+</target>
+
+
+<target name="dom1-core-gen-java" depends="dom1-interfaces, dom1-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="1"/>
+                <param name="module" value="core"/>
+        </antcall>
+</target>
+
+<target name="dom1-core-gen-jsunit-base" depends="dom1-interfaces,dom1-dtd,dom1-core-validate-files">
+    <antcall target="gen-jsunit">
+        <param name="level" value="1"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+<target name="dom1-core-gen-jsunit" depends="jsunit-get, dom1-core-gen-jsunit-base"/>
+
+<target name="dom1-core-gen-svgunit" depends="dom1-interfaces,dom1-dtd">
+    <antcall target="gen-svgunit">
+        <param name="level" value="1"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+<target name="dom1-core-gen-selfhtml" depends="dom1-interfaces,dom1-dtd">
+    <antcall target="gen-selfhtml">
+        <param name="level" value="1"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+<target name="dom1-core-gen-selfxhtml" depends="dom1-interfaces,dom1-dtd">
+    <antcall target="gen-selfxhtml">
+        <param name="level" value="1"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+<target name="dom1-core-validate-tests" depends="dom1-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level1/core" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom1-core-schema-validate-tests" depends="check-schema-support, dom1-dtd, dom1-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level1/core"/>
+    </ant>
+</target>
+
+<target name="dom1-core-validate-test-html" depends="dom1-dtd">
+    <antcall target="validate-test-html">
+        <param name="level" value="1"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+<target name="dom1-core-validate-html-files" depends="init">
+    <antcall target="validate-html">
+        <param name="dir" value="${tests.dir}/level1/core/files"/>
+    </antcall>
+</target>
+
+
+<target name="dom1-core-validate-files" depends="dom1-core-validate-html-files">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+           <fileset dir="${tests.dir}/level1/core/files"
+                    includes="*.xml *.xhtml *.svg"
+                    excludes="hc_nodtdstaff.*"/>
+        </xmlvalidate>
+</target>
+
+
+<target name="dom1-core-metadata" depends="dom1-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level1/core/alltests.xml"
+                   out="${build.dir}/dom1-core-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level1/core/"/>
+        <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+
+<target name="dom1-core-matrix" depends="dom1-core-metadata,dom1-subjects,dom1-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom1-core-metadata.rdf"
+                   out="${build.dir}/dom1-core-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#"/>
+        <param name="interfacesURL" expression="dom1-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom1-subjects.xml"/>
+        </style>
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom1-core-matrix.html"/>
+        </antcall>
+</target>
+
+<target name="dom1-core-javac" depends="common-javac,dom1-core-gen-java">
+        <javac srcdir="${java.build.dir}"
+            includes="org/w3c/domts/level1/core/*.java"
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                target="1.1"
+                source="1.2"
+                encoding="UTF8"/>
+</target>
+
+<target name="dom1-core-checkstyle" depends="checkstyle-available, dom1-core-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="1"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+<target name="dom1-core-jar" depends="dom1-core-javac,dom1-core-validate-files">
+        <antcall target="jar">
+                <param name="level" value="1"/>
+                <param name="module" value="core"/>
+        </antcall>
+</target>
+
+<target name="dom1-core-javadoc" depends="dom1-core-gen-java">
+    <mkdir dir="${build.dir}/javadoc"/>
+    <javadoc packagenames="org.w3c.domts.*"
+             sourcepath="java/org/w3c/domts/level1/core;java/junit;${lib.dir}/junit${junit.version}/junit.jar;${lib.dir}/testlet.dir"
+             destdir="${build.dir}/javadoc"
+             author="true"
+             version="true"
+             use="true"
+             windowtitle="DOM Test Suite"
+             bottom="Copyright &#169; 2001 World Wide Web Consortium.">
+             <group title="Test Suite Framework" packages="org.w3c.domts"/>
+             <group title="DOM Level 1 Core" packages="org.w3c.domts.level1.core"/>
+             <group title="DOM Level 2 Core" packages="org.w3c.domts.level2.core"/>
+    </javadoc>
+</target>
+
+<target name="dom1-core-doxygen" depends="dom1-core-gen-java">
+        <mkdir dir="${build.dir}/level1/core/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom1-core.doxygen"/>
+    </exec>
+
+</target>
+
+
+<target name="dom1-core-dist"
+     depends="dom1-core-jar,
+              dom1-core-gen-jsunit,
+              dom1-core-validate-test-html,
+              dom1-core-matrix,
+              dom1-core-doxygen,
+              get-junit,
+              junit-run,
+              get-junit-license,
+              dom1-schema,
+              dom1-core-gen-svgunit,
+              dom1-core-gen-selfhtml,
+              dom1-core-gen-selfxhtml">
+    <antcall target="dist">
+        <param name="level" value="1"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+
+<!--   DOM L1 Core HTML    -->
+
+<target name="dom1-html-metadata" depends="dom1-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level1/html/alltests.xml"
+                   out="${build.dir}/dom1-html-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level1/html/"/>
+        <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+
+<target name="dom1-html-matrix" depends="dom1-html-metadata,dom1-subjects,dom1-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom1-html-metadata.rdf"
+                   out="${build.dir}/dom1-html-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-html#"/>
+        <param name="interfacesURL" expression="dom1-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom1-subjects.xml"/>
+        <param name="title" expression="DOM Level 1 HTML Test Suite Matrix"/>
+        </style>
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom1-html-matrix.html"/>
+        </antcall>
+
+</target>
+
+<target name="dom1-html-validate-tests" depends="dom1-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level1/html" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom1-html-schema-validate-tests" depends="check-schema-support, dom1-dtd, dom1-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level1/html"/>
+    </ant>
+</target>
+
+<target name="dom1-html-validate-html-files" depends="warn-jtidy" if="jtidy-available">
+        <!--  JTidy complains about these files that the W3C validator accepts   -->
+        <delete dir="${build.dir}/files"/>
+        <mkdir dir="${build.dir}/files/level1/html"/>
+        <copy todir="${build.dir}/files/level1/html">
+                <fileset dir="${tests.dir}/level1/html/files">
+                        <include name="*.html"/>
+                        <exclude name="directory.html"/>
+                        <exclude name="iframe.html"/>
+                        <exclude name="legend.html"/>
+                        <exclude name="menu.html"/>
+                </fileset>
+        </copy>
+
+    <antcall target="validate-html">
+        <param name="dir" value="${build.dir}/files/level1/html"/>
+    </antcall>
+        <delete dir="${build.dir}/files"/>
+</target>
+
+
+<target name="dom1-html-validate-files" depends="dom1-html-validate-html-files, get-xhtml1-dtd">
+    <copy todir="${tests.dir}/level1/html/files">
+                <fileset dir="${lib.dir}/xhtml1-dtd"/>
+    </copy>
+
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level1/html/files" includes="*.xml *.xhtml"/>
+        </xmlvalidate>
+
+</target>
+
+
+<target name="dom1-html-gen-java" depends="dom1-interfaces,dom1-dtd">
+    <mkdir dir="${build.dir}/java/org/w3c/domts/level2/html"/>
+        <antcall target="gen-java">
+                <param name="level" value="1"/>
+                <param name="module" value="html"/>
+                <param name="import-html" value="import org.w3c.dom.html.*;"/>
+        </antcall>
+</target>
+
+<target name="dom1-html-javac" depends="common-javac,dom1-html-gen-java">
+        <javac srcdir="${java.build.dir}"
+                includes="org/w3c/domts/level1/html/*.java"
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                target="1.1"
+                source="1.2"
+                encoding="UTF8"/>
+</target>
+
+<target name="compile-applet">
+        <mkdir dir="${applet.dest.dir}"/>
+        <javac srcdir="java/applets"
+                   destdir="${applet.dest.dir}"
+                   target="1.1"
+                   source="1.2"
+                   debug="on"
+                   encoding="UTF8"/>
+
+        <copy todir="${applet.dest.dir}" file="java/applets/DOMTSApplet.dat"/>
+</target>
+
+<target name="dom1-html-gen-jsunit-base" depends="dom1-interfaces,dom1-dtd,get-xhtml1-dtd">
+    <antcall target="gen-jsunit-no-validation">
+        <param name="level" value="1"/>
+        <param name="module" value="html"/>
+        <param name="hideSVG" value="yes"/>
+    </antcall>
+
+    <!--  fix up tests which could be produced with <elt*> in string literals  -->
+    <replace dir="${build.dir}/ecmascript/level1/html"
+             includes="HTMLDocument*.html"
+             token='&gt;";'
+             value='"&amp;gt;";'/>
+    <replace dir="${build.dir}/ecmascript/level1/html"
+             includes="HTMLDocument*.html"
+             token='("&lt;'
+             value='("&amp;lt;'/>
+    <replace dir="${build.dir}/ecmascript/level1/html"
+             includes="HTMLDocument*.html"
+             token='Replacement&lt;/title'
+             value='Replacement&amp;lt;/title'/>
+
+    <antcall target="validate-html">
+        <param name="dir" value="${build.dir}/ecmascript/level1/html"/>
+    </antcall>
+
+
+    <antcall target="compile-applet">
+        <param name="applet.dest.dir" value="${build.dir}/ecmascript/level1/html/applets"/>
+    </antcall>
+
+</target>
+
+<target name="dom1-html-gen-jsunit" depends="jsunit-get, dom1-html-gen-jsunit-base"/>
+
+<target name="dom1-html-gen-selfhtml" depends="dom1-interfaces,dom1-dtd">
+    <antcall target="gen-selfhtml">
+        <param name="level" value="1"/>
+        <param name="module" value="html"/>
+    </antcall>
+    <copy todir="${build.dir}/self-hosted/html/level1/html">
+        <fileset dir="tests/level1/html/files" includes="*.png"/>
+    </copy>
+    <!--  Name field of URL of document is no longer "document"  --> 
+    <replace file="${build.dir}/self-hosted/html/level1/html/HTMLDocument04.js"
+             token='"document"'
+             value='"HTMLDocument04"'/>
+    <replace dir="${build.dir}/self-hosted/html/level1/html" includes="HTMLScriptElement*.js">
+        <replacefilter token="1,nodeList" value="4,nodeList"/>
+        <replacefilter token="nodeList.item(0)" value="nodeList.item(3)"/>
+    </replace>
+    
+    <!--  HTMLBaseElement01 and 02 need scripts inlined since BASE element
+            interferes with resolution   -->
+    <antcall target="fix-html-base-element-tests">
+        <param name="level" value="1"/>
+    </antcall>
+
+</target>
+
+<target name="dom1-html-gen-selfxhtml" depends="dom1-interfaces,dom1-dtd">
+    <antcall target="gen-selfxhtml">
+        <param name="level" value="1"/>
+        <param name="module" value="html"/>
+    </antcall>
+    <copy todir="${build.dir}/self-hosted/xhtml/level1/html">
+        <fileset dir="tests/level1/html/files" includes="*.png"/>
+    </copy>
+    <!--  Name field of URL of document is no longer "document"  --> 
+    <replace file="${build.dir}/self-hosted/xhtml/level1/html/HTMLDocument04.js"
+             token='"document"'
+             value='"HTMLDocument04"'/>
+    <replace dir="${build.dir}/self-hosted/xhtml/level1/html" includes="HTMLScriptElement*.js">
+        <replacefilter token="1,nodeList" value="4,nodeList"/>
+        <replacefilter token="nodeList.item(0)" value="nodeList.item(3)"/>
+    </replace>
+
+    <!--  HTMLBaseElement01 and 02 need scripts inlined since BASE element
+            interferes with resolution   -->
+    <antcall target="fix-xhtml-base-element-tests">
+        <param name="level" value="1"/>
+    </antcall>
+    
+</target>
+
+
+<target name="dom1-html-checkstyle" depends="checkstyle-available, dom1-html-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="1"/>
+        <param name="module" value="html"/>
+    </antcall>
+</target>
+
+
+<target name="dom1-html-doxygen" depends="dom1-html-gen-java">
+        <mkdir dir="${build.dir}/level1/html/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom1-html.doxygen"/>
+    </exec>
+
+</target>
+
+
+
+
+
+<target name="dom1-html-jar" depends="dom1-html-javac,dom1-html-validate-files">
+        <antcall target="html-jar">
+                <param name="level" value="1"/>
+                <param name="module" value="html"/>
+        </antcall>
+</target>
+
+
+
+<target name="dom1-html-dist"
+        depends="dom1-html-jar,
+                 dom1-html-gen-jsunit,
+                 dom1-html-matrix,
+                 dom1-html-doxygen,
+                 get-junit,
+                 junit-run,
+                 get-junit-license,
+                 dom1-schema,
+                 dom1-html-gen-selfhtml,
+                 dom1-html-gen-selfxhtml">
+    <antcall target="dist">
+        <param name="level" value="1"/>
+        <param name="module" value="html"/>
+    </antcall>
+</target>
+
+
+
+
+<target name="dom1-gump" depends="dom1-core-validate-tests,
+                                                                  dom1-html-validate-tests,
+                                                                  dom1-core-jar,
+                                                                  dom1-html-jar,
+                                                                  junit-run"/>
+
+
+
+<target name="dom1-dist" depends="dom1-core-dist,dom1-html-dist">
+</target>
+
+<!--   DOM Level 2    -->
+
+<target name="dom2-check-spec" depends="init">
+    <available property="dom2-core-available" file="${specs.dir}/DOM2-Core.zip"/>
+    <available property="dom2-views-available" file="${specs.dir}/DOM2-Views-Java-Binding.zip"/>
+    <available property="dom2-events-available" file="${specs.dir}/DOM2-Events-Java-Binding.zip"/>
+    <available property="dom2-style-available" file="${specs.dir}/DOM2-Style.zip"/>
+    <available property="dom2-traversal-available" file="${specs.dir}/DOM2-Traversal-Range.zip"/>
+    <available property="dom2-html-available" file="${specs.dir}/DOM2-HTML-Java-Binding.zip"/>
+    <available property="xmlspec-v22-dom-available" file="${specs.dir}/pubtext/xmlspec-v22-dom.dtd"/>
+</target>
+
+<!--  gets DOM 2 Core spec unless it is available locally   -->
+<target name="get-dom2-core" depends="dom2-check-spec" unless="dom2-core-available">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/Level-2"/>
+        <get src="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/DOM2-Core.zip"
+                dest="${specs.dir}/DOM2-Core.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="get-dom2-views" depends="dom2-check-spec" unless="dom2-views-available">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/Level-2"/>
+        <get src="http://www.w3.org/TR/2000/REC-DOM-Level-2-Views-20001113/DOM2-Views.zip"
+                dest="${specs.dir}/DOM2-Views.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+
+    <get src="http://www.w3.org/TR/2000/REC-DOM-Level-2-Views-20001113/java-binding.zip"
+        dest="${specs.dir}/DOM2-Views-Java-Binding.zip"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+
+</target>
+
+<target name="get-dom2-events" depends="dom2-check-spec" unless="dom2-events-available">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/Level-2"/>
+        <get src="http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/DOM2-Events.zip"
+                dest="${specs.dir}/DOM2-Events.zip"
+                usetimestamp="yes"
+                ignoreerrors="${no-network}"/>
+    <get src="http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/java-binding.zip"
+        dest="${specs.dir}/DOM2-Events-Java-Binding.zip"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="get-dom2-style" depends="dom2-check-spec" unless="dom2-style-available">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/Level-2"/>
+        <get src="http://www.w3.org/TR/2000/REC-DOM-Level-2-Style-20001113/DOM2-Style.zip"
+                dest="${specs.dir}/DOM2-Style.zip"
+                usetimestamp="yes"
+                ignoreerrors="${no-network}"/>
+</target>
+
+
+<target name="get-dom2-traversal" depends="dom2-check-spec" unless="dom2-traversal-available">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/Level-2"/>
+        <get src="http://www.w3.org/TR/2000/REC-DOM-Level-2-Traversal-Range-20001113/DOM2-Traversal-Range.zip"
+                dest="${specs.dir}/DOM2-Traversal-Range.zip"
+                usetimestamp="yes"
+                ignoreerrors="${no-network}"/>
+</target>
+
+<target name="get-dom2-html" depends="dom2-check-spec" unless="dom2-html-available">
+        <mkdir dir="${specs.dir}/pubtext"/>
+        <mkdir dir="${specs.dir}/Level-2"/>
+        <get src="http://www.w3.org/TR/2003/REC-DOM-Level-2-HTML-20030109/DOM2-HTML.zip"
+                dest="${specs.dir}/DOM2-HTML.zip"
+                usetimestamp="yes"
+                ignoreerrors="${no-network}"/>
+    <get src="http://www.w3.org/TR/2003/REC-DOM-Level-2-HTML-20030109/java-binding.zip"
+        dest="${specs.dir}/DOM2-HTML-Java-Binding.zip"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+    <!-- get src="http://www.w3.org/2002/08/xmlspec-v22-dom.dtd"
+        dest="${specs.dir}/pubtext/xmlspec-v22-dom.dtd"
+        usetimestamp="yes"
+        ignoreerrors="${no-network}"/ -->
+</target>
+
+<target name="get-xmlspec-v22-dom-dtd" depends="dom2-check-spec"
+        unless="xmlspec-v22-dom-available">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/pubtext"/>
+        <get src="http://www.w3.org/2002/08/xmlspec-v22-dom.dtd"
+                dest="${specs.dir}/pubtext/xmlspec-v22-dom.dtd"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="get-dom2" depends="get-dom2-core,get-dom2-events,get-xmlspec-v22-dom-dtd,get-dom2-html,get-dom2-views,get-dom2-traversal,get-dom2-style">
+</target>
+
+
+<target name="dom2-missing-files" depends="init">
+        <mkdir dir="${specs.dir}/Level-2/xml"/>
+
+        <!--  zip file is missing two support files   -->
+        <echo file="${specs.dir}/Level-2/xml/options.xml"
+              message="&lt;?xml version='1.0' encoding='UTF-8'?&gt;"/>
+        <echo file="${specs.dir}/Level-2/xml/status.xml"
+              message="&lt;?xml version='1.0'  encoding='UTF-8'?&gt;"/>
+
+</target>
+
+<target name="dom2-traversal-init" depends="get-dom2-traversal, dom2-missing-files">
+        <unzip src="${specs.dir}/DOM2-Traversal-Range.zip"
+               dest="${specs.dir}/Level-2/Traversal-Range"/>
+        <!--  XML source has unusual ../../whatever paths,
+                must put in several layers deep to prevent writing out
+                        of build tree   -->
+        <unzip src="${specs.dir}/Level-2/Traversal-Range/xml-source.zip"
+               dest="${specs.dir}/Level-2/xml/traversal-range"/>
+</target>
+
+<target name="dom2-init" depends="get-dom2, dom2-traversal-init">
+
+        <unzip src="${specs.dir}/DOM2-Core.zip"
+               dest="${specs.dir}/Level-2/Core"/>
+        <!--  XML source has unusual ../../whatever paths,
+                must put in several layers deep to prevent writing out
+                        of build tree   -->
+        <unzip src="${specs.dir}/Level-2/Core/xml-source.zip"
+               dest="${specs.dir}/Level-2/xml/core"/>
+
+
+        <unzip src="${specs.dir}/DOM2-Views.zip"
+               dest="${specs.dir}/Level-2/Views"/>
+        <!--  XML source has unusual ../../whatever paths,
+                must put in several layers deep to prevent writing out
+                        of build tree   -->
+        <unzip src="${specs.dir}/Level-2/Views/xml-source.zip"
+               dest="${specs.dir}/Level-2/xml/views"/>
+
+
+
+        <unzip src="${specs.dir}/DOM2-Events.zip"
+               dest="${specs.dir}/Level-2/Events"/>
+        <!--  XML source has unusual ../../whatever paths,
+                must put in several layers deep to prevent writing out
+                        of build tree   -->
+        <unzip src="${specs.dir}/Level-2/Events/xml-source.zip"
+               dest="${specs.dir}/Level-2/xml/events"/>
+
+
+        <unzip src="${specs.dir}/DOM2-Style.zip"
+               dest="${specs.dir}/Level-2/Style"/>
+        <!--  XML source has unusual ../../whatever paths,
+                must put in several layers deep to prevent writing out
+                        of build tree   -->
+        <unzip src="${specs.dir}/Level-2/Style/xml-source.zip"
+               dest="${specs.dir}/Level-2/xml/style"/>
+
+
+
+
+        <unzip src="${specs.dir}/DOM2-HTML.zip"
+               dest="${specs.dir}/Level-2/HTML"/>
+    <!--  xml-source.xml had bad encoding declaration  -->
+    <replace file="${specs.dir}/Level-2/HTML/xml-source.xml">
+        <replacefilter token='encoding="us-ascii"'
+        value='encoding="ISO-8859-1"'/>
+        <replacefilter token='http://www.w3.org/2002/08/xmlspec-v22-dom.dtd'
+            value='../../../pubtext/xmlspec-v22-dom.dtd'/>
+    </replace>
+
+        <copy file="${specs.dir}/Level-2/HTML/xml-source.xml"
+              tofile="${specs.dir}/Level-2/xml/html/dom-spec.xml"/>
+
+
+        <unzip src="${specs.dir}/DOM2-HTML-Java-Binding.zip"
+               dest="${specs.dir}/Level-2/HTML/java"/>
+        <unzip src="${specs.dir}/DOM2-Events-Java-Binding.zip"
+               dest="${specs.dir}/Level-2/Events"/>
+        <unzip src="${specs.dir}/DOM2-Views-Java-Binding.zip"
+               dest="${specs.dir}/Level-2/Views"/>
+
+</target>
+
+<target name="dom2-schema" depends="dom2-interfaces">
+        <style in="${build.dir}/dom2-interfaces.xml"
+               out="${build.dir}/dom2.xsd"
+               style="${transforms.dir}/dom-to-xsd.xsl">
+                <param name="schema-namespace"
+                   expression="http://www.w3.org/2001/DOM-Test-Suite/Level-2"/>
+        </style>
+
+
+    <replace dir="${build.dir}" includes="dom2.xsd">
+        <replacefilter token="_xmlns" value="xmlns"/>
+        <replacefilter token="xmlns_test" value="xmlns:test"/>
+    </replace>
+        <copy file="${build.dir}/dom2.xsd" todir="${tests.dir}/level2/core"/>
+        <copy file="${build.dir}/dom2.xsd" todir="${tests.dir}/level2/html"/>
+        <copy file="${build.dir}/dom2.xsd" todir="${tests.dir}/level2/events"/>
+</target>
+
+<target name="dom2-dtd" depends="dom2-interfaces">
+        <style in="${build.dir}/dom2-interfaces.xml"
+               out="${build.dir}/dom2.dtd"
+               style="${transforms.dir}/dom-to-dtd.xsl">
+                <param name="schema-namespace"
+                   expression="http://www.w3.org/2001/DOM-Test-Suite/Level-2"/>
+                <param name="schema-location" expression="dom2.xsd"/>
+        </style>
+        <copy file="${build.dir}/dom2.dtd" todir="${tests.dir}/level2/core"/>
+        <copy file="${build.dir}/dom2.dtd" todir="${tests.dir}/level2/html"/>
+        <copy file="${build.dir}/dom2.dtd" todir="${tests.dir}/level2/events"/>
+</target>
+
+<target name="dom2-subjects" depends="dom2-init">
+        <!--  create a DOM 2 version of subjects.xsl  -->
+        <style in="${specs.dir}/Level-2/xml/core/dom-spec.xml"
+               out="${build.dir}/dom2-core-subjects.xml"
+               style="${transforms.dir}/subjects.xsl">
+           <param name="specURI" expression="http://www.w3.org/TR/DOM-Level-2-Core/core"/>
+           <param name="specTitle" expression="Document Object Model (DOM) Level 2 Core Specification"/>
+    </style>
+
+        <style in="${specs.dir}/Level-2/xml/views/dom-spec.xml"
+               out="${build.dir}/dom2-views-subjects.xml"
+               style="${transforms.dir}/subjects.xsl">
+           <param name="specURI" expression="http://www.w3.org/TR/DOM-Level-2-Views/views"/>
+           <param name="specTitle" expression="Document Object Model (DOM) Level 2 Views Specification"/>
+    </style>
+
+        <style in="${specs.dir}/Level-2/xml/events/dom-spec.xml"
+               out="${build.dir}/dom2-events-subjects.xml"
+               style="${transforms.dir}/subjects.xsl">
+           <param name="specURI" expression="http://www.w3.org/TR/DOM-Level-2-Events/events"/>
+           <param name="specTitle" expression="Document Object Model (DOM) Level 2 Events Specification"/>
+    </style>
+    <!--
+    Entities, probably defined in traversal-range/dom-spec.xml, not defined
+        <style in="${specs.dir}/Level-2/xml/traversal-range/traversal.xml"
+               out="${build.dir}/dom2-traversal-subjects.xml"
+               style="${transforms.dir}/subjects.xsl">
+           <param name="specURI" expression="http://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal"/>
+           <param name="specTitle" expression="Document Object Model (DOM) Level 2 Traversal Specification
+"/>
+    </style>
+        <style in="${specs.dir}/Level-2/xml/traversal-range/range.xml"
+               out="${build.dir}/dom2-range-subjects.xml"
+               style="${transforms.dir}/subjects.xsl">
+           <param name="specURI" expression="http://www.w3.org/TR/DOM-Level-2-Traversal-Range/range"/>
+           <param name="specTitle" expression="Document Object Model (DOM) Level 2 Range Specification
+"/>
+    </style>
+    -->
+        <style in="${specs.dir}/Level-2/xml/html/dom-spec.xml"
+               out="${build.dir}/dom2-html-subjects.xml"
+               style="${transforms.dir}/subjects.xsl">
+           <param name="specURI" expression="http://www.w3.org/TR/DOM-Level-2-HTML/html"/>
+           <param name="specTitle"
+                  expression="Document Object Model (DOM) Level 2 HTML Specification
+"/>
+    </style>
+</target>
+
+<target name="dom2-core-validate-html-files" depends="init">
+    <antcall target="validate-html">
+        <param name="dir" value="${tests.dir}/level2/core/files"/>
+    </antcall>
+
+</target>
+
+<target name="dom2-core-validate-files" depends="dom2-core-validate-html-files">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level2/core/files"
+                         includes="*.xml *.xhtml *.svg"
+                         excludes="nodtdstaff.*"/>
+        </xmlvalidate>
+
+</target>
+
+
+<target name="dom2-interfaces" depends="dom2-init">
+    <!--    also changes Element.getElementsByTagName's
+                name parameter to tagname    -->
+        <style in="${specs.dir}/Level-2/xml/core/dom-spec.xml"
+               out="${build.dir}/dom2-interfaces.xml"
+               style="${transforms.dir}/dom2-combine.xsl"/>
+        <xmlvalidate file="${build.dir}/dom2-interfaces.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <style in="${specs.dir}/Level-2/xml/core/dom-spec.xml"
+               out="${build.dir}/dom2-core-interfaces.xml"
+               style="${transforms.dir}/extract.xsl"/>
+
+</target>
+
+
+<!--   DOM Level 2 Core   -->
+
+
+<target name="dom2-core-validate-tests" depends="dom2-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level2/core"
+                         includes="*.xml"
+                         excludes="hc_namednodemapinvalidtype1.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom2-core-schema-validate-tests" depends="check-schema-support, dom2-dtd, dom2-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level2/core"/>
+        <property name="excludes" value="hc_namednodemapinvalidtype1.xml"/>
+    </ant>
+</target>
+
+<target name="dom2-core-gen-java" depends="dom2-interfaces,dom2-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="2"/>
+                <param name="module" value="core"/>
+        </antcall>
+</target>
+
+
+<target name="dom2-core-gen-jsunit-base" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-jsunit">
+        <param name="level" value="2"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+<target name="dom2-core-gen-jsunit" depends="jsunit-get, dom2-core-gen-jsunit-base"/>
+
+<target name="dom2-core-gen-selfhtml" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-selfhtml">
+        <param name="level" value="2"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+<target name="dom2-core-gen-selfxhtml" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-selfxhtml">
+        <param name="level" value="2"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+
+<target name="dom2-core-gen-svgunit" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-svgunit">
+        <param name="level" value="2"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+
+<target name="dom2-core-javac" depends="common-javac,dom2-core-gen-java">
+        <javac srcdir="${java.build.dir}"
+                includes="org/w3c/domts/level2/core/*.java"
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                source="1.2"
+                target="1.1"
+                encoding="UTF8"/>
+</target>
+
+<target name="dom2-core-checkstyle" depends="checkstyle-available, dom2-core-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="2"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+<target name="dom2-core-jar" depends="dom2-core-javac,dom2-core-validate-files">
+        <antcall target="jar">
+                <param name="level" value="2"/>
+                <param name="module" value="core"/>
+        </antcall>
+</target>
+
+<target name="dom2-core-doxygen" depends="dom2-core-gen-java">
+        <mkdir dir="${build.dir}/level2/core/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom2-core.doxygen"/>
+    </exec>
+
+</target>
+
+
+<target name="dom2-core-metadata" depends="dom2-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level2/core/alltests.xml"
+                   out="${build.dir}/dom2-core-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level2/core/"/>
+                <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+
+<target name="dom2-core-matrix" depends="dom2-core-metadata,dom2-subjects,dom2-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom2-core-metadata.rdf"
+                   out="${build.dir}/dom2-core-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/DOM-Level-2-Core/core#"/>
+                <param name="interfacesURL" expression="dom2-core-interfaces.xml"/>
+                <param name="specMetadataURL" expression="dom2-core-subjects.xml"/>
+                <param name="title" expression="DOM Level 2 Core Test Suite Matrix"/>
+                <param name="noTestInterfaces" expression="CDATASection Comment EntityReference"/>
+        </style>
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom2-core-matrix.html"/>
+        </antcall>
+
+</target>
+
+
+<target name="dom2-core-dist"
+        depends="dom2-core-jar,
+                 dom2-core-gen-jsunit,
+                 dom2-core-matrix,
+                 dom2-core-doxygen,
+                 get-junit,
+                 junit-run,
+                 get-junit-license,
+                 dom2-schema,
+                 dom2-core-gen-svgunit,
+                 dom2-core-gen-selfxhtml,
+                 dom2-core-gen-selfhtml">
+    <antcall target="dist">
+        <param name="level" value="2"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+<!--  DOM Level 2 HTML  -->
+
+<target name="dom2-html-validate-tests" depends="dom1-html-validate-tests, dom2-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level2/html" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom2-html-schema-validate-tests" depends="check-schema-support, dom1-html-schema-validate-tests, dom2-dtd, dom2-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level2/html"/>
+    </ant>
+</target>
+
+<target name="dom2-html-validate-html-files" depends="init">
+    <antcall target="validate-html">
+        <param name="dir" value="${tests.dir}/level2/html/files"/>
+    </antcall>
+
+</target>
+
+<target name="dom2-html-validate-files" depends="dom1-html-validate-files, dom2-html-validate-html-files, get-xhtml1-dtd">
+    <copy todir="${tests.dir}/level2/html/files">
+                <fileset dir="${lib.dir}/xhtml1-dtd"/>
+    </copy>
+
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level2/html/files" includes="*.xml *.xhtml"/>
+        </xmlvalidate>
+
+
+</target>
+
+
+<target name="dom2-html-gen-java" depends="dom2-interfaces,dom1-dtd,dom2-dtd">
+        <style basedir="${tests.dir}/level1/html"
+                   destdir="${java.build.dir}/org/w3c/domts/level2/html"
+                   includes="*.xml"
+           excludes="metadata.xml
+                     alltests.xml
+                     HTMLAppletElement07.xml
+                     HTMLAppletElement09.xml
+                     HTMLBaseFontElement03.xml
+                     HTMLImageElement05.xml
+                     HTMLImageElement06.xml
+                     HTMLImageElement11.xml
+                     HTMLImageElement12.xml
+                     HTMLImageElement14.xml
+                     HTMLInputElement13.xml
+                     HTMLObjectElement11.xml
+                     HTMLObjectElement16.xml
+                     hasFeature00.xml
+                     object08.xml
+                     object13.xml"
+               style="${transforms.dir}/test-to-java.xsl"
+               extension=".java">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom2-interfaces.xml"/>
+                <param name="package"
+                       expression="org.w3c.domts.level2.html"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level2/html/"/>
+                <param name="import-html"
+                       expression="import org.w3c.dom.html2.*;"/>
+        </style>
+
+
+
+        <antcall target="gen-java">
+                <param name="level" value="2"/>
+                <param name="module" value="html"/>
+                <param name="import-html" value="import org.w3c.dom.html2.*;"/>
+        </antcall>
+</target>
+
+
+<target name="dom2-html-gen-jsunit-base" depends="dom2-interfaces,dom1-dtd,dom2-dtd,get-xhtml1-dtd">
+    <mkdir dir="${build.dir}/ecmascript/level2/html/files"/>
+    <copy todir="${build.dir}/ecmascript/level2/html/files">
+                <fileset dir="tests/level1/html/files" excludes="*.bak"/>
+    </copy>
+        <style basedir="${tests.dir}/level1/html"
+                   destdir="${build.dir}/ecmascript/level2/html"
+                   includes="*.xml"
+           excludes="metadata.xml
+                     alltests.xml
+                     HTMLAppletElement07.xml
+                     HTMLAppletElement09.xml
+                     HTMLBaseFontElement03.xml
+                     HTMLImageElement05.xml
+                     HTMLImageElement06.xml
+                     HTMLImageElement11.xml
+                     HTMLImageElement12.xml
+                     HTMLImageElement14.xml
+                     HTMLInputElement13.xml
+                     HTMLObjectElement11.xml
+                     HTMLObjectElement16.xml
+                     hasFeature00.xml
+                     object08.xml
+                     object13.xml"
+               style="${transforms.dir}/test-to-jsunit.xsl"
+               extension=".html">
+                <param name="interfaces-docname"
+                       expression="../${build.dir}/dom2-interfaces.xml"/>
+                <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level2/html/"/>
+        <param name="testpath" expression="../level2/html/"/>
+        </style>
+
+    <antcall target="gen-jsunit-no-validation">
+        <param name="level" value="2"/>
+        <param name="module" value="html"/>
+        <param name="hideSVG" value="yes"/>
+    </antcall>
+
+    <!--  fix up tests which could be produced with <elt*> in string literals  -->
+    <replace dir="${build.dir}/ecmascript/level2/html"
+             includes="HTMLDocument*.html"
+             token='&gt;";'
+             value='"&amp;gt;";'/>
+    <replace dir="${build.dir}/ecmascript/level2/html"
+             includes="HTMLDocument*.html"
+             token='("&lt;'
+             value='("&amp;lt;'/>
+    <replace dir="${build.dir}/ecmascript/level2/html"
+             includes="HTMLDocument*.html"
+             token='Replacement&lt;/title'
+             value='Replacement&amp;lt;/title'/>
+
+    <antcall target="validate-html">
+        <param name="dir" value="${build.dir}/ecmascript/level2/html"/>
+    </antcall>
+
+    <antcall target="compile-applet">
+        <param name="applet.dest.dir" value="${build.dir}/ecmascript/level2/html/applets"/>
+    </antcall>
+
+</target>
+
+<target name="dom2-html-gen-jsunit" depends="jsunit-get, dom2-html-gen-jsunit-base"/>
+
+<target name="dom2-html-gen-selfhtml" depends="dom2-interfaces,dom1-dtd,dom2-dtd,get-xhtml1-dtd">
+        <style basedir="${tests.dir}/level1/html"
+               destdir="${build.dir}/self-hosted/html/level2/html"
+               includes="*.xml"
+               excludes="metadata.xml
+                     alltests.xml
+                     HTMLAppletElement07.xml
+                     HTMLAppletElement09.xml
+                     HTMLBaseFontElement03.xml
+                     HTMLImageElement05.xml
+                     HTMLImageElement06.xml
+                     HTMLImageElement11.xml
+                     HTMLImageElement12.xml
+                     HTMLImageElement14.xml
+                     HTMLInputElement13.xml
+                     HTMLObjectElement11.xml
+                     HTMLObjectElement16.xml
+                     hasFeature00.xml
+                     object08.xml
+                     object13.xml"
+               style="${transforms.dir}/test-to-selfhtml.xsl"
+               extension=".js">
+               <param name="interfaces-docname"
+                       expression="../${build.dir}/dom2-interfaces.xml"/>
+               <param name="target-uri-base"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level2/html/"/>
+               <param name="testpath" expression="../level2/html/"/>
+        </style>
+
+    <antcall target="gen-selfhtml">
+        <param name="level" value="2"/>
+        <param name="module" value="html"/>
+    </antcall>
+
+    <antcall target="compile-applet">
+        <param name="applet.dest.dir" value="${build.dir}/self-hosted/html/level2/html/applets"/>
+    </antcall>
+    
+    <copy todir="${build.dir}/self-hosted/html/level2/html">
+        <fileset dir="tests/level1/html/files" includes="*.png frame.html iframe.html"/>
+    </copy>
+    
+    <!--  Name field of URL of document is no longer "document"  --> 
+    <replace file="${build.dir}/self-hosted/html/level2/html/HTMLDocument04.js"
+             token='"document"'
+             value='"HTMLDocument04"'/>
+    <!--  test document now has four script elements, not just one  -->
+    <replace dir="${build.dir}/self-hosted/html/level2/html" includes="HTMLScriptElement*.js">
+        <replacefilter token="1,nodeList" value="4,nodeList"/>
+        <replacefilter token="nodeList.item(0)" value="nodeList.item(3)"/>
+    </replace>
+    
+    <!--  HTMLBaseElement01 and 02 need scripts inlined since BASE element
+            interferes with resolution   -->
+    <antcall target="fix-html-base-element-tests"/>
+</target>
+
+<target name="dom2-html-gen-selfxhtml" depends="dom2-interfaces,dom1-dtd,dom2-dtd,get-xhtml1-dtd">
+        <style basedir="${tests.dir}/level1/html"
+               destdir="${build.dir}/self-hosted/xhtml/level2/html"
+               includes="*.xml"
+               excludes="metadata.xml
+                     alltests.xml
+                     HTMLAppletElement07.xml
+                     HTMLAppletElement09.xml
+                     HTMLBaseFontElement03.xml
+                     HTMLImageElement05.xml
+                     HTMLImageElement06.xml
+                     HTMLImageElement11.xml
+                     HTMLImageElement12.xml
+                     HTMLImageElement14.xml
+                     HTMLInputElement13.xml
+                     HTMLObjectElement11.xml
+                     HTMLObjectElement16.xml
+                     hasFeature00.xml
+                     object08.xml
+                     object13.xml"
+               style="${transforms.dir}/test-to-selfhtml.xsl"
+               extension=".js">
+               <param name="interfaces-docname"
+                      expression="../${build.dir}/dom2-interfaces.xml"/>
+               <param name="target-uri-base"
+                      expression="http://www.w3.org/2001/DOM-Test-Suite/level2/html/"/>
+               <param name="testpath" expression="../level2/html/"/>
+        </style>
+
+    <antcall target="gen-selfxhtml">
+        <param name="level" value="2"/>
+        <param name="module" value="html"/>
+    </antcall>
+
+    <antcall target="compile-applet">
+        <param name="applet.dest.dir" value="${build.dir}/self-hosted/xhtml/level2/html/applets"/>
+    </antcall>
+    
+    <copy todir="${build.dir}/self-hosted/xhtml/level2/html">
+        <fileset dir="tests/level1/html/files" includes="*.png frame.xhtml iframe.xhtml"/>
+    </copy>
+
+    <!--  Name field of URL of document is no longer "document"  --> 
+    <replace file="${build.dir}/self-hosted/xhtml/level2/html/HTMLDocument04.js"
+             token='"document"'
+             value='"HTMLDocument04"'/>
+    <!--  test document now has four script elements, not just one  -->
+    <replace dir="${build.dir}/self-hosted/xhtml/level2/html" includes="HTMLScriptElement*.js">
+        <replacefilter token="1,nodeList" value="4,nodeList"/>
+        <replacefilter token="nodeList.item(0)" value="nodeList.item(3)"/>
+    </replace>
+    
+    
+    <!--  HTMLBaseElement01 and 02 need scripts inlined since BASE element
+            interferes with resolution   -->
+    <antcall target="fix-xhtml-base-element-tests"/>
+
+</target>
+
+<target name="fix-html-base-element-tests">
+    <property name="level" value="2"/>
+    <property name="dest.dir" value="${build.dir}/self-hosted/html/level${level}/html"/>
+    
+    <!-- wrap selfhtml.js in an CDATA section so it can be used as an entity  -->
+    <concat destfile="${dest.dir}/framework.ent">
+         <header>&lt;![CDATA[</header>
+         <footer>]]&gt;</footer>
+         <fileset dir="ecmascript" includes="selfhtml.js"/>
+    </concat>
+    <replace file="${dest.dir}/framework.ent"
+         token="&lt;/" value="&lt;\/"/>
+         
+    <antcall target="fix-base-element-tests">
+         <param name="contentType" value="html"/>
+         <param name="dest.dir" value="${dest.dir}"/>
+    </antcall>
+</target>
+
+
+<target name="fix-xhtml-base-element-tests">
+    <property name="level" value="2"/>
+    <property name="dest.dir" value="${build.dir}/self-hosted/xhtml/level${level}/html"/>
+    
+    <!-- wrap selfxhtml.js in an CDATA section so it can be used as an entity  -->
+    <concat destfile="${dest.dir}/framework.ent">
+         <header>&amp;lt;![CDATA[&lt;![CDATA[</header>
+         <footer>]]&gt;]]&amp;gt;</footer>
+         <fileset dir="ecmascript" includes="selfxhtml.js"/>
+    </concat>
+         
+    <antcall target="fix-base-element-tests">
+         <param name="contentType" value="xhtml"/>
+         <param name="dest.dir" value="${dest.dir}"/>
+    </antcall>
+</target>
+
+<target name="fix-base-element-tests">
+    <!--  HTMLBaseElement01 and 02 need scripts inlined since BASE element
+            interferes with resolution   -->
+    <!--  copy the test script   -->
+    <copy tofile="${dest.dir}/script.ent"
+        file="${dest.dir}/HTMLBaseElement01.js"
+        overwrite="true"/>
+    <!--  copy the Ant file referencing the prepared entities  -->
+    <copy todir="${dest.dir}"
+        file="ecmascript/inline-script.xml"/>
+    <!--   inline the references -->
+    <ant antfile="inline-script.xml"
+         dir="${dest.dir}">
+        <property name="test" value="HTMLBaseElement01.${contentType}"/>
+        <property name="script" value="HTMLBaseElement01.js"/>
+        <property name="framework" value="self${contentType}.js"/>
+    </ant>
+    <!--  do it again for HTMLBaseElement02.html    -->
+    <copy tofile="${dest.dir}/script.ent"
+        file="${dest.dir}/HTMLBaseElement02.js"
+        overwrite="true"/>
+    <ant antfile="inline-script.xml" 
+         dir="${dest.dir}">
+        <property name="test" value="HTMLBaseElement02.${contentType}"/>
+        <property name="script" value="HTMLBaseElement02.js"/>
+        <property name="framework" value="self${contentType}.js"/>
+    </ant>
+    <delete>
+        <fileset dir="${dest.dir}" includes="script.ent framework.ent 
+            inline-script.xml HTMLBaseElement01.js HTMLBaseElement02.js"/>
+    </delete>
+</target>
+
+<target name="dom2-html-javac" depends="common-javac, dom2-html-gen-java">
+        <javac srcdir="${java.build.dir}"
+               includes="org/w3c/domts/level2/html/*.java"
+               destdir="${java.build.dir}"
+               classpath="${java.build.dir};${jaxp.jar}"
+               debug="on"
+               source="1.2"
+               target="1.1"
+               encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <src path="${specs.dir}/Level-2/HTML/java"/>
+        <include name="org/w3c/domts/*"/>
+        <include name="org/w3c/domts/level2/html/*"/>
+        <include name="org/w3c/dom/**"/>
+    </javac>
+</target>
+
+<target name="dom2-html-checkstyle" depends="checkstyle-available, dom2-html-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="2"/>
+        <param name="module" value="html"/>
+    </antcall>
+</target>
+
+
+<target name="dom2-html-jar" depends="dom2-html-javac,dom2-html-validate-files">
+        <jar jarfile="${build.dir}/dom2-html.jar"
+                 manifest="java/dom2-html.mf"
+                 basedir="${java.build.dir}"
+                 includes="org/w3c/domts/* org/w3c/domts/level2/html/* org/w3c/dom/* org/w3c/dom/html/*"
+                 excludes="*.bak">
+                <fileset dir="tests/level1/html/files" excludes="*.bak"/>
+                <fileset dir="tests/level2/html/files" excludes="*.bak"/>
+                <fileset dir="java" includes="org/w3c/domts/*.java"/>
+                <fileset dir="${lib.dir}/xhtml1-dtd"/>
+        </jar>
+</target>
+
+
+<target name="dom2-html-metadata" depends="dom2-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level2/html/alltests.xml"
+               out="${build.dir}/dom2-html-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level2/html/"/>
+                <param name="externalMetadata" expression="metadata.xml"/>
+                <param name="newSpecURI"
+                       expression="http://www.w3.org/TR/DOM-Level-2-HTML/html#"/>
+                <param name="oldSpecURI"
+                       expression="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-html#"/>
+        </style>
+</target>
+
+
+
+<target name="dom2-html-matrix" depends="dom2-html-metadata,dom2-subjects,dom2-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom2-html-metadata.rdf"
+               out="${build.dir}/dom2-html-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+               <param name="specURI"
+                       expression="http://www.w3.org/TR/DOM-Level-2-HTML/html#"/>
+               <param name="interfacesURL" expression="dom2-interfaces.xml"/>
+               <param name="specMetadataURL" expression="dom2-html-subjects.xml"/>
+               <param name="title" expression='DOM Level 2 HTML Test Suite Matrix'/>
+        </style>
+
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom2-html-matrix.html"/>
+        </antcall>
+
+</target>
+
+
+<target name="dom2-html-doxygen" depends="dom2-html-gen-java">
+    <mkdir dir="${build.dir}/level2/html/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom2-html.doxygen"/>
+    </exec>
+
+</target>
+
+
+<target name="dom2-html-dist" depends="dom2-html-jar,
+                dom2-html-gen-jsunit,
+                dom2-html-matrix,
+                dom2-html-doxygen,
+                get-junit,
+                junit-run,
+                get-junit-license,
+                dom2-schema,
+                dom2-html-gen-selfxhtml,
+                dom2-html-gen-selfhtml">
+
+    <!--  copy L1 HTML tests over to distribution directory
+             conflicting ones will be overwritten  -->                
+    <mkdir dir="${build.dir}/level1/html/tests/files"/>
+    <copy todir="${build.dir}/level2/html/tests">
+        <fileset dir="${tests.dir}/level1/html" includes="*.xml *.ent"/>
+    </copy>
+    <copy todir="${build.dir}/level2/html/tests/files">
+        <fileset dir="${tests.dir}/level1/html/files" excludes="*.bak"/>
+    </copy>
+    <replace dir="${build.dir}/level2/html/tests" includes="*.xml">
+        <replacefilter token="dom1.dtd" value="dom2.dtd"/>
+        <replacefilter token="http://www.w3.org/2001/DOM-Test-Suite/Level-1"
+                value="http://www.w3.org/2001/DOM-Test-Suite/Level-2"/>
+    </replace>
+                
+    <antcall target="dist">
+        <param name="level" value="2"/>
+        <param name="module" value="html"/>
+    </antcall>
+</target>
+
+
+<!--   DOM Level 2 Events   -->
+
+<target name="dom2-events-validate-html-files" depends="init">
+    <antcall target="validate-html">
+        <param name="dir" value="${tests.dir}/level2/events/files"/>
+    </antcall>
+
+</target>
+
+<target name="dom2-events-validate-files" depends="dom2-events-validate-html-files">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level2/events/files"
+                         includes="*.xml *.svg"
+                         excludes="nodtdstaff.*"/>
+        </xmlvalidate>
+</target>
+
+
+
+
+<target name="dom2-events-validate-tests" depends="dom2-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level2/events" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom2-events-schema-validate-tests" depends="check-schema-support, dom2-dtd, dom2-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level2/events"/>
+    </ant>
+</target>
+
+
+
+
+<target name="dom2-events-gen-java" depends="dom2-interfaces,dom2-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="2"/>
+                <param name="module" value="events"/>
+        </antcall>
+</target>
+
+
+
+<target name="dom2-events-javac" depends="common-javac,dom2-events-gen-java">
+
+        <javac
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                target="1.1"
+                source="1.2"
+                encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <src path="${specs.dir}/Level-2/Events/java"/>
+        <src path="${specs.dir}/Level-2/Views/java"/>
+        <include name="org/w3c/domts/*"/>
+        <include name="org/w3c/domts/level2/events/*"/>
+        <include name="org/w3c/dom/**"/>
+    </javac>
+</target>
+
+<target name="dom2-events-checkstyle" depends="checkstyle-available, dom2-events-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="2"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+
+<target name="dom2-events-jar" depends="dom2-events-javac,dom2-events-validate-files">
+        <antcall target="jar">
+                <param name="level" value="2"/>
+                <param name="module" value="events"/>
+        </antcall>
+</target>
+
+<target name="dom2-events-gen-jsunit-base" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-jsunit">
+        <param name="level" value="2"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+<target name="dom2-events-gen-jsunit" depends="jsunit-get, dom2-events-gen-jsunit-base"/>
+
+<target name="dom2-events-gen-selfhtml" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-selfhtml">
+        <param name="level" value="2"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+<target name="dom2-events-gen-selfxhtml" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-selfxhtml">
+        <param name="level" value="2"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+
+
+<target name="dom2-events-gen-svgunit" depends="dom2-interfaces,dom2-dtd">
+    <antcall target="gen-svgunit">
+        <param name="level" value="2"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+
+
+<target name="dom2-events-doxygen" depends="dom2-events-gen-java">
+        <mkdir dir="${build.dir}/level2/events/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom2-events.doxygen"/>
+    </exec>
+
+</target>
+
+
+
+<target name="dom2-events-metadata" depends="dom2-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level2/events/alltests.xml"
+                   out="${build.dir}/dom2-events-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level2/events/"/>
+        <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+<target name="dom2-events-matrix" depends="dom2-events-metadata,dom2-subjects,dom2-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom2-events-metadata.rdf"
+                   out="${build.dir}/dom2-events-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/DOM-Level-2-Events/events#"/>
+        <param name="interfacesURL" expression="dom2-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom2-events-subjects.xml"/>
+        <param name="title" expression="DOM Level 2 Events Test Suite Matrix"/>
+        </style>
+
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom2-events-matrix.html"/>
+        </antcall>
+
+</target>
+
+
+<target name="dom2-events-dist"
+     depends="dom2-events-jar,
+              dom2-events-gen-jsunit,
+              dom2-events-matrix,
+              dom2-events-doxygen,
+              get-junit,
+              junit-run,
+              get-junit-license,
+              dom2-schema,
+              dom2-events-gen-svgunit,
+              dom2-events-gen-selfhtml,
+              dom2-events-gen-selfxhtml">
+    <antcall target="dist">
+        <param name="level" value="2"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+<target name="dom2-gump" depends="dom2-core-validate-tests,
+                                  dom2-events-validate-tests,
+                                                                  dom2-html-validate-tests,
+                                                                  dom2-core-jar,
+                                                                  dom2-events-jar,
+                                                                  dom2-html-jar"/>
+
+<target name="dom2-dist" depends="dom2-core-dist,dom2-html-dist,dom2-events-dist">
+</target>
+
+<!--   DOM Level 3   -->
+
+<target name="dom3-available" depends="init">
+    <available property="dom3-core-available" file="${specs.dir}/DOM3-Core.zip"/>
+    <available property="dom3-ls-available" file="${specs.dir}/DOM3-LS.zip"/>
+    <available property="dom3-val-available" file="${specs.dir}/DOM3-Val.zip"/>
+    <available property="dom3-xpath-available" file="${specs.dir}/DOM3-XPath.zip"/>
+    <available property="dom3-events-available" file="${specs.dir}/DOM3-Events.zip"/>
+    <available property="dom3-views-available" file="${specs.dir}/DOM3-Views.zip"/>
+</target>
+
+<target name="get-dom3-core" depends="dom3-available"><!-- unless="dom3-core-available" -->
+        <!--   download DOM 3 Core spec to specs directory   -->
+        <get src="http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/DOM3-Core.zip"
+                dest="${specs.dir}/DOM3-Core.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="get-dom3-ls" depends="dom3-available"><!-- unless="dom3-ls-available" -->
+        <get src="http://www.w3.org/TR/2004/REC-DOM-Level-3-LS-20040407/DOM3-LS.zip"
+                dest="${specs.dir}/DOM3-LS.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="get-dom3-val" depends="dom3-available"><!-- unless="dom3-val-available"-->
+        <get src="http://www.w3.org/TR/2004/REC-DOM-Level-3-Val-20040127/DOM3-Val.zip"
+                dest="${specs.dir}/DOM3-Val.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+
+<target name="get-dom3-xpath" depends="dom3-available" unless="dom3-xpath-available">
+        <get src="http://www.w3.org/TR/2004/NOTE-DOM-Level-3-XPath-20040226/DOM3-XPath.zip"
+                dest="${specs.dir}/DOM3-XPath.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="get-dom3-events" depends="dom3-available"><!-- unless="dom3-events-available"-->
+        <get src="http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/DOM3-Events.zip"
+                dest="${specs.dir}/DOM3-Events.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+
+<!--target name="get-dom3-views" depends="dom3-available" unless="dom3-views-available">
+        <get src="http://www.w3.org/TR/2000/WD-DOM-Level-3-Views-20001115/DOM3-Views.zip"
+                dest="${specs.dir}/DOM3-Views.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target-->
+
+<target name="get-dom3" depends="get-xmlspec-v22-dom-dtd,get-dom3-core,get-dom3-ls,get-dom3-val,get-dom3-xpath,get-dom3-events"><!--,get-dom3-views"-->
+</target>
+
+
+<target name="spec-unzip">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+
+        <unzip src="${specs.dir}/DOM${level}-${module}.zip"
+               dest="${specs.dir}/Level-${level}/${module}"/>
+
+        <copy file="${specs.dir}/pubtext/xmlspec-v22-dom.dtd"
+                todir="${specs.dir}/Level-${level}/${module}"/>
+
+        <replace file="${specs.dir}/Level-${level}/${module}/xml-source.xml"
+                token="http://www.w3.org/2002/08/xmlspec-v22-dom.dtd"
+                value="xmlspec-v22-dom.dtd"/>
+
+    <delete dir="${specs.dir}/Level-${level}/${module}/java"/>
+        <unzip src="${specs.dir}/Level-${level}/${module}/java-binding.zip"
+               dest="${specs.dir}/Level-${level}/${module}/java"/>
+
+</target>
+
+
+
+<target name="dom3-init" depends="init,get-dom3,dom2-traversal-init">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/Level-3"/>
+
+        <!--unzip src="${specs.dir}/DOM3-Views.zip"
+               dest="${specs.dir}/Level-3/Views"/-->
+        <!--  XML source has unusual ../../whatever paths,
+                must put in several layers deep to prevent writing out
+                        of build tree   -->
+        <!--unzip src="${specs.dir}/Level-3/Views/xml-source.zip"
+               dest="${specs.dir}/Level-3/xml/views"/-->
+
+        <antcall target="spec-unzip">
+                <param name="level" value="3"/>
+                <param name="module" value="XPath"/>
+        </antcall>
+
+        <antcall target="spec-unzip">
+                <param name="level" value="3"/>
+                <param name="module" value="Events"/>
+        </antcall>
+
+        <antcall target="spec-unzip">
+                <param name="level" value="3"/>
+                <param name="module" value="Core"/>
+        </antcall>
+
+        <antcall target="spec-unzip">
+                <param name="level" value="3"/>
+                <param name="module" value="LS"/>
+        </antcall>
+
+        <antcall target="spec-unzip">
+                <param name="level" value="3"/>
+                <param name="module" value="Val"/>
+        </antcall>
+
+
+
+    <property name="dom3-core-java-src" location="${specs.dir}/Level-3/Core/java"/>
+    <property name="dom3-ls-java-src" location="${specs.dir}/Level-3/LS/java"/>
+    <property name="dom3-xpath-java-src" location="${specs.dir}/Level-3/XPath/java"/>
+    <property name="dom3-val-java-src" location="${specs.dir}/Level-3/Val/java"/>
+    <property name="dom3-events-java-src" location="${specs.dir}/Level-3/Events/java"/>
+
+</target>
+
+<target name="dom3-interfaces" depends="dom3-init">
+    <delete file="${build.dir}/dom3-interfaces.xml"/>
+
+        <style in="${specs.dir}/Level-3/Core/xml-source.xml"
+               out="${build.dir}/dom3-interfaces.xml"
+               style="${transforms.dir}/dom3-combine.xsl"/>
+        <xmlvalidate file="${build.dir}/dom3-interfaces.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+</target>
+
+<target name="dom3-schema" depends="dom3-interfaces">
+        <style in="${build.dir}/dom3-interfaces.xml"
+               out="${build.dir}/dom3.xsd"
+               style="${transforms.dir}/dom-to-xsd.xsl">
+                <param name="schema-namespace"
+                   expression="http://www.w3.org/2001/DOM-Test-Suite/Level-3"/>
+        </style>
+
+        <!--  remove leading underscore from _xmlns attribute    -->
+    <replace dir="${build.dir}" includes="dom3.xsd">
+        <replacefilter token="_xmlns" value="xmlns"/>
+        <replacefilter token="xmlns_test" value="xmlns:test"/>
+    </replace>
+        <copy file="${build.dir}/dom3.xsd" todir="${tests.dir}/level3/ls" overwrite="true"/>
+        <copy file="${build.dir}/dom3.xsd" todir="${tests.dir}/level3/xpath" overwrite="true"/>
+        <copy file="${build.dir}/dom3.xsd" todir="${tests.dir}/level3/core" overwrite="true"/>
+        <copy file="${build.dir}/dom3.xsd" todir="${tests.dir}/level3/validation" overwrite="true"/>
+        <copy file="${build.dir}/dom3.xsd" todir="${tests.dir}/level3/events" overwrite="true"/>
+</target>
+
+<target name="dom3-dtd" depends="dom3-interfaces">
+        <style in="${build.dir}/dom3-interfaces.xml"
+               out="${build.dir}/dom3.dtd"
+               style="${transforms.dir}/dom-to-dtd.xsl">
+                <param name="schema-namespace"
+                   expression="http://www.w3.org/2001/DOM-Test-Suite/Level-3"/>
+                <param name="schema-location" expression="dom3.xsd"/>
+        <param name="additional-types" expression="|LSInputStream|LSOutputStream|LSReader|LSWriter|DOMUserData|DOMObject|DOMImplementationRegistry"/>
+        </style>
+        <copy file="${build.dir}/dom3.dtd" todir="${tests.dir}/level3/ls" overwrite="true"/>
+    <copy file="${transforms.dir}/test-to-html.xsl" todir="${tests.dir}/level3/ls" overwrite="true"/>
+        <copy file="${build.dir}/dom3.dtd" todir="${tests.dir}/level3/xpath" overwrite="true"/>
+    <copy file="${transforms.dir}/test-to-html.xsl" todir="${tests.dir}/level3/xpath" overwrite="true"/>
+        <copy file="${build.dir}/dom3.dtd" todir="${tests.dir}/level3/core" overwrite="true"/>
+    <copy file="${transforms.dir}/test-to-html.xsl" todir="${tests.dir}/level3/core" overwrite="true"/>
+        <copy file="${build.dir}/dom3.dtd" todir="${tests.dir}/level3/validation" overwrite="true"/>
+    <copy file="${transforms.dir}/test-to-html.xsl" todir="${tests.dir}/level3/validation" overwrite="true"/>
+        <copy file="${build.dir}/dom3.dtd" todir="${tests.dir}/level3/events" overwrite="true"/>
+    <copy file="${transforms.dir}/test-to-html.xsl" todir="${tests.dir}/level3/events" overwrite="true"/>
+</target>
+
+<target name="dom3-subjects" depends="dom3-init">
+        <!--  create a DOM 3 version of subjects.xsl  -->
+    <copy file="${transforms.dir}/subjects.xsl" tofile="${build.dir}/dom3-subjects.xsl"/>
+    <replace dir="${build.dir}" includes="dom3-subjects.xsl">
+        <replacefilter token="dom1.dtd" value="dom3.dtd"/>
+        <replacefilter token="Level-1" value="Level-3"/>
+    </replace>
+
+        <style in="${specs.dir}/Level-3/Core/xml-source.xml"
+               out="${build.dir}/dom3-core-subjects.xml"
+               style="${build.dir}/dom3-subjects.xsl">
+               <param name="specURI"
+                      expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-Core-20031107/core"/>
+        </style>
+       <!-- bc temporarily remove due to problems
+        <style in="${specs.dir}/Level-3/xml/views/dom-spec.xml"
+               out="${build.dir}/dom3-views-subjects.xml"
+               style="${build.dir}/dom3-subjects.xsl"/>
+        bc -->
+        <style in="${specs.dir}/Level-3/Events/xml-source.xml"
+               out="${build.dir}/dom3-events-subjects.xml"
+               style="${build.dir}/dom3-subjects.xsl">
+               <param name="specURI"
+                      expression="http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events"/>
+    </style>
+        <style in="${specs.dir}/Level-3/XPath/xml-source.xml"
+               out="${build.dir}/dom3-xpath-subjects.xml"
+               style="${build.dir}/dom3-subjects.xsl">
+               <param name="specURI"
+                      expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-XPath-20030331/xpath"/>
+        </style>
+        <style in="${specs.dir}/Level-3/LS/xml-source.xml"
+               out="${build.dir}/dom3-ls-subjects.xml"
+               style="${build.dir}/dom3-subjects.xsl">
+               <param name="specURI"
+                      expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-LS-20031107/load-save"/>
+        </style>
+        <style in="${specs.dir}/Level-3/Val/xml-source.xml"
+               out="${build.dir}/dom3-val-subjects.xml"
+               style="${build.dir}/dom3-subjects.xsl">
+               <param name="specURI"
+                      expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-Val-20030730/validation"/>
+        </style>
+        <!--  remove DOM 3 version of subjects.xsl  -->
+        <delete file="{build.dir}/dom3-subjects.xsl"/>
+</target>
+
+<!--  DOM L3 Core   -->
+
+<target name="dom3-core-gen-java" depends="dom3-interfaces,dom3-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="3"/>
+                <param name="module" value="core"/>
+        </antcall>
+</target>
+
+<target name="dom3-core-schema-validate-files" unless="ant-15" depends="init">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level3/core/files"/>
+        <property name="includes"
+                  value="datatype_normalization*.xml datatype_normalization*.svg datatype_normalization*.xhtml typeinfo.xml typeinfo.svg typeinfo.xhtml hc_staff.xml hc_staff.xhtml hc_staff.svg"/>
+    </ant>
+
+</target>
+
+<target name="dom3-core-validate-files" depends="get-xhtml1-dtd, dom3-core-schema-validate-files">
+        <xmlvalidate lenient="no"
+                     failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/core/files"
+                         includes="*.xml *.xhtml *.svg"
+                         excludes="hc_nodtdstaff.* canonicalform*.*"/>
+        </xmlvalidate>
+</target>
+
+
+<target name="dom3-common" depends="dom3-init">
+
+        <mkdir dir="${java.build.dir}"/>
+        <javac
+                   destdir="${java.build.dir}"
+                   classpath="${java.build.dir}"
+                   source="1.2"
+                   target="1.1"
+                   debug="on"
+                   encoding="UTF8">
+                <src path="java"/>
+                <src path="${dom3-core-java-src}"/>
+                <src path="${dom3-ls-java-src}"/>
+                <include name="org/w3c/domts/*.java"/>
+       </javac>
+
+</target>
+
+<target name="dom3-core-javac" depends="dom3-common,dom3-core-gen-java">
+
+        <javac
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                source="1.2"
+                target="1.1"
+                fork="true"
+                encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <src path="${dom3-core-java-src}"/>
+        <include name="org/w3c/domts/level3/core/*"/>
+        <include name="org/w3c/domts/*"/>
+        <include name="org/w3c/dom/**"/>
+    </javac>
+</target>
+
+
+<target name="dom3-core-gen-jsunit-base" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-jsunit">
+        <param name="level" value="3"/>
+        <param name="module" value="core"/>
+        <param name="hideHTML" value="yes"/>
+    </antcall>
+</target>
+
+<target name="dom3-core-gen-jsunit" depends="jsunit-get, dom3-core-gen-jsunit-base"/>
+
+<target name="dom3-core-gen-selfxhtml" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-selfxhtml">
+        <param name="level" value="3"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+<target name="dom3-core-gen-svgunit" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-svgunit">
+        <param name="level" value="3"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+
+
+<target name="dom3-core-checkstyle" depends="checkstyle-available, dom3-core-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="3"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+<target name="dom3-core-jar" depends="dom3-core-javac,dom3-core-validate-files">
+        <antcall target="jar">
+                <param name="level" value="3"/>
+                <param name="module" value="core"/>
+        </antcall>
+</target>
+
+
+
+
+
+<target name="dom3-core-validate-tests" depends="dom3-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/core" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom3-core-schema-validate-tests" depends="check-schema-support, dom3-dtd, dom3-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level3/core"/>
+    </ant>
+</target>
+
+<target name="dom3-core-metadata" depends="dom3-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level3/core/alltests.xml"
+                   out="${build.dir}/dom3-core-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level3/core/"/>
+        <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+
+<target name="dom3-core-matrix" depends="dom3-core-metadata,dom3-subjects,dom3-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom3-core-metadata.rdf"
+                   out="${build.dir}/dom3-core-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-Core-20031107/core#"/>
+               <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+               <param name="specMetadataURL" expression="dom3-core-subjects.xml"/>
+               <param name="title" expression='DOM Level 3 Core Test Suite Matrix'/>
+               <param name="specVersion" expression="DOM Level 3"/>
+               <param name="excludeInterfaces" expression="NameList"/>
+               <param name="noTestInterfaces"
+                      expression="CDATASection Comment DocumentFragment EntityReference"/>
+        </style>
+
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom3-core-matrix.html"/>
+        </antcall>
+
+</target>
+
+<target name="dom3-core-doxygen" depends="dom3-core-gen-java">
+        <mkdir dir="${build.dir}/level3/core/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom3-core.doxygen"/>
+    </exec>
+
+</target>
+
+<target name="dom3-core-dist"
+        depends="dom3-core-jar,
+                 dom3-core-gen-jsunit,
+                 dom3-core-matrix,
+                 dom3-core-doxygen,
+                 get-junit,
+                 junit-run,
+                 get-junit-license,
+                 dom3-schema,
+                 dom3-core-gen-svgunit,
+                 dom3-core-gen-selfxhtml">
+    <antcall target="dist">
+        <param name="level" value="3"/>
+        <param name="module" value="core"/>
+    </antcall>
+</target>
+
+
+<!--  DOM L3 Events   -->
+
+<target name="dom3-events-gen-java" depends="dom3-interfaces,dom3-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="3"/>
+                <param name="module" value="events"/>
+        </antcall>
+</target>
+
+<target name="dom3-events-validate-files" depends="init">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/events/files"
+                         includes="*.xml *.svg"
+                         excludes="hc_nodtdstaff.* canonicalform*.*"/>
+        </xmlvalidate>
+</target>
+
+
+
+<target name="dom3-events-javac" depends="common-javac,dom3-events-gen-java">
+
+        <javac
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                source="1.2"
+                target="1.1"
+                fork="true"
+                encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <src path="${dom3-core-java-src}"/>
+        <include name="org/w3c/domts/level3/events/*"/>
+        <include name="org/w3c/domts/*"/>
+        <include name="org/w3c/dom/**"/>
+    </javac>
+</target>
+
+<target name="dom3-events-jar" depends="dom3-events-javac, dom3-events-validate-files">
+        <antcall target="jar">
+                <param name="level" value="3"/>
+                <param name="module" value="events"/>
+        </antcall>
+</target>
+
+
+
+<target name="dom3-events-gen-jsunit-base" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-jsunit">
+        <param name="level" value="3"/>
+        <param name="module" value="events"/>
+        <param name="hideHTML" value="yes"/>
+    </antcall>
+</target>
+
+<target name="dom3-events-gen-jsunit" depends="jsunit-get,dom3-events-gen-jsunit-base"/>
+
+<target name="dom3-events-gen-svgunit" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-svgunit">
+        <param name="level" value="3"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+
+<target name="dom3-events-gen-selfxhtml" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-selfxhtml">
+        <param name="level" value="3"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+<target name="dom3-events-validate-tests" depends="dom3-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/events" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom3-events-schema-validate-tests" depends="check-schema-support, dom3-dtd, dom3-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level3/events"/>
+    </ant>
+</target>
+
+<target name="dom3-events-checkstyle" depends="checkstyle-available, dom3-events-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="3"/>
+        <param name="module" value="events"/>
+    </antcall>
+</target>
+
+<target name="dom3-events-metadata" depends="dom3-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level3/events/alltests.xml"
+                   out="${build.dir}/dom3-events-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level3/events/"/>
+        <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+
+<target name="dom3-events-matrix" depends="dom3-events-metadata,dom3-subjects,dom3-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom3-events-metadata.rdf"
+                   out="${build.dir}/dom3-events-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events#"/>
+        <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom3-events-subjects.xml"/>
+        <param name="title" expression='DOM Level 3 Events Test Suite Matrix'/>
+        </style>
+
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom3-events-matrix.html"/>
+        </antcall>
+
+</target>
+
+<target name="dom3-events-doxygen" depends="dom3-events-gen-java">
+        <mkdir dir="${build.dir}/level3/events/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom3-events.doxygen"/>
+    </exec>
+
+</target>
+
+
+<target name="dom3-events-dist"
+        depends="dom3-events-jar,
+                     dom3-events-gen-jsunit,
+                     dom3-events-matrix,
+                     dom3-events-doxygen,
+                     get-junit,
+                     junit-run,
+                     get-junit-license,
+                     dom3-schema,
+                     dom3-events-gen-svgunit,
+                     dom3-events-gen-selfxhtml">
+    <antcall target="dist">
+        <param name="level" value="3"/>
+        <param name="module" value="events"/>
+    </antcall>
+
+</target>
+
+
+
+<!--  DOM L3 Load and Save  -->
+
+<target name="dom3-ls-gen-java" depends="dom3-interfaces,dom3-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="3"/>
+                <param name="module" value="ls"/>
+        </antcall>
+</target>
+
+<target name="dom3-ls-validate-files" depends="init">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/ls/files" includes="*.svg *.xml *.xhtml">
+                        <exclude name="test0.*"/>
+                        <exclude name="test1.*"/>
+                        <exclude name="test2.*"/>
+                        <exclude name="test5.*"/>
+                        <exclude name="test7.*"/>
+                        <exclude name="namespaces1.xml"/>
+                        <exclude name="schematype1.xml"/>
+                        <exclude name="validate1.xml"/>
+                        <exclude name="validateschema1.xml"/>
+                        <exclude name="canonicalform02.xml"/>
+                        <exclude name="canonicalform03.xml"/>
+                        <exclude name="wellformed*.xml"/>
+                        <exclude name="unsupportedencoding1.xml"/>
+                </fileset>
+        </xmlvalidate>
+</target>
+
+
+
+<target name="dom3-ls-javac" depends="dom3-common,dom3-ls-gen-java">
+
+        <javac
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                source="1.2"
+                target="1.1"
+                fork="true"
+                encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <src path="${dom3-core-java-src}"/>
+        <src path="${dom3-ls-java-src}"/>
+        <src path="${dom3-xpath-java-src}"/>
+        <include name="org/w3c/domts/level3/ls/*"/>
+        <include name="org/w3c/domts/*"/>
+        <include name="org/w3c/dom/**"/>
+    </javac>
+</target>
+
+
+<target name="dom3-ls-jar" depends="dom3-ls-javac, dom3-ls-validate-files">
+        <antcall target="jar">
+                <param name="level" value="3"/>
+                <param name="module" value="ls"/>
+        </antcall>
+</target>
+
+<target name="dom3-ls-gen-jsunit-base" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-jsunit-no-validation">
+        <param name="level" value="3"/>
+        <param name="module" value="ls"/>
+        <param name="hideHTML" value="yes"/>
+    </antcall>
+
+    <!--  fix up tests which could be produced with <elt*> in string literals  -->
+    <replace dir="${build.dir}/ecmascript/level3/ls" includes="*.html" token="&lt;elt" value="&amp;lt;elt"/>
+    <replace dir="${build.dir}/ecmascript/level3/ls" includes="*.html" token="&lt;/elt" value="&amp;lt;/elt"/>
+    <replace dir="${build.dir}/ecmascript/level3/ls"
+             includes="*.html"
+             token="&lt;hello"
+             value="&amp;lt;hello"/>
+    <replace dir="${build.dir}/ecmascript/level3/ls"
+             includes="*.html"
+             token="&lt;/hello"
+             value="&amp;lt;/hello"/>
+    <replace dir="${build.dir}/ecmascript/level3/ls"
+             includes="cdatasections04.html"
+             token='&gt;foo&lt;'
+             value='&amp;gt;foo&amp;lt;'/>
+    <replace dir="${build.dir}/ecmascript/level3/ls"
+             includes="comments03.html"
+             token='&gt;&lt;!--foo--&gt;&lt;/'
+             value='&amp;gt;&amp;lt;!--foo--&amp;gt;&amp;lt;/'/>
+
+    <antcall target="validate-html">
+        <param name="dir" value="${build.dir}/ecmascript/level3/ls"/>
+    </antcall>
+
+</target>
+
+<target name="dom3-ls-gen-jsunit" depends="jsunit-get,dom3-ls-gen-jsunit-base"/>
+
+<target name="dom3-ls-gen-svgunit" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-svgunit">
+        <param name="level" value="3"/>
+        <param name="module" value="ls"/>
+    </antcall>
+</target>
+
+
+
+
+<target name="dom3-ls-validate-tests" depends="dom3-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/ls" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom3-ls-schema-validate-tests" depends="check-schema-support, dom3-dtd, dom3-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level3/ls"/>
+    </ant>
+</target>
+
+<target name="dom3-ls-checkstyle" depends="checkstyle-available, dom3-ls-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="3"/>
+        <param name="module" value="ls"/>
+    </antcall>
+</target>
+
+
+<target name="dom3-ls-metadata" depends="dom3-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level3/ls/alltests.xml"
+               out="${build.dir}/dom3-ls-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level3/ls/"/>
+                <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+
+<target name="dom3-ls-matrix" depends="dom3-ls-metadata,dom3-subjects,dom3-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom3-ls-metadata.rdf"
+               out="${build.dir}/dom3-ls-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-LS-20031107/load-save#"/>
+               <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+               <param name="specMetadataURL" expression="dom3-ls-subjects.xml"/>
+               <param name="title" expression='DOM Level 3 Load and Save Test Suite Matrix'/>
+               <param name="noTestInterfaces" expression="LSProgressEvent LSLoadEvent"/>
+               <param name="excludeInterfaces" expression="LSProgressEvent LSLoadEvent"/>
+        </style>
+
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom3-ls-matrix.html"/>
+        </antcall>
+
+</target>
+
+<target name="dom3-ls-doxygen" depends="dom3-ls-gen-java">
+        <mkdir dir="${build.dir}/level3/ls/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom3-ls.doxygen"/>
+    </exec>
+
+</target>
+
+<target name="dom3-ls-dist"
+       depends="dom3-ls-jar,
+                dom3-ls-gen-jsunit,
+                dom3-ls-matrix,
+                dom3-ls-doxygen,
+                get-junit,
+                junit-run,
+                get-junit-license,
+                dom3-schema,
+                dom3-ls-gen-svgunit">
+    <antcall target="dist">
+        <param name="level" value="3"/>
+        <param name="module" value="ls"/>
+    </antcall>
+
+</target>
+
+<!--    DOM L3 XPath   -->
+
+<target name="dom3-xpath-gen-java" depends="dom3-interfaces,dom3-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="3"/>
+                <param name="module" value="xpath"/>
+        </antcall>
+</target>
+
+
+
+<target name="dom3-xpath-validate-files" depends="init">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/xpath/files"
+                         includes="*.xml *.svg"
+                         excludes="hc_nodtdstaff.* canonicalform*.*"/>
+        </xmlvalidate>
+</target>
+
+
+
+<target name="dom3-xpath-javac" depends="common-javac,dom3-xpath-gen-java">
+
+        <javac
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                source="1.2"
+                target="1.1"
+                fork="true"
+                encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <src path="${dom3-core-java-src}"/>
+        <src path="${dom3-xpath-java-src}"/>
+        <include name="org/w3c/domts/level3/xpath/*"/>
+        <include name="org/w3c/domts/*"/>
+        <include name="org/w3c/dom/**"/>
+    </javac>
+</target>
+
+<target name="dom3-xpath-jar" depends="dom3-xpath-javac, dom3-xpath-validate-files">
+        <antcall target="jar">
+                <param name="level" value="3"/>
+                <param name="module" value="xpath"/>
+        </antcall>
+</target>
+
+<target name="dom3-xpath-gen-jsunit-base" depends="jsunit-get,dom3-interfaces,dom3-dtd">
+    <antcall target="gen-jsunit">
+        <param name="level" value="3"/>
+        <param name="module" value="xpath"/>
+        <param name="hideHTML" value=".xhtml"/>
+    </antcall>
+</target>
+
+<target name="dom3-xpath-gen-jsunit" depends="jsunit-get,dom3-xpath-gen-jsunit-base"/>
+
+
+<target name="dom3-xpath-gen-svgunit" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-svgunit">
+        <param name="level" value="3"/>
+        <param name="module" value="xpath"/>
+    </antcall>
+</target>
+
+
+
+<target name="dom3-xpath-validate-tests" depends="dom3-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/xpath" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+<target name="dom3-xpath-schema-validate-tests" depends="check-schema-support, dom3-dtd, dom3-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level3/xpath"/>
+    </ant>
+</target>
+
+<target name="dom3-xpath-checkstyle" depends="checkstyle-available, dom3-xpath-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="3"/>
+        <param name="module" value="xpath"/>
+    </antcall>
+</target>
+
+<target name="dom3-xpath-metadata" depends="dom3-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level3/xpath/alltests.xml"
+                   out="${build.dir}/dom3-xpath-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level3/xpath/"/>
+        <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+
+<target name="dom3-xpath-matrix" depends="dom3-xpath-metadata,dom3-subjects,dom3-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom3-xpath-metadata.rdf"
+                   out="${build.dir}/dom3-xpath-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-XPath-20030331/xpath#"/>
+        <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom3-xpath-subjects.xml"/>
+        <param name="title" expression='DOM Level 3 XPath Test Suite Matrix'/>
+        </style>
+
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom3-xpath-matrix.html"/>
+        </antcall>
+
+</target>
+
+<target name="dom3-xpath-doxygen" depends="dom3-xpath-gen-java">
+        <mkdir dir="${build.dir}/level3/xpath/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom3-xpath.doxygen"/>
+    </exec>
+
+</target>
+
+<target name="dom3-xpath-dist"
+        depends="dom3-xpath-jar,
+                 dom3-xpath-gen-jsunit,
+                 dom3-xpath-matrix,
+                 dom3-xpath-doxygen,
+                 get-junit,
+                 junit-run,
+                 get-junit-license,
+                 dom3-schema,
+                 dom3-xpath-gen-svgunit">
+    <antcall target="dist">
+        <param name="level" value="3"/>
+        <param name="module" value="xpath"/>
+    </antcall>
+</target>
+
+
+
+<!--   DOM L3 Validation    -->
+
+
+<target name="dom3-val-gen-java" depends="dom3-interfaces,dom3-dtd">
+        <antcall target="gen-java">
+                <param name="level" value="3"/>
+                <param name="module" value="validation"/>
+        </antcall>
+</target>
+
+<target name="dom3-val-validate-files" depends="init">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/validation/files">
+                        <include name="*.xml *.xhtml *.svg"/>
+                        <exclude name="book.*"/>
+                </fileset>
+        </xmlvalidate>
+</target>
+
+
+
+<target name="dom3-val-javac" depends="common-javac,dom3-val-gen-java">
+
+        <javac
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                source="1.2"
+                target="1.1"
+                fork="true"
+                encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <src path="${dom3-core-java-src}"/>
+        <src path="${dom3-val-java-src}"/>
+        <include name="org/w3c/domts/level3/validation/*"/>
+        <include name="org/w3c/domts/*"/>
+        <include name="org/w3c/dom/**"/>
+    </javac>
+</target>
+
+
+
+<target name="dom3-val-jar" depends="dom3-val-javac, dom3-val-validate-files">
+        <antcall target="jar">
+                <param name="level" value="3"/>
+                <param name="module" value="validation"/>
+        </antcall>
+</target>
+
+
+
+<target name="dom3-val-gen-jsunit-base" depends="dom3-interfaces,dom3-dtd">
+    <antcall target="gen-jsunit">
+        <param name="level" value="3"/>
+        <param name="module" value="validation"/>
+        <param name="hideHTML" value="yes"/>
+    </antcall>
+</target>
+
+<target name="dom3-val-gen-jsunit" depends="jsunit-get,dom3-val-gen-jsunit-base"/>
+
+
+<target name="dom3-val-validate-tests" depends="dom3-dtd">
+        <xmlvalidate lenient="no" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser">
+                <fileset dir="${tests.dir}/level3/validation" includes="*.xml"/>
+        </xmlvalidate>
+</target>
+
+
+<target name="dom3-val-schema-validate-tests" depends="check-schema-support, dom3-dtd, dom3-schema">
+    <ant antfile="schemavalidate.ant">
+        <property name="validate.dir" location="${tests.dir}/level3/validation"/>
+    </ant>
+</target>
+
+<target name="dom3-val-checkstyle" depends="checkstyle-available, dom3-val-javac">
+    <antcall target="checkstyle">
+        <param name="level" value="3"/>
+        <param name="module" value="validation"/>
+    </antcall>
+</target>
+
+<target name="dom3-val-metadata" depends="dom3-dtd">
+    <mkdir dir="${build.dir}"/>
+        <style in="${tests.dir}/level3/validation/alltests.xml"
+                   out="${build.dir}/dom3-validation-metadata.rdf"
+               style="${transforms.dir}/combine-metadata.xsl"
+               force="true">
+                <param name="baseURI"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/level3/validation/"/>
+        <param name="externalMetadata" expression="metadata.xml"/>
+        </style>
+</target>
+
+<target name="dom3-val-matrix" depends="dom3-val-metadata,dom3-subjects,dom3-interfaces">
+    <mkdir dir="${build.dir}"/>
+        <style in="${build.dir}/dom3-validation-metadata.rdf"
+                   out="${build.dir}/dom3-validation-matrix.html"
+               style="${transforms.dir}/test-matrix.xsl">
+                <param name="specURI"
+                       expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-Val-20030730/validation#"/>
+        <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom3-val-subjects.xml"/>
+        <param name="title" expression='DOM Level 3 Validation Test Suite Matrix'/>
+        </style>
+
+        <antcall target="validate-html">
+                <param name="dir" value="${build.dir}"/>
+                <param name="file" value="dom3-validation-matrix.html"/>
+        </antcall>
+
+</target>
+
+<target name="dom3-val-doxygen" depends="dom3-val-gen-java">
+        <mkdir dir="${build.dir}/level3/validation/doxygen"/>
+    <!--  doxygen must be on path
+          download from http://www.doxygen.org    -->
+    <exec executable="doxygen">
+        <arg line="doxygen/dom3-val.doxygen"/>
+    </exec>
+
+</target>
+
+
+
+<target name="dom3-val-dist"
+        depends="dom3-val-jar,
+                     dom3-val-gen-jsunit,
+                     dom3-val-matrix,
+                     dom3-val-doxygen,
+                     get-junit,
+                     junit-run,
+                     get-junit-license,
+                     dom3-schema">
+    <antcall target="dist">
+        <param name="level" value="3"/>
+        <param name="module" value="validation"/>
+    </antcall>
+</target>
+
+
+<target name="dom3-dist" depends="dom3-core-dist,dom3-xpath-dist,dom3-ls-dist,dom3-val-dist,dom3-events-dist">
+</target>
+
+<!--
+
+This target generates Java code for one DOM 3 test
+using the last dom3-interfaces.xml file generated
+
+Useful for quick evaluation of test modifications
+but not part of the automated build
+
+Name probably should change since it looks like
+it would generate all DOM 3 java code
+-->
+<target name="dom3-gen-java" depends="init">
+ <style basedir="${tests.dir}/level3/${module}"
+        destdir="${java.build.dir}/org/w3c/domts/level3/${module}"
+        includes="${test}"
+        style="${transforms.dir}/test-to-java.xsl"
+        extension=".java">
+  <param name="interfaces-docname"
+       expression="../${build.dir}/dom3-interfaces.xml"/>
+  <param name="package"
+       expression="org.w3c.domts.level3.${module}"/>
+  <param name="target-uri-base"
+       expression="http://www.w3.org/2001/DOM-Test-Suite/level3/${module}/"/>
+ </style>
+</target>
+
+<!--
+
+This target performs a Java compilation of one DOM 3 test
+
+Useful for quick evaluation of test modifications
+but not part of the automated build
+
+Name probably should change since it looks like
+it would compile all DOM 3 java code
+-->
+<target name="dom3-javac" depends="init">
+
+        <javac
+                destdir="${java.build.dir}"
+                classpath="${java.build.dir};${jaxp.jar}"
+                debug="on"
+                source="1.2"
+                target="1.1"
+                encoding="UTF8">
+        <src path="${java.build.dir}"/>
+        <include name="org/w3c/domts/level3/${module}/*"/>
+   </javac>
+</target>
+
+
+<target name="dom3-gump" depends="dom3-core-validate-tests,
+                                  dom3-ls-validate-tests,
+                                                                  dom3-xpath-validate-tests,
+                                                                  dom3-val-validate-tests,
+                                                                  dom3-events-validate-tests,
+                                                                  dom3-core-jar,
+                                                                  dom3-ls-jar,
+                                                                  dom3-xpath-jar,
+                                                                  dom3-val-jar,
+                                                                  dom3-events-jar"/>
+
+
+<target name="dom3-core-gump" depends="dom3-core-validate-tests, dom3-core-jar"/>
+<target name="dom3-ls-gump" depends="dom3-ls-validate-tests, dom3-ls-jar"/>
+<target name="dom3-xpath-gump" depends="dom3-xpath-validate-tests, dom3-xpath-jar"/>
+<target name="dom3-val-gump" depends="dom3-val-validate-tests, dom3-val-jar"/>
+<target name="dom3-events-gump" depends="dom3-events-validate-tests, dom3-events-jar"/>
+
+<!--   SVG 1.0   -->
+
+<target name="svg-available" depends="init">
+    <available property="svg-available" file="${specs.dir}/SVG.zip"/>
+</target>
+
+<target name="get-svg" depends="svg-available" unless="svg-available">
+        <mkdir dir="${specs.dir}/SVG1.0"/>
+        <!--   download SVG 1.0 Recommendation to specs directory   -->
+        <get src="http://www.w3.org/TR/2001/REC-SVG-20010904/REC-SVG-20010904.zip"
+                dest="${specs.dir}/SVG.zip"
+                usetimestamp="yes"
+        ignoreerrors="${no-network}"/>
+</target>
+
+<target name="svg-init" depends="get-svg">
+        <mkdir dir="${specs.dir}"/>
+        <mkdir dir="${specs.dir}/SVG1.0"/>
+
+
+        <unzip src="${specs.dir}/SVG.zip" dest="${specs.dir}/SVG1.0"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/coords.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/coords.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/coords.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/animate.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/animate.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/animate.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/color.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/color.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/color.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/extend.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/extend.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/extend.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/interact.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/interact.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/interact.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/linking.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/linking.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/linking.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/masking.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/masking.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/masking.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/painting.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/painting.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/painting.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/paths.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/paths.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/paths.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/pservers.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/pservers.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/pservers.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/script.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/script.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/script.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/shapes.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/shapes.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/shapes.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/struct.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/struct.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/struct.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+<exec executable="sed" output="${specs.dir}/SVG1.0/types.xml">
+                <arg line="-f patches/svgfix.sed ${specs.dir}/SVG1.0/types.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/types.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/text.xml">
+                <arg line="-e'23,5269d' -f patches/svgfix.sed ${specs.dir}/SVG1.0/text.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/text.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/filters.xml">
+                <arg line="-e'24,4785d' -f patches/svgfix.sed ${specs.dir}/SVG1.0/filters.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/filters.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+        <exec executable="sed" output="${specs.dir}/SVG1.0/styling.xml">
+                <arg line="-e'23,1563d' -f patches/svgfix.sed ${specs.dir}/SVG1.0/styling.html"/>
+        </exec>
+        <xmlvalidate file="${specs.dir}/SVG1.0/styling.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+
+</target>
+
+<target name="svg-interfaces" depends="svg-init,dom2-interfaces">
+        <style basedir="${specs.dir}/SVG1.0"
+               in="${specs.dir}/SVG1.0/coords.xml"
+               out="${build.dir}/svg-interfaces.xml"
+               style="${transforms.dir}/svg-to-interface.xsl">
+                <param name="dom2-interfaces" expression="../${build.dir}/dom2-interfaces.xml"/>
+        </style>
+        <xmlvalidate file="${build.dir}/svg-interfaces.xml"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+</target>
+
+<target name="svg-schema" depends="svg-interfaces">
+        <style in="${build.dir}/svg-interfaces.xml"
+               out="${build.dir}/_svg.xsd"
+               style="${transforms.dir}/dom-to-xsd.xsl">
+                <param name="schema-namespace"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/SVG"/>
+        </style>
+
+        <!--  remove leading underscore from _xmlns attribute    -->
+        <exec executable="sed" output="${build.dir}/svg.xsd">
+                <arg line="-e 's/_xmlns/xmlns/g' -e 's/xmlns_test/xmlns:test/g'  ${build.dir}/_svg.xsd"/>
+        </exec>
+        <delete file="${build.dir}/_svg.xsd"/>
+        <xmlvalidate file="${build.dir}/svg.xsd"
+                     lenient="yes" failonerror="yes"
+                     classname="org.apache.xerces.parsers.SAXParser"/>
+</target>
+
+<target name="svg-dtd" depends="svg-interfaces">
+        <style in="${build.dir}/svg-interfaces.xml"
+               out="${build.dir}/svg.dtd"
+               style="${transforms.dir}/dom-to-dtd.xsl">
+                <param name="schema-namespace"
+                       expression="http://www.w3.org/2001/DOM-Test-Suite/SVG"/>
+        </style>
+        <!-- copy file="${build.dir}/svg.dtd" todir="${tests.dir}/svg"/ -->
+</target>
+
+
+</project>

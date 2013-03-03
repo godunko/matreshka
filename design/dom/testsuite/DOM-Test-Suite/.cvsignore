@@ -1,0 +1,5 @@
+build
+dist
+.project
+.classpath
+xercesImpl.db*

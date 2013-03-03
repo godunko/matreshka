@@ -1,0 +1,60 @@
+47d46
+<         containerTestFrame().setTracer(tracer);
+48a48,69
+> 
+>         //
+>         //   determine if test page loads jsUnitCore.js 
+>         //      has setUp or tearDown functions
+>         //
+>         var loadsJSUnitCore = false;
+>         var hasSetUp = false;
+>         var hasTearDown = false;
+>         var scripts = containerTestFrame().document.getElementsByTagName("script");
+>         for(var i = 0; i < scripts.length; i++) {
+>             var script = scripts.item(i);
+>             loadsJSUnitCore = (loadsJSUnitCore || (script.src.indexOf("jsUnitCore.js") > 0));
+>             if(script.text != null && script.text.length > 0) {
+>                 hasSetUp = (hasSetUp || script.text.indexOf(" setUp()") >= 0);
+>                 hasTearDown = (hasTearDown || script.text.indexOf(" tearDown()") >= 0);
+>             }
+>         }   
+> 
+>         if(!loadsJSUnitCore) {
+>             injectJSUnitCore(hasSetUp,hasTearDown);
+>         }
+>         //containerTestFrame().setTracer(tracer);
+366a388,421
+> function injectJSUnitCore(hasSetUp, hasTearDown) {
+>     var testdoc = containerTestFrame().document;
+>     //    get document element of test document
+>     var docelem = testdoc.documentElement;
+>     //
+>     //    find first child element (should be head)
+>     //
+>     var target = docelem.firstChild;
+>     while(target != null) {
+>         if(target.nodeType == 1) {
+>             var scriptElement = testdoc.createElement("script");
+>             scriptElement.setAttribute("language","JavaScript");
+>             scriptElement.setAttribute("type","text/javascript");
+>             //
+>             //    use the second script element on main.html's
+>             //       for the source of the script element
+>             var mainFrame = parent.frames[1];
+>             var mainDoc = mainFrame.document;
+>             var mainScriptElems = mainDoc.getElementsByTagName("script");
+>             var mainScriptElem = mainScriptElems.item(1);
+>             var mainSource = mainScriptElem.text;
+>             if(!hasSetUp) {
+>                 mainSource += "function setUp() { }\n";
+>             }
+>             if(!hasTearDown) {
+>                 mainSource += "function tearDown() {} \n";
+>             }        
+>             scriptElement.text = mainSource;
+>             target.appendChild(scriptElement); 
+>         }
+>         target = target.nextSibling;
+>     }
+> }
+> 

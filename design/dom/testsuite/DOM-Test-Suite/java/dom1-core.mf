@@ -1,0 +1,11 @@
+Manifest-Version: 2.0
+Main-Class: org.w3c.domts.level1.core.alltests
+Class-Path:  dom3-xml-apis.jar dom3-xercesImpl.jar xmlParserAPIs.jar xercesImpl.jar xerces.jar xml4j.jar xmlparserv2.jar crimson.jar parser.jar jaxp.jar xml-apis.jar gnujaxp.jar dom4j-full.jar batik-svg-dom.jar batik-xml.jar batik-dom.jar batik-css.jar batik-ext.jar batik-util.jar crimson-parser.jar junit-run.jar tidy.jar
+
+Name: org/w3c/domts/level1/core
+Specification-Title: W3C/NIST Test Suite for DOM Level 1 Core
+Specification-Version: 1.0
+Specification-Vendor: World Wide Web Consortium
+Implementation-Vendor: World Wide Web Consortium 
+Implementation-Version: 1.0
+Implementation-Title: W3C/NIST Test Suite for DOM Level 1 Core

@@ -1,0 +1,1933 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) 2003-2005 World Wide Web Consortium,
+(Massachusetts Institute of Technology, Institut National de
+Recherche en Informatique et en Automatique, Keio University). All
+Rights Reserved. This program is distributed under the W3C's Software
+Intellectual Property License. This program is distributed in the
+hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+See W3C License http://www.w3.org/Consortium/Legal/ for more details.
+-->
+
+<!--  This ant file runs the tests againsts various implementations
+          and creates a report of all test failures    -->
+
+<!--
+$Log: runtests.xml,v $
+Revision 1.14  2005-09-22 02:41:08  carnold
+Bug 2283: Update runtests.xml for up-to-date implementations
+
+Revision 1.13  2004/05/06 19:47:02  dom-ts-4
+Fix L2 Core tests that did not compensate for SVG docs (bug 699)
+
+Revision 1.12  2004/03/28 07:12:33  dom-ts-4
+Refinement of self-hosting, improved L1 Core diagnostics (bug 638)
+
+Revision 1.11  2004/03/10 07:34:01  dom-ts-4
+ECMAScript support for Events test suite (bug 483)
+
+Revision 1.10  2004/03/09 21:16:41  dom-ts-4
+LS test loader by reflection, now can be used for L1/L2 tests (bug 571)
+
+Revision 1.9  2004/02/25 06:30:29  dom-ts-4
+Add support for java test framework use of DOM L3 LS (bug 571)
+
+Revision 1.8  2004/02/17 05:22:01  dom-ts-4
+Add org.w3c...DOMImplRegList property to run-xerces (bug 530)
+
+Revision 1.7  2004/02/15 02:53:29  dom-ts-4
+Additional typeinfo tests, fix for schemaValidating implementation attribute (bug524)
+
+Revision 1.6  2004/02/09 19:02:51  dom-ts-4
+Test results improvment (bug 446)
+
+Revision 1.5  2004/01/22 06:11:41  dom-ts-4
+Add L3 Core datatype normalization tests (bug 478)
+
+Revision 1.4  2004/01/06 06:57:00  dom-ts-4
+Adding schemaValidating precondition (bug 456)
+
+Revision 1.3  2003/12/23 03:25:31  dom-ts-4
+Extends results matrix to L2 Core (bug 446)
+
+Revision 1.2  2003/12/10 10:30:35  dom-ts-4
+L3 Core fixups (Bug 404)
+
+Revision 1.1  2003/12/08 07:50:50  dom-ts-4
+L&S support for XDK XDK 10.0.1.0A, metadata fixes, test results matrix (bug 396)
+
+
+-->
+<project default="usage" basedir=".">
+    <property name="implbase.dir" value="${user.home}"/>
+	<property name="test.dir" location="build"/>
+	<property name="transforms.dir" location="transforms"/>
+	<property name="results.dir" location="build"/>
+    <property name="xdk.lib.dir" location="${implbase.dir}/xdk_linux_10_1_0_2_0_production/lib"/>
+    <property name="xerces1.lib.dir" location="${implbase.dir}/xerces-1_4_4"/>
+    <property name="xerces2.lib.dir" location="${implbase.dir}/xerces-2_7_1"/>
+    <property name="batik.lib.dir" location="${implbase.dir}/batik-1.6/lib"/>
+    <property name="crimson.lib.dir" location="${implbase.dir}/crimson-1.1.3"/>
+    <property name="dom4j.version" value="1.6.1"/>
+    <property name="dom4j.lib.dir" location="${implbase.dir}/dom4j-${dom4j.version}"/>
+    <property name="dom4j.jar" value="${dom4j.lib.dir}/dom4j-${dom4j.version}.jar"/>
+    <property name="kaffe.dir"
+              location="/usr/local/kaffe"/>
+    <property name="jtidy.lib.dir" location="${implbase.dir}/jtidy-04aug2000r7-dev/build"/>
+    <property name="testsrc.dir" location="tests"/>
+    <property name="doxygensrc.dir" location="${test.dir}"/>
+    <property name="jsunit.dir" location="/home/curta/jsunit-cvs/jsunit"/>
+    <property name="jsunit.bin.dir" location="${jsunit.dir}/java/bin/"/>
+    <property name="jsunit.lib.dir" location="${jsunit.dir}/java/lib"/>
+    <property name="test.url.base" value="http%3A%2F%2Flocalhost%2Fecmascript"/>
+    <property name="testRunner.url" value="http://localhost/ecmascript/jsunit/testRunner.html"/>
+    <property name="jsunit.acceptor.url" value="localhost%3A8080%2Fjsunit%2Facceptor"/>
+    <property name="opera.exe" value="/usr/bin/opera"/>
+    <property name="firefox.exe" value="/usr/bin/firefox"/>
+    <property name="ie6.exe" value="/program files/internet explorer/iexplorer.exe"/>
+    <property name="jsunit.port" value="8080"/>
+
+<target name="init">
+	<available property="xdk-available" file="${xdk.lib.dir}/xmlparserv2.jar"/>
+	<available property="xerces1-available" file="${xerces1.lib.dir}/xerces.jar"/>
+	<available property="xerces2-available" file="${xerces2.lib.dir}/xercesImpl.jar"/>
+	<available property="batik-available" file="${batik.lib.dir}/batik-svg-dom.jar"/>
+	<available property="crimson-available" file="${crimson.lib.dir}/crimson.jar"/>
+	<available property="dom4j-available" file="${dom4j.jar}"/>
+        <available property="kaffe-available" classname="gnu.xml.dom.DomDocumentBuilderFactory"
+                   classpath="${kaffe.dir}/jre/lib/rt.jar"/>
+	<available property="firefox-available" file="${firefox.exe}"/>
+        <available property="opera-available" file="${opera.exe}"/>
+        <available property="ie6-available" file="${ie6.exe}"/>
+        
+        
+        <available property="dom1-core-available" file="${test.dir}/dom1-core.jar"/>
+	<available property="dom1-core-metadata-available" file="${test.dir}/dom1-core-metadata.rdf"/>
+	<available property="junit-run-available" file="${test.dir}/junit-run.jar"/>
+    <available property="jtidy-available" classname="org.w3c.tidy.Tidy"
+                  classpath="${jtidy.lib.dir}/Tidy.jar"/>	
+    <available property="dom2-core-available" file="${test.dir}/dom2-core.jar"/>
+    <available property="dom2-core-metadata-available" file="${test.dir}/dom2-core-metadata.rdf"/>
+    <available property="dom2-events-available" file="${test.dir}/dom2-events.jar"/>
+    <available property="dom2-events-metadata-available" file="${test.dir}/dom2-events-metadata.rdf"/>
+    <available property="dom3-core-available" file="${test.dir}/dom3-core.jar"/>
+    <available property="dom3-core-metadata-available" file="${test.dir}/dom3-core-metadata.rdf"/>
+    <available property="dom3-ls-available" file="${test.dir}/dom3-ls.jar"/>
+    <available property="dom3-ls-metadata-available" file="${test.dir}/dom3-ls-metadata.rdf"/>
+    <available property="dom3-val-available" file="${test.dir}/dom3-val.jar"/>
+    <available property="dom3-val-metadata-available" file="${test.dir}/dom3-val-metadata.rdf"/>
+    <available property="dom3-xpath-available" file="${test.dir}/dom3-xpath.jar"/>
+    <available property="dom3-xpath-metadata-available" file="${test.dir}/dom3-xpath-metadata.rdf"/>
+</target>    
+    
+<target name="usage">
+	<echo message="common targets:"/>
+    <echo message="TODO"/>
+</target>
+
+<target name="xerces1-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${xerces1.lib.dir}/xerces.jar was not located, specify -Dxerces1.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-xerces1${config}.xml">&lt;testsuite name="xerces1-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+<target name="xerces1-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${xerces1.lib.dir}/xerces.jar"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<jvmarg value="-Djava.endorsed.dirs=${xerces1.lib.dir}"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestXerces${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-xerces1${config}"/>
+	</junit>
+</target>
+
+<target name="run-xerces1">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="xerces1-present">
+    <isset property="xerces1-available"/>
+  </condition>
+  <property name="target" value="xerces1-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+<target name="xerces2-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${xerces2.lib.dir}/xercesImpl.jar was not located, specify -Dxerces2.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-xerces2${config}.xml">&lt;testsuite name="xerces2-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+
+<target name="xerces2-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${xerces2.lib.dir}/xml-apis.jar"/>
+			<pathelement path="${xerces2.lib.dir}/xercesImpl.jar"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<jvmarg value="-Djava.endorsed.dirs=${xerces2.lib.dir}"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestXerces${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-xerces2${config}"/>
+	</junit>
+</target>
+
+<target name="run-xerces2">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="xerces2-present">
+    <isset property="xerces2-available"/>
+  </condition>
+  <property name="target" value="xerces2-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+<target name="xerces2_svg-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${xerces2.lib.dir}/xerces.jar was not located, specify -Dxerces2.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-xerces2_svg${config}.xml">&lt;testsuite name="xerces2-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+
+
+<target name="xerces2_svg-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${xerces2.lib.dir}/xml-apis.jar"/>
+			<pathelement path="${xerces2.lib.dir}/xercesImpl.jar"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<jvmarg value="-Dorg.w3c.domts.contentType=image/svg+xml"/>
+		<jvmarg value="-Djava.endorsed.dirs=${xerces2.lib.dir}"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestXerces${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-xerces2_svg${config}"/>
+	</junit>
+</target>
+
+<target name="run-xerces2_svg">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="xerces2_svg-present">
+    <isset property="xerces2-available"/>
+  </condition>
+  <property name="target" value="xerces2_svg-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+<target name="xerces2_xhtml-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${xerces2.lib.dir}/xerces.jar was not located, specify -Dxerces2.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-xerces2_xhtml${config}.xml">&lt;testsuite name="xerces2-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+<target name="xerces2_xhtml-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${xerces2.lib.dir}/xml-apis.jar"/>
+			<pathelement path="${xerces2.lib.dir}/xercesImpl.jar"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<jvmarg value="-Dorg.w3c.domts.contentType=application/xhtml+xml"/>
+		<jvmarg value="-Djava.endorsed.dirs=${xerces2.lib.dir}"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestXerces${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-xerces2_xhtml${config}"/>
+	</junit>
+</target>
+
+<target name="run-xerces2_xhtml">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="xerces2_xhtml-present">
+    <isset property="xerces2-available"/>
+  </condition>
+  <property name="target" value="xerces2_xhtml-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+
+<target name="xdk-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${xdk.lib.dir}/xmlparserv2.jar was not located, specify -Dxdk.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-xdk${config}.xml">&lt;testsuite name="xdk-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+<target name="xdk-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="jarname" value="dom${level}-${module}.jar"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<fileset dir="${xdk.lib.dir}" includes="*.jar"/>
+			<fileset dir="${test.dir}" includes="${jarname} junit-run.jar"/>
+		</classpath> 
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestOracle${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-xdk${config}"/>
+	</junit>
+</target>
+
+<target name="run-xdk">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="xdk-present">
+    <isset property="xdk-available"/>
+  </condition>
+  <property name="target" value="xdk-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+<target name="batik-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${batik.lib.dir}/batik-svg-dom.jar was not located, specify -Dbatik.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-batik${config}.xml">&lt;testsuite name="batik-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+<target name="batik-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${batik.lib.dir}/batik-svg-dom.jar"/>
+			<pathelement path="${batik.lib.dir}/batik-util.jar"/>
+			<pathelement path="${batik.lib.dir}/batik-xml.jar"/>
+			<pathelement path="${batik.lib.dir}/batik-dom.jar"/>
+			<pathelement path="${batik.lib.dir}/batik-css.jar"/>
+			<pathelement path="${batik.lib.dir}/batik-ext.jar"/>
+			<pathelement path="${batik.lib.dir}/xml-apis.jar"/>
+			<pathelement path="${batik.lib.dir}/xerces_2_3_0.jar"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestBatik${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-batik${config}"/>
+	</junit>
+</target>
+
+<target name="run-batik">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="batik-present">
+    <isset property="batik-available"/>
+  </condition>
+  <property name="target" value="batik-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+<target name="kaffe-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${kaffe.lib.dir}/bin/java was not located, specify -Dkaffe.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-kaffe${config}.xml">&lt;testsuite name="kaffe-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+<target name="kaffe-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true" jvm="${kaffe.dir}/bin/java">
+		<classpath>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestDefaultParser${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-kaffe${config}"/>
+	</junit>
+</target>
+
+<target name="run-kaffe">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="kaffe-present">
+    <isset property="kaffe-available"/>
+  </condition>
+  <property name="target" value="kaffe-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+<target name="dom4j-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${dom4j.jar} was not located, specify -Ddom4j.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-dom4j${config}.xml">&lt;testsuite name="dom4j-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+
+
+<target name="dom4j-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${dom4j.jar}"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestDOM4J${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-dom4j${config}"/>
+	</junit>
+</target>
+
+<target name="run-dom4j">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="dom4j-present">
+    <isset property="dom4j-available"/>
+  </condition>
+  <property name="target" value="dom4j-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+
+<target name="crimson-missing" depends="init">
+        <property name="level" value="1"/>
+        <property name="module" value="core"/>
+        <property name="config" value=""/>
+	<echo message="${crimson.lib.dir}/crimson.jar was not located, specify -Dcrimson.lib.dir or -Dimplbase.dir to change location"/> 
+        <echo file="${results.dir}/dom${level}-${module}-crimson${config}.xml">&lt;testsuite name="crimson-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+<target name="crimson-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${crimson.lib.dir}/crimson.jar"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestCrimson${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-crimson${config}"/>
+	</junit>
+</target>
+
+<target name="run-crimson">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="crimson-present">
+       <isset property="crimson-available"/>
+  </condition>
+  <property name="target" value="crimson-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+<target name="jtidy-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <echo message="${jtidy.lib.dir}/Tidy.jar was not located, specify -Djtidy.lib.dir or -Dimplbase.dir to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-jtidy${config}.xml">&lt;testsuite name="jtidy-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+<target name="jtidy-present" depends="init">
+	<property name="level" value="1"/>
+	<property name="module" value="core"/>
+	<property name="config" value=""/>
+	<junit fork="true">
+		<classpath>
+			<pathelement path="${jtidy.lib.dir}/Tidy.jar"/>
+			<pathelement path="${test.dir}/dom${level}-${module}.jar"/>
+			<pathelement path="${test.dir}/junit-run.jar"/>
+		</classpath>
+		<jvmarg value="-Xmx900M"/>
+		<formatter type="xml"/>
+		<test name="org.w3c.domts.level${level}.${module}.TestJTidy${config}" 
+			todir="${results.dir}" 
+			outfile="dom${level}-${module}-jtidy${config}"/>
+	</junit>
+</target>
+
+<target name="run-jtidy">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <condition property="target" value="jtidy-present">
+    <isset property="jtidy-available"/>
+  </condition>
+  <property name="target" value="jtidy-missing"/>
+  <antcall target="${target}">
+  </antcall>
+</target>
+
+
+<target name="firefox-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <echo message="${firefox.exe} was not located, specify -Dfirefox.exe to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-firefox_${type}${config}.xml">&lt;testsuite name="firefox-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+<target name="run-browser" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <property name="browser.exe" value="${firefox.exe}"/>
+  <property name="browser.name" value="mozilla"/> 
+  <property name="implementation" value="iframe"/>
+  <junit showoutput="true" haltonerror="false" haltonfailure="false">
+    <classpath>
+        <pathelement location="${jsunit.bin.dir}/jsunit.jar"/>
+        <pathelement location="${jsunit.lib.dir}/javax.servlet.jar"/>
+        <pathelement location="${jsunit.lib.dir}/jdom.jar"/>
+        <pathelement location="${jsunit.lib.dir}/jetty.jar"/>
+        <pathelement location="${jsunit.lib.dir}/xerces.jar"/>
+      </classpath>
+    <sysproperty key="browserFileNames" value="${browser.exe}"/>
+    <sysproperty key="url" value="${testRunner.url}?testpage=${test.url.base}%2Flevel${level}%2F${module}%2Falltests.html&amp;implementation=${implementation}&amp;skipIncompatibleTests=true&amp;autorun=true&amp;submitCheckbox=on&amp;submitresults=${jsunit.acceptor.url}&amp;resultid=dom${level}-${module}-${browser.name}_${type}&amp;contentType=text%2F${type}"/>
+    <sysproperty key="port" value="${jsunit.port}"/>
+    <sysproperty key="resourceBase" value="${jsunit.dir}"/>
+    <sysproperty key="logsDirectory" value="${results.dir}"/>
+    <test name="net.jsunit.StandaloneTest" 
+          todir="${results.dir}"
+          outfile="${browser.name}"/>
+    <formatter type="xml"/>
+  </junit>
+</target>
+
+<target name="firefox-present" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <antcall target="run-browser">
+     <param name="level" value="${level}"/>
+     <param name="module" value="${module}"/>
+     <param name="config" value="${config}"/>
+     <param name="type" value="${type}"/>
+     <param name="browser.exe" value="${firefox.exe}"/>
+     <param name="browser.name" value="firefox"/>
+   </antcall>
+ </target>
+
+
+<target name="run-firefox">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <condition property="target" value="firefox-present">
+    <isset property="firefox-available"/>
+  </condition>
+  <property name="target" value="firefox-missing"/>
+  <antcall target="${target}">
+    <param name="level" value="${level}"/>
+    <param name="module" value="${module}"/>
+    <param name="config" value="${config}"/>
+    <param name="type" value="${type}"/>
+  </antcall>
+</target>
+
+<target name="opera-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <echo message="${opera.exe} was not located, specify -Dopera.exe to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-opera_${type}${config}.xml">&lt;testsuite name="opera-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+
+<target name="opera-present" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <property name="implementation" value="iframe"/>
+  <antcall target="run-browser">
+    <param name="level" value="${level}"/>
+    <param name="module" value="${module}"/>
+    <param name="config" value="${config}"/>
+    <param name="type" value="${type}"/>
+    <param name="browser.exe" value="${opera.exe}"/>
+    <param name="browser.name" value="opera"/>
+    <param name="implementation" value="${implementation}"/>
+  </antcall>
+</target>
+
+
+<target name="run-opera">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <property name="implementation" value="iframe"/>
+  <condition property="target" value="opera-present">
+    <isset property="opera-available"/>
+  </condition>
+  <property name="target" value="opera-missing"/>
+  <antcall target="${target}">
+      <param name="level" value="${level}"/>
+      <param name="module" value="${module}"/>
+      <param name="config" value="${config}"/>
+      <param name="type" value="${type}"/>
+      <param name="implementation" value="${implementation}"/>
+  </antcall>
+</target>
+
+<target name="ie6-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <echo message="${ie6.exe} was not located, specify -Die6.exe to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-ie6_${type}${config}.xml">&lt;testsuite name="ie6-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+<target name="ie6-present" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <property name="implementation" value="iframe"/>
+  <antcall target="run-browser">
+    <param name="level" value="${level}"/>
+    <param name="module" value="${module}"/>
+    <param name="config" value="${config}"/>
+    <param name="type" value="${type}"/>
+    <param name="browser.exe" value="${ie6.exe}"/>
+    <param name="browser.name" value="ie6"/>
+    <param name="implementation" value="${implementation}"/>
+  </antcall>
+</target>
+
+
+<target name="run-ie6">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <condition property="target" value="ie6-present">
+    <isset property="ie6-available"/>
+  </condition>
+  <property name="target" value="ie6-missing"/>
+  <antcall target="${target}">
+    <param name="level" value="${level}"/>
+    <param name="module" value="${module}"/>
+    <param name="config" value="${config}"/>
+    <param name="type" value="${type}"/>
+  </antcall>
+</target>
+
+<target name="msxml3-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <echo message="${ie6.exe} was not located, specify -Die6.exe to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-msxml3_${type}${config}.xml">&lt;testsuite name="msxml3-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+<target name="msxml3-present" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <antcall target="run-browser">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="config" value=""/>
+    <param name="type" value="xml"/>
+    <param name="browser.exe" value="${ie6.exe}"/>
+    <param name="browser.name" value="msxml3"/>
+    <param name="implementation" value="msxml3"/>
+  </antcall>
+</target>
+
+
+<target name="run-msxml3">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="xml"/>
+  <condition property="target" value="msxml3-present">
+    <isset property="ie6-available"/>
+  </condition>
+  <property name="target" value="msxml3-missing"/>
+  <antcall target="${target}">
+    <param name="level" value="${level}"/>
+    <param name="module" value="${module}"/>
+    <param name="config" value="${config}"/>
+    <param name="type" value="${type}"/>
+  </antcall>
+</target>
+
+<target name="msxml4-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="html"/>
+  <echo message="${ie6.exe} was not located, specify -Die6.exe to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-msxml4_${type}${config}.xml">&lt;testsuite name="msxml4-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+<target name="msxml4-present" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="xml"/>
+  <antcall target="run-browser">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="config" value=""/>
+    <param name="type" value="${type}"/>
+    <param name="browser.exe" value="${ie6.exe}"/>
+    <param name="browser.name" value="msxml4"/>
+    <param name="implementation" value="msxml4"/>
+  </antcall>
+</target>
+
+
+
+<target name="run-msxml4">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="xml"/>
+  <condition property="target" value="msxml4-present">
+    <isset property="ie6-available"/>
+  </condition>
+  <property name="target" value="msxml4-missing"/>
+  <antcall target="${target}">
+    <param name="level" value="${level}"/>
+    <param name="module" value="${module}"/>
+    <param name="config" value="${config}"/>
+    <param name="type" value="${type}"/>
+  </antcall>
+</target>
+
+<target name="msxmlhttp-missing" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="xml"/>
+  <echo message="${ie6.exe} was not located, specify -Die6.exe to change location"/> 
+  <echo file="${results.dir}/dom${level}-${module}-msxmlhttp_${type}${config}.xml">&lt;testsuite name="msxmlhttp-missing" tests="0" failures="0" errors="0" time="0"/&gt;</echo>
+</target>
+
+<target name="msxmlhttp-present" depends="init">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="xml"/>
+  <antcall target="run-browser">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="config" value=""/>
+    <param name="type" value="xml"/>
+    <param name="browser.exe" value="${ie6.exe}"/>
+    <param name="browser.name" value="msxmlhttp"/>
+    <param name="implementation" value="xmlhttprequest"/>
+  </antcall>
+</target>
+
+
+<target name="run-msxmlhttp">
+  <property name="level" value="1"/>
+  <property name="module" value="core"/>
+  <property name="config" value=""/>
+  <property name="type" value="xml"/>
+  <condition property="target" value="msxmlhttp-present">
+    <isset property="ie6-available"/>
+  </condition>
+  <property name="target" value="msxmlhttp-missing"/>
+  <antcall target="${target}">
+    <param name="level" value="${level}"/>
+    <param name="module" value="${module}"/>
+    <param name="config" value="${config}"/>
+    <param name="type" value="${type}"/>
+  </antcall>
+</target>
+
+
+<target name="check-junit-run" depends="init" unless="junit-run-available">
+	<fail message="${test.dir}/junit-run.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+<target name="check-dom1-core" depends="check-junit-run" unless="dom1-core-available">
+	<fail message="${test.dir}/dom1-core.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom1-core-metadata" depends="init" unless="dom1-core-metadata-available">
+	<fail message="${test.dir}/dom1-core-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+<target name="dom1-core-xdk" depends="check-dom1-core">
+	<antcall target="run-xdk">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-xdk-alt" depends="check-dom1-core">
+	<antcall target="run-xdk">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom1-core-xerces1" depends="check-dom1-core">
+	<antcall target="run-xerces1">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-xerces1-alt" depends="check-dom1-core">
+	<antcall target="run-xerces1">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+
+<target name="dom1-core-xerces2" depends="check-dom1-core">
+	<antcall target="run-xerces2">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-xerces2-alt" depends="check-dom1-core">
+	<antcall target="run-xerces2">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom1-core-xerces2_svg" depends="check-dom1-core">
+	<antcall target="run-xerces2_svg">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-xerces2_svg-alt"  depends="check-dom1-core">
+	<antcall target="run-xerces2_svg">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom1-core-xerces2_xhtml"  depends="check-dom1-core">
+	<antcall target="run-xerces2_xhtml">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-xerces2_xhtml-alt" depends="check-dom1-core">
+	<antcall target="run-xerces2_xhtml">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+
+<target name="dom1-core-crimson" depends="check-dom1-core">
+	<antcall target="run-crimson">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-crimson-alt" depends="check-dom1-core">
+	<antcall target="run-crimson">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom1-core-kaffe" depends="check-dom1-core">
+	<antcall target="run-kaffe">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-kaffe-alt" depends="check-dom1-core">
+	<antcall target="run-kaffe">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom1-core-dom4j" depends="check-dom1-core">
+	<antcall target="run-dom4j">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+
+<target name="dom1-core-batik" depends="check-dom1-core">
+	<antcall target="run-batik">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+
+<target name="dom1-core-jtidy" depends="check-dom1-core">
+	<antcall target="run-jtidy">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-xerces_ls" depends="check-dom1-core">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-xerces_ls-alt" depends="check-dom1-core">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="1"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom1-core-firefox_html" depends="check-dom1-core">
+  <antcall target="run-firefox">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-firefox_xhtml" depends="check-dom1-core">
+  <antcall target="run-firefox">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-firefox_xml" depends="check-dom1-core">
+  <antcall target="run-firefox">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xml"/>
+    <param name="implementation" value="mozillaXML"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-opera_html" depends="check-dom1-core">
+  <antcall target="run-opera">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-opera_xhtml" depends="check-dom1-core">
+  <antcall target="run-opera">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-opera_xml" depends="check-dom1-core">
+  <antcall target="run-opera">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xml"/>
+    <param name="implementation" value="xmlhttprequest"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-ie6_html" depends="check-dom1-core">
+  <antcall target="run-ie6">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-msxml3" depends="check-dom1-core">
+  <antcall target="run-msxml3">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-msxml3-alt" depends="check-dom1-core">
+  <antcall target="run-msxml3">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="config" value="AltConfig"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-msxml4" depends="check-dom1-core">
+  <antcall target="run-msxml4">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-msxml4-alt" depends="check-dom1-core">
+  <antcall target="run-msxml4">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+    <param name="config" value="AltConfig"/>
+  </antcall>
+</target>
+
+<target name="dom1-core-msxmlhttp" depends="check-dom1-core">
+  <antcall target="run-msxmlhttp">
+    <param name="level" value="1"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+
+<target name="dom1-core-all"
+        depends="dom1-core-opera_html,
+                 dom1-core-opera_xml,
+                 dom1-core-xerces1, 
+		     dom1-core-xerces1-alt,
+		     dom1-core-xerces2,
+		     dom1-core-xerces2-alt, 
+	         dom1-core-xdk,
+	         dom1-core-xdk-alt,
+		     dom1-core-crimson,
+		     dom1-core-crimson-alt, 
+	         dom1-core-batik,
+	         dom1-core-xerces2_svg,
+	         dom1-core-xerces2_svg-alt,
+	         dom1-core-xerces2_xhtml,
+	         dom1-core-xerces2_xhtml-alt,
+	         dom1-core-kaffe,
+	         dom1-core-kaffe-alt,
+	         dom1-core-dom4j,
+                 dom1-core-firefox_html,
+                 dom1-core-firefox_xhtml,
+                 dom1-core-firefox_xml,
+                 dom1-core-ie6_html,
+                 dom1-core-msxmlhttp,
+                 dom1-core-msxml3,
+                 dom1-core-msxml3-alt,
+                 dom1-core-msxml4,
+                 dom1-core-msxml4-alt"/>
+	         
+<target name="dom1-core-results" depends="check-dom1-core-metadata, dom1-core-all">	         
+	<copy file="${transforms.dir}/dom1-core-results.xml" todir="${results.dir}"/>
+	<style in="${test.dir}/dom1-core-metadata.rdf" 
+		   out="${results.dir}/dom1-core-results.html" 
+	       style="transforms/results-matrix.xsl" force="true">
+		<param name="specURI"
+		       expression="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#"/>
+        <param name="title" expression='DOM Level 1 Core Test Results'/>
+        <param name="resultsURL" expression="${results.dir}/dom1-core-results.xml"/>
+        <param name="testPath" expression="${testsrc.dir}/level1/core/"/>
+        <param name="doxyPath" expression="${doxygensrc.dir}/level1/core/doxygen/html/"/>
+	</style>
+	
+	<antcall target="validate-html">
+		<param name="file" location="${results.dir}/dom1-core-results.html"/>
+	</antcall>
+</target>
+
+
+<target name="warn-jtidy" depends="init" unless="jtidy-available">
+    <echo message="JTidy is not available, no HTML validation performed."/>
+</target>
+
+<target name="validate-html" depends="warn-jtidy" if="jtidy-available">
+	<property name="file" value="build/dom1-core-results.html"/>
+	<java classname="org.w3c.tidy.Tidy" 
+		failonerror="yes" 
+		fork="yes"
+                classpath="${jtidy.lib.dir}/Tidy.jar">
+		<arg value="-e"/>
+		<arg value="-q"/>
+		<arg value="${file}"/>
+	</java> 
+</target>
+
+
+<target name="check-dom2-core" depends="check-junit-run" unless="dom2-core-available">
+  <fail message="${test.dir}/dom2-core.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom2-core-metadata" depends="init" unless="dom2-core-metadata-available">
+  <fail message="${test.dir}/dom2-core-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+
+
+<target name="dom2-core-xdk" depends="check-dom2-core">
+	<antcall target="run-xdk">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xdk-alt" depends="check-dom2-core">
+	<antcall target="run-xdk">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces1" depends="check-dom2-core">
+	<antcall target="run-xerces1">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces1-alt" depends="check-dom2-core">
+	<antcall target="run-xerces1">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces2" depends="check-dom2-core">
+	<antcall target="run-xerces2">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces2-alt" depends="check-dom2-core">
+	<antcall target="run-xerces2">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-core-xerces2_svg" depends="check-dom2-core">
+	<antcall target="run-xerces2_svg">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces2_svg-alt" depends="check-dom2-core">
+	<antcall target="run-xerces2_svg">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-core-xerces2_xhtml" depends="check-dom2-core">
+	<antcall target="run-xerces2_xhtml">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces2_xhtml-alt" depends="check-dom2-core">
+	<antcall target="run-xerces2_xhtml">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-crimson" depends="check-dom2-core">
+	<antcall target="run-crimson">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-crimson-alt" depends="check-dom2-core">
+	<antcall target="run-crimson">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-core-kaffe" depends="check-dom2-core">
+	<antcall target="run-kaffe">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-kaffe-alt" depends="check-dom2-core">
+	<antcall target="run-kaffe">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-core-dom4j" depends="check-dom2-core">
+	<antcall target="run-dom4j">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-core-batik" depends="check-dom2-core">
+	<antcall target="run-batik">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-core-jtidy" depends="check-dom2-core">
+	<antcall target="run-jtidy">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces_ls" depends="check-dom2-core">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom2-core-xerces_ls-alt" depends="check-dom2-core">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="2"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-core-firefox_html" depends="check-dom2-core">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom2-core-firefox_xhtml" depends="check-dom2-core">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+<target name="dom2-core-firefox_xml" depends="check-dom2-core">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xml"/>
+    <param name="implementation" value="mozillaXML"/>
+  </antcall>
+</target>
+
+<target name="dom2-core-opera_html" depends="check-dom2-core">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom2-core-opera_xhtml" depends="check-dom2-core">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+<target name="dom2-core-opera_xml" depends="check-dom1-core">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="core"/>
+    <param name="type" value="xml"/>
+    <param name="implementation" value="xmlhttprequest"/>
+  </antcall>
+</target>
+
+
+
+<target name="dom2-core-all"
+        depends="dom2-core-opera_html,
+        dom2-core-opera_xhtml,
+        dom2-core-opera_xml,
+        dom2-core-firefox_html,
+        dom2-core-firefox_xhtml,
+        dom2-core-firefox_xml,
+        dom2-core-xerces1, 
+		     dom2-core-xerces1-alt,
+		     dom2-core-xerces2,
+		     dom2-core-xerces2-alt, 
+	         dom2-core-xdk,
+	         dom2-core-xdk-alt,
+		     dom2-core-crimson,
+		     dom2-core-crimson-alt, 
+	         dom2-core-batik,
+	         dom2-core-xerces2_svg,
+	         dom2-core-xerces2_svg-alt,
+	         dom2-core-xerces2_xhtml,
+	         dom2-core-xerces2_xhtml-alt,
+	         dom2-core-kaffe,
+	         dom2-core-kaffe-alt,
+                 dom2-core-dom4j"/>
+	         
+<target name="dom2-core-results" depends="dom2-core-all">	         
+	<copy file="${transforms.dir}/dom2-core-results.xml" todir="${results.dir}"/>
+	<style in="${test.dir}/dom2-core-metadata.rdf" 
+		   out="${results.dir}/dom2-core-results.html" 
+	       style="${transforms.dir}/results-matrix.xsl" force="true">
+		<param name="specURI"
+		       expression="http://www.w3.org/TR/DOM-Level-2-Core/core#"/>
+        <param name="interfacesURL" expression="dom2-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom2-core-subjects.xml"/>
+        <param name="title" expression='DOM Level 2 Core Test Results'/>
+        <param name="resultsURL" expression="${results.dir}/dom2-core-results.xml"/>
+        <param name="testBaseURI" expression="http://www.w3.org/2001/DOM-Test-Suite/level2/core/"/>
+	</style>
+</target>
+
+<target name="check-dom2-events" depends="check-junit-run" unless="dom2-events-available">
+  <fail message="${test.dir}/dom2-events.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom2-events-metadata" depends="init" unless="dom2-events-metadata-available">
+  <fail message="${test.dir}/dom2-events-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+
+<target name="dom2-events-xerces1" depends="check-dom2-events">
+	<antcall target="run-xerces1">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+	</antcall>
+</target>
+
+<target name="dom2-events-xerces1-alt" depends="check-dom2-events">
+	<antcall target="run-xerces1">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom2-events-xerces2" depends="check-dom2-events">
+	<antcall target="run-xerces2">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+	</antcall>
+</target>
+
+<target name="dom2-events-xerces2-alt" depends="check-dom2-events">
+	<antcall target="run-xerces2">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-events-xerces2_svg" depends="check-dom2-events">
+	<antcall target="run-xerces2_svg">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+	</antcall>
+</target>
+
+<target name="dom2-events-xerces2_svg-alt" depends="check-dom2-events">
+	<antcall target="run-xerces2_svg">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-events-xerces2_xhtml" depends="check-dom2-events">
+	<antcall target="run-xerces2_xhtml">
+          <param name="level" value="2"/>
+	  <param name="module" value="events"/>
+	</antcall>
+</target>
+
+<target name="dom2-events-xerces2_xhtml-alt" depends="check-dom2-events">
+	<antcall target="run-xerces2_xhtml">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+<target name="dom2-events-batik" depends="check-dom2-events">
+	<antcall target="run-batik">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+	</antcall>
+</target>
+
+<target name="dom2-events-xerces_ls" depends="check-dom2-events">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="2"/>
+                <param name="module" value="events"/>dom2-events-opera_html,
+                dom2-events-firefox_html,
+                dom2-events-firefox_xhtml,
+                 dom2-events-firefox_xml,
+	</antcall>
+</target>
+
+<target name="dom2-events-xerces_ls-alt" depends="check-dom2-events">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="2"/>
+		<param name="module" value="events"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom2-events-kaffe" depends="check-dom2-events">
+  <antcall target="run-kaffe">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+  </antcall>
+</target>
+
+<target name="dom2-events-kaffe-alt" depends="check-dom2-events">
+  <antcall target="run-kaffe">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+    <param name="config" value="AltConfig"/>
+  </antcall>
+</target>
+
+
+<target name="dom2-events-firefox_html" depends="check-dom2-events">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+  </antcall>
+</target>
+
+<target name="dom2-events-firefox_xhtml" depends="check-dom2-events">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+<target name="dom2-events-firefox_xml" depends="check-dom2-events">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+    <param name="type" value="xml"/>
+    <param name="implementation" value="mozillaXML"/>
+  </antcall>
+</target>
+
+<target name="dom2-events-opera_html" depends="check-dom2-events">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+  </antcall>
+</target>
+
+<target name="dom2-events-opera_xhtml" depends="check-dom2-events">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+<target name="dom2-events-opera_xml" depends="check-dom2-events">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="events"/>
+    <param name="type" value="xml"/>
+    <param name="implementation" value="xmlhttprequest"/>
+  </antcall>
+</target>
+
+
+
+<target name="dom2-events-all"
+        depends="dom2-events-opera_html,
+                 dom2-events-opera_xhtml,
+                 dom2-events-opera_xml,
+                 dom2-events-firefox_html,
+                 dom2-events-firefox_xhtml,
+                 dom2-events-firefox_xml,
+                 dom2-events-xerces1, 
+		 dom2-events-xerces1-alt,
+		 dom2-events-xerces2,
+		 dom2-events-xerces2-alt, 
+	         dom2-events-batik,
+	         dom2-events-xerces2_svg,
+	         dom2-events-xerces2_svg-alt,
+	         dom2-events-xerces2_xhtml,
+	         dom2-events-xerces2_xhtml-alt,
+                 dom2-events-kaffe,
+                 dom2-events-kaffe-alt"/>
+	         
+<target name="dom2-events-results" depends="init">	         
+	<copy file="${transforms.dir}/dom2-events-results.xml" todir="${results.dir}"/>
+	<style in="${test.dir}/dom2-events-metadata.rdf" 
+		   out="${results.dir}/dom2-events-results.html" 
+	       style="${transforms.dir}/results-matrix.xsl" force="true">
+		<param name="specURI"
+                       expression="http://www.w3.org/TR/DOM-Level-2-Events/events#"/>
+        <param name="interfacesURL" expression="dom2-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom2-events-subjects.xml"/>
+        <param name="title" expression='DOM Level 2 Events Test Results'/>
+        <param name="resultsURL" expression="${results.dir}/dom2-events-results.xml"/>
+        <param name="testBaseURI" expression="http://www.w3.org/2001/DOM-Test-Suite/level2/events/"/>        
+	</style>
+</target>
+
+
+
+
+<target name="check-dom2-html" depends="check-junit-run" unless="dom2-html-available">
+  <fail message="${test.dir}/dom2-html.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom2-html-metadata" depends="init" unless="dom2-html-metadata-available">
+  <fail message="${test.dir}/dom2-html-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+
+<target name="dom2-html-firefox_html" depends="init">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="html"/>
+  </antcall>
+</target>
+
+<target name="dom2-html-firefox_xhtml" depends="init">
+  <antcall target="run-firefox">
+    <param name="level" value="2"/>
+    <param name="module" value="html"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+
+<target name="dom2-html-opera_html" depends="init">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="html"/>
+  </antcall>
+</target>
+
+<target name="dom2-html-opera_xhtml" depends="init">
+  <antcall target="run-opera">
+    <param name="level" value="2"/>
+    <param name="module" value="html"/>
+    <param name="type" value="xhtml"/>
+  </antcall>
+</target>
+
+<target name="dom2-html-ie6_html" depends="check-dom1-core">
+  <antcall target="run-ie6">
+    <param name="level" value="2"/>
+    <param name="module" value="html"/>
+  </antcall>
+</target>
+
+
+<target name="dom2-html-all"
+        depends="dom2-html-opera_html,
+        dom2-html-opera_xhtml,
+        dom2-html-firefox_html,
+        dom2-html-firefox_xhtml,
+        dom2-html-ie6_html"/>
+
+<target name="dom2-html-results" depends="dom2-html-all">	         
+  <copy file="${transforms.dir}/dom2-html-results.xml" todir="${results.dir}"/>
+  <style in="${test.dir}/dom2-html-metadata.rdf" 
+         out="${results.dir}/dom2-html-results.html" 
+         style="${transforms.dir}/results-matrix.xsl" force="true">
+    <param name="specURI"
+           expression="http://www.w3.org/TR/DOM-Level-2-HTML/html#"/>
+    <param name="interfacesURL" expression="dom2-interfaces.xml"/>
+    <param name="specMetadataURL" expression="dom2-html-subjects.xml"/>
+    <param name="title" expression='DOM Level 2 HTML Test Results'/>
+    <param name="resultsURL" expression="${results.dir}/dom2-html-results.xml"/>
+    <param name="testBaseURI" expression="http://www.w3.org/2001/DOM-Test-Suite/level2/html/"/>
+  </style>
+</target>
+
+
+
+<target name="check-dom3-core" depends="check-junit-run" unless="dom3-core-available">
+  <fail message="${test.dir}/dom3-core.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom3-core-metadata" depends="init" unless="dom3-core-metadata-available">
+  <fail message="${test.dir}/dom3-core-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+
+<target name="dom3-core-xerces2" depends="check-dom3-core">
+  <antcall target="run-xerces2">
+    <param name="level" value="3"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom3-core-xerces2-alt" depends="check-dom3-core">
+  <antcall target="run-xerces2">
+    <param name="level" value="3"/>
+    <param name="module" value="core"/>
+    <param name="config" value="AltConfig"/>
+  </antcall>
+</target>
+
+<target name="dom3-core-xerces2_xhtml" depends="check-dom3-core">
+  <antcall target="run-xerces2_xhtml">
+    <param name="level" value="3"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom3-core-xerces2_svg" depends="check-dom3-core">
+  <antcall target="run-xerces2_svg">
+    <param name="level" value="3"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+
+<target name="dom3-core-xdk" depends="check-dom3-core">
+	<antcall target="run-xdk">
+		<param name="level" value="3"/>
+		<param name="module" value="core"/>
+		<param name="jarname" value="dom3-core-xdk.jar"/>
+	</antcall>
+</target>
+
+<target name="dom3-core-xdk-alt" depends="check-dom3-core">
+	<antcall target="run-xdk">
+		<param name="level" value="3"/>
+		<param name="module" value="core"/>
+		<param name="jarname" value="dom3-core-xdk.jar"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+
+
+<target name="dom3-core-batik" depends="check-dom3-core">
+	<antcall target="run-batik">
+		<param name="level" value="3"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom3-core-xerces_ls" depends="check-dom3-core">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="3"/>
+		<param name="module" value="core"/>
+	</antcall>
+</target>
+
+<target name="dom3-core-xerces_ls-alt" depends="check-dom3-core">
+	<antcall target="run-xerces_ls">
+		<param name="level" value="3"/>
+		<param name="module" value="core"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom3-core-kaffe" depends="check-dom3-core">
+  <antcall target="run-kaffe">
+    <param name="level" value="3"/>
+    <param name="module" value="core"/>
+  </antcall>
+</target>
+
+<target name="dom3-core-kaffe-alt" depends="check-dom3-core">
+  <antcall target="run-kaffe">
+    <param name="level" value="3"/>
+    <param name="module" value="core"/>
+    <param name="config" value="AltConfig"/>
+  </antcall>
+</target>
+
+
+
+
+<target name="dom3-core-results" 
+	depends="dom3-core-xerces2,
+			 dom3-core-xerces2-alt, 
+			 dom3-core-xerces2_xhtml, 
+			 dom3-core-xerces2_svg,
+			 dom3-core-xerces_ls,
+			 dom3-core-xerces_ls-alt,
+                         dom3-core-kaffe,
+                         dom3-core-kaffe-alt">
+    <mkdir dir="${results.dir}"/>
+	<style in="${test.dir}/dom3-core-metadata.rdf" 
+		   out="${results.dir}/dom3-core-results.html" 
+	       style="${transforms.dir}/results-matrix.xsl" force="true">
+		<param name="specURI"
+		       expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-Core-20031107/core#"/>
+        <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom3-core-subjects.xml"/>
+        <param name="title" expression='DOM Level 3 Core Test Results Matrix'/>
+        <param name="resultsURL" expression="${transforms.dir}/dom3-core-results.xml"/>
+	</style>
+</target>
+
+
+<target name="check-dom3-ls" depends="check-junit-run" unless="dom3-ls-available">
+  <fail message="${test.dir}/dom3-ls.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom3-ls-metadata" depends="init" unless="dom3-ls-metadata-available">
+  <fail message="${test.dir}/dom3-ls-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+
+<target name="dom3-ls-xerces" depends="check-dom3-ls">
+	<antcall target="run-xerces2">
+		<param name="level" value="3"/>
+		<param name="module" value="ls"/>
+	</antcall>
+</target>
+
+<target name="dom3-ls-xdk" depends="check-dom3-ls">
+	<antcall target="run-xdk">
+		<param name="level" value="3"/>
+		<param name="module" value="ls"/>
+		<param name="jarname" value="dom3-ls-xdk.jar"/>
+	</antcall>
+</target>
+
+<target name="dom3-ls-kaffe" depends="check-dom3-core">
+  <antcall target="run-kaffe">
+    <param name="level" value="3"/>
+    <param name="module" value="ls"/>
+  </antcall>
+</target>
+
+
+<target name="dom3-ls-all" depends="dom3-ls-xdk, 
+                                    dom3-ls-xerces, 
+                                    dom3-ls-kaffe"/>
+
+
+<target name="dom3-ls-results" depends="dom3-ls-all">	         
+	<copy file="${transforms.dir}/dom3-ls-results.xml" todir="${results.dir}"/>
+	<style in="${test.dir}/dom3-ls-metadata.rdf" 
+		   out="${results.dir}/dom3-ls-results.html" 
+	       style="transforms/results-matrix.xsl" force="true">
+		<param name="specURI"
+		       expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-LS-20031107/load-save#"/>
+        <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom3-ls-subjects.xml"/>
+        <param name="resultsURL" expression="../transforms/dom3-ls-results.xml"/>
+        <param name="title" expression='DOM Level 3 Load and Save Test Suite Results Matrix'/>
+	</style>
+</target>
+
+<target name="check-dom3-val" depends="check-junit-run" unless="dom3-val-available">
+  <fail message="${test.dir}/dom3-val.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom3-val-metadata" depends="init" unless="dom3-val-metadata-available">
+  <fail message="${test.dir}/dom3-val-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+
+<target name="dom3-val-xdk" depends="check-dom3-val">
+	<antcall target="run-xdk">
+		<param name="level" value="3"/>
+		<param name="module" value="validation"/>
+	</antcall>
+</target>
+
+<target name="dom3-val-xdk-alt" depends="check-dom3-val">
+	<antcall target="run-xdk">
+		<param name="level" value="3"/>
+		<param name="module" value="validation"/>
+		<param name="config" value="AltConfig"/>
+	</antcall>
+</target>
+
+<target name="dom3-val-results" depends="dom3-val-xdk,dom3-val-xdk-alt">
+    <mkdir dir="${build.dir}"/>
+	<style in="${build.dir}/dom3-val-metadata.rdf" 
+		   out="${build.dir}/dom3-validation-results.html" 
+	       style="transforms/results-matrix.xsl" force="true">
+		<param name="specURI"
+		       expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-LS-20031107/load-save#"/>
+        <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+        <param name="specMetadataURL" expression="dom3-val-subjects.xml"/>
+        <param name="resultsURL" expression="../transforms/dom3-val-results.xml"/>
+        <param name="title" expression='DOM Level 3 Validation Test Suite Results Matrix'/>
+	</style>
+</target>
+
+<target name="check-dom3-xpath" depends="check-junit-run" unless="dom3-xpath-available">
+  <fail message="${test.dir}/dom3-xpath.jar was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+<target name="check-dom3-xpath-metadata" depends="init" unless="dom3-xpath-metadata-available">
+  <fail message="${test.dir}/dom3-xpath-metadata.rdf was not located, specify -Dtest.dir to change location"/> 
+</target>
+
+
+
+<target name="dom3-xpath-kaffe" depends="check-dom3-xpath">
+  <antcall target="run-kaffe">
+    <param name="level" value="3"/>
+    <param name="module" value="xpath"/>
+  </antcall>
+</target>
+
+<target name="dom3-xpath-kaffe-alt" depends="check-dom3-val">
+  <antcall target="run-kaffe">
+    <param name="level" value="3"/>
+    <param name="module" value="xpath"/>
+    <param name="config" value="AltConfig"/>
+  </antcall>
+</target>
+
+<target name="dom3-xpath-all" depends="dom3-xpath-kaffe,dom3-xpath-kaffe"/>
+
+<target name="dom3-xpath-results" depends="dom3-xpath-all">
+  <mkdir dir="${build.dir}"/>
+  <style in="${build.dir}/dom3-xpath-metadata.rdf" 
+         out="${build.dir}/dom3-xpath-results.html" 
+         style="transforms/results-matrix.xsl" force="true">
+    <param name="specURI"
+           expression="http://www.w3.org/TR/2003/CR-DOM-Level-3-LS-20031107/xpath#"/>
+    <param name="interfacesURL" expression="dom3-interfaces.xml"/>
+    <param name="specMetadataURL" expression="dom3-xpath-subjects.xml"/>
+    <param name="resultsURL" expression="../transforms/dom3-xpath-results.xml"/>
+    <param name="title" expression='DOM Level 3 XPath Test Suite Results Matrix'/>
+  </style>
+</target>
+
+
+</project>

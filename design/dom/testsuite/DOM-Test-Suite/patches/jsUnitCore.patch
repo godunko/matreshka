@@ -1,0 +1,7 @@
+184a185,190
+> function initTracer() {
+>    if(tracer == null) {
+>         tracer = parent.tracer;
+>    }
+> }
+> 

@@ -1,0 +1,11 @@
+Manifest-Version: 2.0
+Main-Class: org.w3c.domts.level3.events.alltests
+Class-Path:  xmlParserAPIs.jar xercesImpl.jar xerces.jar xml4j.jar xmlparserv2.jar crimson.jar parser.jar jaxp.jar xml-apis.jar gnujaxp.jar dom4j-full.jar batik-svg-dom.jar crimson-parser.jar junit-run.jarxalan.jar
+
+Name: org/w3c/domts/level3/events
+Specification-Title: W3C/NIST Test Suite for DOM Level 3 Events
+Specification-Version: 0.0.1
+Specification-Vendor: World Wide Web Consortium
+Implementation-Vendor: World Wide Web Consortium 
+Implementation-Version: 0.0.1
+Implementation-Title: W3C/NIST Test Suite for DOM Level 3 Events

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg [
+   <!ELEMENT svg (rect, script)>
+   <!ATTLIST svg 
+      xmlns CDATA #FIXED "http://www.w3.org/2000/svg"
+      name CDATA #IMPLIED>
+   <!ELEMENT rect EMPTY>
+   <!ATTLIST rect 
+      x CDATA #REQUIRED
+      y CDATA #REQUIRED
+      width CDATA #REQUIRED
+      height CDATA #REQUIRED>      
+  <!ELEMENT script (#PCDATA)>
+  <!ATTLIST script type CDATA #IMPLIED>      
+  <!ENTITY svgunit SYSTEM "svgunit.js">
+  <!ENTITY svgtest SYSTEM "svgtest.js">
+]>
+<!--  simple SVG for tests that don't hava a load statement   -->
+<!--
+Copyright(c) 2001-2004 World Wide Web Consortium, 
+(Massachusetts Institute of Technology, European Research Consortium 
+for Informatics and Mathematics, Keio University). All 
+Rights Reserved. This work is distributed under the W3C(r) Software License [1] in the 
+hope that it will be useful, but WITHOUT ANY WARRANTY; without even 
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+
+[1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+	<rect x="0" y="0" width="100" height="100"/>
+	<script type="text/ecmascript">&svgunit;&svgtest;</script>
+</svg>

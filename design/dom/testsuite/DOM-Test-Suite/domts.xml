@@ -1,0 +1,86 @@
+<module name="domts">
+<!--
+Copyright (c) 2003-2004 World Wide Web Consortium,
+(Massachusetts Institute of Technology, Institut National de
+Recherche en Informatique et en Automatique, Keio University). All
+Rights Reserved. This program is distributed under the W3C's Software
+Intellectual Property License. This program is distributed in the
+hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+See W3C License http://www.w3.org/Consortium/Legal/ for more details.
+-->
+
+<!--   
+
+Gump (http://jakarta.apache.org/gump) descriptor for the
+DOM Test Suite
+
+-->
+
+  <url  href="http://www.w3.org/DOM/Test"/>
+  <description>
+    Document Object Model Conformance Test Suites
+  </description>
+  <redistributable/>
+
+  <cvs repository="w3c" module="2001/DOM-Test-Suite"/>
+  
+  <project name="dom1">
+    <description>DOM Level 1 test suites</description>
+    <ant target="dom1-gump" />
+
+    <depend project="ant" inherit="runtime"/>
+    <depend project="xml-xerces"/>
+    <depend project="xml-xalan2"/>
+    <depend project="junit"/>
+
+    <home nested="build"/>
+    <jar name="dom1-core.jar" />
+    <jar name="dom1-html.jar" />
+    <jar name="junit-run.jar" />
+    <license name="docs/resources/COPYRIGHT.html"/>
+
+    <nag from="Curt Arnold &lt;carnold@houston.rr.com&gt;"
+      to="www-dom-ts@w3.org"/>
+  </project>
+
+  <project name="dom2">
+    <description>DOM Level 2 test suites</description>
+    <ant target="dom2-gump" />
+
+    <depend project="ant" inherit="runtime"/>
+    <depend project="xml-xerces"/>
+    <depend project="xml-xalan2"/>
+
+    <home nested="build"/>
+    <jar name="dom2-core.jar" />
+    <jar name="dom2-html.jar" />
+    <jar name="dom2-events.jar" />
+    <license name="docs/resources/COPYRIGHT.html"/>
+
+    <nag from="Curt Arnold &lt;carnold@houston.rr.com&gt;"
+      to="www-dom-ts@w3.org"/>
+  </project>
+
+  <project name="dom3">
+    <description>DOM Level 3 test suites</description>
+    <ant target="dom3-gump" />
+
+    <depend project="ant" inherit="runtime"/>
+    <depend project="xml-xerces"/>
+    <depend project="xml-xalan2"/>
+
+    <home nested="build"/>
+    <jar name="dom3-core.jar" />
+    <jar name="dom3-ls.jar" />
+    <jar name="dom3-events.jar" />
+    <jar name="dom3-validation.jar" />
+    <jar name="dom3-xpath.jar" />
+    <license name="docs/resources/COPYRIGHT.html"/>
+
+    <nag from="Curt Arnold &lt;carnold@houston.rr.com&gt;"
+      to="www-dom-ts@w3.org"/>
+  </project>
+
+</module>
