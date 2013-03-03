@@ -72,6 +72,10 @@ package Matreshka.XML.DOM_Nodes is
    --  Decrements reference counter; deallocate object when its value went to
    --  zero.
 
+   -------------------
+   -- Abstract_Node --
+   -------------------
+
    type Abstract_Node is abstract tagged limited record
       Counter  : aliased Matreshka.XML.Counters.Counter;
       Is_Root  : Boolean := True;
@@ -84,6 +88,12 @@ package Matreshka.XML.DOM_Nodes is
       First    : Node_Access;
       Last     : Node_Access;
    end record;
+
+   not overriding procedure Append_Child
+    (Self  : not null access Abstract_Node;
+     Child : not null Node_Access);
+   --  Appends child to the list of children nodes. Derived types need to
+   --  override this subprogram to implement specific checks.
 
    not overriding procedure Finalize (Self : not null access Abstract_Node);
 

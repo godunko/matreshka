@@ -105,6 +105,55 @@ package body Matreshka.XML.DOM_Lists is
       Matreshka.XML.Counters.Increment (Attribute.Counter);
    end Append_Attribute_Node;
 
+   -----------------------
+   -- Append_Child_Node --
+   -----------------------
+
+   procedure Append_Child_Node
+    (Node  : not null Matreshka.XML.DOM_Nodes.Node_Access;
+     Child : not null Matreshka.XML.DOM_Nodes.Node_Access)
+   is
+      Owner_Node : Matreshka.XML.DOM_Nodes.Node_Access := Node;
+
+   begin
+      Detach_From_Parent (Child);
+
+      --  Set owner of attribute node.
+
+      Child.Is_Root := False;
+      Child.Owner   := Node;
+
+      --  Append to the list of child nodes.
+
+      if Node.First = null then
+         --  First child of the list.
+
+         Node.First := Child;
+         Node.Last  := Child;
+
+      else
+         Node.Last.Next := Child;
+         Child.Previous := Node.Last;
+         Node.Last      := Child;
+      end if;
+
+      --  Increment counters of parent nodes by value of counter of child node.
+
+      while Owner_Node /= null loop
+         Matreshka.XML.Counters.Increment
+          (Owner_Node.Counter, Child.Counter);
+
+         exit when Owner_Node.Is_Root;
+
+         Owner_Node := Owner_Node.Owner;
+      end loop;
+
+      --  Increment attribute node counter by one to reflect parent-child
+      --  relationship.
+
+      Matreshka.XML.Counters.Increment (Child.Counter);
+   end Append_Child_Node;
+
    --------------------------
    -- Append_Detached_Node --
    --------------------------

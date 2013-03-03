@@ -62,6 +62,11 @@ package Matreshka.XML.DOM_Lists is
    --  Append attribute node to the list of attribute nodes of element node.
    --  Attribute node must be detached node.
 
+   procedure Append_Child_Node
+    (Node  : not null Matreshka.XML.DOM_Nodes.Node_Access;
+     Child : not null Matreshka.XML.DOM_Nodes.Node_Access);
+   --  Append node to the list of children nodes of node.
+
    procedure Detach_From_Parent
     (Node : not null Matreshka.XML.DOM_Nodes.Node_Access);
    --  Remove node from the corresponding list of the parent node and

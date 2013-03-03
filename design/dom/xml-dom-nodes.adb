@@ -57,6 +57,40 @@ package body XML.DOM.Nodes is
       end if;
    end Adjust;
 
+   ------------------
+   -- Append_Child --
+   ------------------
+
+   function Append_Child
+    (Self      : in out DOM_Node'Class;
+     New_Child : DOM_Node'Class) return DOM_Node is
+   begin
+      if Self.Node /= null then
+         Self.Node.Append_Child (New_Child.Node);
+
+         return DOM_Node (New_Child);
+
+      else
+         raise Constraint_Error;
+      end if;
+   end Append_Child;
+
+   ------------------
+   -- Append_Child --
+   ------------------
+
+   procedure Append_Child
+    (Self      : in out DOM_Node'Class;
+     New_Child : DOM_Node'Class) is
+   begin
+      if Self.Node /= null then
+         Self.Node.Append_Child (New_Child.Node);
+
+      else
+         raise Constraint_Error;
+      end if;
+   end Append_Child;
+
    --------------
    -- Finalize --
    --------------

@@ -71,7 +71,139 @@ package XML.DOM.Nodes is
    pragma Preelaborate;
 
    type DOM_Node is tagged private;
+
    Null_DOM_Node : constant DOM_Node;
+
+--  interface Node {
+--
+--    // NodeType
+--    const unsigned short      ELEMENT_NODE                   = 1;
+--    const unsigned short      ATTRIBUTE_NODE                 = 2;
+--    const unsigned short      TEXT_NODE                      = 3;
+--    const unsigned short      CDATA_SECTION_NODE             = 4;
+--    const unsigned short      ENTITY_REFERENCE_NODE          = 5;
+--    const unsigned short      ENTITY_NODE                    = 6;
+--    const unsigned short      PROCESSING_INSTRUCTION_NODE    = 7;
+--    const unsigned short      COMMENT_NODE                   = 8;
+--    const unsigned short      DOCUMENT_NODE                  = 9;
+--    const unsigned short      DOCUMENT_TYPE_NODE             = 10;
+--    const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
+--    const unsigned short      NOTATION_NODE                  = 12;
+--
+--    readonly attribute DOMString       nodeName;
+--             attribute DOMString       nodeValue;
+--                                        // raises(DOMException) on setting
+--                                        // raises(DOMException) on retrieval
+--
+--    readonly attribute unsigned short  nodeType;
+--    readonly attribute Node            parentNode;
+--    readonly attribute NodeList        childNodes;
+--    readonly attribute Node            firstChild;
+--    readonly attribute Node            lastChild;
+--    readonly attribute Node            previousSibling;
+--    readonly attribute Node            nextSibling;
+--    readonly attribute NamedNodeMap    attributes;
+--    // Modified in DOM Level 2:
+--    readonly attribute Document        ownerDocument;
+--    // Modified in DOM Level 3:
+--    Node               insertBefore(in Node newChild, 
+--                                    in Node refChild)
+--                                        raises(DOMException);
+--    // Modified in DOM Level 3:
+--    Node               replaceChild(in Node newChild, 
+--                                    in Node oldChild)
+--                                        raises(DOMException);
+--    // Modified in DOM Level 3:
+--    Node               removeChild(in Node oldChild)
+--                                        raises(DOMException);
+--    boolean            hasChildNodes();
+--    Node               cloneNode(in boolean deep);
+--    // Modified in DOM Level 3:
+--    void               normalize();
+--    // Introduced in DOM Level 2:
+--    boolean            isSupported(in DOMString feature, 
+--                                   in DOMString version);
+--    // Introduced in DOM Level 2:
+--    readonly attribute DOMString       namespaceURI;
+--    // Introduced in DOM Level 2:
+--             attribute DOMString       prefix;
+--                                        // raises(DOMException) on setting
+--
+--    // Introduced in DOM Level 2:
+--    readonly attribute DOMString       localName;
+--    // Introduced in DOM Level 2:
+--    boolean            hasAttributes();
+--    // Introduced in DOM Level 3:
+--    readonly attribute DOMString       baseURI;
+--
+--    // DocumentPosition
+--    const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
+--    const unsigned short      DOCUMENT_POSITION_PRECEDING    = 0x02;
+--    const unsigned short      DOCUMENT_POSITION_FOLLOWING    = 0x04;
+--    const unsigned short      DOCUMENT_POSITION_CONTAINS     = 0x08;
+--    const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
+--    const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
+--
+--    // Introduced in DOM Level 3:
+--    unsigned short     compareDocumentPosition(in Node other)
+--                                        raises(DOMException);
+--    // Introduced in DOM Level 3:
+--             attribute DOMString       textContent;
+--                                        // raises(DOMException) on setting
+--                                        // raises(DOMException) on retrieval
+--
+--    // Introduced in DOM Level 3:
+--    boolean            isSameNode(in Node other);
+--    // Introduced in DOM Level 3:
+--    DOMString          lookupPrefix(in DOMString namespaceURI);
+--    // Introduced in DOM Level 3:
+--    boolean            isDefaultNamespace(in DOMString namespaceURI);
+--    // Introduced in DOM Level 3:
+--    DOMString          lookupNamespaceURI(in DOMString prefix);
+--    // Introduced in DOM Level 3:
+--    boolean            isEqualNode(in Node arg);
+--    // Introduced in DOM Level 3:
+--    DOMObject          getFeature(in DOMString feature, 
+--                                  in DOMString version);
+--    // Introduced in DOM Level 3:
+--    DOMUserData        setUserData(in DOMString key, 
+--                                   in DOMUserData data, 
+--                                   in UserDataHandler handler);
+--    // Introduced in DOM Level 3:
+--    DOMUserData        getUserData(in DOMString key);
+--  };
+
+   function Append_Child
+    (Self      : in out DOM_Node'Class;
+     New_Child : DOM_Node'Class) return DOM_Node;
+   procedure Append_Child
+    (Self      : in out DOM_Node'Class;
+     New_Child : DOM_Node'Class);
+   --  Adds the node newChild to the end of the list of children of this node.
+   --  If the newChild is already in the tree, it is first removed. Returns the
+   --  node added.
+   --
+   --  If New_Child is a DocumentFragment object, the entire contents of the
+   --  document fragment are moved into the child list of this node
+   --
+   --  Raises DOM_Exception:
+   --
+   --   - HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not
+   --     allow children of the type of the newChild node, or if the node to
+   --     append is one of this node's ancestors or this node itself, or if
+   --     this node is of type Document and the DOM application attempts to
+   --     append a second DocumentType or Element node.
+   --
+   --   - WRONG_DOCUMENT_ERR: Raised if newChild was created from a different
+   --     document than the one that created this node.
+   --
+   --   - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly or if
+   --     the previous parent of the node being inserted is readonly.
+   --
+   --   - NOT_SUPPORTED_ERR: if the newChild node is a child of the Document
+   --     node, this exception might be raised if the DOM implementation
+   --     doesn't support the removal of the DocumentType child or Element
+   --     child.
 
 --   type DOM_Node_Type is range 0 .. 2 ** 16 - 1;
 --
@@ -225,35 +357,6 @@ package XML.DOM.Nodes is
 --   --  NOT_SUPPORTED_ERR: if this node is of type Document, this exception
 --   --  might be raised if the DOM implementation doesn't support the removal of
 --   --  the DocumentType child or the Element child.
---
---   function Append_Child
---    (Self      : in out DOM_Node'Class;
---     New_Child : DOM_Node'Class) return DOM_Node;
---   --  Adds the node newChild to the end of the list of children of this node.
---   --  If the newChild is already in the tree, it is first removed. Returns the
---   --  node added.
---   --
---   --  If New_Child is a DocumentFragment object, the entire contents of the
---   --  document fragment are moved into the child list of this node
---   --
---   --  Raises DOM_Exception:
---   --
---   --   - HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not
---   --     allow children of the type of the newChild node, or if the node to
---   --     append is one of this node's ancestors or this node itself, or if
---   --     this node is of type Document and the DOM application attempts to
---   --     append a second DocumentType or Element node.
---   --
---   --   - WRONG_DOCUMENT_ERR: Raised if newChild was created from a different
---   --     document than the one that created this node.
---   --
---   --   - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly or if
---   --     the previous parent of the node being inserted is readonly.
---   --
---   --   - NOT_SUPPORTED_ERR: if the newChild node is a child of the Document
---   --     node, this exception might be raised if the DOM implementation
---   --     doesn't support the removal of the DocumentType child or Element
---   --     child.
 --
 --   function Has_Child_Nodes (Self : DOM_Node'Class) return Boolean;
 --   --  Returns whether this node has any children. Returns True if this node

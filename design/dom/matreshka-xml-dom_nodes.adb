@@ -48,6 +48,17 @@ with Matreshka.XML.DOM_Nodes.Documents;
 
 package body Matreshka.XML.DOM_Nodes is
 
+   ------------------
+   -- Append_Child --
+   ------------------
+
+   not overriding procedure Append_Child
+    (Self  : not null access Abstract_Node;
+     Child : not null Node_Access) is
+   begin
+      Matreshka.XML.DOM_Lists.Append_Child_Node (Self, Child);
+   end Append_Child;
+
    -----------------
    -- Dereference --
    -----------------
