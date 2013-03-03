@@ -51,6 +51,8 @@ package Matreshka.XML.Counters is
 
    procedure Increment (Self : in out Counter);
 
+   procedure Increment (Self : in out Counter; By : Counter);
+
    function Decrement (Self : in out Counter) return Boolean;
 
    function Decrement (Self : in out Counter; By : Counter) return Boolean;

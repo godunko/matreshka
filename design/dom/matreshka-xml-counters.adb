@@ -77,6 +77,15 @@ package body Matreshka.XML.Counters is
       Self.Value := Self.Value + 1;
    end Increment;
 
+   ---------------
+   -- Increment --
+   ---------------
+
+   procedure Increment (Self : in out Counter; By : Counter) is
+   begin
+      Self.Value := Self.Value + By.Value;
+   end Increment;
+
    -------------
    -- Is_Zero --
    -------------

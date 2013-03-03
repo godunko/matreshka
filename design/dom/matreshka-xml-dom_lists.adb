@@ -56,40 +56,53 @@ package body Matreshka.XML.DOM_Lists is
 
    procedure Append_Attribute_Node
     (Element   : not null Matreshka.XML.DOM_Nodes.Element_Access;
-     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access) is
+     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access)
+   is
+      Attribute_Node : constant Matreshka.XML.DOM_Nodes.Node_Access
+        := Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+      Element_Node   : constant Matreshka.XML.DOM_Nodes.Node_Access
+        := Matreshka.XML.DOM_Nodes.Node_Access (Element);
+      Owner_Node     : Matreshka.XML.DOM_Nodes.Node_Access
+        := Matreshka.XML.DOM_Nodes.Node_Access (Element);
+
    begin
-      Detach_From_Parent (Matreshka.XML.DOM_Nodes.Node_Access (Attribute));
+      Detach_From_Parent (Attribute_Node);
 
       --  Set owner of attribute node.
 
       Attribute.Is_Root := False;
-      Attribute.Owner := Matreshka.XML.DOM_Nodes.Node_Access (Element);
+      Attribute.Owner := Element_Node;
 
       --  Append to the list of attribute nodes.
 
       if Element.First_Attribute = null then
          --  First attribute of the list.
 
-         Element.First_Attribute :=
-           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
-         Element.Last_Attribute :=
-           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+         Element.First_Attribute := Attribute_Node;
+         Element.Last_Attribute := Attribute_Node;
 
       else
-         Element.Last_Attribute.Next :=
-           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+         Element.Last_Attribute.Next := Attribute_Node;
          Attribute.Previous := Element.Last_Attribute;
-         Element.Last_Attribute :=
-           Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
+         Element.Last_Attribute := Attribute_Node;
       end if;
 
-      --  Update reference counters.
+      --  Increment counters of parent nodes by value of counter of attribute
+      --  node.
+
+      while Owner_Node /= null loop
+         Matreshka.XML.Counters.Increment
+          (Owner_Node.Counter, Attribute.Counter);
+
+         exit when Owner_Node.Is_Root;
+
+         Owner_Node := Owner_Node.Owner;
+      end loop;
+
+      --  Increment attribute node counter by one to reflect parent-child
+      --  relationship.
 
       Matreshka.XML.Counters.Increment (Attribute.Counter);
---      Matreshka.XML.DOM_Nodes.Reference
---       (Matreshka.XML.DOM_Nodes.Node_Access (Attribute));
-      Matreshka.XML.DOM_Nodes.Reference
-       (Matreshka.XML.DOM_Nodes.Node_Access (Element));
    end Append_Attribute_Node;
 
    --------------------------
