@@ -210,6 +210,7 @@ end <xsl:value-of select="$package"/>.<xsl:value-of select="@name"/>;
     <xsl:param name="type"/>
     <xsl:choose>
         <xsl:when test="$type='Document'">XML.DOM.Documents.DOM_Document</xsl:when>
+        <xsl:when test="$type='Element'">XML.DOM.Elements.DOM_Element</xsl:when>
         <xsl:when test="$type='NodeList'">XML.DOM.Node_Lists.Node_List</xsl:when>
         <xsl:when test="$type='Node'">XML.DOM.Nodes.Node</xsl:when>
         <xsl:when test="$type='DOMString'">XML.DOM.DOM_String</xsl:when>
@@ -345,8 +346,9 @@ end <xsl:value-of select="$package"/>.<xsl:value-of select="@name"/>;
     <xsl:param name="prefix"/>
     <xsl:param name="attribute"/>
     <xsl:value-of select="$prefix"/>
-    <xsl:value-of select="translate(substring($attribute, 1, 1), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
-    <xsl:value-of select="substring($attribute, 2)"/>
+    <xsl:call-template name="to-ada-name">
+      <xsl:with-param name="text" select="$attribute"/>
+    </xsl:call-template>
 </xsl:template>
 
 <xsl:template name="produce-param">
@@ -441,13 +443,13 @@ end <xsl:value-of select="$package"/>.<xsl:value-of select="@name"/>;
         <xsl:choose>
 	     <xsl:when test="$startsWithIs">
         	<xsl:call-template name="build-accessor">
-            		<xsl:with-param name="prefix">.is</xsl:with-param>
+            		<xsl:with-param name="prefix">.is_</xsl:with-param>
             		<xsl:with-param name="attribute" select="substring($attribute/@name, 3)"/>
         	</xsl:call-template>
              </xsl:when>
 	     <xsl:otherwise>
         	<xsl:call-template name="build-accessor">
-            		<xsl:with-param name="prefix">.get</xsl:with-param>
+            		<xsl:with-param name="prefix">.get_</xsl:with-param>
             		<xsl:with-param name="attribute" select="$attribute/@name"/>
         	</xsl:call-template>
 	     </xsl:otherwise>
@@ -480,7 +482,11 @@ end <xsl:value-of select="$package"/>.<xsl:value-of select="@name"/>;
         <xsl:with-param name="reqtype" select="$method/parent::interface/@name"/>
     </xsl:call-template>
     <xsl:text>.</xsl:text>
-    <xsl:value-of select="$method/@name"/>
+
+    <xsl:call-template name="to-ada-name">
+      <xsl:with-param name="text" select="$method/@name"/>
+    </xsl:call-template>
+
     <xsl:text>(</xsl:text>
 
 
@@ -522,6 +528,7 @@ end <xsl:value-of select="$package"/>.<xsl:value-of select="@name"/>;
 <xsl:template name="produce-method">
     <xsl:param name="vardefs"/>
     <xsl:variable name="methodName" select="local-name(.)"/>
+
     <xsl:choose>
         <!--  if interface is specified -->
         <xsl:when test="@interface">
@@ -539,6 +546,24 @@ end <xsl:value-of select="$package"/>.<xsl:value-of select="@name"/>;
             </xsl:call-template>
         </xsl:otherwise>
     </xsl:choose>
+</xsl:template>
+
+
+<xsl:template name="to-ada-name">
+  <xsl:param name="text"/>
+  <xsl:variable name="lower">abcdefghijklmnopqrstuvwxyz</xsl:variable>
+  <xsl:variable name="upper">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
+
+  <xsl:if test="$text='NS'">_NS</xsl:if>
+  <xsl:if test="$text!='' and $text!='NS'">
+    <xsl:variable name="head" select="substring ($text, 1, 1)"/>
+    <xsl:variable name="HEAD" select="translate($head,$lower,$upper)"/>
+    <xsl:if test="$head=$HEAD"><xsl:text>_</xsl:text></xsl:if>
+    <xsl:value-of select="$head"/>
+    <xsl:call-template name="to-ada-name">
+      <xsl:with-param name="text" select="substring ($text, 2)"/>
+    </xsl:call-template>
+  </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
