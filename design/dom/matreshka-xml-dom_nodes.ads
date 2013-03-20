@@ -47,6 +47,7 @@ with Matreshka.XML.Counters;
 limited with Matreshka.XML.DOM_Nodes.Attributes;
 limited with Matreshka.XML.DOM_Nodes.Documents;
 limited with Matreshka.XML.DOM_Nodes.Elements;
+limited with XML.DOM.Visitors;
 
 package Matreshka.XML.DOM_Nodes is
 
@@ -57,7 +58,7 @@ package Matreshka.XML.DOM_Nodes is
    --  Access types for all type of DOM nodes.
 
    type Attribute_Access is
-     access all Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node'Class;
+     access all Matreshka.XML.DOM_Nodes.Attributes.Abstract_Attribute'Class;
    type Document_Access is
      access all Matreshka.XML.DOM_Nodes.Documents.Document_Node'Class;
    type Element_Access is
@@ -102,6 +103,25 @@ package Matreshka.XML.DOM_Nodes is
    --  Removes node from the corresponding list of nodes of node's parent.
    --  This subprogram is overridden by Abstract_Attribute type to remove
    --  attribute node from list of attributes of parent element node.
+
+   not overriding procedure Enter_Element
+    (Self    : not null access Abstract_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   not overriding procedure Leave_Element
+    (Self    : not null access Abstract_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   not overriding procedure Visit_Element
+    (Self     : not null access Abstract_Node;
+     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
    procedure Initialize
     (Self     : not null access Abstract_Node'Class;

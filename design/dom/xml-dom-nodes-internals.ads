@@ -43,16 +43,16 @@
 ------------------------------------------------------------------------------
 with Matreshka.XML.DOM_Nodes;
 
-package XML.DOM.Nodes.Elements.Internals is
+package XML.DOM.Nodes.Internals is
 
    pragma Preelaborate;
 
-   function Create
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+--   function Wrap
+--    (Node : Matreshka.XML.DOM_Nodes.Document_Access)
+--       return XML.DOM.Nodes.Documents.DOM_Document;
 
-   function Wrap
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+   function Internal
+    (Node : XML.DOM.Nodes.DOM_Node'Class)
+       return Matreshka.XML.DOM_Nodes.Node_Access;
 
-end XML.DOM.Nodes.Elements.Internals;
+end XML.DOM.Nodes.Internals;

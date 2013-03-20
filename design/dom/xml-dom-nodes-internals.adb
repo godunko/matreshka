@@ -41,18 +41,31 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes;
 
-package XML.DOM.Nodes.Elements.Internals is
+package body XML.DOM.Nodes.Internals is
 
-   pragma Preelaborate;
+   --------------
+   -- Internal --
+   --------------
 
-   function Create
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+   function Internal
+    (Node : XML.DOM.Nodes.DOM_Node'Class)
+       return Matreshka.XML.DOM_Nodes.Node_Access is
+   begin
+      return Node.Node;
+   end Internal;
 
-   function Wrap
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+--   ----------
+--   -- Wrap --
+--   ----------
+--
+--   function Wrap
+--    (Node : Matreshka.XML.DOM_Nodes.Document_Access)
+--       return XML.DOM.Nodes.Documents.DOM_Document is
+--   begin
+--      return
+--       (Ada.Finalization.Controlled
+--          with Node => Matreshka.XML.DOM_Nodes.Node_Access (Node));
+--   end Wrap;
 
-end XML.DOM.Nodes.Elements.Internals;
+end XML.DOM.Nodes.Internals;

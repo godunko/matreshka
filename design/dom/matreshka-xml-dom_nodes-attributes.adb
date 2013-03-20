@@ -42,8 +42,25 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.XML.DOM_Nodes.Elements;
+with XML.DOM.Attributes.Internals;
+with XML.DOM.Visitors;
 
 package body Matreshka.XML.DOM_Nodes.Attributes is
+
+   -------------------
+   -- Enter_Element --
+   -------------------
+
+   overriding procedure Enter_Element
+    (Self    : not null access Abstract_Attribute;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Attribute
+       (Standard.XML.DOM.Attributes.Internals.Create
+         (Matreshka.XML.DOM_Nodes.Attribute_Access (Self)),
+        Control);
+   end Enter_Element;
 
    ----------------
    -- Initialize --
@@ -57,6 +74,21 @@ package body Matreshka.XML.DOM_Nodes.Attributes is
    begin
       Matreshka.XML.DOM_Nodes.Initialize (Self, Document);
    end Initialize;
+
+   -------------------
+   -- Leave_Element --
+   -------------------
+
+   overriding procedure Leave_Element
+    (Self    : not null access Abstract_Attribute;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Attribute
+       (Standard.XML.DOM.Attributes.Internals.Create
+         (Matreshka.XML.DOM_Nodes.Attribute_Access (Self)),
+        Control);
+   end Leave_Element;
 
    ------------------------
    -- Remove_From_Parent --
@@ -105,5 +137,22 @@ package body Matreshka.XML.DOM_Nodes.Attributes is
           (Matreshka.XML.DOM_Nodes.Abstract_Node (Self.all)'Access);
       end if;
    end Remove_From_Parent;
+
+   -------------------
+   -- Visit_Element --
+   -------------------
+
+   overriding procedure Visit_Element
+    (Self     : not null access Abstract_Attribute;
+     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Attribute
+       (Visitor,
+        Standard.XML.DOM.Attributes.Internals.Create
+         (Matreshka.XML.DOM_Nodes.Attribute_Access (Self)),
+        Control);
+   end Visit_Element;
 
 end Matreshka.XML.DOM_Nodes.Attributes;

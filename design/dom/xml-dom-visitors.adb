@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,17 +42,31 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.XML.DOM_Nodes;
+with XML.DOM.Nodes.Internals;
 
-package XML.DOM.Nodes.Elements.Internals is
+package body XML.DOM.Visitors is
 
-   pragma Preelaborate;
+   -----------
+   -- Visit --
+   -----------
 
-   function Create
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+   procedure Visit
+    (Self    : in out Abstract_Iterator'Class;
+     Visitor : in out Abstract_Visitor'Class;
+     Node    : XML.DOM.Nodes.DOM_Node'Class;
+     Control : in out Traverse_Control)
+   is
+      N : constant Matreshka.XML.DOM_Nodes.Node_Access
+        := XML.DOM.Nodes.Internals.Internal (Node);
 
-   function Wrap
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+   begin
+      N.Enter_Element (Visitor, Control);
 
-end XML.DOM.Nodes.Elements.Internals;
+      N.Visit_Element (Self, Visitor, Control);
+
+      if Control /= Terminate_Immediately then
+         N.Leave_Element (Visitor, Control);
+      end if;
+   end Visit;
+
+end XML.DOM.Visitors;

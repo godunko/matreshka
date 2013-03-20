@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with Matreshka.XML.DOM_Nodes.Attributes;
 with Matreshka.XML.DOM_Nodes.Elements;
+with XML.DOM.Documents.Internals;
+with XML.DOM.Visitors;
 
 package body Matreshka.XML.DOM_Nodes.Documents is
 
@@ -103,5 +105,52 @@ package body Matreshka.XML.DOM_Nodes.Documents is
          end;
       end return;
    end Create_Element;
+
+   -------------------
+   -- Enter_Element --
+   -------------------
+
+   overriding procedure Enter_Element
+    (Self    : not null access Document_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Document
+       (Standard.XML.DOM.Documents.Internals.Create
+         (Matreshka.XML.DOM_Nodes.Document_Access (Self)),
+        Control);
+   end Enter_Element;
+
+   -------------------
+   -- Leave_Element --
+   -------------------
+
+   overriding procedure Leave_Element
+    (Self    : not null access Document_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Document
+       (Standard.XML.DOM.Documents.Internals.Create
+         (Matreshka.XML.DOM_Nodes.Document_Access (Self)),
+        Control);
+   end Leave_Element;
+
+   -------------------
+   -- Visit_Element --
+   -------------------
+
+   overriding procedure Visit_Element
+    (Self     : not null access Document_Node;
+     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Document
+       (Visitor,
+        Standard.XML.DOM.Documents.Internals.Create
+         (Matreshka.XML.DOM_Nodes.Document_Access (Self)),
+        Control);
+   end Visit_Element;
 
 end Matreshka.XML.DOM_Nodes.Documents;

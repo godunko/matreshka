@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,18 +41,95 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes;
+--  This package provides implementation of 'visitors' pattern to process XML
+--  DOM.
+------------------------------------------------------------------------------
+with XML.DOM.Attributes;
+with XML.DOM.Documents;
+with XML.DOM.Elements;
+with XML.DOM.Nodes;
 
-package XML.DOM.Nodes.Elements.Internals is
+package XML.DOM.Visitors is
 
    pragma Preelaborate;
 
-   function Create
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+   type Traverse_Control is
+    (Continue,
+     Abandon_Children,
+     Abandon_Sibling,
+     Terminate_Immediately);
 
-   function Wrap
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
-       return XML.DOM.Nodes.Elements.DOM_Element;
+   ----------------------
+   -- Abstract_Visitor --
+   ----------------------
 
-end XML.DOM.Nodes.Elements.Internals;
+   type Abstract_Visitor is limited interface;
+
+   not overriding procedure Enter_Attribute
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Attributes.DOM_Attribute'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Attribute
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Attributes.DOM_Attribute'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Document
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Documents.DOM_Document'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Document
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Documents.DOM_Document'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Element
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Elements.DOM_Element'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Element
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Elements.DOM_Element'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   -----------------------
+   -- Abstract_Iterator --
+   -----------------------
+
+   type Abstract_Iterator is limited interface;
+
+   procedure Visit
+    (Self    : in out Abstract_Iterator'Class;
+     Visitor : in out Abstract_Visitor'Class;
+     Node    : XML.DOM.Nodes.DOM_Node'Class;
+     Control : in out Traverse_Control);
+   --  Visit specified element by calling:
+   --
+   --   - Enter_<Node> operation on visitor;
+   --
+   --   - Visit_<Node> operation on iterator;
+   --
+   --   - Leave_<Node> operation on visitor.
+
+   not overriding procedure Visit_Attribute
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : XML.DOM.Attributes.DOM_Attribute'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Document
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : XML.DOM.Documents.DOM_Document'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Element
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : XML.DOM.Elements.DOM_Element'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+end XML.DOM.Visitors;

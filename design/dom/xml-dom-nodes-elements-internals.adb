@@ -45,6 +45,27 @@ with Matreshka.XML.DOM_Nodes.Elements;
 
 package body XML.DOM.Nodes.Elements.Internals is
 
+   ------------
+   -- Create --
+   ------------
+
+   function Create
+    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
+       return XML.DOM.Nodes.Elements.DOM_Element
+   is
+       use type Matreshka.XML.DOM_Nodes.Element_Access;
+
+   begin
+      if Node /= null then
+         Matreshka.XML.DOM_Nodes.Reference
+          (Matreshka.XML.DOM_Nodes.Node_Access (Node));
+      end if;
+
+      return
+       (Ada.Finalization.Controlled
+          with Node => Matreshka.XML.DOM_Nodes.Node_Access (Node));
+   end Create;
+
    ----------
    -- Wrap --
    ----------
