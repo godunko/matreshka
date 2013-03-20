@@ -41,6 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML.DOM_Nodes.Attributes;
+with Matreshka.XML.DOM_Nodes.Documents;
+with Matreshka.XML.DOM_Nodes.Elements;
+with XML.DOM.Nodes.Attributes.Internals;
+with XML.DOM.Nodes.Documents.Internals;
+with XML.DOM.Nodes.Elements.Internals;
 
 package body XML.DOM.Nodes is
 
@@ -102,6 +108,42 @@ package body XML.DOM.Nodes is
       end if;
    end Finalize;
 
+   ------------------
+   -- Is_Attribute --
+   ------------------
+
+   function Is_Attribute (Self : DOM_Node'Class) return Boolean is
+   begin
+      return
+        Self.Node /= null
+          and then Self.Node.all
+             in Matreshka.XML.DOM_Nodes.Attributes.Abstract_Attribute'Class;
+   end Is_Attribute;
+
+   -----------------
+   -- Is_Document --
+   -----------------
+
+   function Is_Document (Self : DOM_Node'Class) return Boolean is
+   begin
+      return
+        Self.Node /= null
+          and then Self.Node.all
+             in Matreshka.XML.DOM_Nodes.Documents.Document_Node'Class;
+   end Is_Document;
+
+   ----------------
+   -- Is_Element --
+   ----------------
+
+   function Is_Element (Self : DOM_Node'Class) return Boolean is
+   begin
+      return
+        Self.Node /= null
+          and then Self.Node.all
+             in Matreshka.XML.DOM_Nodes.Elements.Abstract_Element'Class;
+   end Is_Element;
+
    -------------
    -- Is_Null --
    -------------
@@ -110,5 +152,65 @@ package body XML.DOM.Nodes is
    begin
       return Self.Node = null;
    end Is_Null;
+
+   ------------------
+   -- To_Attribute --
+   ------------------
+
+   function To_Attribute
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Attributes.DOM_Attribute is
+   begin
+      if Self.Is_Null then
+         return XML.DOM.Nodes.Attributes.Null_DOM_Attribute;
+
+      elsif Self.Is_Attribute then
+         return
+           XML.DOM.Nodes.Attributes.Internals.Create
+            (Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Node));
+
+      else
+         raise Constraint_Error;
+      end if;
+   end To_Attribute;
+
+   -----------------
+   -- To_Document --
+   -----------------
+
+   function To_Document
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Documents.DOM_Document is
+   begin
+      if Self.Is_Null then
+         return XML.DOM.Nodes.Documents.Null_DOM_Document;
+
+      elsif Self.Is_Document then
+         return
+           XML.DOM.Nodes.Documents.Internals.Create
+            (Matreshka.XML.DOM_Nodes.Document_Access (Self.Node));
+
+      else
+         raise Constraint_Error;
+      end if;
+   end To_Document;
+
+   ----------------
+   -- To_Element --
+   ----------------
+
+   function To_Element
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Elements.DOM_Element is
+   begin
+      if Self.Is_Null then
+         return XML.DOM.Nodes.Elements.Null_DOM_Element;
+
+      elsif Self.Is_Element then
+         return
+           XML.DOM.Nodes.Elements.Internals.Create
+            (Matreshka.XML.DOM_Nodes.Element_Access (Self.Node));
+
+      else
+         raise Constraint_Error;
+      end if;
+   end To_Element;
 
 end XML.DOM.Nodes;

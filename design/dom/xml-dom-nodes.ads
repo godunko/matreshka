@@ -58,9 +58,9 @@
 ------------------------------------------------------------------------------
 private with Ada.Finalization;
 
---limited with XML.DOM.Nodes.Attrs;
---limited with XML.DOM.Nodes.Documents;
---limited with XML.DOM.Nodes.Elements;
+limited with XML.DOM.Nodes.Attributes;
+limited with XML.DOM.Nodes.Documents;
+limited with XML.DOM.Nodes.Elements;
 --limited with XML.DOM.Named_Node_Maps;
 --limited with XML.DOM.Node_Lists;
 
@@ -632,23 +632,25 @@ package XML.DOM.Nodes is
 
    function Is_Null (Self : DOM_Node'Class) return Boolean;
 
---   function Is_Element (Self : DOM_Node'Class) return Boolean;
---   function Is_Attribute (Self : DOM_Node'Class) return Boolean;
+   function Is_Attribute (Self : DOM_Node'Class) return Boolean;
+   function Is_Document (Self : DOM_Node'Class) return Boolean;
+   function Is_Element (Self : DOM_Node'Class) return Boolean;
 --   function Is_Text (Self : DOM_Node'Class) return Boolean;
 --   function Is_CDATA_Section (Self : DOM_Node'Class) return Boolean;
 --   function Is_Entity_Reference (Self : DOM_Node'Class) return Boolean;
 --   function Is_Entity (Self : DOM_Node'Class) return Boolean;
 --   function Is_Processing_Instruction (Self : DOM_Node'Class) return Boolean;
 --   function Is_Comment (Self : DOM_Node'Class) return Boolean;
---   function Is_Document (Self : DOM_Node'Class) return Boolean;
 --   function Is_Document_Type (Self : DOM_Node'Class) return Boolean;
 --   function Is_Document_Fragment (Self : DOM_Node'Class) return Boolean;
 --   function Is_Notation (Self : DOM_Node'Class) return Boolean;
 
---   function To_Element
---    (Self : DOM_Node'Class) return XML.DOM.Nodes.Elements.DOM_Element;
---   function To_Attribute
---    (Self : DOM_Node'Class) return XML.DOM.Nodes.Attrs.DOM_Attribute;
+   function To_Attribute
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Attributes.DOM_Attribute;
+   function To_Document
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Documents.DOM_Document;
+   function To_Element
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Elements.DOM_Element;
 --   function To_Text
 --    (Self : DOM_Node'Class) return XML.DOM.Texts.DOM_Text;
 --   function To_CDATA_Section
@@ -663,8 +665,6 @@ package XML.DOM.Nodes is
 --       return XML.DOM.Processing_Instructions.DOM_Processing_Instruction;
 --   function To_Comment
 --    (Self : DOM_Node'Class) return XML.DOM.Comments.DOM_Comment;
---   function To_Document
---    (Self : DOM_Node'Class) return XML.DOM.Nodes.Documents.DOM_Document;
 --   function To_Document_Type
 --    (Self : DOM_Node'Class) return XML.DOM.Document_Types.DOM_Document_Type;
 --   function To_Document_Fragment
