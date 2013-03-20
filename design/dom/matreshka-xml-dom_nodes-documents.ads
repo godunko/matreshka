@@ -46,8 +46,12 @@ package Matreshka.XML.DOM_Nodes.Documents is
 
    pragma Preelaborate;
 
-   type Document_Node is
-     new Matreshka.XML.DOM_Nodes.Abstract_Node with record
+   -----------------------
+   -- Abstract_Document --
+   -----------------------
+
+   type Abstract_Document is
+     abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with record
       First_Detached : Matreshka.XML.DOM_Nodes.Node_Access;
       Last_Detached  : Matreshka.XML.DOM_Nodes.Node_Access;
       --  List of nodes which is not direct or indirect children of root node
@@ -56,34 +60,41 @@ package Matreshka.XML.DOM_Nodes.Documents is
    end record;
 
    not overriding function Create_Attribute
-    (Self           : not null access Document_Node;
+    (Self           : not null access Abstract_Document;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
        return not null Matreshka.XML.DOM_Nodes.Attribute_Access;
 
    not overriding function Create_Element
-    (Self           : not null access Document_Node;
+    (Self           : not null access Abstract_Document;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
        return not null Matreshka.XML.DOM_Nodes.Element_Access;
 
    overriding procedure Enter_Element
-    (Self    : not null access Document_Node;
+    (Self    : not null access Abstract_Document;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Leave_Element
-    (Self    : not null access Document_Node;
+    (Self    : not null access Abstract_Document;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access Document_Node;
+    (Self     : not null access Abstract_Document;
      Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   -------------------
+   -- Document_Node --
+   -------------------
+
+   type Document_Node is
+     new Matreshka.XML.DOM_Nodes.Documents.Abstract_Document with null record;
 
 end Matreshka.XML.DOM_Nodes.Documents;

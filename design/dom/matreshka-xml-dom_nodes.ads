@@ -60,7 +60,7 @@ package Matreshka.XML.DOM_Nodes is
    type Attribute_Access is
      access all Matreshka.XML.DOM_Nodes.Attributes.Abstract_Attribute'Class;
    type Document_Access is
-     access all Matreshka.XML.DOM_Nodes.Documents.Document_Node'Class;
+     access all Matreshka.XML.DOM_Nodes.Documents.Abstract_Document'Class;
    type Element_Access is
      access all Matreshka.XML.DOM_Nodes.Elements.Abstract_Element'Class;
    type Node_Access is access all Abstract_Node'Class;

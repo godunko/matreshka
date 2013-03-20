@@ -53,7 +53,7 @@ package body Matreshka.XML.DOM_Nodes.Documents is
    ----------------------
 
    not overriding function Create_Attribute
-    (Self           : not null access Document_Node;
+    (Self           : not null access Abstract_Document;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
        return not null Matreshka.XML.DOM_Nodes.Attribute_Access is
@@ -82,7 +82,7 @@ package body Matreshka.XML.DOM_Nodes.Documents is
    --------------------
 
    not overriding function Create_Element
-    (Self           : not null access Document_Node;
+    (Self           : not null access Abstract_Document;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
        return not null Matreshka.XML.DOM_Nodes.Element_Access is
@@ -111,7 +111,7 @@ package body Matreshka.XML.DOM_Nodes.Documents is
    -------------------
 
    overriding procedure Enter_Element
-    (Self    : not null access Document_Node;
+    (Self    : not null access Abstract_Document;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
    begin
@@ -126,7 +126,7 @@ package body Matreshka.XML.DOM_Nodes.Documents is
    -------------------
 
    overriding procedure Leave_Element
-    (Self    : not null access Document_Node;
+    (Self    : not null access Abstract_Document;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
    begin
@@ -141,7 +141,7 @@ package body Matreshka.XML.DOM_Nodes.Documents is
    -------------------
 
    overriding procedure Visit_Element
-    (Self     : not null access Document_Node;
+    (Self     : not null access Abstract_Document;
      Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is
