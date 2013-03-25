@@ -45,6 +45,8 @@
 --  operations that are independent of any particular instance of the document
 --  object model.
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Document_Types;
 with XML.DOM.Documents;
 

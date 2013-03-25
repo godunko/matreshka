@@ -58,13 +58,14 @@
 ------------------------------------------------------------------------------
 private with Ada.Finalization;
 
+with League.Strings;
+
+private with Matreshka.XML.DOM_Nodes;
 limited with XML.DOM.Nodes.Attributes;
 limited with XML.DOM.Nodes.Documents;
 limited with XML.DOM.Nodes.Elements;
 --limited with XML.DOM.Named_Node_Maps;
 --limited with XML.DOM.Node_Lists;
-
-private with Matreshka.XML.DOM_Nodes;
 
 package XML.DOM.Nodes is
 
@@ -473,7 +474,8 @@ package XML.DOM.Nodes is
 --   --     "http://www.w3.org/2000/xmlns/", or if this node is an attribute and
 --   --     the qualifiedName of this node is "xmlns" [XML Namespaces].
 --
---   function Local_Name (Self : DOM_Node'Class) return DOM_String;
+--   function Get_Local_Name
+--    (Self : DOM_Node'Class) return League.Strings.Universal_String;
 --   --  Returns the local part of the qualified name of this node.
 --   --
 --   --  For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
