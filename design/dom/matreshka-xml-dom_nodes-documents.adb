@@ -60,11 +60,11 @@ package body Matreshka.XML.DOM_Nodes.Documents is
    begin
       return Result :
         constant not null Matreshka.XML.DOM_Nodes.Attribute_Access
-          := new Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node
+          := new Matreshka.XML.DOM_Nodes.Attributes.Attribute_V2_Node
       do
          declare
-            Node : Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node
-              renames Matreshka.XML.DOM_Nodes.Attributes.Attribute_Node
+            Node : Matreshka.XML.DOM_Nodes.Attributes.Attribute_V2_Node
+              renames Matreshka.XML.DOM_Nodes.Attributes.Attribute_V2_Node
                        (Result.all);
 
          begin
