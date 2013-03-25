@@ -115,6 +115,21 @@ package body Matreshka.XML.DOM_Nodes is
       Abstract_Node'Class (Self.all).Remove_From_Parent;
    end Finalize;
 
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   not overriding function Get_Local_Name
+    (Self : not null access Abstract_Node)
+       return League.Strings.Universal_String is
+   begin
+      --  "For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
+      --  nodes created with a DOM Level 1 method, such as
+      --  Document.createElement(), this is always null."
+
+      return League.Strings.Empty_Universal_String;
+   end Get_Local_Name;
+
    ----------------
    -- Initialize --
    ----------------

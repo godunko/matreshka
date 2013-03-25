@@ -81,6 +81,17 @@ package body Matreshka.XML.DOM_Nodes.Elements is
        (Matreshka.XML.DOM_Nodes.Abstract_Node (Self.all)'Access);
    end Finalize;
 
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   overriding function Get_Local_Name
+    (Self : not null access Element_Node)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Local_Name;
+   end Get_Local_Name;
+
    ----------------
    -- Initialize --
    ----------------
@@ -89,9 +100,22 @@ package body Matreshka.XML.DOM_Nodes.Elements is
     (Self           : not null access Element_Node'Class;
      Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
      Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String) is
+     Qualified_Name : League.Strings.Universal_String)
+   is
+      Delimiter : constant Natural := Qualified_Name.Index (':');
+
    begin
       Matreshka.XML.DOM_Nodes.Initialize (Self, Document);
+
+      Self.Namespace_URI := Namespace_URI;
+
+      if Delimiter /= 0 then
+         Self.Local_Name :=
+           Qualified_Name.Slice (Delimiter + 1, Qualified_Name.Length);
+
+      else
+         Self.Local_Name := Qualified_Name;
+      end if;
    end Initialize;
 
    -------------------

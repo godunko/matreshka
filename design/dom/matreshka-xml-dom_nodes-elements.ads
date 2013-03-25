@@ -56,6 +56,11 @@ package Matreshka.XML.DOM_Nodes.Elements is
       Last_Attribute  : Matreshka.XML.DOM_Nodes.Node_Access;
    end record;
 
+   overriding function Get_Local_Name
+    (Self : not null access Abstract_Element)
+       return League.Strings.Universal_String is abstract;
+   --  Returns the local part of the qualified name of this node.
+
    function Set_Attribute_Node
     (Self : in out Abstract_Element'Class;
      Attr : Matreshka.XML.DOM_Nodes.Attribute_Access)
@@ -89,7 +94,15 @@ package Matreshka.XML.DOM_Nodes.Elements is
    -- Element_Node --
    ------------------
 
-   type Element_Node is new Abstract_Element with null record;
+   type Element_Node is new Abstract_Element with record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   overriding function Get_Local_Name
+    (Self : not null access Element_Node)
+       return League.Strings.Universal_String;
+   --  Returns the local part of the qualified name of this node.
 
    procedure Initialize
     (Self           : not null access Element_Node'Class;

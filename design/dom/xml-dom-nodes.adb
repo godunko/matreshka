@@ -108,6 +108,21 @@ package body XML.DOM.Nodes is
       end if;
    end Finalize;
 
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   function Get_Local_Name
+    (Self : DOM_Node'Class) return League.Strings.Universal_String is
+   begin
+      if Self.Node /= null then
+         return Self.Node.Get_Local_Name;
+
+      else
+         raise Constraint_Error;
+      end if;
+   end Get_Local_Name;
+
    ------------------
    -- Is_Attribute --
    ------------------

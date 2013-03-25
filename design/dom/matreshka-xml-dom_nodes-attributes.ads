@@ -53,6 +53,11 @@ package Matreshka.XML.DOM_Nodes.Attributes is
    type Abstract_Attribute is
      abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with null record;
 
+   overriding function Get_Local_Name
+    (Self : not null access Abstract_Attribute)
+       return League.Strings.Universal_String is abstract;
+   --  Returns the local part of the qualified name of this node.
+
    overriding procedure Remove_From_Parent
     (Self : not null access Abstract_Attribute);
    --  Removes attribute node from corresponding list of nodes of parent node.
@@ -82,7 +87,15 @@ package Matreshka.XML.DOM_Nodes.Attributes is
    -- Attribute_Node --
    --------------------
 
-   type Attribute_Node is new Abstract_Attribute with null record;
+   type Attribute_Node is new Abstract_Attribute with record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   overriding function Get_Local_Name
+    (Self : not null access Attribute_Node)
+       return League.Strings.Universal_String;
+   --  Returns the local part of the qualified name of this node.
 
    procedure Initialize
     (Self           : not null access Attribute_Node'Class;

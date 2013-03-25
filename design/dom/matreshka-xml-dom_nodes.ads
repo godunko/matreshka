@@ -90,6 +90,11 @@ package Matreshka.XML.DOM_Nodes is
       Last     : Node_Access;
    end record;
 
+   not overriding function Get_Local_Name
+    (Self : not null access Abstract_Node)
+       return League.Strings.Universal_String;
+   --  Returns the local part of the qualified name of this node.
+
    not overriding procedure Append_Child
     (Self  : not null access Abstract_Node;
      Child : not null Node_Access);

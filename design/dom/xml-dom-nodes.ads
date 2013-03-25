@@ -473,15 +473,15 @@ package XML.DOM.Nodes is
 --   --     namespaceURI of this node is different from
 --   --     "http://www.w3.org/2000/xmlns/", or if this node is an attribute and
 --   --     the qualifiedName of this node is "xmlns" [XML Namespaces].
---
---   function Get_Local_Name
---    (Self : DOM_Node'Class) return League.Strings.Universal_String;
---   --  Returns the local part of the qualified name of this node.
---   --
---   --  For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
---   --  nodes created with a DOM Level 1 method, such as
---   --  Document.createElement(), this is always null.
---
+
+   function Get_Local_Name
+    (Self : DOM_Node'Class) return League.Strings.Universal_String;
+   --  Returns the local part of the qualified name of this node.
+   --
+   --  For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
+   --  nodes created with a DOM Level 1 method, such as
+   --  Document.createElement(), this is always null.
+
 --   function Has_Attributes (Self : DOM_Node'Class) return Boolean;
 --   --  Returns whether this node (if it is an element) has any attributes.
 --   --  Returns True if this node has any attributes, False otherwise.
