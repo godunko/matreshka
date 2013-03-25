@@ -96,28 +96,52 @@ package Matreshka.XML.DOM_Nodes.Elements is
      Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-   ------------------
-   -- Element_Node --
-   ------------------
+   ---------------------
+   -- Element_V1_Node --
+   ---------------------
 
-   type Element_Node is new Abstract_Element with record
-      Namespace_URI : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
+   type Element_V1_Node is new Abstract_Element with record
+      Name : League.Strings.Universal_String;
    end record;
 
    overriding function Get_Local_Name
-    (Self : not null access Element_Node)
+    (Self : not null access Element_V1_Node)
        return League.Strings.Universal_String;
    --  Returns the local part of the qualified name of this node.
 
    overriding function Get_Namespace_URI
-    (Self : not null access Element_Node)
+    (Self : not null access Element_V1_Node)
        return League.Strings.Universal_String;
    --  The namespace URI of this node, or null if it is unspecified (see XML
    --  Namespaces).
 
    procedure Initialize
-    (Self           : not null access Element_Node'Class;
+    (Self     : not null access Element_V1_Node'Class;
+     Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
+     Name     : League.Strings.Universal_String);
+
+   ---------------------
+   -- Element_V2_Node --
+   ---------------------
+
+   type Element_V2_Node is new Abstract_Element with record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   overriding function Get_Local_Name
+    (Self : not null access Element_V2_Node)
+       return League.Strings.Universal_String;
+   --  Returns the local part of the qualified name of this node.
+
+   overriding function Get_Namespace_URI
+    (Self : not null access Element_V2_Node)
+       return League.Strings.Universal_String;
+   --  The namespace URI of this node, or null if it is unspecified (see XML
+   --  Namespaces).
+
+   procedure Initialize
+    (Self           : not null access Element_V2_Node'Class;
      Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String);

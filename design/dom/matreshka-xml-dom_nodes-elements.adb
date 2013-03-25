@@ -86,7 +86,20 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access Element_Node)
+    (Self : not null access Element_V1_Node)
+       return League.Strings.Universal_String is
+   begin
+      --  It is always null for attributes created with a DOM Level 1 methods.
+
+      return League.Strings.Empty_Universal_String;
+   end Get_Local_Name;
+
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   overriding function Get_Local_Name
+    (Self : not null access Element_V2_Node)
        return League.Strings.Universal_String is
    begin
       return Self.Local_Name;
@@ -97,7 +110,20 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    -----------------------
 
    overriding function Get_Namespace_URI
-    (Self : not null access Element_Node)
+    (Self : not null access Element_V1_Node)
+       return League.Strings.Universal_String is
+   begin
+      --  It is always null for attributes created with a DOM Level 1 methods.
+
+      return League.Strings.Empty_Universal_String;
+   end Get_Namespace_URI;
+
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   overriding function Get_Namespace_URI
+    (Self : not null access Element_V2_Node)
        return League.Strings.Universal_String is
    begin
       return Self.Namespace_URI;
@@ -108,7 +134,21 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    ----------------
 
    procedure Initialize
-    (Self           : not null access Element_Node'Class;
+    (Self     : not null access Element_V1_Node'Class;
+     Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
+     Name     : League.Strings.Universal_String) is
+   begin
+      Matreshka.XML.DOM_Nodes.Initialize (Self, Document);
+
+      Self.Name := Name;
+   end Initialize;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self           : not null access Element_V2_Node'Class;
      Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
