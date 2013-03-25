@@ -415,24 +415,25 @@ package XML.DOM.Nodes is
 --   --
 --   --  Returns true if the specified feature is supported on this node, false
 --   --  otherwise.
---
---   function Namespace_URI (Self : DOM_Node'Class) return DOM_String;
---   --  The namespace URI of this node, or null if it is unspecified (see XML
---   --  Namespaces).
---   --
---   --  This is not a computed value that is the result of a namespace lookup
---   --  based on an examination of the namespace declarations in scope. It is
---   --  merely the namespace URI given at creation time.
---   --
---   --  For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
---   --  nodes created with a DOM Level 1 method, such as
---   --  Document.createElement(), this is always null.
---   --
---   --  Note: Per the Namespaces in XML Specification [XML Namespaces] an
---   --  attribute does not inherit its namespace from the element it is attached
---   --  to. If an attribute is not explicitly given a namespace, it simply has
---   --  no namespace.
---
+
+   function Get_Namespace_URI
+    (Self : DOM_Node'Class) return League.Strings.Universal_String;
+   --  The namespace URI of this node, or null if it is unspecified (see XML
+   --  Namespaces).
+   --
+   --  This is not a computed value that is the result of a namespace lookup
+   --  based on an examination of the namespace declarations in scope. It is
+   --  merely the namespace URI given at creation time.
+   --
+   --  For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
+   --  nodes created with a DOM Level 1 method, such as
+   --  Document.createElement(), this is always null.
+   --
+   --  Note: Per the Namespaces in XML Specification [XML Namespaces] an
+   --  attribute does not inherit its namespace from the element it is attached
+   --  to. If an attribute is not explicitly given a namespace, it simply has
+   --  no namespace.
+
 --   function Prefix (Self : DOM_Node'Class) return DOM_String;
 --   --  The namespace prefix of this node, or null if it is unspecified.
 --

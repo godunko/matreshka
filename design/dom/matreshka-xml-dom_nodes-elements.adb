@@ -92,6 +92,17 @@ package body Matreshka.XML.DOM_Nodes.Elements is
       return Self.Local_Name;
    end Get_Local_Name;
 
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   overriding function Get_Namespace_URI
+    (Self : not null access Element_Node)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Namespace_URI;
+   end Get_Namespace_URI;
+
    ----------------
    -- Initialize --
    ----------------

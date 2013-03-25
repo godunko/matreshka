@@ -130,6 +130,21 @@ package body Matreshka.XML.DOM_Nodes is
       return League.Strings.Empty_Universal_String;
    end Get_Local_Name;
 
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   not overriding function Get_Namespace_URI
+    (Self : not null access Abstract_Node)
+       return League.Strings.Universal_String is
+   begin
+      --  "For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
+      --  nodes created with a DOM Level 1 method, such as
+      --  Document.createElement(), this is always null."
+
+      return League.Strings.Empty_Universal_String;
+   end Get_Namespace_URI;
+
    ----------------
    -- Initialize --
    ----------------

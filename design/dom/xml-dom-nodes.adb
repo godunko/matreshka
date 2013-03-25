@@ -123,6 +123,21 @@ package body XML.DOM.Nodes is
       end if;
    end Get_Local_Name;
 
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   function Get_Namespace_URI
+    (Self : DOM_Node'Class) return League.Strings.Universal_String is
+   begin
+      if Self.Node /= null then
+         return Self.Node.Get_Namespace_URI;
+
+      else
+         raise Constraint_Error;
+      end if;
+   end Get_Namespace_URI;
+
    ------------------
    -- Is_Attribute --
    ------------------
