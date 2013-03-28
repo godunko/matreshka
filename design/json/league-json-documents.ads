@@ -46,6 +46,7 @@ private with Ada.Finalization;
 with League.JSON.Arrays;
 with League.JSON.Objects;
 with League.Stream_Element_Vectors;
+with League.Strings;
 
 package League.JSON.Documents is
 
@@ -53,21 +54,35 @@ package League.JSON.Documents is
 
    type JSON_Document is tagged private;
 
+   type JSON_Encoding is
+    (UTF8, UTF16, UTF16LE, UTF16BE, UTF32, UTF32LE, UTF32BE);
+
    function To_JSON_Document
     (Value : League.JSON.Arrays.JSON_Array) return JSON_Document;
    function To_JSON_Document
     (Value : League.JSON.Objects.JSON_Object) return JSON_Document;
 
    function From_JSON
-    (JSON : League.Stream_Element_Vectors.Stream_Element_Vector)
+    (Data : League.Stream_Element_Vectors.Stream_Element_Vector)
        return JSON_Document;
-   --  Parses a UTF-8 encoded JSON document and creates a JSON_Document from
-   --  it.
+   --  Parses an encoded JSON document and creates a JSON_Document from it.
+   --  Data can be encoded using UTF-8, UTF-16 and UTF-32 encoding. Encoding
+   --  is detected automatically accroding to RFC-4627.
+
+   function From_JSON
+    (Data : League.Strings.Universal_String) return JSON_Document;
+   --  Parses an encoded JSON document and creates a JSON_Document from it.
 
    function To_JSON
-    (Self : JSON_Document'Class)
+    (Self     : JSON_Document'Class;
+     Encoding : JSON_Encoding := UTF8)
        return League.Stream_Element_Vectors.Stream_Element_Vector;
-   --  Converts the JSON_Document to a UTF-8 encoded JSON document.
+   --  Converts the JSON_Document to an encoded JSON document. Encoding can be
+   --  selected by Encoding parameter.
+
+   function To_JSON
+    (Self : JSON_Document'Class) return League.Strings.Universal_String;
+   --  Converts the JSON_Document to an encoded JSON document.
 
    function Is_Array (Self : JSON_Document'Class) return Boolean;
    --  Returns true if the document contains an array.
