@@ -92,7 +92,7 @@ package Matreshka.JSON_Values is
    end record;
 
    type Shared_JSON_Value is limited record
-      Counter : aliased Matreshka.Atomics.Counters.Counter;
+      Counter : Matreshka.Atomics.Counters.Counter;
       Value   : Internal_Value;
    end record;
 
