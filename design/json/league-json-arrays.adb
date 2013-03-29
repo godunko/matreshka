@@ -41,83 +41,87 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Holders;
-with Matreshka.Atomics.Counters;
-with Matreshka.Internals.Strings;
-with Matreshka.JSON_Arrays;
-with Matreshka.JSON_Objects;
 
-package Matreshka.JSON_Values is
+package body League.JSON.Arrays is
 
-   pragma Preelaborate;
+--   procedure Append
+--    (Self : in out JSON_Array'Class; Value : League.JSON.Values.JSON_Value);
+--   --  Inserts value at the end of the array.
+--
+--   function Element
+--    (Self  : JSON_Array'Class;
+--     Index : Positive) return League.JSON.Values.JSON_Value;
+--    --  Returns a JSON_Value representing the value for index Index.
+--
+--   function First_Element
+--    (Self : JSON_Array'Class) return League.JSON.Values.JSON_Value;
+--   --  Returns the first value stored in the array.
+--
+--   procedure Insert
+--    (Self  : in out JSON_Array'Class;
+--     Index : Positive;
+--     Value : League.JSON.Values.JSON_Value);
+--   --  Inserts value at index position Index in the array. If Index is 1, the
+--   --  value is prepended to the array. If Index is large when Length, the
+--   --  value is appended to the array.
+--
+--   function Is_Empty (Self : JSON_Array'Class) return Boolean;
+--   --  Returns true if the object is empty.
+--
+--   function Last_Element
+--    (Self : JSON_Array'Class) return League.JSON.Values.JSON_Value;
+--   --  Returns the last value stored in the array.
+--
+--   function Length (Self : JSON_Array'Class) return Natural;
+--   --  Returns the number of values stored in the array.
+--
+--   procedure Prepend
+--    (Self : in out JSON_Array'Class; Value : League.JSON.Values.JSON_Value);
+--   --  Inserts value at the beginning of the array.
+--
+--   procedure Remove (Self : in out JSON_Array'Class; Index : Positive);
+--   --  Removes the value at index position Index. Index must be a valid index
+--   --  position in the array.
+--
+--   procedure Remove_First (Self : in out JSON_Array'Class);
+--   --  Removes the first item in the array.
+--
+--   procedure Remove_Last (Self : in out JSON_Array'Class);
+--   --  Removes the last item in the array.
+--
+--   procedure Replace
+--    (Self  : in out JSON_Array'Class;
+--     Index : Positive;
+--     Value : League.JSON.Values.JSON_Value);
+--   --  Replaces the item at index position Index with Value. Index must be a
+--   --  valid index position in the array.
+--
+--   function Take
+--    (Self  : in out JSON_Array'Class;
+--     Index : Positive) return League.JSON.Values.JSON_Value;
+--   --  Removes the item at index position Index and returns it. Index must be a
+--   --  valid index position in the array.
 
-   type Value_Kinds is
-    (Empty_Value,
-     Boolean_Value,
-     Integer_Value,
-     Float_Value,
-     String_Value,
-     Array_Value,
-     Object_Value,
-     Null_Value);
-   --  JSON doesn't distinguish integer and float numbers, but we distinguish
-   --  them to avoid potential loss of precision on conversions.
+   ------------
+   -- Adjust --
+   ------------
 
-   type Internal_Value (Kind : Value_Kinds := Empty_Value) is record
-      case Kind is
-         when Empty_Value =>
-            null;
+   overriding procedure Adjust (Self : in out JSON_Array) is
+   begin
+      Matreshka.JSON_Arrays.Reference (Self.Data);
+   end Adjust;
 
-         when Boolean_Value =>
-            Boolean_Value : Boolean;
+   --------------
+   -- Finalize --
+   --------------
 
-         when Integer_Value =>
-            Integer_Value : League.Holders.Universal_Integer;
+   overriding procedure Finalize (Self : in out JSON_Array) is
+      use type Matreshka.JSON_Arrays.Shared_JSON_Array_Access;
 
-         when Float_Value =>
-            Float_Value   : League.Holders.Universal_Float;
+   begin
+      if Self.Data /= null then
+         Matreshka.JSON_Arrays.Dereference (Self.Data);
+      end if;
+   end Finalize;
 
-         when String_Value =>
-            String_Value  : Matreshka.Internals.Strings.Shared_String_Access;
-
-         when Array_Value =>
-            Array_Value   : Matreshka.JSON_Arrays.Shared_JSON_Array_Access;
-
-         when Object_Value =>
-            Object_Value  : Matreshka.JSON_Objects.Shared_JSON_Object_Access;
-
-         when Null_Value =>
-            null;
-      end case;
-   end record;
-
-   type Shared_JSON_Value is limited record
-      Counter : Matreshka.Atomics.Counters.Counter;
-      Value   : Internal_Value;
-   end record;
-
-   type Shared_JSON_Value_Access is access all Shared_JSON_Value;
-
-   Empty_Shared_JSON_Value : aliased Shared_JSON_Value
-     := (Counter => <>, Value => (Kind => Empty_Value));
-
-   procedure Reference (Self : not null Shared_JSON_Value_Access);
-   --  Increments internal reference counter.
-
-   procedure Dereference (Self : in out Shared_JSON_Value_Access);
-   --  Decrements internal reference counter and deallocates shared object when
-   --  counter reach zero. Sets Self to null.
-
-   procedure Mutate (Self : in out not null Shared_JSON_Value_Access);
-   --  Mutate object: new shared object is allocated when reference counter is
-   --  greater than one, reference counter of original object is decremented
-   --  and original value is copied. Otherwise, shared object is unchanged.
-
-   procedure Mutate
-    (Self : in out not null Shared_JSON_Value_Access;
-     Kind : Value_Kinds);
-   --  Mutate object: allocate new shared then reference counter is greater
-   --  than one, and decrement reference counter of original object. Value of
-   --  the object is reset to default value of specifid kind.
-
-end Matreshka.JSON_Values;
+end League.JSON.Arrays;

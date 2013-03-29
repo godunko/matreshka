@@ -42,9 +42,11 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Holders.Booleans;
+with League.JSON.Arrays.Internals;
 with League.JSON.Objects.Internals;
 with League.Strings.Internals;
 with Matreshka.Internals.Strings;
+with Matreshka.JSON_Arrays;
 with Matreshka.JSON_Objects;
 
 package body League.JSON.Values is
@@ -200,7 +202,8 @@ package body League.JSON.Values is
        return League.JSON.Arrays.JSON_Array is
    begin
       if Self.Data.Value.Kind = Matreshka.JSON_Values.Array_Value then
-         return Self.Data.Value.Array_Value;
+         return
+           League.JSON.Arrays.Internals.Create (Self.Data.Value.Array_Value);
 
       else
          return Default;
@@ -388,8 +391,14 @@ package body League.JSON.Values is
    -------------------
 
    function To_JSON_Value
-    (Value : League.JSON.Arrays.JSON_Array) return JSON_Value is
+    (Value : League.JSON.Arrays.JSON_Array) return JSON_Value
+   is
+      Aux : constant Matreshka.JSON_Arrays.Shared_JSON_Array_Access
+        := League.JSON.Arrays.Internals.Internal (Value);
+
    begin
+      Matreshka.JSON_Arrays.Reference (Aux);
+
       return
        (Ada.Finalization.Controlled with
           Data =>
@@ -397,7 +406,7 @@ package body League.JSON.Values is
                  (Counter => <>,
                   Value   =>
                    (Kind        => Matreshka.JSON_Values.Array_Value,
-                    Array_Value => Value)));
+                    Array_Value => Aux)));
    end To_JSON_Value;
 
    -------------------
