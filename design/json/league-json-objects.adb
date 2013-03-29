@@ -41,21 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Finalization;
+-- with League.JSON.Values;
 
-with League.String_Vectors;
-with League.Strings;
-limited with League.JSON.Values;
-private with Matreshka.JSON_Objects;
-
-package League.JSON.Objects is
-
-   pragma Preelaborate;
-
-   type JSON_Object is tagged private;
-   pragma Preelaborable_Initialization (JSON_Object);
-
-   Empty_JSON_Object : constant JSON_Object;
+package body League.JSON.Objects is
 
 --   function Contains
 --    (Self : JSON_Object'Class;
@@ -104,19 +92,26 @@ package League.JSON.Objects is
 --   --
 --   --  The returned JSON_Value is Undefined, if the key does not exist.
 
-private
+   ------------
+   -- Adjust --
+   ------------
 
-   type JSON_Object is new Ada.Finalization.Controlled with record
-      Data : Matreshka.JSON_Objects.Shared_JSON_Object_Access
-        := Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access;
-   end record;
+   overriding procedure Adjust (Self : in out JSON_Object) is
+   begin
+      Matreshka.JSON_Objects.Reference (Self.Data);
+   end Adjust;
 
-   overriding procedure Adjust (Self : in out JSON_Object);
+   --------------
+   -- Finalize --
+   --------------
 
-   overriding procedure Finalize (Self : in out JSON_Object);
+   overriding procedure Finalize (Self : in out JSON_Object) is
+      use type Matreshka.JSON_Objects.Shared_JSON_Object_Access;
 
-   Empty_JSON_Object : constant JSON_Object
-     := (Ada.Finalization.Controlled with
-           Data => Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access);
+   begin
+      if Self.Data /= null then
+         Matreshka.JSON_Objects.Dereference (Self.Data);
+      end if;
+   end Finalize;
 
 end League.JSON.Objects;

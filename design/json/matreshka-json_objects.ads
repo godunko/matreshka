@@ -41,82 +41,45 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Finalization;
+with Ada.Containers.Hashed_Maps;
 
-with League.String_Vectors;
-with League.Strings;
-limited with League.JSON.Values;
-private with Matreshka.JSON_Objects;
+--with League.JSON.Values;
+with League.Strings.Hash;
+with Matreshka.Atomics.Counters;
 
-package League.JSON.Objects is
+package Matreshka.JSON_Objects is
 
    pragma Preelaborate;
 
-   type JSON_Object is tagged private;
-   pragma Preelaborable_Initialization (JSON_Object);
+--   package Value_Maps is
+--     new Ada.Containers.Hashed_Maps
+--          (League.Strings.Universal_String,
+--           League.JSON.Values.JSON_Value,
+--           League.Strings.Hash,
+--           League.Strings."=",
+--           League.JSON.Values."=");
 
-   Empty_JSON_Object : constant JSON_Object;
-
---   function Contains
---    (Self : JSON_Object'Class;
---     Key  : League.Strings.Universal_String) return Boolean;
---   --  Returns True if the object contains key Key.
---
---   procedure Insert
---    (Self  : in out JSON_Object'Class;
---     Key   : League.Strings.Universal_String;
---     Value : League.JSON.Values.JSON_Value);
---   --  Inserts a new item with the key key and a value of value.
---   --
---   --  If there is already an item with the key key then that item's value is
---   --  replaced with value.
---
---   function Is_Empty (Self : JSON_Object'Class) return Boolean;
---   --  Returns True if the object is empty.
---
---   function Keys
---    (Self : JSON_Object'Class)
---       return League.String_Vectors.Universal_String_Vector;
---   --  Returns a list of all keys in this object.
---
---   function Length (Self : JSON_Object'Class) return Natural;
---   --  Returns the number of (key, value) pairs stored in the object.
---
---   procedure Remove
---    (Self : in out JSON_Object'Class;
---     Key  : League.Strings.Universal_String);
---   --  Removes key from the object.
---
---   function Take
---    (Self : in out JSON_Object'Class;
---     Key  : League.Strings.Universal_String)
---       return League.JSON.Values.JSON_Value;
---   --  Removes key from the object.
---   --
---   --  Returns a JSON_Value containing the value referenced by key. If key was
---   --  not contained in the object, the returned JSON_Value is Undefined.
---
---   function Value
---    (Self : JSON_Object'Class;
---     Key  : League.Strings.Universal_String)
---       return League.JSON.Values.JSON_Value;
---   --  Returns a JSON_Value representing the value for the key Key.
---   --
---   --  The returned JSON_Value is Undefined, if the key does not exist.
-
-private
-
-   type JSON_Object is new Ada.Finalization.Controlled with record
-      Data : Matreshka.JSON_Objects.Shared_JSON_Object_Access
-        := Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access;
+   type Shared_JSON_Object is limited record
+      Counter : Matreshka.Atomics.Counters.Counter;
+--      Values  : Value_Maps.Map;
    end record;
 
-   overriding procedure Adjust (Self : in out JSON_Object);
+   type Shared_JSON_Object_Access is access all Shared_JSON_Object;
 
-   overriding procedure Finalize (Self : in out JSON_Object);
+   Empty_Shared_JSON_Object : aliased Shared_JSON_Object
+     := (Counter => <>);
+--     := (Counter => <>, Values => <>);
 
-   Empty_JSON_Object : constant JSON_Object
-     := (Ada.Finalization.Controlled with
-           Data => Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access);
+   procedure Reference (Self : not null Shared_JSON_Object_Access);
+   --  Increments internal reference counter.
 
-end League.JSON.Objects;
+   procedure Dereference (Self : in out Shared_JSON_Object_Access);
+   --  Decrements internal reference counter and deallocates shared object when
+   --  counter reach zero. Sets Self to null.
+
+   procedure Mutate (Self : in out not null Shared_JSON_Object_Access);
+   --  Mutate object: new shared object is allocated when reference counter is
+   --  greater than one, reference counter of original object is decremented
+   --  and original value is copied. Otherwise, shared object is unchanged.
+
+end Matreshka.JSON_Objects;

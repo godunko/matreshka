@@ -43,9 +43,9 @@
 ------------------------------------------------------------------------------
 with League.Holders;
 with League.JSON.Arrays;
-with League.JSON.Objects;
 with Matreshka.Atomics.Counters;
 with Matreshka.Internals.Strings;
+with Matreshka.JSON_Objects;
 
 package Matreshka.JSON_Values is
 
@@ -84,7 +84,7 @@ package Matreshka.JSON_Values is
             Array_Value : League.JSON.Arrays.JSON_Array;
 
          when Object_Value =>
-            Object_Value : League.JSON.Objects.JSON_Object;
+            Object_Value : Matreshka.JSON_Objects.Shared_JSON_Object_Access;
 
          when Null_Value =>
             null;

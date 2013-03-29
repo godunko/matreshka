@@ -41,82 +41,54 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Finalization;
+with Ada.Unchecked_Deallocation;
 
-with League.String_Vectors;
-with League.Strings;
-limited with League.JSON.Values;
-private with Matreshka.JSON_Objects;
+package body Matreshka.JSON_Objects is
 
-package League.JSON.Objects is
+   -----------------
+   -- Dereference --
+   -----------------
 
-   pragma Preelaborate;
+   procedure Dereference (Self : in out Shared_JSON_Object_Access) is
 
-   type JSON_Object is tagged private;
-   pragma Preelaborable_Initialization (JSON_Object);
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Shared_JSON_Object, Shared_JSON_Object_Access);
 
-   Empty_JSON_Object : constant JSON_Object;
+   begin
+      if Self /= Empty_Shared_JSON_Object'Access
+        and then Matreshka.Atomics.Counters.Decrement (Self.Counter)
+      then
+         Free (Self);
 
---   function Contains
---    (Self : JSON_Object'Class;
---     Key  : League.Strings.Universal_String) return Boolean;
---   --  Returns True if the object contains key Key.
---
---   procedure Insert
---    (Self  : in out JSON_Object'Class;
---     Key   : League.Strings.Universal_String;
---     Value : League.JSON.Values.JSON_Value);
---   --  Inserts a new item with the key key and a value of value.
---   --
---   --  If there is already an item with the key key then that item's value is
---   --  replaced with value.
---
---   function Is_Empty (Self : JSON_Object'Class) return Boolean;
---   --  Returns True if the object is empty.
---
---   function Keys
---    (Self : JSON_Object'Class)
---       return League.String_Vectors.Universal_String_Vector;
---   --  Returns a list of all keys in this object.
---
---   function Length (Self : JSON_Object'Class) return Natural;
---   --  Returns the number of (key, value) pairs stored in the object.
---
---   procedure Remove
---    (Self : in out JSON_Object'Class;
---     Key  : League.Strings.Universal_String);
---   --  Removes key from the object.
---
---   function Take
---    (Self : in out JSON_Object'Class;
---     Key  : League.Strings.Universal_String)
---       return League.JSON.Values.JSON_Value;
---   --  Removes key from the object.
---   --
---   --  Returns a JSON_Value containing the value referenced by key. If key was
---   --  not contained in the object, the returned JSON_Value is Undefined.
---
---   function Value
---    (Self : JSON_Object'Class;
---     Key  : League.Strings.Universal_String)
---       return League.JSON.Values.JSON_Value;
---   --  Returns a JSON_Value representing the value for the key Key.
---   --
---   --  The returned JSON_Value is Undefined, if the key does not exist.
+      else
+         Self := null;
+      end if;
+   end Dereference;
 
-private
+   ------------
+   -- Mutate --
+   ------------
 
-   type JSON_Object is new Ada.Finalization.Controlled with record
-      Data : Matreshka.JSON_Objects.Shared_JSON_Object_Access
-        := Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access;
-   end record;
+   procedure Mutate (Self : in out not null Shared_JSON_Object_Access) is
+   begin
+      --  Mutate object: new shared object is allocated when reference counter
+      --  is greater than one, reference counter of original object is
+      --  decremented and original value is copied. Otherwise, shared object is
+      --  unchanged.
 
-   overriding procedure Adjust (Self : in out JSON_Object);
+      null;
+   end Mutate;
 
-   overriding procedure Finalize (Self : in out JSON_Object);
+   ---------------
+   -- Reference --
+   ---------------
 
-   Empty_JSON_Object : constant JSON_Object
-     := (Ada.Finalization.Controlled with
-           Data => Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access);
+   procedure Reference (Self : not null Shared_JSON_Object_Access) is
+   begin
+      if Self /= Empty_Shared_JSON_Object'Access then
+         Matreshka.Atomics.Counters.Increment (Self.Counter);
+      end if;
+   end Reference;
 
-end League.JSON.Objects;
+end Matreshka.JSON_Objects;
