@@ -47,12 +47,11 @@ with League.Holders;
 with League.JSON.Arrays;
 with League.JSON.Objects;
 with League.Strings;
+private with Matreshka.JSON_Values;
 
 package League.JSON.Values is
 
    pragma Preelaborate;
-
-   type JSON_Value is tagged private;
 
    type JSON_Value_Kinds is
     (Empty_Value,
@@ -62,6 +61,11 @@ package League.JSON.Values is
      Array_Value,
      Object_Value,
      Null_Value);
+
+   type JSON_Value is tagged private;
+   pragma Preelaborable_Initialization (JSON_Value);
+
+   Empty_JSON_Value : constant JSON_Value;
 
    function To_JSON_Value (Value : Boolean) return JSON_Value;
    function To_JSON_Value
@@ -164,11 +168,16 @@ package League.JSON.Values is
 private
 
    type JSON_Value is new Ada.Finalization.Controlled with record
-      null;
+      Data : Matreshka.JSON_Values.Shared_JSON_Value_Access
+        := Matreshka.JSON_Values.Empty_Shared_JSON_Value'Access;
    end record;
 
    overriding procedure Adjust (Self : in out JSON_Value);
 
    overriding procedure Finalize (Self : in out JSON_Value);
+
+   Empty_JSON_Value : constant JSON_Value
+     := (Ada.Finalization.Controlled with
+           Data => Matreshka.JSON_Values.Empty_Shared_JSON_Value'Access);
 
 end League.JSON.Values;
