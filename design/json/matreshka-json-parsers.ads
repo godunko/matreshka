@@ -44,44 +44,23 @@
 
 with League.Strings;
 
-package Matreshka.JSON.Values is
+with Matreshka.JSON.Value_Fabrics;
+with Matreshka.JSON.Values;
 
-   type Value_Kind is
-     (Null_Kind,
-      String_Kind,
-      Number_Kind,
-      Boolean_Kind,
-      Array_Kind,
-      Object_Kind);
+package Matreshka.JSON.Parsers is
 
-   type Array_Value is abstract tagged null record;
-   type Array_Value_Access is access all Array_Value'Class;
+   type Parser is tagged limited private;
 
-   type Object_Value is abstract tagged null record;
-   type Object_Value_Access is access all Object_Value'Class;
+   procedure Parse
+     (Self    : access Parser;
+      Text    : League.Strings.Universal_String;
+      Value   : out Matreshka.JSON.Values.Value;
+      Success : out Boolean);
 
-   type Value (Kind : Value_Kind := Null_Kind) is record
-      case Kind is
-         when Null_Kind =>
-            null;
-         when String_Kind | Number_Kind =>
-            Image : League.Strings.Universal_String;
-         when Boolean_Kind =>
-            Predicate : Boolean;
-         when Array_Kind =>
-            Array_Value : Array_Value_Access;
-         when Object_Kind =>
-            Object_Value : Object_Value_Access;
-      end case;
+private
+
+   type Parser is tagged limited record
+      Fabric : aliased Matreshka.JSON.Value_Fabrics.Value_Fabric;
    end record;
 
-   procedure Append
-     (Self : access Object_Value;
-      Key  : League.Strings.Universal_String;
-      Item : Value) is abstract;
-
-   procedure Append
-     (Self : access Array_Value;
-      Item : Value) is abstract;
-
-end Matreshka.JSON.Values;
+end Matreshka.JSON.Parsers;
