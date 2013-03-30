@@ -87,13 +87,14 @@ package body League.JSON.Objects is
      Key   : League.Strings.Universal_String;
      Value : League.JSON.Values.JSON_Value)
    is
-      Position  : constant Matreshka.JSON_Types.Value_Maps.Cursor
-        := Self.Data.Values.Find (Key);
       New_Value : constant Matreshka.JSON_Types.Shared_JSON_Value_Access
         := League.JSON.Values.Internals.Internal (Value);
       Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+      Position  : Matreshka.JSON_Types.Value_Maps.Cursor;
 
    begin
+      Matreshka.JSON_Types.Mutate (Self.Data);
+      Position := Self.Data.Values.Find (Key);
       Matreshka.JSON_Types.Reference (New_Value);
 
       if Matreshka.JSON_Types.Value_Maps.Has_Element (Position) then
@@ -153,11 +154,13 @@ package body League.JSON.Objects is
     (Self : in out JSON_Object'Class;
      Key  : League.Strings.Universal_String)
    is
-      Position  : Matreshka.JSON_Types.Value_Maps.Cursor
-        := Self.Data.Values.Find (Key);
+      Position  : Matreshka.JSON_Types.Value_Maps.Cursor;
       Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
 
    begin
+      Matreshka.JSON_Types.Mutate (Self.Data);
+      Position := Self.Data.Values.Find (Key);
+
       if Matreshka.JSON_Types.Value_Maps.Has_Element (Position) then
          Old_Value := Matreshka.JSON_Types.Value_Maps.Element (Position);
          Matreshka.JSON_Types.Dereference (Old_Value);
@@ -174,11 +177,13 @@ package body League.JSON.Objects is
      Key  : League.Strings.Universal_String)
        return League.JSON.Values.JSON_Value
    is
-      Position  : Matreshka.JSON_Types.Value_Maps.Cursor
-        := Self.Data.Values.Find (Key);
+      Position  : Matreshka.JSON_Types.Value_Maps.Cursor;
       Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
 
    begin
+      Matreshka.JSON_Types.Mutate (Self.Data);
+      Position := Self.Data.Values.Find (Key);
+
       if Matreshka.JSON_Types.Value_Maps.Has_Element (Position) then
          Old_Value := Matreshka.JSON_Types.Value_Maps.Element (Position);
          Self.Data.Values.Delete (Position);

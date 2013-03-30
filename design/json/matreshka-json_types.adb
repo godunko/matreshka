@@ -96,13 +96,23 @@ package body Matreshka.JSON_Types is
    ------------
 
    procedure Mutate (Self : in out not null Shared_JSON_Object_Access) is
-   begin
-      --  Mutate object: new shared object is allocated when reference counter
-      --  is greater than one, reference counter of original object is
-      --  decremented and original value is copied. Otherwise, shared object is
-      --  unchanged.
+      Source : not null Shared_JSON_Object_Access := Self;
 
-      null;
+   begin
+      if not Matreshka.Atomics.Counters.Is_One (Self.Counter) then
+         Self :=
+           new Shared_JSON_Object'(Counter => <>, Values => Source.Values);
+
+         --  Update reference counters for values.
+
+         for Value of Self.Values loop
+            Reference (Value);
+         end loop;
+
+         --  Release source shared object.
+
+         Dereference (Source);
+      end if;
    end Mutate;
 
    ------------
