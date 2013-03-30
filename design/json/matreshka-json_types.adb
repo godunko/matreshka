@@ -41,45 +41,115 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
+with Ada.Unchecked_Deallocation;
 
---with League.JSON.Values;
-with League.Strings.Hash;
-with Matreshka.Atomics.Counters;
+package body Matreshka.JSON_Types is
 
-package Matreshka.JSON_Objects is
+   -----------------
+   -- Dereference --
+   -----------------
 
-   pragma Preelaborate;
+   procedure Dereference (Self : in out Shared_JSON_Object_Access) is
 
---   package Value_Maps is
---     new Ada.Containers.Hashed_Maps
---          (League.Strings.Universal_String,
---           League.JSON.Values.JSON_Value,
---           League.Strings.Hash,
---           League.Strings."=",
---           League.JSON.Values."=");
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Shared_JSON_Object, Shared_JSON_Object_Access);
 
-   type Shared_JSON_Object is limited record
-      Counter : Matreshka.Atomics.Counters.Counter;
---      Values  : Value_Maps.Map;
-   end record;
+   begin
+      if Self /= Empty_Shared_JSON_Object'Access
+        and then Matreshka.Atomics.Counters.Decrement (Self.Counter)
+      then
+         Free (Self);
 
-   type Shared_JSON_Object_Access is access all Shared_JSON_Object;
+      else
+         Self := null;
+      end if;
+   end Dereference;
 
-   Empty_Shared_JSON_Object : aliased Shared_JSON_Object
-     := (Counter => <>);
---     := (Counter => <>, Values => <>);
+   -----------------
+   -- Dereference --
+   -----------------
 
-   procedure Reference (Self : not null Shared_JSON_Object_Access);
-   --  Increments internal reference counter.
+   procedure Dereference (Self : in out Shared_JSON_Value_Access) is
 
-   procedure Dereference (Self : in out Shared_JSON_Object_Access);
-   --  Decrements internal reference counter and deallocates shared object when
-   --  counter reach zero. Sets Self to null.
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Shared_JSON_Value, Shared_JSON_Value_Access);
 
-   procedure Mutate (Self : in out not null Shared_JSON_Object_Access);
-   --  Mutate object: new shared object is allocated when reference counter is
-   --  greater than one, reference counter of original object is decremented
-   --  and original value is copied. Otherwise, shared object is unchanged.
+   begin
+      if Self /= Empty_Shared_JSON_Value'Access
+        and then Matreshka.Atomics.Counters.Decrement (Self.Counter)
+      then
+         Free (Self);
 
-end Matreshka.JSON_Objects;
+      else
+         Self := null;
+      end if;
+   end Dereference;
+
+   ------------
+   -- Mutate --
+   ------------
+
+   procedure Mutate (Self : in out not null Shared_JSON_Object_Access) is
+   begin
+      --  Mutate object: new shared object is allocated when reference counter
+      --  is greater than one, reference counter of original object is
+      --  decremented and original value is copied. Otherwise, shared object is
+      --  unchanged.
+
+      null;
+   end Mutate;
+
+   ------------
+   -- Mutate --
+   ------------
+
+   procedure Mutate (Self : in out not null Shared_JSON_Value_Access) is
+   begin
+      --  Mutate object: new shared object is allocated when reference counter
+      --  is greater than one, reference counter of original object is
+      --  decremented and original value is copied. Otherwise, shared object is
+      --  unchanged.
+
+      null;
+   end Mutate;
+
+   ------------
+   -- Mutate --
+   ------------
+
+   procedure Mutate
+    (Self : in out not null Shared_JSON_Value_Access;
+     Kind : Value_Kinds) is
+   begin
+      --  Mutate object: allocate new shared then reference counter is greater
+      --  than one, and decrement reference counter of original object. Value
+      --  of the object is reset to default value of specifid kind.
+
+      null;
+   end Mutate;
+
+   ---------------
+   -- Reference --
+   ---------------
+
+   procedure Reference (Self : not null Shared_JSON_Value_Access) is
+   begin
+      if Self /= Empty_Shared_JSON_Value'Access then
+         Matreshka.Atomics.Counters.Increment (Self.Counter);
+      end if;
+   end Reference;
+
+   ---------------
+   -- Reference --
+   ---------------
+
+   procedure Reference (Self : not null Shared_JSON_Object_Access) is
+   begin
+      if Self /= Empty_Shared_JSON_Object'Access then
+         Matreshka.Atomics.Counters.Increment (Self.Counter);
+      end if;
+   end Reference;
+
+end Matreshka.JSON_Types;

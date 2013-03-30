@@ -98,7 +98,7 @@ package body League.JSON.Objects is
 
    overriding procedure Adjust (Self : in out JSON_Object) is
    begin
-      Matreshka.JSON_Objects.Reference (Self.Data);
+      Matreshka.JSON_Types.Reference (Self.Data);
    end Adjust;
 
    --------------
@@ -106,11 +106,11 @@ package body League.JSON.Objects is
    --------------
 
    overriding procedure Finalize (Self : in out JSON_Object) is
-      use type Matreshka.JSON_Objects.Shared_JSON_Object_Access;
+      use type Matreshka.JSON_Types.Shared_JSON_Object_Access;
 
    begin
       if Self.Data /= null then
-         Matreshka.JSON_Objects.Dereference (Self.Data);
+         Matreshka.JSON_Types.Dereference (Self.Data);
       end if;
    end Finalize;
 

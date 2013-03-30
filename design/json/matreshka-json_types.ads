@@ -45,9 +45,8 @@ with League.Holders;
 with Matreshka.Atomics.Counters;
 with Matreshka.Internals.Strings;
 with Matreshka.JSON_Arrays;
-with Matreshka.JSON_Objects;
 
-package Matreshka.JSON_Values is
+package Matreshka.JSON_Types is
 
    pragma Preelaborate;
 
@@ -62,6 +61,49 @@ package Matreshka.JSON_Values is
      Null_Value);
    --  JSON doesn't distinguish integer and float numbers, but we distinguish
    --  them to avoid potential loss of precision on conversions.
+
+   type Shared_JSON_Value;
+
+   type Shared_JSON_Value_Access is access all Shared_JSON_Value;
+
+   ------------------------
+   -- Shared_JSON_Object --
+   ------------------------
+
+--   package Value_Maps is
+--     new Ada.Containers.Hashed_Maps
+--          (League.Strings.Universal_String,
+--           League.JSON.Values.JSON_Value,
+--           League.Strings.Hash,
+--           League.Strings."=",
+--           League.JSON.Values."=");
+
+   type Shared_JSON_Object is limited record
+      Counter : Matreshka.Atomics.Counters.Counter;
+--      Values  : Value_Maps.Map;
+   end record;
+
+   type Shared_JSON_Object_Access is access all Shared_JSON_Object;
+
+   Empty_Shared_JSON_Object : aliased Shared_JSON_Object
+     := (Counter => <>);
+--     := (Counter => <>, Values => <>);
+
+   procedure Reference (Self : not null Shared_JSON_Object_Access);
+   --  Increments internal reference counter.
+
+   procedure Dereference (Self : in out Shared_JSON_Object_Access);
+   --  Decrements internal reference counter and deallocates shared object when
+   --  counter reach zero. Sets Self to null.
+
+   procedure Mutate (Self : in out not null Shared_JSON_Object_Access);
+   --  Mutate object: new shared object is allocated when reference counter is
+   --  greater than one, reference counter of original object is decremented
+   --  and original value is copied. Otherwise, shared object is unchanged.
+
+   -----------------------
+   -- Shared_JSON_Value --
+   -----------------------
 
    type Internal_Value (Kind : Value_Kinds := Empty_Value) is record
       case Kind is
@@ -84,7 +126,7 @@ package Matreshka.JSON_Values is
             Array_Value   : Matreshka.JSON_Arrays.Shared_JSON_Array_Access;
 
          when Object_Value =>
-            Object_Value  : Matreshka.JSON_Objects.Shared_JSON_Object_Access;
+            Object_Value  : Shared_JSON_Object_Access;
 
          when Null_Value =>
             null;
@@ -95,8 +137,6 @@ package Matreshka.JSON_Values is
       Counter : Matreshka.Atomics.Counters.Counter;
       Value   : Internal_Value;
    end record;
-
-   type Shared_JSON_Value_Access is access all Shared_JSON_Value;
 
    Empty_Shared_JSON_Value : aliased Shared_JSON_Value
      := (Counter => <>, Value => (Kind => Empty_Value));
@@ -120,4 +160,4 @@ package Matreshka.JSON_Values is
    --  than one, and decrement reference counter of original object. Value of
    --  the object is reset to default value of specifid kind.
 
-end Matreshka.JSON_Values;
+end Matreshka.JSON_Types;

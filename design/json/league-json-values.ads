@@ -47,7 +47,7 @@ with League.Holders;
 with League.JSON.Arrays;
 with League.JSON.Objects;
 with League.Strings;
-private with Matreshka.JSON_Values;
+private with Matreshka.JSON_Types;
 
 package League.JSON.Values is
 
@@ -168,8 +168,8 @@ package League.JSON.Values is
 private
 
    type JSON_Value is new Ada.Finalization.Controlled with record
-      Data : Matreshka.JSON_Values.Shared_JSON_Value_Access
-        := Matreshka.JSON_Values.Empty_Shared_JSON_Value'Access;
+      Data : Matreshka.JSON_Types.Shared_JSON_Value_Access
+        := Matreshka.JSON_Types.Empty_Shared_JSON_Value'Access;
    end record;
 
    overriding procedure Adjust (Self : in out JSON_Value);
@@ -178,6 +178,6 @@ private
 
    Empty_JSON_Value : constant JSON_Value
      := (Ada.Finalization.Controlled with
-           Data => Matreshka.JSON_Values.Empty_Shared_JSON_Value'Access);
+           Data => Matreshka.JSON_Types.Empty_Shared_JSON_Value'Access);
 
 end League.JSON.Values;

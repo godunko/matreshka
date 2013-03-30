@@ -46,7 +46,7 @@ private with Ada.Finalization;
 with League.String_Vectors;
 with League.Strings;
 limited with League.JSON.Values;
-private with Matreshka.JSON_Objects;
+private with Matreshka.JSON_Types;
 
 package League.JSON.Objects is
 
@@ -107,8 +107,8 @@ package League.JSON.Objects is
 private
 
    type JSON_Object is new Ada.Finalization.Controlled with record
-      Data : Matreshka.JSON_Objects.Shared_JSON_Object_Access
-        := Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access;
+      Data : Matreshka.JSON_Types.Shared_JSON_Object_Access
+        := Matreshka.JSON_Types.Empty_Shared_JSON_Object'Access;
    end record;
 
    overriding procedure Adjust (Self : in out JSON_Object);
@@ -117,6 +117,6 @@ private
 
    Empty_JSON_Object : constant JSON_Object
      := (Ada.Finalization.Controlled with
-           Data => Matreshka.JSON_Objects.Empty_Shared_JSON_Object'Access);
+           Data => Matreshka.JSON_Types.Empty_Shared_JSON_Object'Access);
 
 end League.JSON.Objects;

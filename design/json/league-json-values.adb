@@ -47,11 +47,10 @@ with League.JSON.Objects.Internals;
 with League.Strings.Internals;
 with Matreshka.Internals.Strings;
 with Matreshka.JSON_Arrays;
-with Matreshka.JSON_Objects;
 
 package body League.JSON.Values is
 
-   use type Matreshka.JSON_Values.Value_Kinds;
+   use type Matreshka.JSON_Types.Value_Kinds;
 
    ------------
    -- Adjust --
@@ -59,7 +58,7 @@ package body League.JSON.Values is
 
    overriding procedure Adjust (Self : in out JSON_Value) is
    begin
-      Matreshka.JSON_Values.Reference (Self.Data);
+      Matreshka.JSON_Types.Reference (Self.Data);
    end Adjust;
 
    --------------
@@ -67,11 +66,11 @@ package body League.JSON.Values is
    --------------
 
    overriding procedure Finalize (Self : in out JSON_Value) is
-      use type Matreshka.JSON_Values.Shared_JSON_Value_Access;
+      use type Matreshka.JSON_Types.Shared_JSON_Value_Access;
 
    begin
       if Self.Data /= null then
-         Matreshka.JSON_Values.Dereference (Self.Data);
+         Matreshka.JSON_Types.Dereference (Self.Data);
       end if;
    end Finalize;
 
@@ -81,7 +80,7 @@ package body League.JSON.Values is
 
    function Is_Array (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.Array_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.Array_Value;
    end Is_Array;
 
    ----------------
@@ -90,7 +89,7 @@ package body League.JSON.Values is
 
    function Is_Boolean (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.Boolean_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.Boolean_Value;
    end Is_Boolean;
 
    --------------
@@ -99,7 +98,7 @@ package body League.JSON.Values is
 
    function Is_Empty (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.Empty_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.Empty_Value;
    end Is_Empty;
 
    ---------------------
@@ -108,7 +107,7 @@ package body League.JSON.Values is
 
    function Is_Float_Number (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.Float_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.Float_Value;
    end Is_Float_Number;
 
    -----------------------
@@ -117,7 +116,7 @@ package body League.JSON.Values is
 
    function Is_Integer_Number (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.Integer_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.Integer_Value;
    end Is_Integer_Number;
 
    -------------
@@ -126,7 +125,7 @@ package body League.JSON.Values is
 
    function Is_Null (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.Null_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.Null_Value;
    end Is_Null;
 
    ---------------
@@ -136,8 +135,8 @@ package body League.JSON.Values is
    function Is_Number (Self : JSON_Value'Class) return Boolean is
    begin
       return
-        Self.Data.Value.Kind in Matreshka.JSON_Values.Float_Value
-          | Matreshka.JSON_Values.Integer_Value;
+        Self.Data.Value.Kind in Matreshka.JSON_Types.Float_Value
+          | Matreshka.JSON_Types.Integer_Value;
    end Is_Number;
 
    ---------------
@@ -146,7 +145,7 @@ package body League.JSON.Values is
 
    function Is_Object (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.Object_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.Object_Value;
    end Is_Object;
 
    ---------------
@@ -155,7 +154,7 @@ package body League.JSON.Values is
 
    function Is_String (Self : JSON_Value'Class) return Boolean is
    begin
-      return Self.Data.Value.Kind = Matreshka.JSON_Values.String_Value;
+      return Self.Data.Value.Kind = Matreshka.JSON_Types.String_Value;
    end Is_String;
 
    ----------
@@ -165,28 +164,28 @@ package body League.JSON.Values is
    function Kind (Self : JSON_Value'Class) return JSON_Value_Kinds is
    begin
       case Self.Data.Value.Kind is
-         when Matreshka.JSON_Values.Empty_Value =>
+         when Matreshka.JSON_Types.Empty_Value =>
             return Empty_Value;
 
-         when Matreshka.JSON_Values.Boolean_Value =>
+         when Matreshka.JSON_Types.Boolean_Value =>
             return Boolean_Value;
 
-         when Matreshka.JSON_Values.Integer_Value =>
+         when Matreshka.JSON_Types.Integer_Value =>
             return Number_Value;
 
-         when Matreshka.JSON_Values.Float_Value =>
+         when Matreshka.JSON_Types.Float_Value =>
             return Number_Value;
 
-         when Matreshka.JSON_Values.String_Value =>
+         when Matreshka.JSON_Types.String_Value =>
             return String_Value;
 
-         when Matreshka.JSON_Values.Array_Value =>
+         when Matreshka.JSON_Types.Array_Value =>
             return Array_Value;
 
-         when Matreshka.JSON_Values.Object_Value =>
+         when Matreshka.JSON_Types.Object_Value =>
             return Object_Value;
 
-         when Matreshka.JSON_Values.Null_Value =>
+         when Matreshka.JSON_Types.Null_Value =>
             return Null_Value;
       end case;
    end Kind;
@@ -201,7 +200,7 @@ package body League.JSON.Values is
        := League.JSON.Arrays.Empty_JSON_Array)
        return League.JSON.Arrays.JSON_Array is
    begin
-      if Self.Data.Value.Kind = Matreshka.JSON_Values.Array_Value then
+      if Self.Data.Value.Kind = Matreshka.JSON_Types.Array_Value then
          return
            League.JSON.Arrays.Internals.Create (Self.Data.Value.Array_Value);
 
@@ -217,7 +216,7 @@ package body League.JSON.Values is
    function To_Boolean
     (Self : JSON_Value'Class; Default : Boolean := False) return Boolean is
    begin
-      if Self.Data.Value.Kind = Matreshka.JSON_Values.Boolean_Value then
+      if Self.Data.Value.Kind = Matreshka.JSON_Types.Boolean_Value then
          return Self.Data.Value.Boolean_Value;
 
       else
@@ -234,10 +233,10 @@ package body League.JSON.Values is
      Default : League.Holders.Universal_Float := 0.0)
        return League.Holders.Universal_Float is
    begin
-      if Self.Data.Value.Kind = Matreshka.JSON_Values.Float_Value then
+      if Self.Data.Value.Kind = Matreshka.JSON_Types.Float_Value then
          return Self.Data.Value.Float_Value;
 
-      elsif Self.Data.Value.Kind = Matreshka.JSON_Values.Integer_Value then
+      elsif Self.Data.Value.Kind = Matreshka.JSON_Types.Integer_Value then
          return League.Holders.Universal_Float (Self.Data.Value.Integer_Value);
 
       else
@@ -252,15 +251,15 @@ package body League.JSON.Values is
    function To_Holder (Self : JSON_Value'Class) return League.Holders.Holder is
    begin
       case Self.Data.Value.Kind is
-         when Matreshka.JSON_Values.Empty_Value =>
+         when Matreshka.JSON_Types.Empty_Value =>
             return League.Holders.Empty_Holder;
 
-         when Matreshka.JSON_Values.Boolean_Value =>
+         when Matreshka.JSON_Types.Boolean_Value =>
             return
               League.Holders.Booleans.To_Holder
                (Self.Data.Value.Boolean_Value);
 
-         when Matreshka.JSON_Values.Integer_Value =>
+         when Matreshka.JSON_Types.Integer_Value =>
             return Result : League.Holders.Holder do
                League.Holders.Set_Tag
                 (Result, League.Holders.Universal_Integer_Tag);
@@ -268,7 +267,7 @@ package body League.JSON.Values is
                 (Result, Self.Data.Value.Integer_Value);
             end return;
 
-         when Matreshka.JSON_Values.Float_Value =>
+         when Matreshka.JSON_Types.Float_Value =>
             return Result : League.Holders.Holder do
                League.Holders.Set_Tag
                 (Result, League.Holders.Universal_Float_Tag);
@@ -276,19 +275,19 @@ package body League.JSON.Values is
                 (Result, Self.Data.Value.Float_Value);
             end return;
 
-         when Matreshka.JSON_Values.String_Value =>
+         when Matreshka.JSON_Types.String_Value =>
             return
               League.Holders.To_Holder
                (League.Strings.Internals.Create
                  (Self.Data.Value.String_Value));
 
-         when Matreshka.JSON_Values.Array_Value =>
+         when Matreshka.JSON_Types.Array_Value =>
             return League.Holders.Empty_Holder;
 
-         when Matreshka.JSON_Values.Object_Value =>
+         when Matreshka.JSON_Types.Object_Value =>
             return League.Holders.Empty_Holder;
 
-         when Matreshka.JSON_Values.Null_Value =>
+         when Matreshka.JSON_Types.Null_Value =>
             return League.Holders.Empty_Holder;
       end case;
    end To_Holder;
@@ -302,10 +301,10 @@ package body League.JSON.Values is
      Default : League.Holders.Universal_Integer := 0)
        return League.Holders.Universal_Integer is
    begin
-      if Self.Data.Value.Kind = Matreshka.JSON_Values.Float_Value then
+      if Self.Data.Value.Kind = Matreshka.JSON_Types.Float_Value then
          return League.Holders.Universal_Integer (Self.Data.Value.Float_Value);
 
-      elsif Self.Data.Value.Kind = Matreshka.JSON_Values.Integer_Value then
+      elsif Self.Data.Value.Kind = Matreshka.JSON_Types.Integer_Value then
          return Self.Data.Value.Integer_Value;
 
       else
@@ -322,10 +321,10 @@ package body League.JSON.Values is
       return
        (Ada.Finalization.Controlled with
           Data =>
-            new Matreshka.JSON_Values.Shared_JSON_Value'
+            new Matreshka.JSON_Types.Shared_JSON_Value'
                  (Counter => <>,
                   Value   =>
-                   (Kind          => Matreshka.JSON_Values.Boolean_Value,
+                   (Kind          => Matreshka.JSON_Types.Boolean_Value,
                     Boolean_Value => Value)));
    end To_JSON_Value;
 
@@ -339,10 +338,10 @@ package body League.JSON.Values is
       return
        (Ada.Finalization.Controlled with
           Data =>
-            new Matreshka.JSON_Values.Shared_JSON_Value'
+            new Matreshka.JSON_Types.Shared_JSON_Value'
                  (Counter => <>,
                   Value   =>
-                   (Kind        => Matreshka.JSON_Values.Float_Value,
+                   (Kind        => Matreshka.JSON_Types.Float_Value,
                     Float_Value => Value)));
    end To_JSON_Value;
 
@@ -356,10 +355,10 @@ package body League.JSON.Values is
       return
        (Ada.Finalization.Controlled with
           Data =>
-            new Matreshka.JSON_Values.Shared_JSON_Value'
+            new Matreshka.JSON_Types.Shared_JSON_Value'
                  (Counter => <>,
                   Value   =>
-                   (Kind          => Matreshka.JSON_Values.Integer_Value,
+                   (Kind          => Matreshka.JSON_Types.Integer_Value,
                     Integer_Value => Value)));
    end To_JSON_Value;
 
@@ -379,10 +378,10 @@ package body League.JSON.Values is
       return
        (Ada.Finalization.Controlled with
           Data =>
-            new Matreshka.JSON_Values.Shared_JSON_Value'
+            new Matreshka.JSON_Types.Shared_JSON_Value'
                  (Counter => <>,
                   Value   =>
-                   (Kind         => Matreshka.JSON_Values.String_Value,
+                   (Kind         => Matreshka.JSON_Types.String_Value,
                     String_Value => Aux)));
    end To_JSON_Value;
 
@@ -402,10 +401,10 @@ package body League.JSON.Values is
       return
        (Ada.Finalization.Controlled with
           Data =>
-            new Matreshka.JSON_Values.Shared_JSON_Value'
+            new Matreshka.JSON_Types.Shared_JSON_Value'
                  (Counter => <>,
                   Value   =>
-                   (Kind        => Matreshka.JSON_Values.Array_Value,
+                   (Kind        => Matreshka.JSON_Types.Array_Value,
                     Array_Value => Aux)));
    end To_JSON_Value;
 
@@ -416,19 +415,19 @@ package body League.JSON.Values is
    function To_JSON_Value
     (Value : League.JSON.Objects.JSON_Object) return JSON_Value
    is
-      Aux : constant Matreshka.JSON_Objects.Shared_JSON_Object_Access
+      Aux : constant Matreshka.JSON_Types.Shared_JSON_Object_Access
         := League.JSON.Objects.Internals.Internal (Value);
 
    begin
-      Matreshka.JSON_Objects.Reference (Aux);
+      Matreshka.JSON_Types.Reference (Aux);
 
       return
        (Ada.Finalization.Controlled with
           Data =>
-            new Matreshka.JSON_Values.Shared_JSON_Value'
+            new Matreshka.JSON_Types.Shared_JSON_Value'
                  (Counter => <>,
                   Value   =>
-                   (Kind         => Matreshka.JSON_Values.Object_Value,
+                   (Kind         => Matreshka.JSON_Types.Object_Value,
                     Object_Value => Aux)));
    end To_JSON_Value;
 
@@ -471,7 +470,7 @@ package body League.JSON.Values is
        := League.JSON.Objects.Empty_JSON_Object)
        return League.JSON.Objects.JSON_Object is
    begin
-      if Self.Data.Value.Kind = Matreshka.JSON_Values.Object_Value then
+      if Self.Data.Value.Kind = Matreshka.JSON_Types.Object_Value then
          return
            League.JSON.Objects.Internals.Create (Self.Data.Value.Object_Value);
 
@@ -490,7 +489,7 @@ package body League.JSON.Values is
        := League.Strings.Empty_Universal_String)
        return League.Strings.Universal_String is
    begin
-      if Self.Data.Value.Kind = Matreshka.JSON_Values.String_Value then
+      if Self.Data.Value.Kind = Matreshka.JSON_Types.String_Value then
         return League.Strings.Internals.Create (Self.Data.Value.String_Value);
 
       else
