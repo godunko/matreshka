@@ -99,7 +99,9 @@ package body Matreshka.JSON_Types is
       Source : not null Shared_JSON_Object_Access := Self;
 
    begin
-      if not Matreshka.Atomics.Counters.Is_One (Self.Counter) then
+      if Self = Empty_Shared_JSON_Object'Access
+        or else not Matreshka.Atomics.Counters.Is_One (Self.Counter)
+      then
          Self :=
            new Shared_JSON_Object'(Counter => <>, Values => Source.Values);
 
