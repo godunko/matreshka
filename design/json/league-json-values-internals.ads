@@ -41,82 +41,22 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Finalization;
+with Matreshka.JSON_Types;
 
-with League.String_Vectors;
-with League.Strings;
-limited with League.JSON.Values;
-private with Matreshka.JSON_Types;
-
-package League.JSON.Objects is
+package League.JSON.Values.Internals is
 
    pragma Preelaborate;
 
-   type JSON_Object is tagged private;
-   pragma Preelaborable_Initialization (JSON_Object);
+   function Internal
+    (Self : League.JSON.Values.JSON_Value)
+       return not null Matreshka.JSON_Types.Shared_JSON_Value_Access;
 
-   Empty_JSON_Object : constant JSON_Object;
-
-   function Contains
-    (Self : JSON_Object'Class;
-     Key  : League.Strings.Universal_String) return Boolean;
-   --  Returns True if the object contains key Key.
-
-   procedure Insert
-    (Self  : in out JSON_Object'Class;
-     Key   : League.Strings.Universal_String;
-     Value : League.JSON.Values.JSON_Value);
-   --  Inserts a new item with the key key and a value of value.
-   --
-   --  If there is already an item with the key key then that item's value is
-   --  replaced with value.
-
-   function Is_Empty (Self : JSON_Object'Class) return Boolean;
-   --  Returns True if the object is empty.
-
-   function Keys
-    (Self : JSON_Object'Class)
-       return League.String_Vectors.Universal_String_Vector;
-   --  Returns a list of all keys in this object.
-
-   function Length (Self : JSON_Object'Class) return Natural;
-   --  Returns the number of (key, value) pairs stored in the object.
-
-   procedure Remove
-    (Self : in out JSON_Object'Class;
-     Key  : League.Strings.Universal_String);
-   --  Removes key from the object.
-
-   function Take
-    (Self : in out JSON_Object'Class;
-     Key  : League.Strings.Universal_String)
+   function Create
+    (Data : not null Matreshka.JSON_Types.Shared_JSON_Value_Access)
        return League.JSON.Values.JSON_Value;
-   --  Removes key from the object.
-   --
-   --  Returns a JSON_Value containing the value referenced by key. If key was
-   --  not contained in the object, the returned JSON_Value is Undefined.
 
-   function Value
-    (Self : JSON_Object'Class;
-     Key  : League.Strings.Universal_String)
+   function Wrap
+    (Data : not null Matreshka.JSON_Types.Shared_JSON_Value_Access)
        return League.JSON.Values.JSON_Value;
-   --  Returns a JSON_Value representing the value for the key Key.
-   --
-   --  The returned JSON_Value is Undefined, if the key does not exist.
 
-private
-
-   type JSON_Object is new Ada.Finalization.Controlled with record
-      Data : Matreshka.JSON_Types.Shared_JSON_Object_Access
-        := Matreshka.JSON_Types.Empty_Shared_JSON_Object'Access;
-   end record;
-
-   overriding procedure Adjust (Self : in out JSON_Object);
-
-   overriding procedure Finalize (Self : in out JSON_Object);
-
-   Empty_JSON_Object : constant JSON_Object
-     := (Ada.Finalization.Controlled with
-           Data => Matreshka.JSON_Types.Empty_Shared_JSON_Object'Access);
-
-end League.JSON.Objects;
+end League.JSON.Values.Internals;

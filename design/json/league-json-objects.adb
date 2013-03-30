@@ -41,56 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
--- with League.JSON.Values;
+with League.JSON.Values.Internals;
 
 package body League.JSON.Objects is
-
---   function Contains
---    (Self : JSON_Object'Class;
---     Key  : League.Strings.Universal_String) return Boolean;
---   --  Returns True if the object contains key Key.
---
---   procedure Insert
---    (Self  : in out JSON_Object'Class;
---     Key   : League.Strings.Universal_String;
---     Value : League.JSON.Values.JSON_Value);
---   --  Inserts a new item with the key key and a value of value.
---   --
---   --  If there is already an item with the key key then that item's value is
---   --  replaced with value.
---
---   function Is_Empty (Self : JSON_Object'Class) return Boolean;
---   --  Returns True if the object is empty.
---
---   function Keys
---    (Self : JSON_Object'Class)
---       return League.String_Vectors.Universal_String_Vector;
---   --  Returns a list of all keys in this object.
---
---   function Length (Self : JSON_Object'Class) return Natural;
---   --  Returns the number of (key, value) pairs stored in the object.
---
---   procedure Remove
---    (Self : in out JSON_Object'Class;
---     Key  : League.Strings.Universal_String);
---   --  Removes key from the object.
---
---   function Take
---    (Self : in out JSON_Object'Class;
---     Key  : League.Strings.Universal_String)
---       return League.JSON.Values.JSON_Value;
---   --  Removes key from the object.
---   --
---   --  Returns a JSON_Value containing the value referenced by key. If key was
---   --  not contained in the object, the returned JSON_Value is Undefined.
---
---   function Value
---    (Self : JSON_Object'Class;
---     Key  : League.Strings.Universal_String)
---       return League.JSON.Values.JSON_Value;
---   --  Returns a JSON_Value representing the value for the key Key.
---   --
---   --  The returned JSON_Value is Undefined, if the key does not exist.
 
    ------------
    -- Adjust --
@@ -100,6 +53,17 @@ package body League.JSON.Objects is
    begin
       Matreshka.JSON_Types.Reference (Self.Data);
    end Adjust;
+
+   --------------
+   -- Contains --
+   --------------
+
+   function Contains
+    (Self : JSON_Object'Class;
+     Key  : League.Strings.Universal_String) return Boolean is
+   begin
+      return Self.Data.Values.Contains (Key);
+   end Contains;
 
    --------------
    -- Finalize --
@@ -113,5 +77,141 @@ package body League.JSON.Objects is
          Matreshka.JSON_Types.Dereference (Self.Data);
       end if;
    end Finalize;
+
+   ------------
+   -- Insert --
+   ------------
+
+   procedure Insert
+    (Self  : in out JSON_Object'Class;
+     Key   : League.Strings.Universal_String;
+     Value : League.JSON.Values.JSON_Value)
+   is
+      Position  : constant Matreshka.JSON_Types.Value_Maps.Cursor
+        := Self.Data.Values.Find (Key);
+      New_Value : constant Matreshka.JSON_Types.Shared_JSON_Value_Access
+        := League.JSON.Values.Internals.Internal (Value);
+      Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      Matreshka.JSON_Types.Reference (New_Value);
+
+      if Matreshka.JSON_Types.Value_Maps.Has_Element (Position) then
+         Old_Value := Matreshka.JSON_Types.Value_Maps.Element (Position);
+         Matreshka.JSON_Types.Dereference (Old_Value);
+         Self.Data.Values.Replace_Element (Position, New_Value);
+
+      else
+         Self.Data.Values.Insert (Key, New_Value);
+      end if;
+   end Insert;
+
+   --------------
+   -- Is_Empty --
+   --------------
+
+   function Is_Empty (Self : JSON_Object'Class) return Boolean is
+   begin
+      return Self.Data.Values.Is_Empty;
+   end Is_Empty;
+
+   ----------
+   -- Keys --
+   ----------
+
+   function Keys
+    (Self : JSON_Object'Class)
+       return League.String_Vectors.Universal_String_Vector
+   is
+      Position : Matreshka.JSON_Types.Value_Maps.Cursor
+        := Self.Data.Values.First;
+      Result   : League.String_Vectors.Universal_String_Vector;
+
+   begin
+      while Matreshka.JSON_Types.Value_Maps.Has_Element (Position) loop
+         Result.Append (Matreshka.JSON_Types.Value_Maps.Key (Position));
+         Matreshka.JSON_Types.Value_Maps.Next (Position);
+      end loop;
+
+      return Result;
+   end Keys;
+
+   ------------
+   -- Length --
+   ------------
+
+   function Length (Self : JSON_Object'Class) return Natural is
+   begin
+      return Natural (Self.Data.Values.Length);
+   end Length;
+
+   ------------
+   -- Remove --
+   ------------
+
+   procedure Remove
+    (Self : in out JSON_Object'Class;
+     Key  : League.Strings.Universal_String)
+   is
+      Position  : Matreshka.JSON_Types.Value_Maps.Cursor
+        := Self.Data.Values.Find (Key);
+      Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      if Matreshka.JSON_Types.Value_Maps.Has_Element (Position) then
+         Old_Value := Matreshka.JSON_Types.Value_Maps.Element (Position);
+         Matreshka.JSON_Types.Dereference (Old_Value);
+         Self.Data.Values.Delete (Position);
+      end if;
+   end Remove;
+
+   ----------
+   -- Take --
+   ----------
+
+   function Take
+    (Self : in out JSON_Object'Class;
+     Key  : League.Strings.Universal_String)
+       return League.JSON.Values.JSON_Value
+   is
+      Position  : Matreshka.JSON_Types.Value_Maps.Cursor
+        := Self.Data.Values.Find (Key);
+      Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      if Matreshka.JSON_Types.Value_Maps.Has_Element (Position) then
+         Old_Value := Matreshka.JSON_Types.Value_Maps.Element (Position);
+         Self.Data.Values.Delete (Position);
+
+         return League.JSON.Values.Internals.Wrap (Old_Value);
+
+      else
+         return League.JSON.Values.Empty_JSON_Value;
+      end if;
+   end Take;
+
+   -----------
+   -- Value --
+   -----------
+
+   function Value
+    (Self : JSON_Object'Class;
+     Key  : League.Strings.Universal_String)
+       return League.JSON.Values.JSON_Value
+   is
+      Position  : constant Matreshka.JSON_Types.Value_Maps.Cursor
+        := Self.Data.Values.Find (Key);
+
+   begin
+      if Matreshka.JSON_Types.Value_Maps.Has_Element (Position) then
+
+         return
+           League.JSON.Values.Internals.Wrap
+            (Matreshka.JSON_Types.Value_Maps.Element (Position));
+
+      else
+         return League.JSON.Values.Empty_JSON_Value;
+      end if;
+   end Value;
 
 end League.JSON.Objects;

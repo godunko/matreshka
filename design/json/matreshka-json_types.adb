@@ -59,6 +59,10 @@ package body Matreshka.JSON_Types is
       if Self /= Empty_Shared_JSON_Object'Access
         and then Matreshka.Atomics.Counters.Decrement (Self.Counter)
       then
+         for Value of Self.Values loop
+            Dereference (Value);
+         end loop;
+
          Free (Self);
 
       else

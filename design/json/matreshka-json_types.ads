@@ -41,7 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Hashed_Maps;
+
 with League.Holders;
+with League.Strings.Hash;
 with Matreshka.Atomics.Counters;
 with Matreshka.Internals.Strings;
 with Matreshka.JSON_Arrays;
@@ -70,24 +73,22 @@ package Matreshka.JSON_Types is
    -- Shared_JSON_Object --
    ------------------------
 
---   package Value_Maps is
---     new Ada.Containers.Hashed_Maps
---          (League.Strings.Universal_String,
---           League.JSON.Values.JSON_Value,
---           League.Strings.Hash,
---           League.Strings."=",
---           League.JSON.Values."=");
+   package Value_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Shared_JSON_Value_Access,
+           League.Strings.Hash,
+           League.Strings."=");
 
    type Shared_JSON_Object is limited record
       Counter : Matreshka.Atomics.Counters.Counter;
---      Values  : Value_Maps.Map;
+      Values  : Value_Maps.Map;
    end record;
 
    type Shared_JSON_Object_Access is access all Shared_JSON_Object;
 
    Empty_Shared_JSON_Object : aliased Shared_JSON_Object
-     := (Counter => <>);
---     := (Counter => <>, Values => <>);
+     := (Counter => <>, Values => <>);
 
    procedure Reference (Self : not null Shared_JSON_Object_Access);
    --  Increments internal reference counter.
@@ -126,7 +127,8 @@ package Matreshka.JSON_Types is
             Array_Value   : Matreshka.JSON_Arrays.Shared_JSON_Array_Access;
 
          when Object_Value =>
-            Object_Value  : Shared_JSON_Object_Access;
+            Object_Value  : Shared_JSON_Object_Access
+              := Empty_Shared_JSON_Object'Access;
 
          when Null_Value =>
             null;
