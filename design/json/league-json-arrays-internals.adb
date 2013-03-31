@@ -49,10 +49,10 @@ package body League.JSON.Arrays.Internals is
    ------------
 
    function Create
-    (Data : not null Matreshka.JSON_Arrays.Shared_JSON_Array_Access)
+    (Data : not null Matreshka.JSON_Types.Shared_JSON_Array_Access)
        return League.JSON.Arrays.JSON_Array is
    begin
-      Matreshka.JSON_Arrays.Reference (Data);
+      Matreshka.JSON_Types.Reference (Data);
 
       return (Ada.Finalization.Controlled with Data => Data);
    end Create;
@@ -63,7 +63,7 @@ package body League.JSON.Arrays.Internals is
 
    function Internal
     (Self : League.JSON.Arrays.JSON_Array)
-       return not null Matreshka.JSON_Arrays.Shared_JSON_Array_Access is
+       return not null Matreshka.JSON_Types.Shared_JSON_Array_Access is
    begin
       return Self.Data;
    end Internal;

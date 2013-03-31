@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.JSON_Arrays;
+with Matreshka.JSON_Types;
 
 package League.JSON.Arrays.Internals is
 
@@ -49,10 +49,10 @@ package League.JSON.Arrays.Internals is
 
    function Internal
     (Self : League.JSON.Arrays.JSON_Array)
-       return not null Matreshka.JSON_Arrays.Shared_JSON_Array_Access;
+       return not null Matreshka.JSON_Types.Shared_JSON_Array_Access;
 
    function Create
-    (Data : not null Matreshka.JSON_Arrays.Shared_JSON_Array_Access)
+    (Data : not null Matreshka.JSON_Types.Shared_JSON_Array_Access)
        return League.JSON.Arrays.JSON_Array;
 
 end League.JSON.Arrays.Internals;

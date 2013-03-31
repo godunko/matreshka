@@ -42,12 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Containers.Hashed_Maps;
+with Ada.Containers.Vectors;
 
 with League.Holders;
 with League.Strings.Hash;
 with Matreshka.Atomics.Counters;
 with Matreshka.Internals.Strings;
-with Matreshka.JSON_Arrays;
 
 package Matreshka.JSON_Types is
 
@@ -68,6 +68,35 @@ package Matreshka.JSON_Types is
    type Shared_JSON_Value;
 
    type Shared_JSON_Value_Access is access all Shared_JSON_Value;
+
+   -----------------------
+   -- Shared_JSON_Array --
+   -----------------------
+
+   package Value_Vectors is
+     new Ada.Containers.Vectors (Positive, Shared_JSON_Value_Access);
+
+   type Shared_JSON_Array is limited record
+      Counter : Matreshka.Atomics.Counters.Counter;
+      Values  : Value_Vectors.Vector;
+   end record;
+
+   type Shared_JSON_Array_Access is access all Shared_JSON_Array;
+
+   Empty_Shared_JSON_Array : aliased Shared_JSON_Array
+     := (Counter => <>, Values => <>);
+
+   procedure Reference (Self : not null Shared_JSON_Array_Access);
+   --  Increments internal reference counter.
+
+   procedure Dereference (Self : in out Shared_JSON_Array_Access);
+   --  Decrements internal reference counter and deallocates shared Array when
+   --  counter reach zero. Sets Self to null.
+
+   procedure Mutate (Self : in out not null Shared_JSON_Array_Access);
+   --  Mutate object: new shared object is allocated when reference counter is
+   --  greater than one, reference counter of original object is decremented
+   --  and original value is copied. Otherwise, shared object is unchanged.
 
    ------------------------
    -- Shared_JSON_Object --
@@ -124,7 +153,8 @@ package Matreshka.JSON_Types is
             String_Value  : Matreshka.Internals.Strings.Shared_String_Access;
 
          when Array_Value =>
-            Array_Value   : Matreshka.JSON_Arrays.Shared_JSON_Array_Access;
+            Array_Value   : Shared_JSON_Array_Access
+              := Empty_Shared_JSON_Array'Access;
 
          when Object_Value =>
             Object_Value  : Shared_JSON_Object_Access

@@ -41,66 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.JSON.Values.Internals;
 
 package body League.JSON.Arrays is
-
---   procedure Append
---    (Self : in out JSON_Array'Class; Value : League.JSON.Values.JSON_Value);
---   --  Inserts value at the end of the array.
---
---   function Element
---    (Self  : JSON_Array'Class;
---     Index : Positive) return League.JSON.Values.JSON_Value;
---    --  Returns a JSON_Value representing the value for index Index.
---
---   function First_Element
---    (Self : JSON_Array'Class) return League.JSON.Values.JSON_Value;
---   --  Returns the first value stored in the array.
---
---   procedure Insert
---    (Self  : in out JSON_Array'Class;
---     Index : Positive;
---     Value : League.JSON.Values.JSON_Value);
---   --  Inserts value at index position Index in the array. If Index is 1, the
---   --  value is prepended to the array. If Index is large when Length, the
---   --  value is appended to the array.
---
---   function Is_Empty (Self : JSON_Array'Class) return Boolean;
---   --  Returns true if the object is empty.
---
---   function Last_Element
---    (Self : JSON_Array'Class) return League.JSON.Values.JSON_Value;
---   --  Returns the last value stored in the array.
---
---   function Length (Self : JSON_Array'Class) return Natural;
---   --  Returns the number of values stored in the array.
---
---   procedure Prepend
---    (Self : in out JSON_Array'Class; Value : League.JSON.Values.JSON_Value);
---   --  Inserts value at the beginning of the array.
---
---   procedure Remove (Self : in out JSON_Array'Class; Index : Positive);
---   --  Removes the value at index position Index. Index must be a valid index
---   --  position in the array.
---
---   procedure Remove_First (Self : in out JSON_Array'Class);
---   --  Removes the first item in the array.
---
---   procedure Remove_Last (Self : in out JSON_Array'Class);
---   --  Removes the last item in the array.
---
---   procedure Replace
---    (Self  : in out JSON_Array'Class;
---     Index : Positive;
---     Value : League.JSON.Values.JSON_Value);
---   --  Replaces the item at index position Index with Value. Index must be a
---   --  valid index position in the array.
---
---   function Take
---    (Self  : in out JSON_Array'Class;
---     Index : Positive) return League.JSON.Values.JSON_Value;
---   --  Removes the item at index position Index and returns it. Index must be a
---   --  valid index position in the array.
 
    ------------
    -- Adjust --
@@ -108,20 +51,245 @@ package body League.JSON.Arrays is
 
    overriding procedure Adjust (Self : in out JSON_Array) is
    begin
-      Matreshka.JSON_Arrays.Reference (Self.Data);
+      Matreshka.JSON_Types.Reference (Self.Data);
    end Adjust;
+
+   ------------
+   -- Append --
+   ------------
+
+   procedure Append
+    (Self : in out JSON_Array'Class; Value : League.JSON.Values.JSON_Value)
+   is
+      Aux : constant Matreshka.JSON_Types.Shared_JSON_Value_Access
+        := League.JSON.Values.Internals.Internal (Value);
+
+   begin
+      Matreshka.JSON_Types.Mutate (Self.Data);
+      Matreshka.JSON_Types.Reference (Aux);
+      Self.Data.Values.Append (Aux);
+   end Append;
+
+   ------------
+   -- Delete --
+   ------------
+
+   procedure Delete (Self : in out JSON_Array'Class; Index : Positive) is
+      Aux : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      if Index
+           in Self.Data.Values.First_Index .. Self.Data.Values.Last_Index
+      then
+         Matreshka.JSON_Types.Mutate (Self.Data);
+         Aux := Self.Data.Values.Element (Index);
+         Self.Data.Values.Delete (Index);
+         Matreshka.JSON_Types.Dereference (Aux);
+      end if;
+   end Delete;
+
+   ------------------
+   -- Delete_First --
+   ------------------
+
+   procedure Delete_First (Self : in out JSON_Array'Class) is
+      Aux : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      if not Self.Data.Values.Is_Empty then
+         Matreshka.JSON_Types.Mutate (Self.Data);
+         Aux := Self.Data.Values.First_Element;
+         Self.Data.Values.Delete_First;
+         Matreshka.JSON_Types.Dereference (Aux);
+      end if;
+   end Delete_First;
+
+   -----------------
+   -- Delete_Last --
+   -----------------
+
+   procedure Delete_Last (Self : in out JSON_Array'Class) is
+      Aux : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      if not Self.Data.Values.Is_Empty then
+         Matreshka.JSON_Types.Mutate (Self.Data);
+         Aux := Self.Data.Values.Last_Element;
+         Self.Data.Values.Delete_Last;
+         Matreshka.JSON_Types.Dereference (Aux);
+      end if;
+   end Delete_Last;
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element
+    (Self  : JSON_Array'Class;
+     Index : Positive) return League.JSON.Values.JSON_Value is
+   begin
+      if Index
+           in Self.Data.Values.First_Index .. Self.Data.Values.Last_Index
+      then
+         return
+           League.JSON.Values.Internals.Create
+            (Self.Data.Values.Element (Index));
+
+      else
+         return League.JSON.Values.Empty_JSON_Value;
+      end if;
+   end Element;
 
    --------------
    -- Finalize --
    --------------
 
    overriding procedure Finalize (Self : in out JSON_Array) is
-      use type Matreshka.JSON_Arrays.Shared_JSON_Array_Access;
+      use type Matreshka.JSON_Types.Shared_JSON_Array_Access;
 
    begin
       if Self.Data /= null then
-         Matreshka.JSON_Arrays.Dereference (Self.Data);
+         Matreshka.JSON_Types.Dereference (Self.Data);
       end if;
    end Finalize;
+
+   -------------------
+   -- First_Element --
+   -------------------
+
+   function First_Element
+    (Self : JSON_Array'Class) return League.JSON.Values.JSON_Value is
+   begin
+      if not Self.Data.Values.Is_Empty then
+         return
+           League.JSON.Values.Internals.Create
+            (Self.Data.Values.First_Element);
+
+      else
+         return League.JSON.Values.Empty_JSON_Value;
+      end if;
+   end First_Element;
+
+   ------------
+   -- Insert --
+   ------------
+
+   procedure Insert
+    (Self  : in out JSON_Array'Class;
+     Index : Positive;
+     Value : League.JSON.Values.JSON_Value)
+   is
+      Aux : constant Matreshka.JSON_Types.Shared_JSON_Value_Access
+        := League.JSON.Values.Internals.Internal (Value);
+
+   begin
+      if Index
+           in Self.Data.Values.First_Index .. Self.Data.Values.Last_Index
+      then
+         Matreshka.JSON_Types.Mutate (Self.Data);
+         Matreshka.JSON_Types.Reference (Aux);
+         Self.Data.Values.Insert (Index, Aux);
+      end if;
+   end Insert;
+
+   --------------
+   -- Is_Empty --
+   --------------
+
+   function Is_Empty (Self : JSON_Array'Class) return Boolean is
+   begin
+      return Self.Data.Values.Is_Empty;
+   end Is_Empty;
+
+   ------------------
+   -- Last_Element --
+   ------------------
+
+   function Last_Element
+    (Self : JSON_Array'Class) return League.JSON.Values.JSON_Value is
+   begin
+      if not Self.Data.Values.Is_Empty then
+         return
+           League.JSON.Values.Internals.Create (Self.Data.Values.Last_Element);
+
+      else
+         return League.JSON.Values.Empty_JSON_Value;
+      end if;
+   end Last_Element;
+
+   ------------
+   -- Length --
+   ------------
+
+   function Length (Self : JSON_Array'Class) return Natural is
+   begin
+      return Natural (Self.Data.Values.Length);
+   end Length;
+
+   -------------
+   -- Prepend --
+   -------------
+
+   procedure Prepend
+    (Self : in out JSON_Array'Class; Value : League.JSON.Values.JSON_Value)
+   is
+      Aux : constant Matreshka.JSON_Types.Shared_JSON_Value_Access
+        := League.JSON.Values.Internals.Internal (Value);
+
+   begin
+      Matreshka.JSON_Types.Mutate (Self.Data);
+      Matreshka.JSON_Types.Reference (Aux);
+      Self.Data.Values.Prepend (Aux);
+   end Prepend;
+
+   -------------
+   -- Replace --
+   -------------
+
+   procedure Replace
+    (Self  : in out JSON_Array'Class;
+     Index : Positive;
+     Value : League.JSON.Values.JSON_Value)
+   is
+      New_Value : constant Matreshka.JSON_Types.Shared_JSON_Value_Access
+        := League.JSON.Values.Internals.Internal (Value);
+      Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      if Index
+           in Self.Data.Values.First_Index .. Self.Data.Values.Last_Index
+      then
+         Matreshka.JSON_Types.Mutate (Self.Data);
+         Matreshka.JSON_Types.Reference (New_Value);
+         Old_Value := Self.Data.Values.Element (Index);
+         Self.Data.Values.Replace_Element (Index, New_Value);
+         Matreshka.JSON_Types.Dereference (Old_Value);
+      end if;
+   end Replace;
+
+   ----------
+   -- Take --
+   ----------
+
+   function Take
+    (Self  : in out JSON_Array'Class;
+     Index : Positive) return League.JSON.Values.JSON_Value
+   is
+      Old_Value : Matreshka.JSON_Types.Shared_JSON_Value_Access;
+
+   begin
+      if Index
+           in Self.Data.Values.First_Index .. Self.Data.Values.Last_Index
+      then
+         Matreshka.JSON_Types.Mutate (Self.Data);
+         Old_Value := Self.Data.Values.Element (Index);
+         Self.Data.Values.Delete (Index);
+
+         return League.JSON.Values.Internals.Wrap (Old_Value);
+
+      else
+         return League.JSON.Values.Empty_JSON_Value;
+      end if;
+   end Take;
 
 end League.JSON.Arrays;
