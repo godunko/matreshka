@@ -109,6 +109,32 @@ package body Matreshka.JSON_Types is
       if Self /= Empty_Shared_JSON_Value'Access
         and then Matreshka.Atomics.Counters.Decrement (Self.Counter)
       then
+         case Self.Value.Kind is
+            when Empty_Value =>
+               null;
+
+            when Boolean_Value =>
+               null;
+
+            when Integer_Value =>
+               null;
+
+            when Float_Value =>
+               null;
+
+            when String_Value =>
+               Matreshka.Internals.Strings.Dereference (Self.Value.String_Value);
+
+            when Array_Value =>
+               Dereference (Self.Value.Array_Value);
+
+            when Object_Value =>
+               Dereference (Self.Value.Object_Value);
+
+            when Null_Value =>
+               null;
+         end case;
+
          Free (Self);
 
       else

@@ -150,7 +150,8 @@ package Matreshka.JSON_Types is
             Float_Value   : League.Holders.Universal_Float;
 
          when String_Value =>
-            String_Value  : Matreshka.Internals.Strings.Shared_String_Access;
+            String_Value  : Matreshka.Internals.Strings.Shared_String_Access
+              := Matreshka.Internals.Strings.Shared_Empty'Access;
 
          when Array_Value =>
             Array_Value   : Shared_JSON_Array_Access
