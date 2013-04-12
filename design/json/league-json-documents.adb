@@ -45,10 +45,13 @@ with Ada.Streams;
 
 with League.JSON.Arrays.Internals;
 with League.JSON.Objects.Internals;
+with League.Stream_Element_Vectors.Internals;
 with League.Strings.Internals;
+with Matreshka.Internals.Stream_Element_Vectors;
 with Matreshka.Internals.Strings;
 with Matreshka.Internals.Text_Codecs.UTF16;
 with Matreshka.Internals.Text_Codecs.UTF8;
+with Matreshka.JSON_Generator;
 with Matreshka.JSON_Parser;
 with Matreshka.JSON_Types;
 
@@ -355,13 +358,29 @@ package body League.JSON.Documents is
    function To_JSON
     (Self     : JSON_Document'Class;
      Encoding : JSON_Encoding := UTF8)
-       return League.Stream_Element_Vectors.Stream_Element_Vector is
-   begin
-      --  Converts the JSON_Document to an encoded JSON document. Encoding can
-      --  be selected by Encoding parameter.
+       return League.Stream_Element_Vectors.Stream_Element_Vector
+   is
+      Aux    : constant League.Strings.Universal_String := To_JSON (Self);
+      Result :
+        Matreshka.Internals.Stream_Element_Vectors
+          .Shared_Stream_Element_Vector_Access;
 
-      raise Program_Error;
-      return League.Stream_Element_Vectors.Empty_Stream_Element_Vector;
+   begin
+      if Encoding /= UTF8 then
+         --  XXX Not implemented yet.
+
+         raise Program_Error;
+      end if;
+
+      declare
+         Encoder : Matreshka.Internals.Text_Codecs.Abstract_Encoder'Class
+           := Matreshka.Internals.Text_Codecs.UTF8.Encoder;
+
+      begin
+         Encoder.Encode (League.Strings.Internals.Internal (Aux), Result);
+
+         return League.Stream_Element_Vectors.Internals.Wrap (Result);
+      end;
    end To_JSON;
 
    -------------
@@ -371,10 +390,7 @@ package body League.JSON.Documents is
    function To_JSON
     (Self : JSON_Document'Class) return League.Strings.Universal_String is
    begin
-      --  Converts the JSON_Document to an encoded JSON document.
-
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
+      return Matreshka.JSON_Generator.Generate (Self);
    end To_JSON;
 
    ---------------
