@@ -107,6 +107,7 @@ package body Matreshka.JSON_Types is
 
    begin
       if Self /= Empty_Shared_JSON_Value'Access
+        and then Self /= Null_Shared_JSON_Value'Access
         and then Matreshka.Atomics.Counters.Decrement (Self.Counter)
       then
          case Self.Value.Kind is
@@ -251,7 +252,9 @@ package body Matreshka.JSON_Types is
 
    procedure Reference (Self : not null Shared_JSON_Value_Access) is
    begin
-      if Self /= Empty_Shared_JSON_Value'Access then
+      if Self /= Empty_Shared_JSON_Value'Access
+        and Self /= Null_Shared_JSON_Value'Access
+      then
          Matreshka.Atomics.Counters.Increment (Self.Counter);
       end if;
    end Reference;

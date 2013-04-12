@@ -67,6 +67,8 @@ package League.JSON.Values is
 
    Empty_JSON_Value : constant JSON_Value;
 
+   Null_JSON_Value : constant JSON_Value;
+
    function To_JSON_Value (Value : Boolean) return JSON_Value;
    function To_JSON_Value
     (Value : League.Holders.Universal_Float) return JSON_Value;
@@ -179,5 +181,9 @@ private
    Empty_JSON_Value : constant JSON_Value
      := (Ada.Finalization.Controlled with
            Data => Matreshka.JSON_Types.Empty_Shared_JSON_Value'Access);
+
+   Null_JSON_Value  : constant JSON_Value
+     := (Ada.Finalization.Controlled with
+           Data => Matreshka.JSON_Types.Null_Shared_JSON_Value'Access);
 
 end League.JSON.Values;

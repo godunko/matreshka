@@ -173,6 +173,11 @@ package Matreshka.JSON_Types is
 
    Empty_Shared_JSON_Value : aliased Shared_JSON_Value
      := (Counter => <>, Value => (Kind => Empty_Value));
+   --  Preallocated shared object for empty value.
+
+   Null_Shared_JSON_Value  : aliased Shared_JSON_Value
+     := (Counter => <>, Value => (Kind => Null_Value));
+   --  Preallocated shared object for 'null' value.
 
    procedure Reference (Self : not null Shared_JSON_Value_Access);
    --  Increments internal reference counter.
