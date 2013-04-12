@@ -41,9 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision: 3824 $ $Date: 2013-03-28 20:15:46 +0200 (Чт., 28 марта 2013) $
 ------------------------------------------------------------------------------
+with League.Strings;
+with League.JSON.Documents;
 
-package Matreshka.JSON is
+package Matreshka.JSON_Parser is
 
-   pragma Pure;
+   procedure Parse
+    (Text    : League.Strings.Universal_String;
+     Value   : out League.JSON.Documents.JSON_Document;
+     Success : out Boolean);
 
-end Matreshka.JSON;
+end Matreshka.JSON_Parser;
