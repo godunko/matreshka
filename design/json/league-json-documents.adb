@@ -41,8 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Streams;
+
 with League.JSON.Arrays.Internals;
 with League.JSON.Objects.Internals;
+with League.Strings.Internals;
+with Matreshka.Internals.Strings;
+with Matreshka.Internals.Text_Codecs.UTF16;
+with Matreshka.Internals.Text_Codecs.UTF8;
 with Matreshka.JSON_Parser;
 with Matreshka.JSON_Types;
 
@@ -88,14 +94,143 @@ package body League.JSON.Documents is
 
    function From_JSON
     (Data : League.Stream_Element_Vectors.Stream_Element_Vector)
-       return JSON_Document is
-   begin
-      --  Parses an encoded JSON document and creates a JSON_Document from it.
-      --  Data can be encoded using UTF-8, UTF-16 and UTF-32 encoding. Encoding
-      --  is detected automatically accroding to RFC-4627.
+       return JSON_Document
+   is
+      use type Ada.Streams.Stream_Element;
+      use type Ada.Streams.Stream_Element_Offset;
 
-      raise Program_Error;
-      return Empty_JSON_Document;
+      C1       : Ada.Streams.Stream_Element;
+      C2       : Ada.Streams.Stream_Element;
+      C3       : Ada.Streams.Stream_Element;
+      C4       : Ada.Streams.Stream_Element;
+      Encoding : JSON_Encoding := UTF8;
+      Decoded  : Matreshka.Internals.Strings.Shared_String_Access;
+
+   begin
+      if Data.Length >= 4 then
+         --  Automatic detection of encoding form according to RFC-4627:
+         --
+         --  "Since the first two characters of a JSON text will always be
+         --  ASCII characters [RFC0020], it is possible to determine whether an
+         --  octet stream is UTF-8, UTF-16 (BE or LE), or UTF-32 (BE or LE) by
+         --  looking at the pattern of nulls in the first four octets.
+         --
+         --    00 00 00 xx  UTF-32BE
+         --    00 xx 00 xx  UTF-16BE
+         --    xx 00 00 00  UTF-32LE
+         --    xx 00 xx 00  UTF-16LE
+         --    xx xx xx xx  UTF-8"
+         --
+         --  UTF-8 is checked first because it is most widely used encoding.
+
+         C1 := Data.Element (1);
+         C2 := Data.Element (2);
+         C3 := Data.Element (3);
+         C4 := Data.Element (4);
+
+         if C1 /= 0 and C2 /= 0 and C3 /= 0 and C4 /= 0 then
+            --  xx xx xx xx  UTF-8
+
+            Encoding := UTF8;
+
+         elsif C1 = 0 and C2 /= 0 and C3 = 0 and C4 /= 0 then
+            --  00 xx 00 xx  UTF-16BE
+
+            Encoding := UTF16BE;
+
+         elsif C1 /= 0 and C2 = 0 and C3 /= 0 and C4 = 0 then
+            --  xx 00 xx 00  UTF-16LE
+
+            Encoding := UTF16LE;
+
+         elsif C1 = 0 and C2 = 0 and C3 = 0 and C4 /= 0 then
+            --  00 00 00 xx  UTF-32BE
+
+            Encoding := UTF32BE;
+
+         elsif C1 /= 0 and C2 = 0 and C3 = 0 and C4 = 0 then
+            --  xx 00 00 00  UTF-32LE
+
+            Encoding := UTF32LE;
+
+         else
+            --  Encoding is not detected.
+
+            raise Program_Error;
+         end if;
+      end if;
+
+      case Encoding is
+         when UTF8 =>
+            declare
+               Decoder : Matreshka.Internals.Text_Codecs.Abstract_Decoder'Class
+                 := Matreshka.Internals.Text_Codecs.UTF8.Decoder
+                     (Matreshka.Internals.Text_Codecs.Raw);
+
+            begin
+               Decoder.Decode (Data.To_Stream_Element_Array, Decoded);
+
+               if Decoder.Is_Mailformed then
+                  Matreshka.Internals.Strings.Dereference (Decoded);
+
+                  return League.JSON.Documents.Empty_JSON_Document;
+               end if;
+            end;
+
+         when UTF16 =>
+            --  Must never be happen.
+
+            raise Program_Error;
+
+         when UTF16BE =>
+            declare
+               Decoder : Matreshka.Internals.Text_Codecs.Abstract_Decoder'Class
+                 := Matreshka.Internals.Text_Codecs.UTF16.BE_Decoder
+                     (Matreshka.Internals.Text_Codecs.Raw);
+
+            begin
+               Decoder.Decode (Data.To_Stream_Element_Array, Decoded);
+
+               if Decoder.Is_Mailformed then
+                  Matreshka.Internals.Strings.Dereference (Decoded);
+
+                  return League.JSON.Documents.Empty_JSON_Document;
+               end if;
+            end;
+
+         when UTF16LE =>
+            declare
+               Decoder : Matreshka.Internals.Text_Codecs.Abstract_Decoder'Class
+                 := Matreshka.Internals.Text_Codecs.UTF16.LE_Decoder
+                     (Matreshka.Internals.Text_Codecs.Raw);
+
+            begin
+               Decoder.Decode (Data.To_Stream_Element_Array, Decoded);
+
+               if Decoder.Is_Mailformed then
+                  Matreshka.Internals.Strings.Dereference (Decoded);
+
+                  return League.JSON.Documents.Empty_JSON_Document;
+               end if;
+            end;
+
+         when UTF32 =>
+            --  Must never be happen.
+
+            raise Program_Error;
+
+         when UTF32BE =>
+            --  XX Decoder is not implemented.
+
+            raise Program_Error;
+
+         when UTF32LE =>
+            --  XX Decoder is not implemented.
+
+            raise Program_Error;
+      end case;
+
+      return From_JSON (League.Strings.Internals.Wrap (Decoded));
    end From_JSON;
 
    ---------------
