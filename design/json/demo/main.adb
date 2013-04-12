@@ -11,6 +11,7 @@ procedure Main is
    Value  : JSON_Value;
    Arr    : JSON_Array;
    Doc    : JSON_Document;
+   Str    : Universal_String;
 
 begin
    S := To_Universal_String ("xyz");
@@ -19,6 +20,5 @@ begin
    Object.Insert (To_Universal_String ("id"), To_JSON_Value (10));
    Object.Insert (To_Universal_String ("data"), To_JSON_Value (Arr));
 
-   Doc := To_JSON_Document (Object);
-   Put_Line (Doc.To_JSON.To_Wide_Wide_String);
+   Put_Line (To_JSON_Document (Object).To_JSON.To_Wide_Wide_String);
 end Main;
