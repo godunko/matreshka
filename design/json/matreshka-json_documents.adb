@@ -41,97 +41,84 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Finalization;
+with Ada.Unchecked_Deallocation;
 
-with League.JSON.Arrays;
-with League.JSON.Objects;
-with League.Stream_Element_Vectors;
-with League.Strings;
-private with Matreshka.JSON_Documents;
+package body Matreshka.JSON_Documents is
 
-package League.JSON.Documents is
+   use type Matreshka.JSON_Types.Shared_JSON_Array_Access;
+   use type Matreshka.JSON_Types.Shared_JSON_Object_Access;
 
-   pragma Preelaborate;
+   -----------------
+   -- Dereference --
+   -----------------
 
-   type JSON_Encoding is
-    (UTF8, UTF16, UTF16LE, UTF16BE, UTF32, UTF32LE, UTF32BE);
+   procedure Dereference (Self : in out Shared_JSON_Document_Access) is
 
-   type JSON_Document is tagged private;
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Shared_JSON_Document, Shared_JSON_Document_Access);
 
-   Empty_JSON_Document : constant JSON_Document;
+   begin
+      if Self /= Empty_Shared_JSON_Document'Access
+        and then Matreshka.Atomics.Counters.Decrement (Self.Counter)
+      then
+         if Self.Array_Value /= null then
+            Matreshka.JSON_Types.Dereference (Self.Array_Value);
+         end if;
 
---   function To_JSON_Document
---    (Value : League.JSON.Arrays.JSON_Array) return JSON_Document;
---   function To_JSON_Document
---    (Value : League.JSON.Objects.JSON_Object) return JSON_Document;
-   --  XXX These subprograms can be moved to Arrays and Objects packages.
+         if Self.Object_Value /= null then
+            Matreshka.JSON_Types.Dereference (Self.Object_Value);
+         end if;
 
-   function From_JSON
-    (Data : League.Stream_Element_Vectors.Stream_Element_Vector)
-       return JSON_Document;
-   --  Parses an encoded JSON document and creates a JSON_Document from it.
-   --  Data can be encoded using UTF-8, UTF-16 and UTF-32 encoding. Encoding
-   --  is detected automatically accroding to RFC-4627.
+         Free (Self);
 
-   function From_JSON
-    (Data : League.Strings.Universal_String) return JSON_Document;
-   --  Parses an encoded JSON document and creates a JSON_Document from it.
+      else
+         Self := null;
+      end if;
+   end Dereference;
 
-   function To_JSON
-    (Self     : JSON_Document'Class;
-     Encoding : JSON_Encoding := UTF8)
-       return League.Stream_Element_Vectors.Stream_Element_Vector;
-   --  Converts the JSON_Document to an encoded JSON document. Encoding can be
-   --  selected by Encoding parameter.
+   ------------
+   -- Mutate --
+   ------------
 
-   function To_JSON
-    (Self : JSON_Document'Class) return League.Strings.Universal_String;
-   --  Converts the JSON_Document to an encoded JSON document.
+   procedure Mutate (Self : in out not null Shared_JSON_Document_Access) is
+      Source : not null Shared_JSON_Document_Access := Self;
 
-   function Is_Array (Self : JSON_Document'Class) return Boolean;
-   --  Returns true if the document contains an array.
+   begin
+      if Self = Empty_Shared_JSON_Document'Access
+        or else not Matreshka.Atomics.Counters.Is_One (Self.Counter)
+      then
+         Self :=
+           new Shared_JSON_Document'
+                (Counter      => <>,
+                 Array_Value  => Source.Array_Value,
+                 Object_Value => Source.Object_Value);
 
-   function Is_Empty (Self : JSON_Document'Class) return Boolean;
-   --  Returns true if the document doesn't contain any data.
+         --  Update reference counters.
 
-   function Is_Object (Self : JSON_Document'Class) return Boolean;
-   --  Returns true if the document contains an object.
+         if Self.Array_Value /= null then
+            Matreshka.JSON_Types.Reference (Self.Array_Value);
+         end if;
 
-   procedure Set_Array
-    (Self  : in out JSON_Document'Class;
-     Value : League.JSON.Arrays.JSON_Array);
-   --  Sets array as the main object of this document.
+         if Self.Object_Value /= null then
+            Matreshka.JSON_Types.Reference (Self.Object_Value);
+         end if;
 
-   procedure Set_Object
-    (Self  : in out JSON_Document'Class;
-     Value : League.JSON.Objects.JSON_Object);
-   --  Sets object as the main object of this document.
+         --  Release source shared object.
 
-   function To_Array
-    (Self : JSON_Document'Class) return League.JSON.Arrays.JSON_Array;
-   --  Returns the JSON_Array contained in the document.
-   --
-   --  Returns an empty array if the document contains an object.
+         Dereference (Source);
+      end if;
+   end Mutate;
 
-   function To_Object
-    (Self : JSON_Document'Class) return League.JSON.Objects.JSON_Object;
-   --  Returns the JSON_Object contained in the document.
-   --
-   --  Returns an empty object if the document contains an array.
+   ---------------
+   -- Reference --
+   ---------------
 
-private
+   procedure Reference (Self : not null Shared_JSON_Document_Access) is
+   begin
+      if Self /= Empty_Shared_JSON_Document'Access then
+         Matreshka.Atomics.Counters.Increment (Self.Counter);
+      end if;
+   end Reference;
 
-   type JSON_Document is new Ada.Finalization.Controlled with record
-      Data : Matreshka.JSON_Documents.Shared_JSON_Document_Access
-        := Matreshka.JSON_Documents.Empty_Shared_JSON_Document'Access;
-   end record;
-
-   overriding procedure Adjust (Self : in out JSON_Document);
-
-   overriding procedure Finalize (Self : in out JSON_Document);
-
-   Empty_JSON_Document : constant JSON_Document
-     := (Ada.Finalization.Controlled with
-           Data => Matreshka.JSON_Documents.Empty_Shared_JSON_Document'Access);
-
-end League.JSON.Documents;
+end Matreshka.JSON_Documents;
