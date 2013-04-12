@@ -46,6 +46,8 @@ with League.JSON.Documents;
 
 package Matreshka.JSON_Parser is
 
+   pragma Preelaborate;
+
    procedure Parse
     (Text    : League.Strings.Universal_String;
      Value   : out League.JSON.Documents.JSON_Document;
