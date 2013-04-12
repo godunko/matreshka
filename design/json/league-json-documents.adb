@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with League.JSON.Arrays.Internals;
 with League.JSON.Objects.Internals;
+with Matreshka.JSON_Parser;
 with Matreshka.JSON_Types;
 
 package body League.JSON.Documents is
@@ -102,12 +103,20 @@ package body League.JSON.Documents is
    ---------------
 
    function From_JSON
-    (Data : League.Strings.Universal_String) return JSON_Document is
-   begin
-      --  Parses an encoded JSON document and creates a JSON_Document from it.
+    (Data : League.Strings.Universal_String) return JSON_Document
+   is
+      Result  : League.JSON.Documents.JSON_Document;
+      Success : Boolean;
 
-      raise Program_Error;
-      return Empty_JSON_Document;
+   begin
+      Matreshka.JSON_Parser.Parse (Data, Result, Success);
+
+      if Success then
+         return Result;
+
+      else
+         return Empty_JSON_Document;
+      end if;
    end From_JSON;
 
    --------------
