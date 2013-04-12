@@ -60,10 +60,10 @@ package League.JSON.Documents is
 
    Empty_JSON_Document : constant JSON_Document;
 
---   function To_JSON_Document
---    (Value : League.JSON.Arrays.JSON_Array) return JSON_Document;
---   function To_JSON_Document
---    (Value : League.JSON.Objects.JSON_Object) return JSON_Document;
+   function To_JSON_Document
+    (Value : League.JSON.Arrays.JSON_Array) return JSON_Document;
+   function To_JSON_Document
+    (Value : League.JSON.Objects.JSON_Object) return JSON_Document;
    --  XXX These subprograms can be moved to Arrays and Objects packages.
 
    function From_JSON
