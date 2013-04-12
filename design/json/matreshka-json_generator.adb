@@ -233,10 +233,10 @@ package body Matreshka.JSON_Generator is
 
    begin
       if Document.Is_Object then
-         Generate_Array (Document.To_Array);
+         Generate_Object (Document.To_Object);
 
       elsif Document.Is_Array then
-         Generate_Object (Document.To_Object);
+         Generate_Array (Document.To_Array);
       end if;
 
       return Result;
