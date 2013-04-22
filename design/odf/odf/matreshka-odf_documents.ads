@@ -73,14 +73,14 @@ with Matreshka.ODF_Attributes.FO.Margin_Bottom;
 with Matreshka.ODF_Attributes.FO.Margin_Left;
 with Matreshka.ODF_Attributes.FO.Margin_Right;
 with Matreshka.ODF_Attributes.FO.Margin_Top;
---with Matreshka.ODF_Attributes.FO.Padding;
---with Matreshka.ODF_Attributes.FO.Page_Height;
---with Matreshka.ODF_Attributes.FO.Page_Width;
---with Matreshka.ODF_Attributes.FO.Text_Align;
---with Matreshka.ODF_Attributes.FO.Text_Indent;
---with Matreshka.ODF_Attributes.FO.Wrap_Option;
---with Matreshka.ODF_Attributes.Office.Value_Type;
---with Matreshka.ODF_Attributes.Office.Version;
+with Matreshka.ODF_Attributes.FO.Padding;
+with Matreshka.ODF_Attributes.FO.Page_Height;
+with Matreshka.ODF_Attributes.FO.Page_Width;
+with Matreshka.ODF_Attributes.FO.Text_Align;
+with Matreshka.ODF_Attributes.FO.Text_Indent;
+with Matreshka.ODF_Attributes.FO.Wrap_Option;
+with Matreshka.ODF_Attributes.Office.Value_Type;
+with Matreshka.ODF_Attributes.Office.Version;
 --with Matreshka.ODF_Attributes.Style.Adjustment;
 --with Matreshka.ODF_Attributes.Style.Class;
 --with Matreshka.ODF_Attributes.Style.Color;
@@ -323,82 +323,82 @@ package Matreshka.ODF_Documents is
     (Self : not null access Document_Node'Class)
        return Matreshka.ODF_Attributes.FO.Margin_Top.FO_Margin_Top_Access;
 
---   function Create_FO_Padding
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.FO.Padding.FO_Padding_Access;
---
---   function Create_FO_Page_Height
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.FO.Page_Height.FO_Page_Height_Access;
---
---   function Create_FO_Page_Width
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.FO.Page_Width.FO_Page_Width_Access;
---
---   function Create_FO_Text_Align
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.FO.Text_Align.FO_Text_Align_Access;
---
---   function Create_FO_Text_Indent
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.FO.Text_Indent.FO_Text_Indent_Access;
---
---   function Create_FO_Wrap_Option
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.FO.Wrap_Option.FO_Wrap_Option_Access;
---
+   function Create_FO_Padding
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.FO.Padding.FO_Padding_Access;
+
+   function Create_FO_Page_Height
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.FO.Page_Height.FO_Page_Height_Access;
+
+   function Create_FO_Page_Width
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.FO.Page_Width.FO_Page_Width_Access;
+
+   function Create_FO_Text_Align
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.FO.Text_Align.FO_Text_Align_Access;
+
+   function Create_FO_Text_Indent
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.FO.Text_Indent.FO_Text_Indent_Access;
+
+   function Create_FO_Wrap_Option
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.FO.Wrap_Option.FO_Wrap_Option_Access;
+
 --   function Create_Office_Automatic_Styles
 --    (Self : not null access Document_Node'Class)
 --       return
---         ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+--         ODF.DOM.Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access;
 --
 --   function Create_Office_Body
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;
+--       return ODF.DOM.Elements.Office.Bodies.Office_Body_Access;
 --
 --   function Create_Office_Document_Content
 --    (Self : not null access Document_Node'Class)
 --       return
---         ODF.DOM.Elements.Office.Document_Content.ODF_Office_Document_Content_Access;
+--         ODF.DOM.Elements.Office.Document_Content.Office_Document_Content_Access;
 --
 --   function Create_Office_Document_Styles
 --    (Self : not null access Document_Node'Class)
 --       return
---         ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles_Access;
+--         ODF.DOM.Elements.Office.Document_Styles.Office_Document_Styles_Access;
 --
 --   function Create_Office_Font_Face_Decls
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Font_Face_Decls.ODF_Office_Font_Face_Decls_Access;
+--       return ODF.DOM.Elements.Office.Font_Face_Decls.Office_Font_Face_Decls_Access;
 --
 --   function Create_Office_Master_Styles
 --    (Self : not null access Document_Node'Class)
 --       return
---         ODF.DOM.Elements.Office.Master_Styles.ODF_Office_Master_Styles_Access;
+--         ODF.DOM.Elements.Office.Master_Styles.Office_Master_Styles_Access;
 --
 --   function Create_Office_Scripts
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Scripts.ODF_Office_Scripts_Access;
+--       return ODF.DOM.Elements.Office.Scripts.Office_Scripts_Access;
 --
 --   function Create_Office_Styles
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Styles.ODF_Office_Styles_Access;
+--       return ODF.DOM.Elements.Office.Styles.Office_Styles_Access;
 --
 --   function Create_Office_Text
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
---
---   function Create_Office_Value_Type
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Office.Value_Type.ODF_Office_Value_Type_Access;
---
---   function Create_Office_Version
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Office.Version.ODF_Office_Version_Access;
---
+--       return ODF.DOM.Elements.Office.Text.Office_Text_Access;
+
+   function Create_Office_Value_Type
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Office.Value_Type.Office_Value_Type_Access;
+
+   function Create_Office_Version
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Office.Version.Office_Version_Access;
+
 --   function Create_Style_Background_Image
 --    (Self : not null access Document_Node'Class)
 --       return ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image_Access;
---
+
 --   function Create_Style_Adjustment
 --    (Self : not null access Document_Node'Class)
 --       return Matreshka.ODF_Attributes.Style.Adjustment.ODF_Style_Adjustment_Access;
