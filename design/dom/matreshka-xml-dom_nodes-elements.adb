@@ -86,7 +86,7 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access Element_V1_Node)
+    (Self : not null access constant Element_V1_Node)
        return League.Strings.Universal_String is
    begin
       --  It is always null for attributes created with a DOM Level 1 methods.
@@ -99,7 +99,7 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access Element_V2_Node)
+    (Self : not null access constant Element_V2_Node)
        return League.Strings.Universal_String is
    begin
       return Self.Local_Name;
@@ -110,7 +110,7 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    -----------------------
 
    overriding function Get_Namespace_URI
-    (Self : not null access Element_V1_Node)
+    (Self : not null access constant Element_V1_Node)
        return League.Strings.Universal_String is
    begin
       --  It is always null for attributes created with a DOM Level 1 methods.
@@ -123,7 +123,7 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    -----------------------
 
    overriding function Get_Namespace_URI
-    (Self : not null access Element_V2_Node)
+    (Self : not null access constant Element_V2_Node)
        return League.Strings.Universal_String is
    begin
       return Self.Namespace_URI;

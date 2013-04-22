@@ -120,7 +120,7 @@ package body Matreshka.XML.DOM_Nodes is
    --------------------
 
    not overriding function Get_Local_Name
-    (Self : not null access Abstract_Node)
+    (Self : not null access constant Abstract_Node)
        return League.Strings.Universal_String is
    begin
       --  "For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and
@@ -135,7 +135,7 @@ package body Matreshka.XML.DOM_Nodes is
    -----------------------
 
    not overriding function Get_Namespace_URI
-    (Self : not null access Abstract_Node)
+    (Self : not null access constant Abstract_Node)
        return League.Strings.Universal_String is
    begin
       --  "For nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and

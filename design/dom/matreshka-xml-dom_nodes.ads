@@ -91,12 +91,12 @@ package Matreshka.XML.DOM_Nodes is
    end record;
 
    not overriding function Get_Local_Name
-    (Self : not null access Abstract_Node)
+    (Self : not null access constant Abstract_Node)
        return League.Strings.Universal_String;
    --  Returns the local part of the qualified name of this node.
 
    not overriding function Get_Namespace_URI
-    (Self : not null access Abstract_Node)
+    (Self : not null access constant Abstract_Node)
        return League.Strings.Universal_String;
    --  The namespace URI of this node, or null if it is unspecified (see XML
    --  Namespaces).
