@@ -41,9 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 
-package ODF.DOM.Attributes is
+package body Matreshka.ODF_Attributes.Draw.Shadow_Offset_Y is
 
-   pragma Pure;
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
-end ODF.DOM.Attributes;
+   overriding function Get_Local_Name
+    (Self : not null access constant Draw_Shadow_Offset_Y_Node)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Shadow_Offset_Y_Name;
+   end Get_Local_Name;
+
+end Matreshka.ODF_Attributes.Draw.Shadow_Offset_Y;

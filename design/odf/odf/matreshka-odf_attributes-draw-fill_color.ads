@@ -42,8 +42,15 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes is
+package Matreshka.ODF_Attributes.Draw.Fill_Color is
 
-   pragma Pure;
+   type Draw_Fill_Color_Node is
+     new Matreshka.ODF_Attributes.Draw.Draw_Node_Base with null record;
 
-end ODF.DOM.Attributes;
+   type Draw_Fill_Color_Access is access all Draw_Fill_Color_Node'Class;
+
+   overriding function Get_Local_Name
+    (Self : not null access constant Draw_Fill_Color_Node)
+       return League.Strings.Universal_String;
+
+end Matreshka.ODF_Attributes.Draw.Fill_Color;

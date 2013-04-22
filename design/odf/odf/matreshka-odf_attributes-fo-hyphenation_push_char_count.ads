@@ -42,8 +42,16 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes is
+package Matreshka.ODF_Attributes.FO.Hyphenation_Push_Char_Count is
 
-   pragma Pure;
+   type FO_Hyphenation_Push_Char_Count_Node is
+     new Matreshka.ODF_Attributes.FO.FO_Node_Base with null record;
 
-end ODF.DOM.Attributes;
+   type FO_Hyphenation_Push_Char_Count_Access is
+     access all FO_Hyphenation_Push_Char_Count_Node'Class;
+
+   overriding function Get_Local_Name
+    (Self : not null access constant FO_Hyphenation_Push_Char_Count_Node)
+       return League.Strings.Universal_String;
+
+end Matreshka.ODF_Attributes.FO.Hyphenation_Push_Char_Count;

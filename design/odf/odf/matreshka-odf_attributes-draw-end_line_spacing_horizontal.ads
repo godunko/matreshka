@@ -42,8 +42,16 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes is
+package Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Horizontal is
 
-   pragma Pure;
+   type Draw_End_Line_Spacing_Horizontal_Node is
+     new Matreshka.ODF_Attributes.Draw.Draw_Node_Base with null record;
 
-end ODF.DOM.Attributes;
+   type Draw_End_Line_Spacing_Horizontal_Access is
+     access all Draw_End_Line_Spacing_Horizontal_Node'Class;
+
+   overriding function Get_Local_Name
+    (Self : not null access constant Draw_End_Line_Spacing_Horizontal_Node)
+       return League.Strings.Universal_String;
+
+end Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Horizontal;

@@ -42,8 +42,16 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes is
+package Matreshka.ODF_Attributes.FO.Background_Color is
 
-   pragma Pure;
+   type FO_Background_Color_Node is
+     new Matreshka.ODF_Attributes.FO.FO_Node_Base with null record;
 
-end ODF.DOM.Attributes;
+   type FO_Background_Color_Access is
+     access all FO_Background_Color_Node'Class;
+
+   overriding function Get_Local_Name
+    (Self : not null access constant FO_Background_Color_Node)
+       return League.Strings.Universal_String;
+
+end Matreshka.ODF_Attributes.FO.Background_Color;

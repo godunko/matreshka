@@ -43,17 +43,17 @@
 ------------------------------------------------------------------------------
 with ODF.Constants;
 
-package body ODF.DOM.Attributes.Draw is
+package body Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Horizontal is
 
-   -----------------------
-   -- Get_Namespace_URI --
-   -----------------------
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
-   overriding function Get_Namespace_URI
-    (Self : not null access constant ODF_Draw_Base)
+   overriding function Get_Local_Name
+    (Self : not null access constant Draw_End_Line_Spacing_Horizontal_Node)
        return League.Strings.Universal_String is
    begin
-      return ODF.Constants.Draw_URI;
-   end Get_Namespace_URI;
+      return ODF.Constants.End_Line_Spacing_Horizontal_Name;
+   end Get_Local_Name;
 
-end ODF.DOM.Attributes.Draw;
+end Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Horizontal;

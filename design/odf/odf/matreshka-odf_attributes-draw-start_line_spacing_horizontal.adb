@@ -41,9 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 
-package ODF.DOM.Attributes is
+package body Matreshka.ODF_Attributes.Draw.Start_Line_Spacing_Horizontal is
 
-   pragma Pure;
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
-end ODF.DOM.Attributes;
+   overriding function Get_Local_Name
+    (Self : not null access constant Draw_Start_Line_Spacing_Horizontal_Node)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Start_Line_Spacing_Horizontal_Name;
+   end Get_Local_Name;
+
+end Matreshka.ODF_Attributes.Draw.Start_Line_Spacing_Horizontal;

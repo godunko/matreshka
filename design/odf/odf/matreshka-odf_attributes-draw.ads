@@ -41,9 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 
-package ODF.DOM.Attributes is
+package Matreshka.ODF_Attributes.Draw is
 
-   pragma Pure;
+   type Draw_Node_Base is
+     abstract new Matreshka.ODF_Attributes.ODF_Attribute_Node with null record;
 
-end ODF.DOM.Attributes;
+   overriding function Get_Namespace_URI
+    (Self : not null access constant Draw_Node_Base)
+       return League.Strings.Universal_String;
+
+end Matreshka.ODF_Attributes.Draw;

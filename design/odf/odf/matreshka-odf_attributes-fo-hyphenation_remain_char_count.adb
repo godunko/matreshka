@@ -41,9 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 
-package ODF.DOM.Attributes is
+package body Matreshka.ODF_Attributes.FO.Hyphenation_Remain_Char_Count is
 
-   pragma Pure;
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
-end ODF.DOM.Attributes;
+   overriding function Get_Local_Name
+    (Self : not null access constant FO_Hyphenation_Remain_Char_Count_Node)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Hyphenation_Remain_Char_Count_Name;
+   end Get_Local_Name;
+
+end Matreshka.ODF_Attributes.FO.Hyphenation_Remain_Char_Count;

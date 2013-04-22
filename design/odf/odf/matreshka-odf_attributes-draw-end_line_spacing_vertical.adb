@@ -41,9 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 
-package ODF.DOM.Attributes is
+package body Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Vertical is
 
-   pragma Pure;
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
-end ODF.DOM.Attributes;
+   overriding function Get_Local_Name
+    (Self : not null access constant Draw_End_Line_Spacing_Vertical_Node)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.End_Line_Spacing_Vertical_Name;
+   end Get_Local_Name;
+
+end Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Vertical;

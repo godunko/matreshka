@@ -42,8 +42,15 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes is
+package Matreshka.ODF_Attributes.FO.Font_Style is
 
-   pragma Pure;
+   type FO_Font_Style_Node is
+     new Matreshka.ODF_Attributes.FO.FO_Node_Base with null record;
 
-end ODF.DOM.Attributes;
+   type FO_Font_Style_Access is access all FO_Font_Style_Node'Class;
+
+   overriding function Get_Local_Name
+    (Self : not null access constant FO_Font_Style_Node)
+       return League.Strings.Universal_String;
+
+end Matreshka.ODF_Attributes.FO.Font_Style;

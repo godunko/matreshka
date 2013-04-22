@@ -41,9 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 
-package ODF.DOM.Attributes is
+package body Matreshka.ODF_Attributes.Draw is
 
-   pragma Pure;
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
 
-end ODF.DOM.Attributes;
+   overriding function Get_Namespace_URI
+    (Self : not null access constant Draw_Node_Base)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Draw_URI;
+   end Get_Namespace_URI;
+
+end Matreshka.ODF_Attributes.Draw;

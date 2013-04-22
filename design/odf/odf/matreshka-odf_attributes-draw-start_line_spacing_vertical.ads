@@ -42,8 +42,16 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package ODF.DOM.Attributes is
+package Matreshka.ODF_Attributes.Draw.Start_Line_Spacing_Vertical is
 
-   pragma Pure;
+   type Draw_Start_Line_Spacing_Vertical_Node is
+     new Matreshka.ODF_Attributes.Draw.Draw_Node_Base with null record;
 
-end ODF.DOM.Attributes;
+   type Draw_Start_Line_Spacing_Vertical_Access is
+     access all Draw_Start_Line_Spacing_Vertical_Node'Class;
+
+   overriding function Get_Local_Name
+    (Self : not null access constant Draw_Start_Line_Spacing_Vertical_Node)
+       return League.Strings.Universal_String;
+
+end Matreshka.ODF_Attributes.Draw.Start_Line_Spacing_Vertical;
