@@ -372,75 +372,75 @@ package body Matreshka.ODF_Documents is
               Matreshka.XML.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Justify_Single_Word);
 
---         elsif Local_Name = Language_Asian_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Language_Asian);
---
---         elsif Local_Name = Language_Complex_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Language_Complex);
---
---         elsif Local_Name = Letter_Kerning_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Letter_Kerning);
---
---         elsif Local_Name = Line_Break_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Line_Break);
---
---         elsif Local_Name = Line_Style_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Line_Style);
---
---         elsif Local_Name = Name_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Style_Name);
---
---         elsif Local_Name = Next_Style_Name_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Next_Style_Name);
---
---         elsif Local_Name = Num_Format_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Num_Format);
---
---         elsif Local_Name = Page_Layout_Name_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Page_Layout_Name);
---
---         elsif Local_Name = Parent_Style_Name_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Parent_Style_Name);
---
---         elsif Local_Name = Print_Orientation_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Print_Orientation);
---
---         elsif Local_Name = Punctuation_Wrap_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Punctuation_Wrap);
---
---         elsif Local_Name = Rel_Column_Width_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Rel_Column_Width);
---
---         elsif Local_Name = Rel_Width_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Style_Rel_Width);
---
+         elsif Local_Name = Language_Asian_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Language_Asian);
+
+         elsif Local_Name = Language_Complex_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Language_Complex);
+
+         elsif Local_Name = Letter_Kerning_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Letter_Kerning);
+
+         elsif Local_Name = Line_Break_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Line_Break);
+
+         elsif Local_Name = Line_Style_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Line_Style);
+
+         elsif Local_Name = Name_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Style_Name);
+
+         elsif Local_Name = Next_Style_Name_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Next_Style_Name);
+
+         elsif Local_Name = Num_Format_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Num_Format);
+
+         elsif Local_Name = Page_Layout_Name_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Page_Layout_Name);
+
+         elsif Local_Name = Parent_Style_Name_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Parent_Style_Name);
+
+         elsif Local_Name = Print_Orientation_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Print_Orientation);
+
+         elsif Local_Name = Punctuation_Wrap_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Punctuation_Wrap);
+
+         elsif Local_Name = Rel_Column_Width_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Rel_Column_Width);
+
+         elsif Local_Name = Rel_Width_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Style_Rel_Width);
+
 --         elsif Local_Name = Tab_Stop_Distance_Name then
 --            return
 --              Matreshka.XML.DOM_Nodes.Attribute_Access
@@ -1768,61 +1768,61 @@ package body Matreshka.ODF_Documents is
       return new Matreshka.ODF_Attributes.Style.Justify_Single_Word.Style_Justify_Single_Word_Node;
    end Create_Style_Justify_Single_Word;
 
---   ---------------------------------
---   -- Create_Style_Language_Asian --
---   ---------------------------------
---
---   function Create_Style_Language_Asian
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Language_Asian.Style_Language_Asian_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Language_Asian.Style_Language_Asian;
---   end Create_Style_Language_Asian;
---
---   -----------------------------------
---   -- Create_Style_Language_Complex --
---   -----------------------------------
---
---   function Create_Style_Language_Complex
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Language_Complex.Style_Language_Complex_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Language_Complex.Style_Language_Complex;
---   end Create_Style_Language_Complex;
---
---   ---------------------------------
---   -- Create_Style_Letter_Kerning --
---   ---------------------------------
---
---   function Create_Style_Letter_Kerning
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Letter_Kerning.Style_Letter_Kerning_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Letter_Kerning.Style_Letter_Kerning;
---   end Create_Style_Letter_Kerning;
---
---   -----------------------------
---   -- Create_Style_Line_Break --
---   -----------------------------
---
---   function Create_Style_Line_Break
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Line_Break.Style_Line_Break_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Line_Break.Style_Line_Break;
---   end Create_Style_Line_Break;
---
---   -----------------------------
---   -- Create_Style_Line_Style --
---   -----------------------------
---
---   function Create_Style_Line_Style
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Line_Style.Style_Line_Style_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Line_Style.Style_Line_Style;
---   end Create_Style_Line_Style;
---
+   ---------------------------------
+   -- Create_Style_Language_Asian --
+   ---------------------------------
+
+   function Create_Style_Language_Asian
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Language_Asian.Style_Language_Asian_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Language_Asian.Style_Language_Asian_Node;
+   end Create_Style_Language_Asian;
+
+   -----------------------------------
+   -- Create_Style_Language_Complex --
+   -----------------------------------
+
+   function Create_Style_Language_Complex
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Language_Complex.Style_Language_Complex_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Language_Complex.Style_Language_Complex_Node;
+   end Create_Style_Language_Complex;
+
+   ---------------------------------
+   -- Create_Style_Letter_Kerning --
+   ---------------------------------
+
+   function Create_Style_Letter_Kerning
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Letter_Kerning.Style_Letter_Kerning_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Letter_Kerning.Style_Letter_Kerning_Node;
+   end Create_Style_Letter_Kerning;
+
+   -----------------------------
+   -- Create_Style_Line_Break --
+   -----------------------------
+
+   function Create_Style_Line_Break
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Line_Break.Style_Line_Break_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Line_Break.Style_Line_Break_Node;
+   end Create_Style_Line_Break;
+
+   -----------------------------
+   -- Create_Style_Line_Style --
+   -----------------------------
+
+   function Create_Style_Line_Style
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Line_Style.Style_Line_Style_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Line_Style.Style_Line_Style_Node;
+   end Create_Style_Line_Style;
+
 --   ---------------------------------------------
 --   -- Create_Style_List_Level_Label_Alignment --
 --   ---------------------------------------------
@@ -1858,40 +1858,40 @@ package body Matreshka.ODF_Documents is
 --      return
 --        new ODF.DOM.Elements.Style.Master_Page.Style_Master_Page;
 --   end Create_Style_Master_Page;
---
---   -----------------------
---   -- Create_Style_Name --
---   -----------------------
---
---   function Create_Style_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Name.Style_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Name.Style_Name;
---   end Create_Style_Name;
---
---   ----------------------------------
---   -- Create_Style_Next_Style_Name --
---   ----------------------------------
---
---   function Create_Style_Next_Style_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Next_Style_Name.Style_Next_Style_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Next_Style_Name.Style_Next_Style_Name;
---   end Create_Style_Next_Style_Name;
---
---   -----------------------------
---   -- Create_Style_Num_Format --
---   -----------------------------
---
---   function Create_Style_Num_Format
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Num_Format.Style_Num_Format_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Num_Format.Style_Num_Format;
---   end Create_Style_Num_Format;
---
+
+   -----------------------
+   -- Create_Style_Name --
+   -----------------------
+
+   function Create_Style_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Name.Style_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Name.Style_Name_Node;
+   end Create_Style_Name;
+
+   ----------------------------------
+   -- Create_Style_Next_Style_Name --
+   ----------------------------------
+
+   function Create_Style_Next_Style_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Next_Style_Name.Style_Next_Style_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Next_Style_Name.Style_Next_Style_Name_Node;
+   end Create_Style_Next_Style_Name;
+
+   -----------------------------
+   -- Create_Style_Num_Format --
+   -----------------------------
+
+   function Create_Style_Num_Format
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Num_Format.Style_Num_Format_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Num_Format.Style_Num_Format_Node;
+   end Create_Style_Num_Format;
+
 --   ------------------------------
 --   -- Create_Style_Page_Layout --
 --   ------------------------------
@@ -1927,73 +1927,73 @@ package body Matreshka.ODF_Documents is
 --      return
 --        new ODF.DOM.Elements.Style.Paragraph_Properties.Style_Paragraph_Properties;
 --   end Create_Style_Paragraph_Properties;
---
---   -----------------------------------
---   -- Create_Style_Page_Layout_Name --
---   -----------------------------------
---
---   function Create_Style_Page_Layout_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Page_Layout_Name.Style_Page_Layout_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Page_Layout_Name.Style_Page_Layout_Name;
---   end Create_Style_Page_Layout_Name;
---
---   ------------------------------------
---   -- Create_Style_Parent_Style_Name --
---   ------------------------------------
---
---   function Create_Style_Parent_Style_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Parent_Style_Name.Style_Parent_Style_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Parent_Style_Name.Style_Parent_Style_Name;
---   end Create_Style_Parent_Style_Name;
---
---   ------------------------------------
---   -- Create_Style_Print_Orientation --
---   ------------------------------------
---
---   function Create_Style_Print_Orientation
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Print_Orientation.Style_Print_Orientation_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Print_Orientation.Style_Print_Orientation;
---   end Create_Style_Print_Orientation;
---
---   -----------------------------------
---   -- Create_Style_Punctuation_Wrap --
---   -----------------------------------
---
---   function Create_Style_Punctuation_Wrap
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Punctuation_Wrap.Style_Punctuation_Wrap_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Punctuation_Wrap.Style_Punctuation_Wrap;
---   end Create_Style_Punctuation_Wrap;
---
---   -----------------------------------
---   -- Create_Style_Rel_Column_Width --
---   -----------------------------------
---
---   function Create_Style_Rel_Column_Width
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Rel_Column_Width.Style_Rel_Column_Width_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Rel_Column_Width.Style_Rel_Column_Width;
---   end Create_Style_Rel_Column_Width;
---
---   ----------------------------
---   -- Create_Style_Rel_Width --
---   ----------------------------
---
---   function Create_Style_Rel_Width
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Rel_Width.Style_Rel_Width_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Style.Rel_Width.Style_Rel_Width;
---   end Create_Style_Rel_Width;
---
+
+   -----------------------------------
+   -- Create_Style_Page_Layout_Name --
+   -----------------------------------
+
+   function Create_Style_Page_Layout_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Page_Layout_Name.Style_Page_Layout_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Page_Layout_Name.Style_Page_Layout_Name_Node;
+   end Create_Style_Page_Layout_Name;
+
+   ------------------------------------
+   -- Create_Style_Parent_Style_Name --
+   ------------------------------------
+
+   function Create_Style_Parent_Style_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Parent_Style_Name.Style_Parent_Style_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Parent_Style_Name.Style_Parent_Style_Name_Node;
+   end Create_Style_Parent_Style_Name;
+
+   ------------------------------------
+   -- Create_Style_Print_Orientation --
+   ------------------------------------
+
+   function Create_Style_Print_Orientation
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Print_Orientation.Style_Print_Orientation_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Print_Orientation.Style_Print_Orientation_Node;
+   end Create_Style_Print_Orientation;
+
+   -----------------------------------
+   -- Create_Style_Punctuation_Wrap --
+   -----------------------------------
+
+   function Create_Style_Punctuation_Wrap
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Punctuation_Wrap.Style_Punctuation_Wrap_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Punctuation_Wrap.Style_Punctuation_Wrap_Node;
+   end Create_Style_Punctuation_Wrap;
+
+   -----------------------------------
+   -- Create_Style_Rel_Column_Width --
+   -----------------------------------
+
+   function Create_Style_Rel_Column_Width
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Rel_Column_Width.Style_Rel_Column_Width_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Rel_Column_Width.Style_Rel_Column_Width_Node;
+   end Create_Style_Rel_Column_Width;
+
+   ----------------------------
+   -- Create_Style_Rel_Width --
+   ----------------------------
+
+   function Create_Style_Rel_Width
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Rel_Width.Style_Rel_Width_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Style.Rel_Width.Style_Rel_Width_Node;
+   end Create_Style_Rel_Width;
+
 --   ------------------------
 --   -- Create_Style_Style --
 --   ------------------------
