@@ -122,15 +122,15 @@ with Matreshka.ODF_Attributes.Style.Print_Orientation;
 with Matreshka.ODF_Attributes.Style.Punctuation_Wrap;
 with Matreshka.ODF_Attributes.Style.Rel_Column_Width;
 with Matreshka.ODF_Attributes.Style.Rel_Width;
---with Matreshka.ODF_Attributes.Style.Tab_Stop_Distance;
---with Matreshka.ODF_Attributes.Style.Text_Autospace;
---with Matreshka.ODF_Attributes.Style.Text_Underline_Color;
---with Matreshka.ODF_Attributes.Style.Text_Underline_Style;
---with Matreshka.ODF_Attributes.Style.Text_Underline_Width;
---with Matreshka.ODF_Attributes.Style.Use_Window_Font_Color;
---with Matreshka.ODF_Attributes.Style.Vertical_Align;
---with Matreshka.ODF_Attributes.Style.Width;
---with Matreshka.ODF_Attributes.Style.Writing_Mode;
+with Matreshka.ODF_Attributes.Style.Tab_Stop_Distance;
+with Matreshka.ODF_Attributes.Style.Text_Autospace;
+with Matreshka.ODF_Attributes.Style.Text_Underline_Color;
+with Matreshka.ODF_Attributes.Style.Text_Underline_Style;
+with Matreshka.ODF_Attributes.Style.Text_Underline_Width;
+with Matreshka.ODF_Attributes.Style.Use_Window_Font_Color;
+with Matreshka.ODF_Attributes.Style.Vertical_Align;
+with Matreshka.ODF_Attributes.Style.Width;
+with Matreshka.ODF_Attributes.Style.Writing_Mode;
 --with Matreshka.ODF_Attributes.SVG.Font_Family;
 --with Matreshka.ODF_Attributes.SVG.Stroke_Color;
 --with Matreshka.ODF_Attributes.Table.Align;
@@ -614,11 +614,11 @@ package Matreshka.ODF_Documents is
 --   function Create_Style_Style
 --    (Self : not null access Document_Node'Class)
 --       return ODF.DOM.Elements.Style.Style.Style_Style_Access;
---
---   function Create_Style_Tab_Stop_Distance
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Tab_Stop_Distance.Style_Tab_Stop_Distance_Access;
---
+
+   function Create_Style_Tab_Stop_Distance
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Tab_Stop_Distance.Style_Tab_Stop_Distance_Access;
+
 --   function Create_Style_Tab_Stops
 --    (Self : not null access Document_Node'Class)
 --       return ODF.DOM.Elements.Style.Tab_Stops.Style_Tab_Stops_Access;
@@ -638,43 +638,43 @@ package Matreshka.ODF_Documents is
 --   function Create_Style_Table_Row_Properties
 --    (Self : not null access Document_Node'Class)
 --       return ODF.DOM.Elements.Style.Table_Row_Properties.Style_Table_Row_Properties_Access;
---
---   function Create_Style_Text_Autospace
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Text_Autospace.Style_Text_Autospace_Access;
---
---   function Create_Style_Text_Underline_Color
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Text_Underline_Color.Style_Text_Underline_Color_Access;
---
---   function Create_Style_Text_Underline_Style
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Text_Underline_Style.Style_Text_Underline_Style_Access;
---
---   function Create_Style_Text_Underline_Width
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Text_Underline_Width.Style_Text_Underline_Width_Access;
---
+
+   function Create_Style_Text_Autospace
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Text_Autospace.Style_Text_Autospace_Access;
+
+   function Create_Style_Text_Underline_Color
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Text_Underline_Color.Style_Text_Underline_Color_Access;
+
+   function Create_Style_Text_Underline_Style
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Text_Underline_Style.Style_Text_Underline_Style_Access;
+
+   function Create_Style_Text_Underline_Width
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Text_Underline_Width.Style_Text_Underline_Width_Access;
+
 --   function Create_Style_Text_Properties
 --    (Self : not null access Document_Node'Class)
 --       return ODF.DOM.Elements.Style.Text_Properties.Style_Text_Properties_Access;
---
---   function Create_Style_Use_Window_Font_Color
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Use_Window_Font_Color.Style_Use_Window_Font_Color_Access;
---
---   function Create_Style_Vertical_Align
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Vertical_Align.Style_Vertical_Align_Access;
---
---   function Create_Style_Width
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Width.Style_Width_Access;
---
---   function Create_Style_Writing_Mode
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Style.Writing_Mode.Style_Writing_Mode_Access;
---
+
+   function Create_Style_Use_Window_Font_Color
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Use_Window_Font_Color.Style_Use_Window_Font_Color_Access;
+
+   function Create_Style_Vertical_Align
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Vertical_Align.Style_Vertical_Align_Access;
+
+   function Create_Style_Width
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Width.Style_Width_Access;
+
+   function Create_Style_Writing_Mode
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Style.Writing_Mode.Style_Writing_Mode_Access;
+
 --   function Create_SVG_Font_Family
 --    (Self : not null access Document_Node'Class)
 --       return Matreshka.ODF_Attributes.SVG.Font_Family.ODF_SVG_Font_Family_Access;
