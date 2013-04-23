@@ -41,9 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML.DOM_Nodes.Elements;
+with XML.DOM.Visitors;
 
-package ODF.DOM.Elements is
+package Matreshka.ODF_Elements is
 
-   pragma Pure;
+   type ODF_Element_Node is
+     abstract new Matreshka.XML.DOM_Nodes.Elements.Abstract_Element
+       with null record;
 
-end ODF.DOM.Elements;
+   overriding procedure Enter_Element
+    (Self    : not null access ODF_Element_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access ODF_Element_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access ODF_Element_Node;
+     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of iterator interface.
+
+end Matreshka.ODF_Elements;

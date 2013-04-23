@@ -700,169 +700,169 @@ package body Matreshka.ODF_Documents is
       return new Matreshka.ODF_Attributes.Draw.Start_Line_Spacing_Vertical.Draw_Start_Line_Spacing_Vertical_Node;
    end Create_Draw_Start_Line_Spacing_Vertical;
 
---   -----------------------
---   -- Create_Element_NS --
---   -----------------------
+   --------------------
+   -- Create_Element --
+   --------------------
+
+   overriding function Create_Element
+    (Self           : not null access Document_Node;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.XML.DOM_Nodes.Element_Access
+   is
+      Local_Name : constant League.Strings.Universal_String
+        := Get_Local_Name (Qualified_Name);
+
+   begin
+      if Namespace_URI = Office_URI then
+         if Local_Name = Automatic_Styles_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Element_Access
+               (Self.Create_Office_Automatic_Styles);
 --
---   overriding function Create_Element_NS
---    (Self           : not null access Document_Node;
---     Namespace_URI  : League.Strings.Universal_String;
---     Qualified_Name : League.Strings.Universal_String)
---       return XML.DOM.Nodes.Elements.DOM_Element_Access
---   is
---      Local_Name : constant League.Strings.Universal_String
---        := Get_Local_Name (Qualified_Name);
---
---   begin
---      if Namespace_URI = Office_URI then
 --         if Local_Name = Body_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Body);
---
---         elsif Local_Name = Automatic_Styles_Name then
---            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
---               (Self.Create_Office_Automatic_Styles);
 --
 --         elsif Local_Name = Document_Content_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Document_Content);
 --
 --         elsif Local_Name = Document_Styles_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Document_Styles);
 --
 --         elsif Local_Name = Font_Face_Decls_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Font_Face_Decls);
 --
 --         elsif Local_Name = Master_Styles_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Master_Styles);
 --
 --         elsif Local_Name = Scripts_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Scripts);
 --
 --         elsif Local_Name = Styles_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Styles);
 --
 --         elsif Local_Name = Text_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Text);
 --
 --         else
 --            raise Program_Error;
---         end if;
---
+         end if;
+
 --      elsif Namespace_URI = Style_URI then
 --         if Local_Name = Background_Image_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Background_Image);
 --
 --         elsif Local_Name = Default_Style_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Default_Style);
 --
 --         elsif Local_Name = Font_Face_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Font_Face);
 --
 --         elsif Local_Name = Footer_Style_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Footer_Style);
 --
 --         elsif Local_Name = Footnote_Sep_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Footnote_Sep);
 --
 --         elsif Local_Name = Graphic_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Graphic_Properties);
 --
 --         elsif Local_Name = Header_Style_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Header_Style);
 --
 --         elsif Local_Name = List_Level_Label_Alignment_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_List_Level_Label_Alignment);
 --
 --         elsif Local_Name = List_Level_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_List_Level_Properties);
 --
 --         elsif Local_Name = Master_Page_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Master_Page);
 --
 --         elsif Local_Name = Page_Layout_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Page_Layout);
 --
 --         elsif Local_Name = Page_Layout_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Page_Layout_Properties);
 --
 --         elsif Local_Name = Paragraph_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Paragraph_Properties);
 --
 --         elsif Local_Name = Style_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Style);
 --
 --         elsif Local_Name = Tab_Stops_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Tab_Stops);
 --
 --         elsif Local_Name = Table_Cell_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Cell_Properties);
 --
 --         elsif Local_Name = Table_Column_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Column_Properties);
 --
 --         elsif Local_Name = Table_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Properties);
 --
 --         elsif Local_Name = Table_Row_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Row_Properties);
 --
 --         elsif Local_Name = Text_Properties_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Text_Properties);
 --
 --         else
@@ -872,27 +872,27 @@ package body Matreshka.ODF_Documents is
 --      elsif Namespace_URI = Table_URI then
 --         if Local_Name = Covered_Table_Cell_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Covered_Table_Cell);
 --
 --         elsif Local_Name = Table_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table);
 --
 --         elsif Local_Name = Table_Cell_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table_Cell);
 --
 --         elsif Local_Name = Table_Column_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table_Column);
 --
 --         elsif Local_Name = Table_Row_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table_Row);
 --
 --         else
@@ -902,56 +902,55 @@ package body Matreshka.ODF_Documents is
 --      elsif Namespace_URI = Text_URI then
 --         if Local_Name = H_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access (Self.Create_Text_H);
+--              Matreshka.XML.DOM_Nodes.Element_Access (Self.Create_Text_H);
 --
 --         elsif Local_Name = Linenumbering_Configuration_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Linenumbering_Configuration);
 --
 --         elsif Local_Name = Notes_Configuration_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Notes_Configuration);
 --
 --         elsif Local_Name = Outline_Level_Style_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Outline_Level_Style);
 --
 --         elsif Local_Name = Outline_Style_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Outline_Style);
 --
 --         elsif Local_Name = P_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_P);
 --
 --         elsif Local_Name = Sequence_Decl_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Sequence_Decl);
 --
 --         elsif Local_Name = Sequence_Decls_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Sequence_Decls);
 --
 --         elsif Local_Name = Span_Name then
 --            return
---              XML.DOM.Nodes.Elements.DOM_Element_Access
+--              Matreshka.XML.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Span);
 --
 --         else
 --            raise Program_Error;
 --         end if;
---
---      else
---         raise Program_Error;
---      end if;
---   end Create_Element_NS;
+      end if;
+
+      raise Program_Error;
+   end Create_Element;
 
    --------------------------------
    -- Create_FO_Background_Color --
@@ -1261,28 +1260,28 @@ package body Matreshka.ODF_Documents is
       return new Matreshka.ODF_Attributes.FO.Wrap_Option.FO_Wrap_Option_Node;
    end Create_FO_Wrap_Option;
 
---   ------------------------------------
---   -- Create_Office_Automatic_Styles --
---   ------------------------------------
---
---   function Create_Office_Automatic_Styles
---    (Self : not null access Document_Node'Class)
---       return
---         ODF.DOM.Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access is
---   begin
---      return
---        new ODF.DOM.Elements.Office.Automatic_Styles.Office_Automatic_Styles;
---   end Create_Office_Automatic_Styles;
---
+   ------------------------------------
+   -- Create_Office_Automatic_Styles --
+   ------------------------------------
+
+   function Create_Office_Automatic_Styles
+    (Self : not null access Document_Node'Class)
+       return
+         Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access is
+   begin
+      return
+        new Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Node;
+   end Create_Office_Automatic_Styles;
+
 --   ------------------------
 --   -- Create_Office_Body --
 --   ------------------------
 --
 --   function Create_Office_Body
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Bodies.Office_Body_Access is
+--       return Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access is
 --   begin
---      return new ODF.DOM.Elements.Office.Bodies.Office_Body;
+--      return new Matreshka.ODF_Elements.Office.Bodies.Office_Body;
 --   end Create_Office_Body;
 --
 --   ------------------------------------
@@ -1292,10 +1291,10 @@ package body Matreshka.ODF_Documents is
 --   function Create_Office_Document_Content
 --    (Self : not null access Document_Node'Class)
 --       return
---         ODF.DOM.Elements.Office.Document_Content.Office_Document_Content_Access is
+--         Matreshka.ODF_Elements.Office.Document_Content.Office_Document_Content_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Office.Document_Content.Office_Document_Content;
+--        new Matreshka.ODF_Elements.Office.Document_Content.Office_Document_Content;
 --   end Create_Office_Document_Content;
 --
 --   -----------------------------------
@@ -1305,10 +1304,10 @@ package body Matreshka.ODF_Documents is
 --   function Create_Office_Document_Styles
 --    (Self : not null access Document_Node'Class)
 --       return
---         ODF.DOM.Elements.Office.Document_Styles.Office_Document_Styles_Access is
+--         Matreshka.ODF_Elements.Office.Document_Styles.Office_Document_Styles_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Office.Document_Styles.Office_Document_Styles;
+--        new Matreshka.ODF_Elements.Office.Document_Styles.Office_Document_Styles;
 --   end Create_Office_Document_Styles;
 --
 --   -----------------------------------
@@ -1317,10 +1316,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Office_Font_Face_Decls
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Font_Face_Decls.Office_Font_Face_Decls_Access is
+--       return Matreshka.ODF_Elements.Office.Font_Face_Decls.Office_Font_Face_Decls_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Office.Font_Face_Decls.Office_Font_Face_Decls;
+--        new Matreshka.ODF_Elements.Office.Font_Face_Decls.Office_Font_Face_Decls;
 --   end Create_Office_Font_Face_Decls;
 --
 --   ---------------------------------
@@ -1330,10 +1329,10 @@ package body Matreshka.ODF_Documents is
 --   function Create_Office_Master_Styles
 --    (Self : not null access Document_Node'Class)
 --       return
---         ODF.DOM.Elements.Office.Master_Styles.Office_Master_Styles_Access is
+--         Matreshka.ODF_Elements.Office.Master_Styles.Office_Master_Styles_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Office.Master_Styles.Office_Master_Styles;
+--        new Matreshka.ODF_Elements.Office.Master_Styles.Office_Master_Styles;
 --   end Create_Office_Master_Styles;
 --
 --   ---------------------------
@@ -1342,9 +1341,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Office_Scripts
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Scripts.Office_Scripts_Access is
+--       return Matreshka.ODF_Elements.Office.Scripts.Office_Scripts_Access is
 --   begin
---      return new ODF.DOM.Elements.Office.Scripts.Office_Scripts;
+--      return new Matreshka.ODF_Elements.Office.Scripts.Office_Scripts;
 --   end Create_Office_Scripts;
 --
 --   --------------------------
@@ -1353,9 +1352,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Office_Styles
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Styles.Office_Styles_Access is
+--       return Matreshka.ODF_Elements.Office.Styles.Office_Styles_Access is
 --   begin
---      return new ODF.DOM.Elements.Office.Styles.Office_Styles;
+--      return new Matreshka.ODF_Elements.Office.Styles.Office_Styles;
 --   end Create_Office_Styles;
 --
 --   ------------------------
@@ -1364,9 +1363,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Office_Text
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Office.Text.Office_Text_Access is
+--       return Matreshka.ODF_Elements.Office.Text.Office_Text_Access is
 --   begin
---      return new ODF.DOM.Elements.Office.Text.Office_Text;
+--      return new Matreshka.ODF_Elements.Office.Text.Office_Text;
 --   end Create_Office_Text;
 
    ------------------------------
@@ -1408,9 +1407,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Background_Image
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Background_Image.Style_Background_Image_Access is
+--       return Matreshka.ODF_Elements.Style.Background_Image.Style_Background_Image_Access is
 --   begin
---      return new ODF.DOM.Elements.Style.Background_Image.Style_Background_Image;
+--      return new Matreshka.ODF_Elements.Style.Background_Image.Style_Background_Image;
 --   end Create_Style_Background_Image;
 
    ------------------------
@@ -1496,9 +1495,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Default_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Default_Style.Style_Default_Style_Access is
+--       return Matreshka.ODF_Elements.Style.Default_Style.Style_Default_Style_Access is
 --   begin
---      return new ODF.DOM.Elements.Style.Default_Style.Style_Default_Style;
+--      return new Matreshka.ODF_Elements.Style.Default_Style.Style_Default_Style;
 --   end Create_Style_Default_Style;
 
    -------------------------------
@@ -1562,10 +1561,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Font_Face
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Font_Face.Style_Font_Face_Access is
+--       return Matreshka.ODF_Elements.Style.Font_Face.Style_Font_Face_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Font_Face.Style_Font_Face;
+--        new Matreshka.ODF_Elements.Style.Font_Face.Style_Font_Face;
 --   end Create_Style_Font_Face;
 
    --------------------------------------
@@ -1706,9 +1705,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Footer_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Footer_Style.Style_Footer_Style_Access is
+--       return Matreshka.ODF_Elements.Style.Footer_Style.Style_Footer_Style_Access is
 --   begin
---      return new ODF.DOM.Elements.Style.Footer_Style.Style_Footer_Style;
+--      return new Matreshka.ODF_Elements.Style.Footer_Style.Style_Footer_Style;
 --   end Create_Style_Footer_Style;
 
    --------------------------------------
@@ -1728,10 +1727,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Footnote_Sep
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Footnote_Sep.Style_Footnote_Sep_Access is
+--       return Matreshka.ODF_Elements.Style.Footnote_Sep.Style_Footnote_Sep_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Footnote_Sep.Style_Footnote_Sep;
+--        new Matreshka.ODF_Elements.Style.Footnote_Sep.Style_Footnote_Sep;
 --   end Create_Style_Footnote_Sep;
 --
 --   -------------------------------------
@@ -1740,10 +1739,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Graphic_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Graphic_Properties.Style_Graphic_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Graphic_Properties.Style_Graphic_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Graphic_Properties.Style_Graphic_Properties;
+--        new Matreshka.ODF_Elements.Style.Graphic_Properties.Style_Graphic_Properties;
 --   end Create_Style_Graphic_Properties;
 --
 --   -------------------------------
@@ -1752,9 +1751,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Header_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Header_Style.Style_Header_Style_Access is
+--       return Matreshka.ODF_Elements.Style.Header_Style.Style_Header_Style_Access is
 --   begin
---      return new ODF.DOM.Elements.Style.Header_Style.Style_Header_Style;
+--      return new Matreshka.ODF_Elements.Style.Header_Style.Style_Header_Style;
 --   end Create_Style_Header_Style;
 
    --------------------------------------
@@ -1829,10 +1828,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_List_Level_Label_Alignment
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.List_Level_Label_Alignment.Style_List_Level_Label_Alignment_Access is
+--       return Matreshka.ODF_Elements.Style.List_Level_Label_Alignment.Style_List_Level_Label_Alignment_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.List_Level_Label_Alignment.Style_List_Level_Label_Alignment;
+--        new Matreshka.ODF_Elements.Style.List_Level_Label_Alignment.Style_List_Level_Label_Alignment;
 --   end Create_Style_List_Level_Label_Alignment;
 --
 --   ----------------------------------------
@@ -1841,10 +1840,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_List_Level_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.List_Level_Properties.Style_List_Level_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.List_Level_Properties.Style_List_Level_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.List_Level_Properties.Style_List_Level_Properties;
+--        new Matreshka.ODF_Elements.Style.List_Level_Properties.Style_List_Level_Properties;
 --   end Create_Style_List_Level_Properties;
 --
 --   ------------------------------
@@ -1853,10 +1852,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Master_Page
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Master_Page.Style_Master_Page_Access is
+--       return Matreshka.ODF_Elements.Style.Master_Page.Style_Master_Page_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Master_Page.Style_Master_Page;
+--        new Matreshka.ODF_Elements.Style.Master_Page.Style_Master_Page;
 --   end Create_Style_Master_Page;
 
    -----------------------
@@ -1898,10 +1897,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Page_Layout
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Page_Layout.Style_Page_Layout_Access is
+--       return Matreshka.ODF_Elements.Style.Page_Layout.Style_Page_Layout_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Page_Layout.Style_Page_Layout;
+--        new Matreshka.ODF_Elements.Style.Page_Layout.Style_Page_Layout;
 --   end Create_Style_Page_Layout;
 --
 --   -----------------------------------------
@@ -1910,10 +1909,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Page_Layout_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Page_Layout_Properties.Style_Page_Layout_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Page_Layout_Properties.Style_Page_Layout_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Page_Layout_Properties.Style_Page_Layout_Properties;
+--        new Matreshka.ODF_Elements.Style.Page_Layout_Properties.Style_Page_Layout_Properties;
 --   end Create_Style_Page_Layout_Properties;
 --
 --   ---------------------------------------
@@ -1922,10 +1921,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Paragraph_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Paragraph_Properties.Style_Paragraph_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Paragraph_Properties.Style_Paragraph_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Paragraph_Properties.Style_Paragraph_Properties;
+--        new Matreshka.ODF_Elements.Style.Paragraph_Properties.Style_Paragraph_Properties;
 --   end Create_Style_Paragraph_Properties;
 
    -----------------------------------
@@ -2000,9 +1999,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Style.Style_Style_Access is
+--       return Matreshka.ODF_Elements.Style.Style.Style_Style_Access is
 --   begin
---      return new ODF.DOM.Elements.Style.Style.Style_Style;
+--      return new Matreshka.ODF_Elements.Style.Style.Style_Style;
 --   end Create_Style_Style;
 
    ------------------------------------
@@ -2022,10 +2021,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Tab_Stops
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Tab_Stops.Style_Tab_Stops_Access is
+--       return Matreshka.ODF_Elements.Style.Tab_Stops.Style_Tab_Stops_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Tab_Stops.Style_Tab_Stops;
+--        new Matreshka.ODF_Elements.Style.Tab_Stops.Style_Tab_Stops;
 --   end Create_Style_Tab_Stops;
 --
 --   ----------------------------------------
@@ -2034,10 +2033,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Table_Cell_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Table_Cell_Properties.Style_Table_Cell_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Table_Cell_Properties.Style_Table_Cell_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Table_Cell_Properties.Style_Table_Cell_Properties;
+--        new Matreshka.ODF_Elements.Style.Table_Cell_Properties.Style_Table_Cell_Properties;
 --   end Create_Style_Table_Cell_Properties;
 --
 --   ------------------------------------------
@@ -2046,10 +2045,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Table_Column_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Table_Column_Properties.Style_Table_Column_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Table_Column_Properties.Style_Table_Column_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Table_Column_Properties.Style_Table_Column_Properties;
+--        new Matreshka.ODF_Elements.Style.Table_Column_Properties.Style_Table_Column_Properties;
 --   end Create_Style_Table_Column_Properties;
 --
 --   -----------------------------------
@@ -2058,10 +2057,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Table_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Table_Properties.Style_Table_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Table_Properties.Style_Table_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Table_Properties.Style_Table_Properties;
+--        new Matreshka.ODF_Elements.Style.Table_Properties.Style_Table_Properties;
 --   end Create_Style_Table_Properties;
 --
 --   ---------------------------------------
@@ -2070,10 +2069,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Table_Row_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Table_Row_Properties.Style_Table_Row_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Table_Row_Properties.Style_Table_Row_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Table_Row_Properties.Style_Table_Row_Properties;
+--        new Matreshka.ODF_Elements.Style.Table_Row_Properties.Style_Table_Row_Properties;
 --   end Create_Style_Table_Row_Properties;
 
    ---------------------------------
@@ -2126,10 +2125,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Style_Text_Properties
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Style.Text_Properties.Style_Text_Properties_Access is
+--       return Matreshka.ODF_Elements.Style.Text_Properties.Style_Text_Properties_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Style.Text_Properties.Style_Text_Properties;
+--        new Matreshka.ODF_Elements.Style.Text_Properties.Style_Text_Properties;
 --   end Create_Style_Text_Properties;
 
    ----------------------------------------
@@ -2226,9 +2225,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Covered_Table_Cell
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Covered_Table_Cell.Table_Covered_Table_Cell_Access is
+--       return Matreshka.ODF_Elements.Table.Covered_Table_Cell.Table_Covered_Table_Cell_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Covered_Table_Cell.Table_Covered_Table_Cell;
+--      return new Matreshka.ODF_Elements.Table.Covered_Table_Cell.Table_Covered_Table_Cell;
 --   end Create_Table_Covered_Table_Cell;
 
    -----------------------
@@ -2270,9 +2269,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Table
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table.Table_Table_Access is
+--       return Matreshka.ODF_Elements.Table.Table.Table_Table_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table.Table_Table;
+--      return new Matreshka.ODF_Elements.Table.Table.Table_Table;
 --   end Create_Table_Table;
 --
 --   -----------------------------
@@ -2281,9 +2280,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Table_Cell
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Cell.Table_Table_Cell_Access is
+--       return Matreshka.ODF_Elements.Table.Table_Cell.Table_Table_Cell_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table_Cell.Table_Table_Cell;
+--      return new Matreshka.ODF_Elements.Table.Table_Cell.Table_Table_Cell;
 --   end Create_Table_Table_Cell;
 --
 --   -------------------------------
@@ -2292,9 +2291,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Table_Column
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Column.Table_Table_Column_Access is
+--       return Matreshka.ODF_Elements.Table.Table_Column.Table_Table_Column_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table_Column.Table_Table_Column;
+--      return new Matreshka.ODF_Elements.Table.Table_Column.Table_Table_Column;
 --   end Create_Table_Table_Column;
 --
 --   ----------------------------
@@ -2303,9 +2302,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Table_Row
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Row.Table_Table_Row_Access is
+--       return Matreshka.ODF_Elements.Table.Table_Row.Table_Table_Row_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table_Row.Table_Table_Row;
+--      return new Matreshka.ODF_Elements.Table.Table_Row.Table_Table_Row;
 --   end Create_Table_Table_Row;
 
    ---------------------------------------
@@ -2336,9 +2335,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_H
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.H.Text_H_Access is
+--       return Matreshka.ODF_Elements.Text.H.Text_H_Access is
 --   begin
---      return new ODF.DOM.Elements.Text.H.Text_H;
+--      return new Matreshka.ODF_Elements.Text.H.Text_H;
 --   end Create_Text_H;
 
    ---------------------------
@@ -2391,10 +2390,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Linenumbering_Configuration
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Linenumbering_Configuration.Text_Linenumbering_Configuration_Access is
+--       return Matreshka.ODF_Elements.Text.Linenumbering_Configuration.Text_Linenumbering_Configuration_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Linenumbering_Configuration.Text_Linenumbering_Configuration;
+--        new Matreshka.ODF_Elements.Text.Linenumbering_Configuration.Text_Linenumbering_Configuration;
 --   end Create_Text_Linenumbering_Configuration;
 
    ----------------------------------------------------
@@ -2447,10 +2446,10 @@ package body Matreshka.ODF_Documents is
 -- 
 --   function Create_Text_Notes_Configuration
 --     (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Notes_Configuration.Text_Notes_Configuration_Access is
+--       return Matreshka.ODF_Elements.Text.Notes_Configuration.Text_Notes_Configuration_Access is
 --    begin
 --       return
---        new ODF.DOM.Elements.Text.Notes_Configuration.Text_Notes_Configuration;
+--        new Matreshka.ODF_Elements.Text.Notes_Configuration.Text_Notes_Configuration;
 --   end Create_Text_Notes_Configuration;
  
    ----------------------------
@@ -2519,10 +2518,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Outline_Level_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Outline_Level_Style.Text_Outline_Level_Style_Access is
+--       return Matreshka.ODF_Elements.Text.Outline_Level_Style.Text_Outline_Level_Style_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Outline_Level_Style.Text_Outline_Level_Style;
+--        new Matreshka.ODF_Elements.Text.Outline_Level_Style.Text_Outline_Level_Style;
 --   end Create_Text_Outline_Level_Style;
 --
 --   -------------------------------
@@ -2531,10 +2530,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Outline_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Outline_Style.Text_Outline_Style_Access is
+--       return Matreshka.ODF_Elements.Text.Outline_Style.Text_Outline_Style_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Outline_Style.Text_Outline_Style;
+--        new Matreshka.ODF_Elements.Text.Outline_Style.Text_Outline_Style;
 --   end Create_Text_Outline_Style;
 --
 --   -------------------
@@ -2543,10 +2542,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_P
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.P.Text_P_Access is
+--       return Matreshka.ODF_Elements.Text.P.Text_P_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.P.Text_P;
+--        new Matreshka.ODF_Elements.Text.P.Text_P;
 --   end Create_Text_P;
 --
 --   -------------------------------
@@ -2555,10 +2554,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Sequence_Decl
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Sequence_Decl.Text_Sequence_Decl_Access is
+--       return Matreshka.ODF_Elements.Text.Sequence_Decl.Text_Sequence_Decl_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Sequence_Decl.Text_Sequence_Decl;
+--        new Matreshka.ODF_Elements.Text.Sequence_Decl.Text_Sequence_Decl;
 --   end Create_Text_Sequence_Decl;
 --
 --   --------------------------------
@@ -2567,10 +2566,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Sequence_Decls
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Sequence_Decls.Text_Sequence_Decls_Access is
+--       return Matreshka.ODF_Elements.Text.Sequence_Decls.Text_Sequence_Decls_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Sequence_Decls.Text_Sequence_Decls;
+--        new Matreshka.ODF_Elements.Text.Sequence_Decls.Text_Sequence_Decls;
 --   end Create_Text_Sequence_Decls;
 --
 --   ----------------------
@@ -2579,10 +2578,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Span
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Span.Text_Span_Access is
+--       return Matreshka.ODF_Elements.Text.Span.Text_Span_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Span.Text_Span;
+--        new Matreshka.ODF_Elements.Text.Span.Text_Span;
 --   end Create_Text_Span;
 
    ------------------------------------

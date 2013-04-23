@@ -41,86 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.Constants;
-with ODF.DOM.Iterators;
-with ODF.DOM.Visitors;
+with Matreshka.ODF_Elements.Office.Automatic_Styles;
 
-package body ODF.DOM.Elements.Office.Automatic_Styles is
+package ODF.DOM.Elements.Office.Automatic_Styles.Internals is
 
-   -------------------
-   -- Enter_Element --
-   -------------------
+   function Create
+    (Node : Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access)
+       return ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
 
-   overriding procedure Enter_Element
-    (Self    : not null access ODF_Office_Automatic_Styles;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
-         ODF.DOM.Visitors.ODF_Visitor'Class
-          (Visitor).Enter_Office_Automatic_Styles
-            (ODF_Office_Automatic_Styles_Access (Self), Control);
+   function Wrap
+    (Node : Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access)
+       return ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
 
-      else
-         Visitor.Enter_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
-      end if;
-   end Enter_Element;
-
-   --------------------
-   -- Get_Local_Name --
-   --------------------
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Office_Automatic_Styles)
-       return League.Strings.Universal_String is
-   begin
-      return ODF.Constants.Automatic_Styles_Name;
-   end Get_Local_Name;
-
-   -------------------
-   -- Leave_Element --
-   -------------------
-
-   overriding procedure Leave_Element
-    (Self    : not null access ODF_Office_Automatic_Styles;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
-         ODF.DOM.Visitors.ODF_Visitor'Class
-          (Visitor).Leave_Office_Automatic_Styles
-            (ODF_Office_Automatic_Styles_Access (Self), Control);
-
-      else
-         Visitor.Leave_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
-      end if;
-   end Leave_Element;
-
-   -------------------
-   -- Visit_Element --
-   -------------------
-
-   overriding procedure Visit_Element
-    (Self     : not null access ODF_Office_Automatic_Styles;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
-         ODF.DOM.Iterators.ODF_Iterator'Class
-          (Iterator).Visit_Office_Automatic_Styles
-            (Visitor,
-             ODF_Office_Automatic_Styles_Access (Self),
-             Control);
-
-      else
-         Iterator.Visit_Element
-          (Visitor,
-           XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
-           Control);
-      end if;
-   end Visit_Element;
-
-end ODF.DOM.Elements.Office.Automatic_Styles;
+end ODF.DOM.Elements.Office.Automatic_Styles.Internals;

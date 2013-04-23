@@ -41,9 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML.DOM_Nodes;
+with XML.DOM.Elements.Internals;
 
-package ODF.DOM.Elements is
+package body ODF.DOM.Elements.Office.Automatic_Styles.Internals is
 
-   pragma Pure;
+   ------------
+   -- Create --
+   ------------
 
-end ODF.DOM.Elements;
+   function Create
+    (Node : Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access)
+       return ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles is
+   begin
+      return
+       (XML.DOM.Elements.Internals.Create
+         (Matreshka.XML.DOM_Nodes.Element_Access (Node)) with null record);
+   end Create;
+
+   ----------
+   -- Wrap --
+   ----------
+
+   function Wrap
+    (Node : Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access)
+       return ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles is
+   begin
+      return
+       (XML.DOM.Elements.Internals.Wrap
+         (Matreshka.XML.DOM_Nodes.Element_Access (Node)) with null record);
+   end Wrap;
+
+end ODF.DOM.Elements.Office.Automatic_Styles.Internals;

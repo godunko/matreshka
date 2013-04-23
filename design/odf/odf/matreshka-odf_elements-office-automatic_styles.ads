@@ -41,9 +41,37 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements is
+package Matreshka.ODF_Elements.Office.Automatic_Styles is
 
-   pragma Pure;
+   type Office_Automatic_Styles_Node is
+     new Matreshka.ODF_Elements.Office.Office_Node_Base with null record;
 
-end ODF.DOM.Elements;
+   type Office_Automatic_Styles_Access is
+     access all Office_Automatic_Styles_Node'Class;
+
+   overriding procedure Enter_Element
+    (Self    : not null access Office_Automatic_Styles_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Get_Local_Name
+    (Self : not null access constant Office_Automatic_Styles_Node)
+       return League.Strings.Universal_String;
+
+   overriding procedure Leave_Element
+    (Self    : not null access Office_Automatic_Styles_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access Office_Automatic_Styles_Node;
+     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
+
+end Matreshka.ODF_Elements.Office.Automatic_Styles;

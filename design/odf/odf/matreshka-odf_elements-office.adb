@@ -41,9 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
 
-package ODF.DOM.Elements is
+package body Matreshka.ODF_Elements.Office is
 
-   pragma Pure;
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
 
-end ODF.DOM.Elements;
+   overriding function Get_Namespace_URI
+    (Self : not null access constant Office_Node_Base)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Office_URI;
+   end Get_Namespace_URI;
+
+end Matreshka.ODF_Elements.Office;
