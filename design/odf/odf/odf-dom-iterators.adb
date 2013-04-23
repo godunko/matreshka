@@ -45,29 +45,6 @@ with XML.DOM.Nodes;
 
 package body ODF.DOM.Iterators is
 
-   -------------------
-   -- Visit_Element --
-   -------------------
-
---   overriding procedure Visit_Element
---   procedure Visit_Element
---    (Self    : in out ODF_Iterator'Class;
---     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
---     Node    : XML.DOM.Nodes.DOM_Node'Class;
---     Control : in out XML.DOM.Visitors.Traverse_Control)
---   is
-----      use type XML.DOM.Nodes.DOM_Node_Access;
-----
-----      Node : XML.DOM.Nodes.DOM_Node_Access := Element.Get_First_Child;
-----
---   begin
---      null;
-----      while Node /= null loop
-----         Self.Visit (Visitor, Node, Control);
-----         Node := Node.Get_Next_Sibling;
-----      end loop;
---   end Visit_Element;
-
    -----------------------------------
    -- Visit_Office_Automatic_Styles --
    -----------------------------------
@@ -78,7 +55,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit_Element (Visitor, Element, Control);
+      Self.Visit (Visitor, Element, Control);
    end Visit_Office_Automatic_Styles;
 
 --   -----------------------

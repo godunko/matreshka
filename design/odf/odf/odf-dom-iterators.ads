@@ -356,10 +356,4 @@ private
    type ODF_Iterator is
      limited new XML.DOM.Visitors.Abstract_Iterator with null record;
 
---   overriding procedure Visit_Element
---    (Self    : in out ODF_Iterator;
---     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
---     Element : not null XML.DOM.Nodes.Elements.DOM_Element_Access;
---     Control : in out XML.DOM.Visitors.Traverse_Control);
-
 end ODF.DOM.Iterators;
