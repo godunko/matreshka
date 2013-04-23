@@ -131,13 +131,13 @@ with Matreshka.ODF_Attributes.Style.Use_Window_Font_Color;
 with Matreshka.ODF_Attributes.Style.Vertical_Align;
 with Matreshka.ODF_Attributes.Style.Width;
 with Matreshka.ODF_Attributes.Style.Writing_Mode;
---with Matreshka.ODF_Attributes.SVG.Font_Family;
---with Matreshka.ODF_Attributes.SVG.Stroke_Color;
---with Matreshka.ODF_Attributes.Table.Align;
---with Matreshka.ODF_Attributes.Table.Border_Model;
---with Matreshka.ODF_Attributes.Table.Name;
---with Matreshka.ODF_Attributes.Table.Number_Columns_Spanned;
---with Matreshka.ODF_Attributes.Table.Style_Name;
+with Matreshka.ODF_Attributes.SVG.Font_Family;
+with Matreshka.ODF_Attributes.SVG.Stroke_Color;
+with Matreshka.ODF_Attributes.Table.Align;
+with Matreshka.ODF_Attributes.Table.Border_Model;
+with Matreshka.ODF_Attributes.Table.Name;
+with Matreshka.ODF_Attributes.Table.Number_Columns_Spanned;
+with Matreshka.ODF_Attributes.Table.Style_Name;
 --with Matreshka.ODF_Attributes.Text.Display_Outline_Level;
 --with Matreshka.ODF_Attributes.Text.Footnotes_Position;
 --with Matreshka.ODF_Attributes.Text.Increment;
@@ -675,53 +675,53 @@ package Matreshka.ODF_Documents is
     (Self : not null access Document_Node'Class)
        return Matreshka.ODF_Attributes.Style.Writing_Mode.Style_Writing_Mode_Access;
 
---   function Create_SVG_Font_Family
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.SVG.Font_Family.ODF_SVG_Font_Family_Access;
---
---   function Create_SVG_Stroke_Color
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.SVG.Stroke_Color.ODF_SVG_Stroke_Color_Access;
---
---   function Create_Table_Align
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Align.ODF_Table_Align_Access;
---
---   function Create_Table_Border_Model
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Border_Model.ODF_Table_Border_Model_Access;
---
+   function Create_SVG_Font_Family
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.SVG.Font_Family.SVG_Font_Family_Access;
+
+   function Create_SVG_Stroke_Color
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.SVG.Stroke_Color.SVG_Stroke_Color_Access;
+
+   function Create_Table_Align
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Align.Table_Align_Access;
+
+   function Create_Table_Border_Model
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Border_Model.Table_Border_Model_Access;
+
 --   function Create_Table_Covered_Table_Cell
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell_Access;
---
---   function Create_Table_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Name.ODF_Table_Name_Access;
---
---   function Create_Table_Number_Columns_Spanned
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access;
---
---   function Create_Table_Style_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Style_Name.ODF_Table_Style_Name_Access;
---
+--       return ODF.DOM.Elements.Table.Covered_Table_Cell.Table_Covered_Table_Cell_Access;
+
+   function Create_Table_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Name.Table_Name_Access;
+
+   function Create_Table_Number_Columns_Spanned
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Number_Columns_Spanned.Table_Number_Columns_Spanned_Access;
+
+   function Create_Table_Style_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Style_Name.Table_Style_Name_Access;
+
 --   function Create_Table_Table
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
+--       return ODF.DOM.Elements.Table.Table.Table_Table_Access;
 --
 --   function Create_Table_Table_Cell
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
+--       return ODF.DOM.Elements.Table.Table_Cell.Table_Table_Cell_Access;
 --
 --   function Create_Table_Table_Column
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+--       return ODF.DOM.Elements.Table.Table_Column.Table_Table_Column_Access;
 --
 --   function Create_Table_Table_Row
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
+--       return ODF.DOM.Elements.Table.Table_Row.Table_Table_Row_Access;
 --
 --   function Create_Text_Display_Outline_Level
 --    (Self : not null access Document_Node'Class)

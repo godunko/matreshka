@@ -486,41 +486,41 @@ package body Matreshka.ODF_Documents is
                (Self.Create_Style_Writing_Mode);
          end if;
 
---      elsif Namespace_URI = SVG_URI then
---         if Local_Name = Font_Family_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_SVG_Font_Family);
---
---         elsif Local_Name = Stroke_Color_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_SVG_Stroke_Color);
---         end if;
---
---      elsif Namespace_URI = Table_URI then
---         if Local_Name = Align_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Align);
---
---         elsif Local_Name = Border_Model_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Border_Model);
---
---         elsif Local_Name = Name_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Name);
---
---         elsif Local_Name = Number_Columns_Spanned_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Number_Columns_Spanned);
---
---         elsif Local_Name = Style_Name_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Table_Style_Name);
---         end if;
---
+      elsif Namespace_URI = SVG_URI then
+         if Local_Name = Font_Family_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_SVG_Font_Family);
+
+         elsif Local_Name = Stroke_Color_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_SVG_Stroke_Color);
+         end if;
+
+      elsif Namespace_URI = Table_URI then
+         if Local_Name = Align_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Align);
+
+         elsif Local_Name = Border_Model_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Border_Model);
+
+         elsif Local_Name = Name_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Name);
+
+         elsif Local_Name = Number_Columns_Spanned_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Number_Columns_Spanned);
+
+         elsif Local_Name = Style_Name_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Table_Style_Name);
+         end if;
+
 --      elsif Namespace_URI = Text_URI then
 --         if Local_Name = Display_Outline_Level_Name then
 --            return
@@ -2176,103 +2176,103 @@ package body Matreshka.ODF_Documents is
       return new Matreshka.ODF_Attributes.Style.Writing_Mode.Style_Writing_Mode_Node;
    end Create_Style_Writing_Mode;
 
---   ----------------------------
---   -- Create_SVG_Font_Family --
---   ----------------------------
---
---   function Create_SVG_Font_Family
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.SVG.Font_Family.ODF_SVG_Font_Family_Access is
---   begin
---      return new Matreshka.ODF_Attributes.SVG.Font_Family.ODF_SVG_Font_Family;
---   end Create_SVG_Font_Family;
---
---   -----------------------------
---   -- Create_SVG_Stroke_Color --
---   -----------------------------
---
---   function Create_SVG_Stroke_Color
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.SVG.Stroke_Color.ODF_SVG_Stroke_Color_Access is
---   begin
---      return new Matreshka.ODF_Attributes.SVG.Stroke_Color.ODF_SVG_Stroke_Color;
---   end Create_SVG_Stroke_Color;
---
---   ------------------------
---   -- Create_Table_Align --
---   ------------------------
---
---   function Create_Table_Align
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Align.ODF_Table_Align_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Table.Align.ODF_Table_Align;
---   end Create_Table_Align;
---
---   -------------------------------
---   -- Create_Table_Border_Model --
---   -------------------------------
---
---   function Create_Table_Border_Model
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Border_Model.ODF_Table_Border_Model_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Table.Border_Model.ODF_Table_Border_Model;
---   end Create_Table_Border_Model;
---
+   ----------------------------
+   -- Create_SVG_Font_Family --
+   ----------------------------
+
+   function Create_SVG_Font_Family
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.SVG.Font_Family.SVG_Font_Family_Access is
+   begin
+      return new Matreshka.ODF_Attributes.SVG.Font_Family.SVG_Font_Family_Node;
+   end Create_SVG_Font_Family;
+
+   -----------------------------
+   -- Create_SVG_Stroke_Color --
+   -----------------------------
+
+   function Create_SVG_Stroke_Color
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.SVG.Stroke_Color.SVG_Stroke_Color_Access is
+   begin
+      return new Matreshka.ODF_Attributes.SVG.Stroke_Color.SVG_Stroke_Color_Node;
+   end Create_SVG_Stroke_Color;
+
+   ------------------------
+   -- Create_Table_Align --
+   ------------------------
+
+   function Create_Table_Align
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Align.Table_Align_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Table.Align.Table_Align_Node;
+   end Create_Table_Align;
+
+   -------------------------------
+   -- Create_Table_Border_Model --
+   -------------------------------
+
+   function Create_Table_Border_Model
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Border_Model.Table_Border_Model_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Table.Border_Model.Table_Border_Model_Node;
+   end Create_Table_Border_Model;
+
 --   -------------------------------------
 --   -- Create_Table_Covered_Table_Cell --
 --   -------------------------------------
 --
 --   function Create_Table_Covered_Table_Cell
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell_Access is
+--       return ODF.DOM.Elements.Table.Covered_Table_Cell.Table_Covered_Table_Cell_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell;
+--      return new ODF.DOM.Elements.Table.Covered_Table_Cell.Table_Covered_Table_Cell;
 --   end Create_Table_Covered_Table_Cell;
---
---   -----------------------
---   -- Create_Table_Name --
---   -----------------------
---
---   function Create_Table_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Name.ODF_Table_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Table.Name.ODF_Table_Name;
---   end Create_Table_Name;
---
---   -----------------------------------------
---   -- Create_Table_Number_Columns_Spanned --
---   -----------------------------------------
---
---   function Create_Table_Number_Columns_Spanned
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned;
---   end Create_Table_Number_Columns_Spanned;
---
---   -----------------------------
---   -- Create_Table_Style_Name --
---   -----------------------------
---
---   function Create_Table_Style_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Table.Style_Name.ODF_Table_Style_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Table.Style_Name.ODF_Table_Style_Name;
---   end Create_Table_Style_Name;
---
+
+   -----------------------
+   -- Create_Table_Name --
+   -----------------------
+
+   function Create_Table_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Name.Table_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Table.Name.Table_Name_Node;
+   end Create_Table_Name;
+
+   -----------------------------------------
+   -- Create_Table_Number_Columns_Spanned --
+   -----------------------------------------
+
+   function Create_Table_Number_Columns_Spanned
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Number_Columns_Spanned.Table_Number_Columns_Spanned_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Table.Number_Columns_Spanned.Table_Number_Columns_Spanned_Node;
+   end Create_Table_Number_Columns_Spanned;
+
+   -----------------------------
+   -- Create_Table_Style_Name --
+   -----------------------------
+
+   function Create_Table_Style_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Table.Style_Name.Table_Style_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Table.Style_Name.Table_Style_Name_Node;
+   end Create_Table_Style_Name;
+
 --   ------------------------
 --   -- Create_Table_Table --
 --   ------------------------
 --
 --   function Create_Table_Table
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access is
+--       return ODF.DOM.Elements.Table.Table.Table_Table_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table.ODF_Table_Table;
+--      return new ODF.DOM.Elements.Table.Table.Table_Table;
 --   end Create_Table_Table;
 --
 --   -----------------------------
@@ -2281,9 +2281,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Table_Cell
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access is
+--       return ODF.DOM.Elements.Table.Table_Cell.Table_Table_Cell_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell;
+--      return new ODF.DOM.Elements.Table.Table_Cell.Table_Table_Cell;
 --   end Create_Table_Table_Cell;
 --
 --   -------------------------------
@@ -2292,9 +2292,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Table_Column
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access is
+--       return ODF.DOM.Elements.Table.Table_Column.Table_Table_Column_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column;
+--      return new ODF.DOM.Elements.Table.Table_Column.Table_Table_Column;
 --   end Create_Table_Table_Column;
 --
 --   ----------------------------
@@ -2303,9 +2303,9 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Table_Table_Row
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access is
+--       return ODF.DOM.Elements.Table.Table_Row.Table_Table_Row_Access is
 --   begin
---      return new ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row;
+--      return new ODF.DOM.Elements.Table.Table_Row.Table_Table_Row;
 --   end Create_Table_Table_Row;
 --
 --   ---------------------------------------
