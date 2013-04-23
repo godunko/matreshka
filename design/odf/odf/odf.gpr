@@ -1,4 +1,4 @@
-with "../../gnat/matreshka_league.gpr";
+with "../../../gnat/matreshka_league.gpr";
 with "../../dom/dom.gpr";
 
 project ODF is
