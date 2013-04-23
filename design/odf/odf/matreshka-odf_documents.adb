@@ -521,94 +521,94 @@ package body Matreshka.ODF_Documents is
                (Self.Create_Table_Style_Name);
          end if;
 
---      elsif Namespace_URI = Text_URI then
---         if Local_Name = Display_Outline_Level_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Display_Outline_Level);
---
---         elsif Local_Name = Footnotes_Position_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Footnotes_Position);
---
---         elsif Local_Name = Increment_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Increment);
---
---         elsif Local_Name = Label_Followed_By_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Label_Followed_By);
---
---         elsif Local_Name = Level_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Text_Level);
---
---         elsif Local_Name = Line_Number_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Line_Number);
---
---         elsif Local_Name = List_Level_Position_And_Space_Mode_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_List_Level_Position_And_Space_Mode);
---
---         elsif Local_Name = List_Tab_Stop_Position_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_List_Tab_Stop_Position);
---
---         elsif Local_Name = Min_Label_Distance_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Min_Label_Distance);
---
---         elsif Local_Name = Name_Name then
---            return Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Text_Name);
---
---         elsif Local_Name = Note_Class_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Note_Class);
---
---         elsif Local_Name = Number_Lines_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Number_Lines);
---
---         elsif Local_Name = Number_Position_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Number_Position);
---
---         elsif Local_Name = Offset_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Offset);
---
---         elsif Local_Name = Outline_Level_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Outline_Level);
---
---         elsif Local_Name = Start_Numbering_At_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Start_Numbering_At);
---
---         elsif Local_Name = Start_Value_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Start_Value);
---
---         elsif Local_Name = Style_Name_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Attribute_Access
---               (Self.Create_Text_Style_Name);
---         end if;
+      elsif Namespace_URI = Text_URI then
+         if Local_Name = Display_Outline_Level_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Display_Outline_Level);
+
+         elsif Local_Name = Footnotes_Position_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Footnotes_Position);
+
+         elsif Local_Name = Increment_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Increment);
+
+         elsif Local_Name = Label_Followed_By_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Label_Followed_By);
+
+         elsif Local_Name = Level_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Text_Level);
+
+         elsif Local_Name = Line_Number_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Line_Number);
+
+         elsif Local_Name = List_Level_Position_And_Space_Mode_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_List_Level_Position_And_Space_Mode);
+
+         elsif Local_Name = List_Tab_Stop_Position_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_List_Tab_Stop_Position);
+
+         elsif Local_Name = Min_Label_Distance_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Min_Label_Distance);
+
+         elsif Local_Name = Name_Name then
+            return Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Text_Name);
+
+         elsif Local_Name = Note_Class_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Note_Class);
+
+         elsif Local_Name = Number_Lines_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Number_Lines);
+
+         elsif Local_Name = Number_Position_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Number_Position);
+
+         elsif Local_Name = Offset_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Offset);
+
+         elsif Local_Name = Outline_Level_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Outline_Level);
+
+         elsif Local_Name = Start_Numbering_At_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Start_Numbering_At);
+
+         elsif Local_Name = Start_Value_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Start_Value);
+
+         elsif Local_Name = Style_Name_Name then
+            return
+              Matreshka.XML.DOM_Nodes.Attribute_Access
+               (Self.Create_Text_Style_Name);
+         end if;
       end if;
 --
 --      Ada.Wide_Wide_Text_IO.Put_Line
@@ -2307,222 +2307,222 @@ package body Matreshka.ODF_Documents is
 --   begin
 --      return new ODF.DOM.Elements.Table.Table_Row.Table_Table_Row;
 --   end Create_Table_Table_Row;
---
---   ---------------------------------------
---   -- Create_Text_Display_Outline_Level --
---   ---------------------------------------
---
---   function Create_Text_Display_Outline_Level
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Display_Outline_Level.ODF_Text_Display_Outline_Level_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Display_Outline_Level.ODF_Text_Display_Outline_Level;
---   end Create_Text_Display_Outline_Level;
---
---   ------------------------------------
---   -- Create_Text_Footnotes_Position --
---   ------------------------------------
---
---   function Create_Text_Footnotes_Position
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Footnotes_Position.ODF_Text_Footnotes_Position_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Footnotes_Position.ODF_Text_Footnotes_Position;
---   end Create_Text_Footnotes_Position;
---
+
+   ---------------------------------------
+   -- Create_Text_Display_Outline_Level --
+   ---------------------------------------
+
+   function Create_Text_Display_Outline_Level
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Display_Outline_Level.Text_Display_Outline_Level_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Display_Outline_Level.Text_Display_Outline_Level_Node;
+   end Create_Text_Display_Outline_Level;
+
+   ------------------------------------
+   -- Create_Text_Footnotes_Position --
+   ------------------------------------
+
+   function Create_Text_Footnotes_Position
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Footnotes_Position.Text_Footnotes_Position_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Footnotes_Position.Text_Footnotes_Position_Node;
+   end Create_Text_Footnotes_Position;
+
 --   -------------------
 --   -- Create_Text_H --
 --   -------------------
 --
 --   function Create_Text_H
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.H.ODF_Text_H_Access is
+--       return ODF.DOM.Elements.Text.H.Text_H_Access is
 --   begin
---      return new ODF.DOM.Elements.Text.H.ODF_Text_H;
+--      return new ODF.DOM.Elements.Text.H.Text_H;
 --   end Create_Text_H;
---
---   ---------------------------
---   -- Create_Text_Increment --
---   ---------------------------
---
---   function Create_Text_Increment
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Increment.ODF_Text_Increment_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Increment.ODF_Text_Increment;
---   end Create_Text_Increment;
---
---   -----------------------------------
---   -- Create_Text_Label_Followed_By --
---   -----------------------------------
---
---   function Create_Text_Label_Followed_By
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Label_Followed_By.ODF_Text_Label_Followed_By_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Label_Followed_By.ODF_Text_Label_Followed_By;
---   end Create_Text_Label_Followed_By;
---
---   -----------------------
---   -- Create_Text_Level --
---   -----------------------
---
---   function Create_Text_Level
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Level.ODF_Text_Level_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Level.ODF_Text_Level;
---   end Create_Text_Level;
---
---   -----------------------------
---   -- Create_Text_Line_Number --
---   -----------------------------
---
---   function Create_Text_Line_Number
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Line_Number.ODF_Text_Line_Number_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Line_Number.ODF_Text_Line_Number;
---   end Create_Text_Line_Number;
---
+
+   ---------------------------
+   -- Create_Text_Increment --
+   ---------------------------
+
+   function Create_Text_Increment
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Increment.Text_Increment_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Increment.Text_Increment_Node;
+   end Create_Text_Increment;
+
+   -----------------------------------
+   -- Create_Text_Label_Followed_By --
+   -----------------------------------
+
+   function Create_Text_Label_Followed_By
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Label_Followed_By.Text_Label_Followed_By_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Label_Followed_By.Text_Label_Followed_By_Node;
+   end Create_Text_Label_Followed_By;
+
+   -----------------------
+   -- Create_Text_Level --
+   -----------------------
+
+   function Create_Text_Level
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Level.Text_Level_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Level.Text_Level_Node;
+   end Create_Text_Level;
+
+   -----------------------------
+   -- Create_Text_Line_Number --
+   -----------------------------
+
+   function Create_Text_Line_Number
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Line_Number.Text_Line_Number_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Line_Number.Text_Line_Number_Node;
+   end Create_Text_Line_Number;
+
 --   ---------------------------------------------
 --   -- Create_Text_Linenumbering_Configuration --
 --   ---------------------------------------------
 --
 --   function Create_Text_Linenumbering_Configuration
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Linenumbering_Configuration.ODF_Text_Linenumbering_Configuration_Access is
+--       return ODF.DOM.Elements.Text.Linenumbering_Configuration.Text_Linenumbering_Configuration_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Linenumbering_Configuration.ODF_Text_Linenumbering_Configuration;
+--        new ODF.DOM.Elements.Text.Linenumbering_Configuration.Text_Linenumbering_Configuration;
 --   end Create_Text_Linenumbering_Configuration;
---
---   ----------------------------------------------------
---   -- Create_Text_List_Level_Position_And_Space_Mode --
---   ----------------------------------------------------
---
---   function Create_Text_List_Level_Position_And_Space_Mode
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.List_Level_Position_And_Space_Mode.ODF_Text_List_Level_Position_And_Space_Mode_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.List_Level_Position_And_Space_Mode.ODF_Text_List_Level_Position_And_Space_Mode;
---   end Create_Text_List_Level_Position_And_Space_Mode;
---
---   ----------------------------------------
---   -- Create_Text_List_Tab_Stop_Position --
---   ----------------------------------------
---
---   function Create_Text_List_Tab_Stop_Position
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.List_Tab_Stop_Position.ODF_Text_List_Tab_Stop_Position_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.List_Tab_Stop_Position.ODF_Text_List_Tab_Stop_Position;
---   end Create_Text_List_Tab_Stop_Position;
---
---   ------------------------------------
---   -- Create_Text_Min_Label_Distance --
---   ------------------------------------
---
---   function Create_Text_Min_Label_Distance
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Min_Label_Distance.ODF_Text_Min_Label_Distance_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Min_Label_Distance.ODF_Text_Min_Label_Distance;
---   end Create_Text_Min_Label_Distance;
---
---   ----------------------
---   -- Create_Text_Name --
---   ----------------------
---
---   function Create_Text_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Name.ODF_Text_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Name.ODF_Text_Name;
---   end Create_Text_Name;
---
+
+   ----------------------------------------------------
+   -- Create_Text_List_Level_Position_And_Space_Mode --
+   ----------------------------------------------------
+
+   function Create_Text_List_Level_Position_And_Space_Mode
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.List_Level_Position_And_Space_Mode.Text_List_Level_Position_And_Space_Mode_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.List_Level_Position_And_Space_Mode.Text_List_Level_Position_And_Space_Mode_Node;
+   end Create_Text_List_Level_Position_And_Space_Mode;
+
+   ----------------------------------------
+   -- Create_Text_List_Tab_Stop_Position --
+   ----------------------------------------
+
+   function Create_Text_List_Tab_Stop_Position
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.List_Tab_Stop_Position.Text_List_Tab_Stop_Position_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.List_Tab_Stop_Position.Text_List_Tab_Stop_Position_Node;
+   end Create_Text_List_Tab_Stop_Position;
+
+   ------------------------------------
+   -- Create_Text_Min_Label_Distance --
+   ------------------------------------
+
+   function Create_Text_Min_Label_Distance
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Min_Label_Distance.Text_Min_Label_Distance_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Min_Label_Distance.Text_Min_Label_Distance_Node;
+   end Create_Text_Min_Label_Distance;
+
+   ----------------------
+   -- Create_Text_Name --
+   ----------------------
+
+   function Create_Text_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Name.Text_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Name.Text_Name_Node;
+   end Create_Text_Name;
+
 --   -------------------------------------
 --   -- Create_Text_Notes_Configuration --
 --   -------------------------------------
 -- 
 --   function Create_Text_Notes_Configuration
 --     (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Notes_Configuration.ODF_Text_Notes_Configuration_Access is
+--       return ODF.DOM.Elements.Text.Notes_Configuration.Text_Notes_Configuration_Access is
 --    begin
 --       return
---        new ODF.DOM.Elements.Text.Notes_Configuration.ODF_Text_Notes_Configuration;
+--        new ODF.DOM.Elements.Text.Notes_Configuration.Text_Notes_Configuration;
 --   end Create_Text_Notes_Configuration;
--- 
---   ----------------------------
---   -- Create_Text_Note_Class --
---   ----------------------------
---
---   function Create_Text_Note_Class
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Note_Class.ODF_Text_Note_Class_Access is
---   begin
---      return
---        new Matreshka.ODF_Attributes.Text.Note_Class.ODF_Text_Note_Class;
---   end Create_Text_Note_Class;
---
---   ------------------------------
---   -- Create_Text_Number_Lines --
---   ------------------------------
---
---   function Create_Text_Number_Lines
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Number_Lines.ODF_Text_Number_Lines_Access is
---   begin
---      return
---        new Matreshka.ODF_Attributes.Text.Number_Lines.ODF_Text_Number_Lines;
---   end Create_Text_Number_Lines;
---
---   ---------------------------------
---   -- Create_Text_Number_Position --
---   ---------------------------------
---
---   function Create_Text_Number_Position
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Number_Position.ODF_Text_Number_Position_Access is
---   begin
---      return
---        new Matreshka.ODF_Attributes.Text.Number_Position.ODF_Text_Number_Position;
---   end Create_Text_Number_Position;
---
---   ------------------------
---   -- Create_Text_Offset --
---   ------------------------
---
---   function Create_Text_Offset
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Offset.ODF_Text_Offset_Access is
---   begin
---      return
---        new Matreshka.ODF_Attributes.Text.Offset.ODF_Text_Offset;
---   end Create_Text_Offset;
---
---   -------------------------------
---   -- Create_Text_Outline_Level --
---   -------------------------------
---
---   function Create_Text_Outline_Level
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Outline_Level.ODF_Text_Outline_Level_Access is
---   begin
---      return
---        new Matreshka.ODF_Attributes.Text.Outline_Level.ODF_Text_Outline_Level;
---   end Create_Text_Outline_Level;
---
+ 
+   ----------------------------
+   -- Create_Text_Note_Class --
+   ----------------------------
+
+   function Create_Text_Note_Class
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Note_Class.Text_Note_Class_Access is
+   begin
+      return
+        new Matreshka.ODF_Attributes.Text.Note_Class.Text_Note_Class_Node;
+   end Create_Text_Note_Class;
+
+   ------------------------------
+   -- Create_Text_Number_Lines --
+   ------------------------------
+
+   function Create_Text_Number_Lines
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Number_Lines.Text_Number_Lines_Access is
+   begin
+      return
+        new Matreshka.ODF_Attributes.Text.Number_Lines.Text_Number_Lines_Node;
+   end Create_Text_Number_Lines;
+
+   ---------------------------------
+   -- Create_Text_Number_Position --
+   ---------------------------------
+
+   function Create_Text_Number_Position
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Number_Position.Text_Number_Position_Access is
+   begin
+      return
+        new Matreshka.ODF_Attributes.Text.Number_Position.Text_Number_Position_Node;
+   end Create_Text_Number_Position;
+
+   ------------------------
+   -- Create_Text_Offset --
+   ------------------------
+
+   function Create_Text_Offset
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Offset.Text_Offset_Access is
+   begin
+      return
+        new Matreshka.ODF_Attributes.Text.Offset.Text_Offset_Node;
+   end Create_Text_Offset;
+
+   -------------------------------
+   -- Create_Text_Outline_Level --
+   -------------------------------
+
+   function Create_Text_Outline_Level
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Outline_Level.Text_Outline_Level_Access is
+   begin
+      return
+        new Matreshka.ODF_Attributes.Text.Outline_Level.Text_Outline_Level_Node;
+   end Create_Text_Outline_Level;
+
 --   -------------------------------------
 --   -- Create_Text_Outline_Level_Style --
 --   -------------------------------------
 --
 --   function Create_Text_Outline_Level_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Outline_Level_Style.ODF_Text_Outline_Level_Style_Access is
+--       return ODF.DOM.Elements.Text.Outline_Level_Style.Text_Outline_Level_Style_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Outline_Level_Style.ODF_Text_Outline_Level_Style;
+--        new ODF.DOM.Elements.Text.Outline_Level_Style.Text_Outline_Level_Style;
 --   end Create_Text_Outline_Level_Style;
 --
 --   -------------------------------
@@ -2531,10 +2531,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Outline_Style
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Outline_Style.ODF_Text_Outline_Style_Access is
+--       return ODF.DOM.Elements.Text.Outline_Style.Text_Outline_Style_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Outline_Style.ODF_Text_Outline_Style;
+--        new ODF.DOM.Elements.Text.Outline_Style.Text_Outline_Style;
 --   end Create_Text_Outline_Style;
 --
 --   -------------------
@@ -2543,10 +2543,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_P
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.P.ODF_Text_P_Access is
+--       return ODF.DOM.Elements.Text.P.Text_P_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.P.ODF_Text_P;
+--        new ODF.DOM.Elements.Text.P.Text_P;
 --   end Create_Text_P;
 --
 --   -------------------------------
@@ -2555,10 +2555,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Sequence_Decl
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Sequence_Decl.ODF_Text_Sequence_Decl_Access is
+--       return ODF.DOM.Elements.Text.Sequence_Decl.Text_Sequence_Decl_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Sequence_Decl.ODF_Text_Sequence_Decl;
+--        new ODF.DOM.Elements.Text.Sequence_Decl.Text_Sequence_Decl;
 --   end Create_Text_Sequence_Decl;
 --
 --   --------------------------------
@@ -2567,10 +2567,10 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Sequence_Decls
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Sequence_Decls.ODF_Text_Sequence_Decls_Access is
+--       return ODF.DOM.Elements.Text.Sequence_Decls.Text_Sequence_Decls_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Sequence_Decls.ODF_Text_Sequence_Decls;
+--        new ODF.DOM.Elements.Text.Sequence_Decls.Text_Sequence_Decls;
 --   end Create_Text_Sequence_Decls;
 --
 --   ----------------------
@@ -2579,44 +2579,44 @@ package body Matreshka.ODF_Documents is
 --
 --   function Create_Text_Span
 --    (Self : not null access Document_Node'Class)
---       return ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access is
+--       return ODF.DOM.Elements.Text.Span.Text_Span_Access is
 --   begin
 --      return
---        new ODF.DOM.Elements.Text.Span.ODF_Text_Span;
+--        new ODF.DOM.Elements.Text.Span.Text_Span;
 --   end Create_Text_Span;
---
---   ------------------------------------
---   -- Create_Text_Start_Numbering_At --
---   ------------------------------------
---
---   function Create_Text_Start_Numbering_At
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Start_Numbering_At.ODF_Text_Start_Numbering_At_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Start_Numbering_At.ODF_Text_Start_Numbering_At;
---   end Create_Text_Start_Numbering_At;
---
---   -----------------------------
---   -- Create_Text_Start_Value --
---   -----------------------------
---
---   function Create_Text_Start_Value
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Start_Value.ODF_Text_Start_Value_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Start_Value.ODF_Text_Start_Value;
---   end Create_Text_Start_Value;
---
---   ----------------------------
---   -- Create_Text_Style_Name --
---   ----------------------------
---
---   function Create_Text_Style_Name
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Attributes.Text.Style_Name.ODF_Text_Style_Name_Access is
---   begin
---      return new Matreshka.ODF_Attributes.Text.Style_Name.ODF_Text_Style_Name;
---   end Create_Text_Style_Name;
+
+   ------------------------------------
+   -- Create_Text_Start_Numbering_At --
+   ------------------------------------
+
+   function Create_Text_Start_Numbering_At
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Start_Numbering_At.Text_Start_Numbering_At_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Start_Numbering_At.Text_Start_Numbering_At_Node;
+   end Create_Text_Start_Numbering_At;
+
+   -----------------------------
+   -- Create_Text_Start_Value --
+   -----------------------------
+
+   function Create_Text_Start_Value
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Start_Value.Text_Start_Value_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Start_Value.Text_Start_Value_Node;
+   end Create_Text_Start_Value;
+
+   ----------------------------
+   -- Create_Text_Style_Name --
+   ----------------------------
+
+   function Create_Text_Style_Name
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Attributes.Text.Style_Name.Text_Style_Name_Access is
+   begin
+      return new Matreshka.ODF_Attributes.Text.Style_Name.Text_Style_Name_Node;
+   end Create_Text_Style_Name;
 
    --------------------
    -- Get_Local_Name --
