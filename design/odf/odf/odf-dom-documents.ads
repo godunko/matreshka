@@ -41,10 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
-private with XML.DOM.Nodes.Attrs;
-with XML.DOM.Nodes.Documents;
-private with XML.DOM.Nodes.Elements;
+with XML.DOM.Documents;
 
 with ODF.DOM.Attributes.Draw.End_Line_Spacing_Horizontal;
 with ODF.DOM.Attributes.Draw.End_Line_Spacing_Vertical;
@@ -204,649 +201,634 @@ with ODF.DOM.Elements.Text.Span;
 
 package ODF.DOM.Documents is
 
-   type ODF_Document is new XML.DOM.Nodes.Documents.DOM_Document with private;
-
-   type ODF_Document_Access is access all ODF_Document'Class;
+   type ODF_Document is new XML.DOM.Documents.DOM_Document with private;
 
    function Create_Draw_End_Line_Spacing_Horizontal
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Draw.End_Line_Spacing_Horizontal.ODF_Draw_End_Line_Spacing_Horizontal_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.End_Line_Spacing_Horizontal.ODF_Draw_End_Line_Spacing_Horizontal;
 
    function Create_Draw_End_Line_Spacing_Vertical
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Draw.End_Line_Spacing_Vertical.ODF_Draw_End_Line_Spacing_Vertical_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.End_Line_Spacing_Vertical.ODF_Draw_End_Line_Spacing_Vertical;
 
    function Create_Draw_Fill_Color
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Draw.Fill_Color.ODF_Draw_Fill_Color_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Fill_Color.ODF_Draw_Fill_Color;
 
    function Create_Draw_Shadow_Offset_X
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Draw.Shadow_Offset_X.ODF_Draw_Shadow_Offset_X_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Shadow_Offset_X.ODF_Draw_Shadow_Offset_X;
 
    function Create_Draw_Shadow_Offset_Y
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Draw.Shadow_Offset_Y.ODF_Draw_Shadow_Offset_Y_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Shadow_Offset_Y.ODF_Draw_Shadow_Offset_Y;
 
    function Create_Draw_Start_Line_Spacing_Horizontal
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Draw.Start_Line_Spacing_Horizontal.ODF_Draw_Start_Line_Spacing_Horizontal_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Start_Line_Spacing_Horizontal.ODF_Draw_Start_Line_Spacing_Horizontal;
 
    function Create_Draw_Start_Line_Spacing_Vertical
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Draw.Start_Line_Spacing_Vertical.ODF_Draw_Start_Line_Spacing_Vertical_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Draw.Start_Line_Spacing_Vertical.ODF_Draw_Start_Line_Spacing_Vertical;
 
    function Create_FO_Background_Color
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color;
 
    function Create_FO_Border
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Border.ODF_FO_Border_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border.ODF_FO_Border;
 
    function Create_FO_Border_Bottom
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Border_Bottom.ODF_FO_Border_Bottom_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Bottom.ODF_FO_Border_Bottom;
 
    function Create_FO_Border_Left
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Border_Left.ODF_FO_Border_Left_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Left.ODF_FO_Border_Left;
 
    function Create_FO_Border_Right
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Border_Right.ODF_FO_Border_Right_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Right.ODF_FO_Border_Right;
 
    function Create_FO_Border_Top
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Border_Top.ODF_FO_Border_Top_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Border_Top.ODF_FO_Border_Top;
 
    function Create_FO_Country
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Country.ODF_FO_Country_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Country.ODF_FO_Country;
 
    function Create_FO_Font_Size
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size;
 
    function Create_FO_Font_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style;
 
    function Create_FO_Font_Weight
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight;
 
    function Create_FO_Hyphenate
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Hyphenate.ODF_FO_Hyphenate_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenate.ODF_FO_Hyphenate;
 
    function Create_FO_Hyphenation_Ladder_Count
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Hyphenation_Ladder_Count.ODF_FO_Hyphenation_Ladder_Count_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenation_Ladder_Count.ODF_FO_Hyphenation_Ladder_Count;
 
    function Create_FO_Hyphenation_Push_Char_Count
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Hyphenation_Push_Char_Count.ODF_FO_Hyphenation_Push_Char_Count_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenation_Push_Char_Count.ODF_FO_Hyphenation_Push_Char_Count;
 
    function Create_FO_Hyphenation_Remain_Char_Count
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Hyphenation_Remain_Char_Count.ODF_FO_Hyphenation_Remain_Char_Count_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Hyphenation_Remain_Char_Count.ODF_FO_Hyphenation_Remain_Char_Count;
 
    function Create_FO_Keep_Together
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Keep_Together.ODF_FO_Keep_Together_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Keep_Together.ODF_FO_Keep_Together;
 
    function Create_FO_Keep_With_Next
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Keep_With_Next.ODF_FO_Keep_With_Next_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Keep_With_Next.ODF_FO_Keep_With_Next;
 
    function Create_FO_Language
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Language.ODF_FO_Language_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Language.ODF_FO_Language;
 
    function Create_FO_Margin
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin;
 
    function Create_FO_Margin_Bottom
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom;
 
    function Create_FO_Margin_Left
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left;
 
    function Create_FO_Margin_Right
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right;
 
    function Create_FO_Margin_Top
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top;
 
    function Create_FO_Padding
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding;
 
    function Create_FO_Page_Height
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Page_Height.ODF_FO_Page_Height_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Page_Height.ODF_FO_Page_Height;
 
    function Create_FO_Page_Width
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Page_Width.ODF_FO_Page_Width_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Page_Width.ODF_FO_Page_Width;
 
    function Create_FO_Text_Align
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align;
 
    function Create_FO_Text_Indent
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Text_Indent.ODF_FO_Text_Indent_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Text_Indent.ODF_FO_Text_Indent;
 
    function Create_FO_Wrap_Option
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.FO.Wrap_Option.ODF_FO_Wrap_Option_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.FO.Wrap_Option.ODF_FO_Wrap_Option;
 
    function Create_Office_Automatic_Styles
-    (Self : not null access ODF_Document'Class)
+    (Self : ODF_Document'Class)
        return
-         ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+         ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
 
    function Create_Office_Body
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body;
 
    function Create_Office_Document_Content
-    (Self : not null access ODF_Document'Class)
+    (Self : ODF_Document'Class)
        return
-         ODF.DOM.Elements.Office.Document_Content.ODF_Office_Document_Content_Access;
+         ODF.DOM.Elements.Office.Document_Content.ODF_Office_Document_Content;
 
    function Create_Office_Document_Styles
-    (Self : not null access ODF_Document'Class)
+    (Self : ODF_Document'Class)
        return
-         ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles_Access;
+         ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles;
 
    function Create_Office_Font_Face_Decls
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Office.Font_Face_Decls.ODF_Office_Font_Face_Decls_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Font_Face_Decls.ODF_Office_Font_Face_Decls;
 
    function Create_Office_Master_Styles
-    (Self : not null access ODF_Document'Class)
+    (Self : ODF_Document'Class)
        return
-         ODF.DOM.Elements.Office.Master_Styles.ODF_Office_Master_Styles_Access;
+         ODF.DOM.Elements.Office.Master_Styles.ODF_Office_Master_Styles;
 
    function Create_Office_Scripts
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Office.Scripts.ODF_Office_Scripts_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Scripts.ODF_Office_Scripts;
 
    function Create_Office_Styles
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Office.Styles.ODF_Office_Styles_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Styles.ODF_Office_Styles;
 
    function Create_Office_Text
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Office.Text.ODF_Office_Text;
 
    function Create_Office_Value_Type
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Office.Value_Type.ODF_Office_Value_Type_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Office.Value_Type.ODF_Office_Value_Type;
 
    function Create_Office_Version
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Office.Version.ODF_Office_Version_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Office.Version.ODF_Office_Version;
 
    function Create_Style_Background_Image
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image;
 
    function Create_Style_Adjustment
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Adjustment.ODF_Style_Adjustment_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Adjustment.ODF_Style_Adjustment;
 
    function Create_Style_Class
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Class.ODF_Style_Class_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Class.ODF_Style_Class;
 
    function Create_Style_Color
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Color.ODF_Style_Color_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Color.ODF_Style_Color;
 
    function Create_Style_Column_Width
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width;
 
    function Create_Style_Contextual_Spacing
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Contextual_Spacing.ODF_Style_Contextual_Spacing_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Contextual_Spacing.ODF_Style_Contextual_Spacing;
 
    function Create_Style_Country_Asian
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Country_Asian.ODF_Style_Country_Asian_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Country_Asian.ODF_Style_Country_Asian;
 
    function Create_Style_Country_Complex
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Country_Complex.ODF_Style_Country_Complex_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Country_Complex.ODF_Style_Country_Complex;
 
    function Create_Style_Default_Outline_Level
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Default_Outline_Level.ODF_Style_Default_Outline_Level_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Default_Outline_Level.ODF_Style_Default_Outline_Level;
 
    function Create_Style_Default_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style;
 
    function Create_Style_Display_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Display_Name.ODF_Style_Display_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Display_Name.ODF_Style_Display_Name;
 
    function Create_Style_Distance_After_Sep
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Distance_After_Sep.ODF_Style_Distance_After_Sep_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Distance_After_Sep.ODF_Style_Distance_After_Sep;
 
    function Create_Style_Distance_Before_Sep
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Distance_Before_Sep.ODF_Style_Distance_Before_Sep_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Distance_Before_Sep.ODF_Style_Distance_Before_Sep;
 
    function Create_Style_Family
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Family.ODF_Style_Family;
 
    function Create_Style_Flow_With_Text
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Flow_With_Text.ODF_Style_Flow_With_Text_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Flow_With_Text.ODF_Style_Flow_With_Text;
 
    function Create_Style_Font_Face
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face;
 
    function Create_Style_Font_Family_Generic
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Family_Generic.ODF_Style_Font_Family_Generic_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Family_Generic.ODF_Style_Font_Family_Generic;
 
    function Create_Style_Font_Independent_Line_Spacing
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Independent_Line_Spacing.ODF_Style_Font_Independent_Line_Spacing_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Independent_Line_Spacing.ODF_Style_Font_Independent_Line_Spacing;
 
    function Create_Style_Font_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Name.ODF_Style_Font_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Name.ODF_Style_Font_Name;
 
    function Create_Style_Font_Name_Asian
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Name_Asian.ODF_Style_Font_Name_Asian_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Name_Asian.ODF_Style_Font_Name_Asian;
 
    function Create_Style_Font_Name_Complex
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Name_Complex.ODF_Style_Font_Name_Complex_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Name_Complex.ODF_Style_Font_Name_Complex;
 
    function Create_Style_Font_Pitch
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Pitch.ODF_Style_Font_Pitch_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Pitch.ODF_Style_Font_Pitch;
 
    function Create_Style_Font_Size_Asian
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Size_Asian.ODF_Style_Font_Size_Asian_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Size_Asian.ODF_Style_Font_Size_Asian;
 
    function Create_Style_Font_Size_Complex
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Size_Complex.ODF_Style_Font_Size_Complex_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Size_Complex.ODF_Style_Font_Size_Complex;
 
    function Create_Style_Font_Style_Asian
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Style_Asian.ODF_Style_Font_Style_Asian_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Style_Asian.ODF_Style_Font_Style_Asian;
 
    function Create_Style_Font_Style_Complex
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Style_Complex.ODF_Style_Font_Style_Complex_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Style_Complex.ODF_Style_Font_Style_Complex;
 
    function Create_Style_Font_Weight_Asian
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Weight_Asian.ODF_Style_Font_Weight_Asian_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Weight_Asian.ODF_Style_Font_Weight_Asian;
 
    function Create_Style_Font_Weight_Complex
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Font_Weight_Complex.ODF_Style_Font_Weight_Complex_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Font_Weight_Complex.ODF_Style_Font_Weight_Complex;
 
    function Create_Style_Footer_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Footer_Style.ODF_Style_Footer_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Footer_Style.ODF_Style_Footer_Style;
 
    function Create_Style_Footnote_Max_Height
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Footnote_Max_Height.ODF_Style_Footnote_Max_Height_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Footnote_Max_Height.ODF_Style_Footnote_Max_Height;
 
    function Create_Style_Footnote_Sep
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Footnote_Sep.ODF_Style_Footnote_Sep_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Footnote_Sep.ODF_Style_Footnote_Sep;
 
    function Create_Style_Graphic_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Graphic_Properties.ODF_Style_Graphic_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Graphic_Properties.ODF_Style_Graphic_Properties;
 
    function Create_Style_Header_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Header_Style.ODF_Style_Header_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Header_Style.ODF_Style_Header_Style;
 
    function Create_Style_Justify_Single_Word
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Justify_Single_Word.ODF_Style_Justify_Single_Word_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Justify_Single_Word.ODF_Style_Justify_Single_Word;
 
    function Create_Style_Language_Asian
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Language_Asian.ODF_Style_Language_Asian_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Language_Asian.ODF_Style_Language_Asian;
 
    function Create_Style_Language_Complex
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Language_Complex.ODF_Style_Language_Complex_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Language_Complex.ODF_Style_Language_Complex;
 
    function Create_Style_Letter_Kerning
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Letter_Kerning.ODF_Style_Letter_Kerning_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Letter_Kerning.ODF_Style_Letter_Kerning;
 
    function Create_Style_Line_Break
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Line_Break.ODF_Style_Line_Break_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Line_Break.ODF_Style_Line_Break;
 
    function Create_Style_Line_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Line_Style.ODF_Style_Line_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Line_Style.ODF_Style_Line_Style;
 
    function Create_Style_List_Level_Label_Alignment
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.List_Level_Label_Alignment.ODF_Style_List_Level_Label_Alignment_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.List_Level_Label_Alignment.ODF_Style_List_Level_Label_Alignment;
 
    function Create_Style_List_Level_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.List_Level_Properties.ODF_Style_List_Level_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.List_Level_Properties.ODF_Style_List_Level_Properties;
 
    function Create_Style_Master_Page
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Master_Page.ODF_Style_Master_Page_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Master_Page.ODF_Style_Master_Page;
 
    function Create_Style_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Name.ODF_Style_Name;
 
    function Create_Style_Next_Style_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Next_Style_Name.ODF_Style_Next_Style_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Next_Style_Name.ODF_Style_Next_Style_Name;
 
    function Create_Style_Num_Format
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Num_Format.ODF_Style_Num_Format_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Num_Format.ODF_Style_Num_Format;
 
    function Create_Style_Page_Layout
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Page_Layout.ODF_Style_Page_Layout_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Page_Layout.ODF_Style_Page_Layout;
 
    function Create_Style_Page_Layout_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Page_Layout_Properties.ODF_Style_Page_Layout_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Page_Layout_Properties.ODF_Style_Page_Layout_Properties;
 
    function Create_Style_Paragraph_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties;
 
    function Create_Style_Page_Layout_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Page_Layout_Name.ODF_Style_Page_Layout_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Page_Layout_Name.ODF_Style_Page_Layout_Name;
 
    function Create_Style_Parent_Style_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name;
 
    function Create_Style_Print_Orientation
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Print_Orientation.ODF_Style_Print_Orientation_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Print_Orientation.ODF_Style_Print_Orientation;
 
    function Create_Style_Punctuation_Wrap
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Punctuation_Wrap.ODF_Style_Punctuation_Wrap_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Punctuation_Wrap.ODF_Style_Punctuation_Wrap;
 
    function Create_Style_Rel_Column_Width
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Rel_Column_Width.ODF_Style_Rel_Column_Width_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Rel_Column_Width.ODF_Style_Rel_Column_Width;
 
    function Create_Style_Rel_Width
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Rel_Width.ODF_Style_Rel_Width_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Rel_Width.ODF_Style_Rel_Width;
 
    function Create_Style_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Style.ODF_Style_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Style.ODF_Style_Style;
 
    function Create_Style_Tab_Stop_Distance
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Tab_Stop_Distance.ODF_Style_Tab_Stop_Distance_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Tab_Stop_Distance.ODF_Style_Tab_Stop_Distance;
 
    function Create_Style_Tab_Stops
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Tab_Stops.ODF_Style_Tab_Stops_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Tab_Stops.ODF_Style_Tab_Stops;
 
    function Create_Style_Table_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Table_Properties.ODF_Style_Table_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Table_Properties.ODF_Style_Table_Properties;
 
    function Create_Style_Table_Cell_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties;
 
    function Create_Style_Table_Column_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties;
 
    function Create_Style_Table_Row_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Table_Row_Properties.ODF_Style_Table_Row_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Table_Row_Properties.ODF_Style_Table_Row_Properties;
 
    function Create_Style_Text_Autospace
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Text_Autospace.ODF_Style_Text_Autospace_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Text_Autospace.ODF_Style_Text_Autospace;
 
    function Create_Style_Text_Underline_Color
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Text_Underline_Color.ODF_Style_Text_Underline_Color_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Text_Underline_Color.ODF_Style_Text_Underline_Color;
 
    function Create_Style_Text_Underline_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style;
 
    function Create_Style_Text_Underline_Width
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Text_Underline_Width.ODF_Style_Text_Underline_Width_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Text_Underline_Width.ODF_Style_Text_Underline_Width;
 
    function Create_Style_Text_Properties
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties;
 
    function Create_Style_Use_Window_Font_Color
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Use_Window_Font_Color.ODF_Style_Use_Window_Font_Color_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Use_Window_Font_Color.ODF_Style_Use_Window_Font_Color;
 
    function Create_Style_Vertical_Align
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Vertical_Align.ODF_Style_Vertical_Align_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Vertical_Align.ODF_Style_Vertical_Align;
 
    function Create_Style_Width
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Width.ODF_Style_Width_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Width.ODF_Style_Width;
 
    function Create_Style_Writing_Mode
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Style.Writing_Mode.ODF_Style_Writing_Mode_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Style.Writing_Mode.ODF_Style_Writing_Mode;
 
    function Create_SVG_Font_Family
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.SVG.Font_Family.ODF_SVG_Font_Family_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.SVG.Font_Family.ODF_SVG_Font_Family;
 
    function Create_SVG_Stroke_Color
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.SVG.Stroke_Color.ODF_SVG_Stroke_Color_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.SVG.Stroke_Color.ODF_SVG_Stroke_Color;
 
    function Create_Table_Align
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Table.Align.ODF_Table_Align_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Align.ODF_Table_Align;
 
    function Create_Table_Border_Model
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Table.Border_Model.ODF_Table_Border_Model_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Border_Model.ODF_Table_Border_Model;
 
    function Create_Table_Covered_Table_Cell
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell;
 
    function Create_Table_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Table.Name.ODF_Table_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Name.ODF_Table_Name;
 
    function Create_Table_Number_Columns_Spanned
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned;
 
    function Create_Table_Style_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name;
 
    function Create_Table_Table
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table.ODF_Table_Table;
 
    function Create_Table_Table_Cell
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell;
 
    function Create_Table_Table_Column
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column;
 
    function Create_Table_Table_Row
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row;
 
    function Create_Text_Display_Outline_Level
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Display_Outline_Level.ODF_Text_Display_Outline_Level_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Display_Outline_Level.ODF_Text_Display_Outline_Level;
 
    function Create_Text_Footnotes_Position
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Footnotes_Position.ODF_Text_Footnotes_Position_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Footnotes_Position.ODF_Text_Footnotes_Position;
 
    function Create_Text_H
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.H.ODF_Text_H;
 
    function Create_Text_Increment
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Increment.ODF_Text_Increment_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Increment.ODF_Text_Increment;
 
    function Create_Text_Label_Followed_By
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Label_Followed_By.ODF_Text_Label_Followed_By_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Label_Followed_By.ODF_Text_Label_Followed_By;
 
    function Create_Text_Level
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Level.ODF_Text_Level_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Level.ODF_Text_Level;
 
    function Create_Text_Line_Number
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Line_Number.ODF_Text_Line_Number_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Line_Number.ODF_Text_Line_Number;
 
    function Create_Text_Linenumbering_Configuration
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.Linenumbering_Configuration.ODF_Text_Linenumbering_Configuration_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Linenumbering_Configuration.ODF_Text_Linenumbering_Configuration;
 
    function Create_Text_List_Level_Position_And_Space_Mode
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.List_Level_Position_And_Space_Mode.ODF_Text_List_Level_Position_And_Space_Mode_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.List_Level_Position_And_Space_Mode.ODF_Text_List_Level_Position_And_Space_Mode;
 
    function Create_Text_List_Tab_Stop_Position
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.List_Tab_Stop_Position.ODF_Text_List_Tab_Stop_Position_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.List_Tab_Stop_Position.ODF_Text_List_Tab_Stop_Position;
 
    function Create_Text_Min_Label_Distance
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Min_Label_Distance.ODF_Text_Min_Label_Distance_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Min_Label_Distance.ODF_Text_Min_Label_Distance;
 
    function Create_Text_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Name.ODF_Text_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Name.ODF_Text_Name;
 
    function Create_Text_Notes_Configuration
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.Notes_Configuration.ODF_Text_Notes_Configuration_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Notes_Configuration.ODF_Text_Notes_Configuration;
 
    function Create_Text_Note_Class
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Note_Class.ODF_Text_Note_Class_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Note_Class.ODF_Text_Note_Class;
 
    function Create_Text_Number_Lines
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Number_Lines.ODF_Text_Number_Lines_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Number_Lines.ODF_Text_Number_Lines;
 
    function Create_Text_Number_Position
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Number_Position.ODF_Text_Number_Position_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Number_Position.ODF_Text_Number_Position;
 
    function Create_Text_Offset
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Offset.ODF_Text_Offset_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Offset.ODF_Text_Offset;
 
    function Create_Text_Outline_Level
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Outline_Level.ODF_Text_Outline_Level_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Outline_Level.ODF_Text_Outline_Level;
 
    function Create_Text_Outline_Level_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.Outline_Level_Style.ODF_Text_Outline_Level_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Outline_Level_Style.ODF_Text_Outline_Level_Style;
 
    function Create_Text_Outline_Style
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.Outline_Style.ODF_Text_Outline_Style_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Outline_Style.ODF_Text_Outline_Style;
 
    function Create_Text_P
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.P.ODF_Text_P_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.P.ODF_Text_P;
 
    function Create_Text_Sequence_Decl
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.Sequence_Decl.ODF_Text_Sequence_Decl_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Sequence_Decl.ODF_Text_Sequence_Decl;
 
    function Create_Text_Sequence_Decls
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.Sequence_Decls.ODF_Text_Sequence_Decls_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Sequence_Decls.ODF_Text_Sequence_Decls;
 
    function Create_Text_Span
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Elements.Text.Span.ODF_Text_Span;
 
    function Create_Text_Start_Numbering_At
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Start_Numbering_At.ODF_Text_Start_Numbering_At_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Start_Numbering_At.ODF_Text_Start_Numbering_At;
 
    function Create_Text_Start_Value
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Start_Value.ODF_Text_Start_Value_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Start_Value.ODF_Text_Start_Value;
 
    function Create_Text_Style_Name
-    (Self : not null access ODF_Document'Class)
-       return ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access;
+    (Self : ODF_Document'Class)
+       return ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name;
 
 private
 
-   type ODF_Document is
-     new XML.DOM.Nodes.Documents.DOM_Document with null record;
-
-   overriding function Create_Element_NS
-    (Self           : not null access ODF_Document;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return XML.DOM.Nodes.Elements.DOM_Element_Access;
-
-   overriding function Create_Attribute_NS
-    (Self           : not null access ODF_Document;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
+   type ODF_Document is new XML.DOM.Documents.DOM_Document with null record;
 
 end ODF.DOM.Documents;

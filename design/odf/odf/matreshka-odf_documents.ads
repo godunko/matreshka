@@ -205,6 +205,8 @@ package Matreshka.ODF_Documents is
    type Document_Node is
      new Matreshka.DOM_Nodes.Documents.Abstract_Document with null record;
 
+   type Document_Access is access all Document_Node'Class;
+
    function Create_Draw_End_Line_Spacing_Horizontal
     (Self : not null access Document_Node'Class)
        return Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Horizontal.Draw_End_Line_Spacing_Horizontal_Access;
