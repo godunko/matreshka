@@ -63,7 +63,7 @@ package body Matreshka.ODF_Documents is
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Nodes.Attribute_Access
+       return not null Matreshka.DOM_Nodes.Attribute_Access
    is
       Local_Name : constant League.Strings.Universal_String
         := Get_Local_Name (Qualified_Name);
@@ -72,541 +72,541 @@ package body Matreshka.ODF_Documents is
       if Namespace_URI = Draw_URI then
          if Local_Name = End_Line_Spacing_Horizontal_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_End_Line_Spacing_Horizontal);
 
          elsif Local_Name = End_Line_Spacing_Vertical_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_End_Line_Spacing_Vertical);
 
          elsif Local_Name = Fill_Color_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_Fill_Color);
 
          elsif Local_Name = Shadow_Offset_X_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_Shadow_Offset_X);
 
          elsif Local_Name = Shadow_Offset_Y_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_Shadow_Offset_Y);
 
          elsif Local_Name = Start_Line_Spacing_Horizontal_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_Start_Line_Spacing_Horizontal);
 
          elsif Local_Name = Start_Line_Spacing_Vertical_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_Start_Line_Spacing_Vertical);
          end if;
 
       elsif Namespace_URI = FO_URI then
          if Local_Name = Background_Color_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Background_Color);
 
          elsif Local_Name = Border_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Border);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Border);
 
          elsif Local_Name = Border_Bottom_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Border_Bottom);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Border_Bottom);
 
          elsif Local_Name = Border_Left_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Border_Left);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Border_Left);
 
          elsif Local_Name = Border_Right_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Border_Right);
 
          elsif Local_Name = Border_Top_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Border_Top);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Border_Top);
 
          elsif Local_Name = Country_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Country);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Country);
 
          elsif Local_Name = Font_Size_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Font_Size);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Font_Size);
 
          elsif Local_Name = Font_Style_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Font_Style);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Font_Style);
 
          elsif Local_Name = Font_Weight_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Font_Weight);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Font_Weight);
 
          elsif Local_Name = Hyphenate_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Hyphenate);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Hyphenate);
 
          elsif Local_Name = Hyphenation_Ladder_Count_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Hyphenation_Ladder_Count);
 
          elsif Local_Name = Hyphenation_Push_Char_Count_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Hyphenation_Push_Char_Count);
 
          elsif Local_Name = Hyphenation_Remain_Char_Count_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Hyphenation_Remain_Char_Count);
 
          elsif Local_Name = Keep_Together_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Keep_Together);
 
          elsif Local_Name = Keep_With_Next_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Keep_With_Next);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Keep_With_Next);
 
          elsif Local_Name = Language_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Language);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Language);
 
          elsif Local_Name = Margin_Name then
-            return Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Margin);
+            return Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Margin);
 
          elsif Local_Name = Margin_Bottom_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Margin_Bottom);
 
          elsif Local_Name = Margin_Left_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Margin_Left);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Margin_Left);
 
          elsif Local_Name = Margin_Right_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_FO_Margin_Right);
 
          elsif Local_Name = Margin_Top_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Margin_Top);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Margin_Top);
 
          elsif Local_Name = Padding_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Padding);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Padding);
 
          elsif Local_Name = Page_Height_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Page_Height);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Page_Height);
 
          elsif Local_Name = Page_Width_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Page_Width);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Page_Width);
 
          elsif Local_Name = Text_Align_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Text_Align);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Text_Align);
 
          elsif Local_Name = Text_Indent_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Text_Indent);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Text_Indent);
 
          elsif Local_Name = Wrap_Option_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_FO_Wrap_Option);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Wrap_Option);
          end if;
 
       elsif Namespace_URI = Office_URI then
          if Local_Name = Value_Type_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Office_Value_Type);
 
          elsif Local_Name = Version_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Office_Version);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Office_Version);
          end if;
 
       elsif Namespace_URI = Style_URI then
          if Local_Name = Adjustment_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Adjustment);
 
          elsif Local_Name = Class_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Style_Class);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Style_Class);
 
          elsif Local_Name = Color_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Color);
 
          elsif Local_Name = Column_Width_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Column_Width);
 
          elsif Local_Name = Contextual_Spacing_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Contextual_Spacing);
 
          elsif Local_Name = Country_Asian_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Country_Asian);
 
          elsif Local_Name = Country_Complex_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Country_Complex);
 
          elsif Local_Name = Default_Outline_Level_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Default_Outline_Level);
 
          elsif Local_Name = Display_Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Display_Name);
 
          elsif Local_Name = Distance_After_Sep_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Distance_After_Sep);
 
          elsif Local_Name = Distance_Before_Sep_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Distance_Before_Sep);
 
          elsif Local_Name = Family_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Style_Family);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Style_Family);
 
          elsif Local_Name = Flow_With_Text_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Flow_With_Text);
 
          elsif Local_Name = Font_Family_Generic_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Family_Generic);
 
          elsif Local_Name = Font_Independent_Line_Spacing_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Independent_Line_Spacing);
 
          elsif Local_Name = Font_Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Name);
 
          elsif Local_Name = Font_Name_Asian_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Name_Asian);
 
          elsif Local_Name = Font_Name_Complex_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Name_Complex);
 
          elsif Local_Name = Font_Pitch_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Pitch);
 
          elsif Local_Name = Font_Size_Asian_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Size_Asian);
 
          elsif Local_Name = Font_Size_Complex_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Size_Complex);
 
          elsif Local_Name = Font_Style_Asian_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Style_Asian);
 
          elsif Local_Name = Font_Style_Complex_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Style_Complex);
 
          elsif Local_Name = Font_Weight_Asian_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Weight_Asian);
 
          elsif Local_Name = Font_Weight_Complex_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Font_Weight_Complex);
 
          elsif Local_Name = Footnote_Max_Height_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Footnote_Max_Height);
 
          elsif Local_Name = Justify_Single_Word_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Justify_Single_Word);
 
          elsif Local_Name = Language_Asian_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Language_Asian);
 
          elsif Local_Name = Language_Complex_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Language_Complex);
 
          elsif Local_Name = Letter_Kerning_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Letter_Kerning);
 
          elsif Local_Name = Line_Break_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Line_Break);
 
          elsif Local_Name = Line_Style_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Line_Style);
 
          elsif Local_Name = Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Style_Name);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Style_Name);
 
          elsif Local_Name = Next_Style_Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Next_Style_Name);
 
          elsif Local_Name = Num_Format_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Num_Format);
 
          elsif Local_Name = Page_Layout_Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Page_Layout_Name);
 
          elsif Local_Name = Parent_Style_Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Parent_Style_Name);
 
          elsif Local_Name = Print_Orientation_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Print_Orientation);
 
          elsif Local_Name = Punctuation_Wrap_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Punctuation_Wrap);
 
          elsif Local_Name = Rel_Column_Width_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Rel_Column_Width);
 
          elsif Local_Name = Rel_Width_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Rel_Width);
 
          elsif Local_Name = Tab_Stop_Distance_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Tab_Stop_Distance);
 
          elsif Local_Name = Text_Autospace_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Text_Autospace);
 
          elsif Local_Name = Text_Underline_Color_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Text_Underline_Color);
 
          elsif Local_Name = Text_Underline_Style_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Text_Underline_Style);
 
          elsif Local_Name = Text_Underline_Width_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Text_Underline_Width);
 
          elsif Local_Name = Use_Window_Font_Color_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Use_Window_Font_Color);
 
          elsif Local_Name = Vertical_Align_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Vertical_Align);
 
          elsif Local_Name = Width_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Style_Width);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Style_Width);
 
          elsif Local_Name = Writing_Mode_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Style_Writing_Mode);
          end if;
 
       elsif Namespace_URI = SVG_URI then
          if Local_Name = Font_Family_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_SVG_Font_Family);
 
          elsif Local_Name = Stroke_Color_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_SVG_Stroke_Color);
          end if;
 
       elsif Namespace_URI = Table_URI then
          if Local_Name = Align_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Align);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Table_Align);
 
          elsif Local_Name = Border_Model_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Border_Model);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Table_Border_Model);
 
          elsif Local_Name = Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Name);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Table_Name);
 
          elsif Local_Name = Number_Columns_Spanned_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Table_Number_Columns_Spanned);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Table_Number_Columns_Spanned);
 
          elsif Local_Name = Style_Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Table_Style_Name);
          end if;
 
       elsif Namespace_URI = Text_URI then
          if Local_Name = Display_Outline_Level_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Display_Outline_Level);
 
          elsif Local_Name = Footnotes_Position_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Footnotes_Position);
 
          elsif Local_Name = Increment_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Increment);
 
          elsif Local_Name = Label_Followed_By_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Label_Followed_By);
 
          elsif Local_Name = Level_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Text_Level);
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Text_Level);
 
          elsif Local_Name = Line_Number_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Line_Number);
 
          elsif Local_Name = List_Level_Position_And_Space_Mode_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_List_Level_Position_And_Space_Mode);
 
          elsif Local_Name = List_Tab_Stop_Position_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_List_Tab_Stop_Position);
 
          elsif Local_Name = Min_Label_Distance_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Min_Label_Distance);
 
          elsif Local_Name = Name_Name then
-            return Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Create_Text_Name);
+            return Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Text_Name);
 
          elsif Local_Name = Note_Class_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Note_Class);
 
          elsif Local_Name = Number_Lines_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Number_Lines);
 
          elsif Local_Name = Number_Position_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Number_Position);
 
          elsif Local_Name = Offset_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Offset);
 
          elsif Local_Name = Outline_Level_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Outline_Level);
 
          elsif Local_Name = Start_Numbering_At_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Start_Numbering_At);
 
          elsif Local_Name = Start_Value_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Start_Value);
 
          elsif Local_Name = Style_Name_Name then
             return
-              Matreshka.XML.DOM_Nodes.Attribute_Access
+              Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Style_Name);
          end if;
       end if;
@@ -708,7 +708,7 @@ package body Matreshka.ODF_Documents is
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Nodes.Element_Access
+       return not null Matreshka.DOM_Nodes.Element_Access
    is
       Local_Name : constant League.Strings.Universal_String
         := Get_Local_Name (Qualified_Name);
@@ -717,47 +717,46 @@ package body Matreshka.ODF_Documents is
       if Namespace_URI = Office_URI then
          if Local_Name = Automatic_Styles_Name then
             return
-              Matreshka.XML.DOM_Nodes.Element_Access
+              Matreshka.DOM_Nodes.Element_Access
                (Self.Create_Office_Automatic_Styles);
---
---         if Local_Name = Body_Name then
---            return
---              Matreshka.XML.DOM_Nodes.Element_Access
---               (Self.Create_Office_Body);
---
+
+         elsif Local_Name = Body_Name then
+            return
+              Matreshka.DOM_Nodes.Element_Access (Self.Create_Office_Body);
+
 --         elsif Local_Name = Document_Content_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Document_Content);
 --
 --         elsif Local_Name = Document_Styles_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Document_Styles);
 --
 --         elsif Local_Name = Font_Face_Decls_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Font_Face_Decls);
 --
 --         elsif Local_Name = Master_Styles_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Master_Styles);
 --
 --         elsif Local_Name = Scripts_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Scripts);
 --
 --         elsif Local_Name = Styles_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Styles);
 --
 --         elsif Local_Name = Text_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Office_Text);
 --
 --         else
@@ -767,102 +766,102 @@ package body Matreshka.ODF_Documents is
 --      elsif Namespace_URI = Style_URI then
 --         if Local_Name = Background_Image_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Background_Image);
 --
 --         elsif Local_Name = Default_Style_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Default_Style);
 --
 --         elsif Local_Name = Font_Face_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Font_Face);
 --
 --         elsif Local_Name = Footer_Style_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Footer_Style);
 --
 --         elsif Local_Name = Footnote_Sep_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Footnote_Sep);
 --
 --         elsif Local_Name = Graphic_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Graphic_Properties);
 --
 --         elsif Local_Name = Header_Style_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Header_Style);
 --
 --         elsif Local_Name = List_Level_Label_Alignment_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_List_Level_Label_Alignment);
 --
 --         elsif Local_Name = List_Level_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_List_Level_Properties);
 --
 --         elsif Local_Name = Master_Page_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Master_Page);
 --
 --         elsif Local_Name = Page_Layout_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Page_Layout);
 --
 --         elsif Local_Name = Page_Layout_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Page_Layout_Properties);
 --
 --         elsif Local_Name = Paragraph_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Paragraph_Properties);
 --
 --         elsif Local_Name = Style_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Style);
 --
 --         elsif Local_Name = Tab_Stops_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Tab_Stops);
 --
 --         elsif Local_Name = Table_Cell_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Cell_Properties);
 --
 --         elsif Local_Name = Table_Column_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Column_Properties);
 --
 --         elsif Local_Name = Table_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Properties);
 --
 --         elsif Local_Name = Table_Row_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Table_Row_Properties);
 --
 --         elsif Local_Name = Text_Properties_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Style_Text_Properties);
 --
 --         else
@@ -872,27 +871,27 @@ package body Matreshka.ODF_Documents is
 --      elsif Namespace_URI = Table_URI then
 --         if Local_Name = Covered_Table_Cell_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Covered_Table_Cell);
 --
 --         elsif Local_Name = Table_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table);
 --
 --         elsif Local_Name = Table_Cell_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table_Cell);
 --
 --         elsif Local_Name = Table_Column_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table_Column);
 --
 --         elsif Local_Name = Table_Row_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Table_Table_Row);
 --
 --         else
@@ -902,46 +901,46 @@ package body Matreshka.ODF_Documents is
 --      elsif Namespace_URI = Text_URI then
 --         if Local_Name = H_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access (Self.Create_Text_H);
+--              Matreshka.DOM_Nodes.Element_Access (Self.Create_Text_H);
 --
 --         elsif Local_Name = Linenumbering_Configuration_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Linenumbering_Configuration);
 --
 --         elsif Local_Name = Notes_Configuration_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Notes_Configuration);
 --
 --         elsif Local_Name = Outline_Level_Style_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Outline_Level_Style);
 --
 --         elsif Local_Name = Outline_Style_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Outline_Style);
 --
 --         elsif Local_Name = P_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_P);
 --
 --         elsif Local_Name = Sequence_Decl_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Sequence_Decl);
 --
 --         elsif Local_Name = Sequence_Decls_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Sequence_Decls);
 --
 --         elsif Local_Name = Span_Name then
 --            return
---              Matreshka.XML.DOM_Nodes.Element_Access
+--              Matreshka.DOM_Nodes.Element_Access
 --               (Self.Create_Text_Span);
 --
 --         else
@@ -1273,17 +1272,17 @@ package body Matreshka.ODF_Documents is
         new Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Node;
    end Create_Office_Automatic_Styles;
 
---   ------------------------
---   -- Create_Office_Body --
---   ------------------------
---
---   function Create_Office_Body
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access is
---   begin
---      return new Matreshka.ODF_Elements.Office.Bodies.Office_Body;
---   end Create_Office_Body;
---
+   ------------------------
+   -- Create_Office_Body --
+   ------------------------
+
+   function Create_Office_Body
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access is
+   begin
+      return new Matreshka.ODF_Elements.Office.Bodies.Office_Body_Node;
+   end Create_Office_Body;
+
 --   ------------------------------------
 --   -- Create_Office_Document_Content --
 --   ------------------------------------

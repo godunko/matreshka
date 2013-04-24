@@ -42,35 +42,34 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package Matreshka.ODF_Elements.Office.Automatic_Styles is
+package Matreshka.ODF_Elements.Office.Bodies is
 
-   type Office_Automatic_Styles_Node is
+   type Office_Body_Node is
      new Matreshka.ODF_Elements.Office.Office_Node_Base with null record;
 
-   type Office_Automatic_Styles_Access is
-     access all Office_Automatic_Styles_Node'Class;
+   type Office_Body_Access is access all Office_Body_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access Office_Automatic_Styles_Node;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
+    (Self    : not null access Office_Body_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant Office_Automatic_Styles_Node)
+    (Self : not null access constant Office_Body_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access Office_Automatic_Styles_Node;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
+    (Self    : not null access Office_Body_Node;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access Office_Automatic_Styles_Node;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
+    (Self     : not null access Office_Body_Node;
+     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end Matreshka.ODF_Elements.Office.Automatic_Styles;
+end Matreshka.ODF_Elements.Office.Bodies;

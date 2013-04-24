@@ -41,12 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes.Attributes;
+with Matreshka.DOM_Nodes.Attributes;
 
 package Matreshka.ODF_Attributes is
 
    type ODF_Attribute_Node is
-     abstract new Matreshka.XML.DOM_Nodes.Attributes.Abstract_Attribute
+     abstract new Matreshka.DOM_Nodes.Attributes.Abstract_Attribute
        with null record;
 
 end Matreshka.ODF_Attributes;

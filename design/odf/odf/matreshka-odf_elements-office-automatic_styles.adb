@@ -54,8 +54,8 @@ package body Matreshka.ODF_Elements.Office.Automatic_Styles is
 
    overriding procedure Enter_Element
     (Self    : not null access Office_Automatic_Styles_Node;
-     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
          ODF.DOM.Visitors.ODF_Visitor'Class
@@ -65,7 +65,7 @@ package body Matreshka.ODF_Elements.Office.Automatic_Styles is
              Control);
 
       else
-         Matreshka.XML.DOM_Nodes.Elements.Abstract_Element
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
           (Self.all).Enter_Element (Visitor, Control);
       end if;
    end Enter_Element;
@@ -87,8 +87,8 @@ package body Matreshka.ODF_Elements.Office.Automatic_Styles is
 
    overriding procedure Leave_Element
     (Self    : not null access Office_Automatic_Styles_Node;
-     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
          ODF.DOM.Visitors.ODF_Visitor'Class
@@ -98,7 +98,7 @@ package body Matreshka.ODF_Elements.Office.Automatic_Styles is
              Control);
 
       else
-         Matreshka.XML.DOM_Nodes.Elements.Abstract_Element
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
           (Self.all).Leave_Element (Visitor, Control);
       end if;
    end Leave_Element;
@@ -109,9 +109,9 @@ package body Matreshka.ODF_Elements.Office.Automatic_Styles is
 
    overriding procedure Visit_Element
     (Self     : not null access Office_Automatic_Styles_Node;
-     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
          ODF.DOM.Iterators.ODF_Iterator'Class
@@ -122,7 +122,7 @@ package body Matreshka.ODF_Elements.Office.Automatic_Styles is
              Control);
 
       else
-         Matreshka.XML.DOM_Nodes.Elements.Abstract_Element
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
           (Self.all).Visit_Element (Iterator, Visitor, Control);
       end if;
    end Visit_Element;

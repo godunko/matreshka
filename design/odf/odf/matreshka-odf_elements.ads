@@ -41,13 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Elements;
 with XML.DOM.Visitors;
 
 package Matreshka.ODF_Elements is
 
    type ODF_Element_Node is
-     abstract new Matreshka.XML.DOM_Nodes.Elements.Abstract_Element
+     abstract new Matreshka.DOM_Nodes.Elements.Abstract_Element
        with null record;
 
    overriding procedure Enter_Element

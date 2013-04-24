@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes;
+with Matreshka.DOM_Nodes;
 with XML.DOM.Elements.Internals;
 
 package body ODF.DOM.Elements.Office.Automatic_Styles.Internals is
@@ -56,7 +56,7 @@ package body ODF.DOM.Elements.Office.Automatic_Styles.Internals is
    begin
       return
        (XML.DOM.Elements.Internals.Create
-         (Matreshka.XML.DOM_Nodes.Element_Access (Node)) with null record);
+         (Matreshka.DOM_Nodes.Element_Access (Node)) with null record);
    end Create;
 
    ----------
@@ -69,7 +69,7 @@ package body ODF.DOM.Elements.Office.Automatic_Styles.Internals is
    begin
       return
        (XML.DOM.Elements.Internals.Wrap
-         (Matreshka.XML.DOM_Nodes.Element_Access (Node)) with null record);
+         (Matreshka.DOM_Nodes.Element_Access (Node)) with null record);
    end Wrap;
 
 end ODF.DOM.Elements.Office.Automatic_Styles.Internals;

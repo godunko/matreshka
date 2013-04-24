@@ -41,36 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.ODF_Elements.Office.Bodies;
 
-package Matreshka.ODF_Elements.Office.Automatic_Styles is
+package ODF.DOM.Elements.Office.Bodies.Internals is
 
-   type Office_Automatic_Styles_Node is
-     new Matreshka.ODF_Elements.Office.Office_Node_Base with null record;
+   function Create
+    (Node : Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access)
+       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body;
 
-   type Office_Automatic_Styles_Access is
-     access all Office_Automatic_Styles_Node'Class;
+   function Wrap
+    (Node : Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access)
+       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body;
 
-   overriding procedure Enter_Element
-    (Self    : not null access Office_Automatic_Styles_Node;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding function Get_Local_Name
-    (Self : not null access constant Office_Automatic_Styles_Node)
-       return League.Strings.Universal_String;
-
-   overriding procedure Leave_Element
-    (Self    : not null access Office_Automatic_Styles_Node;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Element
-    (Self     : not null access Office_Automatic_Styles_Node;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-end Matreshka.ODF_Elements.Office.Automatic_Styles;
+end ODF.DOM.Elements.Office.Bodies.Internals;

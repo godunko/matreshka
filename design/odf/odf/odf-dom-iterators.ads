@@ -45,7 +45,7 @@
 with XML.DOM.Visitors;
 
 with ODF.DOM.Elements.Office.Automatic_Styles;
---with ODF.DOM.Elements.Office.Bodies;
+with ODF.DOM.Elements.Office.Bodies;
 --with ODF.DOM.Elements.Office.Document_Content;
 --with ODF.DOM.Elements.Office.Document_Styles;
 --with ODF.DOM.Elements.Office.Font_Face_Decls;
@@ -99,12 +99,12 @@ package ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
      Control : in out XML.DOM.Visitors.Traverse_Control);
 
---   not overriding procedure Visit_Office_Body
---    (Self    : in out ODF_Iterator;
---     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
---     Element : not null ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;
---     Control : in out XML.DOM.Visitors.Traverse_Control);
---
+   not overriding procedure Visit_Office_Body
+    (Self    : in out ODF_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : ODF.DOM.Elements.Office.Bodies.ODF_Office_Body;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
 --   not overriding procedure Visit_Office_Document_Content
 --    (Self    : in out ODF_Iterator;
 --     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

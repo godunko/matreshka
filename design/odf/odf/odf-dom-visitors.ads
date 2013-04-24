@@ -44,7 +44,7 @@
 with XML.DOM.Visitors;
 
 with ODF.DOM.Elements.Office.Automatic_Styles;
---with ODF.DOM.Elements.Office.Bodies;
+with ODF.DOM.Elements.Office.Bodies;
 --with ODF.DOM.Elements.Office.Document_Content;
 --with ODF.DOM.Elements.Office.Document_Styles;
 --with ODF.DOM.Elements.Office.Font_Face_Decls;
@@ -101,16 +101,16 @@ package ODF.DOM.Visitors is
      Element : ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
---   not overriding procedure Enter_Office_Body
---    (Self    : in out ODF_Visitor;
---     Element : not null ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;
---     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
---
---   not overriding procedure Leave_Office_Body
---    (Self    : in out ODF_Visitor;
---     Element : not null ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;
---     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
---
+   not overriding procedure Enter_Office_Body
+    (Self    : in out ODF_Visitor;
+     Element : ODF.DOM.Elements.Office.Bodies.ODF_Office_Body;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Office_Body
+    (Self    : in out ODF_Visitor;
+     Element : ODF.DOM.Elements.Office.Bodies.ODF_Office_Body;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
 --   not overriding procedure Enter_Office_Document_Content
 --    (Self    : in out ODF_Visitor;
 --     Element : not null ODF.DOM.Elements.Office.Document_Content.ODF_Office_Document_Content_Access;

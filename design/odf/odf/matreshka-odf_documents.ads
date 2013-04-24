@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
-with Matreshka.XML.DOM_Nodes.Documents;
+with Matreshka.DOM_Nodes.Documents;
 
 with Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Horizontal;
 with Matreshka.ODF_Attributes.Draw.End_Line_Spacing_Vertical;
@@ -157,7 +157,7 @@ with Matreshka.ODF_Attributes.Text.Start_Numbering_At;
 with Matreshka.ODF_Attributes.Text.Start_Value;
 with Matreshka.ODF_Attributes.Text.Style_Name;
 with Matreshka.ODF_Elements.Office.Automatic_Styles;
---with Matreshka.ODF_Elements.Office.Bodies;
+with Matreshka.ODF_Elements.Office.Bodies;
 --with Matreshka.ODF_Elements.Office.Document_Content;
 --with Matreshka.ODF_Elements.Office.Document_Styles;
 --with Matreshka.ODF_Elements.Office.Font_Face_Decls;
@@ -203,7 +203,7 @@ with Matreshka.ODF_Elements.Office.Automatic_Styles;
 package Matreshka.ODF_Documents is
 
    type Document_Node is
-     new Matreshka.XML.DOM_Nodes.Documents.Abstract_Document with null record;
+     new Matreshka.DOM_Nodes.Documents.Abstract_Document with null record;
 
 --   type ODF_Document_Access is access all ODF_Document'Class;
 
@@ -351,10 +351,10 @@ package Matreshka.ODF_Documents is
     (Self : not null access Document_Node'Class)
        return Matreshka.ODF_Elements.Office.Automatic_Styles.Office_Automatic_Styles_Access;
 
---   function Create_Office_Body
---    (Self : not null access Document_Node'Class)
---       return Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access;
---
+   function Create_Office_Body
+    (Self : not null access Document_Node'Class)
+       return Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access;
+
 --   function Create_Office_Document_Content
 --    (Self : not null access Document_Node'Class)
 --       return
@@ -834,12 +834,12 @@ package Matreshka.ODF_Documents is
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Nodes.Attribute_Access;
+       return not null Matreshka.DOM_Nodes.Attribute_Access;
 
    overriding function Create_Element
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
-       return not null Matreshka.XML.DOM_Nodes.Element_Access;
+       return not null Matreshka.DOM_Nodes.Element_Access;
 
 end Matreshka.ODF_Documents;

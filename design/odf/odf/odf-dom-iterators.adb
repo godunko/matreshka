@@ -58,20 +58,19 @@ package body ODF.DOM.Iterators is
       Self.Visit (Visitor, Element, Control);
    end Visit_Office_Automatic_Styles;
 
---   -----------------------
---   -- Visit_Office_Body --
---   -----------------------
---
---   not overriding procedure Visit_Office_Body
---    (Self    : in out ODF_Iterator;
---     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
---     Element : not null ODF.DOM.Elements.Office.Bodies.ODF_Office_Body_Access;
---     Control : in out XML.DOM.Visitors.Traverse_Control) is
---   begin
---      Self.Visit_Element
---       (Visitor, XML.DOM.Nodes.Elements.DOM_Element_Access (Element), Control);
---   end Visit_Office_Body;
---
+   -----------------------
+   -- Visit_Office_Body --
+   -----------------------
+
+   not overriding procedure Visit_Office_Body
+    (Self    : in out ODF_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : ODF.DOM.Elements.Office.Bodies.ODF_Office_Body;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Visit (Visitor, Element, Control);
+   end Visit_Office_Body;
+
 --   -----------------------------------
 --   -- Visit_Office_Document_Content --
 --   -----------------------------------

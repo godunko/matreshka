@@ -41,86 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.Constants;
-with ODF.DOM.Iterators;
-with ODF.DOM.Visitors;
+with Matreshka.DOM_Nodes;
+with XML.DOM.Elements.Internals;
 
-package body ODF.DOM.Elements.Office.Bodies is
+package body ODF.DOM.Elements.Office.Bodies.Internals is
 
-   -------------------
-   -- Enter_Element --
-   -------------------
+   ------------
+   -- Create --
+   ------------
 
-   overriding procedure Enter_Element
-    (Self    : not null access ODF_Office_Body;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   function Create
+    (Node : Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access)
+       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body is
    begin
-      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
-         ODF.DOM.Visitors.ODF_Visitor'Class
-          (Visitor).Enter_Office_Body
-            (ODF_Office_Body_Access (Self), Control);
+      return
+       (XML.DOM.Elements.Internals.Create
+         (Matreshka.DOM_Nodes.Element_Access (Node)) with null record);
+   end Create;
 
-      else
-         Visitor.Enter_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
-      end if;
-   end Enter_Element;
+   ----------
+   -- Wrap --
+   ----------
 
-   --------------------
-   -- Get_Local_Name --
-   --------------------
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Office_Body)
-       return League.Strings.Universal_String is
+   function Wrap
+    (Node : Matreshka.ODF_Elements.Office.Bodies.Office_Body_Access)
+       return ODF.DOM.Elements.Office.Bodies.ODF_Office_Body is
    begin
-      return ODF.Constants.Body_Name;
-   end Get_Local_Name;
+      return
+       (XML.DOM.Elements.Internals.Wrap
+         (Matreshka.DOM_Nodes.Element_Access (Node)) with null record);
+   end Wrap;
 
-   -------------------
-   -- Leave_Element --
-   -------------------
-
-   overriding procedure Leave_Element
-    (Self    : not null access ODF_Office_Body;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
-         ODF.DOM.Visitors.ODF_Visitor'Class
-          (Visitor).Leave_Office_Body
-            (ODF_Office_Body_Access (Self), Control);
-
-      else
-         Visitor.Leave_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
-      end if;
-   end Leave_Element;
-
-   -------------------
-   -- Visit_Element --
-   -------------------
-
-   overriding procedure Visit_Element
-    (Self     : not null access ODF_Office_Body;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
-         ODF.DOM.Iterators.ODF_Iterator'Class
-          (Iterator).Visit_Office_Body
-            (Visitor,
-             ODF_Office_Body_Access (Self),
-             Control);
-
-      else
-         Iterator.Visit_Element
-          (Visitor,
-           XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
-           Control);
-      end if;
-   end Visit_Element;
-
-end ODF.DOM.Elements.Office.Bodies;
+end ODF.DOM.Elements.Office.Bodies.Internals;

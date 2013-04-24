@@ -41,36 +41,90 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ODF.Constants;
+with ODF.DOM.Elements.Office.Bodies.Internals;
+with ODF.DOM.Iterators;
+with ODF.DOM.Visitors;
 
-package Matreshka.ODF_Elements.Office.Automatic_Styles is
+package body Matreshka.ODF_Elements.Office.Bodies is
 
-   type Office_Automatic_Styles_Node is
-     new Matreshka.ODF_Elements.Office.Office_Node_Base with null record;
-
-   type Office_Automatic_Styles_Access is
-     access all Office_Automatic_Styles_Node'Class;
+   -------------------
+   -- Enter_Element --
+   -------------------
 
    overriding procedure Enter_Element
-    (Self    : not null access Office_Automatic_Styles_Node;
+    (Self    : not null access Office_Body_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
+         ODF.DOM.Visitors.ODF_Visitor'Class
+          (Visitor).Enter_Office_Body
+            (ODF.DOM.Elements.Office.Bodies.Internals.Create
+              (Office_Body_Access (Self)),
+             Control);
+
+      else
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Enter_Element (Visitor, Control);
+      end if;
+   end Enter_Element;
+
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access constant Office_Automatic_Styles_Node)
-       return League.Strings.Universal_String;
+    (Self : not null access constant Office_Body_Node)
+       return League.Strings.Universal_String is
+   begin
+      return ODF.Constants.Body_Name;
+   end Get_Local_Name;
+
+   -------------------
+   -- Leave_Element --
+   -------------------
 
    overriding procedure Leave_Element
-    (Self    : not null access Office_Automatic_Styles_Node;
+    (Self    : not null access Office_Body_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
+         ODF.DOM.Visitors.ODF_Visitor'Class
+          (Visitor).Leave_Office_Body
+            (ODF.DOM.Elements.Office.Bodies.Internals.Create
+              (Office_Body_Access (Self)),
+             Control);
+
+      else
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Leave_Element (Visitor, Control);
+      end if;
+   end Leave_Element;
+
+   -------------------
+   -- Visit_Element --
+   -------------------
 
    overriding procedure Visit_Element
-    (Self     : not null access Office_Automatic_Styles_Node;
+    (Self     : not null access Office_Body_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
+         ODF.DOM.Iterators.ODF_Iterator'Class
+          (Iterator).Visit_Office_Body
+            (Visitor,
+             ODF.DOM.Elements.Office.Bodies.Internals.Create
+              (Office_Body_Access (Self)),
+             Control);
 
-end Matreshka.ODF_Elements.Office.Automatic_Styles;
+      else
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Visit_Element (Iterator, Visitor, Control);
+      end if;
+   end Visit_Element;
+
+end Matreshka.ODF_Elements.Office.Bodies;
