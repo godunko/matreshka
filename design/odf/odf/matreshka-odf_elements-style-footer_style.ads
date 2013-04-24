@@ -41,42 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements.Style.Footer_Style is
+package Matreshka.ODF_Elements.Style.Footer_Style is
 
-   type ODF_Style_Footer_Style is
-     new ODF.DOM.Elements.ODF_Element with private;
+   type Style_Footer_Style_Node is
+     new Matreshka.ODF_Elements.Style.Style_Node_Base with null record;
 
-   type ODF_Style_Footer_Style_Access is
-     access all ODF_Style_Footer_Style'Class;
-
-private
-
-   type ODF_Style_Footer_Style is
-     new ODF.DOM.Elements.Style.ODF_Style_Base with null record;
+   type Style_Footer_Style_Access is
+     access all Style_Footer_Style_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Style_Footer_Style;
+    (Self    : not null access Style_Footer_Style_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Style_Footer_Style)
+    (Self : not null access constant Style_Footer_Style_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Style_Footer_Style;
+    (Self    : not null access Style_Footer_Style_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Style_Footer_Style;
+    (Self     : not null access Style_Footer_Style_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end ODF.DOM.Elements.Style.Footer_Style;
+end Matreshka.ODF_Elements.Style.Footer_Style;

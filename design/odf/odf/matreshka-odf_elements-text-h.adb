@@ -45,7 +45,7 @@ with ODF.Constants;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
-package body ODF.DOM.Elements.Text.H is
+package body Matreshka.ODF_Elements.Text.H is
 
    -------------------
    -- Enter_Element --
@@ -123,4 +123,4 @@ package body ODF.DOM.Elements.Text.H is
       end if;
    end Visit_Element;
 
-end ODF.DOM.Elements.Text.H;
+end Matreshka.ODF_Elements.Text.H;

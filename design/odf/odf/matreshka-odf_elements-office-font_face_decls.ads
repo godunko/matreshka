@@ -41,42 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements.Office.Font_Face_Decls is
+package Matreshka.ODF_Elements.Office.Font_Face_Decls is
 
-   type ODF_Office_Font_Face_Decls is
-     new ODF.DOM.Elements.ODF_Element with private;
+   type Office_Font_Face_Decls_Node is
+     new Matreshka.ODF_Elements.Office.Office_Node_Base with null record;
 
-   type ODF_Office_Font_Face_Decls_Access is
-     access all ODF_Office_Font_Face_Decls'Class;
-
-private
-
-   type ODF_Office_Font_Face_Decls is
-     new ODF.DOM.Elements.Office.ODF_Office_Base with null record;
+   type Office_Font_Face_Decls_Access is
+     access all Office_Font_Face_Decls_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Office_Font_Face_Decls;
+    (Self    : not null access Office_Font_Face_Decls_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Office_Font_Face_Decls)
+    (Self : not null access constant Office_Font_Face_Decls_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Office_Font_Face_Decls;
+    (Self    : not null access Office_Font_Face_Decls_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Office_Font_Face_Decls;
+    (Self     : not null access Office_Font_Face_Decls_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end ODF.DOM.Elements.Office.Font_Face_Decls;
+end Matreshka.ODF_Elements.Office.Font_Face_Decls;

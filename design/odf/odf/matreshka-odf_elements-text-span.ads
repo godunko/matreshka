@@ -41,39 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements.Text.Span is
+package Matreshka.ODF_Elements.Text.Span is
 
-   type ODF_Text_Span is new ODF.DOM.Elements.ODF_Element with private;
+   type Text_Span_Node is
+     new Matreshka.ODF_Elements.Text.Text_Node_Base with null record;
 
-   type ODF_Text_Span_Access is access all ODF_Text_Span'Class;
-
-private
-
-   type ODF_Text_Span is new ODF.DOM.Elements.Text.ODF_Text_Base with null record;
+   type Text_Span_Access is access all Text_Span_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Text_Span;
+    (Self    : not null access Text_Span_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Text_Span;
+    (Self    : not null access Text_Span_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Text_Span;
+    (Self     : not null access Text_Span_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Span)
+    (Self : not null access constant Text_Span_Node)
        return League.Strings.Universal_String;
 
-end ODF.DOM.Elements.Text.Span;
+end Matreshka.ODF_Elements.Text.Span;

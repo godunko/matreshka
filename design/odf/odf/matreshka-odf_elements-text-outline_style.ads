@@ -41,42 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements.Text.Outline_Style is
+package Matreshka.ODF_Elements.Text.Outline_Style is
 
-   type ODF_Text_Outline_Style is
-     new ODF.DOM.Elements.ODF_Element with private;
+   type Text_Outline_Style_Node is
+     new Matreshka.ODF_Elements.Text.Text_Node_Base with null record;
 
-   type ODF_Text_Outline_Style_Access is
-     access all ODF_Text_Outline_Style'Class;
-
-private
-
-   type ODF_Text_Outline_Style is
-     new ODF.DOM.Elements.Text.ODF_Text_Base with null record;
+   type Text_Outline_Style_Access is access all Text_Outline_Style_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Text_Outline_Style;
+    (Self    : not null access Text_Outline_Style_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Outline_Style)
+    (Self : not null access constant Text_Outline_Style_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Text_Outline_Style;
+    (Self    : not null access Text_Outline_Style_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Text_Outline_Style;
+    (Self     : not null access Text_Outline_Style_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end ODF.DOM.Elements.Text.Outline_Style;
+end Matreshka.ODF_Elements.Text.Outline_Style;

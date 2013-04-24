@@ -45,7 +45,7 @@ with ODF.Constants;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
-package body ODF.DOM.Elements.Table.Table_Row is
+package body Matreshka.ODF_Elements.Table.Table_Row is
 
    -------------------
    -- Enter_Element --
@@ -123,4 +123,4 @@ package body ODF.DOM.Elements.Table.Table_Row is
       end if;
    end Visit_Element;
 
-end ODF.DOM.Elements.Table.Table_Row;
+end Matreshka.ODF_Elements.Table.Table_Row;

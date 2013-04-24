@@ -41,17 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
+with League.Strings;
 
-package ODF.DOM.Elements.Style is
+package Matreshka.ODF_Elements.Style is
 
-private
-
-   type ODF_Style_Base is
-     abstract new ODF.DOM.Elements.ODF_Element with null record;
+   type Style_Node_Base is
+     abstract new Matreshka.ODF_Elements.ODF_Element_Node with null record;
 
    overriding function Get_Namespace_URI
-    (Self : not null access constant ODF_Style_Base)
+    (Self : not null access constant Style_Node_Base)
        return League.Strings.Universal_String;
 
-end ODF.DOM.Elements.Style;
+end Matreshka.ODF_Elements.Style;

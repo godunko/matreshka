@@ -45,7 +45,7 @@ with ODF.Constants;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
-package body ODF.DOM.Elements.Text.Sequence_Decls is
+package body Matreshka.ODF_Elements.Text.Sequence_Decls is
 
    -------------------
    -- Enter_Element --
@@ -123,4 +123,4 @@ package body ODF.DOM.Elements.Text.Sequence_Decls is
       end if;
    end Visit_Element;
 
-end ODF.DOM.Elements.Text.Sequence_Decls;
+end Matreshka.ODF_Elements.Text.Sequence_Decls;

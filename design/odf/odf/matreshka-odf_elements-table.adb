@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with ODF.Constants;
 
-package body ODF.DOM.Elements.Table is
+package body Matreshka.ODF_Elements.Table is
 
    -----------------------
    -- Get_Namespace_URI --
@@ -56,4 +56,4 @@ package body ODF.DOM.Elements.Table is
       return ODF.Constants.Table_URI;
    end Get_Namespace_URI;
 
-end ODF.DOM.Elements.Table;
+end Matreshka.ODF_Elements.Table;

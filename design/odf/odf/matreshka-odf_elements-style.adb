@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with ODF.Constants;
 
-package body ODF.DOM.Elements.Style is
+package body Matreshka.ODF_Elements.Style is
 
    -----------------------
    -- Get_Namespace_URI --
@@ -56,4 +56,4 @@ package body ODF.DOM.Elements.Style is
       return ODF.Constants.Style_URI;
    end Get_Namespace_URI;
 
-end ODF.DOM.Elements.Style;
+end Matreshka.ODF_Elements.Style;

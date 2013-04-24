@@ -41,42 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements.Table.Covered_Table_Cell is
+package Matreshka.ODF_Elements.Table.Covered_Table_Cell is
 
-   type ODF_Table_Covered_Table_Cell is
-     new ODF.DOM.Elements.ODF_Element with private;
+   type Table_Covered_Table_Cell_Node is
+     new Matreshka.ODF_Elements.Table.Table_Node_Base with null record;
 
-   type ODF_Table_Covered_Table_Cell_Access is
-     access all ODF_Table_Covered_Table_Cell'Class;
-
-private
-
-   type ODF_Table_Covered_Table_Cell is
-     new ODF.DOM.Elements.Table.ODF_Table_Base with null record;
+   type Table_Covered_Table_Cell_Access is
+     access all Table_Covered_Table_Cell_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Table_Covered_Table_Cell;
+    (Self    : not null access Table_Covered_Table_Cell_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Table_Covered_Table_Cell)
+    (Self : not null access constant Table_Covered_Table_Cell_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Table_Covered_Table_Cell;
+    (Self    : not null access Table_Covered_Table_Cell_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Table_Covered_Table_Cell;
+    (Self     : not null access Table_Covered_Table_Cell_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end ODF.DOM.Elements.Table.Covered_Table_Cell;
+end Matreshka.ODF_Elements.Table.Covered_Table_Cell;

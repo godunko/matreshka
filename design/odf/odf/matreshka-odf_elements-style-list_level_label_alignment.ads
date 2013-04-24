@@ -41,42 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements.Style.List_Level_Label_Alignment is
+package Matreshka.ODF_Elements.Style.List_Level_Label_Alignment is
 
-   type ODF_Style_List_Level_Label_Alignment is
-     new ODF.DOM.Elements.ODF_Element with private;
+   type Style_List_Level_Label_Alignment_Node is
+     new Matreshka.ODF_Elements.Style.Style_Node_Base with null record;
 
-   type ODF_Style_List_Level_Label_Alignment_Access is
-     access all ODF_Style_List_Level_Label_Alignment'Class;
-
-private
-
-   type ODF_Style_List_Level_Label_Alignment is
-     new ODF.DOM.Elements.Style.ODF_Style_Base with null record;
+   type Style_List_Level_Label_Alignment_Access is
+     access all Style_List_Level_Label_Alignment_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Style_List_Level_Label_Alignment;
+    (Self    : not null access Style_List_Level_Label_Alignment_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Style_List_Level_Label_Alignment)
+    (Self : not null access constant Style_List_Level_Label_Alignment_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Style_List_Level_Label_Alignment;
+    (Self    : not null access Style_List_Level_Label_Alignment_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Style_List_Level_Label_Alignment;
+    (Self     : not null access Style_List_Level_Label_Alignment_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end ODF.DOM.Elements.Style.List_Level_Label_Alignment;
+end Matreshka.ODF_Elements.Style.List_Level_Label_Alignment;

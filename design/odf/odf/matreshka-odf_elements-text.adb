@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with ODF.Constants;
 
-package body ODF.DOM.Elements.Text is
+package body Matreshka.ODF_Elements.Text is
 
    -----------------------
    -- Get_Namespace_URI --
@@ -56,4 +56,4 @@ package body ODF.DOM.Elements.Text is
       return ODF.Constants.Text_URI;
    end Get_Namespace_URI;
 
-end ODF.DOM.Elements.Text;
+end Matreshka.ODF_Elements.Text;

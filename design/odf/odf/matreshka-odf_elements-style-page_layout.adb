@@ -45,7 +45,7 @@ with ODF.Constants;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
-package body ODF.DOM.Elements.Style.Page_Layout is
+package body Matreshka.ODF_Elements.Style.Page_Layout is
 
    -------------------
    -- Enter_Element --
@@ -123,4 +123,4 @@ package body ODF.DOM.Elements.Style.Page_Layout is
       end if;
    end Visit_Element;
 
-end ODF.DOM.Elements.Style.Page_Layout;
+end Matreshka.ODF_Elements.Style.Page_Layout;

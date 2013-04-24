@@ -41,40 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
 
-package ODF.DOM.Elements.Office.Scripts is
+package Matreshka.ODF_Elements.Office.Scripts is
 
-   type ODF_Office_Scripts is new ODF.DOM.Elements.ODF_Element with private;
+   type Office_Scripts_Node is
+     new Matreshka.ODF_Elements.Office.Office_Node_Base with null record;
 
-   type ODF_Office_Scripts_Access is access all ODF_Office_Scripts'Class;
-
-private
-
-   type ODF_Office_Scripts is
-     new ODF.DOM.Elements.Office.ODF_Office_Base with null record;
+   type Office_Scripts_Access is access all Office_Scripts_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Office_Scripts;
+    (Self    : not null access Office_Scripts_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Office_Scripts)
+    (Self : not null access constant Office_Scripts_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Office_Scripts;
+    (Self    : not null access Office_Scripts_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Office_Scripts;
+    (Self     : not null access Office_Scripts_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end ODF.DOM.Elements.Office.Scripts;
+end Matreshka.ODF_Elements.Office.Scripts;
