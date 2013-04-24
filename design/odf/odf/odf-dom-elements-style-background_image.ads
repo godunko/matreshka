@@ -41,42 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with XML.DOM.Visitors;
+with XML.DOM.Elements;
 
 package ODF.DOM.Elements.Style.Background_Image is
 
    type ODF_Style_Background_Image is
-     new ODF.DOM.Elements.ODF_Element with private;
-
-   type ODF_Style_Background_Image_Access is
-     access all ODF_Style_Background_Image'Class;
+     new XML.DOM.Elements.DOM_Element with private;
 
 private
 
    type ODF_Style_Background_Image is
-     new ODF.DOM.Elements.Style.ODF_Style_Base with null record;
-
-   overriding procedure Enter_Element
-    (Self    : not null access ODF_Style_Background_Image;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Style_Background_Image)
-       return League.Strings.Universal_String;
-
-   overriding procedure Leave_Element
-    (Self    : not null access ODF_Style_Background_Image;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Element
-    (Self     : not null access ODF_Style_Background_Image;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
+     new XML.DOM.Elements.DOM_Element with null record;
 
 end ODF.DOM.Elements.Style.Background_Image;

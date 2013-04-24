@@ -41,17 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
 
 package ODF.DOM.Elements.Table is
 
-private
-
-   type ODF_Table_Base is
-     abstract new ODF.DOM.Elements.ODF_Element with null record;
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant ODF_Table_Base)
-       return League.Strings.Universal_String;
+   pragma Pure;
 
 end ODF.DOM.Elements.Table;

@@ -41,16 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Elements;
+private with League.Strings;
 
-package ODF.DOM.Elements.Style.Text_Properties is
-
-   type ODF_Style_Text_Properties is
-     new XML.DOM.Elements.DOM_Element with private;
+package ODF.DOM.Elements.Text is
 
 private
 
-   type ODF_Style_Text_Properties is
-     new XML.DOM.Elements.DOM_Element with null record;
+   type ODF_Text_Base is
+     abstract new ODF.DOM.Elements.ODF_Element with null record;
 
-end ODF.DOM.Elements.Style.Text_Properties;
+   overriding function Get_Namespace_URI
+    (Self : not null access constant ODF_Text_Base)
+       return League.Strings.Universal_String;
+
+end ODF.DOM.Elements.Text;
