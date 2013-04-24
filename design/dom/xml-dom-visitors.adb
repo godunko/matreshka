@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes;
+with Matreshka.DOM_Nodes;
 with XML.DOM.Nodes.Internals;
 
 package body XML.DOM.Visitors is
@@ -56,7 +56,7 @@ package body XML.DOM.Visitors is
      Node    : XML.DOM.Nodes.DOM_Node'Class;
      Control : in out Traverse_Control)
    is
-      N : constant Matreshka.XML.DOM_Nodes.Node_Access
+      N : constant Matreshka.DOM_Nodes.Node_Access
         := XML.DOM.Nodes.Internals.Internal (Node);
 
    begin

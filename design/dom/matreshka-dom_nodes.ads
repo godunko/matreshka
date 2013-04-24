@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,109 +41,101 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 
-package Matreshka.XML.DOM_Nodes.Elements is
+with Matreshka.XML.Counters;
+limited with Matreshka.DOM_Nodes.Attributes;
+limited with Matreshka.DOM_Nodes.Documents;
+limited with Matreshka.DOM_Nodes.Elements;
+limited with XML.DOM.Visitors;
+
+package Matreshka.DOM_Nodes is
 
    pragma Preelaborate;
 
-   ----------------------
-   -- Abstract_Element --
-   ----------------------
+   type Abstract_Node is abstract tagged;
 
-   type Abstract_Element is
-     abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with record
-      First_Attribute : Matreshka.XML.DOM_Nodes.Node_Access;
-      Last_Attribute  : Matreshka.XML.DOM_Nodes.Node_Access;
+   --  Access types for all type of DOM nodes.
+
+   type Attribute_Access is
+     access all Matreshka.DOM_Nodes.Attributes.Abstract_Attribute'Class;
+   type Document_Access is
+     access all Matreshka.DOM_Nodes.Documents.Abstract_Document'Class;
+   type Element_Access is
+     access all Matreshka.DOM_Nodes.Elements.Abstract_Element'Class;
+   type Node_Access is access all Abstract_Node'Class;
+
+   procedure Reference (Self : not null Node_Access);
+   pragma Inline (Reference);
+   --  Increments reference counter.
+
+   procedure Dereference (Self : in out Node_Access);
+   --  Decrements reference counter; deallocate object when its value went to
+   --  zero.
+
+   -------------------
+   -- Abstract_Node --
+   -------------------
+
+   type Abstract_Node is abstract tagged limited record
+      Counter  : aliased Matreshka.XML.Counters.Counter;
+      Is_Root  : Boolean := True;
+      --  Node is root node of subtree, associated with document but not part
+      --  of it.
+      Owner    : Node_Access;
+      --  Parent node or associated document when Is_Root set to True.
+      Previous : Node_Access;
+      Next     : Node_Access;
+      First    : Node_Access;
+      Last     : Node_Access;
    end record;
 
-   overriding function Get_Local_Name
-    (Self : not null access constant Abstract_Element)
-       return League.Strings.Universal_String is abstract;
+   not overriding function Get_Local_Name
+    (Self : not null access constant Abstract_Node)
+       return League.Strings.Universal_String;
    --  Returns the local part of the qualified name of this node.
 
-   overriding function Get_Namespace_URI
-    (Self : not null access constant Abstract_Element)
-       return League.Strings.Universal_String is abstract;
+   not overriding function Get_Namespace_URI
+    (Self : not null access constant Abstract_Node)
+       return League.Strings.Universal_String;
    --  The namespace URI of this node, or null if it is unspecified (see XML
    --  Namespaces).
 
-   function Set_Attribute_Node
-    (Self : in out Abstract_Element'Class;
-     Attr : Matreshka.XML.DOM_Nodes.Attribute_Access)
-       return Matreshka.XML.DOM_Nodes.Attribute_Access;
-   --  Adds new attribute or replace existing attribute by specified. Returns
-   --  replaced attribute. Caller is responsible to dereference returned value.
+   not overriding procedure Append_Child
+    (Self  : not null access Abstract_Node;
+     Child : not null Node_Access);
+   --  Appends child to the list of children nodes. Derived types need to
+   --  override this subprogram to implement specific checks.
 
-   overriding procedure Finalize (Self : not null access Abstract_Element);
-   --  Release attribute nodes owned by element.
+   not overriding procedure Finalize (Self : not null access Abstract_Node);
 
-   overriding procedure Enter_Element
-    (Self    : not null access Abstract_Element;
+   not overriding procedure Remove_From_Parent
+    (Self : not null access Abstract_Node);
+   --  Removes node from the corresponding list of nodes of node's parent.
+   --  This subprogram is overridden by Abstract_Attribute type to remove
+   --  attribute node from list of attributes of parent element node.
+
+   not overriding procedure Enter_Element
+    (Self    : not null access Abstract_Node;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Leave_Element
-    (Self    : not null access Abstract_Element;
+   not overriding procedure Leave_Element
+    (Self    : not null access Abstract_Node;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Visit_Element
-    (Self     : not null access Abstract_Element;
+   not overriding procedure Visit_Element
+    (Self     : not null access Abstract_Node;
      Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-   ---------------------
-   -- Element_V1_Node --
-   ---------------------
-
-   type Element_V1_Node is new Abstract_Element with record
-      Name : League.Strings.Universal_String;
-   end record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant Element_V1_Node)
-       return League.Strings.Universal_String;
-   --  Returns the local part of the qualified name of this node.
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant Element_V1_Node)
-       return League.Strings.Universal_String;
-   --  The namespace URI of this node, or null if it is unspecified (see XML
-   --  Namespaces).
-
    procedure Initialize
-    (Self     : not null access Element_V1_Node'Class;
-     Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
-     Name     : League.Strings.Universal_String);
+    (Self     : not null access Abstract_Node'Class;
+     Document : Matreshka.DOM_Nodes.Document_Access);
 
-   ---------------------
-   -- Element_V2_Node --
-   ---------------------
-
-   type Element_V2_Node is new Abstract_Element with record
-      Namespace_URI : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
-   end record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant Element_V2_Node)
-       return League.Strings.Universal_String;
-   --  Returns the local part of the qualified name of this node.
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant Element_V2_Node)
-       return League.Strings.Universal_String;
-   --  The namespace URI of this node, or null if it is unspecified (see XML
-   --  Namespaces).
-
-   procedure Initialize
-    (Self           : not null access Element_V2_Node'Class;
-     Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String);
-
-end Matreshka.XML.DOM_Nodes.Elements;
+end Matreshka.DOM_Nodes;

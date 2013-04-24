@@ -41,11 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Lists;
+with Matreshka.DOM_Lists;
 with XML.DOM.Elements.Internals;
 with XML.DOM.Visitors;
 
-package body Matreshka.XML.DOM_Nodes.Elements is
+package body Matreshka.DOM_Nodes.Elements is
 
    -------------------
    -- Enter_Element --
@@ -58,7 +58,7 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    begin
       Visitor.Enter_Element
        (Standard.XML.DOM.Elements.Internals.Create
-         (Matreshka.XML.DOM_Nodes.Element_Access (Self)),
+         (Matreshka.DOM_Nodes.Element_Access (Self)),
         Control);
    end Enter_Element;
 
@@ -67,18 +67,18 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    --------------
 
    overriding procedure Finalize (Self : not null access Abstract_Element) is
-      use type Matreshka.XML.DOM_Nodes.Node_Access;
+      use type Matreshka.DOM_Nodes.Node_Access;
 
-      Current : Matreshka.XML.DOM_Nodes.Node_Access := Self.First_Attribute;
+      Current : Matreshka.DOM_Nodes.Node_Access := Self.First_Attribute;
 
    begin
       while Current /= null loop
-         Matreshka.XML.DOM_Nodes.Dereference (Current);
+         Matreshka.DOM_Nodes.Dereference (Current);
          Current := Self.First_Attribute;
       end loop;
 
-      Matreshka.XML.DOM_Nodes.Finalize
-       (Matreshka.XML.DOM_Nodes.Abstract_Node (Self.all)'Access);
+      Matreshka.DOM_Nodes.Finalize
+       (Matreshka.DOM_Nodes.Abstract_Node (Self.all)'Access);
    end Finalize;
 
    --------------------
@@ -135,10 +135,10 @@ package body Matreshka.XML.DOM_Nodes.Elements is
 
    procedure Initialize
     (Self     : not null access Element_V1_Node'Class;
-     Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
+     Document : not null Matreshka.DOM_Nodes.Document_Access;
      Name     : League.Strings.Universal_String) is
    begin
-      Matreshka.XML.DOM_Nodes.Initialize (Self, Document);
+      Matreshka.DOM_Nodes.Initialize (Self, Document);
 
       Self.Name := Name;
    end Initialize;
@@ -149,14 +149,14 @@ package body Matreshka.XML.DOM_Nodes.Elements is
 
    procedure Initialize
     (Self           : not null access Element_V2_Node'Class;
-     Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
+     Document       : not null Matreshka.DOM_Nodes.Document_Access;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
    is
       Delimiter : constant Natural := Qualified_Name.Index (':');
 
    begin
-      Matreshka.XML.DOM_Nodes.Initialize (Self, Document);
+      Matreshka.DOM_Nodes.Initialize (Self, Document);
 
       Self.Namespace_URI := Namespace_URI;
 
@@ -180,7 +180,7 @@ package body Matreshka.XML.DOM_Nodes.Elements is
    begin
       Visitor.Leave_Element
        (Standard.XML.DOM.Elements.Internals.Create
-         (Matreshka.XML.DOM_Nodes.Element_Access (Self)),
+         (Matreshka.DOM_Nodes.Element_Access (Self)),
         Control);
    end Leave_Element;
 
@@ -190,10 +190,10 @@ package body Matreshka.XML.DOM_Nodes.Elements is
 
    function Set_Attribute_Node
     (Self : in out Abstract_Element'Class;
-     Attr : Matreshka.XML.DOM_Nodes.Attribute_Access)
-       return Matreshka.XML.DOM_Nodes.Attribute_Access
+     Attr : Matreshka.DOM_Nodes.Attribute_Access)
+       return Matreshka.DOM_Nodes.Attribute_Access
    is
-      use type Matreshka.XML.DOM_Nodes.Node_Access;
+      use type Matreshka.DOM_Nodes.Node_Access;
 
 --      Current : Matreshka.XML.DOM_Nodes.Node_Access := Self.First_Attribute;
 
@@ -202,8 +202,7 @@ package body Matreshka.XML.DOM_Nodes.Elements is
 --         Current := Current.Next;
 --      end loop;
 
-      Matreshka.XML.DOM_Lists.Append_Attribute_Node
-       (Self'Unchecked_Access, Attr);
+      Matreshka.DOM_Lists.Append_Attribute_Node (Self'Unchecked_Access, Attr);
 
       return null;
    end Set_Attribute_Node;
@@ -221,8 +220,8 @@ package body Matreshka.XML.DOM_Nodes.Elements is
       Iterator.Visit_Element
        (Visitor,
         Standard.XML.DOM.Elements.Internals.Create
-         (Matreshka.XML.DOM_Nodes.Element_Access (Self)),
+         (Matreshka.DOM_Nodes.Element_Access (Self)),
         Control);
    end Visit_Element;
 
-end Matreshka.XML.DOM_Nodes.Elements;
+end Matreshka.DOM_Nodes.Elements;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,79 +41,60 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides implementation of doubly linked lists of nodes and
---  attributes.
-------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes;
 
-package Matreshka.XML.DOM_Lists is
+package Matreshka.DOM_Nodes.Documents is
 
    pragma Preelaborate;
 
-   procedure Append_Detached_Node
-    (Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
-     Node     : not null Matreshka.XML.DOM_Nodes.Node_Access);
-   --  Appends detached (newly created) node to the list of detaches nodes of
-   --  the document.
+   -----------------------
+   -- Abstract_Document --
+   -----------------------
 
-   procedure Append_Attribute_Node
-    (Element   : not null Matreshka.XML.DOM_Nodes.Element_Access;
-     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access);
-   --  Append attribute node to the list of attribute nodes of element node.
-   --  Attribute node must be detached node.
+   type Abstract_Document is
+     abstract new Matreshka.DOM_Nodes.Abstract_Node with record
+      First_Detached : Matreshka.DOM_Nodes.Node_Access;
+      Last_Detached  : Matreshka.DOM_Nodes.Node_Access;
+      --  List of nodes which is not direct or indirect children of root node
+      --  of document or document's document type node. All created nodes are
+      --  added to this list.
+   end record;
 
-   procedure Append_Child_Node
-    (Node  : not null Matreshka.XML.DOM_Nodes.Node_Access;
-     Child : not null Matreshka.XML.DOM_Nodes.Node_Access);
-   --  Append node to the list of children nodes of node.
+   not overriding function Create_Attribute
+    (Self           : not null access Abstract_Document;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.DOM_Nodes.Attribute_Access;
 
-   procedure Detach_From_Parent
-    (Node : not null Matreshka.XML.DOM_Nodes.Node_Access);
-   --  Remove node from the corresponding list of the parent node and
-   --  decrements counters accordingly.
+   not overriding function Create_Element
+    (Self           : not null access Abstract_Document;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.DOM_Nodes.Element_Access;
 
---   ---------------
---   -- Node_List --
---   ---------------
---
---   type Node_List is private;
---
---   type Node_List_Entry is private;
---
-----   procedure Append
-----    (Owner : not null Matreshka.XML.DOM_Nodes.Node_Access;
-----     List  : in out Node_List;
-----     Node  : not null Matreshka.XML.DOM_Nodes.Node_Access;
-----     Item  : in out Node_List_Entry);
---
---   --------------------
---   -- Attribute_List --
---   --------------------
---
---   type Attribute_List is private;
---
---   type Attribute_List_Entry is private;
---
---private
---
---   type Node_List is record
---      First : Matreshka.XML.DOM_Nodes.Node_Access;
---      Last  : Matreshka.XML.DOM_Nodes.Node_Access;
---   end record;
---
---   type Node_List_Entry is record
---      Previous : Matreshka.XML.DOM_Nodes.Node_Access;
---      Next     : Matreshka.XML.DOM_Nodes.Node_Access;
---   end record;
---
---   type Attribute_List is record
---      First : Matreshka.XML.DOM_Nodes.Attribute_Access;
---      Last  : Matreshka.XML.DOM_Nodes.Attribute_Access;
---   end record;
---
---   type Attribute_List_Entry is record
---      Previous : Matreshka.XML.DOM_Nodes.Attribute_Access;
---      Next     : Matreshka.XML.DOM_Nodes.Attribute_Access;
---   end record;
+   overriding procedure Enter_Element
+    (Self    : not null access Abstract_Document;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
 
-end Matreshka.XML.DOM_Lists;
+   overriding procedure Leave_Element
+    (Self    : not null access Abstract_Document;
+     Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access Abstract_Document;
+     Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
+
+   -------------------
+   -- Document_Node --
+   -------------------
+
+   type Document_Node is
+     new Matreshka.DOM_Nodes.Documents.Abstract_Document with null record;
+
+end Matreshka.DOM_Nodes.Documents;

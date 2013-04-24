@@ -41,16 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes.Attributes;
-with Matreshka.XML.DOM_Nodes.Documents;
-with Matreshka.XML.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Attributes;
+with Matreshka.DOM_Nodes.Documents;
+with Matreshka.DOM_Nodes.Elements;
 with XML.DOM.Nodes.Attributes.Internals;
 with XML.DOM.Nodes.Documents.Internals;
 with XML.DOM.Nodes.Elements.Internals;
 
 package body XML.DOM.Nodes is
 
-   use type Matreshka.XML.Dom_Nodes.Node_Access;
+   use type Matreshka.DOM_Nodes.Node_Access;
 
    ------------
    -- Adjust --
@@ -59,7 +59,7 @@ package body XML.DOM.Nodes is
    overriding procedure Adjust (Self : in out DOM_Node) is
    begin
       if Self.Node /= null then
-         Matreshka.XML.Dom_Nodes.Reference (Self.Node);
+         Matreshka.DOM_Nodes.Reference (Self.Node);
       end if;
    end Adjust;
 
@@ -104,7 +104,7 @@ package body XML.DOM.Nodes is
    overriding procedure Finalize (Self : in out DOM_Node) is
    begin
       if Self.Node /= null then
-         Matreshka.XML.Dom_Nodes.Dereference (Self.Node);
+         Matreshka.DOM_Nodes.Dereference (Self.Node);
       end if;
    end Finalize;
 
@@ -147,7 +147,7 @@ package body XML.DOM.Nodes is
       return
         Self.Node /= null
           and then Self.Node.all
-             in Matreshka.XML.DOM_Nodes.Attributes.Abstract_Attribute'Class;
+             in Matreshka.DOM_Nodes.Attributes.Abstract_Attribute'Class;
    end Is_Attribute;
 
    -----------------
@@ -159,7 +159,7 @@ package body XML.DOM.Nodes is
       return
         Self.Node /= null
           and then Self.Node.all
-             in Matreshka.XML.DOM_Nodes.Documents.Document_Node'Class;
+             in Matreshka.DOM_Nodes.Documents.Document_Node'Class;
    end Is_Document;
 
    ----------------
@@ -171,7 +171,7 @@ package body XML.DOM.Nodes is
       return
         Self.Node /= null
           and then Self.Node.all
-             in Matreshka.XML.DOM_Nodes.Elements.Abstract_Element'Class;
+             in Matreshka.DOM_Nodes.Elements.Abstract_Element'Class;
    end Is_Element;
 
    -------------
@@ -196,7 +196,7 @@ package body XML.DOM.Nodes is
       elsif Self.Is_Attribute then
          return
            XML.DOM.Nodes.Attributes.Internals.Create
-            (Matreshka.XML.DOM_Nodes.Attribute_Access (Self.Node));
+            (Matreshka.DOM_Nodes.Attribute_Access (Self.Node));
 
       else
          raise Constraint_Error;
@@ -216,7 +216,7 @@ package body XML.DOM.Nodes is
       elsif Self.Is_Document then
          return
            XML.DOM.Nodes.Documents.Internals.Create
-            (Matreshka.XML.DOM_Nodes.Document_Access (Self.Node));
+            (Matreshka.DOM_Nodes.Document_Access (Self.Node));
 
       else
          raise Constraint_Error;
@@ -236,7 +236,7 @@ package body XML.DOM.Nodes is
       elsif Self.Is_Element then
          return
            XML.DOM.Nodes.Elements.Internals.Create
-            (Matreshka.XML.DOM_Nodes.Element_Access (Self.Node));
+            (Matreshka.DOM_Nodes.Element_Access (Self.Node));
 
       else
          raise Constraint_Error;

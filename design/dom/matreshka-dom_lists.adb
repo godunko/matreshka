@@ -42,28 +42,28 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.XML.Counters;
-with Matreshka.XML.DOM_Nodes.Attributes;
-with Matreshka.XML.DOM_Nodes.Documents;
-with Matreshka.XML.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Attributes;
+with Matreshka.DOM_Nodes.Documents;
+with Matreshka.DOM_Nodes.Elements;
 
-package body Matreshka.XML.DOM_Lists is
+package body Matreshka.DOM_Lists is
 
-   use type Matreshka.XML.DOM_Nodes.Node_Access;
+   use type Matreshka.DOM_Nodes.Node_Access;
 
    ---------------------------
    -- Append_Attribute_Node --
    ---------------------------
 
    procedure Append_Attribute_Node
-    (Element   : not null Matreshka.XML.DOM_Nodes.Element_Access;
-     Attribute : not null Matreshka.XML.DOM_Nodes.Attribute_Access)
+    (Element   : not null Matreshka.DOM_Nodes.Element_Access;
+     Attribute : not null Matreshka.DOM_Nodes.Attribute_Access)
    is
-      Attribute_Node : constant Matreshka.XML.DOM_Nodes.Node_Access
-        := Matreshka.XML.DOM_Nodes.Node_Access (Attribute);
-      Element_Node   : constant Matreshka.XML.DOM_Nodes.Node_Access
-        := Matreshka.XML.DOM_Nodes.Node_Access (Element);
-      Owner_Node     : Matreshka.XML.DOM_Nodes.Node_Access
-        := Matreshka.XML.DOM_Nodes.Node_Access (Element);
+      Attribute_Node : constant Matreshka.DOM_Nodes.Node_Access
+        := Matreshka.DOM_Nodes.Node_Access (Attribute);
+      Element_Node   : constant Matreshka.DOM_Nodes.Node_Access
+        := Matreshka.DOM_Nodes.Node_Access (Element);
+      Owner_Node     : Matreshka.DOM_Nodes.Node_Access
+        := Matreshka.DOM_Nodes.Node_Access (Element);
 
    begin
       Detach_From_Parent (Attribute_Node);
@@ -110,10 +110,10 @@ package body Matreshka.XML.DOM_Lists is
    -----------------------
 
    procedure Append_Child_Node
-    (Node  : not null Matreshka.XML.DOM_Nodes.Node_Access;
-     Child : not null Matreshka.XML.DOM_Nodes.Node_Access)
+    (Node  : not null Matreshka.DOM_Nodes.Node_Access;
+     Child : not null Matreshka.DOM_Nodes.Node_Access)
    is
-      Owner_Node : Matreshka.XML.DOM_Nodes.Node_Access := Node;
+      Owner_Node : Matreshka.DOM_Nodes.Node_Access := Node;
 
    begin
       Detach_From_Parent (Child);
@@ -159,12 +159,12 @@ package body Matreshka.XML.DOM_Lists is
    --------------------------
 
    procedure Append_Detached_Node
-    (Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
-     Node     : not null Matreshka.XML.DOM_Nodes.Node_Access) is
+    (Document : not null Matreshka.DOM_Nodes.Document_Access;
+     Node     : not null Matreshka.DOM_Nodes.Node_Access) is
    begin
       --  Set node's owner.
 
-      Node.Owner := Matreshka.XML.DOM_Nodes.Node_Access (Document);
+      Node.Owner := Matreshka.DOM_Nodes.Node_Access (Document);
 
       --  Insert node into documents's list of detached nodes.
 
@@ -186,9 +186,9 @@ package body Matreshka.XML.DOM_Lists is
    ------------------------
 
    procedure Detach_From_Parent
-    (Node : not null Matreshka.XML.DOM_Nodes.Node_Access)
+    (Node : not null Matreshka.DOM_Nodes.Node_Access)
    is
-      Owner : Matreshka.XML.DOM_Nodes.Node_Access := Node.Owner;
+      Owner : Matreshka.DOM_Nodes.Node_Access := Node.Owner;
 
    begin
       Node.Remove_From_Parent;
@@ -237,4 +237,4 @@ package body Matreshka.XML.DOM_Lists is
       end if;
    end Detach_From_Parent;
 
-end Matreshka.XML.DOM_Lists;
+end Matreshka.DOM_Lists;

@@ -41,102 +41,116 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Nodes.Attributes;
+with Matreshka.DOM_Nodes.Elements;
+with XML.DOM.Documents.Internals;
+with XML.DOM.Visitors;
 
-package Matreshka.XML.DOM_Nodes.Attributes is
+package body Matreshka.DOM_Nodes.Documents is
 
-   pragma Preelaborate;
+   ----------------------
+   -- Create_Attribute --
+   ----------------------
 
-   ------------------------
-   -- Abstract_Attribute --
-   ------------------------
+   not overriding function Create_Attribute
+    (Self           : not null access Abstract_Document;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.DOM_Nodes.Attribute_Access is
+   begin
+      return Result :
+        constant not null Matreshka.DOM_Nodes.Attribute_Access
+          := new Matreshka.DOM_Nodes.Attributes.Attribute_V2_Node
+      do
+         declare
+            Node : Matreshka.DOM_Nodes.Attributes.Attribute_V2_Node
+              renames Matreshka.DOM_Nodes.Attributes.Attribute_V2_Node
+                       (Result.all);
 
-   type Abstract_Attribute is
-     abstract new Matreshka.XML.DOM_Nodes.Abstract_Node with null record;
+         begin
+            Matreshka.DOM_Nodes.Attributes.Initialize
+             (Node'Access,
+              Self,
+              Namespace_URI,
+              Qualified_Name);
+         end;
+      end return;
+   end Create_Attribute;
 
-   overriding function Get_Local_Name
-    (Self : not null access constant Abstract_Attribute)
-       return League.Strings.Universal_String is abstract;
-   --  Returns the local part of the qualified name of this node.
+   --------------------
+   -- Create_Element --
+   --------------------
 
-   overriding function Get_Namespace_URI
-    (Self : not null access constant Abstract_Attribute)
-       return League.Strings.Universal_String is abstract;
-   --  The namespace URI of this node, or null if it is unspecified (see XML
-   --  Namespaces).
+   not overriding function Create_Element
+    (Self           : not null access Abstract_Document;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null Matreshka.DOM_Nodes.Element_Access is
+   begin
+      return Result :
+        constant not null Matreshka.DOM_Nodes.Element_Access
+          := new Matreshka.DOM_Nodes.Elements.Element_V2_Node
+      do
+         declare
+            Node : Matreshka.DOM_Nodes.Elements.Element_V2_Node
+              renames Matreshka.DOM_Nodes.Elements.Element_V2_Node
+                       (Result.all);
 
-   overriding procedure Remove_From_Parent
-    (Self : not null access Abstract_Attribute);
-   --  Removes attribute node from corresponding list of nodes of parent node.
-   --  In addition to default implementation it removes attribute node from
-   --  the list of attribute nodes of parent element node.
+         begin
+            Matreshka.DOM_Nodes.Elements.Initialize
+             (Node'Access,
+              Self,
+              Namespace_URI,
+              Qualified_Name);
+         end;
+      end return;
+   end Create_Element;
+
+   -------------------
+   -- Enter_Element --
+   -------------------
 
    overriding procedure Enter_Element
-    (Self    : not null access Abstract_Attribute;
+    (Self    : not null access Abstract_Document;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Document
+       (Standard.XML.DOM.Documents.Internals.Create
+         (Matreshka.DOM_Nodes.Document_Access (Self)),
+        Control);
+   end Enter_Element;
+
+   -------------------
+   -- Leave_Element --
+   -------------------
 
    overriding procedure Leave_Element
-    (Self    : not null access Abstract_Attribute;
+    (Self    : not null access Abstract_Document;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out Standard.XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Document
+       (Standard.XML.DOM.Documents.Internals.Create
+         (Matreshka.DOM_Nodes.Document_Access (Self)),
+        Control);
+   end Leave_Element;
+
+   -------------------
+   -- Visit_Element --
+   -------------------
 
    overriding procedure Visit_Element
-    (Self     : not null access Abstract_Attribute;
+    (Self     : not null access Abstract_Document;
      Iterator : in out Standard.XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
+     Control  : in out Standard.XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Document
+       (Visitor,
+        Standard.XML.DOM.Documents.Internals.Create
+         (Matreshka.DOM_Nodes.Document_Access (Self)),
+        Control);
+   end Visit_Element;
 
-   -----------------------
-   -- Attribute_V1_Node --
-   -----------------------
-
-   type Attribute_V1_Node is new Abstract_Attribute with record
-     Name : League.Strings.Universal_String;
-   end record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant Attribute_V1_Node)
-       return League.Strings.Universal_String;
-   --  Returns the local part of the qualified name of this node.
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant Attribute_V1_Node)
-       return League.Strings.Universal_String;
-   --  The namespace URI of this node, or null if it is unspecified (see XML
-   --  Namespaces).
-
-   procedure Initialize
-    (Self     : not null access Attribute_V1_Node'Class;
-     Document : not null Matreshka.XML.DOM_Nodes.Document_Access;
-     Name     : League.Strings.Universal_String);
-
-   -----------------------
-   -- Attribute_V2_Node --
-   -----------------------
-
-   type Attribute_V2_Node is new Abstract_Attribute with record
-      Namespace_URI : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
-   end record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant Attribute_V2_Node)
-       return League.Strings.Universal_String;
-   --  Returns the local part of the qualified name of this node.
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant Attribute_V2_Node)
-       return League.Strings.Universal_String;
-   --  The namespace URI of this node, or null if it is unspecified (see XML
-   --  Namespaces).
-
-   procedure Initialize
-    (Self           : not null access Attribute_V2_Node'Class;
-     Document       : not null Matreshka.XML.DOM_Nodes.Document_Access;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String);
-
-end Matreshka.XML.DOM_Nodes.Attributes;
+end Matreshka.DOM_Nodes.Documents;

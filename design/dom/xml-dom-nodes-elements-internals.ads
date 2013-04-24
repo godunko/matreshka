@@ -41,18 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes;
+with Matreshka.DOM_Nodes;
 
 package XML.DOM.Nodes.Elements.Internals is
 
    pragma Preelaborate;
 
    function Create
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
+    (Node : Matreshka.DOM_Nodes.Element_Access)
        return XML.DOM.Nodes.Elements.DOM_Element;
 
    function Wrap
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
+    (Node : Matreshka.DOM_Nodes.Element_Access)
        return XML.DOM.Nodes.Elements.DOM_Element;
 
 end XML.DOM.Nodes.Elements.Internals;

@@ -60,7 +60,7 @@ private with Ada.Finalization;
 
 with League.Strings;
 
-private with Matreshka.XML.DOM_Nodes;
+private with Matreshka.DOM_Nodes;
 limited with XML.DOM.Nodes.Attributes;
 limited with XML.DOM.Nodes.Documents;
 limited with XML.DOM.Nodes.Elements;
@@ -679,7 +679,7 @@ package XML.DOM.Nodes is
 private
 
    type DOM_Node is new Ada.Finalization.Controlled with record
-      Node : Matreshka.XML.DOM_Nodes.Node_Access;
+      Node : Matreshka.DOM_Nodes.Node_Access;
    end record;
 
    overriding procedure Adjust (Self : in out DOM_Node);

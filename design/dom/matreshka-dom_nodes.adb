@@ -43,10 +43,10 @@
 ------------------------------------------------------------------------------
 with Ada.Unchecked_Deallocation;
 
-with Matreshka.XML.DOM_Lists;
-with Matreshka.XML.DOM_Nodes.Documents;
+with Matreshka.DOM_Lists;
+with Matreshka.DOM_Nodes.Documents;
 
-package body Matreshka.XML.DOM_Nodes is
+package body Matreshka.DOM_Nodes is
 
    ------------------
    -- Append_Child --
@@ -56,7 +56,7 @@ package body Matreshka.XML.DOM_Nodes is
     (Self  : not null access Abstract_Node;
      Child : not null Node_Access) is
    begin
-      Matreshka.XML.DOM_Lists.Append_Child_Node (Self, Child);
+      Matreshka.DOM_Lists.Append_Child_Node (Self, Child);
    end Append_Child;
 
    -----------------
@@ -151,11 +151,11 @@ package body Matreshka.XML.DOM_Nodes is
 
    procedure Initialize
     (Self     : not null access Abstract_Node'Class;
-     Document : Matreshka.XML.DOM_Nodes.Document_Access) is
+     Document : Matreshka.DOM_Nodes.Document_Access) is
    begin
-      Matreshka.XML.DOM_Nodes.Reference
-       (Matreshka.XML.DOM_Nodes.Node_Access (Document));
-      Matreshka.XML.DOM_Lists.Append_Detached_Node (Document, Self);
+      Matreshka.DOM_Nodes.Reference
+       (Matreshka.DOM_Nodes.Node_Access (Document));
+      Matreshka.DOM_Lists.Append_Detached_Node (Document, Self);
    end Initialize;
 
    ---------------
@@ -178,7 +178,7 @@ package body Matreshka.XML.DOM_Nodes is
    not overriding procedure Remove_From_Parent
     (Self : not null access Abstract_Node)
    is
-      Owner_Document : Matreshka.XML.DOM_Nodes.Document_Access;
+      Owner_Document : Matreshka.DOM_Nodes.Document_Access;
 
    begin
       if Self.Owner /= null then
@@ -187,7 +187,7 @@ package body Matreshka.XML.DOM_Nodes is
             --  document.
 
             Owner_Document :=
-              Matreshka.XML.DOM_Nodes.Document_Access (Self.Owner);
+              Matreshka.DOM_Nodes.Document_Access (Self.Owner);
 
             if Owner_Document.First_Detached = Self then
                Owner_Document.First_Detached := Self.Next;
@@ -221,4 +221,4 @@ package body Matreshka.XML.DOM_Nodes is
       end if;
    end Remove_From_Parent;
 
-end Matreshka.XML.DOM_Nodes;
+end Matreshka.DOM_Nodes;

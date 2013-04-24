@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Elements;
 with XML.DOM.Nodes.Attributes.Internals;
 
 package body XML.DOM.Nodes.Elements is
@@ -57,7 +57,7 @@ package body XML.DOM.Nodes.Elements is
    begin
       return
         XML.DOM.Nodes.Attributes.Internals.Wrap
-         (Matreshka.XML.DOM_Nodes.Elements.Abstract_Element'Class
+         (Matreshka.DOM_Nodes.Elements.Abstract_Element'Class
            (Self.Node.all).Set_Attribute_Node
              (XML.DOM.Nodes.Attributes.Internals.Internal (Attr)));
    end Set_Attribute_Node_NS;

@@ -50,7 +50,7 @@ package body XML.DOM.Nodes.Internals is
 
    function Internal
     (Node : XML.DOM.Nodes.DOM_Node'Class)
-       return Matreshka.XML.DOM_Nodes.Node_Access is
+       return Matreshka.DOM_Nodes.Node_Access is
    begin
       return Node.Node;
    end Internal;

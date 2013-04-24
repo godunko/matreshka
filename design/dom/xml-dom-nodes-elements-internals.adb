@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Elements;
 
 package body XML.DOM.Nodes.Elements.Internals is
 
@@ -50,20 +50,20 @@ package body XML.DOM.Nodes.Elements.Internals is
    ------------
 
    function Create
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
+    (Node : Matreshka.DOM_Nodes.Element_Access)
        return XML.DOM.Nodes.Elements.DOM_Element
    is
-       use type Matreshka.XML.DOM_Nodes.Element_Access;
+       use type Matreshka.DOM_Nodes.Element_Access;
 
    begin
       if Node /= null then
-         Matreshka.XML.DOM_Nodes.Reference
-          (Matreshka.XML.DOM_Nodes.Node_Access (Node));
+         Matreshka.DOM_Nodes.Reference
+          (Matreshka.DOM_Nodes.Node_Access (Node));
       end if;
 
       return
        (Ada.Finalization.Controlled
-          with Node => Matreshka.XML.DOM_Nodes.Node_Access (Node));
+          with Node => Matreshka.DOM_Nodes.Node_Access (Node));
    end Create;
 
    ----------
@@ -71,12 +71,12 @@ package body XML.DOM.Nodes.Elements.Internals is
    ----------
 
    function Wrap
-    (Node : Matreshka.XML.DOM_Nodes.Element_Access)
+    (Node : Matreshka.DOM_Nodes.Element_Access)
        return XML.DOM.Nodes.Elements.DOM_Element is
    begin
       return
        (Ada.Finalization.Controlled
-          with Node => Matreshka.XML.DOM_Nodes.Node_Access (Node));
+          with Node => Matreshka.DOM_Nodes.Node_Access (Node));
    end Wrap;
 
 end XML.DOM.Nodes.Elements.Internals;
