@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Text.List_Level_Position_And_Space_Mode is
 
    type ODF_Text_List_Level_Position_And_Space_Mode is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Text_List_Level_Position_And_Space_Mode_Access is
-     access all ODF_Text_List_Level_Position_And_Space_Mode'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Text_List_Level_Position_And_Space_Mode is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_List_Level_Position_And_Space_Mode)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Text.List_Level_Position_And_Space_Mode;

@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Table.Number_Columns_Spanned is
 
    type ODF_Table_Number_Columns_Spanned is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Table_Number_Columns_Spanned_Access is
-     access all ODF_Table_Number_Columns_Spanned'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Table_Number_Columns_Spanned is
-     new ODF.DOM.Attributes.Table.ODF_Table_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Table_Number_Columns_Spanned)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Table.Number_Columns_Spanned;

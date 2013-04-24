@@ -41,21 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Office.Value_Type is
 
    type ODF_Office_Value_Type is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Office_Value_Type_Access is access all ODF_Office_Value_Type'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Office_Value_Type is
-     new ODF.DOM.Attributes.Office.ODF_Office_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Office_Value_Type)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Office.Value_Type;

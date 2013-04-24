@@ -41,20 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Text.Name is
 
-   type ODF_Text_Name is new ODF.DOM.Attributes.ODF_Attribute with private;
+   type ODF_Text_Name is
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
    type ODF_Text_Name_Access is access all ODF_Text_Name'Class;
 
 private
 
    type ODF_Text_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Name)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Text.Name;

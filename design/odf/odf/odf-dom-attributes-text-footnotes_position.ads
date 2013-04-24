@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Text.Footnotes_Position is
 
    type ODF_Text_Footnotes_Position is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Text_Footnotes_Position_Access is
-     access all ODF_Text_Footnotes_Position'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Text_Footnotes_Position is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Footnotes_Position)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Text.Footnotes_Position;

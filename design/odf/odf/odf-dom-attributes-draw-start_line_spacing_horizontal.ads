@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Draw.Start_Line_Spacing_Horizontal is
 
    type ODF_Draw_Start_Line_Spacing_Horizontal is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Draw_Start_Line_Spacing_Horizontal_Access is
-     access all ODF_Draw_Start_Line_Spacing_Horizontal'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Draw_Start_Line_Spacing_Horizontal is
-     new ODF.DOM.Attributes.Draw.ODF_Draw_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Draw_Start_Line_Spacing_Horizontal)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Draw.Start_Line_Spacing_Horizontal;

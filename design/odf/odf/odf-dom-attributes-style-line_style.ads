@@ -41,21 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Style.Line_Style is
 
    type ODF_Style_Line_Style is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Style_Line_Style_Access is access all ODF_Style_Line_Style'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Style_Line_Style is
-     new ODF.DOM.Attributes.Style.ODF_Style_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Style_Line_Style)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Style.Line_Style;

@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.FO.Hyphenation_Remain_Char_Count is
 
    type ODF_FO_Hyphenation_Remain_Char_Count is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_FO_Hyphenation_Remain_Char_Count_Access is
-     access all ODF_FO_Hyphenation_Remain_Char_Count'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_FO_Hyphenation_Remain_Char_Count is
-     new ODF.DOM.Attributes.FO.ODF_FO_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_FO_Hyphenation_Remain_Char_Count)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.FO.Hyphenation_Remain_Char_Count;

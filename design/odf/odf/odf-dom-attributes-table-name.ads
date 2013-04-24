@@ -41,20 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Table.Name is
 
-   type ODF_Table_Name is new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Table_Name_Access is access all ODF_Table_Name'Class;
+   type ODF_Table_Name is
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Table_Name is
-     new ODF.DOM.Attributes.Table.ODF_Table_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Table_Name)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Table.Name;

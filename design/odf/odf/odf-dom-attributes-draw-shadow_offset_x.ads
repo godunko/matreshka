@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Draw.Shadow_Offset_X is
 
    type ODF_Draw_Shadow_Offset_X is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Draw_Shadow_Offset_X_Access is
-     access all ODF_Draw_Shadow_Offset_X'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Draw_Shadow_Offset_X is
-     new ODF.DOM.Attributes.Draw.ODF_Draw_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Draw_Shadow_Offset_X)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Draw.Shadow_Offset_X;

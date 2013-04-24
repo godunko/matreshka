@@ -41,21 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Office.Version is
 
    type ODF_Office_Version is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Office_Version_Access is access all ODF_Office_Version'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Office_Version is
-     new ODF.DOM.Attributes.Office.ODF_Office_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Office_Version)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Office.Version;

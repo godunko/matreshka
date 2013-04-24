@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Text.Display_Outline_Level is
 
    type ODF_Text_Display_Outline_Level is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Text_Display_Outline_Level_Access is
-     access all ODF_Text_Display_Outline_Level'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Text_Display_Outline_Level is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Display_Outline_Level)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Text.Display_Outline_Level;

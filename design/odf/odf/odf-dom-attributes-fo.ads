@@ -41,17 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
 
 package ODF.DOM.Attributes.FO is
 
-private
-
-   type ODF_FO_Base is
-     abstract new ODF.DOM.Attributes.ODF_Attribute with null record;
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant ODF_FO_Base)
-       return League.Strings.Universal_String;
+   pragma Pure;
 
 end ODF.DOM.Attributes.FO;

@@ -41,31 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Text.Style_Name is
 
    type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Text_Style_Name_Access is access all ODF_Text_Style_Name'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Text_Style_Name is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with record
-      Value : League.Strings.Universal_String;
-   end record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
-
-   overriding function Get_Value
-    (Self : not null access ODF_Text_Style_Name)
-       return League.Strings.Universal_String;
-
-   overriding procedure Set_Value
-    (Self  : not null access ODF_Text_Style_Name;
-     Value : League.Strings.Universal_String);
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Text.Style_Name;

@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.FO.Hyphenation_Ladder_Count is
 
    type ODF_FO_Hyphenation_Ladder_Count is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_FO_Hyphenation_Ladder_Count_Access is
-     access all ODF_FO_Hyphenation_Ladder_Count'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_FO_Hyphenation_Ladder_Count is
-     new ODF.DOM.Attributes.FO.ODF_FO_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_FO_Hyphenation_Ladder_Count)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.FO.Hyphenation_Ladder_Count;

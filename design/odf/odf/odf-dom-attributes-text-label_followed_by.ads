@@ -41,22 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 
 package ODF.DOM.Attributes.Text.Label_Followed_By is
 
    type ODF_Text_Label_Followed_By is
-     new ODF.DOM.Attributes.ODF_Attribute with private;
-
-   type ODF_Text_Label_Followed_By_Access is
-     access all ODF_Text_Label_Followed_By'Class;
+     new XML.DOM.Attributes.DOM_Attribute with private;
 
 private
 
    type ODF_Text_Label_Followed_By is
-     new ODF.DOM.Attributes.Text.ODF_Text_Base with null record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant ODF_Text_Label_Followed_By)
-       return League.Strings.Universal_String;
+     new XML.DOM.Attributes.DOM_Attribute with null record;
 
 end ODF.DOM.Attributes.Text.Label_Followed_By;
