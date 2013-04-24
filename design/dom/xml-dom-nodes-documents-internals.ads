@@ -55,4 +55,8 @@ package XML.DOM.Nodes.Documents.Internals is
     (Node : Matreshka.DOM_Nodes.Document_Access)
        return XML.DOM.Nodes.Documents.DOM_Document;
 
+   function Internal
+    (Document : XML.DOM.Nodes.Documents.DOM_Document'Class)
+       return Matreshka.DOM_Nodes.Document_Access;
+
 end XML.DOM.Nodes.Documents.Internals;

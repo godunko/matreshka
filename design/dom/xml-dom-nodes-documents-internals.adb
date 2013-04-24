@@ -60,6 +60,17 @@ package body XML.DOM.Nodes.Documents.Internals is
           with Node => Matreshka.DOM_Nodes.Node_Access (Node));
    end Create;
 
+   --------------
+   -- Internal --
+   --------------
+
+   function Internal
+    (Document : XML.DOM.Nodes.Documents.DOM_Document'Class)
+       return Matreshka.DOM_Nodes.Document_Access is
+   begin
+      return Matreshka.DOM_Nodes.Document_Access (Document.Node);
+   end Internal;
+
    ----------
    -- Wrap --
    ----------
