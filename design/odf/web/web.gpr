@@ -1,4 +1,3 @@
-with "gnatcoll.gpr";
 with "aws.gpr";
 with "../odf/odf.gpr";
 
