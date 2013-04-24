@@ -50,7 +50,7 @@ package body Matreshka.ODF_Elements.Text is
    -----------------------
 
    overriding function Get_Namespace_URI
-    (Self : not null access constant ODF_Text_Base)
+    (Self : not null access constant Text_Node_Base)
        return League.Strings.Universal_String is
    begin
       return ODF.Constants.Text_URI;

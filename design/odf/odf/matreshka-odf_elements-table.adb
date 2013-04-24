@@ -50,7 +50,7 @@ package body Matreshka.ODF_Elements.Table is
    -----------------------
 
    overriding function Get_Namespace_URI
-    (Self : not null access constant ODF_Table_Base)
+    (Self : not null access constant Table_Node_Base)
        return League.Strings.Universal_String is
    begin
       return ODF.Constants.Table_URI;

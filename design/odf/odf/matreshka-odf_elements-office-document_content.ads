@@ -44,30 +44,30 @@
 
 package Matreshka.ODF_Elements.Office.Document_Content is
 
-   type Office_Document_Content is
+   type Office_Document_Content_Node is
      new Matreshka.ODF_Elements.Office.Office_Node_Base with null record;
 
    type Office_Document_Content_Access is
-     access all Office_Document_Content'Class;
+     access all Office_Document_Content_Node'Class;
 
    overriding procedure Enter_Element
-    (Self    : not null access Office_Document_Content;
+    (Self    : not null access Office_Document_Content_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding function Get_Local_Name
-    (Self : not null access constant Office_Document_Content)
+    (Self : not null access constant Office_Document_Content_Node)
        return League.Strings.Universal_String;
 
    overriding procedure Leave_Element
-    (Self    : not null access Office_Document_Content;
+    (Self    : not null access Office_Document_Content_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Visit_Element
-    (Self     : not null access Office_Document_Content;
+    (Self     : not null access Office_Document_Content_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);

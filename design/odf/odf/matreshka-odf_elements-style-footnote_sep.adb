@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with ODF.Constants;
+with ODF.DOM.Elements.Style.Footnote_Sep.Internals;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
@@ -52,18 +53,20 @@ package body Matreshka.ODF_Elements.Style.Footnote_Sep is
    -------------------
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Style_Footnote_Sep;
+    (Self    : not null access Style_Footnote_Sep_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
          ODF.DOM.Visitors.ODF_Visitor'Class
           (Visitor).Enter_Style_Footnote_Sep
-            (ODF_Style_Footnote_Sep_Access (Self), Control);
+            (ODF.DOM.Elements.Style.Footnote_Sep.Internals.Create
+              (Style_Footnote_Sep_Access (Self)),
+             Control);
 
       else
-         Visitor.Enter_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Enter_Element (Visitor, Control);
       end if;
    end Enter_Element;
 
@@ -72,7 +75,7 @@ package body Matreshka.ODF_Elements.Style.Footnote_Sep is
    --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Style_Footnote_Sep)
+    (Self : not null access constant Style_Footnote_Sep_Node)
        return League.Strings.Universal_String is
    begin
       return ODF.Constants.Footnote_Sep_Name;
@@ -83,18 +86,20 @@ package body Matreshka.ODF_Elements.Style.Footnote_Sep is
    -------------------
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Style_Footnote_Sep;
+    (Self    : not null access Style_Footnote_Sep_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
          ODF.DOM.Visitors.ODF_Visitor'Class
           (Visitor).Leave_Style_Footnote_Sep
-            (ODF_Style_Footnote_Sep_Access (Self), Control);
+            (ODF.DOM.Elements.Style.Footnote_Sep.Internals.Create
+              (Style_Footnote_Sep_Access (Self)),
+             Control);
 
       else
-         Visitor.Leave_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Leave_Element (Visitor, Control);
       end if;
    end Leave_Element;
 
@@ -103,23 +108,22 @@ package body Matreshka.ODF_Elements.Style.Footnote_Sep is
    -------------------
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Style_Footnote_Sep;
+    (Self     : not null access Style_Footnote_Sep_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      if Visitor in ODF.DOM.Iterators.ODF_Iterator'Class then
+      if Iterator in ODF.DOM.Iterators.ODF_Iterator'Class then
          ODF.DOM.Iterators.ODF_Iterator'Class
-          (Visitor).Visit_Style_Footnote_Sep
+          (Iterator).Visit_Style_Footnote_Sep
             (Visitor,
-             ODF_Style_Footnote_Sep_Access (Self),
+             ODF.DOM.Elements.Style.Footnote_Sep.Internals.Create
+              (Style_Footnote_Sep_Access (Self)),
              Control);
 
       else
-         Iterator.Visit_Element
-            (Visitor,
-             XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
-             Control);
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Visit_Element (Iterator, Visitor, Control);
       end if;
    end Visit_Element;
 

@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with ODF.Constants;
+with ODF.DOM.Elements.Style.Font_Face.Internals;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
@@ -52,18 +53,20 @@ package body Matreshka.ODF_Elements.Style.Font_Face is
    -------------------
 
    overriding procedure Enter_Element
-    (Self    : not null access ODF_Style_Font_Face;
+    (Self    : not null access Style_Font_Face_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
          ODF.DOM.Visitors.ODF_Visitor'Class
           (Visitor).Enter_Style_Font_Face
-            (ODF_Style_Font_Face_Access (Self), Control);
+            (ODF.DOM.Elements.Style.Font_Face.Internals.Create
+              (Style_Font_Face_Access (Self)),
+             Control);
 
       else
-         Visitor.Enter_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Enter_Element (Visitor, Control);
       end if;
    end Enter_Element;
 
@@ -72,7 +75,7 @@ package body Matreshka.ODF_Elements.Style.Font_Face is
    --------------------
 
    overriding function Get_Local_Name
-    (Self : not null access constant ODF_Style_Font_Face)
+    (Self : not null access constant Style_Font_Face_Node)
        return League.Strings.Universal_String is
    begin
       return ODF.Constants.Font_Face_Name;
@@ -83,18 +86,20 @@ package body Matreshka.ODF_Elements.Style.Font_Face is
    -------------------
 
    overriding procedure Leave_Element
-    (Self    : not null access ODF_Style_Font_Face;
+    (Self    : not null access Style_Font_Face_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       if Visitor in ODF.DOM.Visitors.ODF_Visitor'Class then
          ODF.DOM.Visitors.ODF_Visitor'Class
           (Visitor).Leave_Style_Font_Face
-            (ODF_Style_Font_Face_Access (Self), Control);
+            (ODF.DOM.Elements.Style.Font_Face.Internals.Create
+              (Style_Font_Face_Access (Self)),
+             Control);
 
       else
-         Visitor.Leave_Element
-          (XML.DOM.Nodes.Elements.DOM_Element_Access (Self), Control);
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Leave_Element (Visitor, Control);
       end if;
    end Leave_Element;
 
@@ -103,7 +108,7 @@ package body Matreshka.ODF_Elements.Style.Font_Face is
    -------------------
 
    overriding procedure Visit_Element
-    (Self     : not null access ODF_Style_Font_Face;
+    (Self     : not null access Style_Font_Face_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control) is
@@ -112,14 +117,13 @@ package body Matreshka.ODF_Elements.Style.Font_Face is
          ODF.DOM.Iterators.ODF_Iterator'Class
           (Iterator).Visit_Style_Font_Face
             (Visitor,
-             ODF_Style_Font_Face_Access (Self),
+             ODF.DOM.Elements.Style.Font_Face.Internals.Create
+              (Style_Font_Face_Access (Self)),
              Control);
 
       else
-         Iterator.Visit_Element
-          (Visitor,
-           XML.DOM.Nodes.Elements.DOM_Element_Access (Self),
-           Control);
+         Matreshka.DOM_Nodes.Elements.Abstract_Element
+          (Self.all).Visit_Element (Iterator, Visitor, Control);
       end if;
    end Visit_Element;
 
