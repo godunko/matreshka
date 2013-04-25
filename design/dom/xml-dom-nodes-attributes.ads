@@ -127,12 +127,13 @@ package XML.DOM.Nodes.Attributes is
 --   --  with default values from other schemas similarly but applications should
 --   --  use Document.normalizeDocument() to guarantee this information is
 --   --  up-to-date.
---
---   function Value (Self : DOM_Attribute'Class) return DOM_String;
---   --  The value of the attribute is returned as a string. Character and
---   --  general entity references are replaced with their values. See also the
---   --  method getAttribute on the Element interface.
---
+
+   function Get_Value
+    (Self : DOM_Attribute'Class) return League.Strings.Universal_String;
+   --  The value of the attribute is returned as a string. Character and
+   --  general entity references are replaced with their values. See also the
+   --  method getAttribute on the Element interface.
+
 --   procedure Set_Value (Self : in out DOM_Attribute'Class; To : DOM_String);
 --   --  Creates a Text node with the unparsed contents of the string, i.e. any
 --   --  characters that an XML processor would recognize as markup are instead

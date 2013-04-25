@@ -53,6 +53,11 @@ package Matreshka.DOM_Nodes.Attributes is
    type Abstract_Attribute is
      abstract new Matreshka.DOM_Nodes.Abstract_Node with null record;
 
+   not overriding function Get_Value
+    (Self : not null access constant Abstract_Attribute)
+       return League.Strings.Universal_String;
+   --  Returns value of the attribute as string value of child DOM_Text node.
+
    overriding function Get_Local_Name
     (Self : not null access constant Abstract_Attribute)
        return League.Strings.Universal_String is abstract;

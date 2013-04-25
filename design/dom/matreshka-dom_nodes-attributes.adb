@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Texts;
 with XML.DOM.Attributes.Internals;
 with XML.DOM.Visitors;
 
@@ -109,6 +110,27 @@ package body Matreshka.DOM_Nodes.Attributes is
    begin
       return Self.Namespace_URI;
    end Get_Namespace_URI;
+
+   ---------------
+   -- Get_Value --
+   ---------------
+
+   not overriding function Get_Value
+    (Self : not null access constant Abstract_Attribute)
+       return League.Strings.Universal_String
+   is
+      Child : Matreshka.DOM_Nodes.Text_Access;
+
+   begin
+      if Self.First /= null then
+         Child := Matreshka.DOM_Nodes.Text_Access (Self.First);
+
+         return Child.Data;
+
+      else
+         return League.Strings.Empty_Universal_String;
+      end if;
+   end Get_Value;
 
    ----------------
    -- Initialize --
