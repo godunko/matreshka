@@ -62,6 +62,7 @@ with League.Strings;
 
 private with Matreshka.DOM_Nodes;
 limited with XML.DOM.Nodes.Attributes;
+limited with XML.DOM.Nodes.Character_Datas.Texts;
 limited with XML.DOM.Nodes.Documents;
 limited with XML.DOM.Nodes.Elements;
 --limited with XML.DOM.Named_Node_Maps;
@@ -638,7 +639,7 @@ package XML.DOM.Nodes is
    function Is_Attribute (Self : DOM_Node'Class) return Boolean;
    function Is_Document (Self : DOM_Node'Class) return Boolean;
    function Is_Element (Self : DOM_Node'Class) return Boolean;
---   function Is_Text (Self : DOM_Node'Class) return Boolean;
+   function Is_Text (Self : DOM_Node'Class) return Boolean;
 --   function Is_CDATA_Section (Self : DOM_Node'Class) return Boolean;
 --   function Is_Entity_Reference (Self : DOM_Node'Class) return Boolean;
 --   function Is_Entity (Self : DOM_Node'Class) return Boolean;
@@ -654,8 +655,8 @@ package XML.DOM.Nodes is
     (Self : DOM_Node'Class) return XML.DOM.Nodes.Documents.DOM_Document;
    function To_Element
     (Self : DOM_Node'Class) return XML.DOM.Nodes.Elements.DOM_Element;
---   function To_Text
---    (Self : DOM_Node'Class) return XML.DOM.Texts.DOM_Text;
+   function To_Text
+    (Self : DOM_Node'Class) return XML.DOM.Nodes.Character_Datas.Texts.DOM_Text;
 --   function To_CDATA_Section
 --    (Self : DOM_Node'Class) return XML.DOM.CDATA_Sections.DOM_CDATA_Section;
 --   function To_Entity_Reference

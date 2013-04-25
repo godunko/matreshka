@@ -48,6 +48,7 @@ with XML.DOM.Attributes;
 with XML.DOM.Documents;
 with XML.DOM.Elements;
 with XML.DOM.Nodes;
+with XML.DOM.Texts;
 
 package XML.DOM.Visitors is
 
@@ -95,6 +96,16 @@ package XML.DOM.Visitors is
      Node    : XML.DOM.Elements.DOM_Element'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
+   not overriding procedure Enter_Text
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Texts.DOM_Text'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Text
+    (Self    : in out Abstract_Visitor;
+     Node    : XML.DOM.Texts.DOM_Text'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
    -----------------------
    -- Abstract_Iterator --
    -----------------------
@@ -130,6 +141,12 @@ package XML.DOM.Visitors is
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Node    : XML.DOM.Elements.DOM_Element'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Text
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : XML.DOM.Texts.DOM_Text'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
 end XML.DOM.Visitors;

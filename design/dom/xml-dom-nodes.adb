@@ -44,7 +44,9 @@
 with Matreshka.DOM_Nodes.Attributes;
 with Matreshka.DOM_Nodes.Documents;
 with Matreshka.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Texts;
 with XML.DOM.Nodes.Attributes.Internals;
+with XML.DOM.Nodes.Character_Datas.Texts.Internals;
 with XML.DOM.Nodes.Documents.Internals;
 with XML.DOM.Nodes.Elements.Internals;
 
@@ -183,6 +185,17 @@ package body XML.DOM.Nodes is
       return Self.Node = null;
    end Is_Null;
 
+   -------------
+   -- Is_Text --
+   -------------
+
+   function Is_Text (Self : DOM_Node'Class) return Boolean is
+   begin
+      return
+        Self.Node /= null
+          and then Self.Node.all in Matreshka.DOM_Nodes.Texts.Text_Node'Class;
+   end Is_Text;
+
    ------------------
    -- To_Attribute --
    ------------------
@@ -242,5 +255,26 @@ package body XML.DOM.Nodes is
          raise Constraint_Error;
       end if;
    end To_Element;
+
+   -------------
+   -- To_Text --
+   -------------
+
+   function To_Text
+    (Self : DOM_Node'Class)
+       return XML.DOM.Nodes.Character_Datas.Texts.DOM_Text is
+   begin
+      if Self.Is_Null then
+         return XML.DOM.Nodes.Character_Datas.Texts.Null_DOM_Text;
+
+      elsif Self.Is_Text then
+         return
+           XML.DOM.Nodes.Character_Datas.Texts.Internals.Create
+            (Matreshka.DOM_Nodes.Text_Access (Self.Node));
+
+      else
+         raise Constraint_Error;
+      end if;
+   end To_Text;
 
 end XML.DOM.Nodes;
