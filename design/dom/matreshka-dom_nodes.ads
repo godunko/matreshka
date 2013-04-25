@@ -45,6 +45,7 @@ with League.Strings;
 
 with Matreshka.XML.Counters;
 limited with Matreshka.DOM_Nodes.Attributes;
+limited with Matreshka.DOM_Nodes.Character_Datas;
 limited with Matreshka.DOM_Nodes.Documents;
 limited with Matreshka.DOM_Nodes.Elements;
 limited with Matreshka.DOM_Nodes.Texts;
@@ -60,6 +61,8 @@ package Matreshka.DOM_Nodes is
 
    type Attribute_Access is
      access all Matreshka.DOM_Nodes.Attributes.Abstract_Attribute'Class;
+   type Character_Data_Access is
+     access all Matreshka.DOM_Nodes.Character_Datas.Character_Data_Node'Class;
    type Document_Access is
      access all Matreshka.DOM_Nodes.Documents.Abstract_Document'Class;
    type Element_Access is

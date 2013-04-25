@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -57,14 +57,15 @@ package XML.DOM.Nodes.Character_Datas is
 
    Null_DOM_Character_Data : constant DOM_Character_Data;
 
---   function Data (Self : DOM_Character_Data'Class) return DOM_String;
---   --  The character data of the node that implements this interface. The DOM
---   --  implementation may not put arbitrary limits on the amount of data that
---   --  may be stored in a CharacterData node. However, implementation limits
---   --  may mean that the entirety of a node's data may not fit into a single
---   --  DOMString. In such cases, the user may call substringData to retrieve
---   --  the data in appropriately sized pieces.
---
+   function Get_Data
+    (Self : DOM_Character_Data'Class) return League.Strings.Universal_String;
+   --  The character data of the node that implements this interface. The DOM
+   --  implementation may not put arbitrary limits on the amount of data that
+   --  may be stored in a CharacterData node. However, implementation limits
+   --  may mean that the entirety of a node's data may not fit into a single
+   --  DOMString. In such cases, the user may call substringData to retrieve
+   --  the data in appropriately sized pieces.
+
 --   procedure Set_Data
 --    (Self : in out DOM_Character_Data'Class; To : DOM_String);
 --   --  The character data of the node that implements this interface. The DOM
