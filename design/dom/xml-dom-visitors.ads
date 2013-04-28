@@ -68,42 +68,42 @@ package XML.DOM.Visitors is
 
    not overriding procedure Enter_Attribute
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Attributes.DOM_Attribute'Class;
+     Node    : XML.DOM.Attributes.DOM_Attribute;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_Attribute
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Attributes.DOM_Attribute'Class;
+     Node    : XML.DOM.Attributes.DOM_Attribute;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Enter_Document
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Documents.DOM_Document'Class;
+     Node    : XML.DOM.Documents.DOM_Document;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_Document
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Documents.DOM_Document'Class;
+     Node    : XML.DOM.Documents.DOM_Document;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Enter_Element
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Elements.DOM_Element'Class;
+     Node    : XML.DOM.Elements.DOM_Element;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_Element
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Elements.DOM_Element'Class;
+     Node    : XML.DOM.Elements.DOM_Element;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Enter_Text
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Texts.DOM_Text'Class;
+     Node    : XML.DOM.Texts.DOM_Text;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_Text
     (Self    : in out Abstract_Visitor;
-     Node    : XML.DOM.Texts.DOM_Text'Class;
+     Node    : XML.DOM.Texts.DOM_Text;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    -----------------------
@@ -128,25 +128,25 @@ package XML.DOM.Visitors is
    not overriding procedure Visit_Attribute
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Node    : XML.DOM.Attributes.DOM_Attribute'Class;
+     Node    : XML.DOM.Attributes.DOM_Attribute;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Document
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Node    : XML.DOM.Documents.DOM_Document'Class;
+     Node    : XML.DOM.Documents.DOM_Document;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Element
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Node    : XML.DOM.Elements.DOM_Element'Class;
+     Node    : XML.DOM.Elements.DOM_Element;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Text
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Node    : XML.DOM.Texts.DOM_Text'Class;
+     Node    : XML.DOM.Texts.DOM_Text;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
 end XML.DOM.Visitors;
