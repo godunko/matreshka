@@ -44,6 +44,27 @@
 
 package body XML.DOM.Nodes.Internals is
 
+   ------------
+   -- Create --
+   ------------
+
+   function Create
+    (Node : Matreshka.DOM_Nodes.Node_Access)
+       return XML.DOM.Nodes.DOM_Node
+   is
+      use type Matreshka.DOM_Nodes.Node_Access;
+
+   begin
+      if Node /= null then
+         Matreshka.DOM_Nodes.Reference
+          (Matreshka.DOM_Nodes.Node_Access (Node));
+      end if;
+
+      return
+       (Ada.Finalization.Controlled
+          with Node => Matreshka.DOM_Nodes.Node_Access (Node));
+   end Create;
+
    --------------
    -- Internal --
    --------------
