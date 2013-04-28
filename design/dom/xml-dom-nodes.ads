@@ -248,11 +248,11 @@ package XML.DOM.Nodes is
 --    (Self : DOM_Node'Class) return XML.DOM.Node_Lists.DOM_Node_List;
 --   --  A NodeList that contains all children of this node. If there are no
 --   --  children, this is a NodeList containing no nodes.
---
---   function First_Child (Self : DOM_Node'Class) return DOM_Node;
---   --  The first child of this node. If there is no such node, this returns
---   --  null.
---
+
+   function Get_First_Child (Self : DOM_Node'Class) return DOM_Node;
+   --  The first child of this node. If there is no such node, this returns
+   --  null.
+
 --   function Last_Child (Self : DOM_Node'Class) return DOM_Node;
 --   --  The last child of this node. If there is no such node, this returns
 --   --  null.

@@ -49,6 +49,7 @@ with XML.DOM.Nodes.Attributes.Internals;
 with XML.DOM.Nodes.Character_Datas.Texts.Internals;
 with XML.DOM.Nodes.Documents.Internals;
 with XML.DOM.Nodes.Elements.Internals;
+with XML.DOM.Nodes.Internals;
 
 package body XML.DOM.Nodes is
 
@@ -109,6 +110,15 @@ package body XML.DOM.Nodes is
          Matreshka.DOM_Nodes.Dereference (Self.Node);
       end if;
    end Finalize;
+
+   ---------------------
+   -- Get_First_Child --
+   ---------------------
+
+   function Get_First_Child (Self : DOM_Node'Class) return DOM_Node is
+   begin
+      return XML.DOM.Nodes.Internals.Create (Self.Node.First);
+   end Get_First_Child;
 
    --------------------
    -- Get_Local_Name --
