@@ -53,7 +53,7 @@ package body XML.DOM.Nodes.Elements.Internals is
     (Node : Matreshka.DOM_Nodes.Element_Access)
        return XML.DOM.Nodes.Elements.DOM_Element
    is
-       use type Matreshka.DOM_Nodes.Element_Access;
+      use type Matreshka.DOM_Nodes.Element_Access;
 
    begin
       if Node /= null then
