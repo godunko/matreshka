@@ -55,4 +55,21 @@ package body XML.DOM.Nodes.Character_Datas is
       return Matreshka.DOM_Nodes.Character_Data_Access (Self.Node).Data;
    end Get_Data;
 
+   ------------------
+   -- Replace_Data --
+   ------------------
+
+   procedure Replace_Data
+    (Self   : in out DOM_Character_Data'Class;
+     Offset : Positive;
+     Count  : Natural;
+     Arg    : League.Strings.Universal_String)
+   is
+      Node : constant Matreshka.DOM_Nodes.Character_Data_Access
+        := Matreshka.DOM_Nodes.Character_Data_Access (Self.Node);
+
+   begin
+      Node.Data.Replace (Offset, Offset + Count - 1, Arg);
+   end Replace_Data;
+
 end XML.DOM.Nodes.Character_Datas;

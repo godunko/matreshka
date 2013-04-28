@@ -138,26 +138,27 @@ package XML.DOM.Nodes.Character_Datas is
 --   --     count is negative.
 --   --
 --   --   - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
---
---   procedure Replace_Data
---    (Self   : in out DOM_Character_Data'Class;
---     Offset : Natural;
---     Count  : Natural;
---     Arg    : DOM_String);
---   --  offset with the specified string.
---   --
---   --  If the sum of offset and count exceeds length, then all Unicode
---   --  characters to the end of the data are replaced; (i.e., the effect is the
---   --  same as a remove method call with the same range, followed by an append
---   --  method invocation).
---   --
---   --  Raises DOMException:
---   --
---   --   - INDEX_SIZE_ERR: Raised if the specified offset is negative or greater
---   --     than the number of Unicode characters in data, or if the specified
---   --     count is negative.
---   --
---   --   - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+
+   procedure Replace_Data
+    (Self   : in out DOM_Character_Data'Class;
+     Offset : Positive;
+     Count  : Natural;
+     Arg    : League.Strings.Universal_String);
+   --  Replace the characters starting at the specified position with the
+   --  specified string.
+   --
+   --  If the sum of offset and count exceeds length, then all Unicode
+   --  characters to the end of the data are replaced; (i.e., the effect is the
+   --  same as a remove method call with the same range, followed by an append
+   --  method invocation).
+   --
+   --  Raises DOMException:
+   --
+   --   - INDEX_SIZE_ERR: Raised if the specified offset is negative or greater
+   --     than the number of Unicode characters in data, or if the specified
+   --     count is negative.
+   --
+   --   - NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 
 private
 
