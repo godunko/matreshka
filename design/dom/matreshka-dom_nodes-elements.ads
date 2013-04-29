@@ -52,8 +52,8 @@ package Matreshka.DOM_Nodes.Elements is
 
    type Abstract_Element is
      abstract new Matreshka.DOM_Nodes.Abstract_Node with record
-      First_Attribute : Matreshka.DOM_Nodes.Node_Access;
-      Last_Attribute  : Matreshka.DOM_Nodes.Node_Access;
+      First_Attribute : Matreshka.DOM_Nodes.Attribute_Access;
+      Last_Attribute  : Matreshka.DOM_Nodes.Attribute_Access;
    end record;
 
    overriding function Get_Local_Name
@@ -73,6 +73,13 @@ package Matreshka.DOM_Nodes.Elements is
        return Matreshka.DOM_Nodes.Attribute_Access;
    --  Adds new attribute or replace existing attribute by specified. Returns
    --  replaced attribute. Caller is responsible to dereference returned value.
+
+   function Get_Attribute_Node
+    (Self          : not null access constant Abstract_Element;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return Matreshka.DOM_Nodes.Attribute_Access;
+   --  Returns attribute with specified namespace URI and local name.
 
    overriding procedure Finalize (Self : not null access Abstract_Element);
    --  Release attribute nodes owned by element.

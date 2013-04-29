@@ -58,6 +58,8 @@ package body Matreshka.DOM_Lists is
     (Element   : not null Matreshka.DOM_Nodes.Element_Access;
      Attribute : not null Matreshka.DOM_Nodes.Attribute_Access)
    is
+      use type Matreshka.DOM_Nodes.Attribute_Access;
+
       Attribute_Node : constant Matreshka.DOM_Nodes.Node_Access
         := Matreshka.DOM_Nodes.Node_Access (Attribute);
       Element_Node   : constant Matreshka.DOM_Nodes.Node_Access
@@ -78,13 +80,14 @@ package body Matreshka.DOM_Lists is
       if Element.First_Attribute = null then
          --  First attribute of the list.
 
-         Element.First_Attribute := Attribute_Node;
-         Element.Last_Attribute := Attribute_Node;
+         Element.First_Attribute := Attribute;
+         Element.Last_Attribute := Attribute;
 
       else
          Element.Last_Attribute.Next := Attribute_Node;
-         Attribute.Previous := Element.Last_Attribute;
-         Element.Last_Attribute := Attribute_Node;
+         Attribute.Previous :=
+           Matreshka.DOM_Nodes.Node_Access (Element.Last_Attribute);
+         Element.Last_Attribute := Attribute;
       end if;
 
       --  Increment counters of parent nodes by value of counter of attribute

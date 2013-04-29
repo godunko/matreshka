@@ -47,6 +47,44 @@ with XML.DOM.Nodes.Attributes.Internals;
 package body XML.DOM.Nodes.Elements is
 
    ---------------------------
+   -- Get_Attribute_Node_NS --
+   ---------------------------
+
+   function Get_Attribute_Node_NS
+    (Self          : DOM_Element'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Attributes.DOM_Attribute is
+   begin
+      return
+        XML.DOM.Nodes.Attributes.Internals.Create
+         (Matreshka.DOM_Nodes.Element_Access
+           (Self.Node).Get_Attribute_Node (Namespace_URI, Local_Name));
+   end Get_Attribute_Node_NS;
+
+   ----------------------
+   -- Get_Attribute_NS --
+   ----------------------
+
+   function Get_Attribute_NS
+    (Self          : in out DOM_Element'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return League.Strings.Universal_String
+   is
+      Attribute : constant XML.DOM.Nodes.Attributes.DOM_Attribute
+        := Self.Get_Attribute_Node_NS (Namespace_URI, Local_Name);
+
+   begin
+      if Attribute.Is_Null then
+         return League.Strings.Empty_Universal_String;
+
+      else
+         return Attribute.Get_Value;
+      end if;
+   end Get_Attribute_NS;
+
+   ---------------------------
    -- Set_Attribute_Node_NS --
    ---------------------------
 

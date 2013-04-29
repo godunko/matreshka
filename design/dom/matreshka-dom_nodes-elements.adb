@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Lists;
+with Matreshka.DOM_Nodes.Attributes;
 with XML.DOM.Elements.Internals;
 with XML.DOM.Visitors;
 
@@ -67,19 +68,45 @@ package body Matreshka.DOM_Nodes.Elements is
    --------------
 
    overriding procedure Finalize (Self : not null access Abstract_Element) is
-      use type Matreshka.DOM_Nodes.Node_Access;
-
-      Current : Matreshka.DOM_Nodes.Node_Access := Self.First_Attribute;
+      Current : Matreshka.DOM_Nodes.Attribute_Access := Self.First_Attribute;
 
    begin
       while Current /= null loop
-         Matreshka.DOM_Nodes.Dereference (Current);
+         Matreshka.DOM_Nodes.Dereference
+          (Matreshka.DOM_Nodes.Node_Access (Current));
          Current := Self.First_Attribute;
       end loop;
 
       Matreshka.DOM_Nodes.Finalize
        (Matreshka.DOM_Nodes.Abstract_Node (Self.all)'Access);
    end Finalize;
+
+   ------------------------
+   -- Get_Attribute_Node --
+   ------------------------
+
+   function Get_Attribute_Node
+    (Self          : not null access constant Abstract_Element;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return Matreshka.DOM_Nodes.Attribute_Access
+   is
+      use type League.Strings.Universal_String;
+
+      Attribute : Matreshka.DOM_Nodes.Attribute_Access
+        := Self.First_Attribute;
+
+   begin
+      while Attribute /= null loop
+         exit when Attribute.Get_Namespace_URI = Namespace_URI
+                     and Attribute.Get_Local_Name = Local_Name;
+
+         Attribute :=
+           Matreshka.DOM_Nodes.Attribute_Access (Attribute.Next);
+      end loop;
+
+      return Attribute;
+   end Get_Attribute_Node;
 
    --------------------
    -- Get_Local_Name --

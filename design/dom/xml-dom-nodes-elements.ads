@@ -265,24 +265,25 @@ package XML.DOM.Nodes.Elements is
 --   --  Returns a NodeList of all descendant Elements with a given tag name, in
 --   --  document order. Name is the name of the tag to match on. The special
 --   --  value "*" matches all tags.
---
---   function Get_Attribute_NS
---    (Self          : in out DOM_Element'Class;
---     Namespace_URI : DOM_String;
---     Local_Name    : DOM_String) return DOM_String;
---   --  Retrieves an attribute value by local name and namespace URI. Returns
---   --  the Attr value as a string, or the empty string if that attribute does
---   --  not have a specified or default value.
---   --
---   --  Per [XML Namespaces], applications must use the value null as the
---   --  namespaceURI parameter for methods if they wish to have no namespace.
---   --
---   --  Raises DOM_Exception:
---   --
---   --  NOT_SUPPORTED_ERR: May be raised if the implementation does not support
---   --  the feature "XML" and the language exposed through the Document does not
---   --  support XML Namespaces (such as [HTML 4.01]). 
---
+
+   function Get_Attribute_NS
+    (Self          : in out DOM_Element'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return League.Strings.Universal_String;
+   --  Retrieves an attribute value by local name and namespace URI. Returns
+   --  the Attr value as a string, or the empty string if that attribute does
+   --  not have a specified or default value.
+   --
+   --  Per [XML Namespaces], applications must use the value null as the
+   --  namespaceURI parameter for methods if they wish to have no namespace.
+   --
+   --  Raises DOM_Exception:
+   --
+   --  NOT_SUPPORTED_ERR: May be raised if the implementation does not support
+   --  the feature "XML" and the language exposed through the Document does not
+   --  support XML Namespaces (such as [HTML 4.01]). 
+
 --   procedure Set_Attribute_NS
 --    (Self          : in out DOM_Element'Class;
 --     Namespace_URI : DOM_String;
@@ -350,25 +351,25 @@ package XML.DOM.Nodes.Elements is
 --   --   - NOT_SUPPORTED_ERR: May be raised if the implementation does not
 --   --     support the feature "XML" and the language exposed through the
 --   --     Document does not support XML Namespaces (such as [HTML 4.01]).
---
---   function Get_Attribute_Node_NS
---    (Self          : DOM_Element'Class;
---     Namespace_URI : DOM_String;
---     Local_Name    : DOM_String)
---       return XML.DOM.Nodes.Attrs.DOM_Attribute;
---   --  Retrieves an Attr node by local name and namespace URI. Returns the Attr
---   --  node with the specified attribute local name and namespace URI or null
---   --  if there is no such attribute.
---   --
---   --  Per [XML Namespaces], applications must use the value null as the
---   --  namespaceURI parameter for methods if they wish to have no namespace.
---   --
---   --  Raises DOM_Exception:
---   --
---   --   - NOT_SUPPORTED_ERR: May be raised if the implementation does not
---   --     support the feature "XML" and the language exposed through the
---   --     Document does not support XML Namespaces (such as [HTML 4.01]).
---
+
+   function Get_Attribute_Node_NS
+    (Self          : DOM_Element'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return XML.DOM.Nodes.Attributes.DOM_Attribute;
+   --  Retrieves an Attr node by local name and namespace URI. Returns the Attr
+   --  node with the specified attribute local name and namespace URI or null
+   --  if there is no such attribute.
+   --
+   --  Per [XML Namespaces], applications must use the value null as the
+   --  namespaceURI parameter for methods if they wish to have no namespace.
+   --
+   --  Raises DOM_Exception:
+   --
+   --   - NOT_SUPPORTED_ERR: May be raised if the implementation does not
+   --     support the feature "XML" and the language exposed through the
+   --     Document does not support XML Namespaces (such as [HTML 4.01]).
+
 --   function Get_Elements_By_Tag_Name_NS
 --    (Self          : DOM_Element'Class;
 --     Namespace_URI : DOM_String;

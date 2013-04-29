@@ -205,16 +205,14 @@ package body Matreshka.DOM_Nodes.Attributes is
 
          Owner_Element := Matreshka.DOM_Nodes.Element_Access (Self.Owner);
 
-         if Owner_Element.First_Attribute
-              = Matreshka.DOM_Nodes.Node_Access (Self)
-         then
-            Owner_Element.First_Attribute := Self.Next;
+         if Owner_Element.First_Attribute = Self then
+            Owner_Element.First_Attribute :=
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Next);
          end if;
 
-         if Owner_Element.Last_Attribute
-              = Matreshka.DOM_Nodes.Node_Access (Self)
-         then
-            Owner_Element.Last_Attribute := Self.Previous;
+         if Owner_Element.Last_Attribute = Self then
+            Owner_Element.Last_Attribute :=
+              Matreshka.DOM_Nodes.Attribute_Access (Self.Previous);
          end if;
 
          if Self.Previous /= null then
