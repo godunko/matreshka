@@ -409,6 +409,7 @@ package body Matreshka.DOM_Builders is
 
       Element   : Matreshka.DOM_Nodes.Element_Access;
       Attribute : Matreshka.DOM_Nodes.Attribute_Access;
+      Text      : Matreshka.DOM_Nodes.Text_Access;
       Dummy     : Matreshka.DOM_Nodes.Attribute_Access;
 
    begin
@@ -465,12 +466,15 @@ package body Matreshka.DOM_Builders is
             Attribute :=
               Self.Document.Create_Attribute
                (Attributes.Namespace_URI (J), Attributes.Qualified_Name (J));
---            Attribute.Set_Value (Attributes.Value (J));
+            Text := Self.Document.Create_Text (Attributes.Value (J));
+            Attribute.Append_Child (Matreshka.DOM_Nodes.Node_Access (Text));
             Dummy :=
               Matreshka.DOM_Nodes.Element_Access
                (Self.Current).Set_Attribute_Node (Attribute);
             Matreshka.DOM_Nodes.Dereference
              (Matreshka.DOM_Nodes.Node_Access (Attribute));
+            Matreshka.DOM_Nodes.Dereference
+             (Matreshka.DOM_Nodes.Node_Access (Text));
          end if;
       end loop;
    end Start_Element;
