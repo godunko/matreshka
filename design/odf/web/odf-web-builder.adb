@@ -41,6 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Holders;
+with XML.DOM.Attributes;
+
 with ODF.Constants;
 with ODF.DOM.Attributes.FO.Background_Color;
 with ODF.DOM.Attributes.FO.Font_Size;
@@ -68,6 +71,10 @@ with ODF.DOM.Attributes.Text.Style_Name;
 
 package body ODF.Web.Builder is
 
+   function "+"
+    (Item : Wide_Wide_String) return League.Strings.Universal_String
+       renames League.Strings.To_Universal_String;
+
 --   procedure Initialize_Object
 --    (Self     : in out JSON_Builder'Class;
 --     The_Type : String;
@@ -89,7 +96,7 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Office_Automatic_Styles
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+     Element : ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       Self.Inside_Automatic := True;
@@ -101,7 +108,7 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Office_Automatic_Styles
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles_Access;
+     Element : ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       Self.Inside_Automatic := False;
@@ -113,10 +120,10 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Office_Text
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
+     Element : ODF.DOM.Elements.Office.Text.ODF_Office_Text;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push ("OdfOfficeText", XML.DOM.Nodes.DOM_Node_Access (Element));
+      Self.Push (+"OdfOfficeText", Element);
    end Enter_Office_Text;
 
    -------------------------------
@@ -125,19 +132,24 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Style_Default_Style
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+     Element : ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      Family : constant
-        ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
-          := ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Style_URI, ODF.Constants.Family_Name));
+--      Family : constant
+--        ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+--          := ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Style_URI, ODF.Constants.Family_Name));
+      Family : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Style_URI, ODF.Constants.Family_Name);
 
    begin
-      Self.Push ("OdfStyleStyle", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field ("family", Family.Get_Value.To_UTF_8_String);
-      Self.Current.Object.Set_Field ("kind", "default");
+      Self.Push (+"OdfStyleStyle", Element);
+      Self.Current.Object.Insert
+       (+"family", League.JSON.Values.To_JSON_Value (Family.Get_Value));
+      Self.Current.Object.Insert
+       (+"kind", League.JSON.Values.To_JSON_Value (+"default"));
    end Enter_Style_Default_Style;
 
    --------------------------------------
@@ -146,87 +158,115 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Style_Paragraph_Properties
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties_Access;
+     Element : ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      use type ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access;
-      use type ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access;
-      use type ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access;
-      use type ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access;
-      use type ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access;
-      use type ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access;
+--      use type ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access;
+--      use type ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access;
+--      use type ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access;
+--      use type ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access;
+--      use type ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access;
+--      use type ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access;
 
-      Margin        : constant
-        ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access
-          := ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Margin_Name));
-      Margin_Bottom : constant
-        ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
-          := ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Margin_Bottom_Name));
-      Margin_Left   : constant
-        ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access
-          := ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Margin_Left_Name));
-      Margin_Right  : constant
-        ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access
-          := ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Margin_Right_Name));
-      Margin_Top    : constant
-        ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access
-          := ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Margin_Top_Name));
-      Text_Align    : constant
-        ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
-          := ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Text_Align_Name));
+--      Margin        : constant
+--        ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access
+--          := ODF.DOM.Attributes.FO.Margin.ODF_FO_Margin_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Margin_Name));
+--      Margin_Bottom : constant
+--        ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
+--          := ODF.DOM.Attributes.FO.Margin_Bottom.ODF_FO_Margin_Bottom_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Margin_Bottom_Name));
+--      Margin_Left   : constant
+--        ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access
+--          := ODF.DOM.Attributes.FO.Margin_Left.ODF_FO_Margin_Left_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Margin_Left_Name));
+--      Margin_Right  : constant
+--        ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access
+--          := ODF.DOM.Attributes.FO.Margin_Right.ODF_FO_Margin_Right_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Margin_Right_Name));
+--      Margin_Top    : constant
+--        ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access
+--          := ODF.DOM.Attributes.FO.Margin_Top.ODF_FO_Margin_Top_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Margin_Top_Name));
+--      Text_Align    : constant
+--        ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
+--          := ODF.DOM.Attributes.FO.Text_Align.ODF_FO_Text_Align_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Text_Align_Name));
+
+      Margin        : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Margin_Name);
+      Margin_Bottom : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Margin_Bottom_Name);
+      Margin_Left   : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Margin_Left_Name);
+      Margin_Right  : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Margin_Right_Name);
+      Margin_Top    : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Margin_Top_Name);
+      Text_Align    : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Text_Align_Name);
 
    begin
-      if Margin_Bottom /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginBottom", Margin_Bottom.Get_Value.To_UTF_8_String);
+      if not Margin_Bottom.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginBottom",
+           League.JSON.Values.To_JSON_Value (Margin_Bottom.Get_Value));
 
-      elsif Margin /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginBottom", Margin.Get_Value.To_UTF_8_String);
+      elsif not Margin.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginBottom",
+           League.JSON.Values.To_JSON_Value (Margin.Get_Value));
       end if;
 
-      if Margin_Left /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginLeft", Margin_Left.Get_Value.To_UTF_8_String);
+      if not Margin_Left.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginLeft",
+           League.JSON.Values.To_JSON_Value (Margin_Left.Get_Value));
 
-      elsif Margin /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginLeft", Margin.Get_Value.To_UTF_8_String);
+      elsif not Margin.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginLeft",
+           League.JSON.Values.To_JSON_Value (Margin.Get_Value));
       end if;
 
-      if Margin_Right /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginRight", Margin_Right.Get_Value.To_UTF_8_String);
+      if not Margin_Right.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginRight",
+           League.JSON.Values.To_JSON_Value (Margin_Right.Get_Value));
 
-      elsif Margin /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginRight", Margin.Get_Value.To_UTF_8_String);
+      elsif not Margin.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginRight",
+           League.JSON.Values.To_JSON_Value (Margin.Get_Value));
       end if;
 
-      if Margin_Top /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginTop", Margin_Top.Get_Value.To_UTF_8_String);
+      if not Margin_Top.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginTop",
+           League.JSON.Values.To_JSON_Value (Margin_Top.Get_Value));
 
-      elsif Margin /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphMarginTop", Margin.Get_Value.To_UTF_8_String);
+      elsif not Margin.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphMarginTop",
+           League.JSON.Values.To_JSON_Value (Margin.Get_Value));
       end if;
 
-      if Text_Align /= null then
-         Self.Current.Object.Set_Field
-          ("paragraphTextAlign", Text_Align.Get_Value.To_UTF_8_String);
+      if not Text_Align.Is_Null then
+         Self.Current.Object.Insert
+          (+"paragraphTextAlign",
+           League.JSON.Values.To_JSON_Value (Text_Align.Get_Value));
       end if;
    end Enter_Style_Paragraph_Properties;
 
@@ -236,39 +276,53 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Style_Style
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Style.ODF_Style_Style_Access;
+     Element : ODF.DOM.Elements.Style.Style.ODF_Style_Style;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      use type ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access;
+--      use type ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access;
+--
+--      Name   : constant
+--        ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
+--          := ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Style_URI, ODF.Constants.Name_Name));
+--      Family : constant
+--        ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+--          := ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Style_URI, ODF.Constants.Family_Name));
+--      Parent : constant
+--        ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access
+--          := ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Style_URI, ODF.Constants.Parent_Style_Name_Name));
 
-      Name   : constant
-        ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
-          := ODF.DOM.Attributes.Style.Name.ODF_Style_Name_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Style_URI, ODF.Constants.Name_Name));
-      Family : constant
-        ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
-          := ODF.DOM.Attributes.Style.Family.ODF_Style_Family_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Style_URI, ODF.Constants.Family_Name));
-      Parent : constant
-        ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access
-          := ODF.DOM.Attributes.Style.Parent_Style_Name.ODF_Style_Parent_Style_Name_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Style_URI, ODF.Constants.Parent_Style_Name_Name));
+      Name   : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Style_URI, ODF.Constants.Name_Name);
+      Family : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Style_URI, ODF.Constants.Family_Name);
+      Parent : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Style_URI, ODF.Constants.Parent_Style_Name_Name);
 
    begin
-      Self.Push ("OdfStyleStyle", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field ("name", Name.Get_Value.To_UTF_8_String);
-      Self.Current.Object.Set_Field ("family", Family.Get_Value.To_UTF_8_String);
+      Self.Push (+"OdfStyleStyle", Element);
+      Self.Current.Object.Insert
+       (+"name", League.JSON.Values.To_JSON_Value (Name.Get_Value));
+      Self.Current.Object.Insert
+       (+"family", League.JSON.Values.To_JSON_Value (Family.Get_Value));
 
       if not Self.Inside_Automatic then
-         Self.Current.Object.Set_Field ("kind", "common");
+         Self.Current.Object.Insert
+          (+"kind", League.JSON.Values.To_JSON_Value (+"common"));
       end if;
 
-      if Parent /= null then
-         Self.Current.Object.Set_Field
-          ("parentStyleName", Parent.Get_Value.To_UTF_8_String);
+      if not Parent.Is_Null then
+         Self.Current.Object.Insert
+          (+"parentStyleName",
+           League.JSON.Values.To_JSON_Value (Parent.Get_Value));
       end if;
    end Enter_Style_Style;
 
@@ -278,26 +332,26 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Style_Table_Cell_Properties
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties_Access;
+     Element : ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      use type ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access;
-      use type ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access;
+--      use type ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access;
+--      use type ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Bottom.ODF_FO_Padding_Bottom_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Left.ODF_FO_Padding_Left_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Right.ODF_FO_Padding_Right_Access;
 --      use type ODF.DOM.Attributes.FO.Padding_Top.ODF_FO_Padding_Top_Access;
 
-      Background_Color : constant
-        ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access
-          := ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Background_Color_Name));
-      Padding          : constant
-        ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
-          := ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Padding_Name));
+--      Background_Color : constant
+--        ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access
+--          := ODF.DOM.Attributes.FO.Background_Color.ODF_FO_Background_Color_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Background_Color_Name));
+--      Padding          : constant
+--        ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
+--          := ODF.DOM.Attributes.FO.Padding.ODF_FO_Padding_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Padding_Name));
 --      Padding_Bottom : constant
 --        ODF.DOM.Attributes.FO.Padding_Bottom.ODF_FO_Padding_Bottom_Access
 --          := ODF.DOM.Attributes.FO.Padding_Bottom.ODF_FO_Padding_Bottom_Access
@@ -319,50 +373,62 @@ package body ODF.Web.Builder is
 --              (Element.Get_Attribute_Node_NS
 --                (ODF.Constants.FO_URI, ODF.Constants.Padding_Top_Name));
 
+      Background_Color : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Background_Color_Name);
+      Padding          : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Padding_Name);
+
    begin
-      if Background_Color /= null then
-         Self.Current.Object.Set_Field
-          ("cellBackgroundColor", Background_Color.Get_Value.To_UTF_8_String);
+      if not Background_Color.Is_Null then
+         Self.Current.Object.Insert
+          (+"cellBackgroundColor",
+           League.JSON.Values.To_JSON_Value (Background_Color.Get_Value));
       end if;
 
 --      if Padding_Bottom /= null then
---         Self.Current.Object.Set_Field
---          ("cellPaddingBottom", Padding_Bottom.Get_Value.To_UTF_8_String);
+--         Self.Current.Object.Insert
+--          ("cellPaddingBottom", League.JSON.Values.To_JSON_Value (Padding_Bottom.Get_Value));
 --
 --      elsif Padding /= null then
-      if Padding /= null then
-         Self.Current.Object.Set_Field
-          ("cellPaddingBottom", Padding.Get_Value.To_UTF_8_String);
+      if not Padding.Is_Null then
+         Self.Current.Object.Insert
+          (+"cellPaddingBottom",
+           League.JSON.Values.To_JSON_Value (Padding.Get_Value));
       end if;
 
 --      if Padding_Left /= null then
---         Self.Current.Object.Set_Field
---          ("cellPaddingLeft", Padding_Left.Get_Value.To_UTF_8_String);
+--         Self.Current.Object.Insert
+--          ("cellPaddingLeft", League.JSON.Values.To_JSON_Value (Padding_Left.Get_Value));
 --
 --      elsif Padding /= null then
-      if Padding /= null then
-         Self.Current.Object.Set_Field
-          ("cellPaddingLeft", Padding.Get_Value.To_UTF_8_String);
+      if not Padding.Is_Null then
+         Self.Current.Object.Insert
+          (+"cellPaddingLeft",
+           League.JSON.Values.To_JSON_Value (Padding.Get_Value));
       end if;
 
 --      if Padding_Right /= null then
---         Self.Current.Object.Set_Field
---          ("cellPaddingRight", Padding_Right.Get_Value.To_UTF_8_String);
+--         Self.Current.Object.Insert
+--          ("cellPaddingRight", League.JSON.Values.To_JSON_Value (Padding_Right.Get_Value));
 --
 --      elsif Padding /= null then
-      if Padding /= null then
-         Self.Current.Object.Set_Field
-          ("cellPaddingRight", Padding.Get_Value.To_UTF_8_String);
+      if not Padding.Is_Null then
+         Self.Current.Object.Insert
+          (+"cellPaddingRight",
+           League.JSON.Values.To_JSON_Value (Padding.Get_Value));
       end if;
 
 --      if Padding_Top /= null then
---         Self.Current.Object.Set_Field
---          ("cellPaddingTop", Padding_Top.Get_Value.To_UTF_8_String);
+--         Self.Current.Object.Insert
+--          ("cellPaddingTop", League.JSON.Values.To_JSON_Value (Padding_Top.Get_Value));
 --
 --      elsif Padding /= null then
-      if Padding /= null then
-         Self.Current.Object.Set_Field
-          ("cellPaddingTop", Padding.Get_Value.To_UTF_8_String);
+      if not Padding.Is_Null then
+         Self.Current.Object.Insert
+          (+"cellPaddingTop",
+           League.JSON.Values.To_JSON_Value (Padding.Get_Value));
       end if;
    end Enter_Style_Table_Cell_Properties;
 
@@ -372,18 +438,21 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Style_Table_Column_Properties
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties_Access;
+     Element : ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      Width : constant
-        ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access
-          := ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Style_URI, ODF.Constants.Column_Width_Name));
+--      Width : constant
+--        ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access
+--          := ODF.DOM.Attributes.Style.Column_Width.ODF_Style_Column_Width_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Style_URI, ODF.Constants.Column_Width_Name));
+      Width : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Style_URI, ODF.Constants.Column_Width_Name);
 
    begin
-      Self.Current.Object.Set_Field
-       ("columnWidth", Width.Get_Value.To_UTF_8_String);
+      Self.Current.Object.Insert
+       (+"columnWidth", League.JSON.Values.To_JSON_Value (Width.Get_Value));
    end Enter_Style_Table_Column_Properties;
 
    ---------------------------------
@@ -392,54 +461,71 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Style_Text_Properties
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties_Access;
+     Element : ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      use type ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access;
-      use type ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access;
-      use type ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
-      use type ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access;
+--      use type ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access;
+--      use type ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access;
+--      use type ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access;
+--      use type ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access;
+--
+--      Font_Size            : constant
+--        ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access
+--          := ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Font_Size_Name));
+--      Font_Style           : constant
+--        ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
+--          := ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Font_Style_Name));
+--      Font_Weight          : constant
+--        ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
+--          := ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.FO_URI, ODF.Constants.Font_Weight_Name));
+--      Text_Underline_Style : constant
+--        ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access
+--          := ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Style_URI, ODF.Constants.Text_Underline_Style_Name));
 
-      Font_Size            : constant
-        ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access
-          := ODF.DOM.Attributes.FO.Font_Size.ODF_FO_Font_Size_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Font_Size_Name));
-      Font_Style           : constant
-        ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
-          := ODF.DOM.Attributes.FO.Font_Style.ODF_FO_Font_Style_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Font_Style_Name));
-      Font_Weight          : constant
-        ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
-          := ODF.DOM.Attributes.FO.Font_Weight.ODF_FO_Font_Weight_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.FO_URI, ODF.Constants.Font_Weight_Name));
-      Text_Underline_Style : constant
-        ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access
-          := ODF.DOM.Attributes.Style.Text_Underline_Style.ODF_Style_Text_Underline_Style_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Style_URI, ODF.Constants.Text_Underline_Style_Name));
+      Font_Size            : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Font_Size_Name);
+      Font_Style           : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Font_Style_Name);
+      Font_Weight          : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.FO_URI, ODF.Constants.Font_Weight_Name);
+      Text_Underline_Style : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Style_URI, ODF.Constants.Text_Underline_Style_Name);
 
    begin
-      if Font_Size /= null then
-         Self.Current.Object.Set_Field
-          ("textFontSize", Font_Size.Get_Value.To_UTF_8_String);
+      if not Font_Size.Is_Null then
+         Self.Current.Object.Insert
+          (+"textFontSize",
+           League.JSON.Values.To_JSON_Value (Font_Size.Get_Value));
       end if;
 
-      if Font_Style /= null then
-         Self.Current.Object.Set_Field
-          ("textFontStyle", Font_Style.Get_Value.To_UTF_8_String);
+      if not Font_Style.Is_Null then
+         Self.Current.Object.Insert
+          (+"textFontStyle",
+           League.JSON.Values.To_JSON_Value (Font_Style.Get_Value));
       end if;
 
-      if Font_Weight /= null then
-         Self.Current.Object.Set_Field
-          ("textFontWeight", Font_Weight.Get_Value.To_UTF_8_String);
+      if not Font_Weight.Is_Null then
+         Self.Current.Object.Insert
+          (+"textFontWeight",
+           League.JSON.Values.To_JSON_Value (Font_Weight.Get_Value));
       end if;
 
-      if Text_Underline_Style /= null then
-         Self.Current.Object.Set_Field
-          ("textUnderlineStyle", Text_Underline_Style.Get_Value.To_UTF_8_String);
+      if not Text_Underline_Style.Is_Null then
+         Self.Current.Object.Insert
+          (+"textUnderlineStyle",
+           League.JSON.Values.To_JSON_Value (Text_Underline_Style.Get_Value));
       end if;
    end Enter_Style_Text_Properties;
 
@@ -449,10 +535,10 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Table_Table
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
+     Element : ODF.DOM.Elements.Table.Table.ODF_Table_Table;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push ("OdfTableTable", XML.DOM.Nodes.DOM_Node_Access (Element));
+      Self.Push (+"OdfTableTable", Element);
    end Enter_Table_Table;
 
    ----------------------------
@@ -461,30 +547,39 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Table_Table_Cell
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
+     Element : ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      use type ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access;
+--      use type ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access;
+--
+--      Style_Name      : constant
+--        ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+--          := ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name));
+--      Columns_Spanned : constant
+--        ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access
+--          := ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Table_URI, ODF.Constants.Number_Columns_Spanned_Name));
 
-      Style_Name      : constant
-        ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
-          := ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name));
-      Columns_Spanned : constant
-        ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access
-          := ODF.DOM.Attributes.Table.Number_Columns_Spanned.ODF_Table_Number_Columns_Spanned_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Table_URI, ODF.Constants.Number_Columns_Spanned_Name));
+      Style_Name      : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name);
+      Columns_Spanned : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Table_URI, ODF.Constants.Number_Columns_Spanned_Name);
 
    begin
-      Self.Push ("OdfTableTableCell", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field
-       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
+      Self.Push (+"OdfTableTableCell", Element);
+      Self.Current.Object.Insert
+       (+"styleName",
+           League.JSON.Values.To_JSON_Value (Style_Name.Get_Value));
 
-      if Columns_Spanned /= null then
-         Self.Current.Object.Set_Field
-          ("columnsSpanned", Columns_Spanned.Get_Value.To_UTF_8_String);
+      if not Columns_Spanned.Is_Null then
+         Self.Current.Object.Insert
+          (+"columnsSpanned",
+           League.JSON.Values.To_JSON_Value (Columns_Spanned.Get_Value));
       end if;
    end Enter_Table_Table_Cell;
 
@@ -494,19 +589,23 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Table_Table_Column
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+     Element : ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      Style_Name : constant
-        ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
-          := ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name));
+--      Style_Name : constant
+--        ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+--          := ODF.DOM.Attributes.Table.Style_Name.ODF_Table_Style_Name_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name));
+      Style_Name : constant XML.DOM.Attributes.DOM_Attribute
+       := Element.Get_Attribute_Node_NS
+           (ODF.Constants.Table_URI, ODF.Constants.Style_Name_Name);
 
    begin
-      Self.Push ("OdfTableTableColumn", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field
-       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
+      Self.Push (+"OdfTableTableColumn", Element);
+      Self.Current.Object.Insert
+       (+"styleName",
+        League.JSON.Values.To_JSON_Value (Style_Name.Get_Value));
    end Enter_Table_Table_Column;
 
    ---------------------------
@@ -515,10 +614,10 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Table_Table_Row
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
+     Element : ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push ("OdfTableTableRow", XML.DOM.Nodes.DOM_Node_Access (Element));
+      Self.Push (+"OdfTableTableRow", Element);
    end Enter_Table_Table_Row;
 
    ----------------
@@ -527,12 +626,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Text
     (Self    : in out JSON_Builder;
-     Element : not null XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access;
+     Element : XML.DOM.Texts.DOM_Text;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Push ("OdfDomText", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field
-        ("characters", Element.Get_Data.To_UTF_8_String);
+      Self.Push (+"OdfDomText", Element);
+      Self.Current.Object.Insert
+        (+"characters", League.JSON.Values.To_JSON_Value (Element.Get_Data));
    end Enter_Text;
 
    ------------------
@@ -541,19 +640,22 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Text_H
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+     Element : ODF.DOM.Elements.Text.H.ODF_Text_H;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      Style_Name : constant
-        ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
-          := ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
+--      Style_Name : constant
+--        ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+--          := ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
+      Style_Name : constant XML.DOM.Attributes.DOM_Attribute
+          := Element.Get_Attribute_Node_NS
+              (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name);
 
    begin
-      Self.Push ("OdfTextH", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field
-       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
+      Self.Push (+"OdfTextH", Element);
+      Self.Current.Object.Insert
+       (+"styleName", League.JSON.Values.To_JSON_Value (Style_Name.Get_Value));
    end Enter_Text_H;
 
    ------------------
@@ -562,19 +664,22 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Text_P
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Text.P.ODF_Text_P_Access;
+     Element : ODF.DOM.Elements.Text.P.ODF_Text_P;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      Style_Name : constant
-        ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
-          := ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
+--      Style_Name : constant
+--        ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+--          := ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
+      Style_Name : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name);
 
    begin
-      Self.Push ("OdfTextP", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field
-       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
+      Self.Push (+"OdfTextP", Element);
+      Self.Current.Object.Insert
+       (+"styleName", League.JSON.Values.To_JSON_Value (Style_Name.Get_Value));
    end Enter_Text_P;
 
    ---------------------
@@ -583,20 +688,25 @@ package body ODF.Web.Builder is
 
    overriding procedure Enter_Text_Span
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access;
+     Element : ODF.DOM.Elements.Text.Span.ODF_Text_Span;
      Control : in out XML.DOM.Visitors.Traverse_Control)
    is
-      Style_Name : constant
-        ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
-          := ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
-              (Element.Get_Attribute_Node_NS
-                (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
+--      Style_Name : constant
+--        ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+--          := ODF.DOM.Attributes.Text.Style_Name.ODF_Text_Style_Name_Access
+--              (Element.Get_Attribute_Node_NS
+--                (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name));
+      Style_Name : constant XML.DOM.Attributes.DOM_Attribute
+        := Element.Get_Attribute_Node_NS
+            (ODF.Constants.Text_URI, ODF.Constants.Style_Name_Name);
 
    begin
-      Self.Push ("OdfTextSpan", XML.DOM.Nodes.DOM_Node_Access (Element));
-      Self.Current.Object.Set_Field ("__type", "OdfTextSpan");
-      Self.Current.Object.Set_Field
-       ("styleName", Style_Name.Get_Value.To_UTF_8_String);
+      Self.Push (+"OdfTextSpan", Element);
+      Self.Current.Object.Insert
+       (+"__type", League.JSON.Values.To_JSON_Value (+"OdfTextSpan"));
+      Self.Current.Object.Insert
+       (+"styleName",
+        League.JSON.Values.To_JSON_Value (Style_Name.Get_Value));
    end Enter_Text_Span;
 
    ------------------
@@ -604,14 +714,13 @@ package body ODF.Web.Builder is
    ------------------
 
    function Get_Document
-    (Self : in out JSON_Builder) return GNATCOLL.JSON.JSON_Value is
+    (Self : in out JSON_Builder) return League.JSON.Objects.JSON_Object is
    begin
-      return Document : GNATCOLL.JSON.JSON_Value
-               := GNATCOLL.JSON.Create_Object
-      do
-         Document.Set_Field ("__type", "OdfDocument");
-         Document.Set_Field ("styles", Self.Styles);
-         Document.Set_Field ("content", Self.Content);
+      return Result : League.JSON.Objects.JSON_Object do
+         Result.Insert
+          (+"__type", League.JSON.Values.To_JSON_Value (+"OdfDocument"));
+         Result.Insert (+"styles", Self.Styles.To_JSON_Value);
+         Result.Insert (+"content", Self.Content);
       end return;
    end Get_Document;
 
@@ -621,12 +730,13 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Office_Text
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Office.Text.ODF_Office_Text_Access;
+     Element : ODF.DOM.Elements.Office.Text.ODF_Office_Text;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
 
-      Self.Content := Self.Current.Object;
+      Self.Content := Self.Current.Object.To_JSON_Value;
       --  office:text is 'root' element of document content.
 
       Self.Pop;
@@ -638,10 +748,10 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Style_Default_Style
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style_Access;
+     Element : ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      GNATCOLL.JSON.Append (Self.Styles, Self.Current.Object);
+      Self.Styles.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Style_Default_Style;
 
@@ -651,10 +761,10 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Style_Style
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Style.Style.ODF_Style_Style_Access;
+     Element : ODF.DOM.Elements.Style.Style.ODF_Style_Style;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      GNATCOLL.JSON.Append (Self.Styles, Self.Current.Object);
+      Self.Styles.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Style_Style;
 
@@ -664,11 +774,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Table_Table
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table.ODF_Table_Table_Access;
+     Element : ODF.DOM.Elements.Table.Table.ODF_Table_Table;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Table_Table;
 
@@ -678,11 +789,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Table_Table_Cell
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell_Access;
+     Element : ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Table_Table_Cell;
 
@@ -692,11 +804,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Table_Table_Column
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column_Access;
+     Element : ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Table_Table_Column;
 
@@ -706,11 +819,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Table_Table_Row
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row_Access;
+     Element : ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Table_Table_Row;
 
@@ -720,10 +834,10 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Text
     (Self    : in out JSON_Builder;
-     Element : not null XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access;
+     Element : XML.DOM.Texts.DOM_Text;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Text;
 
@@ -733,11 +847,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Text_H
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Text.H.ODF_Text_H_Access;
+     Element : ODF.DOM.Elements.Text.H.ODF_Text_H;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Text_H;
 
@@ -747,11 +862,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Text_P
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Text.P.ODF_Text_P_Access;
+     Element : ODF.DOM.Elements.Text.P.ODF_Text_P;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Text_P;
 
@@ -761,11 +877,12 @@ package body ODF.Web.Builder is
 
    overriding procedure Leave_Text_Span
     (Self    : in out JSON_Builder;
-     Element : not null ODF.DOM.Elements.Text.Span.ODF_Text_Span_Access;
+     Element : ODF.DOM.Elements.Text.Span.ODF_Text_Span;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Current.Object.Set_Field ("children", Self.Current.Children);
-      GNATCOLL.JSON.Append (Self.Previous.Children, Self.Current.Object);
+      Self.Current.Object.Insert
+       (+"children", Self.Current.Children.To_JSON_Value);
+      Self.Previous.Children.Append (Self.Current.Object.To_JSON_Value);
       Self.Pop;
    end Leave_Text_Span;
 
@@ -792,26 +909,34 @@ package body ODF.Web.Builder is
 
    procedure Push
     (Self     : in out JSON_Builder'Class;
-     The_Type : String;
-     Node     : XML.DOM.Nodes.DOM_Node_Access) is
+     The_Type : League.Strings.Universal_String;
+     Node     : XML.DOM.Nodes.DOM_Node'Class) is
    begin
       Self.Stack.Append (Self.Previous);
       Self.Previous := Self.Current;
       Self.Current :=
        (Element,
-        GNATCOLL.JSON.Create_Object,
-        GNATCOLL.JSON.Empty_Array);
+        League.JSON.Objects.Empty_JSON_Object,
+        League.JSON.Arrays.Empty_JSON_Array);
 
-      Self.Current.Object.Set_Field ("__type", The_Type);
+      Self.Current.Object.Insert
+       (+"__type",
+        League.JSON.Values.To_JSON_Value (The_Type));
 
-      if To_Identifier.Contains (Node) then
-         Self.Current.Object.Set_Field
-           ("identifier", To_Identifier.Element (Node));
+      if To_Identifier.Contains (XML.DOM.Nodes.DOM_Node (Node)) then
+         Self.Current.Object.Insert
+           (+"identifier",
+            League.JSON.Values.To_JSON_Value
+             (League.Holders.Universal_Integer
+               (To_Identifier.Element (XML.DOM.Nodes.DOM_Node (Node)))));
 
       else
-         Self.Current.Object.Set_Field ("identifier", Unused_Id);
-         To_Node.Insert (Unused_Id, Node);
-         To_Identifier.Insert (Node, Unused_Id);
+         Self.Current.Object.Insert
+          (+"identifier",
+           League.JSON.Values.To_JSON_Value
+            (League.Holders.Universal_Integer (Unused_Id)));
+         To_Node.Insert (Unused_Id, XML.DOM.Nodes.DOM_Node (Node));
+         To_Identifier.Insert (XML.DOM.Nodes.DOM_Node (Node), Unused_Id);
          Unused_Id := Unused_Id + 1;
       end if;
    end Push;

@@ -41,10 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with GNATCOLL.JSON;
+with League.JSON.Objects;
 
 private package ODF.Web.Applier is
 
-   procedure Apply (Change : GNATCOLL.JSON.JSON_Value);
+   procedure Apply (Change : League.JSON.Objects.JSON_Object);
 
 end ODF.Web.Applier;

@@ -41,27 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.JSON.Values;
 with League.Strings;
 
-with XML.DOM.Nodes.Character_Datas.Texts;
+with XML.DOM.Texts;
 
 package body ODF.Web.Applier is
+
+   function "+"
+    (Item : Wide_Wide_String) return League.Strings.Universal_String
+       renames League.Strings.To_Universal_String;
 
    -----------
    -- Apply --
    -----------
 
-   procedure Apply (Change : GNATCOLL.JSON.JSON_Value) is
-      Identifier : constant Positive := Change.Get ("identifier");
-      Start      : constant Natural  := Change.Get ("start") + 1;
-      Length     : constant Natural  := Change.Get ("length");
+   procedure Apply (Change : League.JSON.Objects.JSON_Object) is
+      Identifier : constant Positive
+        := Positive (Change.Value (+"identifier").To_Integer);
+      Start      : constant Positive
+        := Natural (Change.Value (+"start").To_Integer) + 1;
+      Length     : constant Natural
+        := Natural (Change.Value (+"length").To_Integer);
       Characters : constant League.Strings.Universal_String
-        := League.Strings.From_UTF_8_String (Change.Get ("characters"));
+        := Change.Value (+"characters").To_String;
+      Text       : XML.DOM.Texts.DOM_Text;
 
    begin
-      XML.DOM.Nodes.Character_Datas.Texts.Dom_Text'Class
-       (To_Node.Element (Identifier).all).Replace_Data
-         (Start, Length, Characters);
+      Text := To_Node.Element (Identifier).To_Text;
+      Text.Replace_Data (Start, Length, Characters);
    end Apply;
 
 end ODF.Web.Applier;

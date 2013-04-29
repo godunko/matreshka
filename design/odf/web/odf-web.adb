@@ -45,8 +45,8 @@ with Ada.Strings.Hash;
 with System.Address_Image;
 
 with AWS.Translator;
-with GNATCOLL.JSON;
 
+with League.JSON.Documents;
 with XML.DOM.Visitors;
 
 with ODF.DOM.Iterators;
@@ -67,8 +67,10 @@ package body ODF.Web is
     (Request : AWS.Status.Data) return AWS.Response.Data is
    begin
       ODF.Web.Applier.Apply
-       (GNATCOLL.JSON.Read
-         (AWS.Translator.To_String (AWS.Status.Binary_Data (Request)), ""));
+       (League.JSON.Documents.From_JSON
+         (AWS.Status.Binary_Data (Request)).To_Object);
+--       (GNATCOLL.JSON.Read
+--         (AWS.Translator.To_String (AWS.Status.Binary_Data (Request)), ""));
 
       return AWS.Response.Build (Text_Mime_Type, "OK");
    end Change_Callback;
@@ -94,31 +96,31 @@ package body ODF.Web is
       return Ada.Containers.Hash_Type (Item);
    end Hash;
 
-   ----------
-   -- Hash --
-   ----------
-
-   function Hash
-    (Item : XML.DOM.Nodes.DOM_Node_Access) return Ada.Containers.Hash_Type
-   is
-      use type XML.DOM.Nodes.DOM_Node_Access;
-
-   begin
-      if Item = null then
-         return 0;
-
-      else
-         return Ada.Strings.Hash (System.Address_Image (Item.all'Address));
-      end if;
-   end Hash;
+--   ----------
+--   -- Hash --
+--   ----------
+--
+--   function Hash
+--    (Item : XML.DOM.Nodes.DOM_Node) return Ada.Containers.Hash_Type
+--   is
+----      use type XML.DOM.Nodes.DOM_Node_Access;
+--
+--   begin
+--      if Item = null then
+--         return 0;
+--
+--      else
+--         return Ada.Strings.Hash (System.Address_Image (Item.all'Address));
+--      end if;
+--   end Hash;
 
    -------------
    -- To_JSON --
    -------------
 
    function To_JSON
-    (Styles  : not null ODF.DOM.Documents.ODF_Document_Access;
-     Content : not null ODF.DOM.Documents.ODF_Document_Access)
+    (Styles  : ODF.DOM.Documents.ODF_Document;
+     Content : ODF.DOM.Documents.ODF_Document)
        return String
    is
       Builder  : ODF.Web.Builder.JSON_Builder;
@@ -131,7 +133,11 @@ package body ODF.Web is
       Iterator.Visit (Builder, Content.Get_First_Child, Control);
       --  XXX It is better to use 'element' instead of 'firstChild'.
 
-      return GNATCOLL.JSON.Write (Builder.Get_Document);
+      return
+        League.JSON.Documents.To_JSON_Document
+         (Builder.Get_Document).To_JSON.To_UTF_8_String;
+--      return GNATCOLL.JSON.Write (Builder.Get_Document);
+--      return GNATCOLL.JSON.Write (Builder.Get_Document);
    end To_JSON;
 
 end ODF.Web;

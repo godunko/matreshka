@@ -47,13 +47,13 @@ with AWS.Response;
 with AWS.Status;
 
 with ODF.DOM.Documents;
-with XML.DOM.Nodes;
+with XML.DOM.Nodes.Hash;
 
 package ODF.Web is
 
    function To_JSON
-    (Styles  : not null ODF.DOM.Documents.ODF_Document_Access;
-     Content : not null ODF.DOM.Documents.ODF_Document_Access)
+    (Styles  : ODF.DOM.Documents.ODF_Document;
+     Content : ODF.DOM.Documents.ODF_Document)
        return String;
 
    function Get_Callback (Request : AWS.Status.Data) return AWS.Response.Data;
@@ -62,28 +62,25 @@ package ODF.Web is
     (Request : AWS.Status.Data) return AWS.Response.Data;
 
    type ODF_File is record
-      Styles  : ODF.DOM.Documents.ODF_Document_Access;
-      Content : ODF.DOM.Documents.ODF_Document_Access;
+      Styles  : ODF.DOM.Documents.ODF_Document;
+      Content : ODF.DOM.Documents.ODF_Document;
    end record;
 
    function Hash (Item : Positive) return Ada.Containers.Hash_Type;
 
-   function Hash
-    (Item : XML.DOM.Nodes.DOM_Node_Access) return Ada.Containers.Hash_Type;
-
    package Identifier_Node_Maps is
      new Ada.Containers.Hashed_Maps
           (Positive,
-           XML.DOM.Nodes.DOM_Node_Access,
+           XML.DOM.Nodes.DOM_Node,
            Hash,
            "=",
            XML.DOM.Nodes."=");
 
    package Node_Identifier_Maps is
      new Ada.Containers.Hashed_Maps
-          (XML.DOM.Nodes.DOM_Node_Access,
+          (XML.DOM.Nodes.DOM_Node,
            Positive,
-           Hash,
+           XML.DOM.Nodes.Hash,
            XML.DOM.Nodes."=");
 
    Document      : ODF_File;
