@@ -68,7 +68,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Bodies.ODF_Office_Body'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Body;
 
    -----------------------------------
@@ -81,7 +81,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Document_Content.ODF_Office_Document_Content'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Document_Content;
 
    ----------------------------------
@@ -94,7 +94,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Document_Styles.ODF_Office_Document_Styles'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Document_Styles;
 
    ----------------------------------
@@ -107,7 +107,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Font_Face_Decls.ODF_Office_Font_Face_Decls'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Font_Face_Decls;
 
    --------------------------------
@@ -120,7 +120,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Master_Styles.ODF_Office_Master_Styles'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Master_Styles;
 
    --------------------------
@@ -133,7 +133,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Scripts.ODF_Office_Scripts'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Scripts;
 
    -------------------------
@@ -146,7 +146,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Styles.ODF_Office_Styles'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Styles;
 
    -----------------------
@@ -159,7 +159,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Text.ODF_Office_Text'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Text;
 
    ----------------------------------
@@ -172,7 +172,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Background_Image.ODF_Style_Background_Image'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Background_Image;
 
    -------------------------------
@@ -185,7 +185,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Default_Style.ODF_Style_Default_Style'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Default_Style;
 
    ---------------------------
@@ -198,7 +198,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Font_Face.ODF_Style_Font_Face'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Font_Face;
 
    ------------------------------
@@ -211,7 +211,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Footer_Style.ODF_Style_Footer_Style'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Footer_Style;
 
    ------------------------------
@@ -224,7 +224,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Footnote_Sep.ODF_Style_Footnote_Sep'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Footnote_Sep;
 
    ------------------------------------
@@ -237,7 +237,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Graphic_Properties.ODF_Style_Graphic_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Graphic_Properties;
 
    ------------------------------
@@ -250,7 +250,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Header_Style.ODF_Style_Header_Style'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Header_Style;
 
    --------------------------------------------
@@ -263,7 +263,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.List_Level_Label_Alignment.ODF_Style_List_Level_Label_Alignment'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_List_Level_Label_Alignment;
 
    ---------------------------------------
@@ -276,7 +276,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.List_Level_Properties.ODF_Style_List_Level_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_List_Level_Properties;
 
    -----------------------------
@@ -289,7 +289,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Master_Page.ODF_Style_Master_Page'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Master_Page;
 
    -----------------------------
@@ -302,7 +302,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Page_Layout.ODF_Style_Page_Layout'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Page_Layout;
 
    ----------------------------------------
@@ -315,7 +315,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Page_Layout_Properties.ODF_Style_Page_Layout_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Page_Layout_Properties;
 
    --------------------------------------
@@ -328,7 +328,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Paragraph_Properties.ODF_Style_Paragraph_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Paragraph_Properties;
 
    -----------------------
@@ -341,7 +341,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Style.ODF_Style_Style'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Style;
 
    ---------------------------
@@ -354,7 +354,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Tab_Stops.ODF_Style_Tab_Stops'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Tab_Stops;
 
    ---------------------------------------
@@ -367,7 +367,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Table_Cell_Properties.ODF_Style_Table_Cell_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Table_Cell_Properties;
 
    -----------------------------------------
@@ -380,7 +380,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Table_Column_Properties.ODF_Style_Table_Column_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Table_Column_Properties;
 
    ----------------------------------
@@ -393,7 +393,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Table_Properties.ODF_Style_Table_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Table_Properties;
 
    --------------------------------------
@@ -406,7 +406,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Table_Row_Properties.ODF_Style_Table_Row_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Table_Row_Properties;
 
    ---------------------------------
@@ -419,7 +419,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Style.Text_Properties.ODF_Style_Text_Properties'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Style_Text_Properties;
 
    ------------------------------------
@@ -432,7 +432,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Table.Covered_Table_Cell.ODF_Table_Covered_Table_Cell'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Table_Covered_Table_Cell;
 
    -----------------------
@@ -445,7 +445,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Table.Table.ODF_Table_Table'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Table_Table;
 
    ----------------------------
@@ -458,7 +458,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Table.Table_Cell.ODF_Table_Table_Cell'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Table_Table_Cell;
 
    ------------------------------
@@ -471,7 +471,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Table.Table_Column.ODF_Table_Table_Column'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Table_Table_Column;
 
    ---------------------------
@@ -484,7 +484,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Table.Table_Row.ODF_Table_Table_Row'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Table_Table_Row;
 
    ------------------
@@ -497,7 +497,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.H.ODF_Text_H'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_H;
 
    --------------------------------------------
@@ -510,7 +510,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.Linenumbering_Configuration.ODF_Text_Linenumbering_Configuration'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_Linenumbering_Configuration;
 
    ------------------------------------
@@ -523,7 +523,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.Notes_Configuration.ODF_Text_Notes_Configuration'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_Notes_Configuration;
 
    ------------------------------------
@@ -536,7 +536,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.Outline_Level_Style.ODF_Text_Outline_Level_Style'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_Outline_Level_Style;
 
    ------------------------------
@@ -549,7 +549,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.Outline_Style.ODF_Text_Outline_Style'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_Outline_Style;
 
    ------------------
@@ -562,7 +562,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.P.ODF_Text_P'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_P;
 
    ------------------------------
@@ -575,7 +575,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.Sequence_Decl.ODF_Text_Sequence_Decl'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_Sequence_Decl;
 
    -------------------------------
@@ -588,7 +588,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.Sequence_Decls.ODF_Text_Sequence_Decls'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_Sequence_Decls;
 
    ---------------------
@@ -601,7 +601,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Text.Span.ODF_Text_Span'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Text_Span;
 
 end ODF.DOM.Iterators;
