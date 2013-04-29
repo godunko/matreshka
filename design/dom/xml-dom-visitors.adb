@@ -69,4 +69,26 @@ package body XML.DOM.Visitors is
       end if;
    end Visit;
 
+   --------------------
+   -- Visit_Children --
+   --------------------
+
+   procedure Visit_Children
+    (Self    : in out Abstract_Iterator'Class;
+     Visitor : in out Abstract_Visitor'Class;
+     Node    : XML.DOM.Nodes.DOM_Node'Class;
+     Control : in out Traverse_Control)
+   is
+      use type Matreshka.DOM_Nodes.Node_Access;
+
+      Child : Matreshka.DOM_Nodes.Node_Access
+        := XML.DOM.Nodes.Internals.Internal (Node).First;
+
+   begin
+      While Child /= null loop
+         Self.Visit (Visitor, XML.DOM.Nodes.Internals.Create (Child), Control);
+         Child := Child.Next;
+      end loop;
+   end Visit_Children;
+
 end XML.DOM.Visitors;
