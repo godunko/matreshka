@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Nodes.Attributes;
+with XML.DOM.Nodes.Internals;
 
 package body XML.DOM.Nodes.Attributes.Internals is
 
@@ -53,11 +54,9 @@ package body XML.DOM.Nodes.Attributes.Internals is
     (Node : Matreshka.DOM_Nodes.Attribute_Access)
        return XML.DOM.Nodes.Attributes.DOM_Attribute is
    begin
-      Matreshka.DOM_Nodes.Reference (Matreshka.DOM_Nodes.Node_Access (Node));
-
       return
-       (Ada.Finalization.Controlled
-          with Node => Matreshka.DOM_Nodes.Node_Access (Node));
+       (XML.DOM.Nodes.Internals.Create
+         (Matreshka.DOM_Nodes.Node_Access (Node)) with null record);
    end Create;
 
    --------------
