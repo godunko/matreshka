@@ -70,4 +70,9 @@ package Matreshka.DOM_Nodes.Texts is
      Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   procedure Initialize
+    (Self     : not null access Text_Node'Class;
+     Document : not null Matreshka.DOM_Nodes.Document_Access;
+     Data     : League.Strings.Universal_String);
+
 end Matreshka.DOM_Nodes.Texts;

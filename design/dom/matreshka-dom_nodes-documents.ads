@@ -71,6 +71,11 @@ package Matreshka.DOM_Nodes.Documents is
      Qualified_Name : League.Strings.Universal_String)
        return not null Matreshka.DOM_Nodes.Element_Access;
 
+   not overriding function Create_Text
+    (Self : not null access Abstract_Document;
+     Data : League.Strings.Universal_String)
+       return not null Matreshka.DOM_Nodes.Text_Access;
+
    overriding procedure Enter_Element
     (Self    : not null access Abstract_Document;
      Visitor : in out Standard.XML.DOM.Visitors.Abstract_Visitor'Class;

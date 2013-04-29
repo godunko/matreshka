@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Nodes.Attributes;
 with Matreshka.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Texts;
 with XML.DOM.Documents.Internals;
 with XML.DOM.Visitors;
 
@@ -115,6 +116,22 @@ package body Matreshka.DOM_Nodes.Documents is
          end;
       end return;
    end Create_Element;
+
+   -----------------
+   -- Create_Text --
+   -----------------
+
+   not overriding function Create_Text
+    (Self : not null access Abstract_Document;
+     Data : League.Strings.Universal_String)
+       return not null Matreshka.DOM_Nodes.Text_Access is
+   begin
+      return Result : constant not null Matreshka.DOM_Nodes.Text_Access
+        := new Matreshka.DOM_Nodes.Texts.Text_Node
+      do
+         Matreshka.DOM_Nodes.Texts.Initialize (Result, Self, Data);
+      end return;
+   end Create_Text;
 
    -------------------
    -- Enter_Element --

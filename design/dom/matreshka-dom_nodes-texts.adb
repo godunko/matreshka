@@ -61,6 +61,19 @@ package body Matreshka.DOM_Nodes.Texts is
         Control);
    end Enter_Element;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self     : not null access Text_Node'Class;
+     Document : not null Matreshka.DOM_Nodes.Document_Access;
+     Data     : League.Strings.Universal_String) is
+   begin
+      Matreshka.DOM_Nodes.Initialize (Self, Document);
+      Self.Data := Data;
+   end Initialize;
+
    -------------------
    -- Leave_Element --
    -------------------
