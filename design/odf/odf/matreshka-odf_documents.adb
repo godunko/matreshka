@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 --with Ada.Wide_Wide_Text_IO;
 
+with Matreshka.DOM_Builders;
+
 with ODF.Constants;
 
 package body Matreshka.ODF_Documents is
@@ -54,6 +56,17 @@ package body Matreshka.ODF_Documents is
     (Qualified_Name : League.Strings.Universal_String)
        return League.Strings.Universal_String;
    --  Returns local name part of the given qualified name.
+
+   ------------
+   -- Create --
+   ------------
+
+   overriding function Create
+    (The_Type : not null access Matreshka.DOM_Nodes.Documents.Document_Type)
+       return Document_Node is
+   begin
+      return Self : Document_Node;
+   end Create;
 
    ----------------------
    -- Create_Attribute --
@@ -2623,4 +2636,13 @@ package body Matreshka.ODF_Documents is
       end if;
    end Get_Local_Name;
 
+begin
+   Matreshka.DOM_Builders.Register
+    (ODF.Constants.Office_URI,
+     ODF.Constants.Document_Content_Name,
+     Document_Node'Tag);
+   Matreshka.DOM_Builders.Register
+    (ODF.Constants.Office_URI,
+     ODF.Constants.Document_Styles_Name,
+     Document_Node'Tag);
 end Matreshka.ODF_Documents;

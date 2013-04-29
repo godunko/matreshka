@@ -842,4 +842,8 @@ package Matreshka.ODF_Documents is
      Qualified_Name : League.Strings.Universal_String)
        return not null Matreshka.DOM_Nodes.Element_Access;
 
+   overriding function Create
+    (The_Type : not null access Matreshka.DOM_Nodes.Documents.Document_Type)
+       return Document_Node;
+
 end Matreshka.ODF_Documents;
