@@ -44,6 +44,4 @@
 
 package ODF.DOM.Elements.Text is
 
-   pragma Pure;
-
 end ODF.DOM.Elements.Text;

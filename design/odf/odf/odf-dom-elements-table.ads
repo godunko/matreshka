@@ -44,6 +44,4 @@
 
 package ODF.DOM.Elements.Table is
 
-   pragma Pure;
-
 end ODF.DOM.Elements.Table;

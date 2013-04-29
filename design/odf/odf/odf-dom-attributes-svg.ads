@@ -44,6 +44,4 @@
 
 package ODF.DOM.Attributes.SVG is
 
-   pragma Pure;
-
 end ODF.DOM.Attributes.SVG;

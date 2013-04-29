@@ -44,6 +44,4 @@
 
 package ODF.DOM.Attributes.Office is
 
-   pragma Pure;
-
 end ODF.DOM.Attributes.Office;

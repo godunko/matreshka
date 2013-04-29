@@ -41,9 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Nodes;
+
+limited with ODF.DOM.Documents;
 
 package ODF.DOM is
 
-   pragma Pure;
+   function To_ODF_Document
+    (Node : XML.DOM.Nodes.DOM_Node'Class)
+       return ODF.DOM.Documents.ODF_Document;
 
 end ODF.DOM;

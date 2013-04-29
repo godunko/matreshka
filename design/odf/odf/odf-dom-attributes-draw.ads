@@ -44,6 +44,4 @@
 
 package ODF.DOM.Attributes.Draw is
 
-   pragma Pure;
-
 end ODF.DOM.Attributes.Draw;

@@ -44,6 +44,4 @@
 
 package ODF.DOM.Attributes.Table is
 
-   pragma Pure;
-
 end ODF.DOM.Attributes.Table;

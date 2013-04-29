@@ -44,6 +44,4 @@
 
 package ODF.DOM.Elements.Office is
 
-   pragma Pure;
-
 end ODF.DOM.Elements.Office;

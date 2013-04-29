@@ -44,6 +44,4 @@
 
 package ODF.DOM.Attributes.FO is
 
-   pragma Pure;
-
 end ODF.DOM.Attributes.FO;

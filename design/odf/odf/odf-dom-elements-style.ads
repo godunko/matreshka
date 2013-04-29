@@ -44,6 +44,4 @@
 
 package ODF.DOM.Elements.Style is
 
-   pragma Pure;
-
 end ODF.DOM.Elements.Style;
