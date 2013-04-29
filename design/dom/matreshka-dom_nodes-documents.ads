@@ -90,11 +90,25 @@ package Matreshka.DOM_Nodes.Documents is
      Control  : in out Standard.XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   type Document_Type is record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   not overriding function Create
+    (The_Type : not null access Document_Type)
+       return Abstract_Document is abstract;
+   --  Dispatching constructor to be used to create and initialize document
+   --  node.
+
    -------------------
    -- Document_Node --
    -------------------
 
    type Document_Node is
      new Matreshka.DOM_Nodes.Documents.Abstract_Document with null record;
+
+   overriding function Create
+    (The_Type : not null access Document_Type) return Document_Node;
 
 end Matreshka.DOM_Nodes.Documents;

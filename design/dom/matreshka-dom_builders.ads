@@ -41,12 +41,67 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package provides DOM tree builder. It should be connected to SAX
+--  reader to construct DOM tree.
+------------------------------------------------------------------------------
+private with Ada.Containers.Vectors;
+with Ada.Tags;
 
-package body Matreshka.XML.DOM_Builders is
+with League.Strings;
+private with XML.SAX.Attributes;
+with XML.SAX.Content_Handlers;
+with XML.SAX.Declaration_Handlers;
+with XML.SAX.DTD_Handlers;
+with XML.SAX.Lexical_Handlers;
+private with XML.SAX.Locators;
 
-   ---------------------------
-   -- Attribute_Declaration --
-   ---------------------------
+with Matreshka.DOM_Nodes;
+
+package Matreshka.DOM_Builders is
+
+   type DOM_Builder is
+     limited new Standard.XML.SAX.Content_Handlers.SAX_Content_Handler
+       and Standard.XML.SAX.Declaration_Handlers.SAX_Declaration_Handler
+       and Standard.XML.SAX.DTD_Handlers.SAX_DTD_Handler
+       and Standard.XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with private;
+
+   function Get_Document
+    (Self : DOM_Builder'Class) return Matreshka.DOM_Nodes.Document_Access;
+   --  Returns constructed document.
+
+   procedure Register
+    (Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String;
+     Tag           : Ada.Tags.Tag);
+   --  Register specific document type.
+
+private
+
+   package Node_Vectors is
+     new Ada.Containers.Vectors
+          (Positive,
+           Matreshka.DOM_Nodes.Node_Access,
+           Matreshka.DOM_Nodes."=");
+
+--   type DOM_Builder is
+--     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
+--      Document : XML.DOM.Nodes.Documents.DOM_Document_Access;
+--      Current  : XML.DOM.Nodes.DOM_Node_Access;
+--      Parent   : XML.DOM.Nodes.DOM_Node_Access;
+--      Stack    : Node_Vectors.Vector;
+--   end record;
+
+   type DOM_Builder is
+     limited new Standard.XML.SAX.Content_Handlers.SAX_Content_Handler
+       and Standard.XML.SAX.Declaration_Handlers.SAX_Declaration_Handler
+       and Standard.XML.SAX.DTD_Handlers.SAX_DTD_Handler
+       and Standard.XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with
+   record
+      Document : Matreshka.DOM_Nodes.Document_Access;
+      Current  : Matreshka.DOM_Nodes.Node_Access;
+      Parent   : Matreshka.DOM_Nodes.Node_Access;
+      Stack    : Node_Vectors.Vector;
+   end record;
 
    overriding procedure Attribute_Declaration
     (Self          : in out DOM_Builder;
@@ -55,244 +110,104 @@ package body Matreshka.XML.DOM_Builders is
      A_Type        : League.Strings.Universal_String;
      Value_Default : League.Strings.Universal_String;
      Value         : League.Strings.Universal_String;
-     Success       : in out Boolean) is
-   begin
-      null;
-   end Attribute_Declaration;
-
-   ----------------
-   -- Characters --
-   ----------------
+     Success       : in out Boolean);
 
    overriding procedure Characters
     (Self    : in out DOM_Builder;
      Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Characters;
-
-   -------------
-   -- Comment --
-   -------------
+     Success : in out Boolean);
 
    overriding procedure Comment
     (Self    : in out DOM_Builder;
      Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Comment;
-
-   ---------------
-   -- End_CDATA --
-   ---------------
+     Success : in out Boolean);
 
    overriding procedure End_CDATA
     (Self    : in out DOM_Builder;
-     Success : in out Boolean) is
-   begin
-      null;
-   end End_CDATA;
-
-   ------------------
-   -- End_Document --
-   ------------------
+     Success : in out Boolean);
 
    overriding procedure End_Document
     (Self    : in out DOM_Builder;
-     Success : in out Boolean) is
-   begin
-      null;
-   end End_Document;
-
-   -------------
-   -- End_DTD --
-   -------------
+     Success : in out Boolean);
 
    overriding procedure End_DTD
     (Self    : in out DOM_Builder;
-     Success : in out Boolean) is
-   begin
-      null;
-   end End_DTD;
-
-   -----------------
-   -- End_Element --
-   -----------------
+     Success : in out Boolean);
 
    overriding procedure End_Element
     (Self           : in out DOM_Builder;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean) is
-   begin
-      null;
-   end End_Element;
-
-   ----------------
-   -- End_Entity --
-   ----------------
+     Success        : in out Boolean);
 
    overriding procedure End_Entity
     (Self    : in out DOM_Builder;
      Name    : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end End_Entity;
-
-   ------------------------
-   -- End_Prefix_Mapping --
-   ------------------------
+     Success : in out Boolean);
 
    overriding procedure End_Prefix_Mapping
     (Self    : in out DOM_Builder;
      Prefix  : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end End_Prefix_Mapping;
-
-   ------------------
-   -- Error_String --
-   ------------------
+     Success : in out Boolean);
 
    overriding function Error_String
-    (Self : DOM_Builder) return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Error_String;
-
-   ---------------------------------
-   -- External_Entity_Declaration --
-   ---------------------------------
+    (Self : DOM_Builder) return League.Strings.Universal_String;
 
    overriding procedure External_Entity_Declaration
     (Self      : in out DOM_Builder;
      Name      : League.Strings.Universal_String;
      Public_Id : League.Strings.Universal_String;
      System_Id : League.Strings.Universal_String;
-     Success   : in out Boolean) is
-   begin
-      null;
-   end External_Entity_Declaration;
-
-   --------------------------
-   -- Ignorable_Whitespace --
-   --------------------------
+     Success   : in out Boolean);
 
    overriding procedure Ignorable_Whitespace
     (Self    : in out DOM_Builder;
      Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Ignorable_Whitespace;
-
-   ---------------------------------
-   -- Internal_Entity_Declaration --
-   ---------------------------------
+     Success : in out Boolean);
 
    overriding procedure Internal_Entity_Declaration
     (Self    : in out DOM_Builder;
      Name    : League.Strings.Universal_String;
      Value   : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Internal_Entity_Declaration;
-
-   --------------------------
-   -- Notation_Declaration --
-   --------------------------
+     Success : in out Boolean);
 
    overriding procedure Notation_Declaration
     (Self      : in out DOM_Builder;
      Name      : League.Strings.Universal_String;
      Public_Id : League.Strings.Universal_String;
      System_Id : League.Strings.Universal_String;
-     Success   : in out Boolean) is
-   begin
-      null;
-   end Notation_Declaration;
-
-   ----------------------------
-   -- Processing_Instruction --
-   ----------------------------
+     Success   : in out Boolean);
 
    overriding procedure Processing_Instruction
     (Self    : in out DOM_Builder;
      Target  : League.Strings.Universal_String;
      Data    : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Processing_Instruction;
-
-   --------------------------
-   -- Set_Document_Locator --
-   --------------------------
+     Success : in out Boolean);
 
    overriding procedure Set_Document_Locator
     (Self    : in out DOM_Builder;
-     Locator : Standard.XML.SAX.Locators.SAX_Locator) is
-   begin
-      null;
-   end Set_Document_Locator;
-
-   --------------------
-   -- Skipped_Entity --
-   --------------------
+     Locator : Standard.XML.SAX.Locators.SAX_Locator);
 
    overriding procedure Skipped_Entity
     (Self    : in out DOM_Builder;
      Name    : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Skipped_Entity;
-
-   -----------------
-   -- Start_CDATA --
-   -----------------
+     Success : in out Boolean);
 
    overriding procedure Start_CDATA
     (Self    : in out DOM_Builder;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Start_CDATA;
-
-   --------------------
-   -- Start_Document --
-   --------------------
+     Success : in out Boolean);
 
    overriding procedure Start_Document
     (Self    : in out DOM_Builder;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Start_Document;
-
-   ---------------
-   -- Start_DTD --
-   ---------------
+     Success : in out Boolean);
 
    overriding procedure Start_DTD
     (Self      : in out DOM_Builder;
      Name      : League.Strings.Universal_String;
      Public_Id : League.Strings.Universal_String;
      System_Id : League.Strings.Universal_String;
-     Success   : in out Boolean) is
-   begin
-      null;
-   end Start_DTD;
-
-   -------------------
-   -- Start_Element --
-   -------------------
+     Success   : in out Boolean);
 
    overriding procedure Start_Element
     (Self           : in out DOM_Builder;
@@ -300,39 +215,18 @@ package body Matreshka.XML.DOM_Builders is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : Standard.XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is
-   begin
-      null;
-   end Start_Element;
-
-   ------------------
-   -- Start_Entity --
-   ------------------
+     Success        : in out Boolean);
 
    overriding procedure Start_Entity
     (Self    : in out DOM_Builder;
      Name    : League.Strings.Universal_String;
-     Success : in out Boolean) is
-   begin
-      null;
-   end Start_Entity;
-
-   --------------------------
-   -- Start_Prefix_Mapping --
-   --------------------------
+     Success : in out Boolean);
 
    overriding procedure Start_Prefix_Mapping
     (Self          : in out DOM_Builder;
      Prefix        : League.Strings.Universal_String;
      Namespace_URI : League.Strings.Universal_String;
-     Success       : in out Boolean) is
-   begin
-      null;
-   end Start_Prefix_Mapping;
-
-   ---------------------------------
-   -- Unparsed_Entity_Declaration --
-   ---------------------------------
+     Success       : in out Boolean);
 
    overriding procedure Unparsed_Entity_Declaration
     (Self          : in out DOM_Builder;
@@ -340,9 +234,6 @@ package body Matreshka.XML.DOM_Builders is
      Public_Id     : League.Strings.Universal_String;
      System_Id     : League.Strings.Universal_String;
      Notation_Name : League.Strings.Universal_String;
-     Success       : in out Boolean) is
-   begin
-      null;
-   end Unparsed_Entity_Declaration;
+     Success       : in out Boolean);
 
-end Matreshka.XML.DOM_Builders;
+end Matreshka.DOM_Builders;

@@ -48,6 +48,16 @@ with XML.DOM.Visitors;
 
 package body Matreshka.DOM_Nodes.Documents is
 
+   ------------
+   -- Create --
+   ------------
+
+   overriding function Create
+    (The_Type : not null access Document_Type) return Document_Node is
+   begin
+      return Self : Document_Node;
+   end Create;
+
    ----------------------
    -- Create_Attribute --
    ----------------------
