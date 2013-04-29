@@ -48,6 +48,7 @@ with League.Strings.Hash;
 with Matreshka.DOM_Nodes.Attributes;
 with Matreshka.DOM_Nodes.Documents;
 with Matreshka.DOM_Nodes.Elements;
+with Matreshka.DOM_Nodes.Texts;
 
 package body Matreshka.DOM_Builders is
 
@@ -100,13 +101,12 @@ package body Matreshka.DOM_Builders is
      Text    : League.Strings.Universal_String;
      Success : in out Boolean)
    is
---      Node : Matreshka.DOM_Nodes.Text_Access
---        := Self.Document.Create_Text_Node (Text);
+      Node : Matreshka.DOM_Nodes.Node_Access
+        := Matreshka.DOM_Nodes.Node_Access (Self.Document.Create_Text (Text));
 
    begin
---      Self.Current.Append_Child (Node);
---      Matreshka.DOM_Nodes.Dereference (Node);
-      null;
+      Self.Current.Append_Child (Node);
+      Matreshka.DOM_Nodes.Dereference (Node);
    end Characters;
 
    -------------
