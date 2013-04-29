@@ -5,7 +5,7 @@ with League.Strings;
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
-with XML.DOM.Nodes.Documents;
+with XML.DOM.Documents.Internals;
 with ODF.DOM.Documents;
 with Matreshka.DOM_Builders;
 
@@ -20,8 +20,8 @@ procedure Demo is
 
    use type League.Strings.Universal_String;
 
-   Styles  : XML.DOM.Nodes.Documents.DOM_Document_Access;
-   Content : XML.DOM.Nodes.Documents.DOM_Document_Access;
+   Styles  : XML.DOM.Documents.DOM_Document;
+   Content : XML.DOM.Documents.DOM_Document;
 
 begin
    --  Build DOM tree.
@@ -38,7 +38,7 @@ begin
       Reader.Parse (Source'Unchecked_Access);
       Source.Close;
 
-      Styles := Handler.Get_Document;
+      Styles := XML.DOM.Documents.Internals.Wrap (Handler.Get_Document);
    end;
 
    --  Build DOM tree.
@@ -55,18 +55,18 @@ begin
       Reader.Parse (Source'Unchecked_Access);
       Source.Close;
 
-      Content := Handler.Get_Document;
+      Content := XML.DOM.Documents.Internals.Wrap (Handler.Get_Document);
    end;
 
    --  Debug output.
 
    Put_Line
     (ODF.Web.To_JSON
-      (ODF.DOM.Documents.ODF_Document_Access (Styles),
-       ODF.DOM.Documents.ODF_Document_Access (Content)));
+      (ODF.DOM.To_ODF_Document (Styles),
+       ODF.DOM.To_ODF_Document (Content)));
 
-   ODF.Web.Document.Styles := ODF.DOM.Documents.ODF_Document_Access (Styles);
-   ODF.Web.Document.Content := ODF.DOM.Documents.ODF_Document_Access (Content);
+   ODF.Web.Document.Styles := ODF.DOM.To_ODF_Document (Styles);
+   ODF.Web.Document.Content := ODF.DOM.To_ODF_Document (Content);
 
    --  Run AWS.
 
@@ -87,7 +87,4 @@ begin
       AWS.Server.Start (Server, Dispatcher, Config);
       AWS.Server.Wait (AWS.Server.No_Server);
    end;
-
-   XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Styles));
-   XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Content));
 end Demo;
