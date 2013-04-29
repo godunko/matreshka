@@ -55,7 +55,7 @@ package body ODF.DOM.Iterators is
      Element : ODF.DOM.Elements.Office.Automatic_Styles.ODF_Office_Automatic_Styles'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
-      Self.Visit (Visitor, Element, Control);
+      Self.Visit_Children (Visitor, Element, Control);
    end Visit_Office_Automatic_Styles;
 
    -----------------------
