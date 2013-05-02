@@ -47,6 +47,7 @@ with System.Address_Image;
 with AWS.Translator;
 
 with League.JSON.Documents;
+with League.Stream_Element_Vectors;
 with XML.DOM.Visitors;
 
 with ODF.DOM.Iterators;
@@ -68,9 +69,8 @@ package body ODF.Web is
    begin
       ODF.Web.Applier.Apply
        (League.JSON.Documents.From_JSON
-         (AWS.Status.Binary_Data (Request)).To_Object);
---       (GNATCOLL.JSON.Read
---         (AWS.Translator.To_String (AWS.Status.Binary_Data (Request)), ""));
+         (League.Stream_Element_Vectors.To_Stream_Element_Vector
+           (AWS.Status.Binary_Data (Request))).To_Object);
 
       return AWS.Response.Build (Text_Mime_Type, "OK");
    end Change_Callback;
