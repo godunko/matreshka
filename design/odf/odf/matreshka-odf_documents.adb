@@ -41,8 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---with Ada.Wide_Wide_Text_IO;
-
 with Matreshka.DOM_Builders;
 
 with ODF.Constants;
@@ -82,7 +80,22 @@ package body Matreshka.ODF_Documents is
         := Get_Local_Name (Qualified_Name);
 
    begin
-      if Namespace_URI = Draw_URI then
+      if Namespace_URI = Anim_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Chart_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Config_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = DB_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = DR3D_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Draw_URI then
          if Local_Name = End_Line_Spacing_Horizontal_Name then
             return
               Matreshka.DOM_Nodes.Attribute_Access
@@ -118,6 +131,8 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Draw_Start_Line_Spacing_Vertical);
          end if;
+
+         raise Program_Error;
 
       elsif Namespace_URI = FO_URI then
          if Local_Name = Background_Color_Name then
@@ -240,6 +255,26 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Attribute_Access (Self.Create_FO_Wrap_Option);
          end if;
 
+         raise Program_Error;
+
+      elsif Namespace_URI = Form_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Manifest_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Meta_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Number_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Odf_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = OF_URI then
+         raise Program_Error;
+
       elsif Namespace_URI = Office_URI then
          if Local_Name = Value_Type_Name then
             return
@@ -250,6 +285,20 @@ package body Matreshka.ODF_Documents is
             return
               Matreshka.DOM_Nodes.Attribute_Access (Self.Create_Office_Version);
          end if;
+
+         raise Program_Error;
+
+      elsif Namespace_URI = Pkg_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Presentation_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Script_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Smil_URI then
+         raise Program_Error;
 
       elsif Namespace_URI = Style_URI then
          if Local_Name = Adjustment_Name then
@@ -499,6 +548,8 @@ package body Matreshka.ODF_Documents is
                (Self.Create_Style_Writing_Mode);
          end if;
 
+         raise Program_Error;
+
       elsif Namespace_URI = SVG_URI then
          if Local_Name = Font_Family_Name then
             return
@@ -510,6 +561,8 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_SVG_Stroke_Color);
          end if;
+
+         raise Program_Error;
 
       elsif Namespace_URI = Table_URI then
          if Local_Name = Align_Name then
@@ -533,6 +586,8 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Table_Style_Name);
          end if;
+
+         raise Program_Error;
 
       elsif Namespace_URI = Text_URI then
          if Local_Name = Display_Outline_Level_Name then
@@ -622,18 +677,15 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Attribute_Access
                (Self.Create_Text_Style_Name);
          end if;
+
+         raise Program_Error;
       end if;
---
---      Ada.Wide_Wide_Text_IO.Put_Line
---       (Ada.Wide_Wide_Text_IO.Standard_Error,
---        "  {"
---          & Namespace_URI.To_Wide_Wide_String
---          & '}'
---          & Local_Name.To_Wide_Wide_String
---          & ' '
---          & Qualified_Name.To_Wide_Wide_String);
---
-      raise Program_Error;
+
+      --  Unknown attribute, use default construction subprogram.
+
+      return
+        Matreshka.DOM_Nodes.Documents.Abstract_Document
+         (Self.all).Create_Attribute (Namespace_URI, Qualified_Name);
    end Create_Attribute;
 
    ---------------------------------------------
@@ -727,7 +779,46 @@ package body Matreshka.ODF_Documents is
         := Get_Local_Name (Qualified_Name);
 
    begin
-      if Namespace_URI = Office_URI then
+      if Namespace_URI = Anim_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Chart_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Config_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = DB_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = DR3D_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Draw_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = FO_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Form_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Manifest_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Meta_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Number_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Odf_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = OF_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Office_URI then
          if Local_Name = Automatic_Styles_Name then
             return
               Matreshka.DOM_Nodes.Element_Access
@@ -772,6 +863,20 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Element_Access
                (Self.Create_Office_Text);
          end if;
+
+         raise Program_Error;
+
+      elsif Namespace_URI = Pkg_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Presentation_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Script_URI then
+         raise Program_Error;
+
+      elsif Namespace_URI = Smil_URI then
+         raise Program_Error;
 
       elsif Namespace_URI = Style_URI then
          if Local_Name = Background_Image_Name then
@@ -875,6 +980,11 @@ package body Matreshka.ODF_Documents is
                (Self.Create_Style_Text_Properties);
          end if;
 
+         raise Program_Error;
+
+      elsif Namespace_URI = SVG_URI then
+         raise Program_Error;
+
       elsif Namespace_URI = Table_URI then
          if Local_Name = Covered_Table_Cell_Name then
             return
@@ -901,6 +1011,8 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Element_Access
                (Self.Create_Table_Table_Row);
          end if;
+
+         raise Program_Error;
 
       elsif Namespace_URI = Text_URI then
          if Local_Name = H_Name then
@@ -947,9 +1059,13 @@ package body Matreshka.ODF_Documents is
               Matreshka.DOM_Nodes.Element_Access
                (Self.Create_Text_Span);
          end if;
+
+         raise Program_Error;
       end if;
 
-      raise Program_Error;
+      return
+        Matreshka.DOM_Nodes.Documents.Abstract_Document
+         (Self.all).Create_Element (Namespace_URI, Qualified_Name);
    end Create_Element;
 
    --------------------------------
