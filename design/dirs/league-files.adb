@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.Internals.File_Engine;
+with Matreshka.Internals.File_Engines;
 
 package body League.Files is
 
@@ -197,7 +197,7 @@ package body League.Files is
    begin
       return
        (Ada.Finalization.Controlled
-          with Data => Matreshka.Internals.File_Engine.Parse (File_Path));
+          with Data => Matreshka.Internals.File_Engines.Parse (File_Path));
    end Create;
 
 --   -------------
