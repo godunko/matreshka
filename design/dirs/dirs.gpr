@@ -57,12 +57,12 @@ project Dirs is
    package Naming is
       case Matreshka_Config.Operating_System is
          when "POSIX" =>
-            for Implementation ("Matreshka.Internals.File_Engine.Platform")
-              use "matreshka-internals-file_engine-platform__posix.adb";
+            for Implementation ("Matreshka.Internals.File_Engines.Platform")
+              use "matreshka-internals-file_engines-platform__posix.adb";
 
          when "Windows" =>
-            for Implementation ("Matreshka.Internals.File_Engine.Platform")
-              use "matreshka-internals-file_engine-platform__windows.adb";
+            for Implementation ("Matreshka.Internals.File_Engines.Platform")
+              use "matreshka-internals-file_engines-platform__windows.adb";
       end case;
    end Naming;
 

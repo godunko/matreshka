@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,31 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+limited with Matreshka.Internals.Files;
 
-package body Matreshka.Internals.File_Engine is
+package Matreshka.Internals.File_Engines is
 
-   package Platform is
+   pragma Preelaborate;
 
-      --  This package provides platform specific implementation of some
-      --  subprograms. Its body is separate compilation unit, it is substituted
-      --  to use coresponding version.
+   type Abstract_File_Engine is abstract tagged limited null record;
 
-      function Parse
-       (Path : League.Strings.Universal_String)
-          return Matreshka.Internals.Files.Shared_File_Information_Access;
-      --  Parses the given path and constructs file information object.
-
-   end Platform;
-
-   package body Platform is separate;
-
-   -----------
-   -- Parse --
-   -----------
+   type File_Engine_Access is access all Abstract_File_Engine'Class;
 
    function Parse
     (Path : League.Strings.Universal_String)
-       return Matreshka.Internals.Files.Shared_File_Information_Access
-         renames Platform.Parse;
+       return Matreshka.Internals.Files.Shared_File_Information_Access;
+   --  Parses specified path according to operating system conventions and
+   --  returns its internal representation.
 
-end Matreshka.Internals.File_Engine;
+end Matreshka.Internals.File_Engines;

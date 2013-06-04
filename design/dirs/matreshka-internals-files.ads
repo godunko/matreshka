@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -44,19 +44,21 @@
 with League.String_Vectors;
 with League.Strings;
 with Matreshka.Atomics.Counters;
+with Matreshka.Internals.File_Engines;
 
 package Matreshka.Internals.Files is
 
    pragma Preelaborate;
 
-   type Shared_File_Information is record
+   type Shared_File_Information is tagged limited record
       Counter  : Matreshka.Atomics.Counters.Counter;
+      Engine   : Matreshka.Internals.File_Engines.File_Engine_Access;
       Device   : League.Strings.Universal_String;
       Has_Root : Boolean;
       Segments : League.String_Vectors.Universal_String_Vector;
    end record;
 
-   type Shared_File_Information_Access is access all Shared_File_Information;
+   type Shared_File_Information_Access is access all Shared_File_Information'Class;
 
    procedure Reference (Self : Shared_File_Information_Access);
    pragma Inline (Reference);

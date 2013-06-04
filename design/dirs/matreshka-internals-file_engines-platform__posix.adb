@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,17 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with Matreshka.Internals.Files;
+with League.Characters;
 
-package Matreshka.Internals.File_Engine is
+separate (Matreshka.Internals.File_Engines)
+package body Platform is
 
-   pragma Preelaborate;
+   -----------
+   -- Parse --
+   -----------
 
    function Parse
     (Path : League.Strings.Universal_String)
-       return Matreshka.Internals.Files.Shared_File_Information_Access;
-   --  Parses specified path according to operating system conventions and
-   --  returns its internal representation.
+       return Matreshka.Internals.Files.Shared_File_Information_Access
+   is
+      use type League.Characters.Universal_Character;
 
-end Matreshka.Internals.File_Engine;
+   begin
+      --  This is POSIX version.
+
+      if Path.Is_Empty then
+         return null;
+      end if;
+
+      return Result : constant
+        Matreshka.Internals.Files.Shared_File_Information_Access
+          := new Matreshka.Internals.Files.Shared_File_Information
+      do
+         Result.Device.Clear;
+         Result.Has_Root := Path.Element (1) = '/';
+         Result.Segments := Path.Split ('/', League.Strings.Skip_Empty);
+      end return;
+   end Parse;
+
+end Platform;
