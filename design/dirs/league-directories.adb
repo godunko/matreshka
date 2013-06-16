@@ -41,7 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.Internals.File_Engines;
+with Matreshka.File_Engines;
+with Matreshka.File_System_Engines;
 
 package body League.Directories is
 
@@ -153,11 +154,17 @@ package body League.Directories is
    ------------
 
    function Create
-    (Path : League.Strings.Universal_String) return Directory_Information is
+    (Path : League.Strings.Universal_String) return Directory_Information
+   is
+      Engine : constant Matreshka.File_Engines.File_Engine_Access
+        := Matreshka.File_System_Engines.Create
+            (Path).Create_File_Engine
+              (League.Strings.Empty_Universal_String);
+
    begin
       return
        (Ada.Finalization.Controlled
-          with Data => Matreshka.Internals.File_Engines.Parse (Path));
+          with Data => Engine.Create_File_Information);
    end Create;
 
 --   ----------------------

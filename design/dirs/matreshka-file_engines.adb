@@ -41,34 +41,43 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.String_Vectors;
-with League.Strings;
-with Matreshka.Atomics.Counters;
-with Matreshka.File_Engines;
+with Matreshka.Internals.Files;
 
-package Matreshka.Internals.Files is
+package body Matreshka.File_Engines is
 
-   pragma Preelaborate;
+--   package Platform is
+--
+--      --  This package provides platform specific implementation of some
+--      --  subprograms. Its body is separate compilation unit, it is substituted
+--      --  to use coresponding version.
+--
+--      function Parse
+--       (Path : League.Strings.Universal_String)
+--          return Matreshka.Internals.Files.Shared_File_Information_Access;
+--      --  Parses the given path and constructs file information object.
+--
+--   end Platform;
+--
+--   package body Platform is separate;
 
-   type Shared_File_Information
-    (Engine : access Matreshka.File_Engines.Abstract_File_Engine'Class)
-       is tagged limited
-   record
-      Counter  : Matreshka.Atomics.Counters.Counter;
-      Device   : League.Strings.Universal_String;
-      Has_Root : Boolean;
-      Segments : League.String_Vectors.Universal_String_Vector;
-   end record;
+   -----------
+   -- Parse --
+   -----------
 
-   type Shared_File_Information_Access is access all Shared_File_Information'Class;
+--   function Parse
+--    (Path : League.Strings.Universal_String)
+--       return Matreshka.Internals.Files.Shared_File_Information_Access is
+--   begin
+--      return Constructor (Path).Create_File_Information (Path);
+----      return Engine.Create_File_Information (Path);
+----      return null;
+--------      return Platform.Parse (Path);
+--   end Parse;
+--   function Parse
+--    (Path : League.Strings.Universal_String)
+--       return Matreshka.Internals.Files.Shared_File_Information_Access
+--         renames Platform.Parse;
 
-   procedure Reference (Self : Shared_File_Information_Access);
-   pragma Inline (Reference);
-   pragma Inline_Always (Reference);
-   --  Increments reference counter of the shared object.
+   procedure Dummy is null;
 
-   procedure Dereference (Self : in out Shared_File_Information_Access);
-   --  Decrements reference counter of the shared object and dellocates memory
-   --  when reference counter reach zero. Sets Self to null always.
-
-end Matreshka.Internals.Files;
+end Matreshka.File_Engines;

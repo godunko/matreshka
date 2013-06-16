@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,39 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.Internals.Files;
+with League.Strings;
+limited with Matreshka.File_Engines;
 
-package body Matreshka.Internals.File_Engines is
+package Matreshka.File_System_Engines is
 
-   package Platform is
+   pragma Preelaborate;
 
-      --  This package provides platform specific implementation of some
-      --  subprograms. Its body is separate compilation unit, it is substituted
-      --  to use coresponding version.
+   type Abstract_File_System_Engine is abstract tagged limited null record;
 
-      function Parse
-       (Path : League.Strings.Universal_String)
-          return Matreshka.Internals.Files.Shared_File_Information_Access;
-      --  Parses the given path and constructs file information object.
+   type File_System_Engine_Access is
+     access all Abstract_File_System_Engine'Class;
 
-   end Platform;
+   not overriding function Create_File_Engine
+    (Self : not null access Abstract_File_System_Engine;
+     Path : League.Strings.Universal_String)
+       return Matreshka.File_Engines.File_Engine_Access
+         is abstract;
+   --  Creates file engine object to handle specified path. Path is relative to
+   --  file system engine.
 
-   package body Platform is separate;
-
-   -----------
-   -- Parse --
-   -----------
-
---   function Parse
---    (Path : League.Strings.Universal_String)
---       return Matreshka.Internals.Files.Shared_File_Information_Access is
---   begin
---      return null;
-------      return Platform.Parse (Path);
---   end Parse;
-   function Parse
+   Create : access function
     (Path : League.Strings.Universal_String)
-       return Matreshka.Internals.Files.Shared_File_Information_Access
-         renames Platform.Parse;
+       return not null File_System_Engine_Access;
+   --  Temporary solution to plug-in Zip file system engine.
 
-end Matreshka.Internals.File_Engines;
+end Matreshka.File_System_Engines;

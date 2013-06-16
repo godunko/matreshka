@@ -43,19 +43,37 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 limited with Matreshka.Internals.Files;
+with Matreshka.File_System_Engines;
 
-package Matreshka.Internals.File_Engines is
+package Matreshka.File_Engines is
 
    pragma Preelaborate;
 
-   type Abstract_File_Engine is abstract tagged limited null record;
+   type Abstract_File_Engine is abstract tagged limited record
+      File_System : Matreshka.File_System_Engines.File_System_Engine_Access;
+   end record;
 
    type File_Engine_Access is access all Abstract_File_Engine'Class;
 
-   function Parse
-    (Path : League.Strings.Universal_String)
-       return Matreshka.Internals.Files.Shared_File_Information_Access;
-   --  Parses specified path according to operating system conventions and
-   --  returns its internal representation.
+   not overriding function Create_File_Information
+    (Self : not null access Abstract_File_Engine)
+       return Matreshka.Internals.Files.Shared_File_Information_Access
+         is abstract;
+   --  Creates shared file information object based on specified path.
 
-end Matreshka.Internals.File_Engines;
+--   function Parse
+--    (Path : League.Strings.Universal_String)
+--       return Matreshka.Internals.Files.Shared_File_Information_Access;
+--   --  Parses specified path according to operating system conventions and
+--   --  returns its internal representation.
+
+----   Engine : File_Engine_Access;
+--   Constructor : access function
+--    (Path : League.Strings.Universal_String)
+--       return File_Engine_Access;
+----       return Matreshka.Internals.Files.Shared_File_Information_Access;
+--   --  XXX To plugin Zip file engine temporary.
+
+   procedure Dummy;
+
+end Matreshka.File_Engines;
