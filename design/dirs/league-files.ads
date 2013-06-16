@@ -127,9 +127,11 @@ package League.Files is
 --   function Is_Absolute (Self : File_Information'Class) return Boolean;
 --
 --   function Is_Bundle (Self : File_Information'Class) return Boolean;
---
---   function Is_Dir (Self : File_Information'Class) return Boolean;
---
+
+   function Is_Directory (Self : File_Information'Class) return Boolean;
+   --  Returns true if this object points to a directory or to a symbolic link
+   --  to a directory; otherwise returns false.
+
 --   function Is_Executable (Self : File_Information'Class) return Boolean;
 --
 --   function Is_File (Self : File_Information'Class) return Boolean;

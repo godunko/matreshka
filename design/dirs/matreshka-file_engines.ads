@@ -54,6 +54,11 @@ package Matreshka.File_Engines is
 
    type File_Engine_Access is access all Abstract_File_Engine'Class;
 
+   not overriding function Is_Directory
+    (Self : not null access Abstract_File_Engine) return Boolean is abstract;
+   --  Returns true if this object points to a directory or to a symbolic link
+   --  to a directory; otherwise returns false.
+
 --   function Parse
 --    (Path : League.Strings.Universal_String)
 --       return Matreshka.Internals.Files.Shared_File_Information_Access;

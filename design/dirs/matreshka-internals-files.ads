@@ -45,6 +45,7 @@ with League.String_Vectors;
 with League.Strings;
 with Matreshka.Atomics.Counters;
 with Matreshka.File_Engines;
+with Matreshka.File_System_Engines;
 with Matreshka.File_System_Entries;
 
 package Matreshka.Internals.Files is
@@ -52,9 +53,13 @@ package Matreshka.Internals.Files is
    pragma Preelaborate;
 
    type Shared_File_Information is tagged limited record
-      Counter           : Matreshka.Atomics.Counters.Counter;
-      File_System_Entry : Matreshka.File_System_Entries.File_System_Entry;
-      File_Engine       : Matreshka.File_Engines.File_Engine_Access;
+      Counter            : Matreshka.Atomics.Counters.Counter;
+      File_System_Entry  : Matreshka.File_System_Entries.File_System_Entry;
+      File_System_Engine : Matreshka.File_System_Engines.File_System_Engine_Access;
+      --  File system engine to be used as base engine.
+      FS_Relative_Path   : Matreshka.File_System_Entries.File_System_Entry;
+      --  File system entry to store path relative to base file system engine.
+      File_Engine        : Matreshka.File_Engines.File_Engine_Access;
 --      Device   : League.Strings.Universal_String;
 --      Has_Root : Boolean;
 --      Segments : League.String_Vectors.Universal_String_Vector;

@@ -41,7 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  with Matreshka.File_Engines;
+with League.Directories.Internals;
+with Matreshka.File_Engines;
 with Matreshka.File_System_Entries;
 
 package body League.Files is
@@ -285,19 +286,46 @@ package body League.Files is
 --      raise Program_Error with "Unimplemented function Is_Bundle";
 --      return Is_Bundle (Self);
 --   end Is_Bundle;
+
+   ------------------
+   -- Is_Directory --
+   ------------------
+
+   function Is_Directory (Self : File_Information'Class) return Boolean is
+      use type Matreshka.File_Engines.File_Engine_Access;
+
+   begin
+      if Self.Data = null then
+         return False;
+
+      elsif Self.Data.File_Engine = null then
+         Self.Data.File_Engine :=
+           Self.Data.File_System_Engine.Create_File_Engine
+            (Matreshka.File_System_Entries.Path
+              (Self.Data.FS_Relative_Path));
+      end if;
+
+      return Self.Data.File_Engine.Is_Directory;
+--   is
+--      use type Matreshka.Internals.Files.Shared_File_Information_Access;
 --
---   ------------
---   -- Is_Dir --
---   ------------
---
---   function Is_Dir (Self : File_Information'Class) return Boolean is
 --   begin
---      --  Generated stub: replace with real body!
---      pragma Compile_Time_Warning (Standard.True, "Is_Dir unimplemented");
---      raise Program_Error with "Unimplemented function Is_Dir";
---      return Is_Dir (Self);
---   end Is_Dir;
+--      if Self.Data = null then
+--         return League.String_Vectors.Empty_Universal_String_Vector;
 --
+--      elsif Self.Data.File_Engine = null then
+--         Self.Data.File_Engine :=
+--           Matreshka.File_System_Engines.Create
+--            (Matreshka.File_System_Entries.Path
+--              (Self.Data.File_System_Entry)).Create_File_Engine
+--                (League.Strings.Empty_Universal_String);
+--      end if;
+--
+--      return
+--        Self.Data.File_Engine.File_System_Engine.Entry_List
+--         (Self.Data.File_Engine);
+   end Is_Directory;
+
 --   -------------------
 --   -- Is_Executable --
 --   -------------------
@@ -569,6 +597,8 @@ package body League.Files is
    is
       E : constant Matreshka.File_System_Entries.File_System_Entry
         := Matreshka.File_System_Entries.To_File_System_Entry (File);
+      D : constant Matreshka.Internals.Files.Shared_File_Information_Access
+        := League.Directories.Internals.Internal (Directory);
 
    begin
       if E.Is_Absolute then
@@ -576,7 +606,18 @@ package body League.Files is
          --  XXX Not implementet jet.
 
       else
-         return (Ada.Finalization.Controlled with Data => null);
+         return Result : constant File_Information
+           := (Ada.Finalization.Controlled with
+                 Data => new Matreshka.Internals.Files.Shared_File_Information)
+         do
+            Result.Data.File_System_Entry := E;
+            --  XXX Directory's path must be taken in sense here.
+
+            Result.Data.File_System_Engine := D.File_System_Engine;
+            Result.Data.FS_Relative_Path.Segments.Append
+             (D.FS_Relative_Path.Segments);
+            Result.Data.FS_Relative_Path.Segments.Append (E.Segments);
+         end return;
       end if;
    end To_File_Information;
 

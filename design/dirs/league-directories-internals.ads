@@ -41,32 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  File_System_Entry represents path and provides subprograms to parse/create
---  paths and to convert them to native representation.
-------------------------------------------------------------------------------
-with League.String_Vectors;
-with League.Strings;
+with Matreshka.Internals.Files;
 
-package Matreshka.File_System_Entries is
+package League.Directories.Internals is
 
    pragma Preelaborate;
 
-   type File_System_Entry is record
-      Segments    : League.String_Vectors.Universal_String_Vector;
-      Is_Absolute : Boolean := False;
-   end record;
+   function Internal
+    (Self : Directory_Information)
+       return Matreshka.Internals.Files.Shared_File_Information_Access;
 
-   function To_File_System_Entry
-    (Path : League.Strings.Universal_String) return File_System_Entry;
-   --  Creates File_System_Entry object from the specified path. Path can use
-   --  native directory separator as well as internal one.
-
-   function Path
-    (Self : File_System_Entry) return League.Strings.Universal_String;
-   --  Returns path using internal directory separator.
-
-   function "="
-    (Left : File_System_Entry; Right : File_System_Entry) return Boolean
-       is abstract;
-
-end Matreshka.File_System_Entries;
+end League.Directories.Internals;
