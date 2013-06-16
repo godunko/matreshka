@@ -41,25 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
 package body Matreshka.Zip_File_Engines is
-
-   type Zip_File_Information is
-     new Matreshka.Internals.Files.Shared_File_Information with record
-      null;
-   end record;
-
-   -----------------------------
-   -- Create_File_Information --
-   -----------------------------
-
-   overriding function Create_File_Information
-    (Self : not null access Zip_File_Engine)
-       return Matreshka.Internals.Files.Shared_File_Information_Access is
-   begin
-      return new Zip_File_Information (Self);
-   end Create_File_Information;
 
    ----------------
    -- Initialize --
