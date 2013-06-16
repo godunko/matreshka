@@ -50,7 +50,7 @@ package Matreshka.File_Engines is
    pragma Preelaborate;
 
    type Abstract_File_Engine is abstract tagged limited record
-      File_System : Matreshka.File_System_Engines.File_System_Engine_Access;
+      File_System_Engine : Matreshka.File_System_Engines.File_System_Engine_Access;
    end record;
 
    type File_Engine_Access is access all Abstract_File_Engine'Class;

@@ -277,20 +277,27 @@ package body League.Directories is
       Matreshka.Internals.Files.Dereference (Self.Data);
    end Finalize;
 
---   ----------------
---   -- Entry_List --
---   ----------------
---
---   function Entry_List
---    (Self : Directory_Information'Class)
---       return League.String_Vectors.Universal_String_Vector is
---   begin
---      --  Generated stub: replace with real body!
---      pragma Compile_Time_Warning (Standard.True, "Entry_List unimplemented");
---      raise Program_Error with "Unimplemented function Entry_List";
---      return Entry_List (Self);
---   end Entry_List;
---
+   ----------------
+   -- Entry_List --
+   ----------------
+
+   function Entry_List
+    (Self : Directory_Information'Class)
+       return League.String_Vectors.Universal_String_Vector
+   is
+      use type Matreshka.Internals.Files.Shared_File_Information_Access;
+
+   begin
+      if Self.Data = null then
+         return League.String_Vectors.Empty_Universal_String_Vector;
+
+      else
+         return
+           Self.Data.File_Engine.File_System_Engine.Entry_List
+            (Self.Data.File_Engine);
+      end if;
+   end Entry_List;
+
 --   ------------
 --   -- Exists --
 --   ------------

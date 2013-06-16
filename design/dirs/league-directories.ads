@@ -50,7 +50,7 @@ private with Ada.Finalization;
 
 --with League.Characters;
 with League.Strings;
---with League.String_Vectors;
+with League.String_Vectors;
 private with Matreshka.Internals.Files;
 
 package League.Directories is
@@ -121,11 +121,13 @@ package League.Directories is
 ----   function Entry_Information_List
 ----    (Self : Directory_Information'Class)
 ----       return File_Information_Vector;
---
---   function Entry_List
---    (Self : Directory_Information'Class)
---       return League.String_Vectors.Universal_String_Vector;
---
+
+   function Entry_List
+    (Self : Directory_Information'Class)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns a list of the names of all the files and directories in the
+   --  directory.
+
 --   function Exists (Self : Directory_Information'Class) return Boolean;
 --
 --   function Exists

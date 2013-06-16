@@ -51,7 +51,7 @@ package Matreshka.Internals.Files is
    pragma Preelaborate;
 
    type Shared_File_Information
-    (Engine : access Matreshka.File_Engines.Abstract_File_Engine'Class)
+    (File_Engine : access Matreshka.File_Engines.Abstract_File_Engine'Class)
        is tagged limited
    record
       Counter  : Matreshka.Atomics.Counters.Counter;

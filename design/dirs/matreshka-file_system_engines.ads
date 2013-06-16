@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
+with League.String_Vectors;
 limited with Matreshka.File_Engines;
 
 package Matreshka.File_System_Engines is
@@ -60,6 +61,13 @@ package Matreshka.File_System_Engines is
          is abstract;
    --  Creates file engine object to handle specified path. Path is relative to
    --  file system engine.
+
+   not overriding function Entry_List
+    (Self        : not null access Abstract_File_System_Engine;
+     File_Engine : Matreshka.File_Engines.File_Engine_Access)
+       return League.String_Vectors.Universal_String_Vector is abstract;
+   --  Returns a list of the names of all files and directories when
+   --  File_Engine represents directory.
 
    Create : access function
     (Path : League.Strings.Universal_String)
