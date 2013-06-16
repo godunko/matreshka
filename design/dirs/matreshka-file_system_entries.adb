@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,34 +41,51 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.String_Vectors;
-with League.Strings;
-with Matreshka.Atomics.Counters;
-with Matreshka.File_Engines;
-with Matreshka.File_System_Entries;
+with League.Characters;
 
-package Matreshka.Internals.Files is
+package body Matreshka.File_System_Entries is
 
-   pragma Preelaborate;
+   use type League.Characters.Universal_Character;
 
-   type Shared_File_Information is tagged limited record
-      Counter           : Matreshka.Atomics.Counters.Counter;
-      File_System_Entry : Matreshka.File_System_Entries.File_System_Entry;
-      File_Engine       : Matreshka.File_Engines.File_Engine_Access;
---      Device   : League.Strings.Universal_String;
---      Has_Root : Boolean;
---      Segments : League.String_Vectors.Universal_String_Vector;
-   end record;
+   ----------
+   -- Path --
+   ----------
 
-   type Shared_File_Information_Access is access all Shared_File_Information'Class;
+   function Path
+    (Self : File_System_Entry) return League.Strings.Universal_String
+   is
+      Result : League.Strings.Universal_String := Self.Segments.Join ('/');
 
-   procedure Reference (Self : Shared_File_Information_Access);
-   pragma Inline (Reference);
-   pragma Inline_Always (Reference);
-   --  Increments reference counter of the shared object.
+   begin
+      if Self.Is_Absolute then
+         Result.Prepend ('/');
+      end if;
 
-   procedure Dereference (Self : in out Shared_File_Information_Access);
-   --  Decrements reference counter of the shared object and dellocates memory
-   --  when reference counter reach zero. Sets Self to null always.
+      return Result;
+   end Path;
 
-end Matreshka.Internals.Files;
+   --------------------------
+   -- To_File_System_Entry --
+   --------------------------
+
+   function To_File_System_Entry
+    (Path : League.Strings.Universal_String) return File_System_Entry is
+   begin
+      --  XXX This is POSIX specific version.
+
+      if Path.Length = 0 then
+         return (Segments => <>, Is_Absolute => False);
+
+      else
+         return Result : File_System_Entry
+           := (Segments    => Path.Split ('/', League.Strings.Skip_Empty),
+               Is_Absolute => False)
+         do
+            if Path (1) = '/' then
+               Result.Is_Absolute := True;
+            end if;
+         end return;
+      end if;
+   end To_File_System_Entry;
+
+end Matreshka.File_System_Entries;

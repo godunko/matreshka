@@ -61,7 +61,7 @@ package League.Directories is
    type Directory_Information is tagged private;
    pragma Preelaborable_Initialization (Directory_Information);
 
-   function Create
+   function To_Directory_Information
     (Path : League.Strings.Universal_String) return Directory_Information;
    --  Creates new object pointing to the given directory. Empty path points to
    --  program's working directory (".").

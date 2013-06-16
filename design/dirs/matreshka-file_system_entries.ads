@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,34 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  File_System_Entry represents path and provides subprograms to parse/create
+--  paths and to convert them to native representation.
+------------------------------------------------------------------------------
 with League.String_Vectors;
 with League.Strings;
-with Matreshka.Atomics.Counters;
-with Matreshka.File_Engines;
-with Matreshka.File_System_Entries;
 
-package Matreshka.Internals.Files is
+package Matreshka.File_System_Entries is
 
    pragma Preelaborate;
 
-   type Shared_File_Information is tagged limited record
-      Counter           : Matreshka.Atomics.Counters.Counter;
-      File_System_Entry : Matreshka.File_System_Entries.File_System_Entry;
-      File_Engine       : Matreshka.File_Engines.File_Engine_Access;
---      Device   : League.Strings.Universal_String;
---      Has_Root : Boolean;
---      Segments : League.String_Vectors.Universal_String_Vector;
+   type File_System_Entry is record
+      Segments    : League.String_Vectors.Universal_String_Vector;
+      Is_Absolute : Boolean;
    end record;
 
-   type Shared_File_Information_Access is access all Shared_File_Information'Class;
+   function To_File_System_Entry
+    (Path : League.Strings.Universal_String) return File_System_Entry;
+   --  Creates File_System_Entry object from the specified path. Path can use
+   --  native directory separator as well as internal one.
 
-   procedure Reference (Self : Shared_File_Information_Access);
-   pragma Inline (Reference);
-   pragma Inline_Always (Reference);
-   --  Increments reference counter of the shared object.
+   function Path
+    (Self : File_System_Entry) return League.Strings.Universal_String;
+   --  Returns path using internal directory separator.
 
-   procedure Dereference (Self : in out Shared_File_Information_Access);
-   --  Decrements reference counter of the shared object and dellocates memory
-   --  when reference counter reach zero. Sets Self to null always.
+   function "="
+    (Left : File_System_Entry; Right : File_System_Entry) return Boolean
+       is abstract;
 
-end Matreshka.Internals.Files;
+end Matreshka.File_System_Entries;

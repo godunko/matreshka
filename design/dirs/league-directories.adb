@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.File_Engines;
 with Matreshka.File_System_Engines;
+with Matreshka.File_System_Entries;
 
 package body League.Directories is
 
@@ -148,24 +149,6 @@ package body League.Directories is
 --      raise Program_Error with "Unimplemented function Count";
 --      return Count (Directory);
 --   end Count;
-
-   ------------
-   -- Create --
-   ------------
-
-   function Create
-    (Path : League.Strings.Universal_String) return Directory_Information
-   is
-      Engine : constant Matreshka.File_Engines.File_Engine_Access
-        := Matreshka.File_System_Engines.Create
-            (Path).Create_File_Engine
-              (League.Strings.Empty_Universal_String);
-
-   begin
-      return
-       (Ada.Finalization.Controlled
-          with Data => Engine.Create_File_Information);
-   end Create;
 
 --   ----------------------
 --   -- Create_Directory --
@@ -286,16 +269,23 @@ package body League.Directories is
        return League.String_Vectors.Universal_String_Vector
    is
       use type Matreshka.Internals.Files.Shared_File_Information_Access;
+      use type Matreshka.File_Engines.File_Engine_Access;
 
    begin
       if Self.Data = null then
          return League.String_Vectors.Empty_Universal_String_Vector;
 
-      else
-         return
-           Self.Data.File_Engine.File_System_Engine.Entry_List
-            (Self.Data.File_Engine);
+      elsif Self.Data.File_Engine = null then
+         Self.Data.File_Engine :=
+           Matreshka.File_System_Engines.Create
+            (Matreshka.File_System_Entries.Path
+              (Self.Data.File_System_Entry)).Create_File_Engine
+                (League.Strings.Empty_Universal_String);
       end if;
+
+      return
+        Self.Data.File_Engine.File_System_Engine.Entry_List
+         (Self.Data.File_Engine);
    end Entry_List;
 
 --   ------------
@@ -788,7 +778,23 @@ package body League.Directories is
 --      raise Program_Error with "Unimplemented function Temp";
 --      return Temp;
 --   end Temp;
---
+
+   ------------------------------
+   -- To_Directory_Information --
+   ------------------------------
+
+   function To_Directory_Information
+    (Path : League.Strings.Universal_String) return Directory_Information is
+   begin
+      return Result : constant Directory_Information
+        := (Ada.Finalization.Controlled with
+              Data => new Matreshka.Internals.Files.Shared_File_Information)
+      do
+         Result.Data.File_System_Entry :=
+           Matreshka.File_System_Entries.To_File_System_Entry (Path);
+      end return;
+   end To_Directory_Information;
+
 --   --------------------------
 --   -- To_Native_Separators --
 --   --------------------------

@@ -42,7 +42,6 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
-limited with Matreshka.Internals.Files;
 with Matreshka.File_System_Engines;
 
 package Matreshka.File_Engines is
@@ -54,12 +53,6 @@ package Matreshka.File_Engines is
    end record;
 
    type File_Engine_Access is access all Abstract_File_Engine'Class;
-
-   not overriding function Create_File_Information
-    (Self : not null access Abstract_File_Engine)
-       return Matreshka.Internals.Files.Shared_File_Information_Access
-         is abstract;
-   --  Creates shared file information object based on specified path.
 
 --   function Parse
 --    (Path : League.Strings.Universal_String)

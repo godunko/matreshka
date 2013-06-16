@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -46,7 +46,7 @@ pragma Ada_2012;
 private with Ada.Finalization;
 
 --with League.Calendars;
---with League.Directories;
+with League.Directories;
 with League.Strings;
 private with Matreshka.Internals.Files;
 
@@ -58,10 +58,22 @@ package League.Files is
    type File_Information is tagged private;
    pragma Preelaborable_Initialization (File_Information);
 
-   function Create
-    (File_Path : League.Strings.Universal_String) return File_Information;
-   --  Creates new object that gives information about the given file. The
-   --  File_Path can also include absolute of relative path.
+--   function Create
+--    (File_Path : League.Strings.Universal_String) return File_Information;
+--   --  Creates new object that gives information about the given file. The
+--   --  File_Path can also include absolute of relative path.
+
+   function To_File_Information
+    (Directory : League.Directories.Directory_Information;
+     File      : League.Strings.Universal_String) return File_Information;
+   --  Constructs a new File_Information object that gives information about
+   --  the given file in the directory Directory.
+   --
+   --  If Directory has a relative path, the File_Information will also have a
+   --  relative path.
+   --
+   --  If File is an absolute path, then the directory specified by dir will be
+   --  disregarded.
 
 --   function Absolute_Directory
 --    (Self : File_Information'Class)

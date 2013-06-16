@@ -41,7 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.Internals.File_Engines;
+--  with Matreshka.File_Engines;
+with Matreshka.File_System_Entries;
 
 package body League.Files is
 
@@ -188,17 +189,17 @@ package body League.Files is
 --      return Complete_Suffix (Self);
 --   end Complete_Suffix;
 
-   ------------
-   -- Create --
-   ------------
-
-   function Create
-    (File_Path : League.Strings.Universal_String) return File_Information is
-   begin
-      return
-       (Ada.Finalization.Controlled
-          with Data => Matreshka.Internals.File_Engines.Parse (File_Path));
-   end Create;
+--   ------------
+--   -- Create --
+--   ------------
+--
+--   function Create
+--    (File_Path : League.Strings.Universal_String) return File_Information is
+--   begin
+--      return
+--       (Ada.Finalization.Controlled
+--          with Data => Matreshka.File_Engines.Parse (File_Path));
+--   end Create;
 
 --   -------------
 --   -- Created --
@@ -557,5 +558,26 @@ package body League.Files is
 --      raise Program_Error with "Unimplemented function Symbolic_Link_Target";
 --      return Symbolic_Link_Target (Self);
 --   end Symbolic_Link_Target;
+
+   -------------------------
+   -- To_File_Information --
+   -------------------------
+
+   function To_File_Information
+    (Directory : League.Directories.Directory_Information;
+     File      : League.Strings.Universal_String) return File_Information
+   is
+      E : constant Matreshka.File_System_Entries.File_System_Entry
+        := Matreshka.File_System_Entries.To_File_System_Entry (File);
+
+   begin
+      if E.Is_Absolute then
+         raise Program_Error;
+         --  XXX Not implementet jet.
+
+      else
+         return (Ada.Finalization.Controlled with Data => null);
+      end if;
+   end To_File_Information;
 
 end League.Files;
