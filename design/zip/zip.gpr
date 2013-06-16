@@ -1,0 +1,27 @@
+--  with "../../gnat/matreshka_config.gpr";
+with "../../gnat/matreshka_league.gpr";
+with "../dirs/dirs.gpr";
+
+project ZIP is
+
+   for Main use ("main.adb");
+   for Object_Dir use ".objs";
+   for Source_Dirs use (".");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g", "-gnat12");
+   end Compiler;
+
+--   package Naming is
+--      case Matreshka_Config.Operating_System is
+--         when "POSIX" =>
+--            for Implementation ("Matreshka.Internals.File_Engines.Platform")
+--              use "matreshka-internals-file_engines-platform__posix.adb";
+--
+--         when "Windows" =>
+--            for Implementation ("Matreshka.Internals.File_Engines.Platform")
+--              use "matreshka-internals-file_engines-platform__windows.adb";
+--      end case;
+--   end Naming;
+
+end ZIP;
