@@ -48,6 +48,8 @@ with Zip.Metadata;
 
 package body Matreshka.Zip_File_System_Engines is
 
+   use type League.Strings.Universal_String;
+
    function Create
     (Path : League.Strings.Universal_String)
        return not null Matreshka.File_System_Engines.File_System_Engine_Access;
@@ -81,15 +83,27 @@ package body Matreshka.Zip_File_System_Engines is
     (Self : not null access Zip_File_System_Engine;
      Path : League.Strings.Universal_String)
        return Matreshka.File_Engines.File_Engine_Access is
+       procedure puts (Item : String);
+       pragma Import (C, puts);
+       Index : Natural := 0;
+
    begin
       return Result : Matreshka.File_Engines.File_Engine_Access
         := new Matreshka.Zip_File_Engines.Zip_File_Engine
       do
+         for J in 1 .. Integer (Self.Central_Directory.Files.Length) loop
+            if Self.Central_Directory.Files (J).File_Name = Path then
+               Index := J;
+
+               exit;
+            end if;
+         end loop;
+
          Matreshka.Zip_File_Engines.Initialize
           (Matreshka.Zip_File_Engines.Zip_File_Engine'Class (Result.all),
            Self,
            League.String_Vectors.Empty_Universal_String_Vector,
-           0);
+           Index);
       end return;
    end Create_File_Engine;
 
@@ -102,8 +116,6 @@ package body Matreshka.Zip_File_System_Engines is
      File_Engine : Matreshka.File_Engines.File_Engine_Access)
        return League.String_Vectors.Universal_String_Vector
    is
-      use type League.Strings.Universal_String;
-
       File  : Matreshka.Zip_File_Engines.Zip_File_Engine
         renames Matreshka.Zip_File_Engines.Zip_File_Engine (File_Engine.all);
       Path  : League.Strings.Universal_String;
