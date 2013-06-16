@@ -67,4 +67,9 @@ package Matreshka.Zip_File_Engines is
      Path   : League.String_Vectors.Universal_String_Vector;
      Index  : Natural);
 
+   overriding function Is_Directory
+    (Self : not null access Zip_File_Engine) return Boolean;
+   --  Returns true if this object points to a directory or to a symbolic link
+   --  to a directory; otherwise returns false.
+
 end Matreshka.Zip_File_Engines;

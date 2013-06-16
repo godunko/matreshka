@@ -17,7 +17,15 @@ begin
    Ada.Wide_Wide_Text_IO.Put_Line ("list of entries in archive's root directory");
 
    for J in 1 .. V.Length loop
-      Ada.Wide_Wide_Text_IO.Put_Line ("  " & V (J).To_Wide_Wide_String);
       F := League.Files.To_File_Information (D, V (J));
+
+      if F.Is_Directory then
+         Ada.Wide_Wide_Text_IO.Put (" (Dir) ");
+
+      else
+         Ada.Wide_Wide_Text_IO.Put ("       ");
+      end if;
+
+      Ada.Wide_Wide_Text_IO.Put_Line (V (J).To_Wide_Wide_String);
    end loop;
 end Main;

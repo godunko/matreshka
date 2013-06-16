@@ -59,4 +59,14 @@ package body Matreshka.Zip_File_Engines is
       Self.Index := Index;
    end Initialize;
 
+   ------------------
+   -- Is_Directory --
+   ------------------
+
+   overriding function Is_Directory
+    (Self : not null access Zip_File_Engine) return Boolean is
+   begin
+      return Self.Index = 0;
+   end Is_Directory;
+
 end Matreshka.Zip_File_Engines;
