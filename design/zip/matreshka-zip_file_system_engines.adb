@@ -90,9 +90,71 @@ package body Matreshka.Zip_File_System_Engines is
            Self,
            League.String_Vectors.Empty_Universal_String_Vector,
            0);
---           Matreshka.File_Engines.File_Engine_Access (Self));
       end return;
    end Create_File_Engine;
+
+   ----------------
+   -- Entry_List --
+   ----------------
+
+   overriding function Entry_List
+    (Self        : not null access Zip_File_System_Engine;
+     File_Engine : Matreshka.File_Engines.File_Engine_Access)
+       return League.String_Vectors.Universal_String_Vector
+   is
+      use type League.Strings.Universal_String;
+
+      File  : Matreshka.Zip_File_Engines.Zip_File_Engine
+        renames Matreshka.Zip_File_Engines.Zip_File_Engine (File_Engine.all);
+      Path  : League.Strings.Universal_String;
+      Aux   : League.String_Vectors.Universal_String_Vector;
+      Found : Boolean;
+
+   begin
+      if File.Index /= 0 then
+         --  File_Engine points to file.
+
+         return League.String_Vectors.Empty_Universal_String_Vector;
+
+      else
+         --  Construct full path name as used in archive.
+
+         Path := File.Path.Join ('/');
+
+         if not Path.Is_Empty then
+            Path.Append ('/');
+         end if;
+
+         return Result : League.String_Vectors.Universal_String_Vector do
+            for F of Self.Central_Directory.Files loop
+               --  If file name starts with path and doesn't equal to path
+               --  (that means an empty directory) then obtain first segment
+               --  after path and add it to the list of entries.
+
+               if F.File_Name.Starts_With (Path)
+                 and then F.File_Name /= Path
+               then
+                  Aux :=
+                    F.File_Name.Slice
+                     (Path.Length + 1, F.File_Name.Length).Split ('/');
+                  Found := False;
+
+                  for J in 1 .. Result.Length loop
+                     if Result (J) = Aux (1) then
+                        Found := True;
+
+                        exit;
+                     end if;
+                  end loop;
+
+                  if not Found then
+                     Result.Append (Aux (1));
+                  end if;
+               end if;
+            end loop;
+         end return;
+      end if;
+   end Entry_List;
 
    ----------------
    -- Initialize --

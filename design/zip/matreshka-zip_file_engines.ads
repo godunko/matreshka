@@ -45,7 +45,7 @@
 ------------------------------------------------------------------------------
 with League.String_Vectors;
 with Matreshka.File_Engines;
-private with Matreshka.Internals.Files;
+with Matreshka.Internals.Files;
 with Matreshka.File_System_Engines;
 
 package Matreshka.Zip_File_Engines is
@@ -53,25 +53,20 @@ package Matreshka.Zip_File_Engines is
    pragma Elaborate_Body;
 
    type Zip_File_Engine is
-     new Matreshka.File_Engines.Abstract_File_Engine with private;
+     new Matreshka.File_Engines.Abstract_File_Engine with record
+      Path   : League.String_Vectors.Universal_String_Vector;
+      --  When file engine represents directory it contains directory's path
+      --  inside archive.
+      Index  : Natural;
+      --  When file engine represents file it contains index of file
+      --  information in central directory.
+   end record;
 
    procedure Initialize
     (Self   : in out Zip_File_Engine'Class;
      Engine : not null Matreshka.File_System_Engines.File_System_Engine_Access;
      Path   : League.String_Vectors.Universal_String_Vector;
      Index  : Natural);
-
-private
-
-   type Zip_File_Engine is
-     new Matreshka.File_Engines.Abstract_File_Engine with record
-      Path   : League.String_Vectors.Universal_String_Vector;
-      --  When file engine represents directory is contains directory's path
-      --  inside archive.
-      Index  : Natural;
-      --  When file engine represents file it contains index of file
-      --  information in central directory.
-   end record;
 
    overriding function Create_File_Information
     (Self : not null access Zip_File_Engine)

@@ -42,8 +42,6 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
---with Zip.IO;
---with Zip.Metadata;
 
 package body Matreshka.Zip_File_Engines is
 
@@ -71,10 +69,9 @@ package body Matreshka.Zip_File_Engines is
     (Self   : in out Zip_File_Engine'Class;
      Engine : not null Matreshka.File_System_Engines.File_System_Engine_Access;
      Path   : League.String_Vectors.Universal_String_Vector;
-     Index  : Natural)
-   is
+     Index  : Natural) is
    begin
-      Self.File_System := Engine;
+      Self.File_System_Engine := Engine;
       Self.Path := Path;
       Self.Index := Index;
    end Initialize;

@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 private with League.Strings;
+private with League.String_Vectors;
 private with Matreshka.File_Engines;
 with Matreshka.File_System_Engines;
 private with Zip.IO;
@@ -65,5 +66,14 @@ private
     (Self : not null access Zip_File_System_Engine;
      Path : League.Strings.Universal_String)
        return Matreshka.File_Engines.File_Engine_Access;
+   --  Creates file engine object to handle specified path. Path is relative to
+   --  file system engine.
+
+   overriding function Entry_List
+    (Self        : not null access Zip_File_System_Engine;
+     File_Engine : Matreshka.File_Engines.File_Engine_Access)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns a list of the names of all files and directories when
+   --  File_Engine represents directory.
 
 end Matreshka.Zip_File_System_Engines;
