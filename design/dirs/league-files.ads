@@ -64,7 +64,7 @@ package League.Files is
 --   --  File_Path can also include absolute of relative path.
 
    function To_File_Information
-    (Directory : League.Directories.Directory_Information;
+    (Directory : League.Directories.Directory_Information'Class;
      File      : League.Strings.Universal_String) return File_Information;
    --  Constructs a new File_Information object that gives information about
    --  the given file in the directory Directory.
@@ -74,6 +74,11 @@ package League.Files is
    --
    --  If File is an absolute path, then the directory specified by dir will be
    --  disregarded.
+
+   function To_Directory_Information
+    (Self : File_Information'Class)
+       return League.Directories.Directory_Information;
+   --  Converts file information object into directory information object.
 
 --   function Absolute_Directory
 --    (Self : File_Information'Class)

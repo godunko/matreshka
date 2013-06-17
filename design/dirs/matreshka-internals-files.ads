@@ -57,7 +57,7 @@ package Matreshka.Internals.Files is
       File_System_Entry  : Matreshka.File_System_Entries.File_System_Entry;
       File_System_Engine : Matreshka.File_System_Engines.File_System_Engine_Access;
       --  File system engine to be used as base engine.
-      FS_Relative_Path   : Matreshka.File_System_Entries.File_System_Entry;
+      Relative_Segments  : League.String_Vectors.Universal_String_Vector;
       --  File system entry to store path relative to base file system engine.
       File_Engine        : Matreshka.File_Engines.File_Engine_Access;
 --      Device   : League.Strings.Universal_String;

@@ -301,8 +301,7 @@ package body League.Files is
       elsif Self.Data.File_Engine = null then
          Self.Data.File_Engine :=
            Self.Data.File_System_Engine.Create_File_Engine
-            (Matreshka.File_System_Entries.Path
-              (Self.Data.FS_Relative_Path));
+            (Self.Data.Relative_Segments);
       end if;
 
       return Self.Data.File_Engine.Is_Directory;
@@ -587,12 +586,23 @@ package body League.Files is
 --      return Symbolic_Link_Target (Self);
 --   end Symbolic_Link_Target;
 
+   ------------------------------
+   -- To_Directory_Information --
+   ------------------------------
+
+   function To_Directory_Information
+    (Self : File_Information'Class)
+       return League.Directories.Directory_Information is
+   begin
+      return League.Directories.Internals.Create (Self.Data);
+   end To_Directory_Information;
+
    -------------------------
    -- To_File_Information --
    -------------------------
 
    function To_File_Information
-    (Directory : League.Directories.Directory_Information;
+    (Directory : League.Directories.Directory_Information'Class;
      File      : League.Strings.Universal_String) return File_Information
    is
       E : constant Matreshka.File_System_Entries.File_System_Entry
@@ -614,9 +624,8 @@ package body League.Files is
             --  XXX Directory's path must be taken in sense here.
 
             Result.Data.File_System_Engine := D.File_System_Engine;
-            Result.Data.FS_Relative_Path.Segments.Append
-             (D.FS_Relative_Path.Segments);
-            Result.Data.FS_Relative_Path.Segments.Append (E.Segments);
+            Result.Data.Relative_Segments.Append (D.Relative_Segments);
+            Result.Data.Relative_Segments.Append (E.Segments);
          end return;
       end if;
    end To_File_Information;

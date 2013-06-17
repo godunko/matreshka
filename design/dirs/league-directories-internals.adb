@@ -44,12 +44,27 @@
 
 package body League.Directories.Internals is
 
+   ------------
+   -- Create --
+   ------------
+
+   function Create
+    (Self : Matreshka.Internals.Files.Shared_File_Information_Access)
+       return League.Directories.Directory_Information is
+   begin
+      return Result : League.Directories.Directory_Information
+         := (Ada.Finalization.Controlled with Data => Self)
+      do
+         Matreshka.Internals.Files.Reference (Result.Data);
+      end return;
+   end Create;
+
    --------------
    -- Internal --
    --------------
 
    function Internal
-    (Self : Directory_Information)
+    (Self : League.Directories.Directory_Information'Class)
        return Matreshka.Internals.Files.Shared_File_Information_Access is
    begin
       return Self.Data;

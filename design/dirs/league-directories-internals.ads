@@ -48,7 +48,11 @@ package League.Directories.Internals is
    pragma Preelaborate;
 
    function Internal
-    (Self : Directory_Information)
+    (Self : League.Directories.Directory_Information'Class)
        return Matreshka.Internals.Files.Shared_File_Information_Access;
+
+   function Create
+    (Self : Matreshka.Internals.Files.Shared_File_Information_Access)
+       return League.Directories.Directory_Information;
 
 end League.Directories.Internals;

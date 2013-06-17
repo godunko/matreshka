@@ -282,7 +282,7 @@ package body League.Directories is
               (Self.Data.File_System_Entry));
          Self.Data.File_Engine :=
            Self.Data.File_System_Engine.Create_File_Engine
-            (League.Strings.Empty_Universal_String);
+            (League.String_Vectors.Empty_Universal_String_Vector);
       end if;
 
       return
