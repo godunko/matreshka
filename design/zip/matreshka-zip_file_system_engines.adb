@@ -80,19 +80,27 @@ package body Matreshka.Zip_File_System_Engines is
    ------------------------
 
    overriding function Create_File_Engine
-    (Self : not null access Zip_File_System_Engine;
-     Path : League.Strings.Universal_String)
-       return Matreshka.File_Engines.File_Engine_Access is
-       procedure puts (Item : String);
-       pragma Import (C, puts);
-       Index : Natural := 0;
+    (Self              : not null access Zip_File_System_Engine;
+     Relative_Segments : League.String_Vectors.Universal_String_Vector)
+       return Matreshka.File_Engines.File_Engine_Access
+   is
+      Index          : Natural := 0;
+      File_Name      : League.Strings.Universal_String;
+      Directory_Name : League.Strings.Universal_String;
 
    begin
+      File_Name := Relative_Segments.Join ('/');
+      Directory_Name := File_Name;
+
+      if not Directory_Name.Is_Empty then
+         Directory_Name.Append ('/');
+      end if;
+
       return Result : Matreshka.File_Engines.File_Engine_Access
         := new Matreshka.Zip_File_Engines.Zip_File_Engine
       do
          for J in 1 .. Integer (Self.Central_Directory.Files.Length) loop
-            if Self.Central_Directory.Files (J).File_Name = Path then
+            if Self.Central_Directory.Files (J).File_Name = File_Name then
                Index := J;
 
                exit;
@@ -102,7 +110,7 @@ package body Matreshka.Zip_File_System_Engines is
          Matreshka.Zip_File_Engines.Initialize
           (Matreshka.Zip_File_Engines.Zip_File_Engine'Class (Result.all),
            Self,
-           League.String_Vectors.Empty_Universal_String_Vector,
+           Relative_Segments,
            Index);
       end return;
    end Create_File_Engine;

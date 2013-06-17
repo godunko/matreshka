@@ -63,8 +63,8 @@ private
    end record;
 
    overriding function Create_File_Engine
-    (Self : not null access Zip_File_System_Engine;
-     Path : League.Strings.Universal_String)
+    (Self              : not null access Zip_File_System_Engine;
+     Relative_Segments : League.String_Vectors.Universal_String_Vector)
        return Matreshka.File_Engines.File_Engine_Access;
    --  Creates file engine object to handle specified path. Path is relative to
    --  file system engine.
