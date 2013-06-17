@@ -42,7 +42,6 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.String_Vectors;
-with League.Strings;
 with Matreshka.Atomics.Counters;
 with Matreshka.File_Engines;
 with Matreshka.File_System_Engines;

@@ -52,7 +52,7 @@ package body League.Directories.Internals is
     (Self : Matreshka.Internals.Files.Shared_File_Information_Access)
        return League.Directories.Directory_Information is
    begin
-      return Result : League.Directories.Directory_Information
+      return Result : constant League.Directories.Directory_Information
          := (Ada.Finalization.Controlled with Data => Self)
       do
          Matreshka.Internals.Files.Reference (Result.Data);

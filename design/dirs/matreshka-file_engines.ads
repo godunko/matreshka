@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 with Matreshka.File_System_Engines;
 
 package Matreshka.File_Engines is
