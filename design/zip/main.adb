@@ -28,7 +28,12 @@ procedure Main is
          end if;
 
          for J in 1 .. Depth loop
-            Ada.Wide_Wide_Text_IO.Put (" - ");
+            if J /= Depth then
+               Ada.Wide_Wide_Text_IO.Put ("   ");
+
+            else
+               Ada.Wide_Wide_Text_IO.Put (" - ");
+            end if;
          end loop;
 
          Ada.Wide_Wide_Text_IO.Put_Line (Entries (J).To_Wide_Wide_String);
