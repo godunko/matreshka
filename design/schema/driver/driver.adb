@@ -4,9 +4,11 @@ with League.Application;
 with League.String_Vectors;
 with League.Strings;
 
+with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Models;
 with XML.Schema.Utilities;
+with XML.Schema.Type_Definitions;
 
 with Matreshka.XML_Schema.URI_Rewriter;
 
@@ -37,14 +39,26 @@ begin
    --  Lookup for element declaration.
 
    declare
+      use type XML.Schema.Type_Category;
+
       Namespace : League.Strings.Universal_String
         := League.Strings.To_Universal_String ("http://www.actforex.com/iats");
       Name      : League.Strings.Universal_String
         := League.Strings.To_Universal_String ("OpenSessionResponse");
       Decl      : XML.Schema.Element_Declarations.XS_Element_Declaration
         := Model.Get_Element_Declaration (Name, Namespace);
+      Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition
+        := Decl.Get_Type_Definition;
+      CTD       :
+        XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
 
    begin
-      null;
+      if Type_D.Get_Type_Category /= XML.Schema.Complex_Type then
+         CTD := Type_D.To_Complex_Type_Definition;
+
+         if CTD.Is_Null then
+            raise Program_Error;
+         end if;
+      end if;
    end;
 end Driver;
