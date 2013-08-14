@@ -555,6 +555,12 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean);
       --  'sequence' element inside 'complexType'
 
+      procedure Start_Type_Level_Choice_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+      --  'choice' element inside 'complexType'
+
       procedure Start_Any_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
@@ -1210,6 +1216,30 @@ package body Matreshka.XML_Schema.Handlers is
               (Node);
          end if;
       end Start_Type_Level_Attribute_Element;
+
+      procedure Start_Type_Level_Choice_Element
+       (Self       : in out XML_Schema_Handler;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean)
+      is
+         Node : Matreshka.XML_Schema.AST.Particle_Access;
+
+      begin
+         Self.State.Last_Complex_Type_Definition.Derivation_Method :=
+           XML.Schema.Derivation_Restriction;
+         Self.State.Last_Complex_Type_Definition.Any_Type_Restriction := True;
+
+         Particles.Start_Choice_Element
+           (Self       => Self,
+            Attributes => Attributes,
+            Success    => Success,
+            Node       => Node);
+
+         Self.State.Last_Complex_Type_Definition.Content_Type :=
+           (Variety      => AST.Complex_Types.Element_Only,
+            Particle     => Node,
+            Open_Content => <>);
+      end Start_Type_Level_Choice_Element;
 
       ---------------------------------------
       -- Start_Type_Level_Sequence_Element --
@@ -2878,6 +2908,11 @@ package body Matreshka.XML_Schema.Handlers is
                Self.Push (Choice);
                Declarations.Start_Group_Level_Choice_Element
                 (Self, Attributes, Success);
+
+            elsif Self.Current = Complex_Type then
+               Self.Push (Choice);
+               Complex_Types.Start_Type_Level_Choice_Element
+                 (Self, Attributes, Success);
 
             elsif Self.Current in
               Complex_Type_Extension | Complex_Type_Restriction
