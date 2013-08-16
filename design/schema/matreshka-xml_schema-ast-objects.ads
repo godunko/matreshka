@@ -55,4 +55,12 @@ package Matreshka.XML_Schema.AST.Objects is
     (Self : not null access Abstract_Object_Node)
       return XML.Schema.Component_Type is abstract;
 
+   not overriding function Get_Name
+    (Self : not null access Abstract_Object_Node)
+      return League.Strings.Universal_String is abstract;
+
+   not overriding function Get_Target_Namespase
+    (Self : not null access Abstract_Object_Node)
+      return League.Strings.Universal_String is abstract;
+
 end Matreshka.XML_Schema.AST.Objects;

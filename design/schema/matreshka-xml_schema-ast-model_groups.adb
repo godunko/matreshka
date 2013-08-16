@@ -72,6 +72,50 @@ package body Matreshka.XML_Schema.AST.Model_Groups is
    end Enter_Node;
 
    --------------
+   -- Get_Name --
+   --------------
+
+   overriding function Get_Name
+    (Self : not null access Model_Group_Node)
+      return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Name;
+
+   --------------
+   -- Get_Name --
+   --------------
+
+   overriding function Get_Name
+    (Self : not null access Model_Group_Definition_Node)
+      return League.Strings.Universal_String is
+   begin
+      return Self.Name;
+   end Get_Name;
+
+   --------------------------
+   -- Get_Target_Namespase --
+   --------------------------
+
+   overriding function Get_Target_Namespase
+    (Self : not null access Model_Group_Node)
+     return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Target_Namespase;
+
+   --------------------------
+   -- Get_Target_Namespase --
+   --------------------------
+
+   overriding function Get_Target_Namespase
+    (Self : not null access Model_Group_Definition_Node)
+     return League.Strings.Universal_String is
+   begin
+      return Self.Target_Namespace;
+   end Get_Target_Namespase;
+
+   --------------
    -- Get_Type --
    --------------
 
@@ -82,6 +126,20 @@ package body Matreshka.XML_Schema.AST.Model_Groups is
 
    begin
       return XML.Schema.Model_Group;
+   end Get_Type;
+
+   --------------
+   -- Get_Type --
+   --------------
+
+   overriding function Get_Type
+     (Self : not null access Model_Group_Definition_Node)
+     return XML.Schema.Component_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.Schema.Model_Group_Definition;
    end Get_Type;
 
    ----------------

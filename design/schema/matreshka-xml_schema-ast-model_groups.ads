@@ -44,13 +44,16 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.AST.Objects;
 with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Model_Groups is
 
    pragma Preelaborate;
 
-   type Model_Group_Definition_Node is new Abstract_Node with record
+   type Model_Group_Definition_Node is new
+     Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node
+       with record
       --  Properties:
       --
 
@@ -70,6 +73,18 @@ package Matreshka.XML_Schema.AST.Model_Groups is
       --  {model group}
       --  A Model Group component. Required.
    end record;
+
+   overriding function Get_Name
+    (Self : not null access Model_Group_Definition_Node)
+      return League.Strings.Universal_String;
+
+   overriding function Get_Target_Namespase
+    (Self : not null access Model_Group_Definition_Node)
+     return League.Strings.Universal_String;
+
+   overriding function Get_Type
+     (Self : not null access Model_Group_Definition_Node)
+     return XML.Schema.Component_Type;
 
    overriding procedure Enter_Node
     (Self    : not null access Model_Group_Definition_Node;
@@ -111,6 +126,14 @@ package Matreshka.XML_Schema.AST.Model_Groups is
 
    overriding function Get_Type
     (Self : not null access Model_Group_Node) return XML.Schema.Component_Type;
+
+   overriding function Get_Name
+    (Self : not null access Model_Group_Node)
+      return League.Strings.Universal_String;
+
+   overriding function Get_Target_Namespase
+    (Self : not null access Model_Group_Node)
+     return League.Strings.Universal_String;
 
    overriding procedure Enter_Node
     (Self    : not null access Model_Group_Node;

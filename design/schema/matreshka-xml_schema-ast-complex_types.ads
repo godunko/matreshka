@@ -162,6 +162,14 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  Marker for implicit restriction of xs:anyType
    end record;
 
+   overriding function Get_Name
+    (Self : not null access Complex_Type_Definition_Node)
+      return League.Strings.Universal_String;
+
+   overriding function Get_Target_Namespase
+    (Self : not null access Complex_Type_Definition_Node)
+      return League.Strings.Universal_String;
+
    overriding procedure Enter_Node
     (Self    : not null access Complex_Type_Definition_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;

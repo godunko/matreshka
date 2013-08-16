@@ -134,6 +134,14 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
     (Self : not null access Element_Declaration_Node)
        return XML.Schema.Component_Type;
 
+   overriding function Get_Name
+    (Self : not null access Element_Declaration_Node)
+      return League.Strings.Universal_String;
+
+   overriding function Get_Target_Namespase
+    (Self : not null access Element_Declaration_Node)
+     return League.Strings.Universal_String;
+
    overriding procedure Enter_Node
     (Self    : not null access Element_Declaration_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;

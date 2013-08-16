@@ -59,6 +59,28 @@ package body Matreshka.XML_Schema.AST.Element_Declarations is
    end Enter_Node;
 
    --------------
+   -- Get_Name --
+   --------------
+
+   overriding function Get_Name
+    (Self : not null access Element_Declaration_Node)
+      return League.Strings.Universal_String is
+   begin
+      return Self.Name;
+   end Get_Name;
+
+   --------------------------
+   -- Get_Target_Namespase --
+   --------------------------
+
+   overriding function Get_Target_Namespase
+    (Self : not null access Element_Declaration_Node)
+     return League.Strings.Universal_String is
+   begin
+      return Self.Target_Namespace;
+   end Get_Target_Namespase;
+
+   --------------
    -- Get_Type --
    --------------
 
