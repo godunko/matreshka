@@ -41,70 +41,39 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Finalization;
 
 with League.Strings;
 
-with Matreshka.XML_Schema.Named_Maps;
+with Matreshka.XML_Schema.AST;
 
-with XML.Schema.Objects;
-
-package XML.Schema.Named_Maps is
+package Matreshka.XML_Schema.Named_Maps is
 
    pragma Preelaborate;
 
-   type XS_Named_Map is tagged private;
+   type Named_Map is tagged limited private;
+   type Named_Map_Access is access all Named_Map'Class;
 
-   function Length (Self : XS_Named_Map'Class) return Natural;
-   --  The number of XSObjects in the XSObjectList.
-   --  The range of valid child object indices is 1 to Length inclusive.
+   function Length (Self : Named_Map) return Natural;
 
    function Item
-     (Self  : XS_Named_Map'Class;
-      Index : Positive) return XML.Schema.Objects.XS_Object;
-   --  Returns the Index-th item in the collection or null if index is greater
-   --  than the number of objects in the list. The index starts at 1.
-   --
-   --  Parameters
-   --
-   --    index of type Positive -  index into the collection.
-   --
-   --  Return Value
-   --
-   --  The XSObject at the indexth position in the XSObjectList, or null if the
-   --  index specified is not valid.
+     (Self  : Named_Map;
+      Index : Positive) return Matreshka.XML_Schema.AST.Object_Access;
 
    function Item_By_Name
-    (Self      : XS_Named_Map'Class;
+    (Self      : Named_Map;
      Name      : League.Strings.Universal_String;
      Namespace : League.Strings.Universal_String)
-     return XML.Schema.Objects.XS_Object;
-    --  Retrieves an XSObject specified by local Name and Namespace URI.
-    --  Per [XML Namespaces], applications must use the value null as the
-    --  namespace parameter for methods if they wish to specify no namespace.
-    --
-    --  Parameters
-    --
-    --    namespace of type GenericString
-    --        The namespace URI of the XSObject to retrieve, or null if the
-   --         XSObject has no namespace.
-    --    localName of type GenericString
-    --        The local name of the XSObject to retrieve.
-    --
-    --  Return Value
-    --
-    --    A XSObject (of any type) with the specified local name and namespace
-    --    URI, or null if they do not identify any object in this map.
+     return Matreshka.XML_Schema.AST.Object_Access;
+
+   procedure Append
+    (Self      : in out Named_Map;
+     Item      : Matreshka.XML_Schema.AST.Object_Access);
+
+   procedure Reference (Self : Named_Map_Access);
+   procedure Dereference (Self : in out Named_Map_Access);
 
 private
 
-   type XS_Named_Map is new Ada.Finalization.Controlled with record
-      Node : Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
-   end record;
+   type Named_Map is tagged limited null record;
 
-   overriding procedure Adjust (Self : in out XS_Named_Map)
-     with Inline => True;
-
-   overriding procedure Finalize (Self : in out XS_Named_Map);
-
-end XML.Schema.Named_Maps;
+end Matreshka.XML_Schema.Named_Maps;

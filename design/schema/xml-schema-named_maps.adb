@@ -41,70 +41,70 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Finalization;
 
-with League.Strings;
+package body XML.Schema.Named_Maps is
 
-with Matreshka.XML_Schema.Named_Maps;
+   use type Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
 
-with XML.Schema.Objects;
+   ------------
+   -- Adjust --
+   ------------
 
-package XML.Schema.Named_Maps is
+   overriding procedure Adjust (Self : in out XS_Named_Map) is
+   begin
+      if Self.Node /= null then
+         Matreshka.XML_Schema.Named_Maps.Reference (Self.Node);
+      end if;
+   end Adjust;
 
-   pragma Preelaborate;
+   --------------
+   -- Finalize --
+   --------------
 
-   type XS_Named_Map is tagged private;
+   overriding procedure Finalize (Self : in out XS_Named_Map) is
+   begin
+      if Self.Node /= null then
+         Matreshka.XML_Schema.Named_Maps.Dereference (Self.Node);
+      end if;
+   end Finalize;
 
-   function Length (Self : XS_Named_Map'Class) return Natural;
-   --  The number of XSObjects in the XSObjectList.
-   --  The range of valid child object indices is 1 to Length inclusive.
+   ----------
+   -- Item --
+   ----------
 
    function Item
      (Self  : XS_Named_Map'Class;
-      Index : Positive) return XML.Schema.Objects.XS_Object;
-   --  Returns the Index-th item in the collection or null if index is greater
-   --  than the number of objects in the list. The index starts at 1.
-   --
-   --  Parameters
-   --
-   --    index of type Positive -  index into the collection.
-   --
-   --  Return Value
-   --
-   --  The XSObject at the indexth position in the XSObjectList, or null if the
-   --  index specified is not valid.
+      Index : Positive)
+      return XML.Schema.Objects.XS_Object
+   is
+   begin
+      raise Program_Error;
+      return Result : XML.Schema.Objects.XS_Object;
+   end Item;
+
+   ------------------
+   -- Item_By_Name --
+   ------------------
 
    function Item_By_Name
-    (Self      : XS_Named_Map'Class;
-     Name      : League.Strings.Universal_String;
-     Namespace : League.Strings.Universal_String)
-     return XML.Schema.Objects.XS_Object;
-    --  Retrieves an XSObject specified by local Name and Namespace URI.
-    --  Per [XML Namespaces], applications must use the value null as the
-    --  namespace parameter for methods if they wish to specify no namespace.
-    --
-    --  Parameters
-    --
-    --    namespace of type GenericString
-    --        The namespace URI of the XSObject to retrieve, or null if the
-   --         XSObject has no namespace.
-    --    localName of type GenericString
-    --        The local name of the XSObject to retrieve.
-    --
-    --  Return Value
-    --
-    --    A XSObject (of any type) with the specified local name and namespace
-    --    URI, or null if they do not identify any object in this map.
+     (Self      : XS_Named_Map'Class;
+      Name      : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String)
+      return XML.Schema.Objects.XS_Object
+   is
+   begin
+      raise Program_Error;
+      return Result : XML.Schema.Objects.XS_Object;
+   end Item_By_Name;
 
-private
+   ------------
+   -- Length --
+   ------------
 
-   type XS_Named_Map is new Ada.Finalization.Controlled with record
-      Node : Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
-   end record;
-
-   overriding procedure Adjust (Self : in out XS_Named_Map)
-     with Inline => True;
-
-   overriding procedure Finalize (Self : in out XS_Named_Map);
+   function Length (Self : XS_Named_Map'Class) return Natural is
+   begin
+      raise Program_Error;
+      return 0;
+   end Length;
 
 end XML.Schema.Named_Maps;

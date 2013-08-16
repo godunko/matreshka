@@ -43,6 +43,9 @@
 ------------------------------------------------------------------------------
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
+with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.Named_Maps;
+
 with XML.Schema.Element_Declarations.Internals;
 
 package body XML.Schema.Models is
@@ -113,10 +116,48 @@ package body XML.Schema.Models is
     (Self        : XS_Model'Class;
      Object_Type : Extended_XML_Schema_Component_Type;
      Namespace   : League.Strings.Universal_String)
-       return XML.Schema.Named_Maps.XS_Named_Map is
+       return XML.Schema.Named_Maps.XS_Named_Map
+   is
+      use type Matreshka.XML_Schema.AST.Namespace_Access;
+
+      Item : Matreshka.XML_Schema.AST.Namespace_Access;
+
    begin
-      raise Program_Error;
-      return X : XML.Schema.Named_Maps.XS_Named_Map;
+      if Self.Node /= null then
+         --  Lookup for namespace.
+
+         Item := Self.Node.Get_Namespace (Namespace);
+
+         if Item /= null then
+            --  Lookup for components.
+            case Object_Type is
+               when Complex_Type =>
+                  declare
+                     package M renames
+                       Matreshka.XML_Schema.AST.Types.Type_Definition_Maps;
+                     Type_Definitions : M.Map renames Item.Type_Definitions;
+                     Pos    : M.Cursor := Type_Definitions.First;
+                     Result : Matreshka.XML_Schema.Named_Maps
+                       .Named_Map_Access
+                         := new Matreshka.XML_Schema.Named_Maps.Named_Map;
+                  begin
+                     while M.Has_Element (Pos) loop
+                        if M.Element (Pos).Get_Type = Object_Type then
+                           Result.Append
+                             (Matreshka.XML_Schema.AST.Object_Access
+                                (M.Element (Pos)));
+                        end if;
+
+                        M.Next (Pos);
+                     end loop;
+                  end;
+               when others =>
+                  raise Program_Error;
+            end case;
+         end if;
+      end if;
+
+      return Empty : XML.Schema.Named_Maps.XS_Named_Map;
    end Get_Components_By_Namespace;
 
    -----------------------------
