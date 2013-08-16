@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,80 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.Visitors;
+with Matreshka.XML_Schema.AST;
 
-package body Matreshka.XML_Schema.AST.Particles is
+package XML.Schema.Objects.Particles.Internals is
 
-   ----------------
-   -- Enter_Node --
-   ----------------
+   pragma Preelaborate;
 
-   overriding procedure Enter_Node
-    (Self    : not null access Particle_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Enter_Particle
-       (Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Enter_Node;
+   function Create
+    (Node : Matreshka.XML_Schema.AST.Particle_Access) return XS_Particle;
 
-   --------------
-   -- Get_Name --
-   --------------
-
-   overriding function Get_Name
-    (Self : not null access Particle_Node)
-     return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Name;
-
-   --------------------------
-   -- Get_Target_Namespace --
-   --------------------------
-
-   overriding function Get_Target_Namespace
-    (Self : not null access Particle_Node)
-      return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Target_Namespace;
-
-   --------------
-   -- Get_Type --
-   --------------
-
-   overriding function Get_Type
-    (Self : not null access Particle_Node) return XML.Schema.Component_Type is
-   begin
-      return XML.Schema.Particle;
-   end Get_Type;
-
-   ----------------
-   -- Leave_Node --
-   ----------------
-
-   overriding procedure Leave_Node
-    (Self    : not null access Particle_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Particle
-       (Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Leave_Node;
-
-   ----------------
-   -- Visit_Node --
-   ----------------
-
-   overriding procedure Visit_Node
-    (Self     : not null access Particle_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Particle
-       (Visitor, Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Visit_Node;
-
-end Matreshka.XML_Schema.AST.Particles;
+end XML.Schema.Objects.Particles.Internals;

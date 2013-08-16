@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with XML.Schema.Annotations;
+with XML.Schema.Objects.Particles;
 
 package XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
 
@@ -85,7 +86,7 @@ package XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
 
    function Get_Particle
     (Self : XS_Complex_Type_Definition'Class)
-       return Natural;
+       return XML.Schema.Objects.Particles.XS_Particle;
    --  particle of type XSParticle, readonly
    --  A particle for a mixed or element-only content model, otherwise null.
 

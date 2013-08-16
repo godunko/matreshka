@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,80 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.Visitors;
 
-package body Matreshka.XML_Schema.AST.Particles is
+with XML.Schema.Objects.Terms;
 
-   ----------------
-   -- Enter_Node --
-   ----------------
+package XML.Schema.Objects.Particles is
 
-   overriding procedure Enter_Node
-    (Self    : not null access Particle_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Enter_Particle
-       (Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Enter_Node;
+   pragma Preelaborate;
 
-   --------------
-   -- Get_Name --
-   --------------
+   type Unbounded_Natural (Unbounded : Boolean := False) is record
+      case Unbounded is
+         when False =>
+            Value : Natural;
+         when True =>
+            null;
+      end case;
+   end record;
 
-   overriding function Get_Name
-    (Self : not null access Particle_Node)
-     return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Name;
+   type XS_Particle is new XS_Object with private;
 
-   --------------------------
-   -- Get_Target_Namespace --
-   --------------------------
+   function Get_Max_Occurs (Self : XS_Particle'Class) return Unbounded_Natural;
+   --  [max occurs]: determines the maximum number of terms that can occur.
 
-   overriding function Get_Target_Namespace
-    (Self : not null access Particle_Node)
-      return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Target_Namespace;
+   function Get_Min_Occurs (Self : XS_Particle'Class) return Natural;
+   --  [min occurs]: determines the minimum number of terms that can occur.
 
-   --------------
-   -- Get_Type --
-   --------------
+   function Get_Term
+     (Self : XS_Particle'Class) return XML.Schema.Objects.Terms.XS_Term;
+   --  [term]: one of a model group, a wildcard, or an element declaration.
 
-   overriding function Get_Type
-    (Self : not null access Particle_Node) return XML.Schema.Component_Type is
-   begin
-      return XML.Schema.Particle;
-   end Get_Type;
+private
 
-   ----------------
-   -- Leave_Node --
-   ----------------
+   type XS_Particle is new XS_Object with null record;
 
-   overriding procedure Leave_Node
-    (Self    : not null access Particle_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Particle
-       (Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Leave_Node;
-
-   ----------------
-   -- Visit_Node --
-   ----------------
-
-   overriding procedure Visit_Node
-    (Self     : not null access Particle_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Particle
-       (Visitor, Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Visit_Node;
-
-end Matreshka.XML_Schema.AST.Particles;
+end XML.Schema.Objects.Particles;

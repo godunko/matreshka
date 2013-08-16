@@ -42,7 +42,26 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
+with Matreshka.XML_Schema.AST.Complex_Types;
+
+with XML.Schema.Objects.Particles.Internals;
+
 package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
+
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+
+   ---------
+   -- "+" --
+   ---------
+
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Complex_Type_Definition_Access is
+   begin
+      return Matreshka.XML_Schema.AST.Complex_Type_Definition_Access (Self);
+   end "+";
 
    ------------------
    -- Get_Abstract --
@@ -82,11 +101,23 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
      (Self : XS_Complex_Type_Definition'Class)
       return Content_Types
    is
+      package T renames Matreshka.XML_Schema.AST.Complex_Types;
+      use type Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+
+      Convert : constant array (T.Content_Type_Variety) of Content_Types
+        := (T.Empty        => Empty,
+            T.Simple       => Simple,
+            T.Element_Only => Element_Only,
+            T.Mixed        => Mixed);
+
+      Node : constant Matreshka.XML_Schema.AST.Complex_Type_Definition_Access
+        := +Self.Node;
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Get_Content_Type unimplemented");
-      raise Program_Error with "Unimplemented function Get_Content_Type";
-      return Get_Content_Type (Self);
+      if Node = null then
+         return Empty;
+      else
+         return Convert (Node.Content_Type.Variety);
+      end if;
    end Get_Content_Type;
 
    ------------------
@@ -94,14 +125,20 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
    ------------------
 
    function Get_Particle
-     (Self : XS_Complex_Type_Definition'Class)
-      return Natural
+    (Self : XS_Complex_Type_Definition'Class)
+       return XML.Schema.Objects.Particles.XS_Particle
    is
+      use type Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Complex_Type_Definition_Access
+        := +Self.Node;
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Get_Particle unimplemented");
-      raise Program_Error with "Unimplemented function Get_Particle";
-      return Get_Particle (Self);
+      if Node = null then
+         return E : XML.Schema.Objects.Particles.XS_Particle;
+      else
+         return XML.Schema.Objects.Particles.Internals.Create
+            (Node.Content_Type.Particle);
+      end if;
    end Get_Particle;
 
 end XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;

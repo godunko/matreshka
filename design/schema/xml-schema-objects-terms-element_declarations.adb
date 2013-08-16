@@ -42,19 +42,46 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.XML_Schema.AST.Element_Declarations;
+with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.AST.Complex_Types;
+
+with XML.Schema.Complex_Type_Definitions.Internals;
 with XML.Schema.Type_Definitions.Internals;
 
 package body XML.Schema.Objects.Terms.Element_Declarations is
+
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
+   ---------
+   -- "+" --
+   ---------
+
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Element_Declaration_Access is
+   begin
+      return Matreshka.XML_Schema.AST.Element_Declaration_Access (Self);
+   end "+";
 
    ------------------
    -- Get_Abstract --
    ------------------
 
    function Get_Abstract
-    (Self : XS_Element_Declaration'Class) return Boolean is
+    (Self : XS_Element_Declaration'Class) return Boolean
+   is
+      use type Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Element_Declaration_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return False;
+      if Node = null then
+         return False;
+      else
+         return Node.Is_Abstract;
+      end if;
    end Get_Abstract;
 
    -------------------
@@ -96,10 +123,26 @@ package body XML.Schema.Objects.Terms.Element_Declarations is
    -------------------------
 
    function Get_Constraint_Type
-    (Self : XS_Element_Declaration'Class) return XML.Schema.Value_Constraint is
+    (Self : XS_Element_Declaration'Class) return XML.Schema.Value_Constraint
+   is
+      package T renames Matreshka.XML_Schema.AST.Types;
+
+      use type Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
+      Convert : constant array (T.Value_Constraint_Variety) of
+        XML.Schema.Value_Constraint
+          := (T.Absent  => XML.Schema.VC_None,
+              T.Default => XML.Schema.VC_Default,
+              T.Fixed   => XML.Schema.VC_Fixed);
+
+      Node : constant Matreshka.XML_Schema.AST.Element_Declaration_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return X : XML.Schema.Value_Constraint;
+      if Node = null then
+         return XML.Schema.VC_None;
+      else
+         return Convert (Node.Value_Constraint.Variety);
+      end if;
    end Get_Constraint_Type;
 
    --------------------------
@@ -108,10 +151,18 @@ package body XML.Schema.Objects.Terms.Element_Declarations is
 
    function Get_Constraint_Value
     (Self : XS_Element_Declaration'Class)
-       return League.Strings.Universal_String is
+       return League.Strings.Universal_String
+   is
+      use type Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Element_Declaration_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
+      if Node = null then
+         return League.Strings.Empty_Universal_String;
+      else
+         return Node.Value_Constraint.Value;
+      end if;
    end Get_Constraint_Value;
 
    ----------------------------------
@@ -131,10 +182,21 @@ package body XML.Schema.Objects.Terms.Element_Declarations is
 
    function Get_Enclosing_CT_Definition
     (Self : XS_Element_Declaration'Class)
-       return XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition is
+       return XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
+   is
+      use type Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Element_Declaration_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return X : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+      if Node = null then
+         return
+           XML.Schema.Complex_Type_Definitions.Null_XS_Complex_Type_Definition;
+      else
+         return XML.Schema.Complex_Type_Definitions.Internals.Create
+           (Matreshka.XML_Schema.AST.Complex_Type_Definition_Access
+             (Node.Type_Definition));
+      end if;
    end Get_Enclosing_CT_Definition;
 
    ------------------------------
@@ -154,9 +216,16 @@ package body XML.Schema.Objects.Terms.Element_Declarations is
    ------------------
 
    function Get_Nillable (Self : XS_Element_Declaration'Class) return Boolean is
+      use type Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Element_Declaration_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return False;
+      if Node = null then
+         return False;
+      else
+         return Node.Nillable;
+      end if;
    end Get_Nillable;
 
    ---------------
@@ -164,10 +233,24 @@ package body XML.Schema.Objects.Terms.Element_Declarations is
    ---------------
 
    function Get_Scope
-    (Self : XS_Element_Declaration'Class) return XML.Schema.Scope is
+    (Self : XS_Element_Declaration'Class) return XML.Schema.Scope
+   is
+      package T renames Matreshka.XML_Schema.AST.Types;
+      use type Matreshka.XML_Schema.AST.Element_Declaration_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Element_Declaration_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return XML.Schema.Scope_Global;
+      if Node = null then
+         return XML.Schema.Scope_Global;
+      else
+         case Node.Scope.Variety is
+            when T.Global =>
+               return XML.Schema.Scope_Global;
+            when T.Local =>
+               return XML.Schema.Scope_Local;
+         end case;
+      end if;
    end Get_Scope;
 
    ----------------------------------------
@@ -200,17 +283,17 @@ package body XML.Schema.Objects.Terms.Element_Declarations is
     (Self : XS_Element_Declaration'Class)
        return XML.Schema.Type_Definitions.XS_Type_Definition
    is
-      use type Matreshka.XML_Schema.AST.Object_Access;
+      use type Matreshka.XML_Schema.AST.Element_Declaration_Access;
 
+      Node : constant Matreshka.XML_Schema.AST.Element_Declaration_Access
+        := +Self.Node;
    begin
-      if Self.Node = null then
+      if Node = null then
          return XML.Schema.Type_Definitions.Null_XS_Type_Definition;
 
       else
-         return
-           XML.Schema.Type_Definitions.Internals.Create
-            (Matreshka.XML_Schema.AST.Element_Declaration_Access
-              (Self.Node).Type_Definition);
+         return XML.Schema.Type_Definitions.Internals.Create
+           (Node.Type_Definition);
       end if;
    end Get_Type_Definition;
 

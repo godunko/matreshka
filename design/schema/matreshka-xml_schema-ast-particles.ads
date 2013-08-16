@@ -44,12 +44,16 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.AST.Objects;
+
+with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Particles is
 
    pragma Preelaborate;
 
-   type Particle_Node is new Abstract_Node with record
+   type Particle_Node is
+     new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node with record
       --  Properties:
       --
 
@@ -76,6 +80,18 @@ package Matreshka.XML_Schema.AST.Particles is
       Group_Ref : Matreshka.XML_Schema.AST.Qualified_Name;
       --  group/@ref
    end record;
+
+   overriding function Get_Type
+    (Self : not null access Particle_Node)
+      return XML.Schema.Component_Type;
+
+   overriding function Get_Name
+    (Self : not null access Particle_Node)
+      return League.Strings.Universal_String;
+
+   overriding function Get_Target_Namespace
+    (Self : not null access Particle_Node)
+      return League.Strings.Universal_String;
 
    overriding procedure Enter_Node
     (Self    : not null access Particle_Node;

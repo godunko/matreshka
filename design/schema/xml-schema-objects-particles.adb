@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,80 +41,82 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.Visitors;
 
-package body Matreshka.XML_Schema.AST.Particles is
+with XML.Schema.Objects.Terms.Internals;
+with Matreshka.XML_Schema.AST.Particles;
 
-   ----------------
-   -- Enter_Node --
-   ----------------
+package body XML.Schema.Objects.Particles is
 
-   overriding procedure Enter_Node
-    (Self    : not null access Particle_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Particle_Access;
+
+   ---------
+   -- "+" --
+   ---------
+
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Particle_Access is
    begin
-      Visitor.Enter_Particle
-       (Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Enter_Node;
+      return Matreshka.XML_Schema.AST.Particle_Access (Self);
+   end "+";
+
+   --------------------
+   -- Get_Max_Occurs --
+   --------------------
+
+   function Get_Max_Occurs
+     (Self : XS_Particle'Class)
+      return Unbounded_Natural
+   is
+      use type Matreshka.XML_Schema.AST.Particle_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Particle_Access := +Self.Node;
+   begin
+      if Node = null then
+         return (Unbounded => True);
+
+      elsif Node.Max_Occurs = Natural'Last then
+         return (Unbounded => True);
+      else
+         return (Unbounded => False, Value => Node.Max_Occurs);
+      end if;
+   end Get_Max_Occurs;
+
+   --------------------
+   -- Get_Min_Occurs --
+   --------------------
+
+   function Get_Min_Occurs (Self : XS_Particle'Class) return Natural is
+      use type Matreshka.XML_Schema.AST.Particle_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Particle_Access := +Self.Node;
+   begin
+      if Node = null then
+         return 0;
+      else
+         return Node.Min_Occurs;
+      end if;
+   end Get_Min_Occurs;
 
    --------------
-   -- Get_Name --
+   -- Get_Term --
    --------------
 
-   overriding function Get_Name
-    (Self : not null access Particle_Node)
-     return League.Strings.Universal_String is
+   function Get_Term
+     (Self : XS_Particle'Class)
+      return XML.Schema.Objects.Terms.XS_Term
+   is
+      use type Matreshka.XML_Schema.AST.Particle_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Particle_Access := +Self.Node;
    begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Name;
+      if Node = null then
+         return XML.Schema.Objects.Terms.Null_XS_Term;
+      else
+         return XML.Schema.Objects.Terms.Internals.Create (Node.Term);
+      end if;
+   end Get_Term;
 
-   --------------------------
-   -- Get_Target_Namespace --
-   --------------------------
-
-   overriding function Get_Target_Namespace
-    (Self : not null access Particle_Node)
-      return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Target_Namespace;
-
-   --------------
-   -- Get_Type --
-   --------------
-
-   overriding function Get_Type
-    (Self : not null access Particle_Node) return XML.Schema.Component_Type is
-   begin
-      return XML.Schema.Particle;
-   end Get_Type;
-
-   ----------------
-   -- Leave_Node --
-   ----------------
-
-   overriding procedure Leave_Node
-    (Self    : not null access Particle_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Particle
-       (Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Leave_Node;
-
-   ----------------
-   -- Visit_Node --
-   ----------------
-
-   overriding procedure Visit_Node
-    (Self     : not null access Particle_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Particle
-       (Visitor, Matreshka.XML_Schema.AST.Particle_Access (Self), Control);
-   end Visit_Node;
-
-end Matreshka.XML_Schema.AST.Particles;
+end XML.Schema.Objects.Particles;

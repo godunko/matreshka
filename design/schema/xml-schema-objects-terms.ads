@@ -48,8 +48,13 @@ package XML.Schema.Objects.Terms is
 
    type XS_Term is new XS_Object with private;
 
+   Null_XS_Term : constant XS_Term;
+
 private
 
    type XS_Term is new XS_Object with null record;
+
+   Null_XS_Term : constant XS_Term
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Objects.Terms;

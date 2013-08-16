@@ -45,11 +45,14 @@ with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Objects;
 with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.AST.Element_Declarations;
+
 with XML.Schema.Namespace_Items;
 with XML.Schema.Objects.Terms.Element_Declarations;
 with XML.Schema.Objects.Type_Definitions.Internals;
 with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions.Internals;
 with XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions.Internals;
+with XML.Schema.Element_Declarations.Internals;
 
 package body XML.Schema.Objects is
 
@@ -326,10 +329,14 @@ package body XML.Schema.Objects is
          XML.Schema.Objects.Terms.Element_Declarations.XS_Element_Declaration
    is
    begin
-      raise Program_Error;
-      return
-        X :
-          XML.Schema.Objects.Terms.Element_Declarations.XS_Element_Declaration;
+      if Self.Is_Null or else not Self.Is_Element_Declaration then
+         return XML.Schema.Element_Declarations.Null_XS_Element_Declaration;
+      else
+         return
+           XML.Schema.Element_Declarations.Internals.Create
+               (Matreshka.XML_Schema.AST.Element_Declaration_Access
+                    (Self.Node));
+      end if;
    end To_Element_Declaration;
 
    -------------------------------

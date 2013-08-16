@@ -9,12 +9,15 @@ with XML.Schema.Element_Declarations;
 with XML.Schema.Models;
 with XML.Schema.Utilities;
 with XML.Schema.Type_Definitions;
+with XML.Schema.Objects.Particles;
 
 with Matreshka.XML_Schema.URI_Rewriter;
 
 with Ada.Text_IO;
 with XML.Schema.Named_Maps;
 with XML.Schema.Objects;
+with XML.Schema.Objects.Type_Definitions;
+with XML.Schema.Objects.Terms;
 
 procedure Driver is
    Model      : XML.Schema.Models.XS_Model;
@@ -44,6 +47,8 @@ begin
 
    declare
       use type XML.Schema.Type_Category;
+      use all type XML.Schema.Objects.Type_Definitions
+        .Complex_Type_Definitions.Content_Types;
 
       Namespace : League.Strings.Universal_String
         := League.Strings.To_Universal_String ("http://www.actforex.com/iats");
@@ -61,10 +66,12 @@ begin
           (Object_Type => Xml.Schema.Complex_Type,
            Namespace   => Namespace);
 
-      XS_Object : XML.Schema.Objects.XS_Object;
+      XS_Object   : XML.Schema.Objects.XS_Object;
+      XS_Particle : XML.Schema.Objects.Particles.XS_Particle;
+      XS_Term     : XML.Schema.Objects.Terms.XS_Term;
 
    begin
-      if Type_D.Get_Type_Category /= XML.Schema.Complex_Type then
+      if Type_D.Get_Type_Category = XML.Schema.Complex_Type then
          CTD := Type_D.To_Complex_Type_Definition;
 
          if CTD.Is_Null then
@@ -77,6 +84,13 @@ begin
 
          Ada.Text_IO.Put_Line (XS_Object.Get_Name.To_UTF_8_String);
 
+         CTD := XS_Object.To_Complex_Type_Definition;
+
+         if CTD.Get_Content_Type in Element_Only | Mixed then
+            XS_Particle := CTD.Get_Particle;
+            XS_Term := XS_Particle.Get_Term;
+--            Decl := XS_Term.To_Model_Group;
+         end if;
       end loop;
 
    end;
