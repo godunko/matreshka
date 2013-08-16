@@ -80,8 +80,11 @@ package body XML.Schema.Objects is
    function Get_Name
     (Self : XS_Object'Class) return League.Strings.Universal_String is
    begin
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
+      if not Self.Is_Null then
+         return Self.Node.Get_Name;
+      else
+         return League.Strings.Empty_Universal_String;
+      end if;
    end Get_Name;
 
    --------------
@@ -91,8 +94,11 @@ package body XML.Schema.Objects is
    function Get_Namespace
     (Self : XS_Object'Class) return League.Strings.Universal_String is
    begin
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
+      if not Self.Is_Null then
+         return Self.Node.Get_Target_Namespace;
+      else
+         return League.Strings.Empty_Universal_String;
+      end if;
    end Get_Namespace;
 
    ------------------------

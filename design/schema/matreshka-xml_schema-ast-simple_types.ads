@@ -147,6 +147,9 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  list/@itemType
    end record;
 
+   overriding function Get_Type_Category
+    (Self : Simple_Type_Definition_Node) return XML.Schema.Type_Category;
+
    overriding procedure Enter_Node
     (Self    : not null access Simple_Type_Definition_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
@@ -157,7 +160,7 @@ package Matreshka.XML_Schema.AST.Simple_Types is
     (Self : not null access Simple_Type_Definition_Node)
       return League.Strings.Universal_String;
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Simple_Type_Definition_Node)
      return League.Strings.Universal_String;
 

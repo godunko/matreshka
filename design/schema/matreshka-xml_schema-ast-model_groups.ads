@@ -78,7 +78,7 @@ package Matreshka.XML_Schema.AST.Model_Groups is
     (Self : not null access Model_Group_Definition_Node)
       return League.Strings.Universal_String;
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Model_Group_Definition_Node)
      return League.Strings.Universal_String;
 
@@ -131,7 +131,7 @@ package Matreshka.XML_Schema.AST.Model_Groups is
     (Self : not null access Model_Group_Node)
       return League.Strings.Universal_String;
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Model_Group_Node)
      return League.Strings.Universal_String;
 

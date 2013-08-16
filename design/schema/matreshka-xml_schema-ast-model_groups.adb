@@ -94,26 +94,26 @@ package body Matreshka.XML_Schema.AST.Model_Groups is
    end Get_Name;
 
    --------------------------
-   -- Get_Target_Namespase --
+   -- Get_Target_Namespace --
    --------------------------
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Model_Group_Node)
      return League.Strings.Universal_String is
    begin
       return League.Strings.Empty_Universal_String;
-   end Get_Target_Namespase;
+   end Get_Target_Namespace;
 
    --------------------------
-   -- Get_Target_Namespase --
+   -- Get_Target_Namespace --
    --------------------------
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Model_Group_Definition_Node)
      return League.Strings.Universal_String is
    begin
       return Self.Target_Namespace;
-   end Get_Target_Namespase;
+   end Get_Target_Namespace;
 
    --------------
    -- Get_Type --

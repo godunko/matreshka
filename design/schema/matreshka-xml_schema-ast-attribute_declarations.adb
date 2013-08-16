@@ -70,15 +70,15 @@ package body Matreshka.XML_Schema.AST.Attribute_Declarations is
    end Get_Name;
 
    --------------------------
-   -- Get_Target_Namespase --
+   -- Get_Target_Namespace --
    --------------------------
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Attribute_Declaration_Node)
      return League.Strings.Universal_String is
    begin
       return Self.Target_Namespace;
-   end Get_Target_Namespase;
+   end Get_Target_Namespace;
 
    --------------
    -- Get_Type --

@@ -138,7 +138,7 @@ package Matreshka.XML_Schema.AST.Element_Declarations is
     (Self : not null access Element_Declaration_Node)
       return League.Strings.Universal_String;
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Element_Declaration_Node)
      return League.Strings.Universal_String;
 

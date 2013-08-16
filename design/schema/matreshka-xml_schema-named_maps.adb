@@ -41,6 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Objects;
+with Ada.Containers.Hashed_Maps;
+with Ada.Unchecked_Deallocation;
 
 package body Matreshka.XML_Schema.Named_Maps is
 
@@ -49,10 +52,14 @@ package body Matreshka.XML_Schema.Named_Maps is
    ------------
 
    procedure Append
-     (Self      : in out Named_Map;
-      Item      : Matreshka.XML_Schema.AST.Object_Access) is
+     (Self : in out Named_Map;
+      Item : Matreshka.XML_Schema.AST.Object_Access)
+   is
+      use type League.Strings.Universal_String;
+      Key : constant League.Strings.Universal_String :=
+        Item.Get_Name & Item.Get_Target_Namespace;
    begin
-      raise Program_Error;
+      Self.Map.Insert (Key => Key, New_Item =>  Item);
    end Append;
 
    -----------------
@@ -60,8 +67,12 @@ package body Matreshka.XML_Schema.Named_Maps is
    -----------------
 
    procedure Dereference (Self : in out Named_Map_Access) is
+      procedure Free is new Ada.Unchecked_Deallocation
+        (Named_Map'Class, Named_Map_Access);
    begin
-      raise Program_Error;
+      if Matreshka.Atomics.Counters.Decrement (Self.Counter) then
+         Free (Self);
+      end if;
    end Dereference;
 
    ----------
@@ -69,11 +80,23 @@ package body Matreshka.XML_Schema.Named_Maps is
    ----------
 
    function Item
-     (Self  : Named_Map;
+     (Self  : in out Named_Map;
       Index : Positive) return Matreshka.XML_Schema.AST.Object_Access is
    begin
-      raise Program_Error;
-      return null;
+      if Self.Last_Cursor = 0 or Self.Last_Cursor + 1 /= Index then
+         Self.Cursor := Self.Map.First;
+         Self.Last_Cursor := 1;
+
+         for J in 2 .. Index loop
+            Object_Maps.Next (Self.Cursor);
+            Self.Last_Cursor := Self.Last_Cursor + 1;
+         end loop;
+      else
+         Object_Maps.Next (Self.Cursor);
+         Self.Last_Cursor := Self.Last_Cursor + 1;
+      end if;
+
+      return Object_Maps.Element (Self.Cursor);
    end Item;
 
    ------------------
@@ -84,10 +107,20 @@ package body Matreshka.XML_Schema.Named_Maps is
     (Self      : Named_Map;
      Name      : League.Strings.Universal_String;
      Namespace : League.Strings.Universal_String)
-     return Matreshka.XML_Schema.AST.Object_Access is
+     return Matreshka.XML_Schema.AST.Object_Access
+   is
+      use type League.Strings.Universal_String;
+      Key    : constant League.Strings.Universal_String := Name & Namespace;
+      Cursor : Object_Maps.Cursor;
    begin
-      raise Program_Error;
-      return null;
+      Cursor := Self.Map.Find (Key => Key);
+
+      if Object_Maps.Has_Element (Position => Cursor) then
+         return Object_Maps.Element (Cursor);
+      else
+         return null;
+      end if;
+
    end Item_By_Name;
 
    ------------
@@ -96,8 +129,7 @@ package body Matreshka.XML_Schema.Named_Maps is
 
    function Length (Self : Named_Map) return Natural is
    begin
-      raise Program_Error;
-      return 0;
+      return Natural (Self.Map.Length);
    end Length;
 
    ---------------
@@ -106,7 +138,7 @@ package body Matreshka.XML_Schema.Named_Maps is
 
    procedure Reference (Self : Named_Map_Access) is
    begin
-      raise Program_Error;
+      Matreshka.Atomics.Counters.Increment (Self.Counter);
    end Reference;
 
 end Matreshka.XML_Schema.Named_Maps;

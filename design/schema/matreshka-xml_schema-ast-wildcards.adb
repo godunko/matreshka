@@ -70,15 +70,15 @@ package body Matreshka.XML_Schema.AST.Wildcards is
    end Get_Name;
 
    --------------------------
-   -- Get_Target_Namespase --
+   -- Get_Target_Namespace --
    --------------------------
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Wildcard_Node)
       return League.Strings.Universal_String is
    begin
       return League.Strings.Empty_Universal_String;
-   end Get_Target_Namespase;
+   end Get_Target_Namespace;
 
 
    --------------

@@ -45,6 +45,9 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST;
+with Ada.Containers.Hashed_Maps;
+with League.Strings.Hash;
+with Matreshka.Atomics.Counters;
 
 package Matreshka.XML_Schema.Named_Maps is
 
@@ -56,7 +59,7 @@ package Matreshka.XML_Schema.Named_Maps is
    function Length (Self : Named_Map) return Natural;
 
    function Item
-     (Self  : Named_Map;
+     (Self  : in out Named_Map;
       Index : Positive) return Matreshka.XML_Schema.AST.Object_Access;
 
    function Item_By_Name
@@ -74,6 +77,20 @@ package Matreshka.XML_Schema.Named_Maps is
 
 private
 
-   type Named_Map is tagged limited null record;
+   package Object_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Matreshka.XML_Schema.AST.Object_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           Matreshka.XML_Schema.AST."=");
+
+   type Named_Map is tagged limited record
+      Counter    : Matreshka.Atomics.Counters.Counter;
+      --  Atomic reference counter.
+      Map         : Object_Maps.Map;
+      Cursor      : Object_Maps.Cursor;
+      Last_Cursor : Natural := 0;
+   end record;
 
 end Matreshka.XML_Schema.Named_Maps;

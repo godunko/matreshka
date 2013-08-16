@@ -60,6 +60,8 @@ package XML.Schema.Objects is
 
    type XS_Object is tagged private;
 
+   Null_XS_Object : constant XS_Object;
+
    function Get_Type (Self : XS_Object'Class) return XML.Schema.Component_Type;
    --  The type of this object, i.e. ELEMENT_DECLARATION.
 
@@ -132,5 +134,8 @@ private
    type XS_Object is new Ada.Finalization.Controlled with record
       Node : Matreshka.XML_Schema.AST.Object_Access;
    end record;
+
+   Null_XS_Object : constant XS_Object
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Objects;

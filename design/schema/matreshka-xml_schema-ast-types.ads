@@ -65,6 +65,9 @@ package Matreshka.XML_Schema.AST.Types is
      abstract new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node
        with null record;
 
+   not overriding function Get_Type_Category
+    (Self : Type_Definition_Node) return XML.Schema.Type_Category is abstract;
+
    package Annotation_Lists is
      new Ada.Containers.Doubly_Linked_Lists (Annotation_Access);
 

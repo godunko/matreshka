@@ -71,15 +71,25 @@ package body Matreshka.XML_Schema.AST.Complex_Types is
    end Get_Name;
 
    --------------------------
-   -- Get_Target_Namespase --
+   -- Get_Target_Namespace --
    --------------------------
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Complex_Type_Definition_Node)
      return League.Strings.Universal_String is
    begin
       return Self.Target_Namespace;
-   end Get_Target_Namespase;
+   end Get_Target_Namespace;
+
+   -----------------------
+   -- Get_Type_Category --
+   -----------------------
+
+   overriding function Get_Type_Category
+     (Self : Complex_Type_Definition_Node) return XML.Schema.Type_Category is
+   begin
+      return XML.Schema.Complex_Type;
+   end Get_Type_Category;
 
    ----------------
    -- Leave_Node --

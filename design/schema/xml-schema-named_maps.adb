@@ -42,6 +42,8 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
+with XML.Schema.Objects.Internals;
+
 package body XML.Schema.Named_Maps is
 
    use type Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
@@ -78,8 +80,11 @@ package body XML.Schema.Named_Maps is
       return XML.Schema.Objects.XS_Object
    is
    begin
-      raise Program_Error;
-      return Result : XML.Schema.Objects.XS_Object;
+      if Self.Node /= null then
+         return XML.Schema.Objects.Internals.Create (Self.Node.Item (Index));
+      else
+         return XML.Schema.Objects.Null_XS_Object;
+      end if;
    end Item;
 
    ------------------
@@ -90,11 +95,14 @@ package body XML.Schema.Named_Maps is
      (Self      : XS_Named_Map'Class;
       Name      : League.Strings.Universal_String;
       Namespace : League.Strings.Universal_String)
-      return XML.Schema.Objects.XS_Object
-   is
+      return XML.Schema.Objects.XS_Object is
    begin
-      raise Program_Error;
-      return Result : XML.Schema.Objects.XS_Object;
+      if Self.Node /= null then
+         return XML.Schema.Objects.Internals.Create
+           (Self.Node.Item_By_Name (Name, Namespace));
+      else
+         return XML.Schema.Objects.Null_XS_Object;
+      end if;
    end Item_By_Name;
 
    ------------
@@ -103,8 +111,11 @@ package body XML.Schema.Named_Maps is
 
    function Length (Self : XS_Named_Map'Class) return Natural is
    begin
-      raise Program_Error;
-      return 0;
+      if Self.Node /= null then
+         return Self.Node.Length;
+      else
+         return 0;
+      end if;
    end Length;
 
 end XML.Schema.Named_Maps;

@@ -82,8 +82,8 @@ package body XML.Schema.Models is
                Pos              : M.Cursor := Type_Definitions.First;
             begin
                while M.Has_Element (Pos) loop
-                  if M.Element (Pos).Get_Type = Object_Type
-                    or Object_Type = Type_Definition
+                  if Object_Type = Type_Definition
+                    or else M.Element (Pos).Get_Type_Category = Object_Type
                   then
                      Result.Append
                        (Matreshka.XML_Schema.AST.Object_Access

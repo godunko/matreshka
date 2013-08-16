@@ -106,7 +106,7 @@ package Matreshka.XML_Schema.AST.Wildcards is
     (Self : not null access Wildcard_Node)
       return League.Strings.Universal_String;
 
-   overriding function Get_Target_Namespase
+   overriding function Get_Target_Namespace
     (Self : not null access Wildcard_Node)
       return League.Strings.Universal_String;
 

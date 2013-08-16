@@ -59,7 +59,7 @@ package Matreshka.XML_Schema.AST.Objects is
     (Self : not null access Abstract_Object_Node)
       return League.Strings.Universal_String is abstract;
 
-   not overriding function Get_Target_Namespase
+   not overriding function Get_Target_Namespace
     (Self : not null access Abstract_Object_Node)
       return League.Strings.Universal_String is abstract;
 

@@ -41,84 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.Visitors;
 
-package body Matreshka.XML_Schema.AST.Simple_Types is
+package body XML.Schema.Objects.Internals is
 
-   ----------------
-   -- Enter_Node --
-   ----------------
+   ------------
+   -- Create --
+   ------------
 
-   overriding procedure Enter_Node
-    (Self    : not null access Simple_Type_Definition_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   function Create
+    (Node : Matreshka.XML_Schema.AST.Object_Access)
+       return XS_Object is
    begin
-      Visitor.Enter_Simple_Type_Definition
-       (Matreshka.XML_Schema.AST.Simple_Type_Definition_Access (Self),
-        Control);
-   end Enter_Node;
+      return
+       (Ada.Finalization.Controlled with
+          Node => Matreshka.XML_Schema.AST.Object_Access (Node));
+   end Create;
 
-   --------------
-   -- Get_Name --
-   --------------
-
-   overriding function Get_Name
-    (Self : not null access Simple_Type_Definition_Node)
-      return League.Strings.Universal_String is
-   begin
-      return Self.Name;
-   end Get_Name;
-
-   --------------------------
-   -- Get_Target_Namespace --
-   --------------------------
-
-   overriding function Get_Target_Namespace
-    (Self : not null access Simple_Type_Definition_Node)
-     return League.Strings.Universal_String is
-   begin
-      return Self.Target_Namespace;
-   end Get_Target_Namespace;
-
-   -----------------------
-   -- Get_Type_Category --
-   -----------------------
-
-   overriding function Get_Type_Category
-     (Self : Simple_Type_Definition_Node) return XML.Schema.Type_Category is
-   begin
-      return XML.Schema.Simple_Type;
-   end Get_Type_Category;
-
-   ----------------
-   -- Leave_Node --
-   ----------------
-
-   overriding procedure Leave_Node
-    (Self    : not null access Simple_Type_Definition_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Simple_Type_Definition
-       (Matreshka.XML_Schema.AST.Simple_Type_Definition_Access (Self),
-        Control);
-   end Leave_Node;
-
-   ----------------
-   -- Visit_Node --
-   ----------------
-
-   overriding procedure Visit_Node
-    (Self     : not null access Simple_Type_Definition_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Simple_Type_Definition
-       (Visitor,
-        Matreshka.XML_Schema.AST.Simple_Type_Definition_Access (Self),
-        Control);
-   end Visit_Node;
-
-end Matreshka.XML_Schema.AST.Simple_Types;
+end XML.Schema.Objects.Internals;
