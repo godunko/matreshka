@@ -46,11 +46,57 @@ with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.Named_Maps;
 
+with XML.Schema.Named_Maps.Internals;
 with XML.Schema.Element_Declarations.Internals;
+with XML.Schema.Objects.Type_Definitions.Internals;
 
 package body XML.Schema.Models is
 
    use type Matreshka.XML_Schema.AST.Model_Access;
+
+   procedure Common_Get_Components
+     (Item        : Matreshka.XML_Schema.AST.Namespace_Access;
+      Result      : in out Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
+      Object_Type : Extended_XML_Schema_Component_Type);
+
+   function Get_Namespace
+    (Self      : XS_Model'Class;
+     Namespace : League.Strings.Universal_String)
+      return Matreshka.XML_Schema.AST.Namespace_Access;
+
+   ---------------------------
+   -- Common_Get_Components --
+   ---------------------------
+
+   procedure Common_Get_Components
+     (Item        : Matreshka.XML_Schema.AST.Namespace_Access;
+      Result      : in out Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
+      Object_Type : Extended_XML_Schema_Component_Type) is
+   begin
+      case Object_Type is
+         when Type_Category | Type_Definition =>
+            declare
+               package M renames
+                 Matreshka.XML_Schema.AST.Types.Type_Definition_Maps;
+               Type_Definitions : M.Map renames Item.Type_Definitions;
+               Pos              : M.Cursor := Type_Definitions.First;
+            begin
+               while M.Has_Element (Pos) loop
+                  if M.Element (Pos).Get_Type = Object_Type
+                    or Object_Type = Type_Definition
+                  then
+                     Result.Append
+                       (Matreshka.XML_Schema.AST.Object_Access
+                          (M.Element (Pos)));
+                  end if;
+
+                  M.Next (Pos);
+               end loop;
+            end;
+         when others =>
+            raise Program_Error;
+      end case;
+   end Common_Get_Components;
 
    ---------------------
    -- Get_Annotations --
@@ -102,10 +148,19 @@ package body XML.Schema.Models is
    function Get_Components
     (Self        : XS_Model'Class;
      Object_Type : Extended_XML_Schema_Component_Type)
-       return XML.Schema.Named_Maps.XS_Named_Map is
+       return XML.Schema.Named_Maps.XS_Named_Map
+   is
+      Result : Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
    begin
-      raise Program_Error;
-      return X : XML.Schema.Named_Maps.XS_Named_Map;
+      if Self.Node /= null then
+         Result := new Matreshka.XML_Schema.Named_Maps.Named_Map;
+
+         for Item of Self.Node.Namespaces loop
+            Common_Get_Components (Item, Result, Object_Type);
+         end loop;
+      end if;
+
+      return XML.Schema.Named_Maps.Internals.Create (Result);
    end Get_Components;
 
    ---------------------------------
@@ -120,44 +175,19 @@ package body XML.Schema.Models is
    is
       use type Matreshka.XML_Schema.AST.Namespace_Access;
 
-      Item : Matreshka.XML_Schema.AST.Namespace_Access;
+      --  Lookup for namespace.
+      Item   : constant Matreshka.XML_Schema.AST.Namespace_Access
+        := Get_Namespace (Self, Namespace);
+      Result : Matreshka.XML_Schema.Named_Maps.Named_Map_Access;
 
    begin
-      if Self.Node /= null then
-         --  Lookup for namespace.
-
-         Item := Self.Node.Get_Namespace (Namespace);
-
-         if Item /= null then
-            --  Lookup for components.
-            case Object_Type is
-               when Complex_Type =>
-                  declare
-                     package M renames
-                       Matreshka.XML_Schema.AST.Types.Type_Definition_Maps;
-                     Type_Definitions : M.Map renames Item.Type_Definitions;
-                     Pos    : M.Cursor := Type_Definitions.First;
-                     Result : Matreshka.XML_Schema.Named_Maps
-                       .Named_Map_Access
-                         := new Matreshka.XML_Schema.Named_Maps.Named_Map;
-                  begin
-                     while M.Has_Element (Pos) loop
-                        if M.Element (Pos).Get_Type = Object_Type then
-                           Result.Append
-                             (Matreshka.XML_Schema.AST.Object_Access
-                                (M.Element (Pos)));
-                        end if;
-
-                        M.Next (Pos);
-                     end loop;
-                  end;
-               when others =>
-                  raise Program_Error;
-            end case;
-         end if;
+      if Item /= null then
+         --  Lookup for components.
+         Result := new Matreshka.XML_Schema.Named_Maps.Named_Map;
+         Common_Get_Components (Item, Result, Object_Type);
       end if;
 
-      return Empty : XML.Schema.Named_Maps.XS_Named_Map;
+      return XML.Schema.Named_Maps.Internals.Create (Result);
    end Get_Components_By_Namespace;
 
    -----------------------------
@@ -172,21 +202,16 @@ package body XML.Schema.Models is
    is
       use type Matreshka.XML_Schema.AST.Namespace_Access;
 
-      Item : Matreshka.XML_Schema.AST.Namespace_Access;
-
+      --  Lookup for namespace.
+      Item : constant Matreshka.XML_Schema.AST.Namespace_Access
+        := Get_Namespace (Self, Namespace);
    begin
-      if Self.Node /= null then
-         --  Lookup for namespace.
+      if Item /= null then
+         --  Lookup for element declaration.
 
-         Item := Self.Node.Get_Namespace (Namespace);
-
-         if Item /= null then
-            --  Lookup for element declaration.
-
-            return
-              XML.Schema.Element_Declarations.Internals.Create
-               (Item.Get_Element_Declaration (Name));
-         end if;
+         return
+           XML.Schema.Element_Declarations.Internals.Create
+             (Item.Get_Element_Declaration (Name));
       end if;
 
       return XML.Schema.Element_Declarations.Null_XS_Element_Declaration;
@@ -205,6 +230,22 @@ package body XML.Schema.Models is
       raise Program_Error;
       return X : XML.Schema.Model_Group_Definitions.XS_Model_Group_Definition;
    end Get_Model_Group_Definition;
+
+   -------------------
+   -- Get_Namespace --
+   -------------------
+
+   function Get_Namespace
+     (Self      : XS_Model'Class;
+     Namespace : League.Strings.Universal_String)
+      return Matreshka.XML_Schema.AST.Namespace_Access is
+   begin
+      if Self.Node /= null then
+         return Self.Node.Get_Namespace (Namespace);
+      else
+         return null;
+      end if;
+   end Get_Namespace;
 
    -------------------------
    -- Get_Namespace_Items --
@@ -259,10 +300,20 @@ package body XML.Schema.Models is
     (Self      : XS_Model'Class;
      Name      : League.Strings.Universal_String;
      Namespace : League.Strings.Universal_String)
-       return XML.Schema.Type_Definitions.XS_Type_Definition is
+       return XML.Schema.Type_Definitions.XS_Type_Definition
+   is
+      use type Matreshka.XML_Schema.AST.Namespace_Access;
+
+      Item : constant Matreshka.XML_Schema.AST.Namespace_Access
+        := Get_Namespace (Self, Namespace);
    begin
-      raise Program_Error;
-      return X : XML.Schema.Type_Definitions.XS_Type_Definition;
+      if Item /= null then
+         return
+           XML.Schema.Objects.Type_Definitions.Internals.Create
+             (Item.Get_Type_Definition (Name));
+      end if;
+
+      return XML.Schema.Objects.Type_Definitions.Null_XS_Type_Definition;
    end Get_Type_Definition;
 
    -------------

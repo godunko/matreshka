@@ -45,6 +45,8 @@ with Matreshka.XML_Schema.Named_Maps;
 
 package XML.Schema.Named_Maps.Internals is
 
+   pragma Preelaborate;
+
    function Create
     (Node : Matreshka.XML_Schema.Named_Maps.Named_Map_Access)
       return XS_Named_Map;
