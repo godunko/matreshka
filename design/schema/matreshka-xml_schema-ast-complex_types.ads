@@ -126,7 +126,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {derivation method}
       --  One of {extension, restriction}. Required.
 
-      Is_Abstract : Boolean;
+      Is_Abstract : Boolean := False;
       --  {abstract}
       --  An xs:boolean value. Required.
 

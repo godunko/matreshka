@@ -41,60 +41,67 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.Schema.Annotations;
 
-package XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
+package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
 
-   pragma Preelaborate;
-
-   type Content_Types is
-     (Empty,
-      --  Represents an empty content type. A content type with the
-      --  distinguished value empty validates elements with no character or
-      --  element information item children.
-      Simple,
-      --  Represents a simple content type. A content type which is simple
-      --  validates elements with character-only children.
-      Element_Only,
-      --  Represents an element-only content type. An element-only content type
-      --  validates elements with children that conform to the supplied content
-      --  model.
-      Mixed);
-      --  Represents a mixed content type.
-
-   type XS_Complex_Type_Definition is new XS_Type_Definition with private;
-
-   Null_XS_Complex_Type_Definition : constant XS_Complex_Type_Definition;
+   ------------------
+   -- Get_Abstract --
+   ------------------
 
    function Get_Abstract
-    (Self : XS_Complex_Type_Definition'Class) return Boolean;
-   --  {abstract} A boolean. Complex types for which abstract is true must not
-   --  be used as the type definition for the validation of element information
-   --  items.
+     (Self : XS_Complex_Type_Definition'Class)
+      return Boolean
+   is
+   begin
+      --  Generated stub: replace with real body!
+      pragma Compile_Time_Warning (Standard.True, "Get_Abstract unimplemented");
+      raise Program_Error with "Unimplemented function Get_Abstract";
+      return Get_Abstract (Self);
+   end Get_Abstract;
+
+   --------------------
+   -- Get_Annotation --
+   --------------------
 
    function Get_Annotation
-    (Self : XS_Complex_Type_Definition'Class)
-       return XML.Schema.Annotations.XS_Annotation;
-   --  An annotation if it exists, otherwise null.
+     (Self : XS_Complex_Type_Definition'Class)
+      return XML.Schema.Annotations.XS_Annotation
+   is
+   begin
+      --  Generated stub: replace with real body!
+      pragma Compile_Time_Warning (Standard.True, "Get_Annotation unimplemented");
+      raise Program_Error with "Unimplemented function Get_Annotation";
+      return Get_Annotation (Self);
+   end Get_Annotation;
+
+   ----------------------
+   -- Get_Content_Type --
+   ----------------------
 
    function Get_Content_Type
-    (Self : XS_Complex_Type_Definition'Class)
-       return Content_Types;
-   --  content type: one of empty (Empty), a simple type definition (Simple),
-   --  mixed (Mixed), or element-only (Element_Only).
+     (Self : XS_Complex_Type_Definition'Class)
+      return Content_Types
+   is
+   begin
+      --  Generated stub: replace with real body!
+      pragma Compile_Time_Warning (Standard.True, "Get_Content_Type unimplemented");
+      raise Program_Error with "Unimplemented function Get_Content_Type";
+      return Get_Content_Type (Self);
+   end Get_Content_Type;
+
+   ------------------
+   -- Get_Particle --
+   ------------------
 
    function Get_Particle
-    (Self : XS_Complex_Type_Definition'Class)
-       return Natural;
-   --  particle of type XSParticle, readonly
-   --  A particle for a mixed or element-only content model, otherwise null.
-
-private
-
-   type XS_Complex_Type_Definition is
-     new XS_Type_Definition with null record;
-
-   Null_XS_Complex_Type_Definition : constant XS_Complex_Type_Definition
-     := (Ada.Finalization.Controlled with Node => null);
+     (Self : XS_Complex_Type_Definition'Class)
+      return Natural
+   is
+   begin
+      --  Generated stub: replace with real body!
+      pragma Compile_Time_Warning (Standard.True, "Get_Particle unimplemented");
+      raise Program_Error with "Unimplemented function Get_Particle";
+      return Get_Particle (Self);
+   end Get_Particle;
 
 end XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
