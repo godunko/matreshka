@@ -72,7 +72,8 @@ package XML.Schema is
    --  component present.
 
    subtype Type_Category is Extended_XML_Schema_Component_Type
-     range Complex_Type .. Simple_Type;
+     with Static_Predicate =>
+       Type_Category in Complex_Type | Simple_Type | None;
 
    -----------
    -- Scope --
