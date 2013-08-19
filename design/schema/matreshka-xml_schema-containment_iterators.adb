@@ -186,6 +186,38 @@ package body Matreshka.XML_Schema.Containment_Iterators is
            Control);
       end if;
 
+      --  Visit content type.
+
+      case Node.Content_Type.Variety is
+         when Matreshka.XML_Schema.AST.Complex_Types.Element_Only |
+              Matreshka.XML_Schema.AST.Complex_Types.Mixed =>
+            Matreshka.XML_Schema.Visitors.Visit
+              (Self,
+               Visitor,
+               Matreshka.XML_Schema.AST.Node_Access
+                 (Node.Content_Type.Particle),
+               Control);
+
+            if Node.Content_Type.Open_Content.Wildcard /= null then
+               Matreshka.XML_Schema.Visitors.Visit
+                 (Self,
+                  Visitor,
+                  Matreshka.XML_Schema.AST.Node_Access
+                    (Node.Content_Type.Open_Content.Wildcard),
+                  Control);
+
+            end if;
+         when Matreshka.XML_Schema.AST.Complex_Types.Simple =>
+            Matreshka.XML_Schema.Visitors.Visit
+              (Self,
+               Visitor,
+               Matreshka.XML_Schema.AST.Node_Access
+                 (Node.Content_Type.Simple_Type_Definition),
+               Control);
+         when Matreshka.XML_Schema.AST.Complex_Types.Empty =>
+            null;
+      end case;
+
       --  Visit assertions.
 
       for Item of Node.Assertions loop
