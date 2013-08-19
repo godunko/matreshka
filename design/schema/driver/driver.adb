@@ -18,6 +18,8 @@ with XML.Schema.Named_Maps;
 with XML.Schema.Objects;
 with XML.Schema.Objects.Type_Definitions;
 with XML.Schema.Objects.Terms;
+with XML.Schema.Model_Groups;
+with XML.Schema.Object_Lists;
 
 procedure Driver is
    Model      : XML.Schema.Models.XS_Model;
@@ -69,7 +71,8 @@ begin
       XS_Object   : XML.Schema.Objects.XS_Object;
       XS_Particle : XML.Schema.Objects.Particles.XS_Particle;
       XS_Term     : XML.Schema.Objects.Terms.XS_Term;
-
+      XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+      XS_List     : XML.Schema.Object_Lists.XS_Object_List;
    begin
       if Type_D.Get_Type_Category = XML.Schema.Complex_Type then
          CTD := Type_D.To_Complex_Type_Definition;
@@ -89,7 +92,16 @@ begin
          if CTD.Get_Content_Type in Element_Only | Mixed then
             XS_Particle := CTD.Get_Particle;
             XS_Term := XS_Particle.Get_Term;
---            Decl := XS_Term.To_Model_Group;
+            XS_Model_Group := XS_Term.To_Model_Group;
+            XS_List := XS_Model_Group.Get_Particles;
+
+            for J in 1 .. XS_List.Get_Length loop
+               XS_Particle := XS_List.Item (J).To_Particle;
+               XS_Term := XS_Particle.Get_Term;
+               Ada.Text_IO.Put ((J'Img));
+               Ada.Text_IO.Put (' ');
+               Ada.Text_IO.Put_Line (XS_Term.Get_Type'Img);
+            end loop;
          end if;
       end loop;
 
