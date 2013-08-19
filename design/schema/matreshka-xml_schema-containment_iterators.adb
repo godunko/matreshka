@@ -358,6 +358,18 @@ package body Matreshka.XML_Schema.Containment_Iterators is
      Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
    begin
+      --  Visit type definitions.
+
+      for Item of Node.Type_Definitions loop
+         Matreshka.XML_Schema.Visitors.Visit
+          (Self,
+           Visitor,
+           Matreshka.XML_Schema.AST.Node_Access (Item),
+           Control);
+
+         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
+      end loop;
+
       --  Visit element declarations.
 
       for Item of Node.Element_Declarations loop
@@ -369,6 +381,43 @@ package body Matreshka.XML_Schema.Containment_Iterators is
 
          exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
       end loop;
+
+      --  Visit attribute declarations.
+
+      for Item of Node.Attribute_Declarations loop
+         Matreshka.XML_Schema.Visitors.Visit
+          (Self,
+           Visitor,
+           Matreshka.XML_Schema.AST.Node_Access (Item),
+           Control);
+
+         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
+      end loop;
+
+      --  Visit attribute group definitions.
+
+      for Item of Node.Attribute_Group_Definitions loop
+         Matreshka.XML_Schema.Visitors.Visit
+          (Self,
+           Visitor,
+           Matreshka.XML_Schema.AST.Node_Access (Item),
+           Control);
+
+         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
+      end loop;
+
+      --  Visit model group definitions.
+
+      for Item of Node.Model_Group_Definitions loop
+         Matreshka.XML_Schema.Visitors.Visit
+          (Self,
+           Visitor,
+           Matreshka.XML_Schema.AST.Node_Access (Item),
+           Control);
+
+         exit when Control /= Matreshka.XML_Schema.Visitors.Continue;
+      end loop;
+
    end Visit_Namespace;
 
    --------------------

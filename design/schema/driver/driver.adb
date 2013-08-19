@@ -100,7 +100,11 @@ begin
                XS_Term := XS_Particle.Get_Term;
                Ada.Text_IO.Put ((J'Img));
                Ada.Text_IO.Put (' ');
-               Ada.Text_IO.Put_Line (XS_Term.Get_Type'Img);
+               Ada.Text_IO.Put (XS_Term.Get_Type'Img);
+               Decl := XS_Term.To_Element_Declaration;
+               Type_D := Decl.Get_Type_Definition;
+               Ada.Text_IO.Put (' ');
+               Ada.Text_IO.Put_Line (Type_D.Get_Type_Category'Img);
             end loop;
          end if;
       end loop;

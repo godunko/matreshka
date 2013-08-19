@@ -73,7 +73,10 @@ package body Matreshka.XML_Schema.Name_Resolvers is
       if AST.Is_Empty (Node.Type_Name) then
          if Node.Type_Definition = null then
             --  XXX  default ·xs:anySimpleType· not implemented yet
-            raise Program_Error;
+            Ada.Wide_Wide_Text_IO.Put_Line
+              ("Name_Resolver Attribute_Declaration no type for attr for '"
+               & Node.Name.To_Wide_Wide_String & "' !!!");
+--            raise Program_Error;
          end if;
       else
          -- XXX should we check Node.Type_Definition = null here?
