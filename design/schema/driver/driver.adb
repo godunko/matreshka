@@ -20,6 +20,7 @@ with XML.Schema.Objects.Type_Definitions;
 with XML.Schema.Objects.Terms;
 with XML.Schema.Model_Groups;
 with XML.Schema.Object_Lists;
+with XML.Schema.Simple_Type_Definitions;
 
 procedure Driver is
    Model      : XML.Schema.Models.XS_Model;
@@ -52,6 +53,60 @@ begin
       use all type XML.Schema.Objects.Type_Definitions
         .Complex_Type_Definitions.Content_Types;
 
+      procedure Print_Type_Definition
+        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+         Indent : String := "");
+
+      ---------------------------
+      -- Print_Type_Definition --
+      ---------------------------
+
+      procedure Print_Type_Definition
+        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+         Indent : String := "")
+      is
+         XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+         XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+         XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+         XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+
+         Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
+         CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+         STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
+      begin
+         case Type_D.Get_Type_Category is
+            when XML.Schema.Complex_Type =>
+               CTD := Type_D.To_Complex_Type_Definition;
+
+               if CTD.Get_Content_Type in Element_Only | Mixed then
+                  Ada.Text_IO.Put_Line (Indent & "Complex_Type");
+                  XS_Particle := CTD.Get_Particle;
+                  XS_Term := XS_Particle.Get_Term;
+                  XS_Model_Group := XS_Term.To_Model_Group;
+                  XS_List := XS_Model_Group.Get_Particles;
+
+                  for J in 1 .. XS_List.Get_Length loop
+                     Ada.Text_IO.Put (Indent);
+                     XS_Particle := XS_List.Item (J).To_Particle;
+                     XS_Term := XS_Particle.Get_Term;
+                     Ada.Text_IO.Put ((J'Img));
+                     Ada.Text_IO.Put (' ');
+                     Ada.Text_IO.Put_Line (XS_Term.Get_Type'Img);
+                     Decl := XS_Term.To_Element_Declaration;
+                     Print_Type_Definition
+                       (Decl.Get_Type_Definition, Indent & "   ");
+                  end loop;
+
+                  Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
+               end if;
+            when XML.Schema.Simple_Type =>
+               Ada.Text_IO.Put_Line (Indent & "Simple_Type");
+               STD := Type_D.To_Simple_Type_Definition;
+            when XML.Schema.None =>
+               Ada.Text_IO.Put_Line (Indent & "NONE!!!");
+         end case;
+      end Print_Type_Definition;
+
       Namespace : League.Strings.Universal_String
         := League.Strings.To_Universal_String ("http://www.actforex.com/iats");
       Name      : League.Strings.Universal_String
@@ -69,10 +124,6 @@ begin
            Namespace   => Namespace);
 
       XS_Object   : XML.Schema.Objects.XS_Object;
-      XS_Particle : XML.Schema.Objects.Particles.XS_Particle;
-      XS_Term     : XML.Schema.Objects.Terms.XS_Term;
-      XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
-      XS_List     : XML.Schema.Object_Lists.XS_Object_List;
    begin
       if Type_D.Get_Type_Category = XML.Schema.Complex_Type then
          CTD := Type_D.To_Complex_Type_Definition;
@@ -84,29 +135,8 @@ begin
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
-
          Ada.Text_IO.Put_Line (XS_Object.Get_Name.To_UTF_8_String);
-
-         CTD := XS_Object.To_Complex_Type_Definition;
-
-         if CTD.Get_Content_Type in Element_Only | Mixed then
-            XS_Particle := CTD.Get_Particle;
-            XS_Term := XS_Particle.Get_Term;
-            XS_Model_Group := XS_Term.To_Model_Group;
-            XS_List := XS_Model_Group.Get_Particles;
-
-            for J in 1 .. XS_List.Get_Length loop
-               XS_Particle := XS_List.Item (J).To_Particle;
-               XS_Term := XS_Particle.Get_Term;
-               Ada.Text_IO.Put ((J'Img));
-               Ada.Text_IO.Put (' ');
-               Ada.Text_IO.Put (XS_Term.Get_Type'Img);
-               Decl := XS_Term.To_Element_Declaration;
-               Type_D := Decl.Get_Type_Definition;
-               Ada.Text_IO.Put (' ');
-               Ada.Text_IO.Put_Line (Type_D.Get_Type_Category'Img);
-            end loop;
-         end if;
+         Print_Type_Definition (XS_Object.To_Type_Definition);
       end loop;
 
    end;
