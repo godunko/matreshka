@@ -49,6 +49,7 @@ with League.Strings;
 
 private with Matreshka.XML_Schema.AST;
 limited with XML.Schema.Namespace_Items;
+limited with XML.Schema.Objects.Particles;
 limited with XML.Schema.Objects.Terms.Element_Declarations;
 limited with XML.Schema.Objects.Terms.Model_Groups;
 limited with XML.Schema.Objects.Type_Definitions;
@@ -119,6 +120,9 @@ package XML.Schema.Objects is
    function To_Model_Group
     (Self : XS_Object'Class)
        return XML.Schema.Objects.Terms.Model_Groups.XS_Model_Group;
+   function To_Particle
+    (Self : XS_Object'Class)
+       return XML.Schema.Objects.Particles.XS_Particle;
    function To_Simple_Type_Definition
     (Self : XS_Object'Class)
        return

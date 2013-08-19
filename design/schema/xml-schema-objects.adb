@@ -47,8 +47,10 @@ with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Element_Declarations;
 with Matreshka.XML_Schema.AST.Model_Groups;
+with Matreshka.XML_Schema.AST.Particles;
 
 with XML.Schema.Namespace_Items;
+with XML.Schema.Objects.Particles;
 with XML.Schema.Objects.Terms.Element_Declarations;
 with XML.Schema.Objects.Terms.Model_Groups;
 with XML.Schema.Objects.Type_Definitions.Internals;
@@ -56,6 +58,7 @@ with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions.Internals;
 with XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions.Internals;
 with XML.Schema.Element_Declarations.Internals;
 with XML.Schema.Model_Groups.Internals;
+with XML.Schema.Particles.Internals;
 
 package body XML.Schema.Objects is
 
@@ -359,6 +362,24 @@ package body XML.Schema.Objects is
                     (Self.Node));
       end if;
    end To_Model_Group;
+
+   -----------------
+   -- To_Particle --
+   -----------------
+
+   function To_Particle
+     (Self : XS_Object'Class)
+      return XML.Schema.Objects.Particles.XS_Particle is
+   begin
+      if Self.Is_Null or else not Self.Is_Particle then
+         return XML.Schema.Particles.Null_XS_Particle;
+      else
+         return
+           XML.Schema.Particles.Internals.Create
+               (Matreshka.XML_Schema.AST.Particle_Access
+                    (Self.Node));
+      end if;
+   end To_Particle;
 
    -------------------------------
    -- To_Simple_Type_Definition --
