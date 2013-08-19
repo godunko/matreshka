@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,46 +42,62 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-private with Ada.Finalization;
+with XML.Schema.Objects.Internals;
 
-with XML.Schema.Objects;
+package body XML.Schema.Object_Lists is
 
-private with Matreshka.XML_Schema.Object_Lists;
+   use type Matreshka.XML_Schema.Object_Lists.Object_List_Access;
 
-package XML.Schema.Object_Lists is
+   ------------
+   -- Adjust --
+   ------------
 
-   pragma Preelaborate;
+   overriding procedure Adjust (Self : in out XS_Object_List) is
+   begin
+      if Self.Node /= null then
+         Matreshka.XML_Schema.Object_Lists.Reference (Self.Node);
+      end if;
+   end Adjust;
 
-   type XS_Object_List is tagged private;
+   --------------
+   -- Finalize --
+   --------------
 
-   function Get_Length (Self : XS_Object_List'Class) return Natural;
-   --  The number of XSObjects in the XSObjectList.
-   --  The range of valid child object indices is 1 to Get_Length inclusive.
+   overriding procedure Finalize (Self : in out XS_Object_List) is
+   begin
+      if Self.Node /= null then
+         Matreshka.XML_Schema.Object_Lists.Dereference (Self.Node);
+      end if;
+   end Finalize;
+
+   ----------------
+   -- Get_Length --
+   ----------------
+
+   function Get_Length (Self : XS_Object_List'Class) return Natural is
+   begin
+      if Self.Node /= null then
+         return Self.Node.Length;
+      else
+         return 0;
+      end if;
+   end Get_Length;
+
+   ----------
+   -- Item --
+   ----------
 
    function Item
      (Self  : XS_Object_List'Class;
-      Index : Positive) return XML.Schema.Objects.XS_Object;
-   --  Returns the Index-th item in the collection or null if index is greater
-   --  than the number of objects in the list. The index starts at 1.
-   --
-   --  Parameters
-   --
-   --    index of type Positive -  index into the collection.
-   --
-   --  Return Value
-   --
-   --  The XSObject at the indexth position in the XSObjectList, or null if the
-   --  index specified is not valid.
+      Index : Positive)
+      return XML.Schema.Objects.XS_Object
+   is
+   begin
+      if Self.Node /= null then
+         return XML.Schema.Objects.Internals.Create (Self.Node.Item (Index));
+      else
+         return XML.Schema.Objects.Null_XS_Object;
+      end if;
+   end Item;
 
-private
-
-   type XS_Object_List is new Ada.Finalization.Controlled with record
-      Node : Matreshka.XML_Schema.Object_Lists.Object_List_Access;
-   end record;
-
-   overriding procedure Adjust (Self : in out XS_Object_List)
-     with Inline => True;
-
-   overriding procedure Finalize (Self : in out XS_Object_List);
-
-end XML.Schema.Object_Lists;
+ end XML.Schema.Object_Lists;
