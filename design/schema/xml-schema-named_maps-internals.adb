@@ -52,6 +52,8 @@ package body XML.Schema.Named_Maps.Internals is
      (Node : Matreshka.XML_Schema.Named_Maps.Named_Map_Access)
       return XS_Named_Map is
    begin
+      Matreshka.XML_Schema.Named_Maps.Reference (Node);
+
       return (Ada.Finalization.Controlled with Node => Node);
    end Create;
 

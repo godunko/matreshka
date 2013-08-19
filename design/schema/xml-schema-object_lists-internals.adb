@@ -52,6 +52,8 @@ package body XML.Schema.Object_Lists.Internals is
      (Node : Matreshka.XML_Schema.Object_Lists.Object_List_Access)
       return XS_Object_List is
    begin
+      Matreshka.XML_Schema.Object_Lists.Reference (Node);
+
       return (Ada.Finalization.Controlled with Node => Node);
    end Create;
 
