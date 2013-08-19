@@ -73,6 +73,8 @@ package XML.Schema.Object_Lists is
    --  The XSObject at the indexth position in the XSObjectList, or null if the
    --  index specified is not valid.
 
+   Empty_XS_Object_List : constant XS_Object_List;
+
 private
 
    type XS_Object_List is new Ada.Finalization.Controlled with record
@@ -83,5 +85,8 @@ private
      with Inline => True;
 
    overriding procedure Finalize (Self : in out XS_Object_List);
+
+   Empty_XS_Object_List : constant XS_Object_List
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Object_Lists;
