@@ -69,8 +69,13 @@ package XML.Schema.Objects.Particles is
      (Self : XS_Particle'Class) return XML.Schema.Objects.Terms.XS_Term;
    --  [term]: one of a model group, a wildcard, or an element declaration.
 
+   Null_XS_Particle : constant XS_Particle;
+
 private
 
    type XS_Particle is new XS_Object with null record;
+
+   Null_XS_Particle : constant XS_Particle
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Objects.Particles;
