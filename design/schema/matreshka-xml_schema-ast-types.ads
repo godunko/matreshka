@@ -113,9 +113,6 @@ package Matreshka.XML_Schema.AST.Types is
            League.Strings."=",
            Matreshka.XML_Schema.AST."=");
 
-   package Particle_Lists is
-     new Ada.Containers.Doubly_Linked_Lists (Particle_Access);
-
    package Simple_Type_Definition_Lists is
      new Ada.Containers.Doubly_Linked_Lists (Simple_Type_Definition_Access);
 

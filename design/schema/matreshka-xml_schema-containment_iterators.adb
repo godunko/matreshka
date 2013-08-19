@@ -288,11 +288,11 @@ package body Matreshka.XML_Schema.Containment_Iterators is
    begin
       --  Visit particles.
 
-      for Item of Node.Particles loop
+      for Index in 1 .. Node.Particles.Length loop
          Matreshka.XML_Schema.Visitors.Visit
           (Self,
            Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
+           Matreshka.XML_Schema.AST.Node_Access (Node.Particles.Item (Index)),
            Control);
 
          exit when Control /= Matreshka.XML_Schema.Visitors.Continue;

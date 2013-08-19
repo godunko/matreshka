@@ -62,6 +62,7 @@ with Matreshka.XML_Schema.AST.Schemas;
 with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Wildcards;
+with Matreshka.XML_Schema.Object_Lists;
 with XML.Schema;
 
 package body Matreshka.XML_Schema.Handlers is
@@ -254,6 +255,10 @@ package body Matreshka.XML_Schema.Handlers is
    procedure Get_Value_Constant
      (Node       : in out AST.Types.Value_Constraint;
       Attributes : XML.SAX.Attributes.SAX_Attributes);
+
+   procedure Append
+     (List : Matreshka.XML_Schema.Object_Lists.Object_List_Access;
+      Node : Matreshka.XML_Schema.AST.Particle_Access);
 
    package Declarations is
       --  This package groups subprograms to handle declarative component.
@@ -1271,6 +1276,17 @@ package body Matreshka.XML_Schema.Handlers is
 
    end Complex_Types;
 
+   ------------
+   -- Append --
+   ------------
+
+   procedure Append
+     (List : Matreshka.XML_Schema.Object_Lists.Object_List_Access;
+      Node : Matreshka.XML_Schema.AST.Particle_Access) is
+   begin
+      List.Append (Matreshka.XML_Schema.AST.Object_Access (Node));
+   end Append;
+
    -------------
    -- Current --
    -------------
@@ -1337,6 +1353,7 @@ package body Matreshka.XML_Schema.Handlers is
          Model := new Matreshka.XML_Schema.AST.Model_Groups.Model_Group_Node;
 
          Model.Compositor := Compositor;
+         Model.Particles := new Matreshka.XML_Schema.Object_Lists.Object_List;
 
          Self.State.Last_Model := Model;
       end Create_Model_Group;
@@ -2048,7 +2065,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          Node.Term := AST.Types.Term_Access (Term);
 
-         Self.State.Last_Model.Particles.Append (Node);
+         Append (Self.State.Last_Model.Particles, Node);
       end Start_Any_Element;
 
       --------------------------
@@ -2069,7 +2086,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.State.Last_Model.Particles.Append (Node);
+         Append (Self.State.Last_Model.Particles, Node);
       end Start_Choice_Element;
 
       --------------------------
@@ -2161,7 +2178,7 @@ package body Matreshka.XML_Schema.Handlers is
               Self.To_Qualified_Name (Attributes.Value (Index));
          end if;
 
-         Self.State.Last_Model.Particles.Append (Node);
+         Append (Self.State.Last_Model.Particles, Node);
       end Start_Element;
 
       -------------------------
@@ -2182,7 +2199,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.State.Last_Model.Particles.Append (Node);
+         Append (Self.State.Last_Model.Particles, Node);
       end Start_Group_Element;
 
       -------------------------
@@ -2223,7 +2240,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Self.State.Last_Model.Particles.Append (Node);
+         Append (Self.State.Last_Model.Particles, Node);
       end Start_Sequence_Element;
 
       ----------------------------

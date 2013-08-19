@@ -45,6 +45,7 @@ with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Objects;
+with Matreshka.XML_Schema.Object_Lists;
 with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Model_Groups is
@@ -119,7 +120,7 @@ package Matreshka.XML_Schema.AST.Model_Groups is
       --  {compositor}
       --  One of {all, choice, sequence}. Required.
 
-      Particles : Types.Particle_Lists.List;
+      Particles : Matreshka.XML_Schema.Object_Lists.Object_List_Access;
       --  {particles}
       --  A sequence of Particle components.
    end record;
