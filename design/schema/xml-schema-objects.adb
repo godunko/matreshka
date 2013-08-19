@@ -46,13 +46,16 @@ with Matreshka.XML_Schema.AST.Objects;
 with Matreshka.XML_Schema.AST.Simple_Types;
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.AST.Element_Declarations;
+with Matreshka.XML_Schema.AST.Model_Groups;
 
 with XML.Schema.Namespace_Items;
 with XML.Schema.Objects.Terms.Element_Declarations;
+with XML.Schema.Objects.Terms.Model_Groups;
 with XML.Schema.Objects.Type_Definitions.Internals;
 with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions.Internals;
 with XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions.Internals;
 with XML.Schema.Element_Declarations.Internals;
+with XML.Schema.Model_Groups.Internals;
 
 package body XML.Schema.Objects is
 
@@ -338,6 +341,24 @@ package body XML.Schema.Objects is
                     (Self.Node));
       end if;
    end To_Element_Declaration;
+
+   --------------------
+   -- To_Model_Group --
+   --------------------
+
+   function To_Model_Group
+    (Self : XS_Object'Class)
+       return XML.Schema.Objects.Terms.Model_Groups.XS_Model_Group is
+   begin
+      if Self.Is_Null or else not Self.Is_Model_Group then
+         return XML.Schema.Model_Groups.Null_XS_Model_Group;
+      else
+         return
+           XML.Schema.Model_Groups.Internals.Create
+               (Matreshka.XML_Schema.AST.Model_Group_Access
+                    (Self.Node));
+      end if;
+   end To_Model_Group;
 
    -------------------------------
    -- To_Simple_Type_Definition --
