@@ -44,6 +44,8 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.Object_Lists;
+
 with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Simple_Types is
@@ -126,7 +128,7 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  have any basic members which are list types.
       --
 
-      Member_Type_Definitions : Types.Simple_Type_Definition_Lists.List;
+      Member_Type_Definitions : Object_Lists.Object_List_Access;
       --  {member type definitions}
       --  A sequence of primitive or ordinary Simple Type Definition
       --  components.

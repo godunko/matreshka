@@ -574,11 +574,12 @@ package body Matreshka.XML_Schema.Containment_Iterators is
 
       --  Visit member types.
       if Node.Member_Types.Is_Empty then
-         for Item of Node.Member_Type_Definitions loop
+         for Index in 1 .. Node.Member_Type_Definitions.Length loop
             Matreshka.XML_Schema.Visitors.Visit
               (Self,
                Visitor,
-               Matreshka.XML_Schema.AST.Node_Access (Item),
+               Matreshka.XML_Schema.AST.Node_Access
+                 (Node.Member_Type_Definitions.Item (Index)),
                Control);
 
             exit when Control /= Matreshka.XML_Schema.Visitors.Continue;

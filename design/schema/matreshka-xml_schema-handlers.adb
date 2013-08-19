@@ -2675,6 +2675,9 @@ package body Matreshka.XML_Schema.Handlers is
            new Matreshka.XML_Schema.AST.Simple_Types
                  .Simple_Type_Definition_Node;
 
+         Node.Member_Type_Definitions :=
+           new Matreshka.XML_Schema.Object_Lists.Object_List;
+
          XSD_Attribute.Prohibited
            (Final_Attribute_Name,
             Attributes,
@@ -2720,6 +2723,9 @@ package body Matreshka.XML_Schema.Handlers is
          Node :=
            new Matreshka.XML_Schema.AST.Simple_Types
                  .Simple_Type_Definition_Node;
+
+         Node.Member_Type_Definitions :=
+           new Matreshka.XML_Schema.Object_Lists.Object_List;
 
          --  {final}
          --
@@ -2805,7 +2811,8 @@ package body Matreshka.XML_Schema.Handlers is
          if Success then
             Self.States.Last_Element.Last_Simple_Type_Definition
               .Member_Type_Definitions.Append
-                (Self.State.Last_Simple_Type_Definition);
+                (Matreshka.XML_Schema.AST.Object_Access
+                   (Self.State.Last_Simple_Type_Definition));
          end if;
       end Start_Union_Level_Simple_Type_Element;
 

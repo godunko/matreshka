@@ -204,7 +204,8 @@ package body Matreshka.XML_Schema.Name_Resolvers is
 
       for Item of Node.Member_Types loop
          Type_Definition := Self.Resolve_Simple_Type (Item);
-         Node.Member_Type_Definitions.Append (Type_Definition);
+         Node.Member_Type_Definitions.Append
+           (Matreshka.XML_Schema.AST.Object_Access (Type_Definition));
       end loop;
 
       if not AST.Is_Empty (Node.Item_Type) then
