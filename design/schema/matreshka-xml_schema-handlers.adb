@@ -2703,8 +2703,7 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean) is
       begin
          Self.State.Last_Simple_Type_Definition.Restriction_Base :=
-           Self.To_Qualified_Name
-             (Attributes.Value (XML_Schema_Namespace_URI, Base_Attribute_Name));
+           Self.To_Qualified_Name (Attributes.Value (Base_Attribute_Name));
       end Start_Restriction_Element;
 
       -----------------------------------------

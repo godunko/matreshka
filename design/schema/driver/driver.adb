@@ -65,15 +65,20 @@ begin
         (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
          Indent : String := "")
       is
+         use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
          XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
          XS_Term        : XML.Schema.Objects.Terms.XS_Term;
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+         XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
 
          Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
          CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
          STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
       begin
+         XS_Base := Type_D.Get_Base_Type;
+
          case Type_D.Get_Type_Category is
             when XML.Schema.Complex_Type =>
                CTD := Type_D.To_Complex_Type_Definition;
@@ -105,6 +110,14 @@ begin
             when XML.Schema.None =>
                Ada.Text_IO.Put_Line (Indent & "NONE!!!");
          end case;
+
+         if XS_Base.Get_Type_Category in
+           XML.Schema.Complex_Type .. XML.Schema.Simple_Type
+             and XS_Base /= Type_D  --  This is to filter predefined types
+         then
+            Ada.Text_IO.Put_Line (Indent & " is new");
+            Print_Type_Definition (XS_Base, Indent & "   ");
+         end if;
       end Print_Type_Definition;
 
       Namespace : League.Strings.Universal_String

@@ -69,26 +69,12 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
-      Final : XML.Schema.Derivation_Set;
-      --  {final}
-      --  A subset of {extension, restriction, list, union}.
-
       Context : Matreshka.XML_Schema.AST.Node_Access;
       --  {context}
       --  Required if {name} is ·absent·, otherwise must be ·absent·.
       --
       --  Either an Attribute Declaration, an Element Declaration, a Complex
       --  Type Definition, or a Simple Type Definition.
-
-      Base_Type_Definition : Matreshka.XML_Schema.AST.Type_Definition_Access;
-      --  {base type definition}
-      --  A Type Definition component. Required.
-      --
-      --  With one exception, the {base type definition} of any Simple Type
-      --  Definition is a Simple Type Definition. The exception is
-      --  ·xs:anySimpleType·, which has ·xs:anyType·, a Complex Type
-      --  Definition, as its {base type definition}.
-      --
 
       Facets : Types.Facet_Sets.List;
 

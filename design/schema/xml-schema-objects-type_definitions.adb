@@ -43,8 +43,24 @@
 ------------------------------------------------------------------------------
 with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Simple_Types;
+with XML.Schema.Objects.Type_Definitions.Internals;
 
 package body XML.Schema.Objects.Type_Definitions is
+
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Type_Definition_Access;
+
+   ---------
+   -- "+" --
+   ---------
+
+   function "+"
+    (Self : Matreshka.XML_Schema.AST.Object_Access)
+      return Matreshka.XML_Schema.AST.Type_Definition_Access is
+   begin
+      return Matreshka.XML_Schema.AST.Type_Definition_Access (Self);
+   end "+";
 
    ------------------
    -- Derived_From --
@@ -89,9 +105,17 @@ package body XML.Schema.Objects.Type_Definitions is
 
    function Get_Base_Type
     (Self : XS_Type_Definition'Class) return XS_Type_Definition is
+      use type Matreshka.XML_Schema.AST.Type_Definition_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Type_Definition_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return X : XS_Type_Definition;
+      if Node = null then
+         return XML.Schema.Objects.Type_Definitions.Null_XS_Type_Definition;
+      else
+         return XML.Schema.Objects.Type_Definitions.Internals.Create
+            (Node.Base_Type_Definition);
+      end if;
    end Get_Base_Type;
 
    ---------------
@@ -100,9 +124,16 @@ package body XML.Schema.Objects.Type_Definitions is
 
    function Get_Final
     (Self : XS_Type_Definition'Class) return XML.Schema.Derivation_Set is
+      use type Matreshka.XML_Schema.AST.Type_Definition_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Type_Definition_Access
+        := +Self.Node;
    begin
-      raise Program_Error;
-      return (others => False);
+      if Node = null then
+         return XML.Schema.Derivation_None;
+      else
+         return Node.Final;
+      end if;
    end Get_Final;
 
    -----------------------
@@ -111,24 +142,17 @@ package body XML.Schema.Objects.Type_Definitions is
 
    function Get_Type_Category
     (Self : XS_Type_Definition'Class) return XML.Schema.Type_Category is
+      use type Matreshka.XML_Schema.AST.Type_Definition_Access;
+
+      Node : constant Matreshka.XML_Schema.AST.Type_Definition_Access
+        := +Self.Node;
    begin
-      if Self.Is_Null then
+      if Node = null then
          return XML.Schema.None;
 
-      elsif Self.Node.all
-              in Matreshka.XML_Schema.AST.Complex_Types
-                   .Complex_Type_Definition_Node'Class
-      then
-         return XML.Schema.Complex_Type;
-
-      elsif Self.Node.all
-              in Matreshka.XML_Schema.AST.Simple_Types
-                   .Simple_Type_Definition_Node'Class
-      then
-         return XML.Schema.Simple_Type;
-
       else
-         raise Program_Error;
+         return Node.Get_Type_Category;
+
       end if;
    end Get_Type_Category;
 
@@ -140,8 +164,7 @@ package body XML.Schema.Objects.Type_Definitions is
     (Self        : XS_Type_Definition'Class;
      Restriction : XML.Schema.Type_Derivation_Control) return Boolean is
    begin
-      raise Program_Error;
-      return False;
+      return Self.Get_Final (Restriction);
    end Is_Final;
 
 end XML.Schema.Objects.Type_Definitions;

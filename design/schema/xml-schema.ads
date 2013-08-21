@@ -47,7 +47,9 @@ package XML.Schema is
    pragma Pure;
 
    type Extended_XML_Schema_Component_Type is
-    (None,
+    (Complex_Type,
+     Simple_Type,
+     None,
      Attribute_Declaration,
      Element_Declaration,
      Type_Definition,
@@ -61,9 +63,7 @@ package XML.Schema is
      Notation_Declaration,
      Annotation,
      Facet,
-     Multivalue_Facet,
-     Complex_Type,
-     Simple_Type);
+     Multivalue_Facet);
 
    subtype Component_Type is Extended_XML_Schema_Component_Type
      range None .. Multivalue_Facet;
@@ -72,8 +72,7 @@ package XML.Schema is
    --  component present.
 
    subtype Type_Category is Extended_XML_Schema_Component_Type
-     with Static_Predicate =>
-       Type_Category in Complex_Type | Simple_Type | None;
+     range Complex_Type .. None;
 
    -----------
    -- Scope --

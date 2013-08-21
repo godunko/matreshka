@@ -62,8 +62,25 @@ package Matreshka.XML_Schema.AST.Types is
    type Term_Access is access all Term_Node'Class;
 
    type Type_Definition_Node is
-     abstract new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node
-       with null record;
+     abstract new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node with
+   record
+      Base_Type_Definition : Matreshka.XML_Schema.AST.Type_Definition_Access;
+      --  {base type definition}
+      --  A type definition component. Required.
+      --
+      --  With one exception, the {base type definition} of any Simple Type
+      --  Definition is a Simple Type Definition. The exception is
+      --  ·xs:anySimpleType·, which has ·xs:anyType·, a Complex Type
+      --  Definition, as its {base type definition}.
+
+      Final : XML.Schema.Derivation_Set;
+      --  {final}
+      --  Complex Type Definitin:
+      --     A subset of {extension, restriction}.
+      --  Simple Type Definition
+      --     A subset of {extension, restriction, list, union}.
+
+   end record;
 
    not overriding function Get_Type_Category
     (Self : Type_Definition_Node) return XML.Schema.Type_Category is abstract;
