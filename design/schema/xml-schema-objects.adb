@@ -413,7 +413,7 @@ package body XML.Schema.Objects is
     (Self : XS_Object'Class)
        return XML.Schema.Objects.Type_Definitions.XS_Type_Definition is
    begin
-      if Self.Is_Null or else not Self.Is_Complex_Type_Definition then
+      if Self.Is_Null then
          return XML.Schema.Objects.Type_Definitions.Null_XS_Type_Definition;
 
       else
