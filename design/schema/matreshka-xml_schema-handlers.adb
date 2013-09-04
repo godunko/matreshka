@@ -2078,6 +2078,8 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean)
       is
          Node : Matreshka.XML_Schema.AST.Particle_Access;
+         Last_Model : constant Matreshka.XML_Schema.AST.Model_Group_Access
+           := Self.State.Last_Model;
 
       begin
          Particles.Start_Choice_Element
@@ -2086,7 +2088,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Append (Self.State.Last_Model.Particles, Node);
+         Append (Last_Model.Particles, Node);
       end Start_Choice_Element;
 
       --------------------------
@@ -2115,7 +2117,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         --  This will rewrite Self.Top_State.Last_Model
+         --  This will rewrite Self.State.Last_Model
          Declarations.Create_Model_Group
            (Self       => Self,
             Attributes => Attributes,
@@ -2232,6 +2234,8 @@ package body Matreshka.XML_Schema.Handlers is
         Success    : in out Boolean)
       is
          Node : Matreshka.XML_Schema.AST.Particle_Access;
+         Last_Model : constant Matreshka.XML_Schema.AST.Model_Group_Access
+           := Self.State.Last_Model;
 
       begin
          Particles.Start_Sequence_Element
@@ -2240,7 +2244,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         Append (Self.State.Last_Model.Particles, Node);
+         Append (Last_Model.Particles, Node);
       end Start_Sequence_Element;
 
       ----------------------------
@@ -2269,7 +2273,7 @@ package body Matreshka.XML_Schema.Handlers is
             Success    => Success,
             Node       => Node);
 
-         --  This will rewrite Self.Top_State.Last_Model
+         --  This will rewrite Self.State.Last_Model
          Declarations.Create_Model_Group
            (Self       => Self,
             Attributes => Attributes,
@@ -2396,14 +2400,15 @@ package body Matreshka.XML_Schema.Handlers is
               others => <>);
 
          when Choice =>
-            --  Propagate current complext type definition and model group
-            --  definition.
+            --  Propagate current complext type definition, model group
+            --  definition and model group.
 
             Self.State :=
              (State,
               Last_Complex_Type_Definition =>
                 Self.State.Last_Complex_Type_Definition,
               Last_Model_Definition => Self.State.Last_Model_Definition,
+              Last_Model => Self.State.Last_Model,
               others => <>);
 
          when Complex_Content =>
@@ -2489,14 +2494,15 @@ package body Matreshka.XML_Schema.Handlers is
               others => <>);
 
          when Sequence =>
-            --  Propagate current complex type definition and model group
-            --  definition.
+            --  Propagate current complext type definition, model group
+            --  definition and model group.
 
             Self.State :=
              (State,
               Last_Complex_Type_Definition =>
                 Self.State.Last_Complex_Type_Definition,
               Last_Model_Definition => Self.State.Last_Model_Definition,
+              Last_Model => Self.State.Last_Model,
               others => <>);
 
          when Sequence_Element =>

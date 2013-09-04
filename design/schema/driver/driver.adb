@@ -57,6 +57,45 @@ begin
         (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
          Indent : String := "");
 
+      procedure Print_Term
+        (XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+         Indent : String := "");
+
+      ----------------
+      -- Print_Term --
+      ----------------
+
+      procedure Print_Term
+        (XS_Term : XML.Schema.Objects.Terms.XS_Term;
+         Indent  : String := "")
+      is
+         XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+         XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+         XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+         Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
+      begin
+         Ada.Text_IO.Put (Indent);
+         Ada.Text_IO.Put_Line (XS_Term.Get_Type'Img);
+
+         if XS_Term.Is_Model_Group then
+            XS_Model_Group := XS_Term.To_Model_Group;
+            XS_List := XS_Model_Group.Get_Particles;
+            Ada.Text_IO.Put (Indent);
+            Ada.Text_IO.Put_Line (XS_Model_Group.Get_Compositor'Img);
+
+            for J in 1 .. XS_List.Get_Length loop
+               Ada.Text_IO.Put (Indent);
+               XS_Particle := XS_List.Item (J).To_Particle;
+               Ada.Text_IO.Put_Line ((J'Img));
+               Print_Term (XS_Particle.Get_Term, Indent & "   ");
+            end loop;
+         elsif XS_Term.Is_Element_Declaration then
+            Decl := XS_Term.To_Element_Declaration;
+            Print_Type_Definition
+              (Decl.Get_Type_Definition, Indent & "   ");
+         end if;
+      end Print_Term;
+
       ---------------------------
       -- Print_Type_Definition --
       ---------------------------
@@ -69,11 +108,8 @@ begin
 
          XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
          XS_Term        : XML.Schema.Objects.Terms.XS_Term;
-         XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
-         XS_List        : XML.Schema.Object_Lists.XS_Object_List;
          XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
 
-         Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
          CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
          STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
       begin
@@ -87,20 +123,8 @@ begin
                   Ada.Text_IO.Put_Line (Indent & "Complex_Type");
                   XS_Particle := CTD.Get_Particle;
                   XS_Term := XS_Particle.Get_Term;
-                  XS_Model_Group := XS_Term.To_Model_Group;
-                  XS_List := XS_Model_Group.Get_Particles;
 
-                  for J in 1 .. XS_List.Get_Length loop
-                     Ada.Text_IO.Put (Indent);
-                     XS_Particle := XS_List.Item (J).To_Particle;
-                     XS_Term := XS_Particle.Get_Term;
-                     Ada.Text_IO.Put ((J'Img));
-                     Ada.Text_IO.Put (' ');
-                     Ada.Text_IO.Put_Line (XS_Term.Get_Type'Img);
-                     Decl := XS_Term.To_Element_Declaration;
-                     Print_Type_Definition
-                       (Decl.Get_Type_Definition, Indent & "   ");
-                  end loop;
+                  Print_Term (XS_Term, Indent & "   ");
 
                   Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
                end if;
