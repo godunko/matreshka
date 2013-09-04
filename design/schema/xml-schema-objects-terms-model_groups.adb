@@ -79,13 +79,13 @@ package body XML.Schema.Objects.Terms.Model_Groups is
 
    function Get_Compositor
     (Self : XS_Model_Group'Class)
-       return Compositor_Kins
+       return Compositor_Kinds
    is
       use type Matreshka.XML_Schema.AST.Model_Group_Access;
 
       package M renames Matreshka.XML_Schema.AST.Model_Groups;
 
-      Convert : constant array (M.Compositor_Kind) of Compositor_Kins
+      Convert : constant array (M.Compositor_Kind) of Compositor_Kinds
         := (M.Sequence => Compositor_Sequence,
             M.Choice   => Compositor_Choice,
             M.Al1      => Compositor_All);
@@ -94,7 +94,7 @@ package body XML.Schema.Objects.Terms.Model_Groups is
         := +Self.Node;
    begin
       if Node = null then
-         return Compositor_Kins'First;
+         return Compositor_Kinds'First;
       else
          return Convert (Node.Compositor);
       end if;

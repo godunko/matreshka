@@ -53,7 +53,7 @@ package XML.Schema.Objects.Terms.Model_Groups is
 
    Null_XS_Model_Group : constant XS_Model_Group;
 
-   type Compositor_Kins is
+   type Compositor_Kinds is
      (Compositor_Sequence,
       --  This constant value signifies a sequence operator.
       Compositor_Choice,
@@ -65,7 +65,7 @@ package XML.Schema.Objects.Terms.Model_Groups is
    
    function Get_Compositor
     (Self : XS_Model_Group'Class)
-       return Compositor_Kins;
+       return Compositor_Kinds;
    --  [compositor]: one of all, choice or sequence..
 
    function Get_Particles
