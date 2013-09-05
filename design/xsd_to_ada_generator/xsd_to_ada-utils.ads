@@ -45,6 +45,8 @@
 with XSD_To_Ada.Writers;
 
 with XML.Schema.Type_Definitions;
+with XML.Schema.Objects.Terms;
+with League.Strings;
 
 package XSD_To_Ada.Utils is
 
@@ -68,14 +70,19 @@ package XSD_To_Ada.Utils is
    procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
 
    procedure Print_Type_Definition
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent : String := "");
-
-   procedure Print_Type_Definition_Resp
      (Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
       Indent    : String := "";
       Writer    : in out Writers.Writer;
+      Writer_types    : in out Writers.Writer;
+      Name      : League.Strings.Universal_String;
       Is_Record : Boolean := False);
+
+   procedure Print_Term
+     (XS_Term : XML.Schema.Objects.Terms.XS_Term;
+      Indent  : String := "";
+      Writer  : in out Writers.Writer;
+      Writer_types    : in out Writers.Writer;
+      Name    : League.Strings.Universal_String);
 
    procedure Print_Type_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -85,5 +92,10 @@ package XSD_To_Ada.Utils is
    Count  : Natural := 0;
    Choice : Natural := 0;
    Session_Bool : Boolean := False;
+   Now_Add : Boolean := False;
+   Add_Choise : Boolean := False;
+
+   Name_Kind : League.Strings.Universal_String;
+   Name_Case : League.Strings.Universal_String;
 
 end XSD_To_Ada.Utils;

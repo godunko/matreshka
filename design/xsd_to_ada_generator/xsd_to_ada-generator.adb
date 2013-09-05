@@ -60,12 +60,22 @@ package body XSD_To_Ada.Generator is
    Tab   : Natural := 0;
 
    Payloads       : XSD_To_Ada.Writers.Writer;
-   Payload_Writer : XSD_To_Ada.Writers.Writer;
-   Session_Writer : XSD_To_Ada.Writers.Writer;
-   NON_Session_Writer   : XSD_To_Ada.Writers.Writer;
+
+   Payload_Writer          : XSD_To_Ada.Writers.Writer;
+   Payload_Type_Writer     : XSD_To_Ada.Writers.Writer;
+
+   Session_Type_Writer     : XSD_To_Ada.Writers.Writer;
+   Session_Writer          : XSD_To_Ada.Writers.Writer;
+
+   NON_Session_Writer      : XSD_To_Ada.Writers.Writer;
+   NON_Session_Type_Writer : XSD_To_Ada.Writers.Writer;
+
    ST_Writer      : XSD_To_Ada.Writers.Writer;
+
+   CT_Writer      : XSD_To_Ada.Writers.Writer;
+
    Session_Bool   : Boolean := False;
-   Is_Record      : Boolean := True;
+   Is_Record      : Boolean := False;
 
    ---------
    -- Dec --
@@ -138,7 +148,6 @@ package body XSD_To_Ada.Generator is
 
          US_Response : League.Strings.Universal_String;
       begin
-
          --  Create all Simple_Types
          if Type_D.Get_Type_Category = XML.Schema.Simple_Type then
             STD := Type_D.To_Simple_Type_Definition;
@@ -151,7 +160,7 @@ package body XSD_To_Ada.Generator is
          for J in 1 .. Simple_Types.Length loop
             XS_Object := Simple_Types.Item (J);
             Type_D_ST := XS_Object.To_Type_Definition;
-            XS_Base := Type_D_ST.Get_Base_Type;
+            XS_Base   := Type_D_ST.Get_Base_Type;
 
             XSD_To_Ada.Writers.P
               (ST_Writer,
@@ -207,11 +216,11 @@ package body XSD_To_Ada.Generator is
                   & Wide_Wide_Character'Val (10)
                   & "   with record");
 
-               XSD_To_Ada.Utils.Print_Type_Definition_Resp
-                 (XS_Object.To_Type_Definition, "", Payload_Writer);
-
-               Writers.P (Payload_Writer, "   end record;");
-               Writers.P (Payload_Writer);
+               XSD_To_Ada.Utils.Print_Type_Definition
+                 (XS_Object.To_Type_Definition,
+                  "",
+                  Payload_Writer, Payload_Type_Writer,
+                  XS_Object.Get_Name);
 
                XSD_To_Ada.Utils.Gen_Access_Type
                  (Payload_Writer,
@@ -237,13 +246,11 @@ package body XSD_To_Ada.Generator is
                   & Wide_Wide_Character'Val (10)
                   & "   with record");
 
-                  XSD_To_Ada.Utils.Print_Type_Definition_Resp
+                  XSD_To_Ada.Utils.Print_Type_Definition
                     (XS_Object.To_Type_Definition,
                      "",
-                     Session_Writer,
-                     Is_Record);
-
-                  Writers.P (Session_Writer, "   end record;");
+                     Session_Writer, Session_Type_Writer,
+                     XS_Object.Get_Name);
                else
                   Is_Record := True;
 
@@ -253,15 +260,14 @@ package body XSD_To_Ada.Generator is
                      & XSD_To_Ada.Utils.Add_Separator
                        (XS_Object.Get_Name.To_Wide_Wide_String) & " ");
 
-                  XSD_To_Ada.Utils.Print_Type_Definition_Resp
+                  XSD_To_Ada.Utils.Print_Type_Definition
                     (XS_Object.To_Type_Definition,
                      "",
-                     NON_Session_Writer,
+                     NON_Session_Writer, NON_Session_Type_Writer,
+                     XS_Object.Get_Name,
                      Is_Record);
-                  Is_Record := False;
 
-                  Writers.P (NON_Session_Writer, "end record;");
-                  Writers.P (NON_Session_Writer);
+                  Is_Record := False;
                end if;
             end if;
 
@@ -275,19 +281,36 @@ package body XSD_To_Ada.Generator is
          for J in 1 .. Complex_Types.Length loop
             XS_Object := Complex_Types.Item (J);
 
-            if XS_Object.Get_Name.To_UTF_8_String = "ActivateCondition" then
-               Ada.Text_IO.Put_Line ("ActivateCondition");
+--              if XS_Object.Get_Name.To_UTF_8_String = "OpenOrderInformation"
+--                or XS_Object.Get_Name.To_UTF_8_String = "ActivateCondition"
+--                  or XS_Object.Get_Name.To_UTF_8_String = "ConditionalOpenOrderInformation"
+--              then
+               Writers.P
+                 (CT_Writer,
+                  "type "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is record");
 
                XSD_To_Ada.Utils.Print_Type_Definition
-                 (XS_Object.To_Type_Definition, "");
-            end if;
-         end loop;
+                 (XS_Object.To_Type_Definition,
+                  "",
+                  CT_Writer, CT_Writer,
+                  XS_Object.Get_Name);
 
+               Writers.P (CT_Writer, "end record;");
+               Writers.P (CT_Writer);
+--            end if;
+         end loop;
       end;
+
       Ada.Text_IO.Create
         (Current_Out_File, Ada.Text_IO.Out_File, "./Payload.ads");
       Ada.Text_IO.Put_Line
+        (Current_Out_File, Payload_Type_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
         (Current_Out_File, Payload_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, Session_Type_Writer.Text.To_UTF_8_String);
       Ada.Text_IO.Put_Line
         (Current_Out_File, Session_Writer.Text.To_UTF_8_String);
       Ada.Text_IO.Close (Current_Out_File);
@@ -295,7 +318,14 @@ package body XSD_To_Ada.Generator is
       Ada.Text_IO.Create
         (Current_Out_File, Ada.Text_IO.Out_File, "./XSD_Forex.ads");
       Ada.Text_IO.Put_Line
+        (Current_Out_File, NON_Session_Type_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
         (Current_Out_File, NON_Session_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Close (Current_Out_File);
+
+      Ada.Text_IO.Create
+        (Current_Out_File, Ada.Text_IO.Out_File, "./XSD_Types_NEW.ads");
+      Ada.Text_IO.Put_Line (Current_Out_File, CT_Writer.Text.To_UTF_8_String);
       Ada.Text_IO.Close (Current_Out_File);
 
       Ada.Text_IO.Create
