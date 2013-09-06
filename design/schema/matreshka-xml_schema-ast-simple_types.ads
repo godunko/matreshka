@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
+with League.String_Vectors;
 
 with Matreshka.XML_Schema.AST.Types;
 with Matreshka.XML_Schema.Object_Lists;
@@ -133,6 +134,8 @@ package Matreshka.XML_Schema.AST.Simple_Types is
       --  union/@memberTypes
       Item_Type        : Matreshka.XML_Schema.AST.Qualified_Name;
       --  list/@itemType
+      Lexical_Enumeration : League.String_Vectors.Universal_String_Vector;
+      --  List of enumeration literals
    end record;
 
    overriding function Get_Type_Category

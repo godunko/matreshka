@@ -47,6 +47,7 @@ with Matreshka.XML_Schema.AST.Attribute_Declarations;
 with Matreshka.XML_Schema.AST.Attribute_Uses;
 with Matreshka.XML_Schema.AST.Element_Declarations;
 with Matreshka.XML_Schema.AST.Complex_Types;
+with Matreshka.XML_Schema.AST.Constraining_Facets;
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Particles;
@@ -154,6 +155,18 @@ package body Matreshka.XML_Schema.Name_Resolvers is
       end if;
    end Enter_Element_Declaration;
 
+   -----------------------
+   -- Enter_Enumeration --
+   -----------------------
+
+   overriding procedure Enter_Enumeration
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Enumeration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Self.STD.Lexical_Enumeration.Append (Node.Value);
+   end Enter_Enumeration;
+
    -----------------
    -- Enter_Model --
    -----------------
@@ -212,6 +225,8 @@ package body Matreshka.XML_Schema.Name_Resolvers is
          Node.Item_Type_Definition :=
            Self.Resolve_Simple_Type (Node.Item_Type);
       end if;
+
+      Self.STD := Node;
    end Enter_Simple_Type_Definition;
 
    -----------------------

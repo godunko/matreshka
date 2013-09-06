@@ -61,6 +61,7 @@ private
      limited new Matreshka.XML_Schema.Visitors.Abstract_Visitor with
    record
       Model : Matreshka.XML_Schema.AST.Model_Access;
+      STD   : Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
    end record;
 
    not overriding function Resolve_Type
@@ -122,6 +123,12 @@ private
     (Self    : in out Name_Resolver;
      Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+
+   overriding procedure Enter_Enumeration
+    (Self    : in out Name_Resolver;
+     Node    : not null Matreshka.XML_Schema.AST.Enumeration_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
+   --  Append enumeration literal to simple type definition
 
 --   overriding procedure Enter_Schema
 --    (Self    : in out Name_Resolver;

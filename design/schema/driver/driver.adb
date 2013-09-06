@@ -187,9 +187,16 @@ begin
             when XML.Schema.Simple_Type =>
                Ada.Text_IO.Put (Indent & "Simple_Type : ");
                STD := Type_D.To_Simple_Type_Definition;
-               Ada.Text_IO.Put_Line ("Type_D" & Type_D.Get_Name.To_UTF_8_String);
-               Ada.Text_IO.Put_Line ("STD" & STD.Get_Name.To_UTF_8_String);
 
+               declare
+                  List : constant League.String_Vectors.Universal_String_Vector
+                    := STD.Get_Lexical_Enumeration;
+               begin
+                  for J in 1 .. List.Length loop
+                     Ada.Text_IO.Put (Indent & " Enum: ");
+                     Ada.Text_IO.Put_Line (List.Element (J).To_UTF_8_String);
+                  end loop;
+               end;
             when XML.Schema.None =>
                Ada.Text_IO.Put_Line (Indent & "NONE!!!");
          end case;
@@ -292,6 +299,15 @@ begin
                  (Type_D.Get_Name.To_UTF_8_String
                   & " : " & XS_Base.Get_Name.To_UTF_8_String);
 
+               declare
+                  List : constant League.String_Vectors.Universal_String_Vector
+                    := STD.Get_Lexical_Enumeration;
+               begin
+                  for J in 1 .. List.Length loop
+                     Ada.Text_IO.Put (Indent & " Enum: ");
+                     Ada.Text_IO.Put_Line (List.Element (J).To_UTF_8_String);
+                  end loop;
+               end;
             when XML.Schema.None =>
                Ada.Text_IO.Put_Line (Indent & "NONE!!!");
          end case;
