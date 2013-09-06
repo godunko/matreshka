@@ -198,11 +198,13 @@ package body XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions is
      (Self : XS_Simple_Type_Definition'Class)
       return League.String_Vectors.Universal_String_Vector
    is
+      use type Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
    begin
       --  Generated stub: replace with real body!
       pragma Compile_Time_Warning (Standard.True, "Get_Lexical_Enumeration unimplemented");
       raise Program_Error with "Unimplemented function Get_Lexical_Enumeration";
       return Get_Lexical_Enumeration (Self);
+
    end Get_Lexical_Enumeration;
 
    -----------------------------
