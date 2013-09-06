@@ -259,9 +259,15 @@ package body XSD_To_Ada.Utils is
 
       ELEM_XS_Term : XML.Schema.Objects.Terms.XS_Term;
 
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+      XS_Particle_CTD    : XML.Schema.Objects.Particles.XS_Particle;
+      XS_Term_CTD        : XML.Schema.Objects.Terms.XS_Term;
+
    begin
       Ada.Text_IO.Put (Indent);
       Ada.Text_IO.Put_Line ("Type " & XS_Term.Get_Type'Img);
+      Ada.Text_IO.Put (Indent);
+      Ada.Text_IO.Put_Line ("XS_Term.Get_Name =" & XS_Term.Get_Name.To_UTF_8_String);
 
       if XS_Term.Is_Model_Group then
          XS_Model_Group := XS_Term.To_Model_Group;
@@ -272,6 +278,17 @@ package body XSD_To_Ada.Utils is
          if XS_Model_Group.Get_Compositor =
            XML.Schema.Objects.Terms.Model_Groups.Compositor_Choice then
             Choice := 1;
+         end if;
+
+         if Anonym_Type and Choice = 0 then
+            Writers.P
+              (Writer,
+               "      " & Name.To_Wide_Wide_String & " : "
+               & Name.To_Wide_Wide_String & "_Anonym;");
+
+            Anonym_Kind.Append
+              ("   type " & Name.To_Wide_Wide_String & "_Anonym is record");
+            Add_Anonym := True;
          end if;
 
          if Choice = 1 and not Now_Add then
@@ -312,6 +329,16 @@ package body XSD_To_Ada.Utils is
          Decl := XS_Term.To_Element_Declaration;
          Type_D := Decl.Get_Type_Definition;
 
+         if Type_D.Get_Name.To_UTF_8_String = "" then
+            Anonym_Type := True;
+            Print_Type_Definition
+              (Type_D, Indent & "   ", Writer, Writer_types,
+               League.Strings.To_Universal_String
+                 (Name.To_Wide_Wide_String & "_" & Decl.Get_Name.To_Wide_Wide_String));
+            Anonym_Type := False;
+            Add_Anonym := False;
+         end if;
+
          if Choice = 1 then
             Name_Kind.Append (XS_Term.Get_Name);
             Name_Case.Append
@@ -321,12 +348,22 @@ package body XSD_To_Ada.Utils is
                & " : "
                & Type_D.Get_Name.To_Wide_Wide_String & ";"
                & Wide_Wide_Character'Val (10));
-         else
+         end if;
+
+         if Type_D.Get_Name.To_UTF_8_String /= "" and not Anonym_Type then
             Writers.P
               (Writer,
                "      " & XS_Term.Get_Name.To_Wide_Wide_String
                & " : "
                & Type_D.Get_Name.To_Wide_Wide_String & ";");
+         end if;
+
+         if Anonym_Type and Choice = 0 then
+            Anonym_Kind.Append
+               ("      " & XS_Term.Get_Name.To_Wide_Wide_String
+               & " : "
+                & Type_D.Get_Name.To_Wide_Wide_String & ";"
+               & Wide_Wide_Character'Val (10));
          end if;
       end if;
    end Print_Term;
@@ -401,9 +438,6 @@ package body XSD_To_Ada.Utils is
          Print_Type_Definition (XS_Base, Indent & "   ", Writer, Writer_types, Name);
       end if;
 
-      Writers.P (Writer, "   end record;");
-      Writers.P (Writer);
-
       if Add_Choise then
          Writers.P
            (Writer_types,
@@ -420,6 +454,14 @@ package body XSD_To_Ada.Utils is
          Name_Case.Clear;
          Now_Add := False;
          Add_Choise := False;
+      end if;
+
+      if Add_Anonym then
+      Writers.P
+           (Writer_types,
+            Anonym_Kind.To_Wide_Wide_String
+            & "   end record;" & Wide_Wide_Character'Val (10));
+         Anonym_Kind.Clear;
       end if;
 
    end Print_Type_Definition;

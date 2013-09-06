@@ -222,6 +222,9 @@ package body XSD_To_Ada.Generator is
                   Payload_Writer, Payload_Type_Writer,
                   XS_Object.Get_Name);
 
+               Writers.P (Payload_Writer, "   end record;");
+               Writers.P (Payload_Writer);
+
                XSD_To_Ada.Utils.Gen_Access_Type
                  (Payload_Writer,
                   XSD_To_Ada.Utils.Add_Separator
@@ -251,12 +254,14 @@ package body XSD_To_Ada.Generator is
                      "",
                      Session_Writer, Session_Type_Writer,
                      XS_Object.Get_Name);
+                  Writers.P (Session_Writer, "   end record;");
+                  Writers.P (Session_Writer);
                else
                   Is_Record := True;
 
                   Writers.N
                     (NON_Session_Writer,
-                     "type "
+                     "   type "
                      & XSD_To_Ada.Utils.Add_Separator
                        (XS_Object.Get_Name.To_Wide_Wide_String) & " ");
 
@@ -266,6 +271,9 @@ package body XSD_To_Ada.Generator is
                      NON_Session_Writer, NON_Session_Type_Writer,
                      XS_Object.Get_Name,
                      Is_Record);
+
+                  Writers.P (NON_Session_Writer, "   end record;");
+                  Writers.P (NON_Session_Writer);
 
                   Is_Record := False;
                end if;
@@ -281,10 +289,10 @@ package body XSD_To_Ada.Generator is
          for J in 1 .. Complex_Types.Length loop
             XS_Object := Complex_Types.Item (J);
 
---              if XS_Object.Get_Name.To_UTF_8_String = "OpenOrderInformation"
---                or XS_Object.Get_Name.To_UTF_8_String = "ActivateCondition"
---                  or XS_Object.Get_Name.To_UTF_8_String = "ConditionalOpenOrderInformation"
---              then
+            if XS_Object.Get_Name.To_UTF_8_String = "BindOrders"
+              or XS_Object.Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase"
+              or XS_Object.Get_Name.To_UTF_8_String = "AccountBalanceChangedInformation"
+            then
                Writers.P
                  (CT_Writer,
                   "type "
@@ -299,7 +307,7 @@ package body XSD_To_Ada.Generator is
 
                Writers.P (CT_Writer, "end record;");
                Writers.P (CT_Writer);
---            end if;
+          end if;
          end loop;
       end;
 
