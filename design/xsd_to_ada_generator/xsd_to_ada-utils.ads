@@ -89,12 +89,10 @@ package XSD_To_Ada.Utils is
       Indent : String := "";
       Session : in out Boolean);
 
-   Count  : Natural := 0;
    Choice : Natural := 0;
    Session_Bool : Boolean := False;
    Now_Add : Boolean := False;
    Add_Choise : Boolean := False;
-
    Add_Anonym : Boolean := False;
 
    Anonym_Type : Boolean := False;
@@ -102,4 +100,6 @@ package XSD_To_Ada.Utils is
    Name_Kind   : League.Strings.Universal_String;
    Name_Case   : League.Strings.Universal_String;
    Anonym_Kind : League.Strings.Universal_String;
+   Vectop_US   : League.Strings.Universal_String;
+
 end XSD_To_Ada.Utils;

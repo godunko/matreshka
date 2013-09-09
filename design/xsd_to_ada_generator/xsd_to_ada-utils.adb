@@ -257,12 +257,6 @@ package body XSD_To_Ada.Utils is
 
       Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
 
-      ELEM_XS_Term : XML.Schema.Objects.Terms.XS_Term;
-
-      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-      XS_Particle_CTD    : XML.Schema.Objects.Particles.XS_Particle;
-      XS_Term_CTD        : XML.Schema.Objects.Terms.XS_Term;
-
    begin
       Ada.Text_IO.Put (Indent);
       Ada.Text_IO.Put_Line ("Type " & XS_Term.Get_Type'Img);
@@ -287,7 +281,8 @@ package body XSD_To_Ada.Utils is
                & Name.To_Wide_Wide_String & "_Anonym;");
 
             Anonym_Kind.Append
-              ("   type " & Name.To_Wide_Wide_String & "_Anonym is record");
+              ("   type " & Name.To_Wide_Wide_String & "_Anonym is record"
+              & Wide_Wide_Character'Val (10));
             Add_Anonym := True;
          end if;
 
@@ -350,7 +345,10 @@ package body XSD_To_Ada.Utils is
                & Wide_Wide_Character'Val (10));
          end if;
 
-         if Type_D.Get_Name.To_UTF_8_String /= "" and not Anonym_Type then
+         if Type_D.Get_Name.To_UTF_8_String /= ""
+           and not Anonym_Type
+           and Choice = 0
+         then
             Writers.P
               (Writer,
                "      " & XS_Term.Get_Name.To_Wide_Wide_String
@@ -398,17 +396,10 @@ package body XSD_To_Ada.Utils is
          when XML.Schema.Complex_Type =>
             CTD := Type_D.To_Complex_Type_Definition;
 
-            Count := Count + 1;
-
-            if Count = 3 then
-               Writers.P (Writer, Type_D.Get_Name.To_Wide_Wide_String & ";");
-            end if;
-
             if CTD.Get_Content_Type in Element_Only | Mixed then
                Ada.Text_IO.Put_Line
                  (Indent & "Complex_Type "
                   & Type_D.Get_Name.To_UTF_8_String);
-               Ada.Text_IO.Put_Line (Indent & "Count" & Count'Img);
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 
@@ -418,13 +409,9 @@ package body XSD_To_Ada.Utils is
                Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
             end if;
 
-            Count := Count - 1;
-
          when XML.Schema.Simple_Type =>
             Ada.Text_IO.Put (Indent & "Simple_Type : " & Type_D.Get_Name.To_UTF_8_String);
             STD := Type_D.To_Simple_Type_Definition;
-
-            Writers.P (Writer, Type_D.Get_Name.To_Wide_Wide_String & ";");
 
          when XML.Schema.None =>
             Ada.Text_IO.Put_Line (Indent & "NONE!!!");
@@ -463,7 +450,7 @@ package body XSD_To_Ada.Utils is
             & "   end record;" & Wide_Wide_Character'Val (10));
          Anonym_Kind.Clear;
       end if;
-
+      Choice := 0;
    end Print_Type_Definition;
 
    -------------------
