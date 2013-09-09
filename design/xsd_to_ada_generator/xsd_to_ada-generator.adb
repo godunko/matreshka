@@ -54,6 +54,7 @@ with XML.Schema.Simple_Type_Definitions;
 with XML.Schema.Named_Maps;
 
 with League.Strings;
+with League.String_Vectors;
 
 package body XSD_To_Ada.Generator is
 
@@ -162,19 +163,50 @@ package body XSD_To_Ada.Generator is
             Type_D_ST := XS_Object.To_Type_Definition;
             XS_Base   := Type_D_ST.Get_Base_Type;
 
-            XSD_To_Ada.Writers.P
-              (ST_Writer,
-               "type " &
-                 XSD_To_Ada.Utils.Add_Separator
-                 (XS_Object.Get_Name.To_Wide_Wide_String)
-               & " is new "
-               & XSD_To_Ada.Utils.Add_Separator
-                 (XS_Base.Get_Name.To_Wide_Wide_String)
-               & ";" & Wide_Wide_Character'Val (10));
+            STD := XS_Object.To_Simple_Type_Definition;
 
-            if XS_Object.Is_Multivalue_Facet then
-               XSD_To_Ada.Writers.P (ST_Writer, "Is_Multivalue_Facet");
-            end if;
+            declare
+               List : constant League.String_Vectors.Universal_String_Vector
+                 := STD.Get_Lexical_Enumeration;
+            begin
+
+               if List.Is_Empty then
+                  XSD_To_Ada.Writers.P
+                    (ST_Writer,
+                     "type " &
+                       XSD_To_Ada.Utils.Add_Separator
+                       (XS_Object.Get_Name.To_Wide_Wide_String) & " is new "
+                     & XSD_To_Ada.Utils.Add_Separator
+                       (XS_Base.Get_Name.To_Wide_Wide_String)
+                     & ";" & Wide_Wide_Character'Val (10));
+               else
+                  XSD_To_Ada.Writers.N
+                    (ST_Writer,
+                     "type " &
+                       XSD_To_Ada.Utils.Add_Separator
+                       (XS_Object.Get_Name.To_Wide_Wide_String) & " is (");
+
+                  for J in 1 .. List.Length loop
+                     Ada.Text_IO.Put (" Enum: ");
+                     Ada.Text_IO.Put_Line (List.Element (J).To_UTF_8_String);
+
+                     if J /= List.Length then
+                        XSD_To_Ada.Writers.N
+                          (ST_Writer,
+                           League.Strings.To_Lowercase
+                             (List.Element (J)).To_Wide_Wide_String & ", ");
+                     else
+                        XSD_To_Ada.Writers.N
+                          (ST_Writer,
+                           League.Strings.To_Lowercase
+                             (List.Element (J)).To_Wide_Wide_String);
+                     end if;
+
+                  end loop;
+                  XSD_To_Ada.Writers.P (ST_Writer, ");");
+                  XSD_To_Ada.Writers.P (ST_Writer);
+               end if;
+            end;
          end loop;
 
          --  Create all Complex_Types
