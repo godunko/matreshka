@@ -82,7 +82,7 @@ package body XSD_To_Ada.Generator is
    Session_Bool   : Boolean := False;
    Is_Record      : Boolean := False;
 
-   Must_Be_Vector : Boolean := False;
+   maxOccurs : Boolean := False;
    Is_Vector  : Boolean := False;
    ---------
    -- Dec --
@@ -206,7 +206,7 @@ package body XSD_To_Ada.Generator is
                   XS_Particle := CTD.Get_Particle;
                   XS_Term := XS_Particle.Get_Term;
 
-                  Print_Term (XS_Term, Must_Be_Vector, Name);
+                  Print_Term (XS_Term, maxOccurs, Name);
                end if;
             when XML.Schema.Simple_Type | XML.Schema.None =>
                null;
@@ -402,14 +402,14 @@ package body XSD_To_Ada.Generator is
                   Writers.P (NON_Session_Writer, "   end record;");
                   Writers.P (NON_Session_Writer);
 
-                  Must_Be_Vector := False;
+                  maxOccurs := False;
 
                   for J in 1 .. Complex_Types.Length loop
                      XS_Object_2 := Complex_Types.Item (J);
 
                      Print_Type_Definition
                        (XS_Object_2.To_Type_Definition,
-                        Must_Be_Vector,
+                        maxOccurs,
                         XS_Object.Get_Name.To_Wide_Wide_String);
                   end loop;
 
