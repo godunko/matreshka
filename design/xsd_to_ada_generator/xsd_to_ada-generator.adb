@@ -44,23 +44,25 @@
 
 with Ada.Directories;
 
-with XSD_To_Ada.Utils;
-with XML.Schema.Objects;
-with XML.Schema.Objects.Type_Definitions;
-with XML.Schema.Type_Definitions;
-with XML.Schema.Element_Declarations;
 with XML.Schema.Complex_Type_Definitions;
-with XML.Schema.Simple_Type_Definitions;
+with XML.Schema.Element_Declarations;
+with XML.Schema.Object_Lists;
+with XML.Schema.Objects;
+with XML.Schema.Objects.Terms;
+with XML.Schema.Objects.Terms.Model_Groups;
+with XML.Schema.Objects.Type_Definitions;
+with XML.Schema.Objects.Particles;
+with XML.Schema.Model_Groups;
 with XML.Schema.Named_Maps;
+with XML.Schema.Simple_Type_Definitions;
+with XML.Schema.Type_Definitions;
 
 with League.Strings;
 with League.String_Vectors;
-with XML.Schema.Objects.Particles;
-with XML.Schema.Objects.Terms;
 
-with XML.Schema.Objects.Terms.Model_Groups;
-with XML.Schema.Object_Lists;
-with XML.Schema.Model_Groups;
+with XSD_To_Ada.Utils;
+with XSD_To_Ada.Mappings_XML;
+
 package body XSD_To_Ada.Generator is
 
    Tab   : Natural := 0;
@@ -167,13 +169,11 @@ package body XSD_To_Ada.Generator is
                if XS_Term.Is_Model_Group then
                   XS_Model_Group := XS_Term.To_Model_Group;
                   XS_List := XS_Model_Group.Get_Particles;
-                  Ada.Text_IO.Put_Line (XS_Model_Group.Get_Compositor'Img);
 
                   Has_Max_Occurs := False;
 
                   for J in 1 .. XS_List.Get_Length loop
                      XS_Particle := XS_List.Item (J).To_Particle;
-                     Ada.Text_IO.Put_Line ((J'Img));
 
                      if XS_Particle.Get_Max_Occurs.Unbounded then
                         Has_Max_Occurs := True;
@@ -244,7 +244,15 @@ package body XSD_To_Ada.Generator is
          Type_D_ST   : XML.Schema.Type_Definitions.XS_Type_Definition;
 
          US_Response : League.Strings.Universal_String;
+
+         Map : XSD_To_Ada.Mappings_XML.Mapping_XML;
+
       begin
+
+         Map :=
+           XSD_To_Ada.Utils.Read_Mapping
+             (League.Strings.To_Universal_String ("./mapping.xml"));
+
          --  Create all Simple_Types
          if Type_D.Get_Type_Category = XML.Schema.Simple_Type then
             STD := Type_D.To_Simple_Type_Definition;
@@ -347,7 +355,9 @@ package body XSD_To_Ada.Generator is
                  (XS_Object.To_Type_Definition,
                   "",
                   Payload_Writer, Payload_Type_Writer,
-                  XS_Object.Get_Name);
+                  XS_Object.Get_Name,
+                  False,
+                  Map);
 
                Writers.P (Payload_Writer, "   end record;");
                Writers.P (Payload_Writer);
@@ -380,7 +390,7 @@ package body XSD_To_Ada.Generator is
                     (XS_Object.To_Type_Definition,
                      "",
                      Session_Writer, Session_Type_Writer,
-                     XS_Object.Get_Name);
+                     XS_Object.Get_Name, False, Map);
                   Writers.P (Session_Writer, "   end record;");
                   Writers.P (Session_Writer);
                else
@@ -397,7 +407,8 @@ package body XSD_To_Ada.Generator is
                      "",
                      NON_Session_Writer, NON_Session_Type_Writer,
                      XS_Object.Get_Name,
-                     Is_Record);
+                     Is_Record,
+                     Map);
 
                   Writers.P (NON_Session_Writer, "   end record;");
                   Writers.P (NON_Session_Writer);
@@ -466,7 +477,7 @@ package body XSD_To_Ada.Generator is
                  (XS_Object.To_Type_Definition,
                   "",
                   CT_Writer, CT_Writer,
-                  XS_Object.Get_Name);
+                  XS_Object.Get_Name, False, Map);
 
                Writers.P (CT_Writer, "end record;");
                Writers.P (CT_Writer);

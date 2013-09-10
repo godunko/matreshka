@@ -42,79 +42,13 @@
 --  $Revision: 3559 $ $Date: 2012-12-07 13:08:31 +0200 (Пт., 07 дек. 2012) $
 ------------------------------------------------------------------------------
 
-with XSD_To_Ada.Writers;
+with League.String_Vectors;
 
-with XML.Schema.Type_Definitions;
-with XML.Schema.Objects.Terms;
-with League.Strings;
-with XSD_To_Ada.Mappings;
-with XSD_To_Ada.Mappings_XML;
+package XSD_To_Ada.Mappings is
 
-package XSD_To_Ada.Utils is
+   type Mapping is abstract tagged record
+      Map_Vector : League.String_Vectors.Universal_String_Vector;
+      Ada_Vector : League.String_Vectors.Universal_String_Vector;
+   end record;
 
-   function Add_Separator
-     (Text : Wide_Wide_String) return Wide_Wide_String;
-
-   procedure Gen_Access_Type
-     (Self   : in out XSD_To_Ada.Writers.Writer;
-      Name   : Wide_Wide_String;
-      Offset : Positive := 3);
-
-   procedure Gen_Line
-     (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "");
-
-   procedure Gen_Proc_Header
-     (Self   : in out XSD_To_Ada.Writers.Writer;
-      Name   : Wide_Wide_String;
-      Offset : Positive := 3);
-
-   procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
-   procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
-
-   procedure Print_Type_Definition
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent       : String := "";
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Name         : League.Strings.Universal_String;
-      Is_Record    : Boolean := False;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
-
-   procedure Print_Term
-     (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
-      Indent       : String := "";
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
-
-   procedure Print_Type_Session
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent : String := "";
-      Session : in out Boolean);
-
-   function Read_Mapping
-     (File_Name : League.Strings.Universal_String)
-      return XSD_To_Ada.Mappings_XML.Mapping_XML;
-
-   function Find_Type
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
-      return League.Strings.Universal_String;
-
-   Choice : Natural := 0;
-   Session_Bool : Boolean := False;
-   Now_Add : Boolean := False;
-   Add_Choise : Boolean := False;
-   Add_Anonym : Boolean := False;
-
-   Anonym_Type : Boolean := False;
-
-   Name_Kind   : League.Strings.Universal_String;
-   Name_Case   : League.Strings.Universal_String;
-   Anonym_Kind : League.Strings.Universal_String;
-   Vectop_US   : League.Strings.Universal_String;
-
-   Type_Name : League.Strings.Universal_String;
-
-end XSD_To_Ada.Utils;
+end XSD_To_Ada.Mappings;

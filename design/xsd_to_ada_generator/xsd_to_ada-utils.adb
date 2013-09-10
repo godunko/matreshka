@@ -48,6 +48,9 @@ with Ada.Strings.Wide_Wide_Maps;
 with Ada.Strings.Wide_Wide_Unbounded;
 with League.Strings;
 
+with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Simple_Readers;
+
 with XML.Schema.Model_Groups;
 with XML.Schema.Objects.Particles;
 with XML.Schema.Objects.Terms.Model_Groups;
@@ -57,6 +60,9 @@ with XML.Schema.Simple_Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
 use XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
+
+with XSD_To_Ada.Mappings;
+with XSD_To_Ada.Mappings_XML;
 
 package body XSD_To_Ada.Utils is
 
@@ -106,6 +112,22 @@ package body XSD_To_Ada.Utils is
 
    end Add_Separator;
 
+   function Find_Type
+     (Type_D_Name : League.Strings.Universal_String;
+      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
+      return League.Strings.Universal_String
+   is
+   begin
+      for j in 1 .. Map.Map_Vector.Length loop
+         if Type_D_Name.To_UTF_8_String =
+           Map.Map_Vector.Element (J).To_UTF_8_String
+         then
+            return Map.Ada_Vector.Element (J);
+         end if;
+      end loop;
+
+      return Type_D_Name;
+   end Find_Type;
    ---------------------
    -- Gen_Access_Type --
    ---------------------
@@ -242,11 +264,12 @@ package body XSD_To_Ada.Utils is
    ----------------
 
    procedure Print_Term
-     (XS_Term : XML.Schema.Objects.Terms.XS_Term;
-      Indent  : String := "";
-      Writer  : in out Writers.Writer;
-      Writer_types    : in out Writers.Writer;
-      Name    : League.Strings.Universal_String)
+     (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      Indent       : String := "";
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
    is
       use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
 
@@ -311,7 +334,8 @@ package body XSD_To_Ada.Utils is
             XS_Particle := XS_List.Item (J).To_Particle;
 
             Print_Term
-              (XS_Particle.Get_Term, Indent & "   ", Writer, Writer_types, Name);
+              (XS_Particle.Get_Term,
+               Indent & "   ", Writer, Writer_types, Name, Map);
 
             if J /=  XS_List.Get_Length and Choice = 1 then
                Name_Kind.Append (", ");
@@ -324,12 +348,16 @@ package body XSD_To_Ada.Utils is
          Decl := XS_Term.To_Element_Declaration;
          Type_D := Decl.Get_Type_Definition;
 
+         Type_Name := Find_Type (Type_D.Get_Name, Map);
+
          if Type_D.Get_Name.To_UTF_8_String = "" then
             Anonym_Type := True;
             Print_Type_Definition
               (Type_D, Indent & "   ", Writer, Writer_types,
                League.Strings.To_Universal_String
-                 (Name.To_Wide_Wide_String & "_" & Decl.Get_Name.To_Wide_Wide_String));
+                 (Name.To_Wide_Wide_String & "_" & Decl.Get_Name.To_Wide_Wide_String),
+               False,
+               Map);
             Anonym_Type := False;
             Add_Anonym := False;
          end if;
@@ -341,7 +369,7 @@ package body XSD_To_Ada.Utils is
                & Wide_Wide_Character'Val (10)
                & "           " & XS_Term.Get_Name.To_Wide_Wide_String
                & " : "
-               & Type_D.Get_Name.To_Wide_Wide_String & ";"
+               & Type_Name.To_Wide_Wide_String & ";"
                & Wide_Wide_Character'Val (10));
          end if;
 
@@ -353,14 +381,14 @@ package body XSD_To_Ada.Utils is
               (Writer,
                "      " & XS_Term.Get_Name.To_Wide_Wide_String
                & " : "
-               & Type_D.Get_Name.To_Wide_Wide_String & ";");
+               & Type_Name.To_Wide_Wide_String & ";");
          end if;
 
          if Anonym_Type and Choice = 0 then
             Anonym_Kind.Append
                ("      " & XS_Term.Get_Name.To_Wide_Wide_String
                & " : "
-                & Type_D.Get_Name.To_Wide_Wide_String & ";"
+                & Type_Name.To_Wide_Wide_String & ";"
                & Wide_Wide_Character'Val (10));
          end if;
       end if;
@@ -371,12 +399,13 @@ package body XSD_To_Ada.Utils is
    ---------------------------
 
    procedure Print_Type_Definition
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent : String := "";
-      Writer : in out Writers.Writer;
-      Writer_types    : in out Writers.Writer;
-      Name   : League.Strings.Universal_String;
-      Is_Record : Boolean := False)
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent       : String := "";
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Is_Record    : Boolean := False;
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -404,7 +433,8 @@ package body XSD_To_Ada.Utils is
                XS_Term := XS_Particle.Get_Term;
 
                Print_Term
-                 (XS_Term, Indent & "   ", Writer, Writer_types, Name);
+                 (XS_Term,
+                  Indent & "   ", Writer, Writer_types, Name, Map);
 
                Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
             end if;
@@ -422,7 +452,9 @@ package body XSD_To_Ada.Utils is
         and XS_Base /= Type_D  --  This is to filter predefined types
       then
          Ada.Text_IO.Put_Line (Indent & " is new");
-         Print_Type_Definition (XS_Base, Indent & "   ", Writer, Writer_types, Name);
+         Print_Type_Definition
+           (XS_Base,
+            Indent & "   ", Writer, Writer_types, Name, False, Map);
       end if;
 
       if Add_Choise then
@@ -522,5 +554,19 @@ package body XSD_To_Ada.Utils is
       Self.P (Lin);
       Self.P ("");
    end Put_Header;
+
+   function Read_Mapping
+     (File_Name : League.Strings.Universal_String)
+      return XSD_To_Ada.Mappings_XML.Mapping_XML
+   is
+      Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Handler : aliased XSD_To_Ada.Mappings_XML.Mapping_XML;
+   begin
+      Reader.Set_Content_Handler (Handler'Unchecked_Access);
+      Source.Open_By_File_Name (File_Name);
+      Reader.Parse (Source'Access);
+      return Handler;
+   end Read_Mapping;
 
 end XSD_To_Ada.Utils;

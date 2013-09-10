@@ -1,0 +1,88 @@
+
+<mappings>
+ 
+  <map type="AccountIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Account_Identifier"/>
+  </map> 
+
+  <map type="AccountVersion">
+    <ada context="ICTS.Types" type="ICTS.Types.Account_Version"/>
+  </map> 
+
+  <map type="AdapterIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Adapter_Identifier"/>
+  </map>
+
+  <map type="CommissionIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Commission_Identifier"/>
+  </map> 
+
+  <map type="CurrencyIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Currency_Identifier"/>
+  </map> 
+
+  <map type="CurrencyVersion">
+    <ada context="ICTS.Types" type="ICTS.Types.Currency_Version"/>
+  </map> 
+
+  <map type="DealerIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Dealer_Identifier"/>
+  </map>
+
+  <map type="InstrumentIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Instrument_Identifier"/>
+  </map>
+   
+  <map type="InstrumentVersion">
+    <ada context="ICTS.Types" type="ICTS.Types.Instrument_Version"/>
+  </map> 
+
+  <map type="LinkIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Link_Identifier"/>
+  </map> 
+
+  <map type="LinkVersion">
+    <ada context="ICTS.Types" type="ICTS.Types.Link_Version"/>
+  </map>
+
+  <map type="MessageBatchIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Message_Batch_Identifier"/>
+  </map> 
+
+  <map type="OrderIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Order_Identifier"/>
+  </map> 
+
+  <map type="OrderVersion">
+    <ada context="ICTS.Types" type="ICTS.Types.Order_Version"/>
+  </map> 
+
+  <map type="PositionGroup">
+    <ada context="ICTS.Types" type="ICTS.Types.Position_Group"/>
+  </map>
+
+  <map type="PositionGroupVersion">
+    <ada context="ICTS.Types" type="ICTS.Types.Position_Group_Version"/>
+  </map> 
+  
+  <map type="SecondsSinceMidnight">
+    <ada context="ICTS.Types" type="ICTS.Types.Seconds_Since_Midnight"/>
+  </map> 
+
+  <map type="SettingIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Setting_Identifier"/>
+  </map> 
+
+  <map type="TimeInterval">
+    <ada context="ICTS.Types" type="ICTS.Types.Time_Interval"/>
+  </map>
+
+  <map type="TimeIntervalArray">
+    <ada context="ICTS.Types" type="ICTS.Types.Time_Interval_Array"/>
+  </map>   
+  
+  <map type="TraderIdentifier">
+    <ada context="ICTS.Types" type="ICTS.Types.Trader_Identifier"/>
+  </map>
+  
+</mappings>
