@@ -347,9 +347,10 @@ package body XSD_To_Ada.Generator is
                   "   type "
                   & XSD_To_Ada.Utils.Add_Separator
                     (XS_Object.Get_Name.To_Wide_Wide_String)
-                  & " is new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
+                    & Wide_Wide_Character'Val (10)
+                  & "     is new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
                   & Wide_Wide_Character'Val (10)
-                  & "   with record");
+                  & "       with record");
 
                XSD_To_Ada.Utils.Print_Type_Definition
                  (XS_Object.To_Type_Definition,
@@ -487,6 +488,10 @@ package body XSD_To_Ada.Generator is
 
       Ada.Text_IO.Create
         (Current_Out_File, Ada.Text_IO.Out_File, "./Payload.ads");
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, NON_Session_Type_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, NON_Session_Writer.Text.To_UTF_8_String);
       Ada.Text_IO.Put_Line
         (Current_Out_File, Payload_Type_Writer.Text.To_UTF_8_String);
       Ada.Text_IO.Put_Line

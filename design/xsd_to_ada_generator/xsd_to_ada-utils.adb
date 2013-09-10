@@ -126,7 +126,9 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
-      return Type_D_Name;
+      return League.Strings.To_Universal_String
+        (XSD_To_Ada.Utils.Add_Separator
+           (Type_D_Name.To_Wide_Wide_String));
    end Find_Type;
    ---------------------
    -- Gen_Access_Type --
@@ -140,7 +142,7 @@ package body XSD_To_Ada.Utils is
       O : constant Wide_Wide_String (1 .. Offset) := (others => ' ');
    begin
       Gen_Line
-        (Self, O & " type " & Name & "is access all " & Name & "'Class;");
+        (Self, O & " type " & Name & " is access all " & Name & "'Class;");
       Gen_Line (Self);
    end Gen_Access_Type;
 
@@ -300,30 +302,44 @@ package body XSD_To_Ada.Utils is
          if Anonym_Type and Choice = 0 then
             Writers.P
               (Writer,
-               "      " & Name.To_Wide_Wide_String & " : "
-               & Name.To_Wide_Wide_String & "_Anonym;");
+               "      "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String) & " : "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String) & "_Anonym;");
 
             Anonym_Kind.Append
-              ("   type " & Name.To_Wide_Wide_String & "_Anonym is record"
+              ("   type " & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String) & "_Anonym is record"
               & Wide_Wide_Character'Val (10));
             Add_Anonym := True;
          end if;
 
          if Choice = 1 and not Now_Add then
 
-            Name_Kind.Append ("   type " & Name.To_Wide_Wide_String & "_Kind (");
+            Name_Kind.Append
+              ("   type "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String) & "_Kind is (");
 
             Name_Case.Append
-              ("   type " & Name.To_Wide_Wide_String
-               & "_Case (Kind : " & Name.To_Wide_Wide_String & "_Kind) is record"
+              ("   type "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String)
+               & "_Case (Kind : "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String) & "_Kind) is record"
                & Wide_Wide_Character'Val (10)
                & "      case Kind is"
                & Wide_Wide_Character'Val (10));
 
             Writers.P
               (Writer,
-               "      " & Name.To_Wide_Wide_String & " : "
-               & Name.To_Wide_Wide_String & "_Case;");
+               "      "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String) & " : "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Name.To_Wide_Wide_String) & "_Case;");
 
             Now_Add := True;
             Add_Choise := True;
@@ -365,9 +381,13 @@ package body XSD_To_Ada.Utils is
          if Choice = 1 then
             Name_Kind.Append (XS_Term.Get_Name);
             Name_Case.Append
-              ("        when " & XS_Term.Get_Name.To_Wide_Wide_String & " =>"
+              ("        when "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (XS_Term.Get_Name.To_Wide_Wide_String) & " =>"
                & Wide_Wide_Character'Val (10)
-               & "           " & XS_Term.Get_Name.To_Wide_Wide_String
+               & "           "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (XS_Term.Get_Name.To_Wide_Wide_String)
                & " : "
                & Type_Name.To_Wide_Wide_String & ";"
                & Wide_Wide_Character'Val (10));
@@ -379,15 +399,18 @@ package body XSD_To_Ada.Utils is
          then
             Writers.P
               (Writer,
-               "      " & XS_Term.Get_Name.To_Wide_Wide_String
+               "      "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (XS_Term.Get_Name.To_Wide_Wide_String)
                & " : "
                & Type_Name.To_Wide_Wide_String & ";");
          end if;
 
          if Anonym_Type and Choice = 0 then
             Anonym_Kind.Append
-               ("      " & XS_Term.Get_Name.To_Wide_Wide_String
-               & " : "
+              ("      "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (XS_Term.Get_Name.To_Wide_Wide_String) & " : "
                 & Type_Name.To_Wide_Wide_String & ";"
                & Wide_Wide_Character'Val (10));
          end if;
@@ -433,14 +456,14 @@ package body XSD_To_Ada.Utils is
                XS_Term := XS_Particle.Get_Term;
 
                Print_Term
-                 (XS_Term,
-                  Indent & "   ", Writer, Writer_types, Name, Map);
+                 (XS_Term, Indent & "   ", Writer, Writer_types, Name, Map);
 
                Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
             end if;
 
          when XML.Schema.Simple_Type =>
-            Ada.Text_IO.Put (Indent & "Simple_Type : " & Type_D.Get_Name.To_UTF_8_String);
+            Ada.Text_IO.Put
+              (Indent & "Simple_Type : " & Type_D.Get_Name.To_UTF_8_String);
             STD := Type_D.To_Simple_Type_Definition;
 
          when XML.Schema.None =>
@@ -479,7 +502,8 @@ package body XSD_To_Ada.Utils is
       Writers.P
            (Writer_types,
             Anonym_Kind.To_Wide_Wide_String
-            & "   end record;" & Wide_Wide_Character'Val (10));
+            & "   end record;"
+            & Wide_Wide_Character'Val (10));
          Anonym_Kind.Clear;
       end if;
       Choice := 0;
