@@ -63,6 +63,11 @@ use XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
 
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Mappings_XML;
+with League.String_Vectors;
+with XML.Schema.Named_Maps;
+
+with XML.Schema.Models;
+with XML.Schema.Objects;
 
 package body XSD_To_Ada.Utils is
 
@@ -112,6 +117,246 @@ package body XSD_To_Ada.Utils is
 
    end Add_Separator;
 
+   procedure Create_Simple_Type
+     (Model  : XML.Schema.Models.XS_Model;
+      Writer : in out XSD_To_Ada.Writers.Writer)
+   is
+      Namespace : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String
+          ("http://www.actforex.com/iats");
+
+      XS_Object : XML.Schema.Objects.XS_Object;
+      STD       : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
+      XS_Base   : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      Simple_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Simple_Type,
+           Namespace   => Namespace);
+   begin
+      for J in 1 .. Simple_Types.Length loop
+         XS_Object := Simple_Types.Item (J);
+         Type_D    := XS_Object.To_Type_Definition;
+         XS_Base   := Type_D.Get_Base_Type;
+
+         STD := XS_Object.To_Simple_Type_Definition;
+
+         declare
+            List : constant League.String_Vectors.Universal_String_Vector
+              := STD.Get_Lexical_Enumeration;
+         begin
+
+            if List.Is_Empty then
+               XSD_To_Ada.Writers.P
+                 (Writer,
+                  "type " &
+                    XSD_To_Ada.Utils.Add_Separator
+                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is new "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (XS_Base.Get_Name.To_Wide_Wide_String)
+                  & ";" & Wide_Wide_Character'Val (10));
+            else
+               XSD_To_Ada.Writers.N
+                 (Writer,
+                  "type " &
+                    XSD_To_Ada.Utils.Add_Separator
+                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is (");
+
+               for J in 1 .. List.Length loop
+                  Ada.Text_IO.Put (" Enum: ");
+                  Ada.Text_IO.Put_Line (List.Element (J).To_UTF_8_String);
+
+                  if J /= List.Length then
+                     XSD_To_Ada.Writers.N
+                       (Writer,
+                        League.Strings.To_Lowercase
+                          (List.Element (J)).To_Wide_Wide_String & ", ");
+                  else
+                     XSD_To_Ada.Writers.N
+                       (Writer,
+                        League.Strings.To_Lowercase
+                          (List.Element (J)).To_Wide_Wide_String);
+                  end if;
+
+               end loop;
+               XSD_To_Ada.Writers.P (Writer, ");");
+               XSD_To_Ada.Writers.P (Writer);
+            end if;
+         end;
+      end loop;
+   end Create_Simple_Type;
+
+   procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model)
+   is
+      Namespace : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String
+          ("http://www.actforex.com/iats");
+
+      XS_Object : XML.Schema.Objects.XS_Object;
+      XS_Object_2 : XML.Schema.Objects.XS_Object;
+      Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      CTD : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+
+      Complex_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Complex_Type,
+           Namespace   => Namespace);
+
+      Payload_Writer          : XSD_To_Ada.Writers.Writer;
+      Payload_Type_Writer     : XSD_To_Ada.Writers.Writer;
+
+      Session_Type_Writer     : XSD_To_Ada.Writers.Writer;
+      Session_Writer          : XSD_To_Ada.Writers.Writer;
+
+      NON_Session_Writer      : XSD_To_Ada.Writers.Writer;
+      NON_Session_Type_Writer : XSD_To_Ada.Writers.Writer;
+
+      Is_Record      : Boolean := False;
+
+      US_Response : League.Strings.Universal_String;
+
+      maxOccurs : Boolean := False;
+      Is_Vector  : Boolean := False;
+
+      Current_Out_File : Ada.Text_IO.File_Type;
+
+      procedure Print_Type_Definition
+        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+         Vector_Type : in out Boolean;
+         Name : Wide_Wide_String);
+
+      ---------------------------
+      -- Print_Type_Definition --
+      ---------------------------
+
+      procedure Print_Type_Definition
+        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+         Vector_Type : in out Boolean;
+         Name : Wide_Wide_String)
+      is
+         use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+         XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+         XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+         CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+
+         procedure Print_Term
+           (XS_Term : XML.Schema.Objects.Terms.XS_Term;
+            Has_Max_Occurs  : in out Boolean;
+            Name : Wide_Wide_String);
+
+         procedure Print_Term
+           (XS_Term : XML.Schema.Objects.Terms.XS_Term;
+            Has_Max_Occurs  : in out Boolean;
+            Name : Wide_Wide_String)
+         is
+            use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
+
+            XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+            XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+            XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+            Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
+         begin
+
+            if XS_Term.Is_Model_Group then
+               XS_Model_Group := XS_Term.To_Model_Group;
+               XS_List := XS_Model_Group.Get_Particles;
+
+               Has_Max_Occurs := False;
+
+               for J in 1 .. XS_List.Get_Length loop
+                  XS_Particle := XS_List.Item (J).To_Particle;
+
+                  if XS_Particle.Get_Max_Occurs.Unbounded then
+                     Has_Max_Occurs := True;
+                  else
+                     if XS_Particle.Get_Max_Occurs.Value > 1 then
+                        Has_Max_Occurs := True;
+                     end if;
+                  end if;
+
+                  Print_Term (XS_Particle.Get_Term, Has_Max_Occurs, Name);
+               end loop;
+            elsif XS_Term.Is_Element_Declaration then
+               Decl   := XS_Term.To_Element_Declaration;
+
+               Print_Type_Definition
+                 (Decl.Get_Type_Definition, Has_Max_Occurs, Name);
+            end if;
+         end Print_Term;
+
+      begin
+         if Type_D.Get_Name.To_Wide_Wide_String = Name and Vector_Type then
+            Is_Vector := True;
+         end if;
+
+         case Type_D.Get_Type_Category is
+            when XML.Schema.Complex_Type =>
+               CTD := Type_D.To_Complex_Type_Definition;
+
+               if CTD.Get_Content_Type in Element_Only | Mixed then
+                  XS_Particle := CTD.Get_Particle;
+                  XS_Term := XS_Particle.Get_Term;
+
+                  Print_Term (XS_Term, maxOccurs, Name);
+               end if;
+            when XML.Schema.Simple_Type | XML.Schema.None =>
+               null;
+         end case;
+      end Print_Type_Definition;
+   begin
+
+      Map :=
+        XSD_To_Ada.Utils.Read_Mapping
+          (League.Strings.To_Universal_String ("./mapping.xml"));
+
+      for J in 1 .. Complex_Types.Length loop
+         Types_Table (J).Table_Name := Complex_Types.Item (J).Get_Name;
+         Types_Table (J).Table_State := True;
+      end loop;
+
+      for J in 1 .. Complex_Types.Length loop
+         Is_Record := False;
+         XS_Object := Complex_Types.Item (J);
+
+         Print_Type_Title
+           (XS_Object.To_Type_Definition,
+            Payload_Writer,
+            Payload_Type_Writer);
+      end loop;
+
+      Ada.Text_IO.Create
+        (Current_Out_File, Ada.Text_IO.Out_File, "./Payload.ads");
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, NON_Session_Type_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, NON_Session_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, Payload_Type_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, Payload_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, Session_Type_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, Session_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Close (Current_Out_File);
+
+      Ada.Text_IO.Create
+        (Current_Out_File, Ada.Text_IO.Out_File, "./XSD_Forex.ads");
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, NON_Session_Type_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Put_Line
+        (Current_Out_File, NON_Session_Writer.Text.To_UTF_8_String);
+      Ada.Text_IO.Close (Current_Out_File);
+
+   end Create_Complex_Type;
+
+   ---------------
+   -- Find_Type --
+   ---------------
+
    function Find_Type
      (Type_D_Name : League.Strings.Universal_String;
       Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
@@ -130,6 +375,7 @@ package body XSD_To_Ada.Utils is
         (XSD_To_Ada.Utils.Add_Separator
            (Type_D_Name.To_Wide_Wide_String));
    end Find_Type;
+
    ---------------------
    -- Gen_Access_Type --
    ---------------------
@@ -142,7 +388,8 @@ package body XSD_To_Ada.Utils is
       O : constant Wide_Wide_String (1 .. Offset) := (others => ' ');
    begin
       Gen_Line
-        (Self, O & " type " & Name & " is access all " & Name & "'Class;");
+        (Self,
+         O & " type " & Name & "_Access is access all " & Name & "'Class;");
       Gen_Line (Self);
    end Gen_Access_Type;
 
@@ -261,6 +508,169 @@ package body XSD_To_Ada.Utils is
       Self.P ("");
    end New_Line;
 
+   ----------------------
+   -- Print_Type_Title --
+   ----------------------
+
+   procedure Print_Type_Title
+     (Type_D              : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Payload_Writer      : in out XSD_To_Ada.Writers.Writer;
+      Payload_Type_Writer : in out XSD_To_Ada.Writers.Writer)
+   is
+      Is_Record      : Boolean := False;
+
+      US_Response : League.Strings.Universal_String;
+   begin
+
+      Ada.Text_IO.Put_Line ("START Print_Type_Title");
+
+      for J in 1 .. Types_Table'Last loop
+         if Type_D.Get_Name.To_UTF_8_String = Types_Table (J).Table_Name.To_UTF_8_String
+           and then Types_Table (J).Table_State
+         then
+
+            Types_Table (J).Table_State := False;
+
+      if Type_D.Get_Name.Length > 10 then
+            US_Response := League.Strings.Slice
+              (Type_D.Get_Name,
+               Type_D.Get_Name.Length - 7,
+               Type_D.Get_Name.Length);
+         end if;
+
+         if Type_D.Get_Name.Length > 10
+           and
+             US_Response.To_UTF_8_String = "Response"
+         then
+            XSD_To_Ada.Utils.Gen_Proc_Header
+              (Payload_Writer,
+               XSD_To_Ada.Utils.Add_Separator
+                 (Type_D.Get_Name.To_Wide_Wide_String));
+
+            Writers.P
+              (Payload_Writer,
+               "   type "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (Type_D.Get_Name.To_Wide_Wide_String)
+               & " is new Abstract_IATS_Responce with"
+               & Wide_Wide_Character'Val (10)
+               & "     record");
+
+            XSD_To_Ada.Utils.Print_Type_Definition
+              (Type_D,
+               "",
+               Payload_Writer, Payload_Type_Writer,
+               Type_D.Get_Name,
+               False,
+               Map,
+               Types_Table);
+
+            Writers.P (Payload_Writer, "     end record;");
+            Writers.P (Payload_Writer);
+
+            XSD_To_Ada.Utils.Gen_Access_Type
+              (Payload_Writer,
+               XSD_To_Ada.Utils.Add_Separator
+                 (Type_D.Get_Name.To_Wide_Wide_String));
+            US_Response.Clear;
+         else
+            XSD_To_Ada.Utils.Print_Type_Session
+              (Type_D.To_Type_Definition, "", Session_Bool);
+
+            if Session_Bool then
+               XSD_To_Ada.Utils.Gen_Proc_Header
+                 (Payload_Writer,
+                  XSD_To_Ada.Utils.Add_Separator
+                    (Type_D.Get_Name.To_Wide_Wide_String));
+
+               Writers.P
+                 (Payload_Writer,
+                  "   type "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (Type_D.Get_Name.To_Wide_Wide_String)
+                  & " is new Abstract_IATS_Responce"
+                  & Wide_Wide_Character'Val (10)
+                  & "   with record");
+
+               XSD_To_Ada.Utils.Print_Type_Definition
+                 (Type_D,
+                  "",
+                  Payload_Writer, Payload_Type_Writer,
+                  Type_D.Get_Name, False, Map,
+                  Types_Table);
+
+               Writers.P (Payload_Writer, "   end record;");
+               Writers.P (Payload_Writer);
+            else
+               Is_Record := True;
+
+               Writers.N
+                 (Payload_Writer,
+                  "   type "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (Type_D.Get_Name.To_Wide_Wide_String) & " ");
+
+               XSD_To_Ada.Utils.Print_Type_Definition
+                 (Type_D.To_Type_Definition,
+                  "",
+                  Payload_Writer, Payload_Type_Writer,
+                  Type_D.Get_Name,
+                  Is_Record,
+                  Map,
+                  Types_Table);
+
+               Writers.P (Payload_Writer, "   end record;");
+               Writers.P (Payload_Writer);
+
+--                 maxOccurs := False;
+--
+--                 for J in 1 .. Complex_Types.Length loop
+--                    XS_Object_2 := Complex_Types.Item (J);
+--
+--                    Print_Type_Definition
+--                      (XS_Object_2.To_Type_Definition,
+--                       maxOccurs,
+--                       XS_Object.Get_Name.To_Wide_Wide_String);
+--                 end loop;
+--
+--                 if Is_Vector then
+--                    Writers.P
+--                      (NON_Session_Writer,
+--                       "   package "
+--                       & XSD_To_Ada.Utils.Add_Separator
+--                         (XS_Object.Get_Name.To_Wide_Wide_String)
+--                       & "s_Vectors is "
+--                       & Wide_Wide_Character'Val (10)
+--                       & "     new Ada.Containers.Vectors (Positive, "
+--                       & XSD_To_Ada.Utils.Add_Separator
+--                         (XS_Object.Get_Name.To_Wide_Wide_String)
+--                       & ");");
+--                    Writers.P (NON_Session_Writer);
+--
+--                    Writers.P
+--                      (NON_Session_Writer,
+--                       "   subtype "
+--                       & XSD_To_Ada.Utils.Add_Separator
+--                         (XS_Object.Get_Name.To_Wide_Wide_String) & "s is "
+--                       & XSD_To_Ada.Utils.Add_Separator
+--                         (XS_Object.Get_Name.To_Wide_Wide_String)
+--                       & "s_Vectors.Vector;");
+--                    Writers.P (NON_Session_Writer);
+--                 end if;
+--                 Is_Vector := False;
+--                 Is_Record := False;
+              end if;
+            end if;
+
+            end if;
+         end loop;
+
+         Session_Bool := False;
+      US_Response.Clear;
+
+      Ada.Text_IO.Put_Line ("END Print_Type_Title");
+   end Print_Type_Title;
+
    ----------------
    -- Print_Term --
    ----------------
@@ -271,7 +681,8 @@ package body XSD_To_Ada.Utils is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Table        : in out Types_Table_Type_Array)
    is
       use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
 
@@ -281,7 +692,7 @@ package body XSD_To_Ada.Utils is
       Decl           : XML.Schema.Element_Declarations.XS_Element_Declaration;
 
       Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
-
+      Type_Name : League.Strings.Universal_String;
    begin
       Ada.Text_IO.Put (Indent);
       Ada.Text_IO.Put_Line ("Type " & XS_Term.Get_Type'Img);
@@ -309,7 +720,8 @@ package body XSD_To_Ada.Utils is
                  (Name.To_Wide_Wide_String) & "_Anonym;");
 
             Anonym_Kind.Append
-              ("   type " & XSD_To_Ada.Utils.Add_Separator
+              ("   type "
+               & XSD_To_Ada.Utils.Add_Separator
                  (Name.To_Wide_Wide_String) & "_Anonym is record"
               & Wide_Wide_Character'Val (10));
             Add_Anonym := True;
@@ -325,8 +737,9 @@ package body XSD_To_Ada.Utils is
             Name_Case.Append
               ("   type "
                & XSD_To_Ada.Utils.Add_Separator
-                 (Name.To_Wide_Wide_String)
-               & "_Case (Kind : "
+                 (Name.To_Wide_Wide_String) & "_Case "
+               & Wide_Wide_Character'Val (10)
+               & "     (Kind : "
                & XSD_To_Ada.Utils.Add_Separator
                  (Name.To_Wide_Wide_String) & "_Kind) is record"
                & Wide_Wide_Character'Val (10)
@@ -351,7 +764,8 @@ package body XSD_To_Ada.Utils is
 
             Print_Term
               (XS_Particle.Get_Term,
-               Indent & "   ", Writer, Writer_types, Name, Map);
+               Indent & "   ", Writer, Writer_types, Name, Map,
+               Table);
 
             if J /=  XS_List.Get_Length and Choice = 1 then
                Name_Kind.Append (", ");
@@ -373,13 +787,18 @@ package body XSD_To_Ada.Utils is
                League.Strings.To_Universal_String
                  (Name.To_Wide_Wide_String & "_" & Decl.Get_Name.To_Wide_Wide_String),
                False,
-               Map);
+               Map,
+               Table);
+
             Anonym_Type := False;
             Add_Anonym := False;
          end if;
 
          if Choice = 1 then
-            Name_Kind.Append (XS_Term.Get_Name);
+            Name_Kind.Append
+              (League.Strings.To_Universal_String
+                 (XSD_To_Ada.Utils.Add_Separator
+                    (XS_Term.Get_Name.To_Wide_Wide_String)));
             Name_Case.Append
               ("        when "
                & XSD_To_Ada.Utils.Add_Separator
@@ -397,22 +816,82 @@ package body XSD_To_Ada.Utils is
            and not Anonym_Type
            and Choice = 0
          then
-            Writers.P
-              (Writer,
-               "      "
-               & XSD_To_Ada.Utils.Add_Separator
-                 (XS_Term.Get_Name.To_Wide_Wide_String)
-               & " : "
-               & Type_Name.To_Wide_Wide_String & ";");
+            case Type_D.Get_Type_Category is
+            when XML.Schema.Complex_Type =>
+
+               for j in 1 .. Table'Last loop
+                  if Type_Name.To_Wide_Wide_String =
+                    XSD_To_Ada.Utils.Add_Separator
+                      (Table (J).Table_Name.To_Wide_Wide_String)
+                    and Table (J).Table_State
+                  then
+                     XSD_To_Ada.Utils.Print_Type_Title
+                       (Type_D,
+                        Writer_types,
+                        Writer_types);
+                     --                     Table (J).Table_State := False;
+                     exit;
+                  end if;
+               end loop;
+
+               Writers.P
+                 (Writer,
+                  "      "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (XS_Term.Get_Name.To_Wide_Wide_String)
+                  & " : Payload."
+                  & Type_Name.To_Wide_Wide_String & ";");
+            when XML.Schema.Simple_Type =>
+               Writers.P
+                 (Writer,
+                  "      "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (XS_Term.Get_Name.To_Wide_Wide_String)
+                  & " : "
+                  & Type_Name.To_Wide_Wide_String & ";");
+            when XML.Schema.None =>
+               Ada.Text_IO.Put_Line (Indent & "NONE!!!");
+            end case;
          end if;
 
          if Anonym_Type and Choice = 0 then
-            Anonym_Kind.Append
-              ("      "
-               & XSD_To_Ada.Utils.Add_Separator
-                 (XS_Term.Get_Name.To_Wide_Wide_String) & " : "
-                & Type_Name.To_Wide_Wide_String & ";"
-               & Wide_Wide_Character'Val (10));
+            case Type_D.Get_Type_Category is
+            when XML.Schema.Complex_Type =>
+
+               for j in 1 .. Table'Last loop
+                  if Type_Name.To_Wide_Wide_String =
+                    XSD_To_Ada.Utils.Add_Separator
+                      (Table (J).Table_Name.To_Wide_Wide_String)
+                    and Table (J).Table_State
+                  then
+                     XSD_To_Ada.Utils.Print_Type_Title
+                       (Type_D,
+                        Writer_types,
+                        Writer_types);
+--                     Table (J).Table_State := False;
+                     exit;
+                  end if;
+               end loop;
+
+               Anonym_Kind.Append
+                 ("      "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (XS_Term.Get_Name.To_Wide_Wide_String)
+                  & " : Payload."
+                  & Type_Name.To_Wide_Wide_String & ";"
+                  & Wide_Wide_Character'Val (10));
+
+            when XML.Schema.Simple_Type =>
+               Anonym_Kind.Append
+                 ("      "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (XS_Term.Get_Name.To_Wide_Wide_String) & " : "
+                  & Type_Name.To_Wide_Wide_String & ";"
+                  & Wide_Wide_Character'Val (10));
+
+            when XML.Schema.None =>
+               Ada.Text_IO.Put_Line (Indent & "NONE!!!");
+            end case;
          end if;
       end if;
    end Print_Term;
@@ -428,7 +907,8 @@ package body XSD_To_Ada.Utils is
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
       Is_Record    : Boolean := False;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Table        : in out Types_Table_Type_Array)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -450,15 +930,15 @@ package body XSD_To_Ada.Utils is
 
             if CTD.Get_Content_Type in Element_Only | Mixed then
                Ada.Text_IO.Put_Line
-                 (Indent & "Complex_Type "
-                  & Type_D.Get_Name.To_UTF_8_String);
+                 (Indent & "Complex_Type " & Type_D.Get_Name.To_UTF_8_String);
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 
                Print_Term
-                 (XS_Term, Indent & "   ", Writer, Writer_types, Name, Map);
+                 (XS_Term, Indent & "   ", Writer, Writer_types, Name, Map,
+                  Table);
 
-               Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
+             Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
             end if;
 
          when XML.Schema.Simple_Type =>
@@ -477,7 +957,9 @@ package body XSD_To_Ada.Utils is
          Ada.Text_IO.Put_Line (Indent & " is new");
          Print_Type_Definition
            (XS_Base,
-            Indent & "   ", Writer, Writer_types, Name, False, Map);
+            Indent & "   ",
+            Writer, Writer_types, Name, False, Map,
+            Table);
       end if;
 
       if Add_Choise then

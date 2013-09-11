@@ -72,7 +72,7 @@
   <map type="SettingIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Setting_Identifier"/>
   </map> 
-
+<!--
   <map type="TimeInterval">
     <ada context="ICTS.Types" type="ICTS.Types.Time_Interval"/>
   </map>
@@ -80,7 +80,7 @@
   <map type="TimeIntervalArray">
     <ada context="ICTS.Types" type="ICTS.Types.Time_Interval_Array"/>
   </map>   
-  
+  -->
   <map type="TraderIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Trader_Identifier"/>
   </map>

@@ -49,11 +49,31 @@ with XML.Schema.Objects.Terms;
 with League.Strings;
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Mappings_XML;
+with League.String_Vectors;
+
+with XML.Schema.Models;
 
 package XSD_To_Ada.Utils is
 
+   type Types_Table_Type is
+      record
+         Table_Name  : League.Strings.Universal_String;
+         Table_State : Boolean;
+      end record;
+
+   type Types_Table_Type_Array
+     is array (Positive range <>) of Types_Table_Type;
+
+   Types_Table : Types_Table_Type_Array (1 .. 500);
+
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
+
+   procedure Create_Simple_Type
+     (Model  : XML.Schema.Models.XS_Model;
+      Writer : in out XSD_To_Ada.Writers.Writer);
+
+   procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model);
 
    procedure Gen_Access_Type
      (Self   : in out XSD_To_Ada.Writers.Writer;
@@ -78,7 +98,13 @@ package XSD_To_Ada.Utils is
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
       Is_Record    : Boolean := False;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Table        : in out Types_Table_Type_Array);
+
+   procedure Print_Type_Title
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Payload_Writer      : in out XSD_To_Ada.Writers.Writer;
+      Payload_Type_Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Print_Term
      (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
@@ -86,7 +112,8 @@ package XSD_To_Ada.Utils is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Table        : in out Types_Table_Type_Array);
 
    procedure Print_Type_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -110,11 +137,14 @@ package XSD_To_Ada.Utils is
 
    Anonym_Type : Boolean := False;
 
+   Payload_Writer          : XSD_To_Ada.Writers.Writer;
+   Payload_Type_Writer     : XSD_To_Ada.Writers.Writer;
+
    Name_Kind   : League.Strings.Universal_String;
    Name_Case   : League.Strings.Universal_String;
    Anonym_Kind : League.Strings.Universal_String;
    Vectop_US   : League.Strings.Universal_String;
 
-   Type_Name : League.Strings.Universal_String;
+   Map       : XSD_To_Ada.Mappings_XML.Mapping_XML;
 
 end XSD_To_Ada.Utils;
