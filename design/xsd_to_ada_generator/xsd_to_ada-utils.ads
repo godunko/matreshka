@@ -106,15 +106,6 @@ package XSD_To_Ada.Utils is
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Type_Writer : in out XSD_To_Ada.Writers.Writer);
 
-   procedure Print_Term
-     (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
-      Indent       : String := "";
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-      Table        : in out Types_Table_Type_Array);
-
    procedure Print_Type_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
       Indent : String := "";
@@ -129,21 +120,10 @@ package XSD_To_Ada.Utils is
       Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
       return League.Strings.Universal_String;
 
-   Choice : Natural := 0;
-   Session_Bool : Boolean := False;
-   Now_Add : Boolean := False;
-   Add_Choise : Boolean := False;
-   Add_Anonym : Boolean := False;
-
-   Anonym_Type : Boolean := False;
-
    Payload_Writer          : XSD_To_Ada.Writers.Writer;
    Payload_Type_Writer     : XSD_To_Ada.Writers.Writer;
 
-   Name_Kind   : League.Strings.Universal_String;
-   Name_Case   : League.Strings.Universal_String;
-   Anonym_Kind : League.Strings.Universal_String;
-   Vectop_US   : League.Strings.Universal_String;
+   Session_Bool : Boolean := False;
 
    Map       : XSD_To_Ada.Mappings_XML.Mapping_XML;
 

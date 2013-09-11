@@ -112,7 +112,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       US_Text.Append (Text (Text'Last));
-      Ada.Text_IO.Put_Line (US_Text.To_UTF_8_String);
+--      Ada.Text_IO.Put_Line (US_Text.To_UTF_8_String);
       return US_Text.To_Wide_Wide_String;
 
    end Add_Separator;
@@ -321,10 +321,12 @@ package body XSD_To_Ada.Utils is
          Is_Record := False;
          XS_Object := Complex_Types.Item (J);
 
+         if XS_Object.Get_Name.To_UTF_8_String = "OrderInformation" then
          Print_Type_Title
            (XS_Object.To_Type_Definition,
             Payload_Writer,
             Payload_Type_Writer);
+         end if;
       end loop;
 
       Ada.Text_IO.Create
@@ -569,7 +571,6 @@ package body XSD_To_Ada.Utils is
                Types_Table);
 
             Writers.P (Payload_Writer, "     end record;");
-            Writers.P (Payload_Writer);
 
             XSD_To_Ada.Utils.Gen_Access_Type
               (Payload_Writer,
@@ -603,7 +604,6 @@ package body XSD_To_Ada.Utils is
                   Types_Table);
 
                Writers.P (Payload_Writer, "   end record;");
-               Writers.P (Payload_Writer);
             else
                Is_Record := True;
 
@@ -623,7 +623,6 @@ package body XSD_To_Ada.Utils is
                   Types_Table);
 
                Writers.P (Payload_Writer, "   end record;");
-               Writers.P (Payload_Writer);
 
 --                 maxOccurs := False;
 --
@@ -677,7 +676,43 @@ package body XSD_To_Ada.Utils is
       Ada.Text_IO.Put_Line ("END Print_Type_Title");
    end Print_Type_Title;
 
-   ----------------
+   ---------------------------
+   -- Print_Type_Definition --
+   ---------------------------
+
+   procedure Print_Type_Definition
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent       : String := "";
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Is_Record    : Boolean := False;
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Table        : in out Types_Table_Type_Array)
+   is
+      use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+      XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+      STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
+
+      Choice : Natural := 0;
+      Now_Add : Boolean := False;
+      Add_Choise : Boolean := False;
+      Add_Anonym : Boolean := False;
+
+      Anonym_Type : Boolean := False;
+
+      Name_Kind   : League.Strings.Universal_String;
+      Name_Case   : League.Strings.Universal_String;
+      Anonym_Kind : League.Strings.Universal_String;
+      Vectop_US   : League.Strings.Universal_String;
+
+
+      ----------------
    -- Print_Term --
    ----------------
 
@@ -738,7 +773,8 @@ package body XSD_To_Ada.Utils is
             Name_Kind.Append
               ("   type "
                & XSD_To_Ada.Utils.Add_Separator
-                 (Name.To_Wide_Wide_String) & "_Kind is (");
+                 (Name.To_Wide_Wide_String) & "_Kind is "
+               & Wide_Wide_Character'Val (10) &  "     (");
 
             Name_Case.Append
               ("   type "
@@ -774,7 +810,8 @@ package body XSD_To_Ada.Utils is
                Table);
 
             if J /=  XS_List.Get_Length and Choice = 1 then
-               Name_Kind.Append (", ");
+               Name_Kind.Append
+                 (", " & Wide_Wide_Character'Val (10) & "      ") ;
             end if;
          end loop;
 
@@ -801,6 +838,20 @@ package body XSD_To_Ada.Utils is
          end if;
 
          if Choice = 1 then
+
+            for j in 1 .. Table'Last loop
+               if Type_D.Get_Name.To_Wide_Wide_String =
+                 Table (J).Table_Name.To_Wide_Wide_String
+                 and Table (J).Table_State
+               then
+                  XSD_To_Ada.Utils.Print_Type_Title
+                    (Type_D,
+                     Writer_types,
+                     Writer_types);
+                  exit;
+               end if;
+            end loop;
+
             Name_Kind.Append
               (League.Strings.To_Universal_String
                  (XSD_To_Ada.Utils.Add_Separator
@@ -835,7 +886,6 @@ package body XSD_To_Ada.Utils is
                        (Type_D,
                         Writer_types,
                         Writer_types);
-                     --                     Table (J).Table_State := False;
                      exit;
                   end if;
                end loop;
@@ -900,30 +950,8 @@ package body XSD_To_Ada.Utils is
             end case;
          end if;
       end if;
-   end Print_Term;
+      end Print_Term;
 
-   ---------------------------
-   -- Print_Type_Definition --
-   ---------------------------
-
-   procedure Print_Type_Definition
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent       : String := "";
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Name         : League.Strings.Universal_String;
-      Is_Record    : Boolean := False;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-      Table        : in out Types_Table_Type_Array)
-   is
-      use type XML.Schema.Type_Definitions.XS_Type_Definition;
-
-      XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
-      XS_Term        : XML.Schema.Objects.Terms.XS_Term;
-      XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
-
-      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-      STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
    begin
       XS_Base := Type_D.Get_Base_Type;
       if Is_Record then
@@ -978,7 +1006,7 @@ package body XSD_To_Ada.Utils is
            (Writer_types,
             Name_Case.To_Wide_Wide_String
             & "      end case;" & Wide_Wide_Character'Val (10)
-            & "   end record;" & Wide_Wide_Character'Val (10));
+            & "   end record;");
 
          Name_Kind.Clear;
          Name_Case.Clear;
