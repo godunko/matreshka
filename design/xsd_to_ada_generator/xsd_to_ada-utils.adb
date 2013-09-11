@@ -514,12 +514,15 @@ package body XSD_To_Ada.Utils is
 
    procedure Print_Type_Title
      (Type_D              : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Payload_Writer      : in out XSD_To_Ada.Writers.Writer;
-      Payload_Type_Writer : in out XSD_To_Ada.Writers.Writer)
+      Writer      : in out XSD_To_Ada.Writers.Writer;
+      Type_Writer : in out XSD_To_Ada.Writers.Writer)
    is
       Is_Record      : Boolean := False;
 
       US_Response : League.Strings.Universal_String;
+
+      Payload_Writer      : XSD_To_Ada.Writers.Writer;
+      Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
    begin
 
       Ada.Text_IO.Put_Line ("START Print_Type_Title");
@@ -667,6 +670,9 @@ package body XSD_To_Ada.Utils is
 
          Session_Bool := False;
       US_Response.Clear;
+
+      Writer.P (Payload_Type_Writer.Text);
+      Writer.P (Payload_Writer.Text);
 
       Ada.Text_IO.Put_Line ("END Print_Type_Title");
    end Print_Type_Title;

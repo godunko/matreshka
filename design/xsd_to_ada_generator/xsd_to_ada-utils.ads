@@ -103,8 +103,8 @@ package XSD_To_Ada.Utils is
 
    procedure Print_Type_Title
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Payload_Writer      : in out XSD_To_Ada.Writers.Writer;
-      Payload_Type_Writer : in out XSD_To_Ada.Writers.Writer);
+      Writer      : in out XSD_To_Ada.Writers.Writer;
+      Type_Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Print_Term
      (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
