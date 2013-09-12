@@ -136,6 +136,7 @@ package body XSD_To_Ada.Utils is
         Model.Get_Components_By_Namespace
           (Object_Type => XML.Schema.Simple_Type,
            Namespace   => Namespace);
+
    begin
       for J in 1 .. Simple_Types.Length loop
          XS_Object := Simple_Types.Item (J);
@@ -301,6 +302,34 @@ package body XSD_To_Ada.Utils is
          end case;
       end Print_Type_Definition;
    begin
+
+      Writers.P
+        (Payload_Writer,
+         Wide_Wide_Character'Val (10)
+         & "with Ada.Containers;"
+         & Wide_Wide_Character'Val (10)
+         & "with League.Strings;"
+         & Wide_Wide_Character'Val (10)
+         & "with Ada.Containers.Vectors;"
+         & Wide_Wide_Character'Val (10)
+         & "with Ada.Strings.Unbounded;"
+         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
+         & "package Payload is"
+         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
+         & "   subtype Seconds_Since_Midnight is Natural range 0 .. 86_400;"
+         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
+         & "   type Decimal_String is new Ada.Strings.Unbounded.Unbounded_String;"
+         & Wide_Wide_Character'Val (10)
+         & "   Null_Decimal : constant Decimal_String :="
+         & Wide_Wide_Character'Val (10)
+         & "     Decimal_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
+         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
+         & "   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;"
+         & Wide_Wide_Character'Val (10)
+         & "   Null_Rate : constant Rate_String :="
+         & Wide_Wide_Character'Val (10)
+         & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
+         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10));
 
       Map :=
         XSD_To_Ada.Utils.Read_Mapping
@@ -759,7 +788,7 @@ package body XSD_To_Ada.Utils is
                   & "      := "
                   & XSD_To_Ada.Utils.Add_Separator
                       (Name.To_Wide_Wide_String)
-                  & "'First) is record"
+                  & "_Kind'First) is record"
                   & Wide_Wide_Character'Val (10)
                   & "      case Kind is"
                   & Wide_Wide_Character'Val (10));

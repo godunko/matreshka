@@ -37,11 +37,11 @@
     <ada context="ICTS.Types" type="ICTS.Types.Instrument_Version"/>
   </map> 
 
-  <map type="LinkIdentifier">
+  <map type="OrdersLinkIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Link_Identifier"/>
   </map> 
 
-  <map type="LinkVersion">
+  <map type="OrdersLinkVersion">
     <ada context="ICTS.Types" type="ICTS.Types.Link_Version"/>
   </map>
 
@@ -85,4 +85,20 @@
     <ada context="ICTS.Types" type="ICTS.Types.Trader_Identifier"/>
   </map>
   
+  <map type="string">
+    <ada context="ICTS.Types" type="Ada.Strings.Unbounded.Unbounded_String"/>
+  </map>
+  
+  <map type="boolean">
+    <ada context="ICTS.Types" type="Boolean"/>
+  </map>
+  
+  <map type="decimal">
+    <ada context="ICTS.Types" type="Decimal_String"/>
+  </map>
+  
+  <map type="time">
+    <ada context="ICTS.Types" type="Seconds_Since_Midnight"/>
+  </map>
+    
 </mappings>
