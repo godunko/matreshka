@@ -59,12 +59,13 @@ package XSD_To_Ada.Utils is
       record
          Table_Name  : League.Strings.Universal_String;
          Table_State : Boolean;
+--         Is_Vector   : Boolean;
       end record;
 
    type Types_Table_Type_Array
      is array (Positive range <>) of Types_Table_Type;
 
-   Types_Table : Types_Table_Type_Array (1 .. 500);
+   Types_Table  : Types_Table_Type_Array (1 .. 100);
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
@@ -86,6 +87,11 @@ package XSD_To_Ada.Utils is
      (Self   : in out XSD_To_Ada.Writers.Writer;
       Name   : Wide_Wide_String;
       Offset : Positive := 3);
+
+   function Has_Top_Level_Type
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Table  : Types_Table_Type_Array)
+      return Boolean;
 
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
    procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);

@@ -232,6 +232,7 @@ package body XSD_To_Ada.Generator is
              (League.Strings.To_Universal_String ("./mapping.xml"));
 
          XSD_To_Ada.Utils.Create_Simple_Type (Model, ST_Writer);
+
          XSD_To_Ada.Utils.Create_Complex_Type (Model);
 
          Ada.Text_IO.Put_Line
