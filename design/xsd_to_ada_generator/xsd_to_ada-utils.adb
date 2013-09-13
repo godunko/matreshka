@@ -212,95 +212,8 @@ package body XSD_To_Ada.Utils is
 
       US_Response : League.Strings.Universal_String;
 
-      maxOccurs : Boolean := False;
-      Is_Vector  : Boolean := False;
-
       Current_Out_File : Ada.Text_IO.File_Type;
 
-      procedure Print_Type_Definition
-        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-         Vector_Type : in out Boolean;
-         Name : Wide_Wide_String);
-
-      ---------------------------
-      -- Print_Type_Definition --
-      ---------------------------
-
-      procedure Print_Type_Definition
-        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-         Vector_Type : in out Boolean;
-         Name : Wide_Wide_String)
-      is
-         use type XML.Schema.Type_Definitions.XS_Type_Definition;
-
-         XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
-         XS_Term        : XML.Schema.Objects.Terms.XS_Term;
-         CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-
-         procedure Print_Term
-           (XS_Term : XML.Schema.Objects.Terms.XS_Term;
-            Has_Max_Occurs  : in out Boolean;
-            Name : Wide_Wide_String);
-
-         procedure Print_Term
-           (XS_Term : XML.Schema.Objects.Terms.XS_Term;
-            Has_Max_Occurs  : in out Boolean;
-            Name : Wide_Wide_String)
-         is
-            use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
-
-            XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
-            XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-            XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
-            Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
-         begin
-
-            if XS_Term.Is_Model_Group then
-               XS_Model_Group := XS_Term.To_Model_Group;
-               XS_List := XS_Model_Group.Get_Particles;
-
-               Has_Max_Occurs := False;
-
-               for J in 1 .. XS_List.Get_Length loop
-                  XS_Particle := XS_List.Item (J).To_Particle;
-
-                  if XS_Particle.Get_Max_Occurs.Unbounded then
-                     Has_Max_Occurs := True;
-                  else
-                     if XS_Particle.Get_Max_Occurs.Value > 1 then
-                        Has_Max_Occurs := True;
-                     end if;
-                  end if;
-
-                  Print_Term (XS_Particle.Get_Term, Has_Max_Occurs, Name);
-               end loop;
-            elsif XS_Term.Is_Element_Declaration then
-               Decl   := XS_Term.To_Element_Declaration;
-
-               Print_Type_Definition
-                 (Decl.Get_Type_Definition, Has_Max_Occurs, Name);
-            end if;
-         end Print_Term;
-
-      begin
-         if Type_D.Get_Name.To_Wide_Wide_String = Name and Vector_Type then
-            Is_Vector := True;
-         end if;
-
-         case Type_D.Get_Type_Category is
-            when XML.Schema.Complex_Type =>
-               CTD := Type_D.To_Complex_Type_Definition;
-
-               if CTD.Get_Content_Type in Element_Only | Mixed then
-                  XS_Particle := CTD.Get_Particle;
-                  XS_Term := XS_Particle.Get_Term;
-
-                  Print_Term (XS_Term, maxOccurs, Name);
-               end if;
-            when XML.Schema.Simple_Type | XML.Schema.None =>
-               null;
-         end case;
-      end Print_Type_Definition;
    begin
 
       Writers.P
@@ -336,9 +249,8 @@ package body XSD_To_Ada.Utils is
           (League.Strings.To_Universal_String ("./mapping.xml"));
 
       for J in 1 .. Complex_Types.Length loop
-         Types_Table (J).Table_Name := Complex_Types.Item (J).Get_Name;
-         Types_Table (J).Table_State := True;
---         Types_Table (J).Is_Vector := False;
+         Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
+         Types_Table (J).Type_State := True;
       end loop;
 
       for J in 1 .. Complex_Types.Length loop
@@ -348,44 +260,6 @@ package body XSD_To_Ada.Utils is
               (XS_Object.To_Type_Definition,
                Payload_Writer,
                Payload_Type_Writer);
-
---           maxOccurs := False;
---
---           for J in 1 .. Complex_Types.Length loop
---              XS_Object_2 := Complex_Types.Item (J);
---
---              Print_Type_Definition
---                (XS_Object_2.To_Type_Definition,
---                 maxOccurs,
---                 XS_Object.Get_Name.To_Wide_Wide_String);
---           end loop;
---
---           if Is_Vector then
---              Writers.P
---                (Payload_Writer,
---                 "   XXXXXX package "
---                 & XSD_To_Ada.Utils.Add_Separator
---                   (XS_Object.Get_Name.To_Wide_Wide_String)
---                 & "s_Vectors is "
---                 & Wide_Wide_Character'Val (10)
---                 & "     new Ada.Containers.Vectors (Positive, "
---                 & XSD_To_Ada.Utils.Add_Separator
---                   (XS_Object.Get_Name.To_Wide_Wide_String)
---                 & ");");
---              Writers.P (Payload_Writer);
---
---              Writers.P
---                (Payload_Writer,
---                 "   subtype "
---                 & XSD_To_Ada.Utils.Add_Separator
---                   (XS_Object.Get_Name.To_Wide_Wide_String) & "s is "
---                 & XSD_To_Ada.Utils.Add_Separator
---                   (XS_Object.Get_Name.To_Wide_Wide_String)
---                 & "s_Vectors.Vector;");
---              Writers.P (Payload_Writer);
---           end if;
---           Is_Vector := False;
---           Is_Record := False;
       end loop;
 
        Writers.P
@@ -555,8 +429,8 @@ package body XSD_To_Ada.Utils is
    begin
       for j in 1 .. Table'Last loop
          if Type_D.Get_Name.To_Wide_Wide_String =
-           Table (J).Table_Name.To_Wide_Wide_String
-           and Table (J).Table_State
+           Table (J).Type_Name.To_Wide_Wide_String
+           and Table (J).Type_State
          then
             return True;
          end if;
@@ -595,11 +469,11 @@ package body XSD_To_Ada.Utils is
       Ada.Text_IO.Put_Line ("START Print_Type_Title");
 
       for J in 1 .. Types_Table'Last loop
-         if Type_D.Get_Name.To_UTF_8_String = Types_Table (J).Table_Name.To_UTF_8_String
-           and then Types_Table (J).Table_State
+         if Type_D.Get_Name.To_UTF_8_String = Types_Table (J).Type_Name.To_UTF_8_String
+           and then Types_Table (J).Type_State
          then
 
-            Types_Table (J).Table_State := False;
+            Types_Table (J).Type_State := False;
 
             if Type_D.Get_Name.Length > 10 then
                US_Response := League.Strings.Slice
@@ -760,6 +634,8 @@ package body XSD_To_Ada.Utils is
 
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
          Type_Name : League.Strings.Universal_String;
+
+         Added_Vector_Type : Boolean := False;
       begin
          Ada.Text_IO.Put (Indent);
          Ada.Text_IO.Put_Line ("Type " & XS_Term.Get_Type'Img);
@@ -924,15 +800,24 @@ package body XSD_To_Ada.Utils is
                      & Type_Name.To_Wide_Wide_String);
 
                   if Max_Occurs then
-                     Max_Occurs := False;
                      Writers.P (Writer, "s;");
+                     Max_Occurs := False;
 
---                       for J in Table'Last loop
---                          if Table (J).Table_Name.To_UTF_8_String
---                            = Type_D.Get_Name.To_UTF_8_String
---                            and not Table (J).Is_Vector
---                          then
-                           Writers.P
+                     Added_Vector_Type := True;
+
+                     for J in 1 .. Is_Vector_Type.Length loop
+                        if Type_D.Get_Name.To_UTF_8_String
+                          = Is_Vector_Type.Element (J).To_UTF_8_String
+                        then
+                           Added_Vector_Type := False;
+                           exit;
+                        else
+                           Added_Vector_Type := True;
+                        end if;
+                     end loop;
+
+                     if Added_Vector_Type then
+                        Writers.P
                              (Writer_types,
                               "   package "
                               & Type_Name.To_Wide_Wide_String & "_Vectors is "
@@ -944,12 +829,11 @@ package body XSD_To_Ada.Utils is
                               & "is " & Type_Name.To_Wide_Wide_String &
                                 "_Vectors.Vector;"
                               & Wide_Wide_Character'Val (10));
+                        Is_Vector_Type.Append (Type_D.Get_Name);
+                     end if;
 
---                             Table (J).Is_Vector := True;
---                          end if;
---                       end loop;
                   else
-                      Writers.P (Writer, ";");
+                     Writers.P (Writer, ";");
                   end if;
 
                when XML.Schema.Simple_Type =>
@@ -983,15 +867,24 @@ package body XSD_To_Ada.Utils is
                      & Wide_Wide_Character'Val (10));
 
                   if Max_Occurs then
-                     Max_Occurs := False;
                      Writers.P (Writer, "s;");
+                     Max_Occurs := False;
 
---                       for J in Table'Last loop
---                          if Table (J).Table_Name.To_UTF_8_String
---                            = Type_D.Get_Name.To_UTF_8_String
---                            and not Table (J).Is_Vector
---                          then
-                           Writers.P
+                     Added_Vector_Type := True;
+
+                     for J in 1 .. Is_Vector_Type.Length loop
+                        if Type_D.Get_Name.To_UTF_8_String
+                          = Is_Vector_Type.Element (J).To_UTF_8_String
+                        then
+                           Added_Vector_Type := False;
+                           exit;
+                        else
+                           Added_Vector_Type := True;
+                        end if;
+                     end loop;
+
+                     if Added_Vector_Type then
+                        Writers.P
                              (Writer_types,
                               "   package "
                               & Type_Name.To_Wide_Wide_String & "_Vectors is "
@@ -1003,12 +896,11 @@ package body XSD_To_Ada.Utils is
                               & "is " & Type_Name.To_Wide_Wide_String &
                                 "_Vectors.Vector;"
                               & Wide_Wide_Character'Val (10));
+                        Is_Vector_Type.Append (Type_D.Get_Name);
+                     end if;
 
---                             Table (J).Is_Vector := True;
---                          end if;
---                       end loop;
                   else
-                      Writers.P (Writer, ";");
+                     Writers.P (Writer, ";");
                   end if;
 
                when XML.Schema.Simple_Type =>

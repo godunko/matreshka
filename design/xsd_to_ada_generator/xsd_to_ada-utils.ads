@@ -42,30 +42,44 @@
 --  $Revision: 3559 $ $Date: 2012-12-07 13:08:31 +0200 (Пт., 07 дек. 2012) $
 ------------------------------------------------------------------------------
 
-with XSD_To_Ada.Writers;
-
-with XML.Schema.Type_Definitions;
-with XML.Schema.Objects.Terms;
-with League.Strings;
-with XSD_To_Ada.Mappings;
-with XSD_To_Ada.Mappings_XML;
-with League.String_Vectors;
+with Ada.Containers.Indefinite_Vectors;
 
 with XML.Schema.Models;
+with XML.Schema.Type_Definitions;
+with XML.Schema.Objects.Terms;
+
+with XSD_To_Ada.Mappings;
+with XSD_To_Ada.Mappings_XML;
+with XSD_To_Ada.Writers;
+
+with League.Strings;
+with League.String_Vectors;
 
 package XSD_To_Ada.Utils is
 
    type Types_Table_Type is
       record
-         Table_Name  : League.Strings.Universal_String;
-         Table_State : Boolean;
---         Is_Vector   : Boolean;
+         Type_Name  : League.Strings.Universal_String;
+         Type_State : Boolean;
       end record;
 
-   type Types_Table_Type_Array
-     is array (Positive range <>) of Types_Table_Type;
+   type Types_Table_Type_Array is array (1 .. 200) of Types_Table_Type;
 
-   Types_Table  : Types_Table_Type_Array (1 .. 100);
+   Types_Table  : Types_Table_Type_Array;
+
+   Is_Vector_Type : League.String_Vectors.Universal_String_Vector;
+
+--     type Vector_Type is record
+--        Type_Name : League.Strings.Universal_String;
+--        Is_Vector : Boolean;
+--     end record;
+--
+--     package Vector_Type_Vectors is
+--       new Ada.Containers.Indefinite_Vectors (Positive, Vector_Type);
+--
+--     subtype Vector_Types is Vector_Type_Vectors.Vector;
+--
+--     VT_Subtype : Vector_Types;
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
