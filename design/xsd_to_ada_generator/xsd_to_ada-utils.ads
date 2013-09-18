@@ -133,10 +133,9 @@ package XSD_To_Ada.Utils is
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Type_Writer : in out XSD_To_Ada.Writers.Writer);
 
-   procedure Print_Type_Session
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent : String := "";
-      Session : in out Boolean);
+   function Has_Element_Session
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
+      return Boolean;
 
    function Read_Mapping
      (File_Name : League.Strings.Universal_String)
@@ -146,8 +145,6 @@ package XSD_To_Ada.Utils is
      (Type_D_Name : League.Strings.Universal_String;
       Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
       return League.Strings.Universal_String;
-
-   Session_Bool : Boolean := False;
 
    Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
 

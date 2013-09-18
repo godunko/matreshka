@@ -253,14 +253,16 @@ package body XSD_To_Ada.Utils is
           ("http://www.actforex.com/iats");
 
       XS_Object : XML.Schema.Objects.XS_Object;
-      XS_Object_2 : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
-
-      CTD : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
 
       Complex_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
         Model.Get_Components_By_Namespace
           (Object_Type => XML.Schema.Complex_Type,
+           Namespace   => Namespace);
+
+      Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Element_Declaration,
            Namespace   => Namespace);
 
       Payload_Writer          : XSD_To_Ada.Writers.Writer;
@@ -269,11 +271,6 @@ package body XSD_To_Ada.Utils is
       US_Response : League.Strings.Universal_String;
 
       Current_Out_File : Ada.Text_IO.File_Type;
-
-      Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map :=
-        Model.Get_Components_By_Namespace
-          (Object_Type => XML.Schema.Element_Declaration,
-           Namespace   => Namespace);
 
       Print_Element : Boolean := True;
 
@@ -352,8 +349,6 @@ package body XSD_To_Ada.Utils is
                Decl := Element_Declarations.Item (J).To_Element_Declaration;
                Type_D := Decl.Get_Type_Definition;
 
-               Session_Bool := False;
-
                if Element_Declarations.Item (J).Get_Name.Length > 10
                then
                   if  League.Strings.Slice
@@ -382,10 +377,13 @@ package body XSD_To_Ada.Utils is
                         & "'Class;"
                         & Wide_Wide_Character'Val (10));
                else
-                     XSD_To_Ada.Utils.Print_Type_Session
-                       (Type_D.To_Type_Definition, "", Session_Bool);
+                     if XSD_To_Ada.Utils.Has_Element_Session
+                       (Type_D.To_Type_Definition)
+                     then
+--                     XSD_To_Ada.Utils.Print_Type_Session
+--                       (Type_D.To_Type_Definition, "", Session_Bool);
 
-                     if Session_Bool then
+--                     if Session_Bool then
                         Writers.P
                           (Payload_Writer,
                            "   type "
@@ -660,10 +658,9 @@ package body XSD_To_Ada.Utils is
                     (Type_D.Get_Name.To_Wide_Wide_String));
                US_Response.Clear;
             else
-               XSD_To_Ada.Utils.Print_Type_Session
-                 (Type_D.To_Type_Definition, "", Session_Bool);
-
-               if Session_Bool then
+               if XSD_To_Ada.Utils.Has_Element_Session
+                 (Type_D.To_Type_Definition)
+               then
                   XSD_To_Ada.Utils.Gen_Proc_Header
                     (Payload_Writer,
                      XSD_To_Ada.Utils.Add_Separator
@@ -712,7 +709,6 @@ package body XSD_To_Ada.Utils is
             Writer.P (Payload_Type_Writer.Text);
             Writer.P (Payload_Writer.Text);
          end if;
-         Session_Bool := False;
          US_Response.Clear;
       end loop;
 
@@ -1150,16 +1146,14 @@ package body XSD_To_Ada.Utils is
       Now_Print_Level := Now_Print_Level - 1;
    end Print_Type_Definition;
 
-   -------------------
-   -- Print_Type_Session --
-   -------------------
+   -------------------------
+   -- Has_Element_Session --
+   -------------------------
 
-   procedure Print_Type_Session
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent : String := "";
-      Session : in out Boolean)
+   function Has_Element_Session
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
+     return Boolean
    is
-      pragma Unreferenced (Indent);
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
       XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
@@ -1187,11 +1181,10 @@ package body XSD_To_Ada.Utils is
                   Decl := XS_Term.To_Element_Declaration;
 
                   if Decl.Get_Name.To_UTF_8_String = "Session" then
-                     Session := True;
+                     return True;
                   end if;
 
-                  Print_Type_Session
-                    (Decl.Get_Type_Definition, "", Session_Bool);
+                  return Has_Element_Session (Decl.Get_Type_Definition);
                end loop;
             end if;
 
@@ -1201,7 +1194,9 @@ package body XSD_To_Ada.Utils is
          when XML.Schema.None =>
             null;
       end case;
-   end Print_Type_Session;
+
+      return False;
+   end Has_Element_Session;
 
    ----------------
    -- Put_Header --
