@@ -69,22 +69,30 @@ package XSD_To_Ada.Utils is
 
    Is_Vector_Type : League.String_Vectors.Universal_String_Vector;
 
---     type Vector_Type is record
---        Type_Name : League.Strings.Universal_String;
---        Is_Vector : Boolean;
---     end record;
---
---     package Vector_Type_Vectors is
---       new Ada.Containers.Indefinite_Vectors (Positive, Vector_Type);
---
---     subtype Vector_Types is Vector_Type_Vectors.Vector;
---
---     VT_Subtype : Vector_Types;
+   type Anonyn_Vector_Declatarion is
+      record
+         Print_Level : Natural := 2;
+         Print_State : Boolean := False;
+         Term_Level  : Natural := 2;
+         Term_State  : Boolean := False;
+      end record;
+
+   type Anonyn_Vector_Declatarion_Array is
+     array (1 .. 100) of Anonyn_Vector_Declatarion;
+
+   Anonyn_Vector : Anonyn_Vector_Declatarion_Array;
+
+   Now_Print_Level : Natural := 2;
+   Now_Term_Level  : Natural := 2;
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
 
    procedure Create_Simple_Type
+     (Model  : XML.Schema.Models.XS_Model;
+      Writer : in out XSD_To_Ada.Writers.Writer);
+
+   procedure Create_Enumeration_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer);
 
@@ -139,11 +147,10 @@ package XSD_To_Ada.Utils is
       Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
       return League.Strings.Universal_String;
 
-   Payload_Writer          : XSD_To_Ada.Writers.Writer;
-   Payload_Type_Writer     : XSD_To_Ada.Writers.Writer;
-
    Session_Bool : Boolean := False;
 
-   Map       : XSD_To_Ada.Mappings_XML.Mapping_XML;
+   Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+
+   Anonym_Type  : Boolean := False;
 
 end XSD_To_Ada.Utils;

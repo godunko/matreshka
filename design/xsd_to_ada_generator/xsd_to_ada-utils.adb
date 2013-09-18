@@ -167,7 +167,64 @@ package body XSD_To_Ada.Utils is
                     (XS_Object.Get_Name.To_Wide_Wide_String) & " is (");
 
                for J in 1 .. List.Length loop
-                  Ada.Text_IO.Put (" Enum: ");
+                  if J /= List.Length then
+                     XSD_To_Ada.Writers.N
+                       (Writer,
+                        League.Strings.To_Lowercase
+                          (List.Element (J)).To_Wide_Wide_String & ", ");
+                  else
+                     XSD_To_Ada.Writers.P
+                       (Writer,
+                        League.Strings.To_Lowercase
+                          (List.Element (J)).To_Wide_Wide_String
+                        & ");"
+                        & Wide_Wide_Character'Val (10));
+                  end if;
+               end loop;
+            end if;
+         end;
+      end loop;
+   end Create_Simple_Type;
+
+   procedure Create_Enumeration_Simple_Type
+     (Model  : XML.Schema.Models.XS_Model;
+      Writer : in out XSD_To_Ada.Writers.Writer)
+   is
+      Namespace : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String
+          ("http://www.actforex.com/iats");
+
+      XS_Object : XML.Schema.Objects.XS_Object;
+      STD       : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
+      XS_Base   : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      Simple_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Simple_Type,
+           Namespace   => Namespace);
+
+   begin
+      for J in 1 .. Simple_Types.Length loop
+         XS_Object := Simple_Types.Item (J);
+         Type_D    := XS_Object.To_Type_Definition;
+         XS_Base   := Type_D.Get_Base_Type;
+
+         STD := XS_Object.To_Simple_Type_Definition;
+
+         declare
+            List : constant League.String_Vectors.Universal_String_Vector
+              := STD.Get_Lexical_Enumeration;
+         begin
+            if not List.Is_Empty then
+               XSD_To_Ada.Writers.N
+                 (Writer,
+                  "   type " &
+                    XSD_To_Ada.Utils.Add_Separator
+                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is "
+                    & Wide_Wide_Character'Val (10) & "     (");
+
+               for J in 1 .. List.Length loop
                   Ada.Text_IO.Put_Line (List.Element (J).To_UTF_8_String);
 
                   if J /= List.Length then
@@ -176,19 +233,18 @@ package body XSD_To_Ada.Utils is
                         League.Strings.To_Lowercase
                           (List.Element (J)).To_Wide_Wide_String & ", ");
                   else
-                     XSD_To_Ada.Writers.N
+                     XSD_To_Ada.Writers.P
                        (Writer,
                         League.Strings.To_Lowercase
-                          (List.Element (J)).To_Wide_Wide_String);
+                          (List.Element (J)).To_Wide_Wide_String
+                        & ");"
+                        & Wide_Wide_Character'Val (10));
                   end if;
-
                end loop;
-               XSD_To_Ada.Writers.P (Writer, ");");
-               XSD_To_Ada.Writers.P (Writer);
             end if;
          end;
       end loop;
-   end Create_Simple_Type;
+   end Create_Enumeration_Simple_Type;
 
    procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model)
    is
@@ -214,22 +270,21 @@ package body XSD_To_Ada.Utils is
 
       Current_Out_File : Ada.Text_IO.File_Type;
 
-   begin
+      Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Element_Declaration,
+           Namespace   => Namespace);
 
+   begin
       Writers.P
         (Payload_Writer,
          Wide_Wide_Character'Val (10)
-         & "with Ada.Containers;"
-         & Wide_Wide_Character'Val (10)
-         & "with League.Strings;"
-         & Wide_Wide_Character'Val (10)
-         & "with Ada.Containers.Vectors;"
-         & Wide_Wide_Character'Val (10)
+         & "with Ada.Containers;" & Wide_Wide_Character'Val (10)
+         & "with League.Strings;" & Wide_Wide_Character'Val (10)
+         & "with Ada.Containers.Vectors;" & Wide_Wide_Character'Val (10)
          & "with Ada.Strings.Unbounded;"
          & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
          & "package Payloads is"
-         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-         & "   subtype Seconds_Since_Midnight is Natural range 0 .. 86_400;"
          & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
          & "   type Decimal_String is new Ada.Strings.Unbounded.Unbounded_String;"
          & Wide_Wide_Character'Val (10)
@@ -242,7 +297,11 @@ package body XSD_To_Ada.Utils is
          & "   Null_Rate : constant Rate_String :="
          & Wide_Wide_Character'Val (10)
          & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
+         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
+         & "   type TimeT is new Interfaces.Unsigned_64;"
          & Wide_Wide_Character'Val (10));
+
+      Create_Enumeration_Simple_Type (Model, Payload_Writer);
 
       Map :=
         XSD_To_Ada.Utils.Read_Mapping
@@ -256,11 +315,27 @@ package body XSD_To_Ada.Utils is
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
 
+         for J in 1 .. Anonyn_Vector'Last loop
+            Anonyn_Vector (J).Print_State := False;
+            Anonyn_Vector (J).Term_State := False;
+         end loop;
+
+--           if Complex_Types.Item (J).Get_Name.To_UTF_8_String
+--             = "ModifyConditionalOrderBase"
+--           then
             Print_Type_Title
               (XS_Object.To_Type_Definition,
                Payload_Writer,
                Payload_Type_Writer);
+--         end if;
       end loop;
+
+      Ada.Text_IO.Put_Line ("------   Element_Declarations   ---------");
+
+--        for J in 1 .. Element_Declarations.Length loop
+--           Ada.Text_IO.Put_Line
+--             (Element_Declarations.Item (J).Get_Name.To_UTF_8_String);
+--        end loop;
 
        Writers.P
         (Payload_Writer, "end Payloads;" & Wide_Wide_Character'Val (10));
@@ -466,7 +541,8 @@ package body XSD_To_Ada.Utils is
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
    begin
 
-      Ada.Text_IO.Put_Line ("START Print_Type_Title");
+      Ada.Text_IO.Put_Line
+        ("START Print_Type_Title Type_D="  & Type_D.Get_Name.To_UTF_8_String);
 
       for J in 1 .. Types_Table'Last loop
          if Type_D.Get_Name.To_UTF_8_String = Types_Table (J).Type_Name.To_UTF_8_String
@@ -533,7 +609,8 @@ package body XSD_To_Ada.Utils is
                      "   type "
                      & XSD_To_Ada.Utils.Add_Separator
                        (Type_D.Get_Name.To_Wide_Wide_String)
-                     & " is new Abstract_IATS_Responce"
+                     & " is" & Wide_Wide_Character'Val (10)
+                     & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
                      & Wide_Wide_Character'Val (10)
                      & "   with record");
 
@@ -544,7 +621,7 @@ package body XSD_To_Ada.Utils is
                      Type_D.Get_Name, False, Map,
                      Types_Table);
 
-                  Writers.P (Payload_Writer, "   end record;");
+                  Writers.N (Payload_Writer, "   end record;");
                else
                   Is_Record := True;
 
@@ -605,7 +682,6 @@ package body XSD_To_Ada.Utils is
       Add_Choise  : Boolean := False;
       Add_Anonym  : Boolean := False;
       Max_Occurs  : Boolean := False;
-      Anonym_Type : Boolean := False;
 
       Name_Kind   : League.Strings.Universal_String;
       Name_Case   : League.Strings.Universal_String;
@@ -637,10 +713,15 @@ package body XSD_To_Ada.Utils is
 
          Added_Vector_Type : Boolean := False;
       begin
+
+         Now_Term_Level := Now_Term_Level + 1;
+
          Ada.Text_IO.Put (Indent);
          Ada.Text_IO.Put_Line ("Type " & XS_Term.Get_Type'Img);
          Ada.Text_IO.Put (Indent);
-         Ada.Text_IO.Put_Line ("XS_Term.Get_Name =" & XS_Term.Get_Name.To_UTF_8_String);
+         Ada.Text_IO.Put_Line
+           ("XS_Term.Get_Name =" & XS_Term.Get_Name.To_UTF_8_String
+            & "; Anonym=" & Anonyn_Vector (Now_Term_Level - 1).Term_State'Img);
 
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
@@ -653,7 +734,9 @@ package body XSD_To_Ada.Utils is
                Choice := 1;
             end if;
 
-            if Anonym_Type and Choice = 0 then
+            if Anonyn_Vector (Now_Term_Level - 1).Term_State
+              and Choice = 0
+            then
                Writers.P
                  (Writer,
                   "      "
@@ -741,6 +824,9 @@ package body XSD_To_Ada.Utils is
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
                Anonym_Type := True;
+
+               Anonyn_Vector (Now_Term_Level).Term_State := True;
+
                Print_Type_Definition
                  (Type_D, Indent & "   ", Writer, Writer_types,
                   League.Strings.To_Universal_String
@@ -778,7 +864,7 @@ package body XSD_To_Ada.Utils is
             end if;
 
             if Type_D.Get_Name.To_UTF_8_String /= ""
-              and then not Anonym_Type
+              and then not Anonyn_Vector (Now_Term_Level - 2).Term_State
               and then Choice = 0
             then
                case Type_D.Get_Type_Category is
@@ -827,8 +913,7 @@ package body XSD_To_Ada.Utils is
                               & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
                               & "   subtype " & Type_Name.To_Wide_Wide_String & "s "
                               & "is " & Type_Name.To_Wide_Wide_String &
-                                "_Vectors.Vector;"
-                              & Wide_Wide_Character'Val (10));
+                                "_Vectors.Vector;");
                         Is_Vector_Type.Append (Type_D.Get_Name);
                      end if;
 
@@ -844,12 +929,16 @@ package body XSD_To_Ada.Utils is
                        (XS_Term.Get_Name.To_Wide_Wide_String)
                      & " : "
                      & Type_Name.To_Wide_Wide_String & ";");
+
                when XML.Schema.None =>
                   Ada.Text_IO.Put_Line (Indent & "NONE!!!");
                end case;
             end if;
 
-            if Anonym_Type and Choice = 0 then
+            if Anonyn_Vector (Now_Term_Level - 2).Term_State
+              and Choice = 0
+            then
+
                case Type_D.Get_Type_Category is
                when XML.Schema.Complex_Type =>
 
@@ -894,8 +983,7 @@ package body XSD_To_Ada.Utils is
                               & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
                               & "   subtype " & Type_Name.To_Wide_Wide_String & "s "
                               & "is " & Type_Name.To_Wide_Wide_String &
-                                "_Vectors.Vector;"
-                              & Wide_Wide_Character'Val (10));
+                                "_Vectors.Vector;");
                         Is_Vector_Type.Append (Type_D.Get_Name);
                      end if;
 
@@ -916,9 +1004,13 @@ package body XSD_To_Ada.Utils is
                end case;
             end if;
          end if;
+         Now_Term_Level := Now_Term_Level - 1;
       end Print_Term;
 
    begin
+
+      Now_Print_Level := Now_Print_Level + 1;
+
       XS_Base := Type_D.Get_Base_Type;
       if Is_Record then
          Writers.P (Writer, " is record");
@@ -930,7 +1022,7 @@ package body XSD_To_Ada.Utils is
 
             if CTD.Get_Content_Type in Element_Only | Mixed then
                Ada.Text_IO.Put_Line
-                 (Indent & "Complex_Type " & Type_D.Get_Name.To_UTF_8_String);
+                 (Indent & "Complex_Type :" & Type_D.Get_Name.To_UTF_8_String);
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 
@@ -938,7 +1030,8 @@ package body XSD_To_Ada.Utils is
                  (XS_Term, Indent & "   ", Writer, Writer_types, Name, Map,
                   Table);
 
-             Ada.Text_IO.Put_Line (Indent & "End Complex_Type");
+               Ada.Text_IO.Put_Line
+                 (Indent & "End Complex_Type :" & Type_D.Get_Name.To_UTF_8_String);
             end if;
 
          when XML.Schema.Simple_Type =>
@@ -981,7 +1074,7 @@ package body XSD_To_Ada.Utils is
       end if;
 
       if Add_Anonym then
-      Writers.P
+         Writers.P
            (Writer_types,
             Anonym_Kind.To_Wide_Wide_String
             & "   end record;"
@@ -989,6 +1082,7 @@ package body XSD_To_Ada.Utils is
          Anonym_Kind.Clear;
       end if;
       Choice := 0;
+      Now_Print_Level := Now_Print_Level - 1;
    end Print_Type_Definition;
 
    -------------------

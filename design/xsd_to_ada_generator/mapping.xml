@@ -98,7 +98,15 @@
   </map>
   
   <map type="time">
-    <ada context="ICTS.Types" type="Seconds_Since_Midnight"/>
+    <ada context="ICTS.Types" type="ICTS.Types.Seconds_Since_Midnight"/>
   </map>
     
+  <map type="dateTimeStamp">
+    <ada context="ICTS.Types" type="TimeT"/>
+  </map>
+  
+  <map type="SessionIdentifier">
+    <ada context="ICTS.Types" type="Ada.Strings.Wide_Wide_Unbounded.Unbounded_Wide_Wide_String"/>
+  </map>
+  
 </mappings>
