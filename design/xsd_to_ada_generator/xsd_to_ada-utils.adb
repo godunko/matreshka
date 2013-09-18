@@ -275,6 +275,8 @@ package body XSD_To_Ada.Utils is
           (Object_Type => XML.Schema.Element_Declaration,
            Namespace   => Namespace);
 
+      Print_Element : Boolean := True;
+
    begin
       Writers.P
         (Payload_Writer,
@@ -320,24 +322,88 @@ package body XSD_To_Ada.Utils is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String
---             = "ModifyConditionalOrderBase"
---           then
-            Print_Type_Title
-              (XS_Object.To_Type_Definition,
-               Payload_Writer,
-               Payload_Type_Writer);
---         end if;
+         Print_Type_Title
+           (XS_Object.To_Type_Definition,
+            Payload_Writer, Payload_Type_Writer);
       end loop;
 
       Ada.Text_IO.Put_Line ("------   Element_Declarations   ---------");
 
---        for J in 1 .. Element_Declarations.Length loop
---           Ada.Text_IO.Put_Line
---             (Element_Declarations.Item (J).Get_Name.To_UTF_8_String);
---        end loop;
+      for J in 1 .. Element_Declarations.Length loop
 
-       Writers.P
+         Print_Element := True;
+
+         for X in 1 .. Types_Table'Last loop
+            if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
+              = Types_Table (X).Type_Name.To_UTF_8_String
+            then
+               Print_Element := False;
+            end if;
+         end loop;
+
+         if Print_Element
+           and Element_Declarations.Item (J).Get_Name.To_UTF_8_String
+           /= "Transaction"
+         then
+            declare
+               XS_Term : XML.Schema.Objects.Terms.XS_Term;
+               Decl    : XML.Schema.Element_Declarations.XS_Element_Declaration;
+            begin
+               Decl := Element_Declarations.Item (J).To_Element_Declaration;
+               Type_D := Decl.Get_Type_Definition;
+
+               Session_Bool := False;
+
+               if Element_Declarations.Item (J).Get_Name.Length > 10
+               then
+                  if  League.Strings.Slice
+                    (Element_Declarations.Item (J).Get_Name,
+                     Element_Declarations.Item (J).Get_Name.Length - 7,
+                     Element_Declarations.Item (J).Get_Name.Length).To_UTF_8_String = "Response"
+                  then
+                     Writers.P
+                       (Payload_Writer,
+                        "   type "
+                        & Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String
+                        & " is "
+                        & Wide_Wide_Character'Val (10)
+                        & "     new " & Type_D.Get_Name.To_Wide_Wide_String
+                        & " with null record;"
+                        & Wide_Wide_Character'Val (10));
+
+                     Writers.P
+                       (Payload_Writer,
+                        "   type "
+                        & Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String
+                        & "_Access is"
+                        & Wide_Wide_Character'Val (10)
+                        & "     access all "
+                        & Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String
+                        & "'Class;"
+                        & Wide_Wide_Character'Val (10));
+               else
+                     XSD_To_Ada.Utils.Print_Type_Session
+                       (Type_D.To_Type_Definition, "", Session_Bool);
+
+                     if Session_Bool then
+                        Writers.P
+                          (Payload_Writer,
+                           "   type "
+                           & Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String
+                           & " is "
+                           & Wide_Wide_Character'Val (10)
+                           & "     new " & Type_D.Get_Name.To_Wide_Wide_String
+                           & " with null record;"
+                           & Wide_Wide_Character'Val (10));
+                     end if;
+                  end if;
+
+               end if;
+            end;
+         end if;
+      end loop;
+
+      Writers.P
         (Payload_Writer, "end Payloads;" & Wide_Wide_Character'Val (10));
 
       Ada.Text_IO.Create
@@ -529,7 +595,7 @@ package body XSD_To_Ada.Utils is
    ----------------------
 
    procedure Print_Type_Title
-     (Type_D              : XML.Schema.Type_Definitions.XS_Type_Definition;
+     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Type_Writer : in out XSD_To_Ada.Writers.Writer)
    is
@@ -548,7 +614,6 @@ package body XSD_To_Ada.Utils is
          if Type_D.Get_Name.To_UTF_8_String = Types_Table (J).Type_Name.To_UTF_8_String
            and then Types_Table (J).Type_State
          then
-
             Types_Table (J).Type_State := False;
 
             if Type_D.Get_Name.Length > 10 then
@@ -649,7 +714,7 @@ package body XSD_To_Ada.Utils is
          end if;
          Session_Bool := False;
          US_Response.Clear;
-         end loop;
+      end loop;
 
       Ada.Text_IO.Put_Line ("END Print_Type_Title");
    end Print_Type_Title;

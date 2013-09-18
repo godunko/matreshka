@@ -65,7 +65,7 @@ package XSD_To_Ada.Utils is
 
    type Types_Table_Type_Array is array (1 .. 200) of Types_Table_Type;
 
-   Types_Table  : Types_Table_Type_Array;
+   Types_Table    : Types_Table_Type_Array;
 
    Is_Vector_Type : League.String_Vectors.Universal_String_Vector;
 
