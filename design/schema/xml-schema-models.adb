@@ -49,6 +49,7 @@ with Matreshka.XML_Schema.Named_Maps;
 with XML.Schema.Named_Maps.Internals;
 with XML.Schema.Element_Declarations.Internals;
 with XML.Schema.Objects.Type_Definitions.Internals;
+with Matreshka.XML_Schema.AST.Element_Declarations;
 
 package body XML.Schema.Models is
 
@@ -93,6 +94,21 @@ package body XML.Schema.Models is
                   M.Next (Pos);
                end loop;
             end;
+
+         when Element_Declaration =>
+            declare
+               package M renames
+                 Matreshka.XML_Schema.AST.Types.Element_Declaration_Maps;
+               Element_Declarations : M.Map renames Item.Element_Declarations;
+               Pos                  : M.Cursor := Element_Declarations.First;
+            begin
+               while M.Has_Element (Pos) loop
+                  Result.Append
+                    (Matreshka.XML_Schema.AST.Object_Access (M.Element (Pos)));
+                  M.Next (Pos);
+               end loop;
+            end;
+
          when others =>
             raise Program_Error;
       end case;
