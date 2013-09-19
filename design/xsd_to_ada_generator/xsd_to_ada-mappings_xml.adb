@@ -90,14 +90,6 @@ package body XSD_To_Ada.Mappings_XML is
       return X : League.Strings.Universal_String;
    end Error_String;
 
-   overriding procedure Characters
-     (Self      : in out Mapping_XML;
-      Text      : League.Strings.Universal_String;
-      Success   : in out Boolean) is
-   begin
-      Self.Last_Text := Text;
-   end Characters;
-
    overriding procedure End_Element
      (Self           : in out Mapping_XML;
       Namespace_URI  : League.Strings.Universal_String;

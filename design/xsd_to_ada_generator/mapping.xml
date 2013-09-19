@@ -57,21 +57,22 @@
     <ada context="ICTS.Types" type="ICTS.Types.Order_Version"/>
   </map> 
 
-  <map type="PositionGroup">
+  <map type="PositionIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Position_Group"/>
   </map>
 
-  <map type="PositionGroupVersion">
+  <map type="PositionVersion">
     <ada context="ICTS.Types" type="ICTS.Types.Position_Group_Version"/>
   </map> 
   
   <map type="SecondsSinceMidnight">
     <ada context="ICTS.Types" type="ICTS.Types.Seconds_Since_Midnight"/>
-  </map> 
+  </map>
 
-  <map type="SettingIdentifier">
-    <ada context="ICTS.Types" type="ICTS.Types.Setting_Identifier"/>
+   <map type="SessionIdentifier">
+    <ada context="ICTS.Types" type="League.Strings.Universal_String;"/>
   </map> 
+  
 <!--
   <map type="TimeInterval">
     <ada context="ICTS.Types" type="ICTS.Types.Time_Interval"/>
@@ -107,6 +108,18 @@
   
   <map type="SessionIdentifier">
     <ada context="ICTS.Types" type="Ada.Strings.Wide_Wide_Unbounded.Unbounded_Wide_Wide_String"/>
+  </map>
+  
+  <map type="ComissionIdentifier">
+    <ada context="ICTS.Types" type="Positive"/>
+  </map>
+  
+  <map type="CurrencyAmount">
+    <ada context="ICTS.Types" type="Decimal_String"/>
+  </map>
+
+  <map type="unsignedLong">
+    <ada context="ICTS.Types" type="Duration"/>
   </map>
   
 </mappings>

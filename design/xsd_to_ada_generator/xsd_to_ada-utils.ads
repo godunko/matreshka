@@ -105,6 +105,10 @@ package XSD_To_Ada.Utils is
    procedure Gen_Line
      (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "");
 
+   function Gen_Type_Line
+     (Str : Wide_Wide_String := ""; Tab : Natural := 0)
+      return Wide_Wide_String;
+
    procedure Gen_Proc_Header
      (Self   : in out XSD_To_Ada.Writers.Writer;
       Name   : Wide_Wide_String;
@@ -118,6 +122,16 @@ package XSD_To_Ada.Utils is
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
    procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
 
+   procedure Print_Content_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent       : String := "";
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Is_Record    : Boolean := False;
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Table        : in out Types_Table_Type_Array);
+
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
       Indent       : String := "";
@@ -129,7 +143,7 @@ package XSD_To_Ada.Utils is
       Table        : in out Types_Table_Type_Array);
 
    procedure Print_Type_Title
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Type_Writer : in out XSD_To_Ada.Writers.Writer);
 

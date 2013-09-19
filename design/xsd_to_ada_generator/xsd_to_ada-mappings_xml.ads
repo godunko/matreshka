@@ -84,11 +84,6 @@ private
      (Self : Mapping_XML)
      return League.Strings.Universal_String;
 
-   overriding procedure Characters
-     (Self      : in out Mapping_XML;
-      Text      : League.Strings.Universal_String;
-      Success   : in out Boolean);
-
    overriding procedure End_Element
      (Self           : in out Mapping_XML;
       Namespace_URI  : League.Strings.Universal_String;
