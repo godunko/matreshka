@@ -28,6 +28,10 @@
   <map type="DealerIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Dealer_Identifier"/>
   </map>
+  
+  <map type="duration">
+    <ada context="ICTS.Types" type="Duration"/>
+  </map>
 
   <map type="InstrumentIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Instrument_Identifier"/>
