@@ -328,9 +328,12 @@ package body XSD_To_Ada.Utils is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
-         Print_Type_Title
-           (XS_Object.To_Type_Definition,
-            Payload_Writer, Payload_Type_Writer);
+         if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
+         then
+            Print_Type_Title
+              (XS_Object.To_Type_Definition,
+               Payload_Writer, Payload_Type_Writer);
+         end if;
       end loop;
 
       Ada.Text_IO.Put_Line ("------   Element_Declarations   ---------");
@@ -390,10 +393,12 @@ package body XSD_To_Ada.Utils is
                         Add_Separator
                           (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String));
                   else
+
                      if XSD_To_Ada.Utils.Has_Element_Session
                        (Type_D.To_Type_Definition)
-                       and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = ""
+                       and then Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = ""
                      then
+
                         Writers.P
                           (Payload_Writer,
                            "   type "
@@ -407,28 +412,33 @@ package body XSD_To_Ada.Utils is
                            & " with null record;"
                            & Wide_Wide_Character'Val (10));
                      else
-                        Writers.P
-                          (Payload_Writer,
-                           "   type "
-                           & Add_Separator
-                          (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
-                           & " is "
-                           & Wide_Wide_Character'Val (10)
-                           & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
-                           & " with record");
 
-                        XSD_To_Ada.Utils.Print_Content_Type
-                          (Type_D,
-                           "",
-                           Payload_Writer, Payload_Type_Writer,
-                           Type_D.Get_Name,
-                           False,
-                           Map,
-                           Types_Table);
+                        if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
+                          /= "OpenSession2"
+                        then
+                           Writers.P
+                             (Payload_Writer,
+                              "   type "
+                              & Add_Separator
+                                (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
+                              & " is "
+                              & Wide_Wide_Character'Val (10)
+                              & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
+                              & " with record");
 
-                        Writers.P
-                          (Payload_Writer,
-                           "   end record;" & Wide_Wide_Character'Val (10));
+                           XSD_To_Ada.Utils.Print_Content_Type
+                             (Type_D,
+                              "",
+                              Payload_Writer, Payload_Type_Writer,
+                              Type_D.Get_Name,
+                              False,
+                              Map,
+                              Types_Table);
+
+                           Writers.P
+                             (Payload_Writer,
+                              "   end record;" & Wide_Wide_Character'Val (10));
+                        end if;
                      end if;
                   end if;
 
@@ -755,7 +765,7 @@ package body XSD_To_Ada.Utils is
                      "      "
                      & XSD_To_Ada.Utils.Add_Separator
                        (XS_Term.Get_Name.To_Wide_Wide_String)
-                     & " : Payload."
+                     & " : Payloads_2."
                      & Type_Name.To_Wide_Wide_String & ";");
 
                when XML.Schema.Simple_Type =>
@@ -1129,11 +1139,11 @@ package body XSD_To_Ada.Utils is
                Name_Kind.Append
                  (League.Strings.To_Universal_String
                     (XSD_To_Ada.Utils.Add_Separator
-                       (XS_Term.Get_Name.To_Wide_Wide_String)));
+                       (XS_Term.Get_Name.To_Wide_Wide_String) & "_Case"));
                Name_Case.Append
                  ("        when "
                   & XSD_To_Ada.Utils.Add_Separator
-                    (XS_Term.Get_Name.To_Wide_Wide_String) & " =>"
+                    (XS_Term.Get_Name.To_Wide_Wide_String) & "_Case =>"
                   & Wide_Wide_Character'Val (10)
                   & "           "
                   & XSD_To_Ada.Utils.Add_Separator
