@@ -1,9 +1,49 @@
 
 <mappings>
- 
+  
+  <map type="OrdersLinkInformation">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Orders_Link_Informations"/>
+  </map>
+  
+  <map type="Order">
+    <ada context="ICTS.Types" type="ICTS.Forex.Order"/>
+  </map>
+  
+  <map type="Account_Diagnosis">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Account_Diagnosis_Vector"/>
+  </map>
+    
+  <map type="Position">
+    <ada context="ICTS.Types" type="ICTS.Forex.Position_Group"/>
+  </map>
+  
+  <map type="OrdersLink">
+    <ada context="ICTS.Types" type="ICTS.Forex.Link"/>
+  </map>
+
+  <map type="OpenOrderKind">
+    <ada context="ICTS.Types" type="ICTS.Forex.Open_Order_Kind"/>
+  </map>
+
+  <map type="OpenOrderKind">
+    <ada context="ICTS.Types" type="ICTS.Forex.Open_Order_Kind"/>
+  </map>
+    
+  <map type="InstrumentInformation">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Dealer_Instrument_Informations"/>
+  </map>
+  
+  <map type="PredefinedCondition">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Predefined_Condition"/>
+  </map>
+
+  <map type="CurrencyInformation">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Currency_Informations"/>
+  </map>
+    
   <map type="AccountIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Account_Identifier"/>
-  </map> 
+  </map>
 
   <map type="AccountVersion">
     <ada context="ICTS.Types" type="ICTS.Types.Account_Version"/>
@@ -19,8 +59,24 @@
   
   <map type="CurrencyIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Currency_Identifier"/>
-  </map> 
+  </map>
 
+  <map type="PositionInformation">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Position_Group_Informations"/>
+  </map>
+  
+  <map type="Money">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Money"/>
+  </map>
+  
+  <map type="OrdersLink">
+    <ada context="ICTS.Types" type="ICTS.Forex.Link"/>
+  </map>  
+    
+  <map type="AccountInformation">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Account_Informations"/>
+  </map>
+  
   <map type="CurrencyVersion">
     <ada context="ICTS.Types" type="ICTS.Types.Currency_Version"/>
   </map> 
