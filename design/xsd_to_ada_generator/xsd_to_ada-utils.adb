@@ -119,14 +119,133 @@ package body XSD_To_Ada.Utils is
 
    end Add_Separator;
 
+   procedure Create_Element_Type
+     (Model  : XML.Schema.Models.XS_Model;
+      Writer : in out XSD_To_Ada.Writers.Writer)
+   is
+      Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Element_Declaration,
+           Namespace   => Namespace);
+
+      Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      Print_Element : Boolean := True;
+
+   begin
+      for J in 1 .. Element_Declarations.Length loop
+
+         Print_Element := True;
+
+         for X in 1 .. Types_Table'Last loop
+            if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
+              = Types_Table (X).Type_Name.To_UTF_8_String
+            then
+               Print_Element := False;
+            end if;
+         end loop;
+
+         if Print_Element
+           and Element_Declarations.Item (J).Get_Name.To_UTF_8_String
+           /= "Transaction"
+         then
+            declare
+               XS_Term : XML.Schema.Objects.Terms.XS_Term;
+               Decl    : XML.Schema.Element_Declarations.XS_Element_Declaration;
+            begin
+               Decl := Element_Declarations.Item (J).To_Element_Declaration;
+               Type_D := Decl.Get_Type_Definition;
+               if Element_Declarations.Item (J).Get_Name.Length > 10
+               then
+                  if  League.Strings.Slice
+                    (Element_Declarations.Item (J).Get_Name,
+                     Element_Declarations.Item (J).Get_Name.Length - 7,
+                     Element_Declarations.Item (J).Get_Name.Length).To_UTF_8_String = "Response"
+                  then
+                     Writers.P
+                       (Writer,
+                        "   type "
+                        & Add_Separator
+                          (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
+                        & " is "
+                        & Wide_Wide_Character'Val (10)
+                        & "     new Abstract_IATS_Responce with "
+                        & Wide_Wide_Character'Val (10)
+                        & "       record"
+                        & Wide_Wide_Character'Val (10)
+                        & "         "
+                        & Gen_Type_Line (Add_Separator
+                          (Type_D.Get_Name.To_Wide_Wide_String)
+                        & " : Payloads_2."
+                        & Add_Separator
+                          (Type_D.Get_Name.To_Wide_Wide_String) & ";", 12)
+                        & Wide_Wide_Character'Val (10)
+                        & "       end record;" & Wide_Wide_Character'Val (10));
+
+                     Gen_Access_Type
+                       (Writer,
+                        Add_Separator
+                          (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String));
+                  else
+
+                     if XSD_To_Ada.Utils.Has_Element_Session
+                       (Type_D.To_Type_Definition)
+                       and then Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = ""
+                     then
+
+                        Writers.P
+                          (Writer,
+                           "   type "
+                           & Add_Separator
+                             (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
+                           & " is "
+                           & Wide_Wide_Character'Val (10)
+                           & "     new "
+                           & Add_Separator
+                             (Type_D.Get_Name.To_Wide_Wide_String)
+                           & " with null record;"
+                           & Wide_Wide_Character'Val (10));
+                     else
+
+                        if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
+                          /= "OpenSession2"
+                        then
+                           Writers.P
+                             (Writer,
+                              "   type "
+                              & Add_Separator
+                                (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
+                              & " is "
+                              & Wide_Wide_Character'Val (10)
+                              & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
+                              & " with record");
+
+                           XSD_To_Ada.Utils.Print_Content_Type
+                             (Type_D,
+                              "",
+                              Writer, Writer,
+                              Type_D.Get_Name,
+                              False,
+                              Map,
+                              Types_Table);
+
+                           Writers.P
+                             (Writer,
+                              "   end record;" & Wide_Wide_Character'Val (10));
+                        end if;
+                     end if;
+                  end if;
+               end if;
+            end;
+         end if;
+      end loop;
+   end Create_Element_Type;
+
+
    procedure Create_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer)
    is
-      Namespace : constant League.Strings.Universal_String
-        := League.Strings.To_Universal_String
-          ("http://www.actforex.com/iats");
-
       XS_Object : XML.Schema.Objects.XS_Object;
       STD       : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
       XS_Base   : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -190,9 +309,6 @@ package body XSD_To_Ada.Utils is
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer)
    is
-      Namespace : constant League.Strings.Universal_String
-        := League.Strings.To_Universal_String
-          ("http://www.actforex.com/iats");
 
       XS_Object : XML.Schema.Objects.XS_Object;
       STD       : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
@@ -248,21 +364,12 @@ package body XSD_To_Ada.Utils is
 
    procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model)
    is
-      Namespace : constant League.Strings.Universal_String
-        := League.Strings.To_Universal_String
-          ("http://www.actforex.com/iats");
-
       XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       Complex_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
         Model.Get_Components_By_Namespace
           (Object_Type => XML.Schema.Complex_Type,
-           Namespace   => Namespace);
-
-      Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map :=
-        Model.Get_Components_By_Namespace
-          (Object_Type => XML.Schema.Element_Declaration,
            Namespace   => Namespace);
 
       Payload_Writer          : XSD_To_Ada.Writers.Writer;
@@ -272,13 +379,10 @@ package body XSD_To_Ada.Utils is
 
       Current_Out_File : Ada.Text_IO.File_Type;
 
-      Print_Element : Boolean := True;
-
    begin
       Writers.P
         (Payload_Writer,
-         Wide_Wide_Character'Val (10)
-         & "with Ada.Containers.Indefinite_Vectors;" & Wide_Wide_Character'Val (10)
+         "with Ada.Containers.Indefinite_Vectors;" & Wide_Wide_Character'Val (10)
          & "with League.Strings;" & Wide_Wide_Character'Val (10)
          & "with Interfaces;" & Wide_Wide_Character'Val (10)
          & "with ICTS.Types;" & Wide_Wide_Character'Val (10)
@@ -336,116 +440,7 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
-      Ada.Text_IO.Put_Line ("------   Element_Declarations   ---------");
-
-      for J in 1 .. Element_Declarations.Length loop
-
-         Print_Element := True;
-
-         for X in 1 .. Types_Table'Last loop
-            if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
-              = Types_Table (X).Type_Name.To_UTF_8_String
-            then
-               Print_Element := False;
-            end if;
-         end loop;
-
-         if Print_Element
-           and Element_Declarations.Item (J).Get_Name.To_UTF_8_String
-           /= "Transaction"
-         then
-            declare
-               XS_Term : XML.Schema.Objects.Terms.XS_Term;
-               Decl    : XML.Schema.Element_Declarations.XS_Element_Declaration;
-            begin
-               Decl := Element_Declarations.Item (J).To_Element_Declaration;
-               Type_D := Decl.Get_Type_Definition;
-               if Element_Declarations.Item (J).Get_Name.Length > 10
-               then
-                  if  League.Strings.Slice
-                    (Element_Declarations.Item (J).Get_Name,
-                     Element_Declarations.Item (J).Get_Name.Length - 7,
-                     Element_Declarations.Item (J).Get_Name.Length).To_UTF_8_String = "Response"
-                  then
-                     Writers.P
-                       (Payload_Writer,
-                        "   type "
-                        & Add_Separator
-                          (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
-                        & " is "
-                        & Wide_Wide_Character'Val (10)
-                        & "     new Abstract_IATS_Responce with "
-                        & Wide_Wide_Character'Val (10)
-                        & "       record"
-                        & Wide_Wide_Character'Val (10)
-
-                        & "         "
-                        & Gen_Type_Line (Add_Separator
-                          (Type_D.Get_Name.To_Wide_Wide_String)
-                        & " : Payloads_2."
-                        & Add_Separator
-                          (Type_D.Get_Name.To_Wide_Wide_String) & ";", 12)
-                        & Wide_Wide_Character'Val (10)
-                        & "       end record;" & Wide_Wide_Character'Val (10));
-
-                     Gen_Access_Type
-                       (Payload_Writer,
-                        Add_Separator
-                          (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String));
-                  else
-
-                     if XSD_To_Ada.Utils.Has_Element_Session
-                       (Type_D.To_Type_Definition)
-                       and then Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = ""
-                     then
-
-                        Writers.P
-                          (Payload_Writer,
-                           "   type "
-                           & Add_Separator
-                             (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
-                           & " is "
-                           & Wide_Wide_Character'Val (10)
-                           & "     new "
-                           & Add_Separator
-                             (Type_D.Get_Name.To_Wide_Wide_String)
-                           & " with null record;"
-                           & Wide_Wide_Character'Val (10));
-                     else
-
-                        if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
-                          /= "OpenSession2"
-                        then
-                           Writers.P
-                             (Payload_Writer,
-                              "   type "
-                              & Add_Separator
-                                (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
-                              & " is "
-                              & Wide_Wide_Character'Val (10)
-                              & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
-                              & " with record");
-
-                           XSD_To_Ada.Utils.Print_Content_Type
-                             (Type_D,
-                              "",
-                              Payload_Writer, Payload_Type_Writer,
-                              Type_D.Get_Name,
-                              False,
-                              Map,
-                              Types_Table);
-
-                           Writers.P
-                             (Payload_Writer,
-                              "   end record;" & Wide_Wide_Character'Val (10));
-                        end if;
-                     end if;
-                  end if;
-
-               end if;
-            end;
-         end if;
-      end loop;
+      Create_Element_Type (Model, Payload_Writer);
 
       Writers.N (Payload_Writer, "end Payloads_2;");
 

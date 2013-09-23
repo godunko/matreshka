@@ -88,6 +88,10 @@ package XSD_To_Ada.Utils is
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
 
+   procedure Create_Element_Type
+     (Model  : XML.Schema.Models.XS_Model;
+      Writer : in out XSD_To_Ada.Writers.Writer);
+
    procedure Create_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer);
@@ -159,6 +163,10 @@ package XSD_To_Ada.Utils is
      (Type_D_Name : League.Strings.Universal_String;
       Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
       return League.Strings.Universal_String;
+
+   Namespace : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+       ("http://www.actforex.com/iats");
 
    Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
 
