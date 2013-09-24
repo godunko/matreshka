@@ -88,6 +88,10 @@ package XSD_To_Ada.Utils is
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
 
+   function Gen_Type_Line
+     (Str : Wide_Wide_String := ""; Tab : Natural := 0)
+      return Wide_Wide_String;
+
    procedure Create_Element_Type
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer);
@@ -108,10 +112,6 @@ package XSD_To_Ada.Utils is
 
    procedure Gen_Line
      (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "");
-
-   function Gen_Type_Line
-     (Str : Wide_Wide_String := ""; Tab : Natural := 0)
-      return Wide_Wide_String;
 
    procedure Gen_Proc_Header
      (Self   : in out XSD_To_Ada.Writers.Writer;

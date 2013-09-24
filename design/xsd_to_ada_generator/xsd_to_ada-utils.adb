@@ -91,22 +91,33 @@ package body XSD_To_Ada.Utils is
       US_Text.Append (Text (Text'First));
 
       for J in 2 .. Text'Length - 1 loop
-         if Text (J + 1) in Upper_Char_List then
+
+         if Text (J) in Upper_Char_List
+           and then Text (J - 1) in Upper_Char_List
+         then
             Uper_Count := Uper_Count + 1;
+         end if;
+
+         if Text (J) in Lower_Char_List
+           and then Text (J - 1) in Lower_Char_List
+         then
+            Uper_Count := 0;
          end if;
 
          if Text (J) in Lower_Char_List
              and then Text (J + 1) in Upper_Char_List
          then
             US_Text.Append (Text (J));
-            US_Text.Append ('_');
+            US_Text.Append ("_");
             Uper_Count := 0;
+
          elsif Uper_Count > 1
                 and then Text (J) in Upper_Char_List
                 and then Text (J + 2) in Lower_Char_List
          then
             US_Text.Append (Text (J));
-            US_Text.Append ('_');
+
+            US_Text.Append ("_");
             Uper_Count := 0;
          else
             US_Text.Append (Text (J));
@@ -114,7 +125,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       US_Text.Append (Text (Text'Last));
---      Ada.Text_IO.Put_Line (US_Text.To_UTF_8_String);
+
       return US_Text.To_Wide_Wide_String;
 
    end Add_Separator;
@@ -152,9 +163,13 @@ package body XSD_To_Ada.Utils is
             declare
                XS_Term : XML.Schema.Objects.Terms.XS_Term;
                Decl    : XML.Schema.Element_Declarations.XS_Element_Declaration;
+               Name    : League.Strings.Universal_String;
             begin
                Decl := Element_Declarations.Item (J).To_Element_Declaration;
                Type_D := Decl.Get_Type_Definition;
+
+               Name := Find_Type (Type_D.Get_Name, Map);
+
                if Element_Declarations.Item (J).Get_Name.Length > 10
                then
                   if  League.Strings.Slice
@@ -176,9 +191,8 @@ package body XSD_To_Ada.Utils is
                         & "         "
                         & Gen_Type_Line (Add_Separator
                           (Type_D.Get_Name.To_Wide_Wide_String)
-                        & " : Payloads_2."
-                        & Add_Separator
-                          (Type_D.Get_Name.To_Wide_Wide_String) & ";", 12)
+                        & " : "
+                        & Name.To_Wide_Wide_String & ";", 12)
                         & Wide_Wide_Character'Val (10)
                         & "       end record;" & Wide_Wide_Character'Val (10));
 
@@ -201,8 +215,7 @@ package body XSD_To_Ada.Utils is
                            & " is "
                            & Wide_Wide_Character'Val (10)
                            & "     new "
-                           & Add_Separator
-                             (Type_D.Get_Name.To_Wide_Wide_String)
+                           & Name.To_Wide_Wide_String
                            & " with null record;"
                            & Wide_Wide_Character'Val (10));
                      else
@@ -382,10 +395,12 @@ package body XSD_To_Ada.Utils is
    begin
       Writers.P
         (Payload_Writer,
-         "with Ada.Containers.Indefinite_Vectors;" & Wide_Wide_Character'Val (10)
+         "--  with Ada.Containers.Indefinite_Vectors;" & Wide_Wide_Character'Val (10)
          & "with League.Strings;" & Wide_Wide_Character'Val (10)
          & "with Interfaces;" & Wide_Wide_Character'Val (10)
          & "with ICTS.Types;" & Wide_Wide_Character'Val (10)
+          & "with ICTS.Forex;" & Wide_Wide_Character'Val (10)
+         & "with ICTSClient.Types;" & Wide_Wide_Character'Val (10)
          & "with Web_Services.SOAP.Payloads;" & Wide_Wide_Character'Val (10)
          & "with Ada.Strings.Unbounded;"
          & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
@@ -472,7 +487,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       return League.Strings.To_Universal_String
-        (XSD_To_Ada.Utils.Add_Separator
+        ("Payloads_2." & XSD_To_Ada.Utils.Add_Separator
            (Type_D_Name.To_Wide_Wide_String));
    end Find_Type;
 
@@ -760,7 +775,7 @@ package body XSD_To_Ada.Utils is
                      "      "
                      & XSD_To_Ada.Utils.Add_Separator
                        (XS_Term.Get_Name.To_Wide_Wide_String)
-                     & " : Payloads_2."
+                     & " : "
                      & Type_Name.To_Wide_Wide_String & ";");
 
                when XML.Schema.Simple_Type =>
@@ -1140,11 +1155,11 @@ package body XSD_To_Ada.Utils is
                   & XSD_To_Ada.Utils.Add_Separator
                     (XS_Term.Get_Name.To_Wide_Wide_String) & "_Case =>"
                   & Wide_Wide_Character'Val (10)
-                  & "           "
+                  & Gen_Type_Line ("           "
                   & XSD_To_Ada.Utils.Add_Separator
                     (XS_Term.Get_Name.To_Wide_Wide_String)
                   & " : "
-                  & Type_Name.To_Wide_Wide_String & ";"
+                  & Type_Name.To_Wide_Wide_String & ";", 15)
                   & Wide_Wide_Character'Val (10));
             end if;
 
@@ -1167,11 +1182,12 @@ package body XSD_To_Ada.Utils is
                      "      "
                      & XSD_To_Ada.Utils.Add_Separator
                        (XS_Term.Get_Name.To_Wide_Wide_String)
-                     & " : Payloads_2."
+                     & " : "
                      & Type_Name.To_Wide_Wide_String);
 
                   if Max_Occurs then
-                     Writers.P (Writer, "s;");
+                     Writers.P (Writer, ";");
+--                     Writers.P (Writer, "s;");
                      Max_Occurs := False;
 
                      Added_Vector_Type := True;
@@ -1188,23 +1204,24 @@ package body XSD_To_Ada.Utils is
                      end loop;
 
                      if Added_Vector_Type then
-                        Writers.P
-                             (Writer_types,
-                              "   package "
-                              & Type_Name.To_Wide_Wide_String & "_Vectors is "
-                              & Wide_Wide_Character'Val (10)
-                              & Gen_Type_Line
-                                ("     new Ada.Containers.Indefinite_Vectors "
-                                 & "(Positive, "
-                                 & Type_Name.To_Wide_Wide_String & ");", 7)
-                              & Wide_Wide_Character'Val (10)
-                              & Wide_Wide_Character'Val (10)
-                              & Gen_Type_Line
-                                ("   subtype " & Type_Name.To_Wide_Wide_String
-                                 & "s is " & Type_Name.To_Wide_Wide_String
-                                 & "_Vectors.Vector;", 5)
-                              & Wide_Wide_Character'Val (10));
-                        Is_Vector_Type.Append (Type_D.Get_Name);
+                        null;
+--                          Writers.P
+--                               (Writer_types,
+--                                "   package "
+--                                & Type_Name.To_Wide_Wide_String & "_Vectors is "
+--                                & Wide_Wide_Character'Val (10)
+--                                & Gen_Type_Line
+--                                  ("     new Ada.Containers.Indefinite_Vectors "
+--                                   & "(Positive, "
+--                                   & Type_Name.To_Wide_Wide_String & ");", 7)
+--                                & Wide_Wide_Character'Val (10)
+--                                & Wide_Wide_Character'Val (10)
+--                                & Gen_Type_Line
+--                                  ("   subtype " & Type_Name.To_Wide_Wide_String
+--                                   & "s is " & Type_Name.To_Wide_Wide_String
+--                                   & "_Vectors.Vector;", 5)
+--                                & Wide_Wide_Character'Val (10));
+--                          Is_Vector_Type.Append (Type_D.Get_Name);
                      end if;
 
                   else
@@ -1241,12 +1258,12 @@ package body XSD_To_Ada.Utils is
                     ("      "
                      & XSD_To_Ada.Utils.Add_Separator
                        (XS_Term.Get_Name.To_Wide_Wide_String)
-                     & " : Payloads_2."
+                     & " : "
                      & Type_Name.To_Wide_Wide_String & ";"
                      & Wide_Wide_Character'Val (10));
 
                   if Max_Occurs then
-                     Writers.P (Writer, "s;");
+--                     Writers.P (Writer, "s;");
                      Max_Occurs := False;
 
                      Added_Vector_Type := True;
@@ -1263,19 +1280,20 @@ package body XSD_To_Ada.Utils is
                      end loop;
 
                      if Added_Vector_Type then
-                        Writers.P
-                             (Writer_types,
-                              "   package "
-                              & Type_Name.To_Wide_Wide_String & "_Vectors is "
-                              & Wide_Wide_Character'Val (10)
-                              & "     new Ada.Containers.Indefinite_Vectors (Positive, "
-                              & Type_Name.To_Wide_Wide_String & ");"
-                              & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-                              & "   subtype " & Type_Name.To_Wide_Wide_String & "s "
-                              & "is " & Type_Name.To_Wide_Wide_String &
-                                "_Vectors.Vector;"
-                              & Wide_Wide_Character'Val (10));
-                        Is_Vector_Type.Append (Type_D.Get_Name);
+                        null;
+--                          Writers.P
+--                               (Writer_types,
+--                                "   package "
+--                                & Type_Name.To_Wide_Wide_String & "_Vectors is "
+--                                & Wide_Wide_Character'Val (10)
+--                                & "     new Ada.Containers.Indefinite_Vectors (Positive, "
+--                                & Type_Name.To_Wide_Wide_String & ");"
+--                                & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
+--                                & "   subtype " & Type_Name.To_Wide_Wide_String & "s "
+--                                & "is " & Type_Name.To_Wide_Wide_String &
+--                                  "_Vectors.Vector;"
+--                                & Wide_Wide_Character'Val (10));
+--                          Is_Vector_Type.Append (Type_D.Get_Name);
                      end if;
 
                   else

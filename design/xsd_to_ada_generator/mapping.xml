@@ -1,6 +1,10 @@
 
 <mappings>
   
+  <map type="unsignedShort">
+    <ada context="ICTS.Types" type="Boolean;  --  Type must be going to change"/>
+  </map>
+  
   <map type="OrdersLinkInformation">
     <ada context="ICTS.Types" type="ICTSClient.Types.Orders_Link_Informations"/>
   </map>
@@ -39,6 +43,10 @@
 
   <map type="CurrencyInformation">
     <ada context="ICTS.Types" type="ICTSClient.Types.Currency_Informations"/>
+  </map>
+    
+  <map type="Quantum">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Quantums_Vector"/>
   </map>
     
   <map type="AccountIdentifier">
