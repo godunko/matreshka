@@ -395,7 +395,7 @@ package body XSD_To_Ada.Utils is
    begin
       Writers.P
         (Payload_Writer,
-         "--  with Ada.Containers.Indefinite_Vectors;" & Wide_Wide_Character'Val (10)
+         "with Ada.Containers.Indefinite_Vectors;" & Wide_Wide_Character'Val (10)
          & "with League.Strings;" & Wide_Wide_Character'Val (10)
          & "with Interfaces;" & Wide_Wide_Character'Val (10)
          & "with ICTS.Types;" & Wide_Wide_Character'Val (10)
@@ -794,6 +794,17 @@ package body XSD_To_Ada.Utils is
       end Print_Term;
 
    begin
+
+      if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String /= "" then
+         Writers.P
+           (Writer,
+            Gen_Type_Line ("      "
+            & Add_Separator (Type_D.Get_Base_Type.Get_Name.To_Wide_Wide_String)
+            & " : Payloads_2."
+            & Add_Separator (Type_D.Get_Base_Type.Get_Name.To_Wide_Wide_String)
+            & ";", 8));
+      end if;
+
       case Type_D.Get_Type_Category is
          when XML.Schema.Complex_Type =>
             CTD := Type_D.To_Complex_Type_Definition;
@@ -984,6 +995,7 @@ package body XSD_To_Ada.Utils is
       Name_Kind   : League.Strings.Universal_String;
       Name_Case   : League.Strings.Universal_String;
       Anonym_Kind : League.Strings.Universal_String;
+      Anonym_Vector : League.Strings.Universal_String;
       Vectop_US   : League.Strings.Universal_String;
 
       ----------------
@@ -1035,6 +1047,7 @@ package body XSD_To_Ada.Utils is
             if Anonyn_Vector (Now_Term_Level - 1).Term_State
               and Choice = 0
             then
+
                Writers.P
                  (Writer,
                   Gen_Type_Line
@@ -1042,7 +1055,27 @@ package body XSD_To_Ada.Utils is
                      & XSD_To_Ada.Utils.Add_Separator
                        (Name.To_Wide_Wide_String) & " : "
                      & XSD_To_Ada.Utils.Add_Separator
-                       (Name.To_Wide_Wide_String) & "_Anonym;", 8));
+                       (Name.To_Wide_Wide_String) & "_Anonyms;", 8));
+
+               Anonym_Vector.Append
+                 ("   package "
+                  & XSD_To_Ada.Utils.Add_Separator
+                       (Name.To_Wide_Wide_String) & "_Anonyms_Vectors is "
+                  & Wide_Wide_Character'Val (10)
+                  & "     new Ada.Containers.Indefinite_Vectors "
+                  & Wide_Wide_Character'Val (10)
+                  & "        (Positive, "
+                     & XSD_To_Ada.Utils.Add_Separator
+                       (Name.To_Wide_Wide_String) & "_Anonym);"
+                  & Wide_Wide_Character'Val (10)
+                  & Wide_Wide_Character'Val (10)
+                  & Gen_Type_Line
+                    ("   subtype " & XSD_To_Ada.Utils.Add_Separator
+                       (Name.To_Wide_Wide_String)
+                     & "_Anonyms is " & XSD_To_Ada.Utils.Add_Separator
+                       (Name.To_Wide_Wide_String)
+                     & "_Anonyms_Vectors.Vector;", 5)
+                  & Wide_Wide_Character'Val (10));
 
                Anonym_Kind.Append
                  ("   type "
@@ -1388,6 +1421,9 @@ package body XSD_To_Ada.Utils is
             Anonym_Kind.To_Wide_Wide_String
             & "   end record;"
             & Wide_Wide_Character'Val (10));
+
+         Writers.P (Writer_types, Anonym_Vector.To_Wide_Wide_String);
+
          Anonym_Kind.Clear;
       end if;
       Choice := 0;
