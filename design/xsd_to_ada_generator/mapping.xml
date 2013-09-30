@@ -29,10 +29,14 @@
     <ada context="ICTS.Types" type="ICTS.Forex.Open_Order_Kind"/>
   </map>
 
-  <map type="OpenOrderKind">
-    <ada context="ICTS.Types" type="ICTS.Forex.Open_Order_Kind"/>
+  <map type="CloseOrderInformation">
+    <ada context="ICTS.Types" type="ICTSClient.Types.CloseOrder_Informations"/>
   </map>
-    
+  
+  <map type="OpenOrderInformation">
+    <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Informations"/>
+  </map>
+  
   <map type="InstrumentInformation">
     <ada context="ICTS.Types" type="ICTSClient.Types.Dealer_Instrument_Informations"/>
   </map>
