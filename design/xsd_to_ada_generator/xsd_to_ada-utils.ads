@@ -106,6 +106,11 @@ package XSD_To_Ada.Utils is
 
    procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model);
 
+   procedure Create_Type_Container
+     (Type_Name       : Wide_Wide_String;
+      Writer          : in out Writers.Writer;
+      Writer_Types    : in out Writers.Writer);
+
    procedure Gen_Access_Type
      (Self   : in out XSD_To_Ada.Writers.Writer;
       Name   : Wide_Wide_String);
@@ -163,6 +168,11 @@ package XSD_To_Ada.Utils is
      (Type_D_Name : League.Strings.Universal_String;
       Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
       return League.Strings.Universal_String;
+
+   function Is_Type_In_Map
+     (Type_D_Name : League.Strings.Universal_String;
+      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
+      return Boolean;
 
    Namespace : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String

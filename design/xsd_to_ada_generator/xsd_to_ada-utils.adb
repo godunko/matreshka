@@ -468,6 +468,33 @@ package body XSD_To_Ada.Utils is
       Ada.Text_IO.Close (Current_Out_File);
    end Create_Complex_Type;
 
+   ---------------------------
+   -- Create_Type_Container --
+   ---------------------------
+
+   procedure Create_Type_Container
+     (Type_Name       : Wide_Wide_String;
+      Writer          : in out Writers.Writer;
+      Writer_Types    : in out Writers.Writer)is
+   begin
+      Writers.P
+        (Writer_Types,
+         "   package "
+         & Add_Separator (Type_Name) & "_Vectors is "
+         & Wide_Wide_Character'Val (10)
+         & Gen_Type_Line
+           ("     new Ada.Containers.Indefinite_Vectors "
+            & "(Positive, "
+            & Add_Separator (Type_Name) & ");", 7)
+         & Wide_Wide_Character'Val (10)
+         & Wide_Wide_Character'Val (10)
+         & Gen_Type_Line
+           ("   subtype " & Add_Separator (Type_Name)
+            & "s is " & Add_Separator (Type_Name)
+            & "_Vectors.Vector;", 5)
+         & Wide_Wide_Character'Val (10));
+   end Create_Type_Container;
+
    ---------------
    -- Find_Type --
    ---------------
@@ -490,6 +517,27 @@ package body XSD_To_Ada.Utils is
         ("Payloads_2." & XSD_To_Ada.Utils.Add_Separator
            (Type_D_Name.To_Wide_Wide_String));
    end Find_Type;
+
+   --------------------
+   -- Is_Type_In_Map --
+   --------------------
+
+   function Is_Type_In_Map
+     (Type_D_Name : League.Strings.Universal_String;
+      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
+      return Boolean
+   is
+   begin
+      for j in 1 .. Map.Map_Vector.Length loop
+         if Type_D_Name.To_UTF_8_String =
+           Map.Map_Vector.Element (J).To_UTF_8_String
+         then
+            return True;
+         end if;
+      end loop;
+
+      return False;
+   end Is_Type_In_Map;
 
    ---------------------
    -- Gen_Access_Type --
@@ -1219,8 +1267,6 @@ package body XSD_To_Ada.Utils is
                      & Type_Name.To_Wide_Wide_String);
 
                   if Max_Occurs then
-                     Writers.P (Writer, ";");
---                     Writers.P (Writer, "s;");
                      Max_Occurs := False;
 
                      Added_Vector_Type := True;
@@ -1237,26 +1283,20 @@ package body XSD_To_Ada.Utils is
                      end loop;
 
                      if Added_Vector_Type then
-                        null;
---                          Writers.P
---                               (Writer_types,
---                                "   package "
---                                & Type_Name.To_Wide_Wide_String & "_Vectors is "
---                                & Wide_Wide_Character'Val (10)
---                                & Gen_Type_Line
---                                  ("     new Ada.Containers.Indefinite_Vectors "
---                                   & "(Positive, "
---                                   & Type_Name.To_Wide_Wide_String & ");", 7)
---                                & Wide_Wide_Character'Val (10)
---                                & Wide_Wide_Character'Val (10)
---                                & Gen_Type_Line
---                                  ("   subtype " & Type_Name.To_Wide_Wide_String
---                                   & "s is " & Type_Name.To_Wide_Wide_String
---                                   & "_Vectors.Vector;", 5)
---                                & Wide_Wide_Character'Val (10));
---                          Is_Vector_Type.Append (Type_D.Get_Name);
+                        Create_Type_Container
+                          (Type_D.Get_Name.To_Wide_Wide_String,
+                           Writer,
+                           Writer_types);
+
+                        Is_Vector_Type.Append (Type_D.Get_Name);
+
+                        if not Is_Type_In_Map (Type_D.Get_Name, Map) then
+                          Writers.N (Writer, "s");
+                        end if;
+
                      end if;
 
+                     Writers.P (Writer, ";");
                   else
                      Writers.P (Writer, ";");
                   end if;
@@ -1296,7 +1336,6 @@ package body XSD_To_Ada.Utils is
                      & Wide_Wide_Character'Val (10));
 
                   if Max_Occurs then
---                     Writers.P (Writer, "s;");
                      Max_Occurs := False;
 
                      Added_Vector_Type := True;
@@ -1312,23 +1351,21 @@ package body XSD_To_Ada.Utils is
                         end if;
                      end loop;
 
-                     if Added_Vector_Type then
-                        null;
---                          Writers.P
---                               (Writer_types,
---                                "   package "
---                                & Type_Name.To_Wide_Wide_String & "_Vectors is "
---                                & Wide_Wide_Character'Val (10)
---                                & "     new Ada.Containers.Indefinite_Vectors (Positive, "
---                                & Type_Name.To_Wide_Wide_String & ");"
---                                & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
---                                & "   subtype " & Type_Name.To_Wide_Wide_String & "s "
---                                & "is " & Type_Name.To_Wide_Wide_String &
---                                  "_Vectors.Vector;"
---                                & Wide_Wide_Character'Val (10));
---                          Is_Vector_Type.Append (Type_D.Get_Name);
-                     end if;
+                     if Added_Vector_Type
+                     then
+                        Create_Type_Container
+                          (Type_D.Get_Name.To_Wide_Wide_String,
+                           Writer,
+                           Writer_types);
 
+                        Is_Vector_Type.Append (Type_D.Get_Name);
+
+                        if not Is_Type_In_Map (Type_D.Get_Name, Map) then
+                          Writers.N (Writer, "s");
+                        end if;
+
+                     end if;
+                     Writers.P (Writer, ";");
                   else
                      Writers.P (Writer, ";");
                   end if;
