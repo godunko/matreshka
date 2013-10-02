@@ -238,9 +238,7 @@ package body XSD_To_Ada.Utils is
                               "",
                               Writer, Writer,
                               Type_D.Get_Name,
-                              False,
-                              Map,
-                              Types_Table);
+                              Map);
 
                            Writers.P
                              (Writer,
@@ -447,8 +445,11 @@ package body XSD_To_Ada.Utils is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
-         if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
-         then
+         if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession" then
+--           if Complex_Types.Item (J).Get_Name.To_UTF_8_String =
+--             "BindOrders"
+--               or Complex_Types.Item (J).Get_Name.To_UTF_8_String = "GetOrdersResponse"
+--           then
             Print_Type_Title
               (XS_Object.To_Type_Definition,
                Payload_Writer, Payload_Type_Writer);
@@ -469,31 +470,57 @@ package body XSD_To_Ada.Utils is
    end Create_Complex_Type;
 
    ---------------------------
-   -- Create_Type_Container --
+   -- Create_Vector_Package --
    ---------------------------
 
-   procedure Create_Type_Container
-     (Type_Name       : Wide_Wide_String;
-      Writer          : in out Writers.Writer;
-      Writer_Types    : in out Writers.Writer)is
+   procedure Create_Vector_Package
+     (Type_D_Name  : League.Strings.Universal_String;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer)
+   is
+      Added_Vector_Type : Boolean := False;
    begin
-      Writers.P
-        (Writer_Types,
-         "   package "
-         & Add_Separator (Type_Name) & "_Vectors is "
-         & Wide_Wide_Character'Val (10)
-         & Gen_Type_Line
-           ("     new Ada.Containers.Indefinite_Vectors "
-            & "(Positive, "
-            & Add_Separator (Type_Name) & ");", 7)
-         & Wide_Wide_Character'Val (10)
-         & Wide_Wide_Character'Val (10)
-         & Gen_Type_Line
-           ("   subtype " & Add_Separator (Type_Name)
-            & "s is " & Add_Separator (Type_Name)
-            & "_Vectors.Vector;", 5)
-         & Wide_Wide_Character'Val (10));
-   end Create_Type_Container;
+      Added_Vector_Type := True;
+
+      for J in 1 .. Is_Vector_Type.Length loop
+         if Type_D_Name.To_UTF_8_String
+           = Is_Vector_Type.Element (J).To_UTF_8_String
+         then
+            Added_Vector_Type := False;
+            exit;
+         else
+            Added_Vector_Type := True;
+         end if;
+      end loop;
+
+      if Added_Vector_Type then
+          Writers.P
+           (Writer_Types,
+            "   package "
+            & Add_Separator (Type_D_Name.To_Wide_Wide_String) & "_Vectors is "
+            & Wide_Wide_Character'Val (10)
+            & Gen_Type_Line
+              ("     new Ada.Containers.Indefinite_Vectors "
+               & "(Positive, "
+               & Add_Separator (Type_D_Name.To_Wide_Wide_String) & ");", 7)
+            & Wide_Wide_Character'Val (10)
+            & Wide_Wide_Character'Val (10)
+            & Gen_Type_Line
+              ("   subtype " & Add_Separator (Type_D_Name.To_Wide_Wide_String)
+               & "s is " & Add_Separator (Type_D_Name.To_Wide_Wide_String)
+               & "_Vectors.Vector;", 5)
+            & Wide_Wide_Character'Val (10));
+
+         Is_Vector_Type.Append (Type_D_Name);
+
+         if not Is_Type_In_Map (Type_D_Name, Map) then
+            Writers.N (Writer, "s");
+         end if;
+
+      end if;
+
+      Writers.P (Writer, ";");
+   end Create_Vector_Package;
 
    ---------------
    -- Find_Type --
@@ -752,9 +779,7 @@ package body XSD_To_Ada.Utils is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Is_Record    : Boolean := False;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-      Table        : in out Types_Table_Type_Array)
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -774,8 +799,7 @@ package body XSD_To_Ada.Utils is
          Writer       : in out Writers.Writer;
          Writer_types : in out Writers.Writer;
          Name         : League.Strings.Universal_String;
-         Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-         Table        : in out Types_Table_Type_Array)
+         Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
       is
          use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
 
@@ -784,10 +808,8 @@ package body XSD_To_Ada.Utils is
          XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
          Decl           : XML.Schema.Element_Declarations.XS_Element_Declaration;
 
-         Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
+         Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
          Type_Name : League.Strings.Universal_String;
-
-         Added_Vector_Type : Boolean := False;
       begin
          Ada.Text_IO.Put (Indent);
          Ada.Text_IO.Put_Line ("Type " & XS_Term.Get_Type'Img);
@@ -806,8 +828,7 @@ package body XSD_To_Ada.Utils is
 
                Print_Term
                  (XS_Particle.Get_Term,
-                  Indent & "   ", Writer, Writer_types, Name, Map,
-                  Table);
+                  Indent & "   ", Writer, Writer_types, Name, Map);
             end loop;
 
          elsif XS_Term.Is_Element_Declaration then
@@ -817,16 +838,7 @@ package body XSD_To_Ada.Utils is
             Type_Name := Find_Type (Type_D.Get_Name, Map);
 
             case Type_D.Get_Type_Category is
-               when XML.Schema.Complex_Type =>
-                  Writers.P
-                    (Writer,
-                     "      "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (XS_Term.Get_Name.To_Wide_Wide_String)
-                     & " : "
-                     & Type_Name.To_Wide_Wide_String & ";");
-
-               when XML.Schema.Simple_Type =>
+               when XML.Schema.Complex_Type | XML.Schema.Simple_Type =>
                   Writers.P
                     (Writer,
                      "      "
@@ -865,8 +877,7 @@ package body XSD_To_Ada.Utils is
                   XS_Term := XS_Particle.Get_Term;
 
                   Print_Term
-                    (XS_Term, Indent & "   ", Writer, Writer_types, Name, Map,
-                     Table);
+                    (XS_Term, Indent & "   ", Writer, Writer_types, Name, Map);
 
                Ada.Text_IO.Put_Line
                  (Indent & "End Complex_Type :" & Type_D.Get_Name.To_UTF_8_String);
@@ -1068,8 +1079,6 @@ package body XSD_To_Ada.Utils is
 
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
          Type_Name : League.Strings.Universal_String;
-
-         Added_Vector_Type : Boolean := False;
       begin
 
          Now_Term_Level := Now_Term_Level + 1;
@@ -1173,14 +1182,22 @@ package body XSD_To_Ada.Utils is
 
             for J in 1 .. XS_List.Get_Length loop
                Ada.Text_IO.Put (Indent);
+
                XS_Particle := XS_List.Item (J).To_Particle;
+
+               Ada.Text_IO.Put
+                 ("XS_Particle " & XS_Particle.Get_Name.To_UTF_8_String);
 
                if XS_Particle.Get_Max_Occurs.Unbounded
                then
                   Max_Occurs := True;
+                  Ada.Text_IO.Put ("Get_Max_Occurs = <>;");
                else
                   if XS_Particle.Get_Max_Occurs.Value > 1 then
                      Max_Occurs := True;
+                     Ada.Text_IO.Put ("Get_Max_Occurs > 1;");
+                  else
+                     Ada.Text_IO.Put ("Get_Max_Occurs = 0;");
                   end if;
                end if;
 
@@ -1269,34 +1286,9 @@ package body XSD_To_Ada.Utils is
                   if Max_Occurs then
                      Max_Occurs := False;
 
-                     Added_Vector_Type := True;
+                     Create_Vector_Package
+                       (Type_D.Get_Name, Writer, Writer_types);
 
-                     for J in 1 .. Is_Vector_Type.Length loop
-                        if Type_D.Get_Name.To_UTF_8_String
-                          = Is_Vector_Type.Element (J).To_UTF_8_String
-                        then
-                           Added_Vector_Type := False;
-                           exit;
-                        else
-                           Added_Vector_Type := True;
-                        end if;
-                     end loop;
-
-                     if Added_Vector_Type then
-                        Create_Type_Container
-                          (Type_D.Get_Name.To_Wide_Wide_String,
-                           Writer,
-                           Writer_types);
-
-                        Is_Vector_Type.Append (Type_D.Get_Name);
-
-                        if not Is_Type_In_Map (Type_D.Get_Name, Map) then
-                          Writers.N (Writer, "s");
-                        end if;
-
-                     end if;
-
-                     Writers.P (Writer, ";");
                   else
                      Writers.P (Writer, ";");
                   end if;
@@ -1338,34 +1330,8 @@ package body XSD_To_Ada.Utils is
                   if Max_Occurs then
                      Max_Occurs := False;
 
-                     Added_Vector_Type := True;
-
-                     for J in 1 .. Is_Vector_Type.Length loop
-                        if Type_D.Get_Name.To_UTF_8_String
-                          = Is_Vector_Type.Element (J).To_UTF_8_String
-                        then
-                           Added_Vector_Type := False;
-                           exit;
-                        else
-                           Added_Vector_Type := True;
-                        end if;
-                     end loop;
-
-                     if Added_Vector_Type
-                     then
-                        Create_Type_Container
-                          (Type_D.Get_Name.To_Wide_Wide_String,
-                           Writer,
-                           Writer_types);
-
-                        Is_Vector_Type.Append (Type_D.Get_Name);
-
-                        if not Is_Type_In_Map (Type_D.Get_Name, Map) then
-                          Writers.N (Writer, "s");
-                        end if;
-
-                     end if;
-                     Writers.P (Writer, ";");
+                     Create_Vector_Package
+                       (Type_D.Get_Name, Writer, Writer_types);
                   else
                      Writers.P (Writer, ";");
                   end if;

@@ -106,10 +106,10 @@ package XSD_To_Ada.Utils is
 
    procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model);
 
-   procedure Create_Type_Container
-     (Type_Name       : Wide_Wide_String;
-      Writer          : in out Writers.Writer;
-      Writer_Types    : in out Writers.Writer);
+   procedure Create_Vector_Package
+     (Type_D_Name  : League.Strings.Universal_String;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer);
 
    procedure Gen_Access_Type
      (Self   : in out XSD_To_Ada.Writers.Writer;
@@ -137,9 +137,7 @@ package XSD_To_Ada.Utils is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Is_Record    : Boolean := False;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-      Table        : in out Types_Table_Type_Array);
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
