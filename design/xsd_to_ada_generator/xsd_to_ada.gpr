@@ -1,5 +1,4 @@
 with "schema";
-
 with "../../gnat/matreshka_league.gpr";
 with "../../gnat/matreshka_xml.gpr";
 
@@ -9,5 +8,13 @@ project Xsd_To_Ada is
    for Source_Dirs use (".");
    for Object_Dir use ".objs";
    for Exec_Dir use ".";
-   
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-g");
+   end Compiler;
+
 end Xsd_To_Ada;

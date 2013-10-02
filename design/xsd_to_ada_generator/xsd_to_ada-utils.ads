@@ -151,6 +151,16 @@ package XSD_To_Ada.Utils is
       Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
       Table        : in out Types_Table_Type_Array);
 
+   procedure Print_Type_Definition_MaxOccur
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent       : String := "";
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Is_Record    : Boolean := False;
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Table        : in out Types_Table_Type_Array);
+
    procedure Print_Type_Title
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       Writer      : in out XSD_To_Ada.Writers.Writer;
