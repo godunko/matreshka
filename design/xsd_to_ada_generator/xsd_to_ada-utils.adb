@@ -445,18 +445,17 @@ package body XSD_To_Ada.Utils is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
-         if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession" then
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String =
---             "BindOrders"
---               or Complex_Types.Item (J).Get_Name.To_UTF_8_String = "GetOrdersResponse"
---           then
+         if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
+--         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "BindOrders"
+--             or Complex_Types.Item (J).Get_Name.To_UTF_8_String = "GetOrdersResponse"
+         then
             Print_Type_Title
               (XS_Object.To_Type_Definition,
                Payload_Writer, Payload_Type_Writer);
          end if;
       end loop;
 
-      Create_Element_Type (Model, Payload_Writer);
+     Create_Element_Type (Model, Payload_Writer);
 
       Writers.N (Payload_Writer, "end Payloads_2;");
 
@@ -1097,8 +1096,45 @@ package body XSD_To_Ada.Utils is
             Ada.Text_IO.Put_Line (XS_Model_Group.Get_Compositor'Img);
 
             if XS_Model_Group.Get_Compositor =
-              XML.Schema.Objects.Terms.Model_Groups.Compositor_Choice then
+              XML.Schema.Objects.Terms.Model_Groups.Compositor_Choice
+            then
                Choice := 1;
+
+               Writers.P
+                 (Writer,
+                  Gen_Type_Line
+                    ("      "
+                     & XSD_To_Ada.Utils.Add_Separator
+                       (Name.To_Wide_Wide_String)
+                     & " : "
+                     & XSD_To_Ada.Utils.Add_Separator
+                       (Name.To_Wide_Wide_String)
+                     & "_Case;", 8));
+
+               Name_Kind.Append
+                 ("   type "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (Name.To_Wide_Wide_String) & "_Kind is "
+                  & Wide_Wide_Character'Val (10) &  "     (");
+
+               Name_Case.Append
+                 ("   type "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (Name.To_Wide_Wide_String) & "_Case "
+                  & Wide_Wide_Character'Val (10)
+                  & "     (Kind : "
+                  & XSD_To_Ada.Utils.Add_Separator
+                    (Name.To_Wide_Wide_String) & "_Kind "
+                    & Wide_Wide_Character'Val (10)
+                  & "      := "
+                  & XSD_To_Ada.Utils.Add_Separator
+                      (Name.To_Wide_Wide_String)
+                  & "_Kind'First) is record"
+                  & Wide_Wide_Character'Val (10)
+                  & "      case Kind is"
+                  & Wide_Wide_Character'Val (10));
+
+               Add_Choise := True;
             end if;
 
             if Anonyn_Vector (Now_Term_Level - 1).Term_State
@@ -1142,51 +1178,10 @@ package body XSD_To_Ada.Utils is
                Add_Anonym := True;
             end if;
 
-            if Choice = 1 and not Now_Add then
-
-               Name_Kind.Append
-                 ("   type "
-                  & XSD_To_Ada.Utils.Add_Separator
-                    (Name.To_Wide_Wide_String) & "_Kind is "
-                  & Wide_Wide_Character'Val (10) &  "     (");
-
-               Name_Case.Append
-                 ("   type "
-                  & XSD_To_Ada.Utils.Add_Separator
-                    (Name.To_Wide_Wide_String) & "_Case "
-                  & Wide_Wide_Character'Val (10)
-                  & "     (Kind : "
-                  & XSD_To_Ada.Utils.Add_Separator
-                    (Name.To_Wide_Wide_String) & "_Kind "
-                    & Wide_Wide_Character'Val (10)
-                  & "      := "
-                  & XSD_To_Ada.Utils.Add_Separator
-                      (Name.To_Wide_Wide_String)
-                  & "_Kind'First) is record"
-                  & Wide_Wide_Character'Val (10)
-                  & "      case Kind is"
-                  & Wide_Wide_Character'Val (10));
-
-               Writers.P
-                 (Writer,
-                  Gen_Type_Line
-                    ("      "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (Name.To_Wide_Wide_String) & " : "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (Name.To_Wide_Wide_String) & "_Case;", 8));
-
-               Now_Add := True;
-               Add_Choise := True;
-            end if;
-
             for J in 1 .. XS_List.Get_Length loop
                Ada.Text_IO.Put (Indent);
 
                XS_Particle := XS_List.Item (J).To_Particle;
-
-               Ada.Text_IO.Put
-                 ("XS_Particle " & XS_Particle.Get_Name.To_UTF_8_String);
 
                if XS_Particle.Get_Max_Occurs.Unbounded
                then
@@ -1231,6 +1226,19 @@ package body XSD_To_Ada.Utils is
                   False,
                   Map,
                   Table);
+
+--                 if Max_Occurs then
+--
+--                    Max_Occurs := False;
+--
+--                    Create_Vector_Package
+--                      (League.Strings.To_Universal_String
+--                         (Name.To_Wide_Wide_String
+--                          & "_"
+--                          & Decl.Get_Name.To_Wide_Wide_String & "_Case"),
+--                       Writer,
+--                       Writer_types);
+--                 end if;
 
                Add_Anonym := False;
             end if;
