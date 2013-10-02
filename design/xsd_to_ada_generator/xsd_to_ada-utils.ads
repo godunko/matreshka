@@ -127,6 +127,8 @@ package XSD_To_Ada.Utils is
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
       Table  : Types_Table_Type_Array)
       return Boolean;
+   --  This function returns True if Type_D has Top Level Types and
+   --  it was not created.
 
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
    procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
@@ -177,7 +179,5 @@ package XSD_To_Ada.Utils is
        ("http://www.actforex.com/iats");
 
    Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-
-   Anonym_Type  : Boolean := False;
 
 end XSD_To_Ada.Utils;

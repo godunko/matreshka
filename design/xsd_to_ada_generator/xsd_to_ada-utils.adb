@@ -1221,7 +1221,6 @@ package body XSD_To_Ada.Utils is
             Type_Name := Find_Type (Type_D.Get_Name, Map);
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
-               Anonym_Type := True;
 
                Anonyn_Vector (Now_Term_Level).Term_State := True;
 
@@ -1233,7 +1232,6 @@ package body XSD_To_Ada.Utils is
                   Map,
                   Table);
 
-               Anonym_Type := False;
                Add_Anonym := False;
             end if;
 
@@ -1248,6 +1246,7 @@ package body XSD_To_Ada.Utils is
                  (League.Strings.To_Universal_String
                     (XSD_To_Ada.Utils.Add_Separator
                        (XS_Term.Get_Name.To_Wide_Wide_String) & "_Case"));
+
                Name_Case.Append
                  ("        when "
                   & XSD_To_Ada.Utils.Add_Separator
