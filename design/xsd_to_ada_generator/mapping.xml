@@ -30,21 +30,21 @@
   </map>
 
   <map type="CloseOrderInformation">
-    <ada context="ICTS.Types" type="ICTSClient.Types.CloseOrder_Informations"/>
+    <ada context="ICTS.Types" type="ICTSClient.Types.CloseOrder_Information"/>
   </map>
   
   
   <map type="ConditionalCloseOrderInformation">
-    <ada context="ICTS.Types" type="ICTSClient.Types.CloseOrder_Informations"/>
+    <ada context="ICTS.Types" type="ICTSClient.Types.CloseOrder_Information"/>
   </map>
     
   <map type="ConditionalOpenOrderInformation">
-    <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Informations"/>
+    <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Information"/>
   </map>
   
   
   <map type="OpenOrderInformation">
-    <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Informations"/>
+    <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Information"/>
   </map>
   
   <map type="InstrumentInformation">
