@@ -1080,7 +1080,8 @@ package body XSD_To_Ada.Utils is
                      Types_Table);
 
                   Writers.P (Payload_Writer,
-                             "   end record;" & Wide_Wide_Character'Val (10));
+                             "   end record;"
+                             & Wide_Wide_Character'Val (10));
               end if;
             end if;
 
@@ -1312,15 +1313,14 @@ package body XSD_To_Ada.Utils is
 
                   Print_Type_Definition_MaxOccur
                     (Type_D, Indent & "   ", Writer, Writer_types,
-                       (Name & '_' & Decl.Get_Name),
+                     Name & '_' & Decl.Get_Name,
                      False,
                      Map,
                      Table);
                else
                   Print_Type_Definition
                     (Type_D, Indent & "   ", Writer, Writer_types,
-                     League.Strings.To_Universal_String
-                       (Name.To_Wide_Wide_String & "_" & Decl.Get_Name.To_Wide_Wide_String),
+                     Name & "_" & Decl.Get_Name,
                      False,
                      Map,
                      Table);
@@ -1405,7 +1405,7 @@ package body XSD_To_Ada.Utils is
                            & "     "
                            & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
                            & " : "
-                           & Type_Name.To_Wide_Wide_String
+                           & Type_Name
                            & ";"
                            & Wide_Wide_Character'Val (10)
                            & "   end record;"
@@ -1427,8 +1427,7 @@ package body XSD_To_Ada.Utils is
                         "      "
                         & XSD_To_Ada.Utils.Add_Separator
                           (XS_Term.Get_Name.To_Wide_Wide_String)
-                        & " : "
-                        & Type_Name.To_Wide_Wide_String & ";");
+                        & " : " & Type_Name & ";");
                   end if;
 
                when XML.Schema.None =>
@@ -1452,7 +1451,7 @@ package body XSD_To_Ada.Utils is
                     ("      "
                      & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
                      & " : "
-                     & Type_Name.To_Wide_Wide_String & ";"
+                     & Type_Name & ";"
                      & Wide_Wide_Character'Val (10));
 
                   if Max_Occurs then
@@ -1469,16 +1468,16 @@ package body XSD_To_Ada.Utils is
                   if Min_Occurs then
                      Anonym_Kind.Append
                        ("      "
-                        & XSD_To_Ada.Utils.Add_Separator
-                          (XS_Term.Get_Name.To_Wide_Wide_String) & " : "
-                        & Type_Name.To_Wide_Wide_String & ";  -- fjdb fb"
+                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                        & " : "
+                        & Type_Name & ";"
                         & Wide_Wide_Character'Val (10));
                   else
                      Anonym_Kind.Append
                        ("      "
-                        & XSD_To_Ada.Utils.Add_Separator
-                          (XS_Term.Get_Name.To_Wide_Wide_String) & " : "
-                        & Type_Name.To_Wide_Wide_String & ";"
+                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                        & " : "
+                        & Type_Name & ";"
                         & Wide_Wide_Character'Val (10));
                   end if;
 
@@ -1563,7 +1562,7 @@ package body XSD_To_Ada.Utils is
             & "   end record;"
             & Wide_Wide_Character'Val (10));
 
-         Writers.P (Writer_types, Anonym_Vector.To_Wide_Wide_String);
+         Writers.P (Writer_types, Anonym_Vector);
 
          Anonym_Kind.Clear;
       end if;
