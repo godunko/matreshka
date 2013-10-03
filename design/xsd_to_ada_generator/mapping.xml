@@ -42,9 +42,16 @@
     <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Information"/>
   </map>
   
-  
   <map type="OpenOrderInformation">
     <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Information"/>
+  </map>
+  
+  <map type="CreateConditionalOpenOrderBase">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Entry_Order"/>
+  </map>
+  
+  <map type="CreateConditionalCloseOrderBase">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Stop_Limit_Order"/>
   </map>
   
   <map type="InstrumentInformation">
