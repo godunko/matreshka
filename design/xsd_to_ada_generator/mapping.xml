@@ -175,6 +175,10 @@
     <ada context="ICTS.Types" type="ICTS.Types.Trader_Identifier"/>
   </map>
   
+  <!--<map type="string">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Optional_Application_Data"/>
+  </map>-->
+
   <map type="string">
     <ada context="ICTS.Types" type="Ada.Strings.Unbounded.Unbounded_String"/>
   </map>

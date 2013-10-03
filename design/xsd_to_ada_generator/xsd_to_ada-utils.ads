@@ -85,8 +85,13 @@ package XSD_To_Ada.Utils is
    Now_Print_Level : Natural := 2;
    Now_Term_Level  : Natural := 2;
 
+   Optional_Vector : League.String_Vectors.Universal_String_Vector;
+
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
+
+   function Add_Separator
+     (Text : League.Strings.Universal_String) return Wide_Wide_String;
 
    function Gen_Type_Line
      (Str : Wide_Wide_String := ""; Tab : Natural := 0)
@@ -183,6 +188,10 @@ package XSD_To_Ada.Utils is
      (Type_D_Name : League.Strings.Universal_String;
       Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
       return Boolean;
+
+   function Is_Type_In_Optional_Vector
+     (Type_Name : League.Strings.Universal_String)
+     return Boolean;
 
    Namespace : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
