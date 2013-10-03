@@ -239,7 +239,7 @@ package body XSD_To_Ada.Utils is
                        (Writer,
                         "   type "
                         & Add_Separator
-                          (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
+                          (Element_Declarations.Item (J).Get_Name)
                         & " is "
                         & Wide_Wide_Character'Val (10)
                         & "     new Abstract_IATS_Responce with "
@@ -247,8 +247,7 @@ package body XSD_To_Ada.Utils is
                         & "       record"
                         & Wide_Wide_Character'Val (10)
                         & "         "
-                        & Gen_Type_Line (Add_Separator
-                          (Type_D.Get_Name.To_Wide_Wide_String)
+                        & Gen_Type_Line (Add_Separator (Type_D.Get_Name)
                         & " : "
                         & Name.To_Wide_Wide_String & ";", 12)
                         & Wide_Wide_Character'Val (10)
@@ -256,8 +255,7 @@ package body XSD_To_Ada.Utils is
 
                      Gen_Access_Type
                        (Writer,
-                        Add_Separator
-                          (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String));
+                        Add_Separator (Element_Declarations.Item (J).Get_Name));
                   else
 
                      if XSD_To_Ada.Utils.Has_Element_Session
@@ -342,17 +340,16 @@ package body XSD_To_Ada.Utils is
                XSD_To_Ada.Writers.P
                  (Writer,
                   "type " &
-                    XSD_To_Ada.Utils.Add_Separator
-                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is new "
-                  & XSD_To_Ada.Utils.Add_Separator
-                    (XS_Base.Get_Name.To_Wide_Wide_String)
+                    XSD_To_Ada.Utils.Add_Separator (XS_Object.Get_Name)
+                  & " is new "
+                  & XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
                   & ";" & Wide_Wide_Character'Val (10));
             else
                XSD_To_Ada.Writers.N
                  (Writer,
                   "type " &
-                    XSD_To_Ada.Utils.Add_Separator
-                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is (");
+                    XSD_To_Ada.Utils.Add_Separator (XS_Object.Get_Name)
+                  & " is (");
 
                for J in 1 .. List.Length loop
                   if J /= List.Length then
@@ -554,17 +551,17 @@ package body XSD_To_Ada.Utils is
           Writers.P
            (Writer_Types,
             "   package "
-            & Add_Separator (Type_D_Name.To_Wide_Wide_String) & "_Vectors is "
+            & Add_Separator (Type_D_Name) & "_Vectors is "
             & Wide_Wide_Character'Val (10)
             & Gen_Type_Line
               ("     new Ada.Containers.Indefinite_Vectors "
                & "(Positive, "
-               & Add_Separator (Type_D_Name.To_Wide_Wide_String) & ");", 7)
+               & Add_Separator (Type_D_Name) & ");", 7)
             & Wide_Wide_Character'Val (10)
             & Wide_Wide_Character'Val (10)
             & Gen_Type_Line
-              ("   subtype " & Add_Separator (Type_D_Name.To_Wide_Wide_String)
-               & "s is " & Add_Separator (Type_D_Name.To_Wide_Wide_String)
+              ("   subtype " & Add_Separator (Type_D_Name)
+               & "s is " & Add_Separator (Type_D_Name)
                & "_Vectors.Vector;", 5)
             & Wide_Wide_Character'Val (10));
 
@@ -598,8 +595,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       return League.Strings.To_Universal_String
-        ("Payloads_2." & XSD_To_Ada.Utils.Add_Separator
-           (Type_D_Name.To_Wide_Wide_String));
+        ("Payloads_2." & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
    end Find_Type;
 
    --------------------
@@ -1342,8 +1338,8 @@ package body XSD_To_Ada.Utils is
 
                Name_Kind.Append
                  (League.Strings.To_Universal_String
-                    (XSD_To_Ada.Utils.Add_Separator
-                       (XS_Term.Get_Name) & "_Case"));
+                    (XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                     & "_Case"));
 
                Name_Case.Append
                  ("        when "
@@ -1374,8 +1370,9 @@ package body XSD_To_Ada.Utils is
                   Writers.N
                     (Writer,
                      "      "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (XS_Term.Get_Name) & " : " & Type_Name);
+                     & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                     & " : "
+                     & Type_Name);
 
                   if Max_Occurs then
                      Max_Occurs := False;
@@ -1659,11 +1656,9 @@ package body XSD_To_Ada.Utils is
                  (Writer,
                   Gen_Type_Line
                     ("      "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (Name.To_Wide_Wide_String)
+                     & XSD_To_Ada.Utils.Add_Separator (Name)
                      & " : "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (Name.To_Wide_Wide_String)
+                     & XSD_To_Ada.Utils.Add_Separator (Name)
                      & "_Case", 8));
 
                Create_Vector_Package
