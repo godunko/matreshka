@@ -131,61 +131,9 @@ package body XSD_To_Ada.Utils is
    end Add_Separator;
 
    function Add_Separator
-     (Text : League.Strings.Universal_String) return Wide_Wide_String
-   is
-      subtype Upper_Char_List  is Wide_Wide_Character range 'A' .. 'Z';
-      subtype Lower_Char_List is Wide_Wide_Character range 'a' .. 'z';
-
-
-      US_Text    : League.Strings.Universal_String;
-      Uper_Count : Natural := 0;
+     (Text : League.Strings.Universal_String) return Wide_Wide_String is
    begin
-
-      if Text.To_Wide_Wide_String = "" then
-         return "Add_Separator ERROR";
---         raise Constraint_Error with "Add_Separator ERROR";
-      end if;
-
-      US_Text.Append (Text (Text.To_Wide_Wide_String'First));
-
-      for J in 2 .. Text.To_Wide_Wide_String'Length - 1 loop
-
-         if Text.To_Wide_Wide_String (J) in Upper_Char_List
-           and then Text.To_Wide_Wide_String (J - 1) in Upper_Char_List
-         then
-            Uper_Count := Uper_Count + 1;
-         end if;
-
-         if Text.To_Wide_Wide_String (J) in Lower_Char_List
-           and then Text.To_Wide_Wide_String (J - 1) in Lower_Char_List
-         then
-            Uper_Count := 0;
-         end if;
-
-         if Text.To_Wide_Wide_String (J) in Lower_Char_List
-             and then Text.To_Wide_Wide_String (J + 1) in Upper_Char_List
-         then
-            US_Text.Append (Text (J));
-            US_Text.Append ("_");
-            Uper_Count := 0;
-
-         elsif Uper_Count > 1
-                and then Text.To_Wide_Wide_String (J) in Upper_Char_List
-                and then Text.To_Wide_Wide_String (J + 2) in Lower_Char_List
-         then
-            US_Text.Append (Text (J));
-
-            US_Text.Append ("_");
-            Uper_Count := 0;
-         else
-            US_Text.Append (Text (J));
-         end if;
-      end loop;
-
-      US_Text.Append (Text (Text.To_Wide_Wide_String'Last));
-
-      return US_Text.To_Wide_Wide_String;
-
+     return Add_Separator (Text.To_Wide_Wide_String);
    end Add_Separator;
 
    procedure Create_Element_Type
@@ -1470,14 +1418,14 @@ package body XSD_To_Ada.Utils is
                        ("      "
                         & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
                         & " : "
-                        & Type_Name & ";"
+                        & Type_Name & ";  --  aaaaa"
                         & Wide_Wide_Character'Val (10));
                   else
                      Anonym_Kind.Append
                        ("      "
                         & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
                         & " : "
-                        & Type_Name & ";"
+                        & Type_Name & ";  --  bbbbb"
                         & Wide_Wide_Character'Val (10));
                   end if;
 
@@ -1585,6 +1533,7 @@ package body XSD_To_Ada.Utils is
       Table        : in out Types_Table_Type_Array)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
+      use type League.Strings.Universal_String;
 
       XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
       XS_Term        : XML.Schema.Objects.Terms.XS_Term;
@@ -1598,6 +1547,7 @@ package body XSD_To_Ada.Utils is
       Add_Choise  : Boolean := False;
       Add_Anonym  : Boolean := False;
       Max_Occurs  : Boolean := False;
+      Min_Occurs  : Boolean := False;
 
       Name_Kind   : League.Strings.Universal_String;
       Name_Case   : League.Strings.Universal_String;
@@ -1739,6 +1689,13 @@ package body XSD_To_Ada.Utils is
                Ada.Text_IO.Put (Indent);
 
                XS_Particle := XS_List.Item (J).To_Particle;
+
+               Min_Occurs := False;
+
+               if XS_Particle.Get_Min_Occurs = 0 then
+                     Min_Occurs := True;
+                     Ada.Text_IO.Put ("Min_Occurs = 0;");
+               end if;
 
                if XS_Particle.Get_Max_Occurs.Unbounded
                then
@@ -1884,13 +1841,49 @@ package body XSD_To_Ada.Utils is
                   end if;
 
                when XML.Schema.Simple_Type =>
-                  Writers.P
-                    (Writer,
-                     "      "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (XS_Term.Get_Name.To_Wide_Wide_String)
-                     & " : "
-                     & Type_Name.To_Wide_Wide_String & ";");
+                  if Min_Occurs
+                    and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
+                      = "string"
+                  then
+
+                     if not Is_Type_In_Optional_Vector
+                       (Type_D.Get_Base_Type.Get_Name)
+                     then
+                        Writers.P
+                          (Writer_types,
+                           "   type Optional_"
+                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                           & " is record"
+                           & Wide_Wide_Character'Val (10)
+                           & "     Is_Set : Boolean := False;"
+                           & Wide_Wide_Character'Val (10)
+                           & "     "
+                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                           & " : "
+                           & Type_Name
+                           & ";"
+                           & Wide_Wide_Character'Val (10)
+                           & "   end record;"
+                           & Wide_Wide_Character'Val (10));
+                     end if;
+
+                     Writers.P
+                       (Writer,
+                        "      "
+                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                        & " : Optional_"
+                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                        & "; ");
+
+                     Min_Occurs := False;
+                  else
+                     Writers.P
+                       (Writer,
+                        "      "
+                        & XSD_To_Ada.Utils.Add_Separator
+                          (XS_Term.Get_Name.To_Wide_Wide_String)
+                        & " : " & Type_Name & ";");
+                  end if;
 
                when XML.Schema.None =>
                   Ada.Text_IO.Put_Line (Indent & "NONE!!!");
@@ -1927,12 +1920,49 @@ package body XSD_To_Ada.Utils is
                   end if;
 
                when XML.Schema.Simple_Type =>
-                  Anonym_Kind.Append
-                    ("      "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (XS_Term.Get_Name.To_Wide_Wide_String) & " : "
-                     & Type_Name.To_Wide_Wide_String & ";"
-                     & Wide_Wide_Character'Val (10));
+
+                  if Min_Occurs
+                    and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
+                      = "string"
+                  then
+
+                     if not Is_Type_In_Optional_Vector
+                       (Type_D.Get_Base_Type.Get_Name)
+                     then
+                        Writers.P
+                          (Writer_types,
+                           "   type Optional_"
+                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                           & " is record"
+                           & Wide_Wide_Character'Val (10)
+                           & "     Is_Set : Boolean := False;"
+                           & Wide_Wide_Character'Val (10)
+                           & "     "
+                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                           & " : "
+                           & Type_Name
+                           & ";"
+                           & Wide_Wide_Character'Val (10)
+                           & "   end record;"
+                           & Wide_Wide_Character'Val (10));
+                     end if;
+
+                     Anonym_Kind.Append
+                        ("      "
+                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                        & " : Optional_"
+                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                        & "; ");
+
+                     Min_Occurs := False;
+                  else
+                     Anonym_Kind.Append
+                       ("      "
+                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                        & " : "
+                        & Type_Name & ";"
+                        & Wide_Wide_Character'Val (10));
+                  end if;
 
                when XML.Schema.None =>
                   Ada.Text_IO.Put_Line (Indent & "NONE!!!");
