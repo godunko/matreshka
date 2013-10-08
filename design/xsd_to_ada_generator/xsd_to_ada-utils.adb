@@ -756,6 +756,155 @@ package body XSD_To_Ada.Utils is
       Gen_Line (Self);
    end Gen_Proc_Header;
 
+   ---------------------------
+   -- Generate_Complex_Type --
+   ---------------------------
+
+   procedure Generate_Complex_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      Type_Name    : League.Strings.Universal_String;
+      Table        : in out Types_Table_Type_Array;
+      Max_Occurs   : in out Boolean;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer)
+   is
+   begin
+
+      if Has_Top_Level_Type (Type_D, Table) then
+         XSD_To_Ada.Utils.Print_Type_Title
+           (Type_D,
+            Writer_types,
+            Writer_types);
+      end if;
+
+      Writers.N
+        (Writer,
+         "      "
+         & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+         & " : "
+         & Type_Name.To_Wide_Wide_String);
+
+      if Max_Occurs then
+         Max_Occurs := False;
+
+         Create_Vector_Package
+           (Type_D.Get_Name, Writer, Writer_types);
+
+      else
+         Writers.P (Writer, ";");
+      end if;
+
+   end Generate_Complex_Type;
+
+   ---------------------------
+   -- Generate_Complex_Type --
+   ---------------------------
+
+   procedure Generate_Complex_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      Type_Name    : League.Strings.Universal_String;
+      Table        : in out Types_Table_Type_Array;
+      Max_Occurs   : in out Boolean;
+      Anonym       : in out League.Strings.Universal_String;
+      Writer_types : in out Writers.Writer)
+   is
+      Writer : Writers.Writer;
+   begin
+      Generate_Complex_Type
+        (Type_D,
+         XS_Term,
+         Type_Name,
+         Table,
+         Max_Occurs,
+         Writer,
+         Writer_types);
+
+      Anonym.Append (Writer.Text);
+   end Generate_Complex_Type;
+
+   --------------------------
+   -- Generate_Simple_Type --
+   --------------------------
+
+   procedure Generate_Simple_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      Type_Name    : League.Strings.Universal_String;
+      Min_Occurs   : in out Boolean;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer) is
+   begin
+      if Min_Occurs
+        and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string"
+      then
+
+         if not Is_Type_In_Optional_Vector (Type_D.Get_Base_Type.Get_Name) then
+            Writers.P
+              (Writer_Types,
+               "   type Optional_"
+               & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+               & " is record"
+               & Wide_Wide_Character'Val (10)
+               & "     Is_Set : Boolean := False;"
+               & Wide_Wide_Character'Val (10)
+               & "     "
+               & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+               & " : "
+               & Type_Name.To_Wide_Wide_String
+               & ";"
+               & Wide_Wide_Character'Val (10)
+               & "   end record;"
+               & Wide_Wide_Character'Val (10));
+         end if;
+
+         Writers.P
+           (Writer,
+            "      "
+            & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+            & " : Optional_"
+            & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+            & "; ");
+
+         Min_Occurs := False;
+      else
+         Writers.P
+           (Writer,
+            "      "
+            & XSD_To_Ada.Utils.Add_Separator
+              (XS_Term.Get_Name.To_Wide_Wide_String)
+            & " : " & Type_Name.To_Wide_Wide_String & ";");
+      end if;
+   end Generate_Simple_Type;
+
+   --------------------------
+   -- Generate_Simple_Type --
+   --------------------------
+
+   procedure Generate_Simple_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      Type_Name    : League.Strings.Universal_String;
+      Min_Occurs   : in out Boolean;
+      Anonym       : in out League.Strings.Universal_String;
+      Writer_types : in out Writers.Writer)
+   is
+      Writer : Writers.Writer;
+   begin
+
+      Generate_Simple_Type
+        (Type_D,
+         XS_Term,
+         Type_Name,
+         Min_Occurs,
+         Writer,
+         Writer_types);
+
+      Anonym.Append (Writer.Text);
+
+   end Generate_Simple_Type;
+
    ------------------------
    -- Has_Top_Level_Type --
    ------------------------
@@ -861,7 +1010,7 @@ package body XSD_To_Ada.Utils is
                     (Writer,
                      "      "
                      & XSD_To_Ada.Utils.Add_Separator
-                       (XS_Term.Get_Name.To_Wide_Wide_String)
+                       (XS_Term.Get_Name)
                      & " : "
                      & Type_Name.To_Wide_Wide_String & ";");
 
@@ -1301,8 +1450,8 @@ package body XSD_To_Ada.Utils is
             if Choice then
 
                if Has_Top_Level_Type (Type_D, Table) then
-                     XSD_To_Ada.Utils.Print_Type_Title
-                          (Type_D, Writer_types, Writer_types);
+                  XSD_To_Ada.Utils.Print_Type_Title
+                    (Type_D, Writer_types, Writer_types);
                end if;
 
                Name_Kind.Append
@@ -1329,75 +1478,24 @@ package body XSD_To_Ada.Utils is
                case Type_D.Get_Type_Category is
                when XML.Schema.Complex_Type =>
 
-                  if Has_Top_Level_Type (Type_D, Table) then
-                     XSD_To_Ada.Utils.Print_Type_Title
-                          (Type_D,
-                           Writer_types,
-                           Writer_types);
-                  end if;
-
-                  Writers.N
-                    (Writer,
-                     "      "
-                     & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                     & " : "
-                     & Type_Name);
-
-                  if Max_Occurs then
-                     Max_Occurs := False;
-
-                     Create_Vector_Package
-                       (Type_D.Get_Name, Writer, Writer_types);
-
-                  else
-                     Writers.P (Writer, ";");
-                  end if;
+                  Generate_Complex_Type
+                    (Type_D,
+                     XS_Term,
+                     Type_Name,
+                     Table,
+                     Max_Occurs,
+                     Writer,
+                     Writer_types);
 
                when XML.Schema.Simple_Type =>
 
-                  if Min_Occurs
-                    and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
-                      = "string"
-                  then
-
-                     if not Is_Type_In_Optional_Vector
-                       (Type_D.Get_Base_Type.Get_Name)
-                     then
-                        Writers.P
-                          (Writer_types,
-                           "   type Optional_"
-                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                           & " is record"
-                           & Wide_Wide_Character'Val (10)
-                           & "     Is_Set : Boolean := False;"
-                           & Wide_Wide_Character'Val (10)
-                           & "     "
-                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                           & " : "
-                           & Type_Name
-                           & ";"
-                           & Wide_Wide_Character'Val (10)
-                           & "   end record;"
-                           & Wide_Wide_Character'Val (10));
-                     end if;
-
-                     Writers.P
-                       (Writer,
-                        "      "
-                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                        & " : Optional_"
-                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                        & "; ");
-
-                     Min_Occurs := False;
-                  else
-                     Writers.P
-                       (Writer,
-                        "      "
-                        & XSD_To_Ada.Utils.Add_Separator
-                          (XS_Term.Get_Name.To_Wide_Wide_String)
-                        & " : " & Type_Name & ";");
-                  end if;
+                  Generate_Simple_Type
+                    (Type_D,
+                     XS_Term,
+                     Type_Name,
+                     Min_Occurs,
+                     Writer,
+                     Writer_types);
 
                when XML.Schema.None =>
                   Ada.Text_IO.Put_Line (Indent & "NONE!!!");
@@ -1411,72 +1509,24 @@ package body XSD_To_Ada.Utils is
                case Type_D.Get_Type_Category is
                when XML.Schema.Complex_Type =>
 
-                  if Has_Top_Level_Type (Type_D, Table) then
-                     XSD_To_Ada.Utils.Print_Type_Title
-                          (Type_D, Writer_types, Writer_types);
-                  end if;
-
-                  Anonym_Kind.Append
-                    ("      "
-                     & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                     & " : "
-                     & Type_Name & ";"
-                     & Wide_Wide_Character'Val (10));
-
-                  if Max_Occurs then
-                     Max_Occurs := False;
-
-                     Create_Vector_Package
-                       (Type_D.Get_Name, Writer, Writer_types);
-                  else
-                     Writers.P (Writer, ";");
-                  end if;
+                  Generate_Complex_Type
+                    (Type_D,
+                     XS_Term,
+                     Type_Name,
+                     Table,
+                     Max_Occurs,
+                     Anonym_Kind,
+                     Writer_types);
 
                when XML.Schema.Simple_Type =>
 
-                  if Min_Occurs
-                    and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
-                      = "string"
-                  then
-
-                     if not Is_Type_In_Optional_Vector
-                       (Type_D.Get_Base_Type.Get_Name)
-                     then
-                        Writers.P
-                          (Writer_types,
-                           "   type Optional_"
-                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                           & " is record"
-                           & Wide_Wide_Character'Val (10)
-                           & "     Is_Set : Boolean := False;"
-                           & Wide_Wide_Character'Val (10)
-                           & "     "
-                           & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                           & " : "
-                           & Type_Name
-                           & ";"
-                           & Wide_Wide_Character'Val (10)
-                           & "   end record;"
-                           & Wide_Wide_Character'Val (10));
-                     end if;
-
-                     Anonym_Kind.Append
-                        ("      "
-                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                        & " : Optional_"
-                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                         & ";"
-                         & Wide_Wide_Character'Val (10));
-
-                     Min_Occurs := False;
-                  else
-                     Anonym_Kind.Append
-                       ("      "
-                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                        & " : "
-                        & Type_Name & ";"
-                        & Wide_Wide_Character'Val (10));
-                  end if;
+                  Generate_Simple_Type
+                    (Type_D,
+                     XS_Term,
+                     Type_Name,
+                     Min_Occurs,
+                     Anonym_Kind,
+                     Writer_types);
 
                when XML.Schema.None =>
                   Ada.Text_IO.Put_Line (Indent & "NONE!!!");

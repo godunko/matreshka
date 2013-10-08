@@ -128,6 +128,22 @@ package XSD_To_Ada.Utils is
       Name   : Wide_Wide_String;
       Offset : Positive := 3);
 
+   procedure Generate_Simple_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      Type_Name    : League.Strings.Universal_String;
+      Min_Occurs   : in out Boolean;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer);
+
+   procedure Generate_Simple_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      Type_Name    : League.Strings.Universal_String;
+      Min_Occurs   : in out Boolean;
+      Anonym       : in out League.Strings.Universal_String;
+      Writer_types : in out Writers.Writer);
+
    function Has_Top_Level_Type
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
       Table  : Types_Table_Type_Array)
