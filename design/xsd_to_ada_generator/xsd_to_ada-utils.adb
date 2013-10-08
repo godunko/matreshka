@@ -71,7 +71,11 @@ with XML.Schema.Objects;
 with XSD_To_Ada.Writers;
 use XSD_To_Ada.Writers;
 
+with Ada.Characters.Wide_Wide_Latin_1;
+
 package body XSD_To_Ada.Utils is
+
+   LF : constant Wide_Wide_Character := Ada.Characters.Wide_Wide_Latin_1.LF;
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String
@@ -256,6 +260,43 @@ package body XSD_To_Ada.Utils is
       end loop;
    end Create_Element_Type;
 
+   -------------------------
+   -- Create_Package_Name --
+   -------------------------
+
+   procedure Create_Package_Name
+     (Payload_Writer : in out XSD_To_Ada.Writers.Writer) is
+   begin
+      Writers.P
+        (Payload_Writer,
+         "with Ada.Containers.Indefinite_Vectors;" & LF
+         & "with League.Strings;" & LF
+         & "with Interfaces;" & LF
+         & "with ICTS.Types;" & LF
+         & "with ICTS.Forex;" & LF
+         & "with ICTSClient.Types;" & LF
+         & "with Web_Services.SOAP.Payloads;" & LF
+         & "with Ada.Strings.Unbounded;" & LF & LF
+         & "package Payloads_2 is" & LF & LF
+         & "   type Decimal_String is new Ada.Strings.Unbounded.Unbounded_String;"
+         & LF
+         & "   Null_Decimal : constant Decimal_String :=" & LF
+         & "     Decimal_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
+         & LF & LF
+         & "   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;" & LF
+         & "   Null_Rate : constant Rate_String :=" & LF
+         & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);" & LF & LF
+         & "   type TimeT is new Interfaces.Unsigned_64;" & LF & LF
+         & "   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;" & LF & LF
+         & "   type Abstract_IATS_Responce is" & LF
+         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
+         & "     with null record;" & LF);
+   end Create_Package_Name;
+
+   ------------------------
+   -- Create_Simple_Type --
+   ------------------------
+
    procedure Create_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer)
@@ -375,6 +416,10 @@ package body XSD_To_Ada.Utils is
       end loop;
    end Create_Enumeration_Simple_Type;
 
+   -------------------------
+   -- Create_Complex_Type --
+   -------------------------
+
    procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model)
    is
       XS_Object : XML.Schema.Objects.XS_Object;
@@ -388,56 +433,22 @@ package body XSD_To_Ada.Utils is
       Payload_Writer          : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer     : XSD_To_Ada.Writers.Writer;
 
-      US_Response : League.Strings.Universal_String;
-
       Current_Out_File : Ada.Text_IO.File_Type;
-
    begin
-      Writers.P
-        (Payload_Writer,
-         "with Ada.Containers.Indefinite_Vectors;" & Wide_Wide_Character'Val (10)
-         & "with League.Strings;" & Wide_Wide_Character'Val (10)
-         & "with Interfaces;" & Wide_Wide_Character'Val (10)
-         & "with ICTS.Types;" & Wide_Wide_Character'Val (10)
-          & "with ICTS.Forex;" & Wide_Wide_Character'Val (10)
-         & "with ICTSClient.Types;" & Wide_Wide_Character'Val (10)
-         & "with Web_Services.SOAP.Payloads;" & Wide_Wide_Character'Val (10)
-         & "with Ada.Strings.Unbounded;"
-         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-         & "package Payloads_2 is"
-         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-         & "   type Decimal_String is new Ada.Strings.Unbounded.Unbounded_String;"
-         & Wide_Wide_Character'Val (10)
-         & "   Null_Decimal : constant Decimal_String :="
-         & Wide_Wide_Character'Val (10)
-         & "     Decimal_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
-         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-         & "   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;"
-         & Wide_Wide_Character'Val (10)
-         & "   Null_Rate : constant Rate_String :="
-         & Wide_Wide_Character'Val (10)
-         & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
-         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-         & "   type TimeT is new Interfaces.Unsigned_64;"
-         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-         & "   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;"
-         & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10)
-         & "   type Abstract_IATS_Responce is" & Wide_Wide_Character'Val (10)
-         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
-         & Wide_Wide_Character'Val (10)
-         & "     with null record;"
-         & Wide_Wide_Character'Val (10));
-
-      Create_Enumeration_Simple_Type (Model, Payload_Writer);
-
       Map :=
         XSD_To_Ada.Utils.Read_Mapping
           (League.Strings.To_Universal_String ("./mapping.xml"));
 
       for J in 1 .. Complex_Types.Length loop
          Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
-         Types_Table (J).Type_State := True;
+         	Types_Table (J).Type_State := True;
       end loop;
+
+      Put_Header (Payload_Writer);
+
+      Create_Package_Name (Payload_Writer);
+
+      Create_Enumeration_Simple_Type (Model, Payload_Writer);
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
@@ -767,10 +778,8 @@ package body XSD_To_Ada.Utils is
       Table        : in out Types_Table_Type_Array;
       Max_Occurs   : in out Boolean;
       Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer)
-   is
+      Writer_types : in out Writers.Writer) is
    begin
-
       if Has_Top_Level_Type (Type_D, Table) then
          XSD_To_Ada.Utils.Print_Type_Title
            (Type_D,
@@ -787,42 +796,52 @@ package body XSD_To_Ada.Utils is
 
       if Max_Occurs then
          Max_Occurs := False;
-
-         Create_Vector_Package
-           (Type_D.Get_Name, Writer, Writer_types);
-
+         Create_Vector_Package (Type_D.Get_Name, Writer, Writer_types);
       else
          Writers.P (Writer, ";");
       end if;
-
    end Generate_Complex_Type;
 
-   ---------------------------
-   -- Generate_Complex_Type --
-   ---------------------------
+   -------------------
+   -- Generate_Type --
+   -------------------
 
-   procedure Generate_Complex_Type
+   procedure Generate_Type
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term      : XML.Schema.Objects.Terms.XS_Term;
       Type_Name    : League.Strings.Universal_String;
       Table        : in out Types_Table_Type_Array;
       Max_Occurs   : in out Boolean;
-      Anonym       : in out League.Strings.Universal_String;
-      Writer_types : in out Writers.Writer)
-   is
-      Writer : Writers.Writer;
+      Min_Occurs   : in out Boolean;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer) is
    begin
-      Generate_Complex_Type
-        (Type_D,
-         XS_Term,
-         Type_Name,
-         Table,
-         Max_Occurs,
-         Writer,
-         Writer_types);
+      case Type_D.Get_Type_Category is
+         when XML.Schema.Complex_Type =>
 
-      Anonym.Append (Writer.Text);
-   end Generate_Complex_Type;
+            Generate_Complex_Type
+              (Type_D,
+               XS_Term,
+               Type_Name,
+               Table,
+               Max_Occurs,
+               Writer,
+               Writer_types);
+
+         when XML.Schema.Simple_Type =>
+
+            Generate_Simple_Type
+              (Type_D,
+               XS_Term,
+               Type_Name,
+               Min_Occurs,
+               Writer,
+               Writer_types);
+
+         when XML.Schema.None =>
+            Ada.Text_IO.Put_Line ("NONE!!!");
+      end case;
+   end Generate_Type;
 
    --------------------------
    -- Generate_Simple_Type --
@@ -839,7 +858,6 @@ package body XSD_To_Ada.Utils is
       if Min_Occurs
         and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string"
       then
-
          if not Is_Type_In_Optional_Vector (Type_D.Get_Base_Type.Get_Name) then
             Writers.P
               (Writer_Types,
@@ -865,7 +883,7 @@ package body XSD_To_Ada.Utils is
             & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
             & " : Optional_"
             & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-            & "; ");
+            & ";");
 
          Min_Occurs := False;
       else
@@ -876,33 +894,6 @@ package body XSD_To_Ada.Utils is
               (XS_Term.Get_Name.To_Wide_Wide_String)
             & " : " & Type_Name.To_Wide_Wide_String & ";");
       end if;
-   end Generate_Simple_Type;
-
-   --------------------------
-   -- Generate_Simple_Type --
-   --------------------------
-
-   procedure Generate_Simple_Type
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
-      Type_Name    : League.Strings.Universal_String;
-      Min_Occurs   : in out Boolean;
-      Anonym       : in out League.Strings.Universal_String;
-      Writer_types : in out Writers.Writer)
-   is
-      Writer : Writers.Writer;
-   begin
-
-      Generate_Simple_Type
-        (Type_D,
-         XS_Term,
-         Type_Name,
-         Min_Occurs,
-         Writer,
-         Writer_types);
-
-      Anonym.Append (Writer.Text);
-
    end Generate_Simple_Type;
 
    ------------------------
@@ -1223,9 +1214,10 @@ package body XSD_To_Ada.Utils is
 
       Name_Kind   : League.Strings.Universal_String;
       Name_Case   : League.Strings.Universal_String;
-      Anonym_Kind : League.Strings.Universal_String;
       Anonym_Vector : League.Strings.Universal_String;
       Vectop_US   : League.Strings.Universal_String;
+
+      Anonym_Kind : Writers.Writer;
 
       Vector_Package : Writers.Writer;
 
@@ -1249,9 +1241,8 @@ package body XSD_To_Ada.Utils is
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
          XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
          Decl           : XML.Schema.Element_Declarations.XS_Element_Declaration;
-
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
-         Type_Name : League.Strings.Universal_String;
+         Type_Name      : League.Strings.Universal_String;
       begin
 
          Now_Term_Level := Now_Term_Level + 1;
@@ -1355,10 +1346,11 @@ package body XSD_To_Ada.Utils is
                      & "_Anonyms_Vectors.Vector;", 5)
                   & Wide_Wide_Character'Val (10));
 
-               Anonym_Kind.Append
-                 ("   type "
-                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Anonym is record"
-                  & Wide_Wide_Character'Val (10));
+               Writers.P
+                 (Anonym_Kind,
+                  "   type "
+                   & XSD_To_Ada.Utils.Add_Separator (Name)
+                   & "_Anonym is record");
                Add_Anonym := True;
             end if;
 
@@ -1475,62 +1467,29 @@ package body XSD_To_Ada.Utils is
               and then not Anonyn_Vector (Now_Term_Level - 2).Term_State
               and then not Choice
             then
-               case Type_D.Get_Type_Category is
-               when XML.Schema.Complex_Type =>
-
-                  Generate_Complex_Type
-                    (Type_D,
-                     XS_Term,
-                     Type_Name,
-                     Table,
-                     Max_Occurs,
-                     Writer,
-                     Writer_types);
-
-               when XML.Schema.Simple_Type =>
-
-                  Generate_Simple_Type
-                    (Type_D,
-                     XS_Term,
-                     Type_Name,
-                     Min_Occurs,
-                     Writer,
-                     Writer_types);
-
-               when XML.Schema.None =>
-                  Ada.Text_IO.Put_Line (Indent & "NONE!!!");
-               end case;
+               Generate_Type
+                 (Type_D,
+                  XS_Term,
+                  Type_Name,
+                  Table,
+                  Max_Occurs,
+                  Min_Occurs,
+                  Writer,
+                  Writer_types);
             end if;
 
             if Anonyn_Vector (Now_Term_Level - 2).Term_State
               and not Choice
             then
-
-               case Type_D.Get_Type_Category is
-               when XML.Schema.Complex_Type =>
-
-                  Generate_Complex_Type
-                    (Type_D,
-                     XS_Term,
-                     Type_Name,
-                     Table,
-                     Max_Occurs,
-                     Anonym_Kind,
-                     Writer_types);
-
-               when XML.Schema.Simple_Type =>
-
-                  Generate_Simple_Type
-                    (Type_D,
-                     XS_Term,
-                     Type_Name,
-                     Min_Occurs,
-                     Anonym_Kind,
-                     Writer_types);
-
-               when XML.Schema.None =>
-                  Ada.Text_IO.Put_Line (Indent & "NONE!!!");
-               end case;
+               Generate_Type
+                 (Type_D,
+                  XS_Term,
+                  Type_Name,
+                  Table,
+                  Max_Occurs,
+                  Min_Occurs,
+                  Anonym_Kind,
+                  Writer_types);
             end if;
          end if;
          Now_Term_Level := Now_Term_Level - 1;
@@ -1605,13 +1564,13 @@ package body XSD_To_Ada.Utils is
       if Add_Anonym then
          Writers.P
            (Writer_types,
-            Anonym_Kind.To_Wide_Wide_String
+            Anonym_Kind.Text.To_Wide_Wide_String
             & "   end record;"
             & Wide_Wide_Character'Val (10));
 
          Writers.P (Writer_types, Anonym_Vector);
 
-         Anonym_Kind.Clear;
+         Anonym_Kind.Text.Clear;
       end if;
 
       Writers.N (Writer_types, Vector_Package.Text);
