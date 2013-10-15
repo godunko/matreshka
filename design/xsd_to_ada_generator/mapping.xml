@@ -33,7 +33,6 @@
     <ada context="ICTS.Types" type="ICTSClient.Types.CloseOrder_Information"/>
   </map>
   
-  
   <map type="ConditionalCloseOrderInformation">
     <ada context="ICTS.Types" type="ICTSClient.Types.CloseOrder_Information"/>
   </map>
@@ -66,8 +65,8 @@
     <ada context="ICTS.Types" type="ICTSClient.Types.Currency_Informations"/>
   </map>
     
-  <map type="Quantum">
-    <ada context="ICTS.Types" type="ICTSClient.Types.Quantums_Vector"/>
+  <map type="OrderItem">
+    <ada context="ICTS.Types" type="ICTSClient.Types.Order_Item"/>
   </map>
     
   <map type="AccountIdentifier">
