@@ -276,8 +276,10 @@ package body XSD_To_Ada.Utils is
          & "with ICTS.Forex;" & LF
          & "with ICTSClient.Types;" & LF
          & "with Web_Services.SOAP.Payloads;" & LF
-         & "with Ada.Strings.Unbounded;" & LF & LF
-         & "package Payloads_2 is" & LF & LF
+         & "with Ada.Strings.Unbounded;"
+         & LF & LF
+         & "package Payloads_2 is"
+         & LF & LF
          & "   type Decimal_String is new Ada.Strings.Unbounded.Unbounded_String;"
          & LF
          & "   Null_Decimal : constant Decimal_String :=" & LF
@@ -287,10 +289,19 @@ package body XSD_To_Ada.Utils is
          & "   Null_Rate : constant Rate_String :=" & LF
          & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);" & LF & LF
          & "   type TimeT is new Interfaces.Unsigned_64;" & LF & LF
-         & "   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;" & LF & LF
+         & "   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;"
+         & LF & LF
          & "   type Abstract_IATS_Responce is" & LF
          & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
-         & "     with null record;" & LF);
+         & "     with null record;"
+         & LF & LF
+         & "   type Abstract_IATS_Request is" & LF
+         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
+         & "     with record" & LF
+         & "       Session : League.Strings.Universal_String;"
+         & LF
+         & "     end record;" & LF);
+
    end Create_Package_Name;
 
    ------------------------
@@ -327,8 +338,8 @@ package body XSD_To_Ada.Utils is
             if List.Is_Empty then
                XSD_To_Ada.Writers.P
                  (Writer,
-                  "type " &
-                    XSD_To_Ada.Utils.Add_Separator (XS_Object.Get_Name)
+                  "type "
+                  & XSD_To_Ada.Utils.Add_Separator (XS_Object.Get_Name)
                   & " is new "
                   & XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
                   & ";" & Wide_Wide_Character'Val (10));
@@ -699,7 +710,8 @@ package body XSD_To_Ada.Utils is
    -------------------
 
    function Gen_Type_Line
-     (Str : Wide_Wide_String := ""; Tab : Natural := 0) return Wide_Wide_String
+     (Str : Wide_Wide_String := "";
+      Tab : Natural := 0) return Wide_Wide_String
    is
       use Ada.Strings.Wide_Wide_Unbounded;
       use Ada.Strings.Wide_Wide_Maps;
@@ -707,6 +719,8 @@ package body XSD_To_Ada.Utils is
       US      : League.Strings.Universal_String
         := League.Strings.To_Universal_String (Str);
       US_New : League.Strings.Universal_String;
+
+      Tab_Count : Natural := Tab;
    begin
       if US.Length > 79 then
          for J in 1 .. US.Length loop
@@ -727,8 +741,9 @@ package body XSD_To_Ada.Utils is
               and then US.Element (J + 3).To_Wide_Wide_Character = ' '
             then
                US_New.Append (Wide_Wide_Character'Val (10));
+               Tab_Count := Tab_Count + 2;
 
-               for Count in 1 .. Tab loop
+               for Count in 1 .. Tab_Count loop
                   US_New.Append (" ");
                end loop;
 

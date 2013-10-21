@@ -94,7 +94,8 @@ package XSD_To_Ada.Utils is
      (Text : League.Strings.Universal_String) return Wide_Wide_String;
 
    function Gen_Type_Line
-     (Str : Wide_Wide_String := ""; Tab : Natural := 0)
+     (Str : Wide_Wide_String := "";
+      Tab : Natural := 0)
       return Wide_Wide_String;
 
    procedure Create_Element_Type
