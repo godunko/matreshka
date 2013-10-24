@@ -1,0 +1,143 @@
+V "GNAT Lib v2013"
+A -g
+A -g
+A -gnatA
+P SS ZX
+
+RN
+RV NO_DISPATCH
+RV NO_DISPATCHING_CALLS
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTION_PROPAGATION
+RV NO_EXCEPTIONS
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_LOCAL_ALLOCATORS
+RV NO_NESTED_FINALIZATION
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_ELABORATION_CODE
+RV SPARK
+
+U xsd_to_ada.writers%b	xsd_to_ada-writers.adb	d3f08d0e NE OO PK
+W ada.tags%s		a-tags.adb		a-tags.ali
+W system.img_int%s	s-imgint.adb		s-imgint.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.wch_stw%s	s-wchstw.adb		s-wchstw.ali
+W xsd_to_ada%s		xsd_to_ada.ads		xsd_to_ada.ali
+
+U xsd_to_ada.writers%s	xsd_to_ada-writers.ads	902eb589 EE OO PF PR PK
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.streams%s		a-stream.ads		a-stream.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W league%s		league.ads		league.ali
+W league.strings%s	league-strings.adb	league-strings.ali
+W system%s		system.ads		system.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.storage_elements%s  s-stoele.adb	s-stoele.ali
+W system.storage_pools.subpools%s  s-stposu.adb	s-stposu.ali
+W xsd_to_ada%s		xsd_to_ada.ads		xsd_to_ada.ali
+
+D ada.ads		20130417131023 3ffc8e18
+D a-except.ads		20130417131019 10fcae55
+D a-finali.ads		20130417131020 52ecdc1b
+D a-stream.ads		20130417131021 2ca4ee37
+D a-string.ads		20130417131021 90ac6797
+D a-stuten.ads		20130417131021 808c40ad
+D a-tags.ads		20130417131022 6c0509d0
+D a-unccon.ads		20130417131022 f9eb8f06
+D interfac.ads		20130417131027 cb4a8015
+D league.ads		20130814102245 47c4a3ed
+D league-characters.ads	20130814102245 952c182e
+D league-string_vectors.ads  20130814102244 b799b312
+D league-strings.ads	20130814102244 ca7577a5
+D matreshka.ads		20130814102244 1941fa1c
+D matreshka-atomics.ads	20130814102244 1226107f
+D matreshka-atomics-counters.ads  20130814102244 a93d3285
+D matreshka-internals.ads  20130814102244 04683cf2
+D matreshka-internals-string_vectors.ads  20130814102244 9b020ec5
+D matreshka-internals-strings.ads  20130814102245 ee9e6e40
+D matreshka-internals-unicode.ads  20130814102245 845068e4
+D matreshka-internals-unicode-ucd.ads  20130814102245 bc70478b
+D matreshka-internals-utf16.ads  20130814102244 2d006d1c
+D system.ads		20130417131036 90249111
+D s-exctab.ads		20130417131029 66e51330
+D s-finmas.ads		20130417131029 b95bb341
+D s-finroo.ads		20130417131029 4ff27390
+D s-imgint.ads		20130417131030 02dbe0c2
+D s-parame.ads		20130417131032 b6e20cc0
+D s-pooglo.ads		20130417131032 542f33d0
+D s-secsta.ads		20130417131032 eea35a36
+D s-soflin.ads		20130417131032 24c8153c
+D s-stache.ads		20130417131032 596fc1b4
+D s-stalib.ads		20130417131032 f78bcf95
+D s-stoele.ads		20130417131032 facd7d98
+D s-stoele.adb		20130417131032 afc5dc80
+D s-stopoo.ads		20130417131032 7b8fbeee
+D s-stposu.ads		20130417131032 ffeba1c5
+D s-stratt.ads		20130417131032 aedef97e
+D s-traent.ads		20130417131033 5221ee41
+D s-unstyp.ads		20130417131034 6ae15c76
+D s-wchcon.ads		20130417131034 bfeb2e3d
+D s-wchstw.ads		20130417131034 2d112c01
+D unchconv.ads		20130417131036 ca2f9e18
+D xsd_to_ada.ads	20131008065647 db16ca7a
+D xsd_to_ada-writers.ads  20131008065647 814d0856
+D xsd_to_ada-writers.adb  20131008065647 52bd8558
+X 10 league.ads
+45K9*League 51e11 45|45r6 52r14 65r16 69r14 83r16 88r14 46|56r14 72r14 103r16
+. 112r16
+X 13 league-strings.ads
+76K16*Strings 524e19 45|45w13 52r21 65r23 69r21 83r23 88r21 46|56r21 72r21
+. 103r23 112r23
+83R9*Universal_String 432e14 45|52r29 65r31 69r29 83r31 88r29 46|56r29 72r29
+. 103r31 112r31
+103V13*To_Wide_Wide_String{wide_wide_string} 46|58s20 114s20
+161U14*Append 46|51s17 121s17
+164U14*Append 46|122s17
+X 44 xsd_to_ada.ads
+45K9*XSD_To_Ada 49e15 45|47r9 95r5 46|45r14 125r5
+X 45 xsd_to_ada-writers.ads
+47K20*Writers 44|45k9 45|95l16 95e23 46|45b25 125l16 125t23
+51R9*Writer 53e14 55p14 56r23 59p14 60r21 63p14 64r23 67p14 68r21 71p14 72r21
+. 74r21 76p14 77r21 79r21 81p14 82r23 84r21 86p14 87r21 89r21 91p14 92r22
+. 46|49r31 55r21 62r21 64r21 71r21 73r21 84r22 93r21 95r21 102r23 104r21
+. 111r23 118r23
+52r7*Text{13|83R9} 46|51m12 121m12 122m12
+55U14*P 56=7 57>7 46|97s12 98R12 114s12 117b14 123l8 123t9
+56r7 Self{51R9} 46|118b7 121m7 121r7 122m7 122r7
+57s7 Text{wide_wide_string} 46|119b7 121r25
+59U14*N 60=7 61>7 46|49b14 52l8 52t9 58s12 66s12 67R12 89s12
+60r7 Self{51R9} 46|49b17 51m7 51r7
+61s7 Text{wide_wide_string} 46|49b39 51r25
+63U14*P 64=7 65>7 46|106s12 107R12 110b14 115l8 115t9
+64r7 Self{51R9} 46|111b7 114m7 114r7
+65r7 Text{13|83R9} 46|112b7 114r15
+67U14*N 68=7 69>7 46|54b14 59l8 59t9 75s12 76R12
+68r7 Self{51R9} 46|55b7 58m7 58r7
+69r7 Text{13|83R9} 46|56b7 58r15
+71U14*P 72=7 73>7 74=7 46|92b14 99l8 99t9
+72r7 Self{51R9} 46|93b7 97m7 97r7
+73s7 Text{wide_wide_string} 46|94b7 97r15 98r15
+74c7 Copy<51R9> 46|95b7 98m7 98r7
+76U14*N 77=7 78>7 79=7 46|61b14 68l8 68t9
+77r7 Self{51R9} 46|62b7 66m7 66r7
+78s7 Text{wide_wide_string} 46|63b7 66r15 67r15
+79c7 Copy<51R9> 46|64b7 67m7 67r7
+81U14*P 82=7 83>7 84=7 46|101b14 108l8 108t9
+82r7 Self{51R9} 46|102b7 106m7 106r7
+83r7 Text{13|83R9} 46|103b7 106r15 107r15
+84c7 Copy<51R9> 46|104b7 107m7 107r7
+86U14*N 87=7 88>7 89=7 46|70b14 77l8 77t9
+87r7 Self{51R9} 46|71b7 75m7 75r7
+88r7 Text{13|83R9} 46|72b7 75r15 76r15
+89c7 Copy<51R9> 46|73b7 76m7 76r7
+91U14*N 92=7 93>7 46|83b14 90l8 90t9
+92r7 Self{51R9} 46|84b7 89m7 89r7
+93i7 Value{natural} 46|85b7 87r69
+X 46 xsd_to_ada-writers.adb
+47e4 New_Line{wide_wide_character} 122r25
+87a7 Image{wide_wide_string} 89r15 89r27
+

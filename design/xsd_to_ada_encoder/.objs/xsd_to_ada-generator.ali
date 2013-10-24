@@ -1,0 +1,228 @@
+V "GNAT Lib v2013"
+A -g
+A -g
+A -gnatA
+P SS ZX
+
+RN
+RV NO_IO
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U xsd_to_ada.generator%b  xsd_to_ada-generator.adb  669936c4 NE OO PK
+W ada%s			ada.ads			ada.ali
+W ada.containers%s	a-contai.ads		a-contai.ali
+W ada.containers.vectors%s
+W ada.directories%s	a-direct.adb		a-direct.ali
+W league%s		league.ads		league.ali
+W league.string_vectors%s  league-string_vectors.adb  league-string_vectors.ali
+W league.strings%s	league-strings.adb	league-strings.ali
+W xsd_to_ada%s		xsd_to_ada.ads		xsd_to_ada.ali
+W xsd_to_ada.mappings_xml%s  xsd_to_ada-mappings_xml.adb  xsd_to_ada-mappings_xml.ali
+W xsd_to_ada.utils%s	xsd_to_ada-utils.adb	xsd_to_ada-utils.ali
+
+U xsd_to_ada.generator%s  xsd_to_ada-generator.ads  fce00132 EE NE OO PK
+W ada%s			ada.ads			ada.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W xml%s			xml.ads			xml.ali
+W xml.schema%s		xml-schema.ads		xml-schema.ali
+W xml.schema.models%s	xml-schema-models.adb	xml-schema-models.ali
+W xsd_to_ada%s		xsd_to_ada.ads		xsd_to_ada.ali
+W xsd_to_ada.writers%s	xsd_to_ada-writers.adb	xsd_to_ada-writers.ali
+
+D ada.ads		20130417131023 3ffc8e18
+D a-calend.ads		20130417131018 d86d6c8c
+D a-charac.ads		20130417131019 2d3ec45b
+D a-chlat1.ads		20130417131019 2825df20
+D a-contai.ads		20130417131019 61e5e089
+D a-cdlili.ads		20130417131018 c3008bbb
+D a-cgarso.ads		20130417131018 9129bfa8
+D a-cohata.ads		20130417131019 04abccc5
+D a-cohama.ads		20130417131019 9f97b812
+D a-cohase.ads		20130417131019 1483927e
+D a-coinve.ads		20130417131019 cfa7d9ff
+D a-convec.ads		20130417131019 0aaf3975
+D a-convec.adb		20130417131019 ba151ea6
+D a-direct.ads		20130417131019 9d42e46d
+D a-except.ads		20130417131019 10fcae55
+D a-finali.ads		20130417131020 52ecdc1b
+D a-ioexce.ads		20130417131020 8b9de6cd
+D a-iteint.ads		20130417131020 7c7305e9
+D a-stream.ads		20130417131021 2ca4ee37
+D a-string.ads		20130417131021 90ac6797
+D a-strmap.ads		20130417131021 9cb836fb
+D a-strunb.ads		20130417131021 3f91d4c5
+D a-stuten.ads		20130417131021 808c40ad
+D a-tags.ads		20130417131022 6c0509d0
+D a-textio.ads		20130417131022 386df5d4
+D a-unccon.ads		20130417131022 f9eb8f06
+D a-uncdea.ads		20130417131022 f15a5ed1
+D interfac.ads		20130417131027 cb4a8015
+D i-cstrea.ads		20130417131026 8128536b
+D league.ads		20130814102245 47c4a3ed
+D league-calendars.ads	20130814102244 f67d6eba
+D league-characters.ads	20130814102245 952c182e
+D league-holders.ads	20130814102245 7d5325d3
+D league-iris.ads	20130814102245 b72e32fa
+D league-stream_element_vectors.ads  20130814102245 820e37c5
+D league-string_vectors.ads  20130814102244 b799b312
+D league-strings.ads	20130814102244 ca7577a5
+D league-strings-hash.ads  20130814102245 edb04d14
+D matreshka.ads		20130814102244 1941fa1c
+D matreshka-atomics.ads	20130814102244 1226107f
+D matreshka-atomics-counters.ads  20130814102244 a93d3285
+D matreshka-internals.ads  20130814102244 04683cf2
+D matreshka-internals-calendars.ads  20130814102244 ca723bc8
+D matreshka-internals-sax_locators.ads  20130814102243 8b6d896b
+D matreshka-internals-stream_element_vectors.ads  20130814102245 2dd97d55
+D matreshka-internals-string_vectors.ads  20130814102244 9b020ec5
+D matreshka-internals-string_vectors.adb  20130814102244 b6295cbf
+D matreshka-internals-strings.ads  20130814102245 ee9e6e40
+D matreshka-internals-unicode.ads  20130814102245 845068e4
+D matreshka-internals-unicode-ucd.ads  20130814102245 bc70478b
+D matreshka-internals-utf16.ads  20130814102244 2d006d1c
+D matreshka-xml_schema.ads  20130909090319 9938973b
+D matreshka-xml_schema-ast.ads  20130909090319 3758348d
+D matreshka-xml_schema-ast-annotations.ads  20130909090319 c2ac6d41
+D matreshka-xml_schema-ast-assertions.ads  20130909090319 de00c3c6
+D matreshka-xml_schema-ast-attribute_declarations.ads  20130909090319 6ddc41e7
+D matreshka-xml_schema-ast-attribute_groups.ads  20130909090320 30e2a62a
+D matreshka-xml_schema-ast-attribute_uses.ads  20130909090320 2230088a
+D matreshka-xml_schema-ast-complex_types.ads  20130909090320 4959d06a
+D matreshka-xml_schema-ast-constraining_facets.ads  20130909090319 b4ec0e30
+D matreshka-xml_schema-ast-element_declarations.ads  20130909090320 1ff1a274
+D matreshka-xml_schema-ast-identity_constraints.ads  20130909090319 c4b71e9b
+D matreshka-xml_schema-ast-model_groups.ads  20130909090319 3f2637ad
+D matreshka-xml_schema-ast-models.ads  20130909090320 62efb82b
+D matreshka-xml_schema-ast-namespaces.ads  20130909090319 fe73966f
+D matreshka-xml_schema-ast-notation_declarations.ads  20130909090320 5379496f
+D matreshka-xml_schema-ast-objects.ads  20130909090320 28fee127
+D matreshka-xml_schema-ast-particles.ads  20130909090320 0e7f60fd
+D matreshka-xml_schema-ast-schemas.ads  20130909090320 213b73e2
+D matreshka-xml_schema-ast-simple_types.ads  20130909090320 fa85316b
+D matreshka-xml_schema-ast-type_alternatives.ads  20130909090320 9b921c1e
+D matreshka-xml_schema-ast-types.ads  20130909090320 dee69f20
+D matreshka-xml_schema-ast-wildcards.ads  20130909090320 1cc167ad
+D matreshka-xml_schema-named_maps.ads  20130909090319 740095ab
+D matreshka-xml_schema-object_lists.ads  20130909090319 de36f8dd
+D matreshka-xml_schema-visitors.ads  20130909090320 86d86a90
+D system.ads		20130417131036 90249111
+D s-atocou.ads		20130417131028 4a9c6cb4
+D s-atocou.adb		20130417131028 7116b4cf
+D s-crtl.ads		20130417131029 dfcfca61
+D s-exctab.ads		20130417131029 66e51330
+D s-ficobl.ads		20130417131029 55a71d43
+D s-finmas.ads		20130417131029 b95bb341
+D s-finroo.ads		20130417131029 4ff27390
+D s-parame.ads		20130417131032 b6e20cc0
+D s-pooglo.ads		20130417131032 542f33d0
+D s-secsta.ads		20130417131032 eea35a36
+D s-soflin.ads		20130417131032 24c8153c
+D s-stache.ads		20130417131032 596fc1b4
+D s-stalib.ads		20130417131032 f78bcf95
+D s-stoele.ads		20130417131032 facd7d98
+D s-stoele.adb		20130417131032 afc5dc80
+D s-stopoo.ads		20130417131032 7b8fbeee
+D s-stposu.ads		20130417131032 ffeba1c5
+D s-stratt.ads		20130417131032 aedef97e
+D s-traent.ads		20130417131033 5221ee41
+D s-unstyp.ads		20130417131034 6ae15c76
+D s-wchcon.ads		20130417131034 bfeb2e3d
+D unchconv.ads		20130417131036 ca2f9e18
+D xml.ads		20130814102243 ad9a85ca
+D xml-sax.ads		20130814102243 5e9ceb82
+D xml-sax-attributes.ads  20130814102243 c7b16e2f
+D xml-sax-content_handlers.ads  20130814102243 4bcf7815
+D xml-sax-locators.ads	20130814102243 2cf55fd8
+D xml-schema.ads	20130909090320 2b82b8ee
+D xml-schema-annotations.ads  20130909090319 00ad74a8
+D xml-schema-attribute_declarations.ads  20130909090320 61cf4e64
+D xml-schema-attribute_group_definitions.ads  20130909090320 dd4b322c
+D xml-schema-complex_type_definitions.ads  20130909090320 73d7eb70
+D xml-schema-element_declarations.ads  20130909090319 91df15fb
+D xml-schema-model_group_definitions.ads  20130909090319 f8a839a9
+D xml-schema-models.ads	20130909090319 96936cf1
+D xml-schema-named_maps.ads  20130909090320 310d429c
+D xml-schema-namespace_item_lists.ads  20130909090319 f15f0613
+D xml-schema-namespace_items.ads  20130909090320 fd565541
+D xml-schema-notation_declarations.ads  20130909090319 22f3625f
+D xml-schema-object_lists.ads  20130909090319 3e98cb41
+D xml-schema-objects.ads  20130909090319 2027d621
+D xml-schema-objects-annotations.ads  20130909090320 ccaf942e
+D xml-schema-objects-attribute_declarations.ads  20130909090320 b0e21991
+D xml-schema-objects-attribute_group_definitions.ads  20130909090320 ae30fd0d
+D xml-schema-objects-model_group_definitions.ads  20130909090320 8923476a
+D xml-schema-objects-notation_declarations.ads  20130909090320 f466b34c
+D xml-schema-objects-particles.ads  20130909090320 8038d190
+D xml-schema-objects-terms.ads  20130909090320 46872be6
+D xml-schema-objects-terms-element_declarations.ads  20130909090320 208bdd02
+D xml-schema-objects-terms-model_groups.ads  20130909090320 ea8dc351
+D xml-schema-objects-type_definitions.ads  20130909090320 d505e987
+D xml-schema-objects-type_definitions-complex_type_definitions.ads  20130909090319 71e8b5b7
+D xml-schema-objects-type_definitions-simple_type_definitions.ads  20130909090319 e34e6ee4
+D xml-schema-simple_type_definitions.ads  20130909090319 79aa1e4b
+D xml-schema-type_definitions.ads  20130909090319 6f849cbb
+D xsd_to_ada.ads	20131008065647 db16ca7a
+D xsd_to_ada-generator.ads  20131008065647 08455a3b
+D xsd_to_ada-generator.adb  20131008065647 0d3784f4
+D xsd_to_ada-mappings.ads  20131008065647 a32671ff
+D xsd_to_ada-mappings_xml.ads  20131008065647 a16ab03c
+D xsd_to_ada-utils.ads	20131017110741 28804198
+D xsd_to_ada-writers.ads  20131008065647 814d0856
+X 1 ada.ads
+16K9*Ada 19e8 134|45r14 66r23 135|45r6 46r6 76r10 77r10
+X 5 a-contai.ads
+16K13*Containers 24e19 135|46r10
+X 12 a-convec.ads
+45k24*Vectors 474e27 135|46w21
+55R9*Vector
+X 14 a-direct.ads
+76K13*Directories 487e20 135|45w10 76r14 77r14
+147U14*Delete_File 135|77s26
+295V13*Exists{boolean} 135|76s26
+X 18 a-iteint.ads
+24h9 Forward_Iterator
+32h9 Reversible_Iterator<24R9[12|70]>
+X 25 a-textio.ads
+49K13*Text_IO 471e16 134|45w18 66r27
+52P9*File_Type(369R9) 134|66r35
+X 30 league.ads
+45K9*League 51e11 135|48r6 49r6
+X 36 league-string_vectors.ads
+55K16*String_Vectors 166e26 135|49w13
+X 37 league-strings.ads
+76K16*Strings 524e19 135|48w13
+X 100 xml.ads
+45K9*XML 49e8 134|49r6 53r32 135|85r32
+X 105 xml-schema.ads
+45K13*Schema 177e15 134|49r10 53r36 135|85r36
+X 112 xml-schema-models.ads
+62K20*Models 267e22 134|49w17 53r43 135|85r43
+66R9*XS_Model 262e14 134|53r50 135|85r50
+X 133 xsd_to_ada.ads
+45K9*XSD_To_Ada 49e15 134|47r6 51r9 60r21 68r5 135|51r6 52r6 54r14 87r7 103r21
+. 108r5
+X 134 xsd_to_ada-generator.ads
+51K20*Generator 133|45k9 134|68l16 68e25 135|54b25 108l16 108t25
+53U14*Generate 53>24 135|85b14 88l8 88t16
+53r24 Model{112|66R9} 135|85b24 87r45
+57U14 Delete_File 57>27 135|74b14 79l8 79t19
+57s27 Name{string} 135|74b27 76r34 77r39
+59U14 P 60=7 61>7 135|102b14 106l8 106t9
+60r7 Self{139|51R9} 135|103b7 105m7 105r7
+61s7 Txt{wide_wide_string} 135|103b48 105r15
+63U14 Inc 135|94b14 96l8 96t11
+64U14 Dec 135|62b14 68l8 68t11
+66p4 Current_Out_File{25|52P9}
+X 135 xsd_to_ada-generator.adb
+56i4 Tab{natural} 63r10 64m10 64r17 66m10 95m7 95r14
+X 137 xsd_to_ada-mappings_xml.ads
+55K20*Mappings_XML 135|52w17 137|94e28
+X 138 xsd_to_ada-utils.ads
+58K20*Utils 135|51w17 87r18 138|237e21
+118U14*Create_Complex_Type 135|87s24
+X 139 xsd_to_ada-writers.ads
+47K20*Writers 134|47w17 60r32 135|103r32 139|95e23
+51R9*Writer 134|60r40 135|103r40 139|53e14
+55U14*P 135|105s12
+

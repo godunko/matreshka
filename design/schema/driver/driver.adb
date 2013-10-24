@@ -27,9 +27,6 @@ procedure Driver is
    Model      : XML.Schema.Models.XS_Model;
    Namespaces : League.String_Vectors.Universal_String_Vector;
 
---   Choice      : Boolean := False;
---   Choice_Enum : League.Strings.Universal_String;
---   Condition   : League.Strings.Universal_String;
 begin
    Matreshka.XML_Schema.URI_Rewriter.Initialize;
 
@@ -45,9 +42,9 @@ begin
 
    for J in 1 .. Namespaces.Length loop
       Ada.Wide_Wide_Text_IO.Put_Line
-       ("   '"
-          & Namespaces (J).To_Wide_Wide_String
-          & ''');
+        ("   '"
+         & Namespaces (J).To_Wide_Wide_String
+         & ''');
    end loop;
 
    --  Lookup for element declaration.
@@ -77,6 +74,59 @@ begin
          Indent : String := "";
          Name   : League.Strings.Universal_String);
 
+      function Has_Element_Session
+        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
+         return Boolean;
+
+      function Has_Element_Session
+        (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
+      return Boolean
+      is
+         use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+         XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+         XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+         XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+         XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+
+         Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
+         CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+         STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
+      begin
+         case Type_D.Get_Type_Category is
+         when XML.Schema.Complex_Type =>
+            CTD := Type_D.To_Complex_Type_Definition;
+
+            if CTD.Get_Content_Type in Element_Only | Mixed then
+               XS_Particle    := CTD.Get_Particle;
+               XS_Term        := XS_Particle.Get_Term;
+               XS_Model_Group := XS_Term.To_Model_Group;
+               XS_List        := XS_Model_Group.Get_Particles;
+
+               for J in 1 .. XS_List.Get_Length loop
+                  XS_Particle := XS_List.Item (J).To_Particle;
+                  XS_Term := XS_Particle.Get_Term;
+                  Decl := XS_Term.To_Element_Declaration;
+
+                  if Decl.Get_Name.To_UTF_8_String = "Session" then
+                     return True;
+                  end if;
+
+                  return Has_Element_Session (Decl.Get_Type_Definition);
+               end loop;
+            end if;
+
+         when XML.Schema.Simple_Type =>
+            STD := Type_D.To_Simple_Type_Definition;
+
+         when XML.Schema.None =>
+            null;
+         end case;
+
+         return False;
+      end Has_Element_Session;
+
+
       ----------------
       -- Print_Term --
       ----------------
@@ -100,14 +150,14 @@ begin
          XS_Model_Group_2 : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List_2        : XML.Schema.Object_Lists.XS_Object_List;
          XS_Particle_2    : XML.Schema.Objects.Particles.XS_Particle;
-         begin
+      begin
          Ada.Text_IO.Put (Indent);
          Ada.Text_IO.Put_Line ("XS_Term.Get_Type =" & XS_Term.Get_Type'Img);
          Ada.Text_IO.Put_Line ("XS_Term.Get_Name =" & XS_Term.Get_Name.To_UTF_8_String);
 
---           if Choice then
---              Choice_Enum.Append (XS_Term.Get_Name.To_Wide_Wide_String & ", ");
---           end if;
+         --           if Choice then
+         --              Choice_Enum.Append (XS_Term.Get_Name.To_Wide_Wide_String & ", ");
+         --           end if;
 
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
@@ -115,37 +165,37 @@ begin
             Ada.Text_IO.Put (Indent);
             Ada.Text_IO.Put_Line (XS_Model_Group.Get_Compositor'Img);
 
---              if XS_Model_Group.Get_Compositor =
---                XML.Schema.Objects.Terms.Model_Groups.Compositor_Choice
---              then
---                 Choice := True;
---                 Ada.Text_IO.Put_Line
---                   ("type " & Name.To_UTF_8_String & "_Kind is (");
---                 Choice_Enum.Append
---                   ("type " & Name.To_Wide_Wide_String &  "_Kind is (");
---
---                 for J in 1 .. XS_List.Get_Length loop
---                    Ada.Text_IO.Put (Indent);
---                    XS_Particle := XS_List.Item (J).To_Particle;
---                    Ada.Text_IO.Put_Line ((J'Img));
---                    Print_Term (XS_Particle.Get_Term, Indent & "   ", Name);
---                 end loop;
---
---                 Choice := False;
---                 Choice_Enum.Append (");");
---              else
-               for J in 1 .. XS_List.Get_Length loop
-                  Ada.Text_IO.Put (Indent);
-                  XS_Particle := XS_List.Item (J).To_Particle;
-                  Ada.Text_IO.Put_Line ((J'Img));
-                  Print_Term (XS_Particle.Get_Term, Indent & "   ", Name);
-               end loop;
---            end if;
+            --              if XS_Model_Group.Get_Compositor =
+            --                XML.Schema.Objects.Terms.Model_Groups.Compositor_Choice
+            --              then
+            --                 Choice := True;
+            --                 Ada.Text_IO.Put_Line
+            --                   ("type " & Name.To_UTF_8_String & "_Kind is (");
+            --                 Choice_Enum.Append
+            --                   ("type " & Name.To_Wide_Wide_String &  "_Kind is (");
+            --
+            --                 for J in 1 .. XS_List.Get_Length loop
+            --                    Ada.Text_IO.Put (Indent);
+            --                    XS_Particle := XS_List.Item (J).To_Particle;
+            --                    Ada.Text_IO.Put_Line ((J'Img));
+            --                    Print_Term (XS_Particle.Get_Term, Indent & "   ", Name);
+            --                 end loop;
+            --
+            --                 Choice := False;
+            --                 Choice_Enum.Append (");");
+            --              else
+            for J in 1 .. XS_List.Get_Length loop
+               Ada.Text_IO.Put (Indent);
+               XS_Particle := XS_List.Item (J).To_Particle;
+               Ada.Text_IO.Put_Line ((J'Img));
+               Print_Term (XS_Particle.Get_Term, Indent & "   ", Name);
+            end loop;
+            --            end if;
          elsif XS_Term.Is_Element_Declaration then
             Decl   := XS_Term.To_Element_Declaration;
 
-          Print_X_Type_Definition
-            (Decl.Get_Type_Definition, Indent & "   ", Name);
+            Print_X_Type_Definition
+              (Decl.Get_Type_Definition, Indent & "   ", Name);
          end if;
       end Print_Term;
 
@@ -203,7 +253,7 @@ begin
 
          if XS_Base.Get_Type_Category in
            XML.Schema.Complex_Type .. XML.Schema.Simple_Type
-             and XS_Base /= Type_D  --  This is to filter predefined types
+           and XS_Base /= Type_D  --  This is to filter predefined types
          then
             Ada.Text_IO.Put_Line (Indent & " is new");
             Print_Type_Definition (XS_Base, Indent & "   ", Name);
@@ -227,7 +277,7 @@ begin
          Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
          Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
 
-         begin
+      begin
          Ada.Text_IO.Put (Indent);
          Ada.Text_IO.Put_Line ("XS_Term.Get_Type =" & XS_Term.Get_Type'Img);
          Ada.Text_IO.Put (Indent);
@@ -239,12 +289,12 @@ begin
             Ada.Text_IO.Put (Indent);
             Ada.Text_IO.Put_Line (XS_Model_Group.Get_Compositor'Img);
 
-               for J in 1 .. XS_List.Get_Length loop
-                  Ada.Text_IO.Put (Indent);
-                  XS_Particle := XS_List.Item (J).To_Particle;
-                  Ada.Text_IO.Put_Line ((J'Img));
-                  Print_X_Term (XS_Particle.Get_Term, Indent & "   ", Name);
-               end loop;
+            for J in 1 .. XS_List.Get_Length loop
+               Ada.Text_IO.Put (Indent);
+               XS_Particle := XS_List.Item (J).To_Particle;
+               Ada.Text_IO.Put_Line ((J'Img));
+               Print_X_Term (XS_Particle.Get_Term, Indent & "   ", Name);
+            end loop;
          elsif XS_Term.Is_Element_Declaration then
             Decl   := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
@@ -254,8 +304,8 @@ begin
               (XS_Term.Get_Name.To_UTF_8_String
                & " : "
                & Type_D.Get_Name.To_UTF_8_String & ";");
---          Print_Type_Definition
---            (Decl.Get_Type_Definition, Indent & "   ", Name);
+            --          Print_Type_Definition
+            --            (Decl.Get_Type_Definition, Indent & "   ", Name);
          end if;
       end Print_X_Term;
 
@@ -322,11 +372,16 @@ begin
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition
         := Decl.Get_Type_Definition;
       CTD       :
-        XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+      XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
 
       Complex_Types : Xml.Schema.Named_Maps.XS_Named_Map :=
         Model.Get_Components_By_Namespace
           (Object_Type => Xml.Schema.Complex_Type,
+           Namespace   => Namespace);
+
+      Element_Declarations : Xml.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => Xml.Schema.Element_Declaration,
            Namespace   => Namespace);
 
       XS_Object   : XML.Schema.Objects.XS_Object;
@@ -353,11 +408,11 @@ begin
 
          if XS_Object.Get_Name.To_UTF_8_String = "BindOrders"
            or XS_Object.Get_Name.To_UTF_8_String = "PositionInformationBase"
-             or XS_Object.Get_Name.To_UTF_8_String = "AccountBalanceChangedInformation"
+           or XS_Object.Get_Name.To_UTF_8_String = "AccountBalanceChangedInformation"
          then
             Ada.Text_IO.Put_Line (XS_Object.Get_Name.To_UTF_8_String);
 
---            Choice_Enum.Clear;
+            --            Choice_Enum.Clear;
 
             Print_Type_Definition
               (XS_Object.To_Type_Definition,
@@ -366,7 +421,30 @@ begin
          end if;
       end loop;
 
---      Ada.Text_IO.Put_Line (Choice_Enum.To_UTF_8_String);
+      Ada.Text_IO.Put_Line ("----------  SESSIONS/RESPONCE  ------------");
 
-   end;
-end Driver;
+      for J in 1 .. Complex_Types.Length loop
+         XS_Object := Complex_Types.Item (J);
+         Type_D := XS_Object.To_Type_Definition;
+
+         if Type_D.Get_Name.Length > 8
+           and then
+             League.Strings.Slice
+               (Type_D.Get_Name,
+                Type_D.Get_Name.Length - 7,
+                Type_D.Get_Name.Length).To_Wide_Wide_String = "Response"
+         then
+            Ada.Text_IO.Put_Line
+              ("Response : " & Type_D.Get_Name.To_UTF_8_String);
+         else
+            if Has_Element_Session (Type_D.To_Type_Definition)
+            then
+               Ada.Text_IO.Put_Line
+                 ("Sessions : " & Type_D.Get_Name.To_UTF_8_String);
+            else
+               null;
+            end if;
+         end if;
+      end loop;
+      end;
+   end Driver;

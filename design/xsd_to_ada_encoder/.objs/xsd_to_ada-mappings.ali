@@ -1,0 +1,85 @@
+V "GNAT Lib v2013"
+A -g
+A -g
+A -gnatA
+P SS ZX
+
+RN
+RV NO_DISPATCHING_CALLS
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_ELABORATION_CODE
+RV SPARK
+
+U xsd_to_ada.mappings%s	xsd_to_ada-mappings.ads	cfa90897 EE OO PK
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.streams%s		a-stream.ads		a-stream.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W league%s		league.ads		league.ali
+W league.string_vectors%s  league-string_vectors.adb  league-string_vectors.ali
+W system%s		system.ads		system.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.storage_elements%s  s-stoele.adb	s-stoele.ali
+W xsd_to_ada%s		xsd_to_ada.ads		xsd_to_ada.ali
+
+D ada.ads		20130417131023 3ffc8e18
+D a-except.ads		20130417131019 10fcae55
+D a-finali.ads		20130417131020 52ecdc1b
+D a-stream.ads		20130417131021 2ca4ee37
+D a-string.ads		20130417131021 90ac6797
+D a-stuten.ads		20130417131021 808c40ad
+D a-tags.ads		20130417131022 6c0509d0
+D a-unccon.ads		20130417131022 f9eb8f06
+D a-uncdea.ads		20130417131022 f15a5ed1
+D interfac.ads		20130417131027 cb4a8015
+D league.ads		20130814102245 47c4a3ed
+D league-characters.ads	20130814102245 952c182e
+D league-string_vectors.ads  20130814102244 b799b312
+D league-strings.ads	20130814102244 ca7577a5
+D matreshka.ads		20130814102244 1941fa1c
+D matreshka-atomics.ads	20130814102244 1226107f
+D matreshka-atomics-counters.ads  20130814102244 a93d3285
+D matreshka-internals.ads  20130814102244 04683cf2
+D matreshka-internals-string_vectors.ads  20130814102244 9b020ec5
+D matreshka-internals-string_vectors.adb  20130814102244 b6295cbf
+D matreshka-internals-strings.ads  20130814102245 ee9e6e40
+D matreshka-internals-unicode.ads  20130814102245 845068e4
+D matreshka-internals-unicode-ucd.ads  20130814102245 bc70478b
+D matreshka-internals-utf16.ads  20130814102244 2d006d1c
+D system.ads		20130417131036 90249111
+D s-exctab.ads		20130417131029 66e51330
+D s-finmas.ads		20130417131029 b95bb341
+D s-finroo.ads		20130417131029 4ff27390
+D s-parame.ads		20130417131032 b6e20cc0
+D s-pooglo.ads		20130417131032 542f33d0
+D s-secsta.ads		20130417131032 eea35a36
+D s-soflin.ads		20130417131032 24c8153c
+D s-stache.ads		20130417131032 596fc1b4
+D s-stalib.ads		20130417131032 f78bcf95
+D s-stoele.ads		20130417131032 facd7d98
+D s-stoele.adb		20130417131032 afc5dc80
+D s-stopoo.ads		20130417131032 7b8fbeee
+D s-stposu.ads		20130417131032 ffeba1c5
+D s-stratt.ads		20130417131032 aedef97e
+D s-traent.ads		20130417131033 5221ee41
+D s-unstyp.ads		20130417131034 6ae15c76
+D unchconv.ads		20130417131036 ca2f9e18
+D xsd_to_ada.ads	20131008065647 db16ca7a
+D xsd_to_ada-mappings.ads  20131008065647 a32671ff
+X 11 league.ads
+45K9*League 51e11 44|45r6 50r20 51r20
+X 13 league-string_vectors.ads
+55K16*String_Vectors 166e26 44|45w13 50r27 51r27
+60R9*Universal_String_Vector 149e14 44|50r42 51r42
+X 43 xsd_to_ada.ads
+45K9*XSD_To_Ada 49e15 44|47r9 54r5
+X 44 xsd_to_ada-mappings.ads
+47K20*Mappings 43|45k9 44|54l16 54e24
+49H9*Mapping 52e14
+50r7*Map_Vector{13|60R9}
+51r7*Ada_Vector{13|60R9}
+

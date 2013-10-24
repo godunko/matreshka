@@ -1,0 +1,207 @@
+V "GNAT Lib v2013"
+A -g
+A -g
+A -gnatA
+P SS ZX
+
+RN
+RV NO_DISPATCHING_CALLS
+RV NO_ENUMERATION_MAPS
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTION_PROPAGATION
+RV NO_EXCEPTIONS
+RV NO_IO
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_LOCAL_ALLOCATORS
+RV NO_NESTED_FINALIZATION
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_ELABORATION_CODE
+RV SPARK
+
+U xsd_to_ada.mappings_xml%b  xsd_to_ada-mappings_xml.adb  a9a4b2c3 NE OO PK
+W ada%s			ada.ads			ada.ali
+W ada.containers%s	a-contai.ads		a-contai.ali
+W ada.containers.vectors%s
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W interfaces%s		interfac.ads		interfac.ali
+W league%s		league.ads		league.ali
+W league.string_vectors%s  league-string_vectors.adb  league-string_vectors.ali
+W league.strings%s	league-strings.adb	league-strings.ali
+W system%s		system.ads		system.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.storage_pools.subpools%s  s-stposu.adb	s-stposu.ali
+W system.val_enum%s	s-valenu.adb		s-valenu.ali
+W system.wch_wts%s	s-wchwts.adb		s-wchwts.ali
+W xml%s			xml.ads			xml.ali
+W xml.sax%s		xml-sax.ads		xml-sax.ali
+W xml.sax.attributes%s	xml-sax-attributes.adb	xml-sax-attributes.ali
+W xml.sax.content_handlers%s  xml-sax-content_handlers.ads  xml-sax-content_handlers.ali
+W xsd_to_ada%s		xsd_to_ada.ads		xsd_to_ada.ali
+
+U xsd_to_ada.mappings_xml%s  xsd_to_ada-mappings_xml.ads  2267e041 EE OO PF PK
+W ada%s			ada.ads			ada.ali
+W ada.containers%s	a-contai.ads		a-contai.ali
+W ada.containers.vectors%s
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.streams%s		a-stream.ads		a-stream.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W league%s		league.ads		league.ali
+W league.string_vectors%s  league-string_vectors.adb  league-string_vectors.ali
+W league.strings%s	league-strings.adb	league-strings.ali
+W system%s		system.ads		system.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.storage_elements%s  s-stoele.adb	s-stoele.ali
+W system.storage_pools.subpools%s  s-stposu.adb	s-stposu.ali
+W xml%s			xml.ads			xml.ali
+W xml.sax%s		xml-sax.ads		xml-sax.ali
+W xml.sax.attributes%s	xml-sax-attributes.adb	xml-sax-attributes.ali
+W xml.sax.content_handlers%s  xml-sax-content_handlers.ads  xml-sax-content_handlers.ali
+W xsd_to_ada%s		xsd_to_ada.ads		xsd_to_ada.ali
+W xsd_to_ada.mappings%s	xsd_to_ada-mappings.ads	xsd_to_ada-mappings.ali
+
+D ada.ads		20130417131023 3ffc8e18
+D a-contai.ads		20130417131019 61e5e089
+D a-cgarso.ads		20130417131018 9129bfa8
+D a-convec.ads		20130417131019 0aaf3975
+D a-convec.adb		20130417131019 ba151ea6
+D a-except.ads		20130417131019 10fcae55
+D a-finali.ads		20130417131020 52ecdc1b
+D a-ioexce.ads		20130417131020 8b9de6cd
+D a-iteint.ads		20130417131020 7c7305e9
+D a-stream.ads		20130417131021 2ca4ee37
+D a-string.ads		20130417131021 90ac6797
+D a-stuten.ads		20130417131021 808c40ad
+D a-tags.ads		20130417131022 6c0509d0
+D a-textio.ads		20130417131022 386df5d4
+D a-unccon.ads		20130417131022 f9eb8f06
+D a-uncdea.ads		20130417131022 f15a5ed1
+D interfac.ads		20130417131027 cb4a8015
+D i-cstrea.ads		20130417131026 8128536b
+D league.ads		20130814102245 47c4a3ed
+D league-characters.ads	20130814102245 952c182e
+D league-iris.ads	20130814102245 b72e32fa
+D league-stream_element_vectors.ads  20130814102245 820e37c5
+D league-string_vectors.ads  20130814102244 b799b312
+D league-strings.ads	20130814102244 ca7577a5
+D matreshka.ads		20130814102244 1941fa1c
+D matreshka-atomics.ads	20130814102244 1226107f
+D matreshka-atomics-counters.ads  20130814102244 a93d3285
+D matreshka-internals.ads  20130814102244 04683cf2
+D matreshka-internals-sax_locators.ads  20130814102243 8b6d896b
+D matreshka-internals-stream_element_vectors.ads  20130814102245 2dd97d55
+D matreshka-internals-string_vectors.ads  20130814102244 9b020ec5
+D matreshka-internals-string_vectors.adb  20130814102244 b6295cbf
+D matreshka-internals-strings.ads  20130814102245 ee9e6e40
+D matreshka-internals-unicode.ads  20130814102245 845068e4
+D matreshka-internals-unicode-ucd.ads  20130814102245 bc70478b
+D matreshka-internals-utf16.ads  20130814102244 2d006d1c
+D system.ads		20130417131036 90249111
+D s-crtl.ads		20130417131029 dfcfca61
+D s-exctab.ads		20130417131029 66e51330
+D s-ficobl.ads		20130417131029 55a71d43
+D s-finmas.ads		20130417131029 b95bb341
+D s-finroo.ads		20130417131029 4ff27390
+D s-parame.ads		20130417131032 b6e20cc0
+D s-pooglo.ads		20130417131032 542f33d0
+D s-secsta.ads		20130417131032 eea35a36
+D s-soflin.ads		20130417131032 24c8153c
+D s-stache.ads		20130417131032 596fc1b4
+D s-stalib.ads		20130417131032 f78bcf95
+D s-stoele.ads		20130417131032 facd7d98
+D s-stoele.adb		20130417131032 afc5dc80
+D s-stopoo.ads		20130417131032 7b8fbeee
+D s-stposu.ads		20130417131032 ffeba1c5
+D s-stratt.ads		20130417131032 aedef97e
+D s-traent.ads		20130417131033 5221ee41
+D s-unstyp.ads		20130417131034 6ae15c76
+D s-valenu.ads		20130417131034 bb1a4295
+D s-wchcon.ads		20130417131034 bfeb2e3d
+D s-wchwts.ads		20130417131034 b3692fb2
+D unchconv.ads		20130417131036 ca2f9e18
+D xml.ads		20130814102243 ad9a85ca
+D xml-sax.ads		20130814102243 5e9ceb82
+D xml-sax-attributes.ads  20130814102243 c7b16e2f
+D xml-sax-content_handlers.ads  20130814102243 4bcf7815
+D xml-sax-locators.ads	20130814102243 2cf55fd8
+D xsd_to_ada.ads	20131008065647 db16ca7a
+D xsd_to_ada-mappings.ads  20131008065647 a32671ff
+D xsd_to_ada-mappings_xml.ads  20131008065647 a16ab03c
+D xsd_to_ada-mappings_xml.adb  20131008065647 cb9e1cd3
+X 1 ada.ads
+16K9*Ada 19e8 67|45r6 68|45r6 46r6
+X 2 a-contai.ads
+16K13*Containers 24e19 67|45r10 68|45r10
+X 4 a-convec.ads
+45k24*Vectors 474e27 67|45w21 68|45w21
+X 9 a-iteint.ads
+24h9 Forward_Iterator
+32h9 Reversible_Iterator<24R9[4|70]>
+X 14 a-textio.ads
+49K13*Text_IO 471e16 68|46w10
+X 19 league.ads
+45K9*League 51e11 67|47r6 48r6 72r29 77r23 78r23 79r23 85r13 89r24 90r24
+. 91r24 68|48r6 49r6 60r24 61r24 62r24 86r14 90r18 95r24 96r24 97r24
+X 23 league-string_vectors.ads
+55K16*String_Vectors 166e26 67|48w13 68|49w13
+77U14*Append 68|77s29 79s29
+X 24 league-strings.ads
+76K16*Strings 524e19 67|47w13 72r36 77r30 78r30 79r30 85r20 89r31 90r31 91r31
+. 68|48w13 60r31 61r31 62r31 86r21 90r25 95r31 96r31 97r31
+83R9*Universal_String 432e14 67|72r44 77r38 78r38 79r38 85r28 89r39 90r39
+. 91r39 68|60r39 61r39 62r39 86r29 90r33 95r39 96r39 97r39
+103V13*To_Wide_Wide_String{wide_wide_string} 68|69s54
+X 60 xml.ads
+45K9*XML 49e8 67|50r6 51r6 58r10 69r10 80r23 68|51r6 52r6 63r24
+X 61 xml-sax.ads
+50K13*SAX 54e12 67|50r10 51r10 58r14 69r14 80r27 68|51r10 52r10 63r28
+X 62 xml-sax-attributes.ads
+54K17*Attributes 351e23 67|51w14 80r31 68|52w14 63r32
+58R9*SAX_Attributes 339e14 67|80r42 68|63r43
+164V13*Value{24|83R9} 68|77s48 79s48
+X 63 xml-sax-content_handlers.ads
+49K17*Content_Handlers 272e29 67|50w14 58r18 69r18 68|51w14
+53h9*SAX_Content_Handler 67|58r35 69r35
+X 65 xsd_to_ada.ads
+45K9*XSD_To_Ada 49e15 67|53r6 55r9 57r28 68r28 94r5 68|54r14 104r5
+X 66 xsd_to_ada-mappings.ads
+47K20*Mappings 54e24 67|53w17 57r39 68r39
+49H9*Mapping 52e14 67|57r48 68r48
+50r7*Map_Vector{23|60R9} 68|77m18
+51r7*Ada_Vector{23|60R9} 68|79m18
+X 67 xsd_to_ada-mappings_xml.ads
+55K20*Mappings_XML 65|45k9 67|94l16 94e28 68|54b25 104l16 104t28
+57R9*Mapping_XML<66|49R9><63|53R9> 68c9 73e17 75P25 76r30 83P24 84r14 87P25
+. 88r31 68|59r31 85r14 94r31
+72r10 Last_Text{24|83R9}
+75U25 Start_Element<63|217p29> 76=6 77>6 78>6 79>6 80>6 81=6 68|58b25 82l8
+. 82t21
+76r6 Self{57R9} 68|59b7 77m13 77r13 79m13 79r13
+77r6 Namespace_URI{24|83R9} 68|60b7
+78r6 Local_Name{24|83R9} 68|61b7 69r43
+79r6 Qualified_Name{24|83R9} 68|62b7
+80r6 Attributes{62|58R9} 68|63b7 77r37 79r37
+81b6 Success{boolean} 68|64b7
+83V24 Error_String{24|83R9}<63|122p28> 84>7 68|84b24 91l8 91t20
+84r7 Self{57R9} 68|85b7 88r28
+87U25 End_Element<63|89p29> 88=7 89>7 90>7 91>7 92=7 68|93b25 102l8 102t19
+88r7 Self{57R9} 68|94b7
+89r7 Namespace_URI{24|83R9} 68|95b7
+90r7 Local_Name{24|83R9} 68|96b7
+91r7 Qualified_Name{24|83R9} 68|97b7
+92b7 Success{boolean} 68|98b7
+X 68 xsd_to_ada-mappings_xml.adb
+56E9 XML_Tags 56e31 66r13 69r17
+56n22 Map{56E9} 76r15
+56n27 Ada{56E9} 78r15
+66e7 Tag{56E9} 69m10 75r12
+90r14 X{24|83R9}
+
