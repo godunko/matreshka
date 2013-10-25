@@ -860,10 +860,7 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Rate_Name);
       Writer.Characters
         (League.Strings.From_UTF_8_String
-             (To_String 
-               (Data
-                 .Modify_Conditional_Order_Base_Condition
-                   .Modify_Conditional_Order_Base_Condition.Rate)));
+             (To_String (Data.Modify_Conditional_Order_Base_Condition.Rate)));
   --  decimal
       Writer.End_Element (IATS_URI, Rate_Name);
 
@@ -872,9 +869,7 @@ package body Encoder is
       Writer.Characters
         (League.Strings.From_UTF_8_String
              (To_String 
-               (Data
-                 .Modify_Conditional_Order_Base_Condition
-                   .Modify_Conditional_Order_Base_Condition.Distance)));
+               (Data.Modify_Conditional_Order_Base_Condition.Distance)));
   --  decimal
       Writer.End_Element (IATS_URI, Distance_Name);
 

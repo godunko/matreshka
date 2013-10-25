@@ -142,6 +142,7 @@ package XSD_To_Ada.Utils is
       Anonym_Name  : League.Strings.Universal_String;
       Full_Anonym_Name : League.Strings.Universal_String;
       Base_Choice_Name : League.Strings.Universal_String;
+      Base_Name    : League.Strings.Universal_String;
       Max_Occurs   : in out Boolean;
       Top_Max_Occurs : Boolean;
       Min_Occurs   : in out Boolean;

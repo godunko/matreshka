@@ -1311,7 +1311,7 @@ package ada_main is
    pragma Export (C, u00637, "xml__schema__models__internalsS");
    u00638 : constant Version_32 := 16#db16ca7a#;
    pragma Export (C, u00638, "xsd_to_adaS");
-   u00639 : constant Version_32 := 16#669936c4#;
+   u00639 : constant Version_32 := 16#08de1fe5#;
    pragma Export (C, u00639, "xsd_to_ada__generatorB");
    u00640 : constant Version_32 := 16#fce00132#;
    pragma Export (C, u00640, "xsd_to_ada__generatorS");
@@ -1321,9 +1321,9 @@ package ada_main is
    pragma Export (C, u00642, "xsd_to_ada__mappings_xmlS");
    u00643 : constant Version_32 := 16#cfa90897#;
    pragma Export (C, u00643, "xsd_to_ada__mappingsS");
-   u00644 : constant Version_32 := 16#d1240d8f#;
+   u00644 : constant Version_32 := 16#402f7795#;
    pragma Export (C, u00644, "xsd_to_ada__utilsB");
-   u00645 : constant Version_32 := 16#7d4c8493#;
+   u00645 : constant Version_32 := 16#130badb2#;
    pragma Export (C, u00645, "xsd_to_ada__utilsS");
    u00646 : constant Version_32 := 16#43026d07#;
    pragma Export (C, u00646, "ada__characters__wide_wide_latin_1S");

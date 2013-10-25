@@ -1009,6 +1009,7 @@ package body XSD_To_Ada.Utils is
       Anonym_Name  : League.Strings.Universal_String;
       Full_Anonym_Name : League.Strings.Universal_String;
       Base_Choice_Name    : League.Strings.Universal_String;
+      Base_Name    : League.Strings.Universal_String;
       Table        : in out Types_Table_Type_Array;
       Max_Occurs   : in out Boolean;
       Top_Max_Occurs : Boolean;
@@ -1051,6 +1052,7 @@ package body XSD_To_Ada.Utils is
                Anonym_Name => Anonym_Name,
                Full_Anonym_Name => Full_Anonym_Name,
                Base_Choice_Name => Base_Choice_Name,
+               Base_Name => Base_Name,
                Max_Occurs => Max_Occurs,
                Top_Max_Occurs => Top_Max_Occurs,
                Min_Occurs => Min_Occurs,
@@ -1075,6 +1077,7 @@ package body XSD_To_Ada.Utils is
       Anonym_Name  : League.Strings.Universal_String;
       Full_Anonym_Name : League.Strings.Universal_String;
       Base_Choice_Name : League.Strings.Universal_String;
+      Base_Name    : League.Strings.Universal_String;
       Max_Occurs   : in out Boolean;
       Top_Max_Occurs : Boolean;
       Min_Occurs   : in out Boolean;
@@ -1307,33 +1310,65 @@ package body XSD_To_Ada.Utils is
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
-         if Top_Max_Occurs then
-            Writers.P
-              (Writer,
-               "      Writer.Characters" & LF
-               & "        (League.Strings.From_UTF_8_String" & LF
-               & Gen_Type_Line
-                 ("(To_String (Data."
-                  & Full_Anonym_Name.To_Wide_Wide_String
-                  & Base_Choice_Name.To_Wide_Wide_String
-                  & "Element (Index)."
-                  & Add_Separator (XS_Term.Get_Name)
-                  & ")));", 13)
-               & LF & "  --  "
-               & Type_D.Get_Base_Type.Get_Name);
+
+         if Choice then
+            if Top_Max_Occurs then
+               Writers.P
+                 (Writer,
+                  "      Writer.Characters" & LF
+                  & "        (League.Strings.From_UTF_8_String" & LF
+                  & Gen_Type_Line
+                    ("(To_String (Data."
+                     & Name.To_Wide_Wide_String & "."
+                     & Base_Name.To_Wide_Wide_String
+                     & "Element (Index)."
+                     & Add_Separator (XS_Term.Get_Name)
+                     & ")));", 13)
+                  & LF & "  --  "
+                  & Type_D.Get_Base_Type.Get_Name);
+            else
+               Writers.P
+                 (Writer,
+                  "      Writer.Characters" & LF
+                  & "        (League.Strings.From_UTF_8_String" & LF
+                  & Gen_Type_Line
+                    ("(To_String (Data."
+                     & Name.To_Wide_Wide_String & "."
+                     & Base_Name.To_Wide_Wide_String
+                     & Add_Separator (XS_Term.Get_Name)
+                     & ")));", 13)
+                  & LF & "  --  "
+                  & Type_D.Get_Base_Type.Get_Name);
+            end if;
          else
-            Writers.P
-              (Writer,
-               "      Writer.Characters" & LF
-               & "        (League.Strings.From_UTF_8_String" & LF
-               & Gen_Type_Line
-                 ("(To_String (Data."
-                  & Full_Anonym_Name.To_Wide_Wide_String
-                  & Base_Choice_Name.To_Wide_Wide_String
-                  & Add_Separator (XS_Term.Get_Name)
-                  & ")));", 13)
-               & LF & "  --  "
-               & Type_D.Get_Base_Type.Get_Name);
+            if Top_Max_Occurs then
+               Writers.P
+                 (Writer,
+                  "      Writer.Characters" & LF
+                  & "        (League.Strings.From_UTF_8_String" & LF
+                  & Gen_Type_Line
+                    ("(To_String (Data."
+                     & Full_Anonym_Name.To_Wide_Wide_String
+                     & Base_Choice_Name.To_Wide_Wide_String
+                     & "Element (Index)."
+                     & Add_Separator (XS_Term.Get_Name)
+                     & ")));", 13)
+                  & LF & "  --  "
+                  & Type_D.Get_Base_Type.Get_Name);
+            else
+               Writers.P
+                 (Writer,
+                  "      Writer.Characters" & LF
+                  & "        (League.Strings.From_UTF_8_String" & LF
+                  & Gen_Type_Line
+                    ("(To_String (Data."
+                     & Full_Anonym_Name.To_Wide_Wide_String
+                     & Base_Choice_Name.To_Wide_Wide_String
+                     & Add_Separator (XS_Term.Get_Name)
+                     & ")));", 13)
+                  & LF & "  --  "
+                  & Type_D.Get_Base_Type.Get_Name);
+            end if;
          end if;
 
          Writers.P
@@ -2121,6 +2156,7 @@ package body XSD_To_Ada.Utils is
                   Anonym_Name => Anonym_Name,
                   Full_Anonym_Name => Full_Anonym_Name,
                   Base_Choice_Name => Base_Choice_Name,
+                  Base_Name => Base_Name,
                   Table => Table,
                   Max_Occurs => Max_Occurs,
                   Top_Max_Occurs => Top_Max_Occur,
