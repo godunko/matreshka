@@ -1359,6 +1359,7 @@ package body XSD_To_Ada.Utils is
 
          if Anonym_Name.To_UTF_8_String /= "" then
             Writers.N (Writer, Write_Start_Element (Anonym_Name));
+--            Writers.N (Writer, "--dvdvdv");
          end if;
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
@@ -1978,10 +1979,14 @@ package body XSD_To_Ada.Utils is
               XML.Schema.Objects.Terms.Model_Groups.Compositor_Choice
             then
                Choice := True;
-               Base_Choice_Name := League.Strings.To_Universal_String
-                 (Add_Separator (Name) & ".");
 
-               if  Top_Max_Occur then
+--               if Anonym_Name.To_UTF_8_String /= "" then
+                  Base_Choice_Name :=
+                    League.Strings.To_Universal_String
+                      (Add_Separator (Name) & ".");
+--               end if;
+
+               if Top_Max_Occur then
                   Writer.P
                     (Gen_Type_Line
                        ("case Data."
@@ -1995,7 +2000,6 @@ package body XSD_To_Ada.Utils is
                         & Add_Separator (Name) & "."
                         & Base_Name.To_Wide_Wide_String
                         & "Kind is", 5));
-
                end if;
 
                Ada.Text_IO.Put_Line ("!!!!!!!!!!!   Choice := True;");
@@ -2059,13 +2063,17 @@ package body XSD_To_Ada.Utils is
                      & ".Length) loop");
                end if;
 
+
+               Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
+               Writers.P (Writer, "--  SSSSSSSSSSSS");
+
                   XSD_To_Ada.Utils.Print_Type_Definition
                     (Type_D => Type_D,
                      Indent => "   " & Indent,
                      Writer => Writer,
                      Name => League.Strings.To_Universal_String
                        (Add_Separator ((Name) & "_" & XS_Term.Get_Name)),
-                     Anonym_Name => XS_Term.Get_Name,
+                     Anonym_Name => League.Strings.To_Universal_String (""), --  must be deleted
                      Full_Anonym_Name => League.Strings.To_Universal_String
                        (Add_Separator ((Name) & "_" & XS_Term.Get_Name) & "."),
                      Base_Name => Base_Name,
@@ -2075,6 +2083,13 @@ package body XSD_To_Ada.Utils is
                      Top_Max_Occur => Max_Occurs);
 
                Anonyn_Vector (Now_Term_Level).Term_State := True;
+
+               Writers.P
+                 (Writer,
+                  "      Writer.End_Element (IATS_URI, "
+                  & Add_Separator (XS_Term.Get_Name)
+                  & "_Name);  --  EEEEEEEEE"
+                  & LF);
 
                if Max_Occurs then
                   Writer.P ("     end loop;" & LF);
@@ -2151,6 +2166,7 @@ package body XSD_To_Ada.Utils is
             if CTD.Get_Content_Type in Element_Only | Mixed then
                Ada.Text_IO.Put_Line
                  (Indent & "Complex_Type :" & Type_D.Get_Name.To_UTF_8_String);
+
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 

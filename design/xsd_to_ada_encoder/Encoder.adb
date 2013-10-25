@@ -17,6 +17,9 @@ package body Encoder is
    Session_Name : constant League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("Session");
 
+   delphi_Name : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("delphi");
+
    Kind_Name : constant League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("Kind");
 
@@ -595,6 +598,8 @@ package body Encoder is
 
      for Index in 1 .. Natural
        (Data.Bind_Orders_delphi.Length) loop
+      Writer.Start_Element (IATS_URI, delphi_Name);
+--  SSSSSSSSSSSS
      case Data.Bind_Orders_delphi.Element (Index).Kind is
        when Payloads.Create_Stop_Open_Order_Case =>
       Encode (Data.Bind_Orders_delphi.Element (Index).Create_Stop_Open_Order,
@@ -618,6 +623,8 @@ package body Encoder is
               Writer,
               League.Strings.To_Universal_String ("ConditionalOrder"));
      end case;
+
+      Writer.End_Element (IATS_URI, delphi_Name);  --  EEEEEEEEE
 
      end loop;
 
@@ -846,9 +853,10 @@ package body Encoder is
       Encode (Data.Order,
               Writer,
               League.Strings.To_Universal_String ("Order"));
+      Writer.Start_Element (IATS_URI, Condition_Name);
+--  SSSSSSSSSSSS
      case Data.Modify_Conditional_Order_Base_Condition.Kind is
        when Payloads.Rate_Case =>
-      Writer.Start_Element (IATS_URI, Condition_Name);
       Writer.Start_Element (IATS_URI, Rate_Name);
       Writer.Characters
         (League.Strings.From_UTF_8_String
@@ -859,9 +867,7 @@ package body Encoder is
   --  decimal
       Writer.End_Element (IATS_URI, Rate_Name);
 
-      Writer.End_Element (IATS_URI, Condition_Name);
        when Payloads.Distance_Case =>
-      Writer.Start_Element (IATS_URI, Condition_Name);
       Writer.Start_Element (IATS_URI, Distance_Name);
       Writer.Characters
         (League.Strings.From_UTF_8_String
@@ -872,12 +878,14 @@ package body Encoder is
   --  decimal
       Writer.End_Element (IATS_URI, Distance_Name);
 
-      Writer.End_Element (IATS_URI, Condition_Name);
      end case;
+
+      Writer.End_Element (IATS_URI, Condition_Name);  --  EEEEEEEEE
 
      for Index in 1 .. Natural
        (Data.Modify_Conditional_Order_Base_Order_Item.Length) loop
       Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
       Writer.Start_Element (IATS_URI, Account_Name);
       Writer.Characters
         (League.Strings.To_Universal_String
@@ -890,15 +898,12 @@ package body Encoder is
   --  positive_Integer
       Writer.End_Element (IATS_URI, Account_Name);
 
-      Writer.End_Element (IATS_URI, Order_Item_Name);
-
      if Data
        .Modify_Conditional_Order_Base_Order_Item
          .Element (Index).Amount /= Payloads.Null_Decimal
       and then CLI.Ws_Utils.Is_Digits
         (Data.Modify_Conditional_Order_Base_Order_Item.Element (Index).Amount)
     then
-      Writer.Start_Element (IATS_URI, Order_Item_Name);
       Writer.Start_Element (IATS_URI, Amount_Name);
       Writer.Characters
         (League.Strings.From_UTF_8_String
@@ -909,7 +914,6 @@ package body Encoder is
   --  decimal
       Writer.End_Element (IATS_URI, Amount_Name);
 
-      Writer.End_Element (IATS_URI, Order_Item_Name);
      end if;
      if Ada
        .Strings
@@ -918,7 +922,6 @@ package body Encoder is
              (Data
                .Modify_Conditional_Order_Base_Order_Item
                  .Element (Index).Application_Data.Application_Data) /= 0 then
-      Writer.Start_Element (IATS_URI, Order_Item_Name);
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
         (League.Strings.From_UTF_8_String
@@ -929,9 +932,9 @@ package body Encoder is
   --  YYYYYYYYYYYstring
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
-      Writer.End_Element (IATS_URI, Order_Item_Name);
-
      end if;
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
+
      end loop;
 
      if Ada
@@ -1076,6 +1079,7 @@ package body Encoder is
      for Index in 1 .. Natural
        (Data.Modify_Order_Base_Order_Item.Length) loop
       Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
       Writer.Start_Element (IATS_URI, Account_Name);
       Writer.Characters
         (League.Strings.To_Universal_String
@@ -1086,9 +1090,6 @@ package body Encoder is
   --  positive_Integer
       Writer.End_Element (IATS_URI, Account_Name);
 
-      Writer.End_Element (IATS_URI, Order_Item_Name);
-
-      Writer.Start_Element (IATS_URI, Order_Item_Name);
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
         (League.Strings.From_UTF_8_String
@@ -1099,7 +1100,7 @@ package body Encoder is
   --  XXXXXXXXXstring
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
-      Writer.End_Element (IATS_URI, Order_Item_Name);
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
 
      end loop;
 

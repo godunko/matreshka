@@ -1321,7 +1321,7 @@ package ada_main is
    pragma Export (C, u00642, "xsd_to_ada__mappings_xmlS");
    u00643 : constant Version_32 := 16#cfa90897#;
    pragma Export (C, u00643, "xsd_to_ada__mappingsS");
-   u00644 : constant Version_32 := 16#23a03db3#;
+   u00644 : constant Version_32 := 16#d1240d8f#;
    pragma Export (C, u00644, "xsd_to_ada__utilsB");
    u00645 : constant Version_32 := 16#7d4c8493#;
    pragma Export (C, u00645, "xsd_to_ada__utilsS");
