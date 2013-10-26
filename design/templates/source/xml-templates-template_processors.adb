@@ -78,9 +78,22 @@ package body XML.Templates.Template_Processors is
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean) is
    begin
+      Self.Namespaces.Pop_Context;
       Self.Content_Handler.End_Element
        (Namespace_URI, Local_Name, Qualified_Name, Success);
    end End_Element;
+
+   ------------------------
+   -- End_Prefix_Mapping --
+   ------------------------
+
+   overriding procedure End_Prefix_Mapping
+    (Self    : in out Template_Processor;
+     Prefix  : League.Strings.Universal_String;
+     Success : in out Boolean) is
+   begin
+      Self.Content_Handler.End_Prefix_Mapping (Prefix, Success);
+   end End_Prefix_Mapping;
 
    ------------------
    -- Error_String --
@@ -140,8 +153,24 @@ package body XML.Templates.Template_Processors is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean) is
    begin
+      Self.Namespaces.Push_Context;
       Self.Content_Handler.Start_Element
        (Namespace_URI, Local_Name, Qualified_Name, Attributes, Success);
    end Start_Element;
+
+   --------------------------
+   -- Start_Prefix_Mapping --
+   --------------------------
+
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out Template_Processor;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean) is
+   begin
+      Self.Namespaces.Declare_Prefix (Prefix, Namespace_URI);
+      Self.Content_Handler.Start_Prefix_Mapping
+       (Prefix, Namespace_URI, Success);
+   end Start_Prefix_Mapping;
 
 end XML.Templates.Template_Processors;

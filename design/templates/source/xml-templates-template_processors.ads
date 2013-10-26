@@ -46,10 +46,9 @@ private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 with XML.SAX.Lexical_Handlers;
 with XML.SAX.Readers;
+private with XML.Utilities.Namespace_Supports;
 
 package XML.Templates.Template_Processors is
-
-   pragma Preelaborate;
 
    type Template_Processor is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
@@ -70,6 +69,7 @@ private
        and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with record
       Content_Handler : XML.SAX.Readers.SAX_Content_Handler_Access;
       Lexical_Handler : XML.SAX.Readers.SAX_Lexical_Handler_Access;
+      Namespaces      : XML.Utilities.Namespace_Supports.XML_Namespace_Support;
    end record;
 
    --  Override SAX event handling subprogram.
@@ -102,20 +102,10 @@ private
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean);
 
---   not overriding procedure End_Prefix_Mapping
---    (Self    : in out SAX_Content_Handler;
---     Prefix  : League.Strings.Universal_String;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram to signal the end of a prefix mapping
---   --  for the prefix Prefix.
---   --
---   --  These events always occur immediately after the corresponding
---   --  End_Element event, but the order of End_Prefix_Mapping events is not
---   --  otherwise guaranteed.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
+   overriding procedure End_Prefix_Mapping
+    (Self    : in out Template_Processor;
+     Prefix  : League.Strings.Universal_String;
+     Success : in out Boolean);
 
    overriding function Error_String
     (Self : Template_Processor) return League.Strings.Universal_String;
@@ -226,28 +216,11 @@ private
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean);
 
---   not overriding procedure Start_Prefix_Mapping
---    (Self          : in out SAX_Content_Handler;
---     Prefix        : League.Strings.Universal_String;
---     Namespace_URI : League.Strings.Universal_String;
---     Success       : in out Boolean) is null;
---   --  The reader calls this subprogram to signal the begin of a prefix-URI
---   --  namespace mapping scope. This information is not necessary for normal
---   --  namespace processing since the reader automatically replaces prefixes
---   --  for element and attribute names.
---   --
---   --  Note that Start_Prefix_Mapping and End_Prefix_Mapping calls are not
---   --  guaranteed to be properly nested relative to each other: all
---   --  Start_Prefix_Mapping events occur before the corresponding Start_Element
---   --  event, and all End_Prefix_Mapping events occur after the corresponding
---   --  End_Element event, but their order is not otherwise guaranteed.
---   --
---   --  The argument Prefix is the namespace prefix being declared and the
---   --  argument Namespace_URI is the namespace URI the prefix is mapped to.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out Template_Processor;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean);
 
 --   not overriding procedure Comment
 --    (Self    : in out SAX_Lexical_Handler;
