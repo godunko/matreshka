@@ -1,0 +1,13 @@
+with "../../gnat/matreshka_league.gpr";
+
+project Templates is
+
+   for Main use ("main.adb");
+   for Object_Dir use ".objs";
+   for Source_Dirs use (".", "source");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g", "-gnat12");
+   end Compiler;
+
+end Templates;
