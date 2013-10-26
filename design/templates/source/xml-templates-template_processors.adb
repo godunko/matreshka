@@ -41,8 +41,73 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Characters;
 
 package body XML.Templates.Template_Processors is
+
+   function Substitute
+    (Self : in out Template_Processor'Class;
+     Text : League.Strings.Universal_String)
+       return League.Strings.Universal_String;
+   --  Process text and substitute parameters.
+
+   ----------------
+   -- Substitute --
+   ----------------
+
+   function Substitute
+    (Self : in out Template_Processor'Class;
+     Text : League.Strings.Universal_String)
+       return League.Strings.Universal_String
+   is
+      use type League.Characters.Universal_Character;
+
+      Current : Positive := 1;
+      First   : Positive;
+      Last    : Natural;
+      Result  : League.Strings.Universal_String;
+      Object  : League.Holders.Holder;
+
+   begin
+      while Current <= Text.Length loop
+         if Text (Current) = '$'
+           and then Current < Text.Length
+           and then Text (Current + 1) = '{'
+         then
+            First := Current + 2;
+            Current := Current + 2;
+
+            while Current <= Text.Length loop
+               exit when Text (Current) = '}';
+               Current := Current + 1;
+            end loop;
+
+            if Current <= Text.Length then
+               Last := Current - 1;
+               Object := Self.Parameters (Text.Slice (First, Last));
+
+               if League.Holders.Is_Universal_String (Object) then
+                  Result.Append (League.Holders.Element (Object));
+
+               else
+                  raise Program_Error;
+               end if;
+
+            else
+               --  Invalid syntax.
+
+               raise Program_Error;
+            end if;
+
+         else
+            Result.Append (Text (Current));
+         end if;
+
+         Current := Current + 1;
+      end loop;
+
+      return Result;
+   end Substitute;
 
    ----------------
    -- Characters --
@@ -53,7 +118,8 @@ package body XML.Templates.Template_Processors is
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      Self.Content_Handler.Characters (Text, Success);
+      Self.Content_Handler.Characters
+       (Self.Substitute (Text), Success);
    end Characters;
 
    -------------
@@ -82,6 +148,18 @@ package body XML.Templates.Template_Processors is
       Self.Content_Handler.End_Element
        (Namespace_URI, Local_Name, Qualified_Name, Success);
    end End_Element;
+
+   -------------------
+   -- Set_Parameter --
+   -------------------
+
+   procedure Set_Parameter
+    (Self  : in out Template_Processor'Class;
+     Name  : League.Strings.Universal_String;
+     Value : League.Holders.Holder) is
+   begin
+      Self.Parameters.Include (Name, Value);
+   end Set_Parameter;
 
    ------------------------
    -- End_Prefix_Mapping --
@@ -151,11 +229,28 @@ package body XML.Templates.Template_Processors is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is
+     Success        : in out Boolean)
+   is
+      Result : XML.SAX.Attributes.SAX_Attributes;
+
    begin
       Self.Namespaces.Push_Context;
+
+      for J in 1 .. Attributes.Length loop
+         if Attributes.Namespace_URI (J).Is_Empty then
+            Result.Set_Value
+             (Attributes.Qualified_Name (J), Self.Substitute (Attributes (J)));
+
+         else
+            Result.Set_Value
+             (Attributes.Namespace_URI (J),
+              Attributes.Local_Name (J),
+              Self.Substitute (Attributes (J)));
+         end if;
+      end loop;
+
       Self.Content_Handler.Start_Element
-       (Namespace_URI, Local_Name, Qualified_Name, Attributes, Success);
+       (Namespace_URI, Local_Name, Qualified_Name, Result, Success);
    end Start_Element;
 
    --------------------------

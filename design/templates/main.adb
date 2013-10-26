@@ -1,5 +1,6 @@
 with Ada.Wide_Wide_Text_IO;
 
+with League.Holders;
 with League.Strings;
 with XML.SAX.Error_Handlers;
 with XML.SAX.Input_Sources.Streams.Files;
@@ -71,6 +72,7 @@ procedure Main is
    Writer : aliased XML.SAX.Pretty_Writers.SAX_Pretty_Writer;
    Output : aliased XML.SAX.Output_Destinations.Strings.SAX_String_Output_Destination;
    ErrorH : aliased Error_Handler;
+   Object : League.Holders.Holder;
 
 begin
    Input.Open_By_File_Name
@@ -87,6 +89,15 @@ begin
 
    Filter.Set_Content_Handler (Writer'Unchecked_Access);
    Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
+
+   Filter.Set_Parameter
+    (League.Strings.To_Universal_String ("class"),
+     League.Holders.To_Holder (League.Strings.To_Universal_String ("bold")));
+   Filter.Set_Parameter
+    (League.Strings.To_Universal_String ("value"),
+     League.Holders.To_Holder
+      (League.Strings.To_Universal_String
+        ("Hello, world! This is some special characters <> test.")));
 
    --  Configure XML writer.
 

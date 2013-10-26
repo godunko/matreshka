@@ -41,7 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with League.Strings;
+private with Ada.Containers.Hashed_Maps;
+
+with League.Holders;
+with League.Strings;
+private with League.Strings.Hash;
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 with XML.SAX.Lexical_Handlers;
@@ -62,7 +66,20 @@ package XML.Templates.Template_Processors is
     (Self    : in out Template_Processor'Class;
      Handler : XML.SAX.Readers.SAX_Lexical_Handler_Access);
 
+   procedure Set_Parameter
+    (Self  : in out Template_Processor'Class;
+     Name  : League.Strings.Universal_String;
+     Value : League.Holders.Holder);
+
 private
+
+   package String_Holder_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           League.Holders.Holder,
+           League.Strings.Hash,
+           League.Strings."=",
+           League.Holders."=");
 
    type Template_Processor is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
@@ -70,6 +87,7 @@ private
       Content_Handler : XML.SAX.Readers.SAX_Content_Handler_Access;
       Lexical_Handler : XML.SAX.Readers.SAX_Lexical_Handler_Access;
       Namespaces      : XML.Utilities.Namespace_Supports.XML_Namespace_Support;
+      Parameters      : String_Holder_Maps.Map;
    end record;
 
    --  Override SAX event handling subprogram.
