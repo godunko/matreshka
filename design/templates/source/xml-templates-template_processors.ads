@@ -92,6 +92,8 @@ private
       Parameters      : String_Holder_Maps.Map;
       Stream          : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
       Accumulate      : Natural := 0;
+      Object_Name     : League.Strings.Universal_String;
+      Container_Name  : League.Strings.Universal_String;
    end record;
 
    --  Override SAX event handling subprogram.

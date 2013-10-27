@@ -42,19 +42,24 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Characters;
+with League.JSON.Arrays;
+with League.JSON.Values;
+with League.Holders.JSON_Arrays;
 
 package body XML.Templates.Template_Processors is
 
-   Template_URI  : constant League.Strings.Universal_String
+   use type League.Strings.Universal_String;
+
+   Template_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://forge.ada-ru.org/matreshka/template");
 
-   For_Name      : constant League.Strings.Universal_String
+   For_Name     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("for");
-   In_Name       : constant League.Strings.Universal_String
+   In_Name      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("in");
-   Variable_Name : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("variable");
+   Object_Name  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("object");
 
    function Substitute
     (Self : in out Template_Processor'Class;
@@ -208,8 +213,101 @@ package body XML.Templates.Template_Processors is
                Local_Name,
                Qualified_Name));
 
-         else
-            Self.Namespaces.Pop_Context;
+         elsif Namespace_URI = Template_URI then
+            if Local_Name = For_Name then
+               Self.Namespaces.Pop_Context;
+
+               declare
+                  Container : League.JSON.Arrays.JSON_Array
+                    := League.Holders.JSON_Arrays.Element
+                        (Self.Parameters (Self.Container_Name));
+                  Object    : League.JSON.Values.JSON_Value;
+                  Holder    : League.Holders.Holder;
+                  Success   : Boolean := True;
+
+               begin
+                  for Index in 1 .. Container.Length loop
+                     Object := Container.Element (Index);
+
+                     case League.JSON.Values.Kind (Object) is
+                        when League.JSON.Values.Empty_Value
+                          | League.JSON.Values.Boolean_Value
+                          | League.JSON.Values.Number_Value
+                          | League.JSON.Values.Array_Value
+                          | League.JSON.Values.Object_Value
+                          | League.JSON.Values.Null_Value
+                        =>
+                           raise Program_Error;
+
+                        when League.JSON.Values.String_Value =>
+                           Holder :=
+                             League.Holders.To_Holder (Object.To_String);
+                     end case;
+
+                     Self.Parameters.Include (Self.Object_Name, Holder);
+
+                     for Event of Self.Stream loop
+                        case Event.Kind is
+                           when XML.Templates.Streams.Empty =>
+                              raise Program_Error;
+
+                           when XML.Templates.Streams.Text =>
+                              Self.Characters (Event.Text, Success);
+
+                           when XML.Templates.Streams.Start_Element =>
+                              Self.Start_Element
+                               (Event.Namespace_URI,
+                                Event.Local_Name,
+                                Event.Qualified_Name,
+                                Event.Attributes,
+                                Success);
+
+                           when XML.Templates.Streams.End_Element =>
+                              Self.End_Element
+                               (Event.Namespace_URI,
+                                Event.Local_Name,
+                                Event.Qualified_Name,
+                                Success);
+
+                           when XML.Templates.Streams.Start_Prefix_Mapping =>
+                              Self.Start_Prefix_Mapping
+                               (Event.Prefix,
+                                Event.Mapped_Namespace_URI,
+                                Success);
+
+                           when XML.Templates.Streams.End_Prefix_Mapping =>
+                              Self.End_Prefix_Mapping (Event.Prefix, Success);
+
+                           when XML.Templates.Streams.Processing_Instruction =>
+                              Self.Processing_Instruction
+                               (Event.Target, Event.Data, Success);
+
+                           when XML.Templates.Streams.Comment =>
+                              Self.Comment (Event.Text, Success);
+
+                           when XML.Templates.Streams.Start_CDATA =>
+                              Self.Start_CDATA (Success);
+
+                           when XML.Templates.Streams.End_CDATA =>
+                              Self.End_CDATA (Success);
+
+                           when XML.Templates.Streams.Start_DTD =>
+                              Self.Start_DTD
+                               (Event.Name,
+                                Event.Public_Id,
+                                Event.System_Id,
+                                Success);
+
+                           when XML.Templates.Streams.End_DTD =>
+                              Self.End_DTD (Success);
+                        end case;
+                     end loop;
+                  end loop;
+
+                  Self.Parameters.Delete (Self.Object_Name);
+                  Self.Stream.Clear;
+               end;
+            end if;
          end if;
 
       else
@@ -348,8 +446,6 @@ package body XML.Templates.Template_Processors is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
-      use type League.Strings.Universal_String;
-
       Result : XML.SAX.Attributes.SAX_Attributes;
 
    begin
@@ -369,6 +465,8 @@ package body XML.Templates.Template_Processors is
             --  Enable accumulation of SAX events for future processing.
 
             Self.Accumulate := 1;
+            Self.Object_Name := Attributes (Object_Name);
+            Self.Container_Name := Attributes (In_Name);
 
          else
             raise Program_Error;
