@@ -45,6 +45,17 @@ with League.Characters;
 
 package body XML.Templates.Template_Processors is
 
+   Template_URI  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://forge.ada-ru.org/matreshka/template");
+
+   For_Name      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("for");
+   In_Name       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("in");
+   Variable_Name : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("variable");
+
    function Substitute
     (Self : in out Template_Processor'Class;
      Text : League.Strings.Universal_String)
@@ -118,8 +129,13 @@ package body XML.Templates.Template_Processors is
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      Self.Content_Handler.Characters
-       (Self.Substitute (Text), Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append ((XML.Templates.Streams.Text, Text));
+
+      else
+         Self.Content_Handler.Characters
+          (Self.Substitute (Text), Success);
+      end if;
    end Characters;
 
    -------------
@@ -131,7 +147,12 @@ package body XML.Templates.Template_Processors is
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      Self.Lexical_Handler.Comment (Text, Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append ((XML.Templates.Streams.Comment, Text));
+
+      else
+         Self.Lexical_Handler.Comment (Text, Success);
+      end if;
    end Comment;
 
    ---------------
@@ -142,7 +163,12 @@ package body XML.Templates.Template_Processors is
     (Self    : in out Template_Processor;
      Success : in out Boolean) is
    begin
-      Self.Lexical_Handler.End_CDATA (Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append ((Kind => XML.Templates.Streams.End_CDATA));
+
+      else
+         Self.Lexical_Handler.End_CDATA (Success);
+      end if;
    end End_CDATA;
 
    -------------
@@ -153,7 +179,12 @@ package body XML.Templates.Template_Processors is
     (Self    : in out Template_Processor;
      Success : in out Boolean) is
    begin
-      Self.Lexical_Handler.End_DTD (Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append ((Kind => XML.Templates.Streams.End_DTD));
+
+      else
+         Self.Lexical_Handler.End_DTD (Success);
+      end if;
    end End_DTD;
 
    -----------------
@@ -167,9 +198,25 @@ package body XML.Templates.Template_Processors is
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean) is
    begin
-      Self.Namespaces.Pop_Context;
-      Self.Content_Handler.End_Element
-       (Namespace_URI, Local_Name, Qualified_Name, Success);
+      if Self.Accumulate /= 0 then
+         Self.Accumulate := Self.Accumulate - 1;
+
+         if Self.Accumulate /= 0 then
+            Self.Stream.Append
+             ((XML.Templates.Streams.End_Element,
+               Namespace_URI,
+               Local_Name,
+               Qualified_Name));
+
+         else
+            Self.Namespaces.Pop_Context;
+         end if;
+
+      else
+         Self.Namespaces.Pop_Context;
+         Self.Content_Handler.End_Element
+          (Namespace_URI, Local_Name, Qualified_Name, Success);
+      end if;
    end End_Element;
 
    -------------------
@@ -193,7 +240,13 @@ package body XML.Templates.Template_Processors is
      Prefix  : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      Self.Content_Handler.End_Prefix_Mapping (Prefix, Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append
+          ((XML.Templates.Streams.End_Prefix_Mapping, Prefix));
+
+      else
+         Self.Content_Handler.End_Prefix_Mapping (Prefix, Success);
+      end if;
    end End_Prefix_Mapping;
 
    ------------------
@@ -216,7 +269,13 @@ package body XML.Templates.Template_Processors is
      Data    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
-      Self.Content_Handler.Processing_Instruction (Target, Data, Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append
+          ((XML.Templates.Streams.Processing_Instruction, Target, Data));
+
+      else
+         Self.Content_Handler.Processing_Instruction (Target, Data, Success);
+      end if;
    end Processing_Instruction;
 
    -------------------------
@@ -249,7 +308,12 @@ package body XML.Templates.Template_Processors is
     (Self    : in out Template_Processor;
      Success : in out Boolean) is
    begin
-      Self.Lexical_Handler.Start_CDATA (Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append ((Kind => XML.Templates.Streams.Start_CDATA));
+
+      else
+         Self.Lexical_Handler.Start_CDATA (Success);
+      end if;
    end Start_CDATA;
 
    ---------------
@@ -263,7 +327,13 @@ package body XML.Templates.Template_Processors is
      System_Id : League.Strings.Universal_String;
      Success   : in out Boolean) is
    begin
-      Self.Lexical_Handler.Start_DTD (Name, Public_Id, System_Id, Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append
+          ((XML.Templates.Streams.Start_DTD, Name, Public_Id, System_Id));
+
+      else
+         Self.Lexical_Handler.Start_DTD (Name, Public_Id, System_Id, Success);
+      end if;
    end Start_DTD;
 
    -------------------
@@ -278,26 +348,50 @@ package body XML.Templates.Template_Processors is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
+      use type League.Strings.Universal_String;
+
       Result : XML.SAX.Attributes.SAX_Attributes;
 
    begin
       Self.Namespaces.Push_Context;
 
-      for J in 1 .. Attributes.Length loop
-         if Attributes.Namespace_URI (J).Is_Empty then
-            Result.Set_Value
-             (Attributes.Qualified_Name (J), Self.Substitute (Attributes (J)));
+      if Self.Accumulate /= 0 then
+         Self.Accumulate := Self.Accumulate + 1;
+         Self.Stream.Append
+          ((XML.Templates.Streams.Start_Element,
+            Namespace_URI,
+            Local_Name,
+            Qualified_Name,
+            Attributes));
+
+      elsif Namespace_URI = Template_URI then
+         if Local_Name = For_Name then
+            --  Enable accumulation of SAX events for future processing.
+
+            Self.Accumulate := 1;
 
          else
-            Result.Set_Value
-             (Attributes.Namespace_URI (J),
-              Attributes.Local_Name (J),
-              Self.Substitute (Attributes (J)));
+            raise Program_Error;
          end if;
-      end loop;
 
-      Self.Content_Handler.Start_Element
-       (Namespace_URI, Local_Name, Qualified_Name, Result, Success);
+      else
+         for J in 1 .. Attributes.Length loop
+            if Attributes.Namespace_URI (J).Is_Empty then
+               Result.Set_Value
+                (Attributes.Qualified_Name (J),
+                 Self.Substitute (Attributes (J)));
+
+            else
+               Result.Set_Value
+                (Attributes.Namespace_URI (J),
+                 Attributes.Local_Name (J),
+                 Self.Substitute (Attributes (J)));
+            end if;
+         end loop;
+
+         Self.Content_Handler.Start_Element
+          (Namespace_URI, Local_Name, Qualified_Name, Result, Success);
+      end if;
    end Start_Element;
 
    --------------------------
@@ -310,9 +404,17 @@ package body XML.Templates.Template_Processors is
      Namespace_URI : League.Strings.Universal_String;
      Success       : in out Boolean) is
    begin
-      Self.Namespaces.Declare_Prefix (Prefix, Namespace_URI);
-      Self.Content_Handler.Start_Prefix_Mapping
-       (Prefix, Namespace_URI, Success);
+      if Self.Accumulate /= 0 then
+         Self.Stream.Append
+          ((XML.Templates.Streams.Start_Prefix_Mapping,
+            Prefix,
+            Namespace_URI));
+
+      else
+         Self.Namespaces.Declare_Prefix (Prefix, Namespace_URI);
+         Self.Content_Handler.Start_Prefix_Mapping
+          (Prefix, Namespace_URI, Success);
+      end if;
    end Start_Prefix_Mapping;
 
 end XML.Templates.Template_Processors;

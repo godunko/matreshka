@@ -1,6 +1,10 @@
 with Ada.Wide_Wide_Text_IO;
 
 with League.Holders;
+with League.Holders.JSON_Arrays;
+--with League.Holders.JSON_Objects;
+with League.JSON.Arrays;
+with League.JSON.Values;
 with League.Strings;
 with XML.SAX.Error_Handlers;
 with XML.SAX.Input_Sources.Streams.Files;
@@ -73,6 +77,7 @@ procedure Main is
    Output : aliased XML.SAX.Output_Destinations.Strings.SAX_String_Output_Destination;
    ErrorH : aliased Error_Handler;
    Object : League.Holders.Holder;
+   Items  : League.JSON.Arrays.JSON_Array;
 
 begin
    Input.Open_By_File_Name
@@ -98,6 +103,18 @@ begin
      League.Holders.To_Holder
       (League.Strings.To_Universal_String
         ("Hello, world! This is some special characters <> test.")));
+   Items.Append
+    (League.JSON.Values.To_JSON_Value
+      (League.Strings.To_Universal_String ("first")));
+   Items.Append
+    (League.JSON.Values.To_JSON_Value
+      (League.Strings.To_Universal_String ("second")));
+   Items.Append
+    (League.JSON.Values.To_JSON_Value
+      (League.Strings.To_Universal_String ("third")));
+   Filter.Set_Parameter
+    (League.Strings.To_Universal_String ("items"),
+     League.Holders.JSON_Arrays.To_Holder (Items));
 
    --  Configure XML writer.
 

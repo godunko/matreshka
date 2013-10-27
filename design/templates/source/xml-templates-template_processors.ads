@@ -52,6 +52,8 @@ with XML.SAX.Lexical_Handlers;
 with XML.SAX.Readers;
 private with XML.Utilities.Namespace_Supports;
 
+private with XML.Templates.Streams;
+
 package XML.Templates.Template_Processors is
 
    type Template_Processor is
@@ -88,6 +90,8 @@ private
       Lexical_Handler : XML.SAX.Readers.SAX_Lexical_Handler_Access;
       Namespaces      : XML.Utilities.Namespace_Supports.XML_Namespace_Support;
       Parameters      : String_Holder_Maps.Map;
+      Stream          : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+      Accumulate      : Natural := 0;
    end record;
 
    --  Override SAX event handling subprogram.
