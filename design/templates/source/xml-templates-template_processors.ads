@@ -97,17 +97,14 @@ private
      Text    : League.Strings.Universal_String;
      Success : in out Boolean);
 
---   not overriding procedure End_Document
---    (Self    : in out SAX_Content_Handler;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram after it has finished parsing. It is
---   --  called just once, and is the last subprogram called. It is called after
---   --  the reader has read all input or has abandoned parsing because of fatal
---   --  error.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
+   overriding procedure Comment
+    (Self    : in out Template_Processor;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean);
+
+   overriding procedure End_CDATA
+    (Self    : in out Template_Processor;
+     Success : in out Boolean);
 
    overriding procedure End_DTD
     (Self    : in out Template_Processor;
@@ -127,43 +124,55 @@ private
 
    overriding function Error_String
     (Self : Template_Processor) return League.Strings.Universal_String;
-   --  The reader calls this function to get an error string, e.g. if any of
-   --  the handler subprograms sets Success to False.
 
---   not overriding procedure Ignorable_Whitespace
+   overriding procedure Ignorable_Whitespace
+    (Self    : in out Template_Processor;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean) renames Characters;
+
+   overriding procedure Processing_Instruction
+    (Self    : in out Template_Processor;
+     Target  : League.Strings.Universal_String;
+     Data    : League.Strings.Universal_String;
+     Success : in out Boolean);
+
+   overriding procedure Start_CDATA
+    (Self    : in out Template_Processor;
+     Success : in out Boolean);
+
+   overriding procedure Start_DTD
+    (Self      : in out Template_Processor;
+     Name      : League.Strings.Universal_String;
+     Public_Id : League.Strings.Universal_String;
+     System_Id : League.Strings.Universal_String;
+     Success   : in out Boolean);
+
+   overriding procedure Start_Element
+    (Self           : in out Template_Processor;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String;
+     Attributes     : XML.SAX.Attributes.SAX_Attributes;
+     Success        : in out Boolean);
+
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out Template_Processor;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean);
+
+--   not overriding procedure End_Document
 --    (Self    : in out SAX_Content_Handler;
---     Text    : League.Strings.Universal_String;
 --     Success : in out Boolean) is null;
---   --  Validating readers must use this subprogram to report each chunk of
---   --  whitespace in element content, non-validating readers may also use this
---   --  subprogram if they are capable of parsing and using content model, The
---   --  whitespace is reported in Text.
---   --
---   --  SAX readers may return all contiguous whitespace in a single chunk, or
---   --  they may split it into several chunks; however, all of the characters in
---   --  any single event must come from the same external entity, so that the
---   --  Locator provides useful information.
+--   --  The reader calls this subprogram after it has finished parsing. It is
+--   --  called just once, and is the last subprogram called. It is called after
+--   --  the reader has read all input or has abandoned parsing because of fatal
+--   --  error.
 --   --
 --   --  If this subprogram sets Success to False the reader stops parsing and
 --   --  reports an error. The reader uses the function Error_String to get the
 --   --  error message.
---
---   not overriding procedure Processing_Instruction
---    (Self    : in out SAX_Content_Handler;
---     Target  : League.Strings.Universal_String;
---     Data    : League.Strings.Universal_String;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram when it has parsed a processing
---   --  instruction. Target is the name of the processing instruction and Data
---   --  is the data in the processing instruction.
---   --
---   --  The reader must never report an XML declaration or a text declaration
---   --  using this subprogram.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
---
+
 --   not overriding procedure Set_Document_Locator
 --    (Self    : in out SAX_Content_Handler;
 --     Locator : XML.SAX.Locators.SAX_Locator) is null;
@@ -219,66 +228,12 @@ private
 --   --  reports an error. The reader uses the function Error_String to get the
 --   --  error message.
 
-   overriding procedure Start_DTD
-    (Self      : in out Template_Processor;
-     Name      : League.Strings.Universal_String;
-     Public_Id : League.Strings.Universal_String;
-     System_Id : League.Strings.Universal_String;
-     Success   : in out Boolean);
-
-   overriding procedure Start_Element
-    (Self           : in out Template_Processor;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
-
-   overriding procedure Start_Prefix_Mapping
-    (Self          : in out Template_Processor;
-     Prefix        : League.Strings.Universal_String;
-     Namespace_URI : League.Strings.Universal_String;
-     Success       : in out Boolean);
-
---   not overriding procedure Comment
---    (Self    : in out SAX_Lexical_Handler;
---     Text    : League.Strings.Universal_String;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram to report an XML comment anywhere in
---   --  the document (inside and outside document element, and in the external
---   --  DTD subset). It reports the text of the comment in ch.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
---
---   not overriding procedure End_CDATA
---    (Self    : in out SAX_Lexical_Handler;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram to report the end of a CDATA section.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
---
 --   not overriding procedure End_Entity
 --    (Self    : in out SAX_Lexical_Handler;
 --     Name    : League.Strings.Universal_String;
 --     Success : in out Boolean) is null;
 --   --  The reader calls this subprogram to report the end of an entity called
 --   --  Name.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
---
---   not overriding procedure Start_CDATA
---    (Self    : in out SAX_Lexical_Handler;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram to report the start of a CDATA section.
---   --  The content of the CDATA section is reported through the
---   --  SAX_Content_Handler's Characters subprogram. This subprogram is intended
---   --  only to report the boundary.
 --   --
 --   --  If this subprogram sets Success to False the reader stops parsing and
 --   --  reports an error. The reader uses the function Error_String to get the

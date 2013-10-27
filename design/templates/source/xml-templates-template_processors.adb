@@ -123,6 +123,29 @@ package body XML.Templates.Template_Processors is
    end Characters;
 
    -------------
+   -- Comment --
+   -------------
+
+   overriding procedure Comment
+    (Self    : in out Template_Processor;
+     Text    : League.Strings.Universal_String;
+     Success : in out Boolean) is
+   begin
+      Self.Lexical_Handler.Comment (Text, Success);
+   end Comment;
+
+   ---------------
+   -- End_CDATA --
+   ---------------
+
+   overriding procedure End_CDATA
+    (Self    : in out Template_Processor;
+     Success : in out Boolean) is
+   begin
+      Self.Lexical_Handler.End_CDATA (Success);
+   end End_CDATA;
+
+   -------------
    -- End_DTD --
    -------------
 
@@ -183,6 +206,19 @@ package body XML.Templates.Template_Processors is
       return League.Strings.Empty_Universal_String;
    end Error_String;
 
+   ----------------------------
+   -- Processing_Instruction --
+   ----------------------------
+
+   overriding procedure Processing_Instruction
+    (Self    : in out Template_Processor;
+     Target  : League.Strings.Universal_String;
+     Data    : League.Strings.Universal_String;
+     Success : in out Boolean) is
+   begin
+      Self.Content_Handler.Processing_Instruction (Target, Data, Success);
+   end Processing_Instruction;
+
    -------------------------
    -- Set_Content_Handler --
    -------------------------
@@ -204,6 +240,17 @@ package body XML.Templates.Template_Processors is
    begin
       Self.Lexical_Handler := Handler;
    end Set_Lexical_Handler;
+
+   -----------------
+   -- Start_CDATA --
+   -----------------
+
+   overriding procedure Start_CDATA
+    (Self    : in out Template_Processor;
+     Success : in out Boolean) is
+   begin
+      Self.Lexical_Handler.Start_CDATA (Success);
+   end Start_CDATA;
 
    ---------------
    -- Start_DTD --
