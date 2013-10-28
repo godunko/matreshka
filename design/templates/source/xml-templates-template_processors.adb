@@ -46,6 +46,8 @@ with League.JSON.Arrays;
 with League.JSON.Values;
 with League.Holders.JSON_Arrays;
 
+with XML.Templates.Streams.Holders;
+
 package body XML.Templates.Template_Processors is
 
    use type League.Strings.Universal_String;
@@ -61,69 +63,20 @@ package body XML.Templates.Template_Processors is
    Object_Name  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("object");
 
-   function Substitute
-    (Self : in out Template_Processor'Class;
-     Text : League.Strings.Universal_String)
-       return League.Strings.Universal_String;
+   procedure Substitute
+    (Self         : in out Template_Processor'Class;
+     Text         : League.Strings.Universal_String;
+     In_Attribute : Boolean;
+     Result       : out League.Strings.Universal_String;
+     Success      : in out Boolean);
    --  Process text and substitute parameters.
 
-   ----------------
-   -- Substitute --
-   ----------------
-
-   function Substitute
-    (Self : in out Template_Processor'Class;
-     Text : League.Strings.Universal_String)
-       return League.Strings.Universal_String
-   is
-      use type League.Characters.Universal_Character;
-
-      Current : Positive := 1;
-      First   : Positive;
-      Last    : Natural;
-      Result  : League.Strings.Universal_String;
-      Object  : League.Holders.Holder;
-
-   begin
-      while Current <= Text.Length loop
-         if Text (Current) = '$'
-           and then Current < Text.Length
-           and then Text (Current + 1) = '{'
-         then
-            First := Current + 2;
-            Current := Current + 2;
-
-            while Current <= Text.Length loop
-               exit when Text (Current) = '}';
-               Current := Current + 1;
-            end loop;
-
-            if Current <= Text.Length then
-               Last := Current - 1;
-               Object := Self.Parameters (Text.Slice (First, Last));
-
-               if League.Holders.Is_Universal_String (Object) then
-                  Result.Append (League.Holders.Element (Object));
-
-               else
-                  raise Program_Error;
-               end if;
-
-            else
-               --  Invalid syntax.
-
-               raise Program_Error;
-            end if;
-
-         else
-            Result.Append (Text (Current));
-         end if;
-
-         Current := Current + 1;
-      end loop;
-
-      return Result;
-   end Substitute;
+   procedure Process_Stream
+    (Self    : in out Template_Processor'Class;
+     Stream  : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+     Success : in out Boolean);
+   --  Process specified stream be dispatching each event to the template
+   --  processor's event handler.
 
    ----------------
    -- Characters --
@@ -132,14 +85,16 @@ package body XML.Templates.Template_Processors is
    overriding procedure Characters
     (Self    : in out Template_Processor;
      Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is
+     Success : in out Boolean)
+   is
+      Aux : League.Strings.Universal_String;
+
    begin
       if Self.Accumulate /= 0 then
          Self.Stream.Append ((XML.Templates.Streams.Text, Text));
 
       else
-         Self.Content_Handler.Characters
-          (Self.Substitute (Text), Success);
+         Self.Substitute (Text, False, Aux, Success);
       end if;
    end Characters;
 
@@ -245,63 +200,7 @@ package body XML.Templates.Template_Processors is
                      end case;
 
                      Self.Parameters.Include (Self.Object_Name, Holder);
-
-                     for Event of Self.Stream loop
-                        case Event.Kind is
-                           when XML.Templates.Streams.Empty =>
-                              raise Program_Error;
-
-                           when XML.Templates.Streams.Text =>
-                              Self.Characters (Event.Text, Success);
-
-                           when XML.Templates.Streams.Start_Element =>
-                              Self.Start_Element
-                               (Event.Namespace_URI,
-                                Event.Local_Name,
-                                Event.Qualified_Name,
-                                Event.Attributes,
-                                Success);
-
-                           when XML.Templates.Streams.End_Element =>
-                              Self.End_Element
-                               (Event.Namespace_URI,
-                                Event.Local_Name,
-                                Event.Qualified_Name,
-                                Success);
-
-                           when XML.Templates.Streams.Start_Prefix_Mapping =>
-                              Self.Start_Prefix_Mapping
-                               (Event.Prefix,
-                                Event.Mapped_Namespace_URI,
-                                Success);
-
-                           when XML.Templates.Streams.End_Prefix_Mapping =>
-                              Self.End_Prefix_Mapping (Event.Prefix, Success);
-
-                           when XML.Templates.Streams.Processing_Instruction =>
-                              Self.Processing_Instruction
-                               (Event.Target, Event.Data, Success);
-
-                           when XML.Templates.Streams.Comment =>
-                              Self.Comment (Event.Text, Success);
-
-                           when XML.Templates.Streams.Start_CDATA =>
-                              Self.Start_CDATA (Success);
-
-                           when XML.Templates.Streams.End_CDATA =>
-                              Self.End_CDATA (Success);
-
-                           when XML.Templates.Streams.Start_DTD =>
-                              Self.Start_DTD
-                               (Event.Name,
-                                Event.Public_Id,
-                                Event.System_Id,
-                                Success);
-
-                           when XML.Templates.Streams.End_DTD =>
-                              Self.End_DTD (Success);
-                        end case;
-                     end loop;
+                     Self.Process_Stream (Self.Stream, Success);
                   end loop;
 
                   Self.Parameters.Delete (Self.Object_Name);
@@ -343,7 +242,9 @@ package body XML.Templates.Template_Processors is
           ((XML.Templates.Streams.End_Prefix_Mapping, Prefix));
 
       else
-         Self.Content_Handler.End_Prefix_Mapping (Prefix, Success);
+--         if Self.Namespaces.Namespace_URI (Prefix) /= Template_URI then
+            Self.Content_Handler.End_Prefix_Mapping (Prefix, Success);
+--         end if;
       end if;
    end End_Prefix_Mapping;
 
@@ -356,6 +257,67 @@ package body XML.Templates.Template_Processors is
    begin
       return League.Strings.Empty_Universal_String;
    end Error_String;
+
+   --------------------
+   -- Process_Stream --
+   --------------------
+
+   procedure Process_Stream
+    (Self    : in out Template_Processor'Class;
+     Stream  : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+     Success : in out Boolean) is
+   begin
+      for Event of Stream loop
+         case Event.Kind is
+            when XML.Templates.Streams.Empty =>
+               raise Program_Error;
+
+            when XML.Templates.Streams.Text =>
+               Self.Characters (Event.Text, Success);
+
+            when XML.Templates.Streams.Start_Element =>
+               Self.Start_Element
+                (Event.Namespace_URI,
+                 Event.Local_Name,
+                 Event.Qualified_Name,
+                 Event.Attributes,
+                 Success);
+
+            when XML.Templates.Streams.End_Element =>
+               Self.End_Element
+                (Event.Namespace_URI,
+                 Event.Local_Name,
+                 Event.Qualified_Name,
+                 Success);
+
+            when XML.Templates.Streams.Start_Prefix_Mapping =>
+               Self.Start_Prefix_Mapping
+                (Event.Prefix, Event.Mapped_Namespace_URI, Success);
+
+            when XML.Templates.Streams.End_Prefix_Mapping =>
+               Self.End_Prefix_Mapping (Event.Prefix, Success);
+
+            when XML.Templates.Streams.Processing_Instruction =>
+               Self.Processing_Instruction (Event.Target, Event.Data, Success);
+
+            when XML.Templates.Streams.Comment =>
+               Self.Comment (Event.Text, Success);
+
+            when XML.Templates.Streams.Start_CDATA =>
+               Self.Start_CDATA (Success);
+
+            when XML.Templates.Streams.End_CDATA =>
+               Self.End_CDATA (Success);
+
+            when XML.Templates.Streams.Start_DTD =>
+               Self.Start_DTD
+                (Event.Name, Event.Public_Id, Event.System_Id, Success);
+
+            when XML.Templates.Streams.End_DTD =>
+               Self.End_DTD (Success);
+         end case;
+      end loop;
+   end Process_Stream;
 
    ----------------------------
    -- Processing_Instruction --
@@ -447,6 +409,7 @@ package body XML.Templates.Template_Processors is
      Success        : in out Boolean)
    is
       Result : XML.SAX.Attributes.SAX_Attributes;
+      Aux    : League.Strings.Universal_String;
 
    begin
       Self.Namespaces.Push_Context;
@@ -474,16 +437,14 @@ package body XML.Templates.Template_Processors is
 
       else
          for J in 1 .. Attributes.Length loop
+            Self.Substitute (Attributes (J), True, Aux, Success);
+
             if Attributes.Namespace_URI (J).Is_Empty then
-               Result.Set_Value
-                (Attributes.Qualified_Name (J),
-                 Self.Substitute (Attributes (J)));
+               Result.Set_Value (Attributes.Qualified_Name (J), Aux);
 
             else
                Result.Set_Value
-                (Attributes.Namespace_URI (J),
-                 Attributes.Local_Name (J),
-                 Self.Substitute (Attributes (J)));
+                (Attributes.Namespace_URI (J), Attributes.Local_Name (J), Aux);
             end if;
          end loop;
 
@@ -510,9 +471,117 @@ package body XML.Templates.Template_Processors is
 
       else
          Self.Namespaces.Declare_Prefix (Prefix, Namespace_URI);
-         Self.Content_Handler.Start_Prefix_Mapping
-          (Prefix, Namespace_URI, Success);
+
+         if Namespace_URI /= Template_URI then
+            Self.Content_Handler.Start_Prefix_Mapping
+             (Prefix, Namespace_URI, Success);
+         end if;
       end if;
    end Start_Prefix_Mapping;
+
+   ----------------
+   -- Substitute --
+   ----------------
+
+   procedure Substitute
+    (Self         : in out Template_Processor'Class;
+     Text         : League.Strings.Universal_String;
+     In_Attribute : Boolean;
+     Result       : out League.Strings.Universal_String;
+     Success      : in out Boolean)
+   is
+      use type League.Characters.Universal_Character;
+
+      First   : Positive := 1;
+      Dollar  : Natural;
+      Last    : Natural;
+      Object  : League.Holders.Holder;
+
+   begin
+      Result.Clear;
+
+      while First <= Text.Length loop
+         Dollar := Text.Index (First, '$');
+
+         if Dollar = 0 then
+            if In_Attribute then
+               Result.Append (Text.Slice (First, Text.Length));
+
+            else
+               Self.Content_Handler.Characters
+                (Text.Slice (First, Text.Length), Success);
+            end if;
+
+            First := Text.Length + 1;
+
+         else
+            if In_Attribute then
+               Result.Append (Text.Slice (First, Dollar - 1));
+
+            else
+               Self.Content_Handler.Characters
+                (Text.Slice (First, Dollar - 1), Success);
+            end if;
+
+            if Dollar < Text.Length
+              and then Text (Dollar + 1) = '$'
+            then
+               --  Escaped dollar sign.
+
+               if In_Attribute then
+                  Result.Append ('$');
+
+               else
+                  Self.Content_Handler.Characters
+                   (Text.Slice (Dollar + 1, Dollar + 1), Success);
+               end if;
+
+            elsif Dollar <= Text.Length
+              and then Text (Dollar + 1) = '{'
+            then
+               --  Expression.
+
+               First := Dollar + 2;
+               Dollar := Text.Index (First, '}');
+
+               if Dollar = 0 then
+                  raise Program_Error;
+
+               else
+                  Last := Dollar - 1;
+
+                  Object := Self.Parameters (Text.Slice (First, Last));
+
+                  if League.Holders.Is_Universal_String (Object) then
+                     if In_Attribute then
+                        Result.Append (League.Holders.Element (Object));
+
+                     else
+                        Self.Content_Handler.Characters
+                         (League.Holders.Element (Object), Success);
+                     end if;
+
+                  elsif League.Holders.Has_Tag
+                         (Object, XML.Templates.Streams.Holders.Value_Tag)
+                  then
+                     if In_Attribute then
+                        raise Program_Error;
+
+                     else
+                        Self.Process_Stream
+                         (XML.Templates.Streams.Holders.Element (Object),
+                          Success);
+                     end if;
+
+                  else
+                     raise Program_Error;
+                  end if;
+
+                  First := Dollar + 1;
+               end if;
+            end if;
+         end if;
+      end loop;
+   end Substitute;
 
 end XML.Templates.Template_Processors;
