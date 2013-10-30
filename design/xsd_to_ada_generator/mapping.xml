@@ -45,29 +45,29 @@
     <ada context="ICTS.Types" type="ICTSClient.Types.OpenOrder_Information"/>
   </map>
   
-  <map type="CreateConditionalOpenOrderBase">
+  <!--<map type="CreateConditionalOpenOrderBase">
     <ada context="ICTS.Types" type="ICTSClient.Types.Entry_Order"/>
-  </map>
+  </map>-->
   
-  <map type="CreateConditionalCloseOrderBase">
+  <!--<map type="CreateConditionalCloseOrderBase">
     <ada context="ICTS.Types" type="ICTSClient.Types.Stop_Limit_Order"/>
-  </map>
+  </map>-->
   
   <map type="InstrumentInformation">
     <ada context="ICTS.Types" type="ICTSClient.Types.Dealer_Instrument_Informations"/>
   </map>
   
-  <map type="PredefinedCondition">
+  <!--<map type="PredefinedCondition">
     <ada context="ICTS.Types" type="ICTSClient.Types.Predefined_Condition"/>
-  </map>
+  </map>-->
 
   <map type="CurrencyInformation">
     <ada context="ICTS.Types" type="ICTSClient.Types.Currency_Informations"/>
   </map>
     
-  <map type="OrderItem">
+  <!--<map type="OrderItem">
     <ada context="ICTS.Types" type="ICTSClient.Types.Order_Item_Vector"/>
-  </map>
+  </map>-->
     
   <map type="AccountIdentifier">
     <ada context="ICTS.Types" type="ICTS.Types.Account_Identifier"/>
@@ -179,7 +179,7 @@
   </map>-->
 
   <map type="string">
-    <ada context="ICTS.Types" type="Ada.Strings.Unbounded.Unbounded_String"/>
+    <ada context="ICTS.Types" type="League.Strings.Universal_String"/>
   </map>
   
   <map type="boolean">
@@ -196,10 +196,6 @@
     
   <map type="dateTimeStamp">
     <ada context="ICTS.Types" type="TimeT"/>
-  </map>
-  
-  <map type="SessionIdentifier">
-    <ada context="ICTS.Types" type="Ada.Strings.Wide_Wide_Unbounded.Unbounded_Wide_Wide_String"/>
   </map>
   
   <map type="ComissionIdentifier">

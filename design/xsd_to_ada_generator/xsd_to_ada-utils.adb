@@ -471,7 +471,7 @@ package body XSD_To_Ada.Utils is
 
          if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
 --           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyOrderBase"
---             if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "BindOrders"
+--             if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateCloseOrder"
          then
             Print_Type_Title
               (XS_Object.To_Type_Definition,
@@ -510,6 +510,11 @@ package body XSD_To_Ada.Utils is
            = Is_Vector_Type.Element (J).To_UTF_8_String
          then
             Added_Vector_Type := False;
+
+            if not Is_Type_In_Map (Type_D_Name, Map) then
+               Writers.N (Writer, "s");
+            end if;
+
             exit;
          else
             Added_Vector_Type := True;
@@ -539,7 +544,6 @@ package body XSD_To_Ada.Utils is
          if not Is_Type_In_Map (Type_D_Name, Map) then
             Writers.N (Writer, "s");
          end if;
-
       end if;
 
       Writers.P (Writer, ";");
