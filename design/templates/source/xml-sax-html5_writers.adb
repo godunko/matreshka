@@ -92,6 +92,53 @@ package body XML.SAX.HTML5_Writers is
    Wbr_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("wbr");
 
+   Async_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("async");
+   Autofocus_Attribute      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("autofocus");
+   Autoplay_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("autoplay");
+   Checked_Attribute        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("checked");
+   Controls_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("controls");
+   Default_Attribute        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("default");
+   Defer_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("defer");
+   Disabled_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("disabled");
+   Formnovalidate_Attribute : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("formnovalidate");
+   Hidden_Attribute         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("hidden");
+   Ismap_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("ismap");
+   Loop_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("loop");
+   Multiple_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("multiple");
+   Muted_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("muted");
+   Novalidate_Attribute     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("novalidate");
+   Open_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("open");
+   Readonly_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("readonly");
+   Required_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("required");
+   Reversed_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("reversed");
+   Scoped_Attribute         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("scoped");
+   Seamless_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("seamless");
+   Selected_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("selected");
+   Typemustmatch_Attribute  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("typemustmatch");
+
    function Is_Space (Item : League.Strings.Universal_String) return Boolean;
    --  Returns True when specified string contains only space characters as
    --  defined by HTML5 specification.
@@ -102,6 +149,10 @@ package body XML.SAX.HTML5_Writers is
 
    procedure Write_DOCTYPE (Self : in out HTML5_Writer'Class);
    --  Outputs DOCTYPE declaration.
+
+   function Is_Boolean_Attribute
+    (Name : League.Strings.Universal_String) return Boolean;
+   --  Returns True when attribute is boolean attribute in HTML5.
 
    function Is_Void_Element
     (Tag : League.Strings.Universal_String) return Boolean;
@@ -240,6 +291,39 @@ package body XML.SAX.HTML5_Writers is
       return Self.Diagnosis;
    end Error_String;
 
+   --------------------------
+   -- Is_Boolean_Attribute --
+   --------------------------
+
+   function Is_Boolean_Attribute
+    (Name : League.Strings.Universal_String) return Boolean is
+   begin
+      return
+        Name = Async_Attribute
+          or Name = Autofocus_Attribute
+          or Name = Autoplay_Attribute
+          or Name = Checked_Attribute
+          or Name = Controls_Attribute
+          or Name = Default_Attribute
+          or Name = Defer_Attribute
+          or Name = Disabled_Attribute
+          or Name = Formnovalidate_Attribute
+          or Name = Hidden_Attribute
+          or Name = Ismap_Attribute
+          or Name = Loop_Attribute
+          or Name = Multiple_Attribute
+          or Name = Muted_Attribute
+          or Name = Novalidate_Attribute
+          or Name = Open_Attribute
+          or Name = Readonly_Attribute
+          or Name = Required_Attribute
+          or Name = Reversed_Attribute
+          or Name = Scoped_Attribute
+          or Name = Seamless_Attribute
+          or Name = Selected_Attribute
+          or Name = Typemustmatch_Attribute;
+   end Is_Boolean_Attribute;
+
    --------------
    -- Is_Space --
    --------------
@@ -362,7 +446,8 @@ package body XML.SAX.HTML5_Writers is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is
+     Success        : in out Boolean)
+   is
    begin
       if not Self.DOCTYPE_Written then
          --  DOCTYPE is required by HTML5 but it is optional in XHTML5.
@@ -388,6 +473,35 @@ package body XML.SAX.HTML5_Writers is
          Self.No_Content := False;
          Self.Output.Put ('<');
          Self.Output.Put (Local_Name);
+
+         for J in 1 .. Attributes.Length loop
+            if Attributes.Namespace_URI (J).Is_Empty then
+               declare
+                  Qualified_Name : constant League.Strings.Universal_String
+                    := Attributes.Qualified_Name (J);
+
+               begin
+                  if Is_Boolean_Attribute (Qualified_Name) then
+                    Self.Output.Put (' ');
+                    Self.Output.Put (Qualified_Name);
+
+                  else
+                     --  XXX Must be checked if value allows to use unquoted
+                     --  attribute value syntax or some quoted attribute value
+                     --  syntax must be used.
+
+                     Self.Output.Put (' ');
+                     Self.Output.Put (Qualified_Name);
+                     Self.Output.Put ('=');
+                     Self.Output.Put (Attributes.Value (J));
+                  end if;
+               end;
+
+            else
+               raise Program_Error;
+            end if;
+         end loop;
+
          Self.Output.Put ('>');
 
          if Local_Name = HTML_Tag then
@@ -415,10 +529,7 @@ package body XML.SAX.HTML5_Writers is
          Self.Diagnosis :=
            League.Strings.To_Universal_String
             ("namespace is not supported by HTML5");
-
-         return;
       end if;
-
    end Start_Element;
 
    -------------------

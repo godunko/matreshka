@@ -43,8 +43,10 @@
 ------------------------------------------------------------------------------
 --  This package provides specialized SAX Writer to generate HTML5 documents
 --  from XHTML5 SAX events streams. This writer doesn't fix any potential
---  issues in generated document right now, but provides high optimization of
---  output data by omitting elements when this is allowed.
+--  issues in generated document right now. It provides some optimization of
+--  output data:
+--   - close tag for void elements are omitted;
+--   - boolean attributes are output using empty attribute syntax.
 ------------------------------------------------------------------------------
 private with League.Strings;
 private with XML.SAX.Attributes;
