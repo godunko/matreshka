@@ -149,11 +149,29 @@ package body Encoder is
    Accept_Order_Name : constant League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("AcceptOrder");
 
+   Modify_Close_Order_Name : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("ModifyCloseOrder");
+
+   Modify_Limit_Close_Order_Name : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("ModifyLimitCloseOrder");
+
    Create_Stop_Open_Order_Name : constant League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("CreateStopOpenOrder");
 
+   Modify_Limit_Open_Order_Name : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("ModifyLimitOpenOrder");
+
+   Modify_Stop_Open_Order_Name : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("ModifyStopOpenOrder");
+
+   Modify_Open_Order_Name : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("ModifyOpenOrder");
+
    Create_Stop_Close_Order_Name : constant League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("CreateStopCloseOrder");
+
+   Modify_Stop_Close_Order_Name : constant League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("ModifyStopCloseOrder");
 
    Create_Limit_Open_Order_Name : constant League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("CreateLimitOpenOrder");
@@ -194,14 +212,10 @@ package body Encoder is
   --  decimal
       Writer.End_Element (IATS_URI, Amount_Name);
 
-     if Ada
-       .Strings
-         .Unbounded.Length (Data.Application_Data.Application_Data) /= 0 then
+     if not Data.Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data.Application_Data)));
+             (Data.Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -348,14 +362,10 @@ package body Encoder is
       Encode (Data.Predefined,
               Writer,
               League.Strings.To_Universal_String ("Predefined"));
-     if Ada
-       .Strings
-         .Unbounded.Length (Data.Application_Data.Application_Data) /= 0 then
+     if not Data.Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data.Application_Data)));
+             (Data.Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -421,14 +431,10 @@ package body Encoder is
   --  boolean
       Writer.End_Element (IATS_URI, Hedge_Name);
 
-     if Ada
-       .Strings
-         .Unbounded.Length (Data.Application_Data.Application_Data) /= 0 then
+     if not Data.Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data.Application_Data)));
+             (Data.Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -592,7 +598,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Bind_Orders_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -662,7 +669,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Set_Position_Item_Application_Data_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -681,9 +689,7 @@ package body Encoder is
 
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data)));
+             (Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -721,7 +727,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Set_Position_Application_Data_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -730,9 +737,7 @@ package body Encoder is
               League.Strings.To_Universal_String ("Position"));
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data)));
+             (Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -770,7 +775,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Close_Session_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -808,7 +814,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Get_Instruments_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -846,7 +853,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Modify_Conditional_Order_Base_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -910,21 +918,15 @@ package body Encoder is
       Writer.End_Element (IATS_URI, Amount_Name);
 
      end if;
-     if Ada
-       .Strings
-         .Unbounded
-           .Length 
-             (Data
-               .Modify_Conditional_Order_Base_Order_Item
-                 .Element (Index).Application_Data.Application_Data) /= 0 then
+     if not Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
              (Data
                .Modify_Conditional_Order_Base_Order_Item
-                 .Element (Index).Application_Data.Application_Data)));
-  --  YYYYYYYYYYYstring
+                 .Element (Index).Application_Data.Application_Data);
+  -- string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
      end if;
@@ -932,14 +934,10 @@ package body Encoder is
 
      end loop;
 
-     if Ada
-       .Strings
-         .Unbounded.Length (Data.Application_Data.Application_Data) /= 0 then
+     if not Data.Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data.Application_Data)));
+             (Data.Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -978,7 +976,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Get_Positions_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1016,7 +1015,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Get_Balance_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1064,7 +1064,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Modify_Order_Base_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1087,26 +1088,19 @@ package body Encoder is
 
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
              (Data
-               .Modify_Order_Base_Order_Item
-                 .Element (Index).Application_Data)));
-  --  XXXXXXXXXstring
+               .Modify_Order_Base_Order_Item.Element (Index).Application_Data);
+  --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
       Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
 
      end loop;
 
-     if Ada
-       .Strings
-         .Unbounded.Length (Data.Application_Data.Application_Data) /= 0 then
+     if not Data.Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data.Application_Data)));
+             (Data.Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -1145,7 +1139,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Get_Currencies_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1183,7 +1178,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Reject_Order_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1231,7 +1227,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Unbind_Orders_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1272,7 +1269,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Activate_Account_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1320,7 +1318,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Create_Open_Order_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1374,17 +1373,10 @@ package body Encoder is
       Encode (Data.Predefined,
               Writer,
               League.Strings.To_Universal_String ("Predefined"));
-     if Ada
-       .Strings
-         .Unbounded.Length (Data.Application_Data.Application_Data) /= 0 then
+     if not Data.Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
-      Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data.Application_Data)));
-  --  string
+      Writer.Characters (Data.Application_Data.Application_Data);
       Writer.End_Element (IATS_URI, Application_Data_Name);
-
      end if;
       Writer.End_Element (IATS_URI, Create_Open_Order_Name);
    end Encode;
@@ -1420,7 +1412,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Deactivate_Order_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1468,7 +1461,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Accept_Order_At_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1535,7 +1529,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Cancel_Order_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1583,7 +1578,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Execute_Order_At_Market_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1631,7 +1627,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Negotiate_Order_At_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1686,7 +1683,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Create_Close_Order_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1732,14 +1730,10 @@ package body Encoder is
   --  boolean
       Writer.End_Element (IATS_URI, With_Hedge_Name);
 
-     if Ada
-       .Strings
-         .Unbounded.Length (Data.Application_Data.Application_Data) /= 0 then
+     if not Data.Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
-             (Data.Application_Data.Application_Data)));
+             (Data.Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
@@ -1778,7 +1772,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Execute_Order_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1826,7 +1821,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Execute_Order_At_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1881,7 +1877,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Get_Orders_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1919,7 +1916,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Get_Orders_Links_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1957,7 +1955,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Get_Accounts_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -1995,7 +1994,8 @@ package body Encoder is
       Writer.Start_Element (IATS_URI, Accept_Order_Name);
 
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -2010,6 +2010,198 @@ package body Encoder is
       Writer.End_Element (IATS_URI, Order_Name);
 
       Writer.End_Element (IATS_URI, Accept_Order_Name);
+   end Encode;
+
+   overriding function Create
+     (Dummy : not null access Boolean)
+      return Modify_Close_Order_Encoder
+   is
+     pragma Unreferenced (Dummy);
+   begin
+     return X : Modify_Close_Order_Encoder;
+   end Create;
+
+   overriding procedure Encode
+     (Self    : Modify_Close_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+     pragma Unreferenced (Self);
+
+     use Ada.Strings.Unbounded;
+     use Payloads;
+
+     Data : Payloads.Modify_Close_Order
+       renames Payloads.Modify_Close_Order (Message);
+
+   begin
+      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);
+
+      Writer.Start_Element (IATS_URI, Modify_Close_Order_Name);
+
+      Writer.Start_Element (IATS_URI, Session_Name);
+      Writer.Characters
+             (Data.Session);
+  --  string
+      Writer.End_Element (IATS_URI, Session_Name);
+
+      Encode (Data.Order,
+              Writer,
+              League.Strings.To_Universal_String ("Order"));
+     for Index in 1 .. Natural
+       (Data.Modify_Order_Base_Order_Item.Length) loop
+      Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
+      Writer.Start_Element (IATS_URI, Account_Name);
+      Writer.Characters
+        (League.Strings.To_Universal_String
+           (Ada.Strings.Wide_Wide_Fixed.Trim
+              (ICTS.Types.Account_Identifier'Wide_Wide_Image
+               (Data.Modify_Order_Base_Order_Item.Element (Index).Account),
+            Ada.Strings.Both)));
+  --  positive_Integer
+      Writer.End_Element (IATS_URI, Account_Name);
+
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data
+               .Modify_Order_Base_Order_Item.Element (Index).Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
+
+     end loop;
+
+     if not Data.Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data.Application_Data.Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Modify_Close_Order_Name);
+   end Encode;
+
+   overriding function Create
+     (Dummy : not null access Boolean)
+      return Modify_Limit_Close_Order_Encoder
+   is
+     pragma Unreferenced (Dummy);
+   begin
+     return X : Modify_Limit_Close_Order_Encoder;
+   end Create;
+
+   overriding procedure Encode
+     (Self    : Modify_Limit_Close_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+     pragma Unreferenced (Self);
+
+     use Ada.Strings.Unbounded;
+     use Payloads;
+
+     Data : Payloads.Modify_Limit_Close_Order
+       renames Payloads.Modify_Limit_Close_Order (Message);
+
+   begin
+      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);
+
+      Writer.Start_Element (IATS_URI, Modify_Limit_Close_Order_Name);
+
+      Writer.Start_Element (IATS_URI, Session_Name);
+      Writer.Characters
+             (Data.Session);
+  --  string
+      Writer.End_Element (IATS_URI, Session_Name);
+
+      Encode (Data.Order,
+              Writer,
+              League.Strings.To_Universal_String ("Order"));
+      Writer.Start_Element (IATS_URI, Condition_Name);
+--  SSSSSSSSSSSS
+     case Data.Modify_Conditional_Order_Base_Condition.Kind is
+       when Payloads.Rate_Case =>
+      Writer.Start_Element (IATS_URI, Rate_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String (Data.Modify_Conditional_Order_Base_Condition.Rate)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Rate_Name);
+
+       when Payloads.Distance_Case =>
+      Writer.Start_Element (IATS_URI, Distance_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data.Modify_Conditional_Order_Base_Condition.Distance)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Distance_Name);
+
+     end case;
+
+      Writer.End_Element (IATS_URI, Condition_Name);  --  EEEEEEEEE
+
+     for Index in 1 .. Natural
+       (Data.Modify_Conditional_Order_Base_Order_Item.Length) loop
+      Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
+      Writer.Start_Element (IATS_URI, Account_Name);
+      Writer.Characters
+        (League.Strings.To_Universal_String
+           (Ada.Strings.Wide_Wide_Fixed.Trim
+              (ICTS.Types.Account_Identifier'Wide_Wide_Image
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Account),
+            Ada.Strings.Both)));
+  --  positive_Integer
+      Writer.End_Element (IATS_URI, Account_Name);
+
+     if Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Amount /= Payloads.Null_Decimal
+      and then CLI.Ws_Utils.Is_Digits
+        (Data.Modify_Conditional_Order_Base_Order_Item.Element (Index).Amount)
+    then
+      Writer.Start_Element (IATS_URI, Amount_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Amount)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Amount_Name);
+
+     end if;
+     if not Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data
+               .Modify_Conditional_Order_Base_Order_Item
+                 .Element (Index).Application_Data.Application_Data);
+  -- string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
+
+     end loop;
+
+     if not Data.Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data.Application_Data.Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Modify_Limit_Close_Order_Name);
    end Encode;
 
    ----------------------------
@@ -2107,30 +2299,337 @@ package body Encoder is
       Encode (Data.Create_Conditional_Open_Order_Base.Predefined,
               Writer,
               League.Strings.To_Universal_String ("Predefined"));
-     if Ada
-       .Strings
-         .Unbounded
-           .Length 
-             (Data
-               .Create_Conditional_Open_Order_Base
-                 .Application_Data.Application_Data) /= 0 then
+     if not Data
+       .Create_Conditional_Open_Order_Base
+         .Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
              (Data
                .Create_Conditional_Open_Order_Base
-                 .Application_Data.Application_Data)));
+                 .Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
      end if;
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
       Writer.End_Element (IATS_URI, Create_Stop_Open_Order_Name);
+   end Encode;
+
+   overriding function Create
+     (Dummy : not null access Boolean)
+      return Modify_Limit_Open_Order_Encoder
+   is
+     pragma Unreferenced (Dummy);
+   begin
+     return X : Modify_Limit_Open_Order_Encoder;
+   end Create;
+
+   overriding procedure Encode
+     (Self    : Modify_Limit_Open_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+     pragma Unreferenced (Self);
+
+     use Ada.Strings.Unbounded;
+     use Payloads;
+
+     Data : Payloads.Modify_Limit_Open_Order
+       renames Payloads.Modify_Limit_Open_Order (Message);
+
+   begin
+      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);
+
+      Writer.Start_Element (IATS_URI, Modify_Limit_Open_Order_Name);
+
+      Writer.Start_Element (IATS_URI, Session_Name);
+      Writer.Characters
+             (Data.Session);
+  --  string
+      Writer.End_Element (IATS_URI, Session_Name);
+
+      Encode (Data.Order,
+              Writer,
+              League.Strings.To_Universal_String ("Order"));
+      Writer.Start_Element (IATS_URI, Condition_Name);
+--  SSSSSSSSSSSS
+     case Data.Modify_Conditional_Order_Base_Condition.Kind is
+       when Payloads.Rate_Case =>
+      Writer.Start_Element (IATS_URI, Rate_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String (Data.Modify_Conditional_Order_Base_Condition.Rate)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Rate_Name);
+
+       when Payloads.Distance_Case =>
+      Writer.Start_Element (IATS_URI, Distance_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data.Modify_Conditional_Order_Base_Condition.Distance)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Distance_Name);
+
+     end case;
+
+      Writer.End_Element (IATS_URI, Condition_Name);  --  EEEEEEEEE
+
+     for Index in 1 .. Natural
+       (Data.Modify_Conditional_Order_Base_Order_Item.Length) loop
+      Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
+      Writer.Start_Element (IATS_URI, Account_Name);
+      Writer.Characters
+        (League.Strings.To_Universal_String
+           (Ada.Strings.Wide_Wide_Fixed.Trim
+              (ICTS.Types.Account_Identifier'Wide_Wide_Image
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Account),
+            Ada.Strings.Both)));
+  --  positive_Integer
+      Writer.End_Element (IATS_URI, Account_Name);
+
+     if Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Amount /= Payloads.Null_Decimal
+      and then CLI.Ws_Utils.Is_Digits
+        (Data.Modify_Conditional_Order_Base_Order_Item.Element (Index).Amount)
+    then
+      Writer.Start_Element (IATS_URI, Amount_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Amount)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Amount_Name);
+
+     end if;
+     if not Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data
+               .Modify_Conditional_Order_Base_Order_Item
+                 .Element (Index).Application_Data.Application_Data);
+  -- string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
+
+     end loop;
+
+     if not Data.Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data.Application_Data.Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Modify_Limit_Open_Order_Name);
+   end Encode;
+
+   overriding function Create
+     (Dummy : not null access Boolean)
+      return Modify_Stop_Open_Order_Encoder
+   is
+     pragma Unreferenced (Dummy);
+   begin
+     return X : Modify_Stop_Open_Order_Encoder;
+   end Create;
+
+   overriding procedure Encode
+     (Self    : Modify_Stop_Open_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+     pragma Unreferenced (Self);
+
+     use Ada.Strings.Unbounded;
+     use Payloads;
+
+     Data : Payloads.Modify_Stop_Open_Order
+       renames Payloads.Modify_Stop_Open_Order (Message);
+
+   begin
+      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);
+
+      Writer.Start_Element (IATS_URI, Modify_Stop_Open_Order_Name);
+
+      Writer.Start_Element (IATS_URI, Session_Name);
+      Writer.Characters
+             (Data.Session);
+  --  string
+      Writer.End_Element (IATS_URI, Session_Name);
+
+      Encode (Data.Order,
+              Writer,
+              League.Strings.To_Universal_String ("Order"));
+      Writer.Start_Element (IATS_URI, Condition_Name);
+--  SSSSSSSSSSSS
+     case Data.Modify_Conditional_Order_Base_Condition.Kind is
+       when Payloads.Rate_Case =>
+      Writer.Start_Element (IATS_URI, Rate_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String (Data.Modify_Conditional_Order_Base_Condition.Rate)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Rate_Name);
+
+       when Payloads.Distance_Case =>
+      Writer.Start_Element (IATS_URI, Distance_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data.Modify_Conditional_Order_Base_Condition.Distance)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Distance_Name);
+
+     end case;
+
+      Writer.End_Element (IATS_URI, Condition_Name);  --  EEEEEEEEE
+
+     for Index in 1 .. Natural
+       (Data.Modify_Conditional_Order_Base_Order_Item.Length) loop
+      Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
+      Writer.Start_Element (IATS_URI, Account_Name);
+      Writer.Characters
+        (League.Strings.To_Universal_String
+           (Ada.Strings.Wide_Wide_Fixed.Trim
+              (ICTS.Types.Account_Identifier'Wide_Wide_Image
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Account),
+            Ada.Strings.Both)));
+  --  positive_Integer
+      Writer.End_Element (IATS_URI, Account_Name);
+
+     if Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Amount /= Payloads.Null_Decimal
+      and then CLI.Ws_Utils.Is_Digits
+        (Data.Modify_Conditional_Order_Base_Order_Item.Element (Index).Amount)
+    then
+      Writer.Start_Element (IATS_URI, Amount_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Amount)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Amount_Name);
+
+     end if;
+     if not Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data
+               .Modify_Conditional_Order_Base_Order_Item
+                 .Element (Index).Application_Data.Application_Data);
+  -- string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
+
+     end loop;
+
+     if not Data.Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data.Application_Data.Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Modify_Stop_Open_Order_Name);
+   end Encode;
+
+   overriding function Create
+     (Dummy : not null access Boolean)
+      return Modify_Open_Order_Encoder
+   is
+     pragma Unreferenced (Dummy);
+   begin
+     return X : Modify_Open_Order_Encoder;
+   end Create;
+
+   overriding procedure Encode
+     (Self    : Modify_Open_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+     pragma Unreferenced (Self);
+
+     use Ada.Strings.Unbounded;
+     use Payloads;
+
+     Data : Payloads.Modify_Open_Order
+       renames Payloads.Modify_Open_Order (Message);
+
+   begin
+      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);
+
+      Writer.Start_Element (IATS_URI, Modify_Open_Order_Name);
+
+      Writer.Start_Element (IATS_URI, Session_Name);
+      Writer.Characters
+             (Data.Session);
+  --  string
+      Writer.End_Element (IATS_URI, Session_Name);
+
+      Encode (Data.Order,
+              Writer,
+              League.Strings.To_Universal_String ("Order"));
+     for Index in 1 .. Natural
+       (Data.Modify_Order_Base_Order_Item.Length) loop
+      Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
+      Writer.Start_Element (IATS_URI, Account_Name);
+      Writer.Characters
+        (League.Strings.To_Universal_String
+           (Ada.Strings.Wide_Wide_Fixed.Trim
+              (ICTS.Types.Account_Identifier'Wide_Wide_Image
+               (Data.Modify_Order_Base_Order_Item.Element (Index).Account),
+            Ada.Strings.Both)));
+  --  positive_Integer
+      Writer.End_Element (IATS_URI, Account_Name);
+
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data
+               .Modify_Order_Base_Order_Item.Element (Index).Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
+
+     end loop;
+
+     if not Data.Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data.Application_Data.Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Modify_Open_Order_Name);
    end Encode;
 
    -----------------------------
@@ -2215,30 +2714,145 @@ package body Encoder is
   --  boolean
       Writer.End_Element (IATS_URI, Hedge_Name);
 
-     if Ada
-       .Strings
-         .Unbounded
-           .Length 
-             (Data
-               .Create_Conditional_Close_Order_Base
-                 .Application_Data.Application_Data) /= 0 then
+     if not Data
+       .Create_Conditional_Close_Order_Base
+         .Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
              (Data
                .Create_Conditional_Close_Order_Base
-                 .Application_Data.Application_Data)));
+                 .Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
      end if;
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
       Writer.End_Element (IATS_URI, Create_Stop_Close_Order_Name);
+   end Encode;
+
+   overriding function Create
+     (Dummy : not null access Boolean)
+      return Modify_Stop_Close_Order_Encoder
+   is
+     pragma Unreferenced (Dummy);
+   begin
+     return X : Modify_Stop_Close_Order_Encoder;
+   end Create;
+
+   overriding procedure Encode
+     (Self    : Modify_Stop_Close_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)
+   is
+     pragma Unreferenced (Self);
+
+     use Ada.Strings.Unbounded;
+     use Payloads;
+
+     Data : Payloads.Modify_Stop_Close_Order
+       renames Payloads.Modify_Stop_Close_Order (Message);
+
+   begin
+      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);
+
+      Writer.Start_Element (IATS_URI, Modify_Stop_Close_Order_Name);
+
+      Writer.Start_Element (IATS_URI, Session_Name);
+      Writer.Characters
+             (Data.Session);
+  --  string
+      Writer.End_Element (IATS_URI, Session_Name);
+
+      Encode (Data.Order,
+              Writer,
+              League.Strings.To_Universal_String ("Order"));
+      Writer.Start_Element (IATS_URI, Condition_Name);
+--  SSSSSSSSSSSS
+     case Data.Modify_Conditional_Order_Base_Condition.Kind is
+       when Payloads.Rate_Case =>
+      Writer.Start_Element (IATS_URI, Rate_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String (Data.Modify_Conditional_Order_Base_Condition.Rate)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Rate_Name);
+
+       when Payloads.Distance_Case =>
+      Writer.Start_Element (IATS_URI, Distance_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data.Modify_Conditional_Order_Base_Condition.Distance)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Distance_Name);
+
+     end case;
+
+      Writer.End_Element (IATS_URI, Condition_Name);  --  EEEEEEEEE
+
+     for Index in 1 .. Natural
+       (Data.Modify_Conditional_Order_Base_Order_Item.Length) loop
+      Writer.Start_Element (IATS_URI, Order_Item_Name);
+--  SSSSSSSSSSSS
+      Writer.Start_Element (IATS_URI, Account_Name);
+      Writer.Characters
+        (League.Strings.To_Universal_String
+           (Ada.Strings.Wide_Wide_Fixed.Trim
+              (ICTS.Types.Account_Identifier'Wide_Wide_Image
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Account),
+            Ada.Strings.Both)));
+  --  positive_Integer
+      Writer.End_Element (IATS_URI, Account_Name);
+
+     if Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Amount /= Payloads.Null_Decimal
+      and then CLI.Ws_Utils.Is_Digits
+        (Data.Modify_Conditional_Order_Base_Order_Item.Element (Index).Amount)
+    then
+      Writer.Start_Element (IATS_URI, Amount_Name);
+      Writer.Characters
+        (League.Strings.From_UTF_8_String
+             (To_String 
+               (Data
+                 .Modify_Conditional_Order_Base_Order_Item
+                   .Element (Index).Amount)));
+  --  decimal
+      Writer.End_Element (IATS_URI, Amount_Name);
+
+     end if;
+     if not Data
+       .Modify_Conditional_Order_Base_Order_Item
+         .Element (Index).Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data
+               .Modify_Conditional_Order_Base_Order_Item
+                 .Element (Index).Application_Data.Application_Data);
+  -- string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Order_Item_Name);  --  EEEEEEEEE
+
+     end loop;
+
+     if not Data.Application_Data.Application_Data.Is_Empty then
+      Writer.Start_Element (IATS_URI, Application_Data_Name);
+      Writer.Characters
+             (Data.Application_Data.Application_Data);
+  --  string
+      Writer.End_Element (IATS_URI, Application_Data_Name);
+
+     end if;
+      Writer.End_Element (IATS_URI, Modify_Stop_Close_Order_Name);
    end Encode;
 
    -----------------------------
@@ -2336,26 +2950,21 @@ package body Encoder is
       Encode (Data.Create_Conditional_Open_Order_Base.Predefined,
               Writer,
               League.Strings.To_Universal_String ("Predefined"));
-     if Ada
-       .Strings
-         .Unbounded
-           .Length 
-             (Data
-               .Create_Conditional_Open_Order_Base
-                 .Application_Data.Application_Data) /= 0 then
+     if not Data
+       .Create_Conditional_Open_Order_Base
+         .Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
              (Data
                .Create_Conditional_Open_Order_Base
-                 .Application_Data.Application_Data)));
+                 .Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
      end if;
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -2444,26 +3053,21 @@ package body Encoder is
   --  boolean
       Writer.End_Element (IATS_URI, Hedge_Name);
 
-     if Ada
-       .Strings
-         .Unbounded
-           .Length 
-             (Data
-               .Create_Conditional_Close_Order_Base
-                 .Application_Data.Application_Data) /= 0 then
+     if not Data
+       .Create_Conditional_Close_Order_Base
+         .Application_Data.Application_Data.Is_Empty then
       Writer.Start_Element (IATS_URI, Application_Data_Name);
       Writer.Characters
-        (League.Strings.From_UTF_8_String
-          (Ada.Strings.Unbounded.To_String
              (Data
                .Create_Conditional_Close_Order_Base
-                 .Application_Data.Application_Data)));
+                 .Application_Data.Application_Data);
   --  string
       Writer.End_Element (IATS_URI, Application_Data_Name);
 
      end if;
       Writer.Start_Element (IATS_URI, Session_Name);
-      Writer.Characters (Data.Session);
+      Writer.Characters
+             (Data.Session);
   --  string
       Writer.End_Element (IATS_URI, Session_Name);
 
@@ -2471,3 +3075,76 @@ package body Encoder is
    end Encode;
 
 end Encoder;
+   begin
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Bind_Orders'Tag, Bind_Orders_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Set_Position_Item_Application_Data'Tag, Set_Position_Item_Application_Data_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Set_Position_Application_Data'Tag, Set_Position_Application_Data_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Close_Session'Tag, Close_Session_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Get_Instruments'Tag, Get_Instruments_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Conditional_Order_Base'Tag, Modify_Conditional_Order_Base_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Get_Positions'Tag, Get_Positions_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Get_Balance'Tag, Get_Balance_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Order_Base'Tag, Modify_Order_Base_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Get_Currencies'Tag, Get_Currencies_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Reject_Order'Tag, Reject_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Unbind_Orders'Tag, Unbind_Orders_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Activate_Account'Tag, Activate_Account_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Create_Open_Order'Tag, Create_Open_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Deactivate_Order'Tag, Deactivate_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Accept_Order_At'Tag, Accept_Order_At_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Cancel_Order'Tag, Cancel_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Execute_Order_At_Market'Tag, Execute_Order_At_Market_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Negotiate_Order_At'Tag, Negotiate_Order_At_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Create_Close_Order'Tag, Create_Close_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Execute_Order'Tag, Execute_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Execute_Order_At'Tag, Execute_Order_At_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Get_Orders'Tag, Get_Orders_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Get_Orders_Links'Tag, Get_Orders_Links_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Get_Accounts'Tag, Get_Accounts_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Accept_Order'Tag, Accept_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Close_Order'Tag, Modify_Close_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Limit_Close_Order'Tag, Modify_Limit_Close_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Create_Stop_Open_Order'Tag, Create_Stop_Open_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Limit_Open_Order'Tag, Modify_Limit_Open_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Stop_Open_Order'Tag, Modify_Stop_Open_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Open_Order'Tag, Modify_Open_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Create_Stop_Close_Order'Tag, Create_Stop_Close_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Modify_Stop_Close_Order'Tag, Modify_Stop_Close_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Create_Limit_Open_Order'Tag, Create_Limit_Open_Order_Encoder'Tag);
+   Web_Services.SOAP.Payloads.Encoders.Registry.Register
+     (Payloads.Create_Limit_Close_Order'Tag, Create_Limit_Close_Order_Encoder'Tag);

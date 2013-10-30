@@ -17,19 +17,19 @@ RV NO_IMPLEMENTATION_PRAGMAS
 RV NO_OBSOLESCENT_FEATURES
 RV SPARK
 
-U ada_main%b		b~xsd_to_ada_generator.adb  f82b2786 NE OO PK IL
+U ada_main%b		b~xsd_to_ada_generator.adb  fa6e2639 NE OO PK IL
 W ada%s			ada.ads			ada.ali
 W ada.exceptions%s	a-except.adb		a-except.ali
 W system%s		system.ads		system.ali
 
-U ada_main%s		b~xsd_to_ada_generator.ads  a0562aec EE NE OO PK IL
+U ada_main%s		b~xsd_to_ada_generator.ads  a2132b53 EE NE OO PK IL
 W system%s		system.ads		system.ali
 
 D ada.ads		20130417131023 3ffc8e18
 D a-except.ads		20130417131019 10fcae55
 D a-unccon.ads		20130417131022 f9eb8f06
-D b~xsd_to_ada_generator.ads  20131025082757 3072bbfd
-D b~xsd_to_ada_generator.adb  20131025082757 d8a5322e
+D b~xsd_to_ada_generator.ads  20131030164437 3237ba42
+D b~xsd_to_ada_generator.adb  20131030164437 d8a5322e
 D system.ads		20130417131036 90249111
 D s-parame.ads		20130417131032 b6e20cc0
 D s-stalib.ads		20130417131032 f78bcf95

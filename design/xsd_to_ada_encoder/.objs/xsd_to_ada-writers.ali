@@ -83,9 +83,9 @@ D s-unstyp.ads		20130417131034 6ae15c76
 D s-wchcon.ads		20130417131034 bfeb2e3d
 D s-wchstw.ads		20130417131034 2d112c01
 D unchconv.ads		20130417131036 ca2f9e18
-D xsd_to_ada.ads	20131008065647 db16ca7a
-D xsd_to_ada-writers.ads  20131008065647 814d0856
-D xsd_to_ada-writers.adb  20131008065647 52bd8558
+D xsd_to_ada.ads	20131028085654 db16ca7a
+D xsd_to_ada-writers.ads  20131028085654 814d0856
+D xsd_to_ada-writers.adb  20131028085654 52bd8558
 X 10 league.ads
 45K9*League 51e11 45|45r6 52r14 65r16 69r14 83r16 88r14 46|56r14 72r14 103r16
 . 112r16

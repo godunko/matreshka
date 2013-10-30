@@ -337,6 +337,32 @@ package Encoder is
       Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
       Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
 
+   type Modify_Close_Order_Encoder is
+   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
+   with null record;
+
+   overriding function Create
+     (Dummy : not null access Boolean) return 
+      Modify_Close_Order_Encoder;
+
+   overriding procedure Encode
+     (Self    : Modify_Close_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
+
+   type Modify_Limit_Close_Order_Encoder is
+   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
+   with null record;
+
+   overriding function Create
+     (Dummy : not null access Boolean) return 
+      Modify_Limit_Close_Order_Encoder;
+
+   overriding procedure Encode
+     (Self    : Modify_Limit_Close_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
+
    type Create_Stop_Open_Order_Encoder is
    limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
    with null record;
@@ -350,6 +376,45 @@ package Encoder is
       Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
       Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
 
+   type Modify_Limit_Open_Order_Encoder is
+   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
+   with null record;
+
+   overriding function Create
+     (Dummy : not null access Boolean) return 
+      Modify_Limit_Open_Order_Encoder;
+
+   overriding procedure Encode
+     (Self    : Modify_Limit_Open_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
+
+   type Modify_Stop_Open_Order_Encoder is
+   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
+   with null record;
+
+   overriding function Create
+     (Dummy : not null access Boolean) return 
+      Modify_Stop_Open_Order_Encoder;
+
+   overriding procedure Encode
+     (Self    : Modify_Stop_Open_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
+
+   type Modify_Open_Order_Encoder is
+   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
+   with null record;
+
+   overriding function Create
+     (Dummy : not null access Boolean) return 
+      Modify_Open_Order_Encoder;
+
+   overriding procedure Encode
+     (Self    : Modify_Open_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
+
    type Create_Stop_Close_Order_Encoder is
    limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
    with null record;
@@ -360,6 +425,19 @@ package Encoder is
 
    overriding procedure Encode
      (Self    : Create_Stop_Close_Order_Encoder;
+      Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
+      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
+
+   type Modify_Stop_Close_Order_Encoder is
+   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder
+   with null record;
+
+   overriding function Create
+     (Dummy : not null access Boolean) return 
+      Modify_Stop_Close_Order_Encoder;
+
+   overriding procedure Encode
+     (Self    : Modify_Stop_Close_Order_Encoder;
       Message : Web_Services.SOAP.Payloads.Abstract_SOAP_Payload'Class;
       Writer  : in out XML.SAX.Writers.SAX_Writer'Class);
 

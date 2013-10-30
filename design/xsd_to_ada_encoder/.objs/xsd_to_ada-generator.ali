@@ -9,7 +9,7 @@ RV NO_IO
 RV NO_DEFAULT_INITIALIZATION
 RV NO_IMPLEMENTATION_PRAGMAS
 
-U xsd_to_ada.generator%b  xsd_to_ada-generator.adb  08de1fe5 NE OO PK
+U xsd_to_ada.generator%b  xsd_to_ada-generator.adb  6adeda61 NE OO PK
 W ada%s			ada.ads			ada.ali
 W ada.containers%s	a-contai.ads		a-contai.ali
 W ada.containers.vectors%s
@@ -162,13 +162,13 @@ D xml-schema-objects-type_definitions-complex_type_definitions.ads  201309090903
 D xml-schema-objects-type_definitions-simple_type_definitions.ads  20130909090319 e34e6ee4
 D xml-schema-simple_type_definitions.ads  20130909090319 79aa1e4b
 D xml-schema-type_definitions.ads  20130909090319 6f849cbb
-D xsd_to_ada.ads	20131008065647 db16ca7a
-D xsd_to_ada-generator.ads  20131008065647 08455a3b
-D xsd_to_ada-generator.adb  20131008065647 0d3784f4
-D xsd_to_ada-mappings.ads  20131008065647 a32671ff
-D xsd_to_ada-mappings_xml.ads  20131008065647 a16ab03c
-D xsd_to_ada-utils.ads	20131025081815 46c768b9
-D xsd_to_ada-writers.ads  20131008065647 814d0856
+D xsd_to_ada.ads	20131028085654 db16ca7a
+D xsd_to_ada-generator.ads  20131028085654 08455a3b
+D xsd_to_ada-generator.adb  20131028085654 0d3784f4
+D xsd_to_ada-mappings.ads  20131028085654 a32671ff
+D xsd_to_ada-mappings_xml.ads  20131028085654 a16ab03c
+D xsd_to_ada-utils.ads	20131028113118 24c7ad3d
+D xsd_to_ada-writers.ads  20131028085654 814d0856
 X 1 ada.ads
 16K9*Ada 19e8 134|45r14 66r23 135|45r6 46r6 76r10 77r10
 X 5 a-contai.ads
@@ -219,7 +219,7 @@ X 135 xsd_to_ada-generator.adb
 X 137 xsd_to_ada-mappings_xml.ads
 55K20*Mappings_XML 135|52w17 137|94e28
 X 138 xsd_to_ada-utils.ads
-58K20*Utils 135|51w17 87r18 138|238e21
+58K20*Utils 135|51w17 87r18 138|240e21
 118U14*Create_Complex_Type 135|87s24
 X 139 xsd_to_ada-writers.ads
 47K20*Writers 134|47w17 60r32 135|103r32 139|95e23

@@ -68,8 +68,8 @@ D s-stratt.ads		20130417131032 aedef97e
 D s-traent.ads		20130417131033 5221ee41
 D s-unstyp.ads		20130417131034 6ae15c76
 D unchconv.ads		20130417131036 ca2f9e18
-D xsd_to_ada.ads	20131008065647 db16ca7a
-D xsd_to_ada-mappings.ads  20131008065647 a32671ff
+D xsd_to_ada.ads	20131028085654 db16ca7a
+D xsd_to_ada-mappings.ads  20131028085654 a32671ff
 X 11 league.ads
 45K9*League 51e11 44|45r6 50r20 51r20
 X 13 league-string_vectors.ads

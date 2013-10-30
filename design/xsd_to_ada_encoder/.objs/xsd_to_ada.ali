@@ -10,7 +10,7 @@ RV NO_IMPLEMENTATION_PRAGMAS
 U xsd_to_ada%s		xsd_to_ada.ads		db16ca7a NE OO PU PK
 
 D system.ads		20130417131036 90249111
-D xsd_to_ada.ads	20131008065647 db16ca7a
+D xsd_to_ada.ads	20131028085654 db16ca7a
 X 2 xsd_to_ada.ads
 45K9*XSD_To_Ada 49l5 49e15
 

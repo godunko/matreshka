@@ -235,4 +235,6 @@ package XSD_To_Ada.Utils is
 
    Element_Vector : League.String_Vectors.Universal_String_Vector;
 
+   Tag_Vector : League.String_Vectors.Universal_String_Vector;
+
 end XSD_To_Ada.Utils;
