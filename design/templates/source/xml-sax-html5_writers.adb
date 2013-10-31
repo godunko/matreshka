@@ -48,13 +48,20 @@ package body XML.SAX.HTML5_Writers is
    use type League.Characters.Universal_Character;
    use type League.Strings.Universal_String;
 
-   XHTML_URI : constant League.Strings.Universal_String
+   HTML_URI   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
    MathML_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/1998/Math/MathML");
    SVG_URI    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/2000/svg");
+   XLink_URI  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/1999/xlink");
+   XML_URI    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/XML/1998/namespace");
+   XMLNS_URI  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/2000/xmlns/");
 
    Area_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("area");
@@ -93,12 +100,18 @@ package body XML.SAX.HTML5_Writers is
    Wbr_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("wbr");
 
+   Actuate_Attribute        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("actuate");
+   Arcrole_Attribute        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("arcrole");
    Async_Attribute          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("async");
    Autofocus_Attribute      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("autofocus");
    Autoplay_Attribute       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("autoplay");
+   Base_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("base");
    Checked_Attribute        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("checked");
    Controls_Attribute       : constant League.Strings.Universal_String
@@ -113,8 +126,12 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("formnovalidate");
    Hidden_Attribute         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("hidden");
+   Href_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("href");
    Ismap_Attribute          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("ismap");
+   Lang_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("lang");
    Loop_Attribute           : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("loop");
    Multiple_Attribute       : constant League.Strings.Universal_String
@@ -131,14 +148,50 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("required");
    Reversed_Attribute       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("reversed");
+   Role_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("role");
    Scoped_Attribute         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("scoped");
    Seamless_Attribute       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("seamless");
    Selected_Attribute       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("selected");
+   Show_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("show");
+   Space_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("space");
+   Title_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("title");
+   Type_Attribute           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("type");
    Typemustmatch_Attribute  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("typemustmatch");
+   XLink_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink");
+   XLink_Actuate_Attribute  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink:actuate");
+   XLink_Arcrole_Attribute  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink:arcrole");
+   XLink_Href_Attribute     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink:href");
+   XLink_Role_Attribute     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink:role");
+   XLink_Show_Attribute     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink:show");
+   XLink_Title_Attribute    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink:title");
+   XLink_Type_Attribute     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xlink:type");
+   XML_Base_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xml:base");
+   XML_Lang_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xml:lang");
+   XML_Space_Attribute      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xml:space");
+   XMLNS_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xmlns");
+   XMLNS_XLink_Attribute    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xmlns:xlink");
 
    type Attribute_Value_Syntax is
      (Empty, Unquoted, Single_Quoted, Double_Quoted);
@@ -153,6 +206,13 @@ package body XML.SAX.HTML5_Writers is
 
    procedure Write_DOCTYPE (Self : in out HTML5_Writer'Class);
    --  Outputs DOCTYPE declaration.
+
+   procedure Write_Attributes
+    (Self            : in out HTML5_Writer'Class;
+     Attributes      : XML.SAX.Attributes.SAX_Attributes;
+     Foreign_Element : Boolean;
+     Success         : in out Boolean);
+   --  Output attributes.
 
    function Is_Boolean_Attribute
     (Name : League.Strings.Universal_String) return Boolean;
@@ -254,7 +314,7 @@ package body XML.SAX.HTML5_Writers is
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean) is
    begin
-      if Namespace_URI = XHTML_URI then
+      if Namespace_URI = HTML_URI then
          if Is_Void_Element (Local_Name) then
             --  Don't generate close tag for void elements.
             --
@@ -580,8 +640,7 @@ package body XML.SAX.HTML5_Writers is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean)
-   is
+     Success        : in out Boolean) is
    begin
       if not Self.DOCTYPE_Written then
          --  DOCTYPE is required by HTML5 but it is optional in XHTML5.
@@ -593,7 +652,7 @@ package body XML.SAX.HTML5_Writers is
          Self.Output.Put ('>');
       end if;
 
-      if Namespace_URI = XHTML_URI then
+      if Namespace_URI = HTML_URI then
          if Local_Name = Head_Tag then
             Self.Document_Start := False;
 
@@ -607,52 +666,11 @@ package body XML.SAX.HTML5_Writers is
          Self.No_Content := False;
          Self.Output.Put ('<');
          Self.Output.Put (Local_Name);
+         Self.Write_Attributes (Attributes, False, Success);
 
-         for J in 1 .. Attributes.Length loop
-            if Attributes.Namespace_URI (J).Is_Empty then
-               declare
-                  Qualified_Name : constant League.Strings.Universal_String
-                    := Attributes.Qualified_Name (J);
-                  Escaped_Value  : League.Strings.Universal_String;
-                  Syntax         : Attribute_Value_Syntax;
-
-               begin
-                  Escape_Attribute_Value (Attributes (J), Escaped_Value, Syntax);
-
-                  if Syntax = Empty
-                    or else Is_Boolean_Attribute (Qualified_Name)
-                  then
-                    Self.Output.Put (' ');
-                    Self.Output.Put (Qualified_Name);
-
-                  elsif Syntax = Unquoted then
-                     Self.Output.Put (' ');
-                     Self.Output.Put (Qualified_Name);
-                     Self.Output.Put ('=');
-                     Self.Output.Put (Escaped_Value);
-
-                  elsif Syntax = Single_Quoted then
-                     Self.Output.Put (' ');
-                     Self.Output.Put (Qualified_Name);
-                     Self.Output.Put ('=');
-                     Self.Output.Put (''');
-                     Self.Output.Put (Escaped_Value);
-                     Self.Output.Put (''');
-
-                  else
-                     Self.Output.Put (' ');
-                     Self.Output.Put (Qualified_Name);
-                     Self.Output.Put ('=');
-                     Self.Output.Put ('"');
-                     Self.Output.Put (Escaped_Value);
-                     Self.Output.Put ('"');
-                  end if;
-               end;
-
-            else
-               raise Program_Error;
-            end if;
-         end loop;
+         if not Success then
+            return;
+         end if;
 
          Self.Output.Put ('>');
 
@@ -673,6 +691,11 @@ package body XML.SAX.HTML5_Writers is
 
          Self.Output.Put ('<');
          Self.Output.Put (Local_Name);
+         Self.Write_Attributes (Attributes, True, Success);
+
+         if not Success then
+            return;
+         end if;
 
       else
          --  Other namespaces can't be used in HTML5.
@@ -683,6 +706,166 @@ package body XML.SAX.HTML5_Writers is
             ("namespace is not supported by HTML5");
       end if;
    end Start_Element;
+
+   ----------------------
+   -- Write_Attributes --
+   ----------------------
+
+   procedure Write_Attributes
+    (Self            : in out HTML5_Writer'Class;
+     Attributes      : XML.SAX.Attributes.SAX_Attributes;
+     Foreign_Element : Boolean;
+     Success         : in out Boolean)
+   is
+
+      procedure Write_Attribute
+       (Qualified_Name : League.Strings.Universal_String;
+        Value          : League.Strings.Universal_String);
+
+      ---------------------
+      -- Write_Attribute --
+      ---------------------
+
+      procedure Write_Attribute
+       (Qualified_Name : League.Strings.Universal_String;
+        Value          : League.Strings.Universal_String)
+      is
+         Escaped_Value : League.Strings.Universal_String;
+         Syntax        : Attribute_Value_Syntax;
+
+      begin
+         Escape_Attribute_Value (Value, Escaped_Value, Syntax);
+
+         if Syntax = Empty
+           or else (not Foreign_Element
+                      and then Is_Boolean_Attribute (Qualified_Name))
+         then
+            Self.Output.Put (' ');
+            Self.Output.Put (Qualified_Name);
+
+         elsif Syntax = Unquoted then
+            Self.Output.Put (' ');
+            Self.Output.Put (Qualified_Name);
+            Self.Output.Put ('=');
+            Self.Output.Put (Escaped_Value);
+
+         elsif Syntax = Single_Quoted then
+            Self.Output.Put (' ');
+            Self.Output.Put (Qualified_Name);
+            Self.Output.Put ('=');
+            Self.Output.Put (''');
+            Self.Output.Put (Escaped_Value);
+            Self.Output.Put (''');
+
+         else
+            Self.Output.Put (' ');
+            Self.Output.Put (Qualified_Name);
+            Self.Output.Put ('=');
+            Self.Output.Put ('"');
+            Self.Output.Put (Escaped_Value);
+            Self.Output.Put ('"');
+         end if;
+      end Write_Attribute;
+
+      Namespace_URI  : League.Strings.Universal_String;
+      Local_Name     : League.Strings.Universal_String;
+      Qualified_Name : League.Strings.Universal_String;
+      Value          : League.Strings.Universal_String;
+
+   begin
+      for J in 1 .. Attributes.Length loop
+         Namespace_URI  := Attributes.Namespace_URI (J);
+         Local_Name     := Attributes.Local_Name (J);
+         Qualified_Name := Attributes.Qualified_Name (J);
+         Value          := Attributes (J);
+
+         if Namespace_URI.Is_Empty then
+            Write_Attribute (Qualified_Name, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XLink_URI
+           and Local_Name = Actuate_Attribute
+         then
+            Write_Attribute (XLink_Actuate_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XLink_URI
+           and Local_Name = Arcrole_Attribute
+         then
+            Write_Attribute (XLink_Arcrole_Attribute, Value);
+
+         elsif Foreign_Element
+              and Namespace_URI = XLink_URI
+              and Local_Name = Href_Attribute
+         then
+            Write_Attribute (XLink_Href_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XLink_URI
+           and Local_Name = Role_Attribute
+         then
+            Write_Attribute (XLink_Role_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XLink_URI
+           and Local_Name = Show_Attribute
+         then
+            Write_Attribute (XLink_Show_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XLink_URI
+           and Local_Name = Title_Attribute
+         then
+            Write_Attribute (XLink_Title_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XLink_URI
+           and Local_Name = Type_Attribute
+         then
+            Write_Attribute (XLink_Type_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XML_URI
+           and Local_Name = Base_Attribute
+         then
+            Write_Attribute (XML_Base_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XML_URI
+           and Local_Name = Lang_Attribute
+         then
+            Write_Attribute (XML_Lang_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XML_URI
+           and Local_Name = Space_Attribute
+         then
+            Write_Attribute (XML_Space_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XMLNS_URI
+           and Local_Name = XMLNS_Attribute
+         then
+            Write_Attribute (XMLNS_Attribute, Value);
+
+         elsif Foreign_Element
+           and Namespace_URI = XMLNS_URI
+           and Local_Name = XLink_Attribute
+         then
+            Write_Attribute (XMLNS_XLink_Attribute, Value);
+
+         else
+            --  Other namespaces can't be expressed in HTML5.
+
+            Success        := False;
+            Self.Diagnosis :=
+              League.Strings.To_Universal_String
+               ("namespaced attribute can't be expressed in HTML5");
+
+            return;
+         end if;
+      end loop;
+   end Write_Attributes;
 
    -------------------
    -- Write_DOCTYPE --
