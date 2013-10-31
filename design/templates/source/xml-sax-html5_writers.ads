@@ -46,8 +46,11 @@
 --  issues in generated document right now. It provides some optimization of
 --  output data:
 --   - close tag for void elements are omitted;
---   - boolean attributes are output using empty attribute syntax.
+--   - boolean attributes are output using empty attribute syntax;
+--   - all attributes are output using most compact syntax.
 ------------------------------------------------------------------------------
+private with Ada.Containers.Vectors;
+
 private with League.Strings;
 private with XML.SAX.Attributes;
 with XML.SAX.Writers;
@@ -58,10 +61,19 @@ package XML.SAX.HTML5_Writers is
 
 private
 
+   type Writer_State is record
+      Foreign_Element : Boolean := False;
+   end record;
+
+   package State_Stacks is
+     new Ada.Containers.Vectors (Positive, Writer_State);
+
    type HTML5_Writer is
      limited new XML.SAX.Writers.SAX_Writer with record
       Output          : XML.SAX.Writers.SAX_Output_Destination_Access;
       Diagnosis       : League.Strings.Universal_String;
+      State           : Writer_State;
+      Stack           : State_Stacks.Vector;
       DOCTYPE_Written : Boolean := False;
       --  <!DOCTYPE html> has been output. This can happen on Start_DTD event
       --  if any, or be synthesized on first Start_Element event.

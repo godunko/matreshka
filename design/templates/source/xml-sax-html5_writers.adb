@@ -208,10 +208,9 @@ package body XML.SAX.HTML5_Writers is
    --  Outputs DOCTYPE declaration.
 
    procedure Write_Attributes
-    (Self            : in out HTML5_Writer'Class;
-     Attributes      : XML.SAX.Attributes.SAX_Attributes;
-     Foreign_Element : Boolean;
-     Success         : in out Boolean);
+    (Self       : in out HTML5_Writer'Class;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean);
    --  Output attributes.
 
    function Is_Boolean_Attribute
@@ -300,7 +299,13 @@ package body XML.SAX.HTML5_Writers is
      Success : in out Boolean) is
    begin
       Self.CDATA_Mode := False;
-      Self.Output.Put ("]]>");
+
+      if Self.State.Foreign_Element then
+         --  [HTML5] "CDATA sections can only be used in foreign content
+         --  (MathML or SVG)."
+
+         Self.Output.Put ("]]>");
+      end if;
    end End_CDATA;
 
    -----------------
@@ -349,6 +354,8 @@ package body XML.SAX.HTML5_Writers is
       end if;
 
       Self.No_Content := False;
+      Self.State := Self.Stack.Last_Element;
+      Self.Stack.Delete_Last;
    end End_Element;
 
    ------------------
@@ -598,7 +605,13 @@ package body XML.SAX.HTML5_Writers is
       end if;
 
       Self.CDATA_Mode := True;
-      Self.Output.Put ("<![CDATA[");
+
+      if Self.State.Foreign_Element then
+         --  [HTML5] "CDATA sections can only be used in foreign content
+         --  (MathML or SVG)."
+
+         Self.Output.Put ("<![CDATA[");
+      end if;
    end Start_CDATA;
 
    --------------------
@@ -610,6 +623,8 @@ package body XML.SAX.HTML5_Writers is
      Success : in out Boolean) is
    begin
       Self.Diagnosis.Clear;
+      Self.State.Foreign_Element := False;
+      Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
       Self.Document_Start  := True;
       Self.No_Content      := False;
@@ -642,6 +657,8 @@ package body XML.SAX.HTML5_Writers is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean) is
    begin
+      Self.Stack.Append (Self.State);
+
       if not Self.DOCTYPE_Written then
          --  DOCTYPE is required by HTML5 but it is optional in XHTML5.
 
@@ -653,6 +670,8 @@ package body XML.SAX.HTML5_Writers is
       end if;
 
       if Namespace_URI = HTML_URI then
+         Self.State.Foreign_Element := False;
+
          if Local_Name = Head_Tag then
             Self.Document_Start := False;
 
@@ -666,7 +685,7 @@ package body XML.SAX.HTML5_Writers is
          Self.No_Content := False;
          Self.Output.Put ('<');
          Self.Output.Put (Local_Name);
-         Self.Write_Attributes (Attributes, False, Success);
+         Self.Write_Attributes (Attributes, Success);
 
          if not Success then
             return;
@@ -687,11 +706,12 @@ package body XML.SAX.HTML5_Writers is
       elsif Namespace_URI = MathML_URI
         or Namespace_URI = SVG_URI
       then
+         Self.State.Foreign_Element := True;
          Self.No_Content := True;
 
          Self.Output.Put ('<');
          Self.Output.Put (Local_Name);
-         Self.Write_Attributes (Attributes, True, Success);
+         Self.Write_Attributes (Attributes, Success);
 
          if not Success then
             return;
@@ -712,10 +732,9 @@ package body XML.SAX.HTML5_Writers is
    ----------------------
 
    procedure Write_Attributes
-    (Self            : in out HTML5_Writer'Class;
-     Attributes      : XML.SAX.Attributes.SAX_Attributes;
-     Foreign_Element : Boolean;
-     Success         : in out Boolean)
+    (Self       : in out HTML5_Writer'Class;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean)
    is
 
       procedure Write_Attribute
@@ -737,7 +756,7 @@ package body XML.SAX.HTML5_Writers is
          Escape_Attribute_Value (Value, Escaped_Value, Syntax);
 
          if Syntax = Empty
-           or else (not Foreign_Element
+           or else (not Self.State.Foreign_Element
                       and then Is_Boolean_Attribute (Qualified_Name))
          then
             Self.Output.Put (' ');
@@ -782,73 +801,73 @@ package body XML.SAX.HTML5_Writers is
          if Namespace_URI.Is_Empty then
             Write_Attribute (Qualified_Name, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XLink_URI
            and Local_Name = Actuate_Attribute
          then
             Write_Attribute (XLink_Actuate_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XLink_URI
            and Local_Name = Arcrole_Attribute
          then
             Write_Attribute (XLink_Arcrole_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
               and Namespace_URI = XLink_URI
               and Local_Name = Href_Attribute
          then
             Write_Attribute (XLink_Href_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XLink_URI
            and Local_Name = Role_Attribute
          then
             Write_Attribute (XLink_Role_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XLink_URI
            and Local_Name = Show_Attribute
          then
             Write_Attribute (XLink_Show_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XLink_URI
            and Local_Name = Title_Attribute
          then
             Write_Attribute (XLink_Title_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XLink_URI
            and Local_Name = Type_Attribute
          then
             Write_Attribute (XLink_Type_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XML_URI
            and Local_Name = Base_Attribute
          then
             Write_Attribute (XML_Base_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XML_URI
            and Local_Name = Lang_Attribute
          then
             Write_Attribute (XML_Lang_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XML_URI
            and Local_Name = Space_Attribute
          then
             Write_Attribute (XML_Space_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XMLNS_URI
            and Local_Name = XMLNS_Attribute
          then
             Write_Attribute (XMLNS_Attribute, Value);
 
-         elsif Foreign_Element
+         elsif Self.State.Foreign_Element
            and Namespace_URI = XMLNS_URI
            and Local_Name = XLink_Attribute
          then
