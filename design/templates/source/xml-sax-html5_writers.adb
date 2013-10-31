@@ -265,7 +265,16 @@ package body XML.SAX.HTML5_Writers is
       if not Self.Document_Start or else not Is_Space (Text) then
          case Self.State.Element_Kind is
             when Void =>
-               raise Program_Error;
+               --  [HTML5] "Void elements can't have any contents (since
+               --  there's no end tag, no content can be put between the start
+               --  tag and the end tag)."
+
+               Self.Diagnosis :=
+                 League.Strings.To_Universal_String
+                  ("void element can't have any contents");
+               Success        := False;
+
+               return;
 
             when Raw_Text =>
                --  XXX Verification of the text content can be done here.
@@ -281,9 +290,34 @@ package body XML.SAX.HTML5_Writers is
                Self.Output.Put (Text);
 
             when Escapable_Raw_Text =>
-               --  XXX not implemented
+               for J in 1 .. Text.Length loop
+                  C := Text (J);
 
-               Self.Output.Put (Text);
+                  if C = League.Characters.Latin.Less_Than_Sign
+                    and then J < Text.Length
+                    and then Text (J + 1) = League.Characters.Latin.Solidus
+                  then
+                     --  XXX This check can be even more improved:
+                     --
+                     --  [HTML5] "The text in raw text and escapable raw text
+                     --  elements must not contain any occurrences of the
+                     --  string "</" (U+003C LESS-THAN SIGN, U+002F SOLIDUS)
+                     --  followed by characters that case-insensitively match
+                     --  the tag name of the element followed by one of "tab"
+                     --  (U+0009), "LF" (U+000A), "FF" (U+000C), "CR" (U+000D),
+                     --  U+0020 SPACE, ">" (U+003E), or "/" (U+002F)."
+
+                     Escaped_Text.Append ("&lt;");
+
+                  elsif C = League.Characters.Latin.Ampersand then
+                     Escaped_Text.Append ("&amp;");
+
+                  else
+                     Escaped_Text.Append (C);
+                  end if;
+               end loop;
+
+               Self.Output.Put (Escaped_Text);
 
             when Normal | Foreign =>
                if Self.State.Element_Kind = Foreign and Self.CDATA_Mode then
