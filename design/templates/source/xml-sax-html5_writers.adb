@@ -93,8 +93,12 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("meta");
    Param_Tag  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("param");
+   Script_Tag : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("script");
    Source_Tag : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("source");
+   Style_Tag  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("style");
    Track_Tag  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("track");
    Wbr_Tag    : constant League.Strings.Universal_String
@@ -221,6 +225,10 @@ package body XML.SAX.HTML5_Writers is
     (Tag : League.Strings.Universal_String) return Boolean;
    --  Returns True when specified tag refernce to void element of HTML5.
 
+   function Is_Raw_Text_Element
+    (Tag : League.Strings.Universal_String) return Boolean;
+   --  Returns True when specified tag refernce to raw text element of HTML5.
+
    procedure Escape_Attribute_Value
     (Value  : League.Strings.Universal_String;
      Text   : out League.Strings.Universal_String;
@@ -242,8 +250,22 @@ package body XML.SAX.HTML5_Writers is
       end if;
 
       if not Self.Document_Start or else not Is_Space (Text) then
-         Self.Output.Put (Text);
-         --  XXX Text MUST BE escaped.
+         if Self.State.Element_Kind = Raw_Text then
+            --  XXX Verification of the text content can be done here.
+            --
+            --  [HTML5] "The text in raw text and escapable raw text elements
+            --  must not contain any occurrences of the string "</" (U+003C
+            --  LESS-THAN SIGN, U+002F SOLIDUS) followed by characters that
+            --  case-insensitively match the tag name of the element followed
+            --  by one of "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), "CR"
+            --  (U+000D), U+0020 SPACE, ">" (U+003E), or "/" (U+002F)."
+
+            Self.Output.Put (Text);
+
+         else
+            Self.Output.Put (Text);
+            --  XXX Text MUST BE escaped.
+         end if;
       end if;
    end Characters;
 
@@ -300,7 +322,7 @@ package body XML.SAX.HTML5_Writers is
    begin
       Self.CDATA_Mode := False;
 
-      if Self.State.Foreign_Element then
+      if Self.State.Element_Kind = Foreign then
          --  [HTML5] "CDATA sections can only be used in foreign content
          --  (MathML or SVG)."
 
@@ -319,8 +341,13 @@ package body XML.SAX.HTML5_Writers is
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean) is
    begin
-      if Namespace_URI = HTML_URI then
-         if Is_Void_Element (Local_Name) then
+      case Self.State.Element_Kind is
+         when Normal | Raw_Text | Escapable_Raw_Text =>
+            Self.Output.Put ("</");
+            Self.Output.Put (Local_Name);
+            Self.Output.Put ('>');
+
+         when Void =>
             --  Don't generate close tag for void elements.
             --
             --  [HTML5] "Then, if the element is one of the void elements, or
@@ -331,27 +358,16 @@ package body XML.SAX.HTML5_Writers is
 
             null;
 
-         else
-            Self.Output.Put ("</");
-            Self.Output.Put (Local_Name);
-            Self.Output.Put ('>');
-         end if;
+         when Foreign =>
+            if Self.No_Content then
+               Self.Output.Put ("/>");
 
-      elsif Namespace_URI = MathML_URI
-        or Namespace_URI = SVG_URI
-      then
-         if Self.No_Content then
-            Self.Output.Put ("/>");
-
-         else
-            Self.Output.Put ("</");
-            Self.Output.Put (Local_Name);
-            Self.Output.Put ('>');
-         end if;
-
-      else
-         raise Program_Error;
-      end if;
+            else
+               Self.Output.Put ("</");
+               Self.Output.Put (Local_Name);
+               Self.Output.Put ('>');
+            end if;
+      end case;
 
       Self.No_Content := False;
       Self.State := Self.Stack.Last_Element;
@@ -527,6 +543,16 @@ package body XML.SAX.HTML5_Writers is
           or Name = Typemustmatch_Attribute;
    end Is_Boolean_Attribute;
 
+   -------------------------
+   -- Is_Raw_Text_Element --
+   -------------------------
+
+   function Is_Raw_Text_Element
+    (Tag : League.Strings.Universal_String) return Boolean is
+   begin
+      return Tag = Script_Tag or Tag = Style_Tag;
+   end Is_Raw_Text_Element;
+
    --------------
    -- Is_Space --
    --------------
@@ -606,7 +632,7 @@ package body XML.SAX.HTML5_Writers is
 
       Self.CDATA_Mode := True;
 
-      if Self.State.Foreign_Element then
+      if Self.State.Element_Kind = Foreign then
          --  [HTML5] "CDATA sections can only be used in foreign content
          --  (MathML or SVG)."
 
@@ -623,7 +649,7 @@ package body XML.SAX.HTML5_Writers is
      Success : in out Boolean) is
    begin
       Self.Diagnosis.Clear;
-      Self.State.Foreign_Element := False;
+      Self.State := (Element_Kind => Normal);
       Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
       Self.Document_Start  := True;
@@ -670,7 +696,15 @@ package body XML.SAX.HTML5_Writers is
       end if;
 
       if Namespace_URI = HTML_URI then
-         Self.State.Foreign_Element := False;
+         if Is_Void_Element (Local_Name) then
+            Self.State.Element_Kind := Void;
+
+         elsif Is_Raw_Text_Element (Local_Name) then
+            Self.State.Element_Kind := Raw_Text;
+
+         else
+            Self.State.Element_Kind := Normal;
+         end if;
 
          if Local_Name = Head_Tag then
             Self.Document_Start := False;
@@ -706,7 +740,7 @@ package body XML.SAX.HTML5_Writers is
       elsif Namespace_URI = MathML_URI
         or Namespace_URI = SVG_URI
       then
-         Self.State.Foreign_Element := True;
+         Self.State.Element_Kind := Foreign;
          Self.No_Content := True;
 
          Self.Output.Put ('<');
@@ -756,7 +790,7 @@ package body XML.SAX.HTML5_Writers is
          Escape_Attribute_Value (Value, Escaped_Value, Syntax);
 
          if Syntax = Empty
-           or else (not Self.State.Foreign_Element
+           or else (Self.State.Element_Kind /= Foreign
                       and then Is_Boolean_Attribute (Qualified_Name))
          then
             Self.Output.Put (' ');
@@ -801,73 +835,73 @@ package body XML.SAX.HTML5_Writers is
          if Namespace_URI.Is_Empty then
             Write_Attribute (Qualified_Name, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XLink_URI
            and Local_Name = Actuate_Attribute
          then
             Write_Attribute (XLink_Actuate_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XLink_URI
            and Local_Name = Arcrole_Attribute
          then
             Write_Attribute (XLink_Arcrole_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
               and Namespace_URI = XLink_URI
               and Local_Name = Href_Attribute
          then
             Write_Attribute (XLink_Href_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XLink_URI
            and Local_Name = Role_Attribute
          then
             Write_Attribute (XLink_Role_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XLink_URI
            and Local_Name = Show_Attribute
          then
             Write_Attribute (XLink_Show_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XLink_URI
            and Local_Name = Title_Attribute
          then
             Write_Attribute (XLink_Title_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XLink_URI
            and Local_Name = Type_Attribute
          then
             Write_Attribute (XLink_Type_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XML_URI
            and Local_Name = Base_Attribute
          then
             Write_Attribute (XML_Base_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XML_URI
            and Local_Name = Lang_Attribute
          then
             Write_Attribute (XML_Lang_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XML_URI
            and Local_Name = Space_Attribute
          then
             Write_Attribute (XML_Space_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XMLNS_URI
            and Local_Name = XMLNS_Attribute
          then
             Write_Attribute (XMLNS_Attribute, Value);
 
-         elsif Self.State.Foreign_Element
+         elsif Self.State.Element_Kind = Foreign
            and Namespace_URI = XMLNS_URI
            and Local_Name = XLink_Attribute
          then

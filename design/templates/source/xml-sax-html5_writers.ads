@@ -61,8 +61,15 @@ package XML.SAX.HTML5_Writers is
 
 private
 
+   type Element_Kinds is
+    (Normal,
+     Escapable_Raw_Text,
+     Raw_Text,
+     Void,
+     Foreign);
+
    type Writer_State is record
-      Foreign_Element : Boolean := False;
+      Element_Kind : Element_Kinds := Normal;
    end record;
 
    package State_Stacks is
