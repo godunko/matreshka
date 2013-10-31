@@ -45,6 +45,7 @@ with League.Characters.Latin;
 
 package body XML.SAX.HTML5_Writers is
 
+   use type League.Characters.Universal_Character;
    use type League.Strings.Universal_String;
 
    XHTML_URI : constant League.Strings.Universal_String
@@ -139,6 +140,9 @@ package body XML.SAX.HTML5_Writers is
    Typemustmatch_Attribute  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("typemustmatch");
 
+   type Attribute_Value_Syntax is
+     (Empty, Unquoted, Single_Quoted, Double_Quoted);
+
    function Is_Space (Item : League.Strings.Universal_String) return Boolean;
    --  Returns True when specified string contains only space characters as
    --  defined by HTML5 specification.
@@ -157,6 +161,12 @@ package body XML.SAX.HTML5_Writers is
    function Is_Void_Element
     (Tag : League.Strings.Universal_String) return Boolean;
    --  Returns True when specified tag refernce to void element of HTML5.
+
+   procedure Escape_Attribute_Value
+    (Value  : League.Strings.Universal_String;
+     Text   : out League.Strings.Universal_String;
+     Syntax : out Attribute_Value_Syntax);
+   --  Detects optimal attribute value syntax and escape attribute value.
 
    ----------------
    -- Characters --
@@ -329,8 +339,6 @@ package body XML.SAX.HTML5_Writers is
    --------------
 
    function Is_Space (Item : League.Strings.Universal_String) return Boolean is
-      use type League.Characters.Universal_Character;
-
       C : League.Characters.Universal_Character;
 
    begin
@@ -353,6 +361,128 @@ package body XML.SAX.HTML5_Writers is
 
       return True;
    end Is_Space;
+
+   procedure Escape_Attribute_Value
+    (Value  : League.Strings.Universal_String;
+     Text   : out League.Strings.Universal_String;
+     Syntax : out Attribute_Value_Syntax)
+   is
+      C               : League.Characters.Universal_Character;
+      Unquoted_Syntax : Boolean := True;
+      Apostrophes     : Natural := 0;
+      Quotation_Marks : Natural := 0;
+      Aux             : League.Strings.Universal_String;
+      First           : Positive := 1;
+      Index           : Natural;
+
+   begin
+      Text.Clear;
+
+      if Value.Is_Empty then
+         Syntax := Empty;
+
+      else
+         for J in 1 .. Value.Length loop
+            C := Value (J);
+
+            if C = League.Characters.Latin.Space
+              or C = League.Characters.Latin.Character_Tabulation
+              or C = League.Characters.Latin.Line_Feed
+              or C = League.Characters.Latin.Form_Feed
+              or C = League.Characters.Latin.Carriage_Return
+              or C = League.Characters.Latin.Equals_Sign
+              or C = League.Characters.Latin.Less_Than_Sign
+              or C = League.Characters.Latin.Greater_Than_Sign
+              or C = League.Characters.Latin.Grave_Accent
+            then
+               --  Space characters, '=', '<', '>', '`' are prohibited in
+               --  unquoted attribute value syntax.
+
+               Unquoted_Syntax := False;
+
+            elsif C = League.Characters.Latin.Apostrophe then
+               --  ''' is prohibited in unquoted attribute value syntax.
+
+               Unquoted_Syntax := False;
+               Apostrophes := Apostrophes + 1;
+
+            elsif C = League.Characters.Latin.Quotation_Mark then
+               --  '"' is prohibited in unquoted attribute value syntax.
+
+               Unquoted_Syntax := False;
+               Quotation_Marks := Quotation_Marks + 1;
+            end if;
+
+            if C = League.Characters.Latin.Ampersand then
+               --  Replace '&' by character reference in result string.
+
+               Text.Append ("&amp;");
+
+            else
+               --  Copy other characters to result string.
+
+               Text.Append (C);
+            end if;
+         end loop;
+
+         if Unquoted_Syntax then
+            --  Use unquoted attribute value syntax then actual attribute value
+            --  doesn't violate its restrictions.
+
+            Syntax := Unquoted;
+
+         elsif Apostrophes <= Quotation_Marks then
+            --  Number of apostrophes is less than number of quotation marks,
+            --  use single-quoted attribute value syntax.
+
+            Syntax := Single_Quoted;
+
+            --  Escape ''' characters
+
+            Aux := Text;
+            Text.Clear;
+
+            while First <= Aux.Length loop
+               Index := Aux.Index (First, ''');
+
+               if Index = 0 then
+                  Text.Append (Aux.Slice (First, Aux.Length));
+                  First := Aux.Length + 1;
+
+               else
+                  Text.Append (Aux.Slice (First, Index - 1));
+                  Text.Append ("&apos;");
+                  First := Index + 1;
+               end if;
+            end loop;
+
+         else
+            --  Number of apostrophes is greater than number of quotation
+            --  marks, use single-quoted attribute value syntax.
+
+            Syntax := Double_Quoted;
+
+            --  Escape '"' characters
+
+            Aux := Text;
+            Text.Clear;
+
+            while First <= Aux.Length loop
+               Index := Aux.Index (First, '"');
+
+               if Index = 0 then
+                  Text.Append (Aux.Slice (First, Aux.Length));
+                  First := Aux.Length + 1;
+
+               else
+                  Text.Append (Aux.Slice (First, Index - 1));
+                  Text.Append ("&quot;");
+                  First := Index + 1;
+               end if;
+            end loop;
+         end if;
+      end if;
+   end Escape_Attribute_Value;
 
    ---------------------
    -- Is_Void_Element --
@@ -479,21 +609,39 @@ package body XML.SAX.HTML5_Writers is
                declare
                   Qualified_Name : constant League.Strings.Universal_String
                     := Attributes.Qualified_Name (J);
+                  Escaped_Value  : League.Strings.Universal_String;
+                  Syntax         : Attribute_Value_Syntax;
 
                begin
-                  if Is_Boolean_Attribute (Qualified_Name) then
+                  Escape_Attribute_Value (Attributes (J), Escaped_Value, Syntax);
+
+                  if Syntax = Empty
+                    or else Is_Boolean_Attribute (Qualified_Name)
+                  then
                     Self.Output.Put (' ');
                     Self.Output.Put (Qualified_Name);
 
-                  else
-                     --  XXX Must be checked if value allows to use unquoted
-                     --  attribute value syntax or some quoted attribute value
-                     --  syntax must be used.
-
+                  elsif Syntax = Unquoted then
                      Self.Output.Put (' ');
                      Self.Output.Put (Qualified_Name);
                      Self.Output.Put ('=');
-                     Self.Output.Put (Attributes.Value (J));
+                     Self.Output.Put (Escaped_Value);
+
+                  elsif Syntax = Single_Quoted then
+                     Self.Output.Put (' ');
+                     Self.Output.Put (Qualified_Name);
+                     Self.Output.Put ('=');
+                     Self.Output.Put (''');
+                     Self.Output.Put (Escaped_Value);
+                     Self.Output.Put (''');
+
+                  else
+                     Self.Output.Put (' ');
+                     Self.Output.Put (Qualified_Name);
+                     Self.Output.Put ('=');
+                     Self.Output.Put ('"');
+                     Self.Output.Put (Escaped_Value);
+                     Self.Output.Put ('"');
                   end if;
                end;
 
