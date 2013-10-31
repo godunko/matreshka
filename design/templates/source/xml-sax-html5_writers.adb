@@ -301,66 +301,9 @@ package body XML.SAX.HTML5_Writers is
       return Self.Diagnosis;
    end Error_String;
 
-   --------------------------
-   -- Is_Boolean_Attribute --
-   --------------------------
-
-   function Is_Boolean_Attribute
-    (Name : League.Strings.Universal_String) return Boolean is
-   begin
-      return
-        Name = Async_Attribute
-          or Name = Autofocus_Attribute
-          or Name = Autoplay_Attribute
-          or Name = Checked_Attribute
-          or Name = Controls_Attribute
-          or Name = Default_Attribute
-          or Name = Defer_Attribute
-          or Name = Disabled_Attribute
-          or Name = Formnovalidate_Attribute
-          or Name = Hidden_Attribute
-          or Name = Ismap_Attribute
-          or Name = Loop_Attribute
-          or Name = Multiple_Attribute
-          or Name = Muted_Attribute
-          or Name = Novalidate_Attribute
-          or Name = Open_Attribute
-          or Name = Readonly_Attribute
-          or Name = Required_Attribute
-          or Name = Reversed_Attribute
-          or Name = Scoped_Attribute
-          or Name = Seamless_Attribute
-          or Name = Selected_Attribute
-          or Name = Typemustmatch_Attribute;
-   end Is_Boolean_Attribute;
-
-   --------------
-   -- Is_Space --
-   --------------
-
-   function Is_Space (Item : League.Strings.Universal_String) return Boolean is
-      C : League.Characters.Universal_Character;
-
-   begin
-      --  [HTML5] "The space characters, for the purposes of this
-      --  specification, are U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF"
-      --  (U+000C), and "CR" (U+000D)."
-
-      for J in 1 .. Item.Length loop
-         C := Item (J);
-
-         if C /= League.Characters.Latin.Space
-           and C /= League.Characters.Latin.Character_Tabulation
-           and C /= League.Characters.Latin.Line_Feed
-           and C /= League.Characters.Latin.Form_Feed
-           and C /= League.Characters.Latin.Carriage_Return
-         then
-            return False;
-         end if;
-      end loop;
-
-      return True;
-   end Is_Space;
+   ----------------------------
+   -- Escape_Attribute_Value --
+   ----------------------------
 
    procedure Escape_Attribute_Value
     (Value  : League.Strings.Universal_String;
@@ -483,6 +426,67 @@ package body XML.SAX.HTML5_Writers is
          end if;
       end if;
    end Escape_Attribute_Value;
+
+   --------------------------
+   -- Is_Boolean_Attribute --
+   --------------------------
+
+   function Is_Boolean_Attribute
+    (Name : League.Strings.Universal_String) return Boolean is
+   begin
+      return
+        Name = Async_Attribute
+          or Name = Autofocus_Attribute
+          or Name = Autoplay_Attribute
+          or Name = Checked_Attribute
+          or Name = Controls_Attribute
+          or Name = Default_Attribute
+          or Name = Defer_Attribute
+          or Name = Disabled_Attribute
+          or Name = Formnovalidate_Attribute
+          or Name = Hidden_Attribute
+          or Name = Ismap_Attribute
+          or Name = Loop_Attribute
+          or Name = Multiple_Attribute
+          or Name = Muted_Attribute
+          or Name = Novalidate_Attribute
+          or Name = Open_Attribute
+          or Name = Readonly_Attribute
+          or Name = Required_Attribute
+          or Name = Reversed_Attribute
+          or Name = Scoped_Attribute
+          or Name = Seamless_Attribute
+          or Name = Selected_Attribute
+          or Name = Typemustmatch_Attribute;
+   end Is_Boolean_Attribute;
+
+   --------------
+   -- Is_Space --
+   --------------
+
+   function Is_Space (Item : League.Strings.Universal_String) return Boolean is
+      C : League.Characters.Universal_Character;
+
+   begin
+      --  [HTML5] "The space characters, for the purposes of this
+      --  specification, are U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF"
+      --  (U+000C), and "CR" (U+000D)."
+
+      for J in 1 .. Item.Length loop
+         C := Item (J);
+
+         if C /= League.Characters.Latin.Space
+           and C /= League.Characters.Latin.Character_Tabulation
+           and C /= League.Characters.Latin.Line_Feed
+           and C /= League.Characters.Latin.Form_Feed
+           and C /= League.Characters.Latin.Carriage_Return
+         then
+            return False;
+         end if;
+      end loop;
+
+      return True;
+   end Is_Space;
 
    ---------------------
    -- Is_Void_Element --
