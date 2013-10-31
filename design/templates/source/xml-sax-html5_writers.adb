@@ -63,45 +63,49 @@ package body XML.SAX.HTML5_Writers is
    XMLNS_URI  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/2000/xmlns/");
 
-   Area_Tag   : constant League.Strings.Universal_String
+   Area_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("area");
-   Base_Tag   : constant League.Strings.Universal_String
+   Base_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("base");
-   Body_Tag   : constant League.Strings.Universal_String
+   Body_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("body");
-   Br_Tag     : constant League.Strings.Universal_String
+   Br_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("br");
-   Col_Tag    : constant League.Strings.Universal_String
+   Col_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("col");
-   Embed_Tag  : constant League.Strings.Universal_String
+   Embed_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("embed");
-   Head_Tag   : constant League.Strings.Universal_String
+   Head_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("head");
-   Hr_Tag     : constant League.Strings.Universal_String
+   Hr_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("hr");
-   HTML_Tag   : constant League.Strings.Universal_String
+   HTML_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("html");
-   Img_Tag    : constant League.Strings.Universal_String
+   Img_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("img");
-   Input_Tag  : constant League.Strings.Universal_String
+   Input_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("input");
-   Keygen_Tag : constant League.Strings.Universal_String
+   Keygen_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("keygen");
-   Link_Tag   : constant League.Strings.Universal_String
+   Link_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("link");
-   Meta_Tag   : constant League.Strings.Universal_String
+   Meta_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("meta");
-   Param_Tag  : constant League.Strings.Universal_String
+   Param_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("param");
-   Script_Tag : constant League.Strings.Universal_String
+   Script_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("script");
-   Source_Tag : constant League.Strings.Universal_String
+   Source_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("source");
-   Style_Tag  : constant League.Strings.Universal_String
+   Style_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("style");
-   Track_Tag  : constant League.Strings.Universal_String
+   Textarea_Tag : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("textarea");
+   Title_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("title");
+   Track_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("track");
-   Wbr_Tag    : constant League.Strings.Universal_String
+   Wbr_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("wbr");
 
    Actuate_Attribute        : constant League.Strings.Universal_String
@@ -229,6 +233,11 @@ package body XML.SAX.HTML5_Writers is
     (Tag : League.Strings.Universal_String) return Boolean;
    --  Returns True when specified tag refernce to raw text element of HTML5.
 
+   function Is_Escapable_Raw_Text_Element
+    (Tag : League.Strings.Universal_String) return Boolean;
+   --  Returns True when specified tag refernce to escapable raw text element
+   --  of HTML5.
+
    procedure Escape_Attribute_Value
     (Value  : League.Strings.Universal_String;
      Text   : out League.Strings.Universal_String;
@@ -242,7 +251,11 @@ package body XML.SAX.HTML5_Writers is
    overriding procedure Characters
     (Self    : in out HTML5_Writer;
      Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is
+     Success : in out Boolean)
+   is
+      Escaped_Text : League.Strings.Universal_String;
+      C            : League.Characters.Universal_Character;
+
    begin
       if Self.No_Content then
          Self.Output.Put ('>');
@@ -250,22 +263,50 @@ package body XML.SAX.HTML5_Writers is
       end if;
 
       if not Self.Document_Start or else not Is_Space (Text) then
-         if Self.State.Element_Kind = Raw_Text then
-            --  XXX Verification of the text content can be done here.
-            --
-            --  [HTML5] "The text in raw text and escapable raw text elements
-            --  must not contain any occurrences of the string "</" (U+003C
-            --  LESS-THAN SIGN, U+002F SOLIDUS) followed by characters that
-            --  case-insensitively match the tag name of the element followed
-            --  by one of "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), "CR"
-            --  (U+000D), U+0020 SPACE, ">" (U+003E), or "/" (U+002F)."
+         case Self.State.Element_Kind is
+            when Void =>
+               raise Program_Error;
 
-            Self.Output.Put (Text);
+            when Raw_Text =>
+               --  XXX Verification of the text content can be done here.
+               --
+               --  [HTML5] "The text in raw text and escapable raw text
+               --  elements must not contain any occurrences of the string "</"
+               --  (U+003C LESS-THAN SIGN, U+002F SOLIDUS) followed by
+               --  characters that case-insensitively match the tag name of the
+               --  element followed by one of "tab" (U+0009), "LF" (U+000A),
+               --  "FF" (U+000C), "CR" (U+000D), U+0020 SPACE, ">" (U+003E), or
+               --  "/" (U+002F)."
 
-         else
-            Self.Output.Put (Text);
-            --  XXX Text MUST BE escaped.
-         end if;
+               Self.Output.Put (Text);
+
+            when Escapable_Raw_Text =>
+               --  XXX not implemented
+
+               Self.Output.Put (Text);
+
+            when Normal | Foreign =>
+               if Self.State.Element_Kind = Foreign and Self.CDATA_Mode then
+                  Self.Output.Put (Text);
+
+               else
+                  for J in 1 .. Text.Length loop
+                     C := Text (J);
+
+                     if C = League.Characters.Latin.Less_Than_Sign then
+                        Escaped_Text.Append ("&lt;");
+
+                     elsif C = League.Characters.Latin.Ampersand then
+                        Escaped_Text.Append ("&amp;");
+
+                     else
+                        Escaped_Text.Append (C);
+                     end if;
+                  end loop;
+
+                  Self.Output.Put (Escaped_Text);
+               end if;
+         end case;
       end if;
    end Characters;
 
@@ -543,6 +584,16 @@ package body XML.SAX.HTML5_Writers is
           or Name = Typemustmatch_Attribute;
    end Is_Boolean_Attribute;
 
+   -----------------------------------
+   -- Is_Escapable_Raw_Text_Element --
+   -----------------------------------
+
+   function Is_Escapable_Raw_Text_Element
+    (Tag : League.Strings.Universal_String) return Boolean is
+   begin
+      return Tag = Textarea_Tag or Tag = Title_Tag;
+   end Is_Escapable_Raw_Text_Element;
+
    -------------------------
    -- Is_Raw_Text_Element --
    -------------------------
@@ -701,6 +752,9 @@ package body XML.SAX.HTML5_Writers is
 
          elsif Is_Raw_Text_Element (Local_Name) then
             Self.State.Element_Kind := Raw_Text;
+
+         elsif Is_Escapable_Raw_Text_Element (Local_Name) then
+            Self.State.Element_Kind := Escapable_Raw_Text;
 
          else
             Self.State.Element_Kind := Normal;
