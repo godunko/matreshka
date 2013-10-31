@@ -112,6 +112,10 @@ package body XML.Templates.Template_Processors is
 
       else
          Self.Lexical_Handler.Comment (Text, Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Lexical_Handler.Error_String;
+         end if;
       end if;
    end Comment;
 
@@ -128,6 +132,10 @@ package body XML.Templates.Template_Processors is
 
       else
          Self.Lexical_Handler.End_CDATA (Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Lexical_Handler.Error_String;
+         end if;
       end if;
    end End_CDATA;
 
@@ -144,6 +152,10 @@ package body XML.Templates.Template_Processors is
 
       else
          Self.Lexical_Handler.End_DTD (Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Lexical_Handler.Error_String;
+         end if;
       end if;
    end End_DTD;
 
@@ -201,6 +213,10 @@ package body XML.Templates.Template_Processors is
 
                      Self.Parameters.Include (Self.Object_Name, Holder);
                      Self.Process_Stream (Self.Stream, Success);
+
+                     if not Success then
+                        return;
+                     end if;
                   end loop;
 
                   Self.Parameters.Delete (Self.Object_Name);
@@ -213,6 +229,10 @@ package body XML.Templates.Template_Processors is
          Self.Namespaces.Pop_Context;
          Self.Content_Handler.End_Element
           (Namespace_URI, Local_Name, Qualified_Name, Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Content_Handler.Error_String;
+         end if;
       end if;
    end End_Element;
 
@@ -244,6 +264,10 @@ package body XML.Templates.Template_Processors is
       else
 --         if Self.Namespaces.Namespace_URI (Prefix) /= Template_URI then
             Self.Content_Handler.End_Prefix_Mapping (Prefix, Success);
+
+            if not Success then
+               Self.Diagnosis := Self.Content_Handler.Error_String;
+            end if;
 --         end if;
       end if;
    end End_Prefix_Mapping;
@@ -255,7 +279,7 @@ package body XML.Templates.Template_Processors is
    overriding function Error_String
     (Self : Template_Processor) return League.Strings.Universal_String is
    begin
-      return League.Strings.Empty_Universal_String;
+      return Self.Diagnosis;
    end Error_String;
 
    --------------------
@@ -316,6 +340,10 @@ package body XML.Templates.Template_Processors is
             when XML.Templates.Streams.End_DTD =>
                Self.End_DTD (Success);
          end case;
+
+         if not Success then
+            return;
+         end if;
       end loop;
    end Process_Stream;
 
@@ -335,6 +363,10 @@ package body XML.Templates.Template_Processors is
 
       else
          Self.Content_Handler.Processing_Instruction (Target, Data, Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Content_Handler.Error_String;
+         end if;
       end if;
    end Processing_Instruction;
 
@@ -373,6 +405,10 @@ package body XML.Templates.Template_Processors is
 
       else
          Self.Lexical_Handler.Start_CDATA (Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Lexical_Handler.Error_String;
+         end if;
       end if;
    end Start_CDATA;
 
@@ -393,6 +429,10 @@ package body XML.Templates.Template_Processors is
 
       else
          Self.Lexical_Handler.Start_DTD (Name, Public_Id, System_Id, Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Lexical_Handler.Error_String;
+         end if;
       end if;
    end Start_DTD;
 
@@ -439,6 +479,10 @@ package body XML.Templates.Template_Processors is
          for J in 1 .. Attributes.Length loop
             Self.Substitute (Attributes (J), True, Aux, Success);
 
+            if not Success then
+               return;
+            end if;
+
             if Attributes.Namespace_URI (J).Is_Empty then
                Result.Set_Value (Attributes.Qualified_Name (J), Aux);
 
@@ -450,6 +494,10 @@ package body XML.Templates.Template_Processors is
 
          Self.Content_Handler.Start_Element
           (Namespace_URI, Local_Name, Qualified_Name, Result, Success);
+
+         if not Success then
+            Self.Diagnosis := Self.Content_Handler.Error_String;
+         end if;
       end if;
    end Start_Element;
 
@@ -475,6 +523,10 @@ package body XML.Templates.Template_Processors is
          if Namespace_URI /= Template_URI then
             Self.Content_Handler.Start_Prefix_Mapping
              (Prefix, Namespace_URI, Success);
+
+            if not Success then
+               Self.Diagnosis := Self.Content_Handler.Error_String;
+            end if;
          end if;
       end if;
    end Start_Prefix_Mapping;
@@ -510,6 +562,12 @@ package body XML.Templates.Template_Processors is
             else
                Self.Content_Handler.Characters
                 (Text.Slice (First, Text.Length), Success);
+
+               if not Success then
+                  Self.Diagnosis := Self.Content_Handler.Error_String;
+
+                  return;
+               end if;
             end if;
 
             First := Text.Length + 1;
@@ -521,6 +579,12 @@ package body XML.Templates.Template_Processors is
             else
                Self.Content_Handler.Characters
                 (Text.Slice (First, Dollar - 1), Success);
+
+               if not Success then
+                  Self.Diagnosis := Self.Content_Handler.Error_String;
+
+                  return;
+               end if;
             end if;
 
             if Dollar < Text.Length
@@ -534,6 +598,12 @@ package body XML.Templates.Template_Processors is
                else
                   Self.Content_Handler.Characters
                    (Text.Slice (Dollar + 1, Dollar + 1), Success);
+
+                  if not Success then
+                     Self.Diagnosis := Self.Content_Handler.Error_String;
+
+                     return;
+                  end if;
                end if;
 
             elsif Dollar <= Text.Length
@@ -559,6 +629,12 @@ package body XML.Templates.Template_Processors is
                      else
                         Self.Content_Handler.Characters
                          (League.Holders.Element (Object), Success);
+
+                        if not Success then
+                           Self.Diagnosis := Self.Content_Handler.Error_String;
+
+                           return;
+                        end if;
                      end if;
 
                   elsif League.Holders.Has_Tag
@@ -571,6 +647,10 @@ package body XML.Templates.Template_Processors is
                         Self.Process_Stream
                          (XML.Templates.Streams.Holders.Element (Object),
                           Success);
+
+                        if not Success then
+                           return;
+                        end if;
                      end if;
 
                   else

@@ -86,6 +86,7 @@ private
    type Template_Processor is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with record
+      Diagnosis       : League.Strings.Universal_String;
       Content_Handler : XML.SAX.Readers.SAX_Content_Handler_Access;
       Lexical_Handler : XML.SAX.Readers.SAX_Lexical_Handler_Access;
       Namespaces      : XML.Utilities.Namespace_Supports.XML_Namespace_Support;
