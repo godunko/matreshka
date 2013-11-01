@@ -75,12 +75,12 @@ private
                        --  start tags.
      HTML_Start_Tag,
      HTML_End_Tag,
-     Head_Start_Tag);
+     Head_Start_Tag,
+     Head_End_Tag);
 
    type Writer_State is record
       Element_Kind       : Element_Kinds := Normal;
 
-      Head_End_Tag       : Boolean       := False;
       Body_Start_Tag     : Boolean       := False;
       Body_End_Tag       : Boolean       := False;
       Li_End_Tag         : Boolean       := False;

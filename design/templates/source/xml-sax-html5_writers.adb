@@ -282,6 +282,15 @@ package body XML.SAX.HTML5_Writers is
             --  is an element."
 
             Self.Output.Put ("<head>");
+
+         when Head_End_Tag =>
+            --  [HTML5] "A head element's end tag may be omitted if the head
+            --  element is not immediately followed by a space character or a
+            --  comment."
+
+            if not Text.Is_Empty and then Is_Space (Text.Slice (1, 1)) then
+               Self.Output.Put ("</head>");
+            end if;
       end case;
 
       Self.Omit := None;
@@ -426,6 +435,15 @@ package body XML.SAX.HTML5_Writers is
             --  element is an element."
 
             Self.Output.Put ("<head>");
+
+         when Head_End_Tag =>
+            --  [HTML5] "A head element's end tag may be omitted if the head
+            --  element is not immediately followed by a space character or a
+            --  comment."
+
+            if not Text.Is_Empty and then Is_Space (Text.Slice (1, 1)) then
+               Self.Output.Put ("</head>");
+            end if;
       end case;
 
       Self.Omit := None;
@@ -503,13 +521,23 @@ package body XML.SAX.HTML5_Writers is
             --  is an element."
 
             null;
+
+         when Head_End_Tag =>
+            --  [HTML5] "A head element's end tag may be omitted if the head
+            --  element is not immediately followed by a space character or a
+            --  comment."
+
+            null;
       end case;
 
       Self.Omit := None;
 
       case Self.State.Element_Kind is
          when Normal | Raw_Text | Escapable_Raw_Text =>
-            if Local_Name = HTML_Tag then
+            if Local_Name = Head_Tag then
+               Self.Omit := Head_End_Tag;
+
+            elsif Local_Name = HTML_Tag then
                Self.Omit := HTML_End_Tag;
 
             else
@@ -828,7 +856,6 @@ package body XML.SAX.HTML5_Writers is
       Self.Diagnosis.Clear;
       Self.State :=
        (Element_Kind       => Normal,
-        Head_End_Tag       => False,
         Body_Start_Tag     => False,
         Body_End_Tag       => False,
         Li_End_Tag         => False,
@@ -912,6 +939,13 @@ package body XML.SAX.HTML5_Writers is
             --  [HTML5] "A head element's start tag may be omitted if the
             --  element is empty, or if the first thing inside the head element
             --  is an element."
+
+            null;
+
+         when Head_End_Tag =>
+            --  [HTML5] "A head element's end tag may be omitted if the head
+            --  element is not immediately followed by a space character or a
+            --  comment."
 
             null;
       end case;
