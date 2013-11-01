@@ -68,6 +68,12 @@ private
      Void,
      Foreign);
 
+   type Simple_Omit_Kinds is
+    (None,
+     HTML_Start_Tag,
+     HTML_End_Tag,
+     Head_Start_Tag);
+
    type Writer_State is record
       Element_Kind       : Element_Kinds := Normal;
 
@@ -121,9 +127,7 @@ private
       CDATA_Mode      : Boolean := False;
       --  In CDATA mode writer doesn't escape text.
 
-      HTML_Start_Tag  : Boolean := False;
-      HTML_End_Tag    : Boolean := False;
-      Head_Start_Tag  : Boolean := False;
+      Omit            : Simple_Omit_Kinds := None;
    end record;
 
    overriding procedure Set_Output
