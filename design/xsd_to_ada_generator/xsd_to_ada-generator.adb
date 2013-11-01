@@ -49,6 +49,7 @@ with League.Strings;
 with League.String_Vectors;
 
 with XSD_To_Ada.Utils;
+with XSD_To_Ada.Encoder;
 with XSD_To_Ada.Mappings_XML;
 
 package body XSD_To_Ada.Generator is
@@ -85,6 +86,7 @@ package body XSD_To_Ada.Generator is
    procedure Generate (Model : XML.Schema.Models.XS_Model) is
    begin
       XSD_To_Ada.Utils.Create_Complex_Type (Model);
+      XSD_To_Ada.Encoder.Create_Complex_Type (Model);
    end Generate;
 
    ---------
