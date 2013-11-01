@@ -266,6 +266,12 @@ package body XML.SAX.HTML5_Writers is
          --  thing inside the html element is not a comment."
 
          Self.HTML_Start_Tag := False;
+
+      elsif Self.HTML_End_Tag then
+         --  [HTML5] "An html element's end tag may be omitted if the html
+         --  element is not immediately followed by a comment."
+
+         Self.HTML_End_Tag := False;
       end if;
 
       if not Self.Document_Start or else not Is_Space (Text) then
@@ -394,6 +400,13 @@ package body XML.SAX.HTML5_Writers is
          end if;
 
          Self.HTML_Start_Tag := False;
+
+      elsif Self.HTML_End_Tag then
+         --  [HTML5] "An html element's end tag may be omitted if the html
+         --  element is not immediately followed by a comment."
+
+         Self.Output.Put ("</html>");
+         Self.HTML_End_Tag := False;
       end if;
 
       Self.Output.Put ("<!--");
@@ -445,13 +458,24 @@ package body XML.SAX.HTML5_Writers is
          --  thing inside the html element is not a comment."
 
          Self.HTML_Start_Tag := False;
+
+      elsif Self.HTML_End_Tag then
+         --  [HTML5] "An html element's end tag may be omitted if the html
+         --  element is not immediately followed by a comment."
+
+         Self.HTML_End_Tag := False;
       end if;
 
       case Self.State.Element_Kind is
          when Normal | Raw_Text | Escapable_Raw_Text =>
-            Self.Output.Put ("</");
-            Self.Output.Put (Local_Name);
-            Self.Output.Put ('>');
+            if Local_Name = HTML_Tag then
+               Self.HTML_End_Tag := True;
+
+            else
+               Self.Output.Put ("</");
+               Self.Output.Put (Local_Name);
+               Self.Output.Put ('>');
+            end if;
 
          when Void =>
             --  Don't generate close tag for void elements.
@@ -767,7 +791,6 @@ package body XML.SAX.HTML5_Writers is
       Self.Diagnosis.Clear;
       Self.State :=
        (Element_Kind       => Normal,
-        HTML_End_Tag       => False,
         Head_Start_Tag     => False,
         Head_End_Tag       => False,
         Body_Start_Tag     => False,
@@ -790,6 +813,7 @@ package body XML.SAX.HTML5_Writers is
         Td_End_Tag         => False,
         Th_End_Tag         => False);
       Self.HTML_Start_Tag  := False;
+      Self.HTML_End_Tag    := False;
       Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
       Self.Document_Start  := True;
@@ -842,6 +866,12 @@ package body XML.SAX.HTML5_Writers is
          --  thing inside the html element is not a comment."
 
          Self.HTML_Start_Tag := False;
+
+      elsif Self.HTML_End_Tag then
+         --  [HTML5] "An html element's end tag may be omitted if the html
+         --  element is not immediately followed by a comment."
+
+         Self.HTML_End_Tag := False;
       end if;
 
       if Namespace_URI = HTML_URI then
