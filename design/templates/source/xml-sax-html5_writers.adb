@@ -291,6 +291,22 @@ package body XML.SAX.HTML5_Writers is
             if not Text.Is_Empty and then Is_Space (Text.Slice (1, 1)) then
                Self.Output.Put ("</head>");
             end if;
+
+         when Body_Start_Tag =>
+            --  [HTML5] "A body element's start tag may be omitted if the
+            --  element is empty, or if the first thing inside the body element
+            --  is not a space character or a comment, except if the first
+            --  thing inside the body element is a script or style element."
+
+            if not Text.Is_Empty and then Is_Space (Text.Slice (1, 1)) then
+               Self.Output.Put ("<body>");
+            end if;
+
+         when Body_End_Tag =>
+            --  [HTML5] "A body element's end tag may be omitted if the body
+            --  element is not immediately followed by a comment."
+
+            null;
       end case;
 
       Self.Omit := None;
@@ -441,9 +457,21 @@ package body XML.SAX.HTML5_Writers is
             --  element is not immediately followed by a space character or a
             --  comment."
 
-            if not Text.Is_Empty and then Is_Space (Text.Slice (1, 1)) then
-               Self.Output.Put ("</head>");
-            end if;
+            Self.Output.Put ("</head>");
+
+         when Body_Start_Tag =>
+            --  [HTML5] "A body element's start tag may be omitted if the
+            --  element is empty, or if the first thing inside the body element
+            --  is not a space character or a comment, except if the first
+            --  thing inside the body element is a script or style element."
+
+            Self.Output.Put ("<body>");
+
+         when Body_End_Tag =>
+            --  [HTML5] "A body element's end tag may be omitted if the body
+            --  element is not immediately followed by a comment."
+
+            Self.Output.Put ("</body>");
       end case;
 
       Self.Omit := None;
@@ -528,13 +556,30 @@ package body XML.SAX.HTML5_Writers is
             --  comment."
 
             null;
+
+         when Body_Start_Tag =>
+            --  [HTML5] "A body element's start tag may be omitted if the
+            --  element is empty, or if the first thing inside the body element
+            --  is not a space character or a comment, except if the first
+            --  thing inside the body element is a script or style element."
+
+            null;
+
+         when Body_End_Tag =>
+            --  [HTML5] "A body element's end tag may be omitted if the body
+            --  element is not immediately followed by a comment."
+
+            null;
       end case;
 
       Self.Omit := None;
 
       case Self.State.Element_Kind is
          when Normal | Raw_Text | Escapable_Raw_Text =>
-            if Local_Name = Head_Tag then
+            if Local_Name = Body_Tag then
+               Self.Omit := Body_End_Tag;
+
+            elsif Local_Name = Head_Tag then
                Self.Omit := Head_End_Tag;
 
             elsif Local_Name = HTML_Tag then
@@ -856,8 +901,6 @@ package body XML.SAX.HTML5_Writers is
       Self.Diagnosis.Clear;
       Self.State :=
        (Element_Kind       => Normal,
-        Body_Start_Tag     => False,
-        Body_End_Tag       => False,
         Li_End_Tag         => False,
         Dt_End_Tag         => False,
         Dd_End_Tag         => False,
@@ -948,6 +991,24 @@ package body XML.SAX.HTML5_Writers is
             --  comment."
 
             null;
+
+         when Body_Start_Tag =>
+            --  [HTML5] "A body element's start tag may be omitted if the
+            --  element is empty, or if the first thing inside the body element
+            --  is not a space character or a comment, except if the first
+            --  thing inside the body element is a script or style element."
+
+            if Namespace_URI = HTML_URI
+              and (Local_Name = Script_Tag or Local_Name = Style_Tag)
+            then
+               Self.Output.Put ("<body>");
+            end if;
+
+         when Body_End_Tag =>
+            --  [HTML5] "A body element's end tag may be omitted if the body
+            --  element is not immediately followed by a comment."
+
+            null;
       end case;
 
       Self.Omit := None;
@@ -966,7 +1027,17 @@ package body XML.SAX.HTML5_Writers is
             Self.State.Element_Kind := Normal;
          end if;
 
-         if Local_Name = Head_Tag then
+         if Local_Name = Body_Tag then
+            --  For convinience recognize <body> tag as start of the document's
+            --  content.
+
+            Self.Document_Start := False;
+
+            if Attributes.Is_Empty then
+               Self.Omit := Body_Start_Tag;
+            end if;
+
+         elsif Local_Name = Head_Tag then
             Self.Document_Start := False;
 
             if Attributes.Is_Empty then
@@ -977,12 +1048,6 @@ package body XML.SAX.HTML5_Writers is
             if Attributes.Is_Empty then
                Self.Omit := HTML_Start_Tag;
             end if;
-
-         elsif Local_Name = Body_Tag then
-            --  For convinience recognize <body> tag as start of the document's
-            --  content.
-
-            Self.Document_Start := False;
          end if;
 
          if Self.Omit = None then
