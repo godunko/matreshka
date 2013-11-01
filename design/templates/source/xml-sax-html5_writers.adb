@@ -260,6 +260,12 @@ package body XML.SAX.HTML5_Writers is
       if Self.No_Content then
          Self.Output.Put ('>');
          Self.No_Content := False;
+
+      elsif Self.HTML_Start_Tag then
+         --  [HTML5] "An html element's start tag may be omitted if the first
+         --  thing inside the html element is not a comment."
+
+         Self.HTML_Start_Tag := False;
       end if;
 
       if not Self.Document_Start or else not Is_Space (Text) then
@@ -370,6 +376,24 @@ package body XML.SAX.HTML5_Writers is
       if Self.No_Content then
          Self.Output.Put ('>');
          Self.No_Content := False;
+
+      elsif Self.HTML_Start_Tag then
+         --  [HTML5] "An html element's start tag may be omitted if the first
+         --  thing inside the html element is not a comment."
+
+         Self.Output.Put ("<html>");
+
+         if Self.Stack.Is_Empty then
+            --  [HTML5] "It is suggested that newlines be inserted after the
+            --  DOCTYPE, after any comments that are before the root element,
+            --  after the html element's start tag (if it is not omitted), and
+            --  after any comments that are inside the html element but before
+            --  the head element."
+
+            Self.Output.Put (League.Characters.Latin.Line_Feed);
+         end if;
+
+         Self.HTML_Start_Tag := False;
       end if;
 
       Self.Output.Put ("<!--");
@@ -416,6 +440,13 @@ package body XML.SAX.HTML5_Writers is
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean) is
    begin
+      if Self.HTML_Start_Tag then
+         --  [HTML5] "An html element's start tag may be omitted if the first
+         --  thing inside the html element is not a comment."
+
+         Self.HTML_Start_Tag := False;
+      end if;
+
       case Self.State.Element_Kind is
          when Normal | Raw_Text | Escapable_Raw_Text =>
             Self.Output.Put ("</");
@@ -734,7 +765,31 @@ package body XML.SAX.HTML5_Writers is
      Success : in out Boolean) is
    begin
       Self.Diagnosis.Clear;
-      Self.State := (Element_Kind => Normal);
+      Self.State :=
+       (Element_Kind       => Normal,
+        HTML_End_Tag       => False,
+        Head_Start_Tag     => False,
+        Head_End_Tag       => False,
+        Body_Start_Tag     => False,
+        Body_End_Tag       => False,
+        Li_End_Tag         => False,
+        Dt_End_Tag         => False,
+        Dd_End_Tag         => False,
+        P_End_Tag          => False,
+        Rt_End_Tag         => False,
+        Rp_End_Tag         => False,
+        Optgroup_End_Tag   => False,
+        Option_End_Tag     => False,
+        Colgroup_Start_Tag => False,
+        Colgroup_End_Tag   => False,
+        Thead_End_Tag      => False,
+        Tbody_Start_Tag    => False,
+        TBody_End_Tag      => False,
+        Tfoot_End_Tag      => False,
+        Tr_End_Tag         => False,
+        Td_End_Tag         => False,
+        Th_End_Tag         => False);
+      Self.HTML_Start_Tag  := False;
       Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
       Self.Document_Start  := True;
@@ -766,7 +821,10 @@ package body XML.SAX.HTML5_Writers is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is
+     Success        : in out Boolean)
+   is
+      Omit : Boolean := False;
+
    begin
       Self.Stack.Append (Self.State);
 
@@ -778,6 +836,12 @@ package body XML.SAX.HTML5_Writers is
 
       if Self.No_Content then
          Self.Output.Put ('>');
+
+      elsif Self.HTML_Start_Tag then
+         --  [HTML5] "An html element's start tag may be omitted if the first
+         --  thing inside the html element is not a comment."
+
+         Self.HTML_Start_Tag := False;
       end if;
 
       if Namespace_URI = HTML_URI then
@@ -794,7 +858,11 @@ package body XML.SAX.HTML5_Writers is
             Self.State.Element_Kind := Normal;
          end if;
 
-         if Local_Name = Head_Tag then
+         if Local_Name = HTML_Tag then
+            Omit := Attributes.Is_Empty;
+            Self.HTML_Start_Tag := Omit;
+
+         elsif Local_Name = Head_Tag then
             Self.Document_Start := False;
 
          elsif Local_Name = Body_Tag then
@@ -805,24 +873,27 @@ package body XML.SAX.HTML5_Writers is
          end if;
 
          Self.No_Content := False;
-         Self.Output.Put ('<');
-         Self.Output.Put (Local_Name);
-         Self.Write_Attributes (Attributes, Success);
 
-         if not Success then
-            return;
-         end if;
+         if not Omit then
+            Self.Output.Put ('<');
+            Self.Output.Put (Local_Name);
+            Self.Write_Attributes (Attributes, Success);
 
-         Self.Output.Put ('>');
+            if not Success then
+               return;
+            end if;
 
-         if Local_Name = HTML_Tag then
-            --  [HTML5] "It is suggested that newlines be inserted after the
-            --  DOCTYPE, after any comments that are before the root element,
-            --  after the html element's start tag (if it is not omitted), and
-            --  after any comments that are inside the html element but before
-            --  the head element."
+            Self.Output.Put ('>');
 
-            Self.Output.Put (League.Characters.Latin.Line_Feed);
+            if Local_Name = HTML_Tag then
+               --  [HTML5] "It is suggested that newlines be inserted after the
+               --  DOCTYPE, after any comments that are before the root
+               --  element, after the html element's start tag (if it is not
+               --  omitted), and after any comments that are inside the html
+               --  element but before the head element."
+
+               Self.Output.Put (League.Characters.Latin.Line_Feed);
+            end if;
          end if;
 
       elsif Namespace_URI = MathML_URI

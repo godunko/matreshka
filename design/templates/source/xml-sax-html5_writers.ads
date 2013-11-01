@@ -69,7 +69,36 @@ private
      Foreign);
 
    type Writer_State is record
-      Element_Kind : Element_Kinds := Normal;
+      Element_Kind       : Element_Kinds := Normal;
+
+      HTML_End_Tag       : Boolean       := False;
+      Head_Start_Tag     : Boolean       := False;
+      Head_End_Tag       : Boolean       := False;
+      Body_Start_Tag     : Boolean       := False;
+      Body_End_Tag       : Boolean       := False;
+      Li_End_Tag         : Boolean       := False;
+      Dt_End_Tag         : Boolean       := False;
+      Dd_End_Tag         : Boolean       := False;
+      P_End_Tag          : Boolean       := False;
+      Rt_End_Tag         : Boolean       := False;
+      Rp_End_Tag         : Boolean       := False;
+      Optgroup_End_Tag   : Boolean       := False;
+      Option_End_Tag     : Boolean       := False;
+      Colgroup_Start_Tag : Boolean       := False;
+      Colgroup_End_Tag   : Boolean       := False;
+      Thead_End_Tag      : Boolean       := False;
+      Tbody_Start_Tag    : Boolean       := False;
+      TBody_End_Tag      : Boolean       := False;
+      Tfoot_End_Tag      : Boolean       := False;
+      Tr_End_Tag         : Boolean       := False;
+      Td_End_Tag         : Boolean       := False;
+      Th_End_Tag         : Boolean       := False;
+
+--    (A_Parent,
+--     Colgroup_End_Omitted,
+--     Tbody_End_Omitted,
+--     Thead_End_Omitted,
+--     Tfoot_End_Omitted);
    end record;
 
    package State_Stacks is
@@ -93,6 +122,8 @@ private
       --  generate self-closing start tags.
       CDATA_Mode      : Boolean := False;
       --  In CDATA mode writer doesn't escape text.
+
+      HTML_Start_Tag  : Boolean := False;
    end record;
 
    overriding procedure Set_Output
