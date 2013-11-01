@@ -257,37 +257,34 @@ package body XML.SAX.HTML5_Writers is
       C            : League.Characters.Universal_Character;
 
    begin
-      if Self.No_Content then
-         Self.Output.Put ('>');
-         Self.No_Content := False;
+      case Self.Omit is
+         when None =>
+            null;
 
-      else
-         case Self.Omit is
-            when None =>
-               null;
+         when Foreign =>
+            Self.Output.Put ('>');
 
-            when HTML_Start_Tag =>
-               --  [HTML5] "An html element's start tag may be omitted if the
-               --  first thing inside the html element is not a comment."
+         when HTML_Start_Tag =>
+            --  [HTML5] "An html element's start tag may be omitted if the
+            --  first thing inside the html element is not a comment."
 
-               null;
+            null;
 
-            when HTML_End_Tag =>
-               --  [HTML5] "An html element's end tag may be omitted if the
-               --  html element is not immediately followed by a comment."
+         when HTML_End_Tag =>
+            --  [HTML5] "An html element's end tag may be omitted if the html
+            --  element is not immediately followed by a comment."
 
-               null;
+            null;
 
-            when Head_Start_Tag =>
-               --  [HTML5] "A head element's start tag may be omitted if the
-               --  element is empty, or if the first thing inside the head
-               --  element is an element."
+         when Head_Start_Tag =>
+            --  [HTML5] "A head element's start tag may be omitted if the
+            --  element is empty, or if the first thing inside the head element
+            --  is an element."
 
-               Self.Output.Put ("<head>");
-         end case;
+            Self.Output.Put ("<head>");
+      end case;
 
-         Self.Omit := None;
-      end if;
+      Self.Omit := None;
 
       if not Self.Document_Start or else not Is_Space (Text) then
          case Self.State.Element_Kind is
@@ -394,47 +391,44 @@ package body XML.SAX.HTML5_Writers is
       --  character sequence U+002D HYPHEN-MINUS, U+002D HYPHEN-MINUS, U+003E
       --  GREATER-THAN SIGN (-->)."
 
-      if Self.No_Content then
-         Self.Output.Put ('>');
-         Self.No_Content := False;
+      case Self.Omit is
+         when None =>
+            null;
 
-      else
-         case Self.Omit is
-            when None =>
-               null;
+         when Foreign =>
+            Self.Output.Put ('>');
 
-            when HTML_Start_Tag =>
-               --  [HTML5] "An html element's start tag may be omitted if the
-               --  first thing inside the html element is not a comment."
+         when HTML_Start_Tag =>
+            --  [HTML5] "An html element's start tag may be omitted if the
+            --  first thing inside the html element is not a comment."
 
-               Self.Output.Put ("<html>");
+            Self.Output.Put ("<html>");
 
-               if Self.Stack.Is_Empty then
-                  --  [HTML5] "It is suggested that newlines be inserted after
-                  --  the DOCTYPE, after any comments that are before the root
-                  --  element, after the html element's start tag (if it is not
-                  --  omitted), and after any comments that are inside the html
-                  --  element but before the head element."
+            if Self.Stack.Is_Empty then
+               --  [HTML5] "It is suggested that newlines be inserted after
+               --  the DOCTYPE, after any comments that are before the root
+               --  element, after the html element's start tag (if it is not
+               --  omitted), and after any comments that are inside the html
+               --  element but before the head element."
 
-                  Self.Output.Put (League.Characters.Latin.Line_Feed);
-               end if;
+               Self.Output.Put (League.Characters.Latin.Line_Feed);
+            end if;
 
-            when HTML_End_Tag =>
-               --  [HTML5] "An html element's end tag may be omitted if the
-               --  html element is not immediately followed by a comment."
+         when HTML_End_Tag =>
+            --  [HTML5] "An html element's end tag may be omitted if the
+            --  html element is not immediately followed by a comment."
 
-               Self.Output.Put ("</html>");
+            Self.Output.Put ("</html>");
 
-            when Head_Start_Tag =>
-               --  [HTML5] "A head element's start tag may be omitted if the
-               --  element is empty, or if the first thing inside the head
-               --  element is an element."
+         when Head_Start_Tag =>
+            --  [HTML5] "A head element's start tag may be omitted if the
+            --  element is empty, or if the first thing inside the head
+            --  element is an element."
 
-               Self.Output.Put ("<head>");
-         end case;
+            Self.Output.Put ("<head>");
+      end case;
 
-         Self.Omit := None;
-      end if;
+      Self.Omit := None;
 
       Self.Output.Put ("<!--");
       Self.Output.Put (Text);
@@ -478,11 +472,18 @@ package body XML.SAX.HTML5_Writers is
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean) is
+     Success        : in out Boolean)
+   is
+      Foreign_Closed : Boolean := False;
+
    begin
       case Self.Omit is
          when None =>
             null;
+
+         when Foreign =>
+            Self.Output.Put ("/>");
+            Foreign_Closed := True;
 
          when HTML_Start_Tag =>
             --  [HTML5] "An html element's start tag may be omitted if the
@@ -529,17 +530,13 @@ package body XML.SAX.HTML5_Writers is
             null;
 
          when Foreign =>
-            if Self.No_Content then
-               Self.Output.Put ("/>");
-
-            else
+            if not Foreign_Closed then
                Self.Output.Put ("</");
                Self.Output.Put (Local_Name);
                Self.Output.Put ('>');
             end if;
       end case;
 
-      Self.No_Content := False;
       Self.State := Self.Stack.Last_Element;
       Self.Stack.Delete_Last;
    end End_Element;
@@ -805,9 +802,9 @@ package body XML.SAX.HTML5_Writers is
     (Self    : in out HTML5_Writer;
      Success : in out Boolean) is
    begin
-      if Self.No_Content then
+      if Self.Omit = Foreign then
          Self.Output.Put ('>');
-         Self.No_Content := False;
+         Self.Omit := None;
       end if;
 
       Self.CDATA_Mode := True;
@@ -855,7 +852,6 @@ package body XML.SAX.HTML5_Writers is
       Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
       Self.Document_Start  := True;
-      Self.No_Content      := False;
       Self.CDATA_Mode      := False;
    end Start_Document;
 
@@ -893,36 +889,34 @@ package body XML.SAX.HTML5_Writers is
          Self.Write_DOCTYPE;
       end if;
 
-      if Self.No_Content then
-         Self.Output.Put ('>');
+      case Self.Omit is
+         when None =>
+            null;
 
-      else
-         case Self.Omit is
-            when None =>
-               null;
+         when Foreign =>
+            Self.Output.Put ('>');
 
-            when HTML_Start_Tag =>
-               --  [HTML5] "An html element's start tag may be omitted if the
-               --  first thing inside the html element is not a comment."
+         when HTML_Start_Tag =>
+            --  [HTML5] "An html element's start tag may be omitted if the
+            --  first thing inside the html element is not a comment."
 
-               null;
+            null;
 
-            when HTML_End_Tag =>
-               --  [HTML5] "An html element's end tag may be omitted if the
-               --  html element is not immediately followed by a comment."
+         when HTML_End_Tag =>
+            --  [HTML5] "An html element's end tag may be omitted if the html
+            --  element is not immediately followed by a comment."
 
-               null;
+            null;
 
-            when Head_Start_Tag =>
-               --  [HTML5] "A head element's start tag may be omitted if the
-               --  element is empty, or if the first thing inside the head
-               --  element is an element."
+         when Head_Start_Tag =>
+            --  [HTML5] "A head element's start tag may be omitted if the
+            --  element is empty, or if the first thing inside the head element
+            --  is an element."
 
-               null;
-         end case;
+            null;
+      end case;
 
-         Self.Omit := None;
-      end if;
+      Self.Omit := None;
 
       if Namespace_URI = HTML_URI then
          if Is_Void_Element (Local_Name) then
@@ -957,8 +951,6 @@ package body XML.SAX.HTML5_Writers is
             Self.Document_Start := False;
          end if;
 
-         Self.No_Content := False;
-
          if Self.Omit = None then
             Self.Output.Put ('<');
             Self.Output.Put (Local_Name);
@@ -985,7 +977,7 @@ package body XML.SAX.HTML5_Writers is
         or Namespace_URI = SVG_URI
       then
          Self.State.Element_Kind := Foreign;
-         Self.No_Content := True;
+         Self.Omit := Foreign;
 
          Self.Output.Put ('<');
          Self.Output.Put (Local_Name);

@@ -70,6 +70,9 @@ private
 
    type Simple_Omit_Kinds is
     (None,
+     Foreign,          --  For foreign elements this is used to determine
+                       --  absence of content and to generate self-closing
+                       --  start tags.
      HTML_Start_Tag,
      HTML_End_Tag,
      Head_Start_Tag);
@@ -121,9 +124,6 @@ private
       --  <head> has not been processed. It enables suppression of space
       --  characters and adding new line after comments. In absence of <head>
       --  element it is activated by <body> element for convinience.
-      No_Content      : Boolean := False;
-      --  For foreign elements this is used to determine absence of content and
-      --  generate self-closing start tags.
       CDATA_Mode      : Boolean := False;
       --  In CDATA mode writer doesn't escape text.
 
