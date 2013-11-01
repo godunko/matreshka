@@ -272,6 +272,14 @@ package body XML.SAX.HTML5_Writers is
          --  element is not immediately followed by a comment."
 
          Self.HTML_End_Tag := False;
+
+      elsif Self.Head_Start_Tag then
+         --  [HTML5] "A head element's start tag may be omitted if the element
+         --  is empty, or if the first thing inside the head element is an
+         --  element."
+
+         Self.Output.Put ("<head>");
+         Self.Head_Start_Tag := False;
       end if;
 
       if not Self.Document_Start or else not Is_Space (Text) then
@@ -407,6 +415,14 @@ package body XML.SAX.HTML5_Writers is
 
          Self.Output.Put ("</html>");
          Self.HTML_End_Tag := False;
+
+      elsif Self.Head_Start_Tag then
+         --  [HTML5] "A head element's start tag may be omitted if the element
+         --  is empty, or if the first thing inside the head element is an
+         --  element."
+
+         Self.Output.Put ("<head>");
+         Self.Head_Start_Tag := False;
       end if;
 
       Self.Output.Put ("<!--");
@@ -464,6 +480,13 @@ package body XML.SAX.HTML5_Writers is
          --  element is not immediately followed by a comment."
 
          Self.HTML_End_Tag := False;
+
+      elsif Self.Head_Start_Tag then
+         --  [HTML5] "A head element's start tag may be omitted if the element
+         --  is empty, or if the first thing inside the head element is an
+         --  element."
+
+         Self.Head_Start_Tag := False;
       end if;
 
       case Self.State.Element_Kind is
@@ -791,7 +814,6 @@ package body XML.SAX.HTML5_Writers is
       Self.Diagnosis.Clear;
       Self.State :=
        (Element_Kind       => Normal,
-        Head_Start_Tag     => False,
         Head_End_Tag       => False,
         Body_Start_Tag     => False,
         Body_End_Tag       => False,
@@ -814,6 +836,7 @@ package body XML.SAX.HTML5_Writers is
         Th_End_Tag         => False);
       Self.HTML_Start_Tag  := False;
       Self.HTML_End_Tag    := False;
+      Self.Head_Start_Tag  := False;
       Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
       Self.Document_Start  := True;
@@ -872,6 +895,13 @@ package body XML.SAX.HTML5_Writers is
          --  element is not immediately followed by a comment."
 
          Self.HTML_End_Tag := False;
+
+      elsif Self.Head_Start_Tag then
+         --  [HTML5] "A head element's start tag may be omitted if the element
+         --  is empty, or if the first thing inside the head element is an
+         --  element."
+
+         Self.Head_Start_Tag := False;
       end if;
 
       if Namespace_URI = HTML_URI then
@@ -888,12 +918,14 @@ package body XML.SAX.HTML5_Writers is
             Self.State.Element_Kind := Normal;
          end if;
 
-         if Local_Name = HTML_Tag then
+         if Local_Name = Head_Tag then
+            Self.Document_Start := False;
+            Omit := Attributes.Is_Empty;
+            Self.Head_Start_Tag := Omit;
+
+         elsif Local_Name = HTML_Tag then
             Omit := Attributes.Is_Empty;
             Self.HTML_Start_Tag := Omit;
-
-         elsif Local_Name = Head_Tag then
-            Self.Document_Start := False;
 
          elsif Local_Name = Body_Tag then
             --  For convinience recognize <body> tag as start of the document's

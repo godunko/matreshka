@@ -71,7 +71,6 @@ private
    type Writer_State is record
       Element_Kind       : Element_Kinds := Normal;
 
-      Head_Start_Tag     : Boolean       := False;
       Head_End_Tag       : Boolean       := False;
       Body_Start_Tag     : Boolean       := False;
       Body_End_Tag       : Boolean       := False;
@@ -124,6 +123,7 @@ private
 
       HTML_Start_Tag  : Boolean := False;
       HTML_End_Tag    : Boolean := False;
+      Head_Start_Tag  : Boolean := False;
    end record;
 
    overriding procedure Set_Output
