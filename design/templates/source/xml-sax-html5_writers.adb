@@ -73,6 +73,10 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("br");
    Col_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("col");
+   Dd_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("dd");
+   Dt_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("dt");
    Embed_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("embed");
    Head_Tag     : constant League.Strings.Universal_String
@@ -87,6 +91,8 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("input");
    Keygen_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("keygen");
+   Li_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("li");
    Link_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("link");
    Meta_Tag     : constant League.Strings.Universal_String
@@ -307,6 +313,27 @@ package body XML.SAX.HTML5_Writers is
             --  element is not immediately followed by a comment."
 
             null;
+
+         when Li_End_Tag =>
+            --  [HTML5] "An li element's end tag may be omitted if the li
+            --  element is immediately followed by another li element or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</li>");
+
+         when Dt_End_Tag =>
+            --  [HTML5] "A dt element's end tag may be omitted if the dt
+            --  element is immediately followed by another dt element or a dd
+            --  element."
+
+            Self.Output.Put ("</dt>");
+
+         when Dd_End_Tag =>
+            --  [HTML5] "A dd element's end tag may be omitted if the dd
+            --  element is immediately followed by another dd element or a dt
+            --  element, or if there is no more content in the parent element."
+
+            Self.Output.Put ("</dd>");
       end case;
 
       Self.Omit := None;
@@ -472,6 +499,27 @@ package body XML.SAX.HTML5_Writers is
             --  element is not immediately followed by a comment."
 
             Self.Output.Put ("</body>");
+
+         when Li_End_Tag =>
+            --  [HTML5] "An li element's end tag may be omitted if the li
+            --  element is immediately followed by another li element or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</li>");
+
+         when Dt_End_Tag =>
+            --  [HTML5] "A dt element's end tag may be omitted if the dt
+            --  element is immediately followed by another dt element or a dd
+            --  element."
+
+            Self.Output.Put ("</dt>");
+
+         when Dd_End_Tag =>
+            --  [HTML5] "A dd element's end tag may be omitted if the dd
+            --  element is immediately followed by another dd element or a dt
+            --  element, or if there is no more content in the parent element."
+
+            Self.Output.Put ("</dd>");
       end case;
 
       Self.Omit := None;
@@ -570,6 +618,27 @@ package body XML.SAX.HTML5_Writers is
             --  element is not immediately followed by a comment."
 
             null;
+
+         when Li_End_Tag =>
+            --  [HTML5] "An li element's end tag may be omitted if the li
+            --  element is immediately followed by another li element or if
+            --  there is no more content in the parent element."
+
+            null;
+
+         when Dt_End_Tag =>
+            --  [HTML5] "A dt element's end tag may be omitted if the dt
+            --  element is immediately followed by another dt element or a dd
+            --  element."
+
+            Self.Output.Put ("</dt>");
+
+         when Dd_End_Tag =>
+            --  [HTML5] "A dd element's end tag may be omitted if the dd
+            --  element is immediately followed by another dd element or a dt
+            --  element, or if there is no more content in the parent element."
+
+            null;
       end case;
 
       Self.Omit := None;
@@ -579,11 +648,20 @@ package body XML.SAX.HTML5_Writers is
             if Local_Name = Body_Tag then
                Self.Omit := Body_End_Tag;
 
+            elsif Local_Name = Dd_Tag then
+               Self.Omit := Dd_End_Tag;
+
+            elsif Local_Name = Dt_Tag then
+               Self.Omit := Dt_End_Tag;
+
             elsif Local_Name = Head_Tag then
                Self.Omit := Head_End_Tag;
 
             elsif Local_Name = HTML_Tag then
                Self.Omit := HTML_End_Tag;
+
+            elsif Local_Name = Li_Tag then
+               Self.Omit := Li_End_Tag;
 
             else
                Self.Output.Put ("</");
@@ -901,9 +979,6 @@ package body XML.SAX.HTML5_Writers is
       Self.Diagnosis.Clear;
       Self.State :=
        (Element_Kind       => Normal,
-        Li_End_Tag         => False,
-        Dt_End_Tag         => False,
-        Dd_End_Tag         => False,
         P_End_Tag          => False,
         Rt_End_Tag         => False,
         Rp_End_Tag         => False,
@@ -1009,6 +1084,37 @@ package body XML.SAX.HTML5_Writers is
             --  element is not immediately followed by a comment."
 
             null;
+
+         when Li_End_Tag =>
+            --  [HTML5] "An li element's end tag may be omitted if the li
+            --  element is immediately followed by another li element or if
+            --  there is no more content in the parent element."
+
+            if Namespace_URI = HTML_URI and Local_Name /= Li_Tag then
+               Self.Output.Put ("</li>");
+            end if;
+
+         when Dt_End_Tag =>
+            --  [HTML5] "A dt element's end tag may be omitted if the dt
+            --  element is immediately followed by another dt element or a dd
+            --  element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Dt_Tag and Local_Name /= Dd_Tag)
+            then
+               Self.Output.Put ("</dt>");
+            end if;
+
+         when Dd_End_Tag =>
+            --  [HTML5] "A dd element's end tag may be omitted if the dd
+            --  element is immediately followed by another dd element or a dt
+            --  element, or if there is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Dt_Tag and Local_Name /= Dd_Tag)
+            then
+               Self.Output.Put ("</dd>");
+            end if;
       end case;
 
       Self.Omit := None;

@@ -78,14 +78,14 @@ private
      Head_Start_Tag,
      Head_End_Tag,
      Body_Start_Tag,
-     Body_End_Tag);
+     Body_End_Tag,
+     Li_End_Tag,
+     Dt_End_Tag,
+     Dd_End_Tag);
 
    type Writer_State is record
       Element_Kind       : Element_Kinds := Normal;
 
-      Li_End_Tag         : Boolean       := False;
-      Dt_End_Tag         : Boolean       := False;
-      Dd_End_Tag         : Boolean       := False;
       P_End_Tag          : Boolean       := False;
       Rt_End_Tag         : Boolean       := False;
       Rp_End_Tag         : Boolean       := False;
