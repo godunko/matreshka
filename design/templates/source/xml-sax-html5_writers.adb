@@ -99,6 +99,10 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("meta");
    Param_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("param");
+   Rp_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("rp");
+   Rt_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("rt");
    Script_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("script");
    Source_Tag   : constant League.Strings.Universal_String
@@ -334,6 +338,20 @@ package body XML.SAX.HTML5_Writers is
             --  element, or if there is no more content in the parent element."
 
             Self.Output.Put ("</dd>");
+
+         when Rt_End_Tag =>
+            --  [HTML5] "An rt element's end tag may be omitted if the rt
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</rt>");
+
+         when Rp_End_Tag =>
+            --  [HTML5] "An rp element's end tag may be omitted if the rp
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</rp>");
       end case;
 
       Self.Omit := None;
@@ -520,6 +538,20 @@ package body XML.SAX.HTML5_Writers is
             --  element, or if there is no more content in the parent element."
 
             Self.Output.Put ("</dd>");
+
+         when Rt_End_Tag =>
+            --  [HTML5] "An rt element's end tag may be omitted if the rt
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</rt>");
+
+         when Rp_End_Tag =>
+            --  [HTML5] "An rp element's end tag may be omitted if the rp
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</rp>");
       end case;
 
       Self.Omit := None;
@@ -639,6 +671,20 @@ package body XML.SAX.HTML5_Writers is
             --  element, or if there is no more content in the parent element."
 
             null;
+
+         when Rt_End_Tag =>
+            --  [HTML5] "An rt element's end tag may be omitted if the rt
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            null;
+
+         when Rp_End_Tag =>
+            --  [HTML5] "An rp element's end tag may be omitted if the rp
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            null;
       end case;
 
       Self.Omit := None;
@@ -662,6 +708,12 @@ package body XML.SAX.HTML5_Writers is
 
             elsif Local_Name = Li_Tag then
                Self.Omit := Li_End_Tag;
+
+            elsif Local_Name = Rp_Tag then
+               Self.Omit := Rp_End_Tag;
+
+            elsif Local_Name = Rt_Tag then
+               Self.Omit := Rt_End_Tag;
 
             else
                Self.Output.Put ("</");
@@ -980,8 +1032,6 @@ package body XML.SAX.HTML5_Writers is
       Self.State :=
        (Element_Kind       => Normal,
         P_End_Tag          => False,
-        Rt_End_Tag         => False,
-        Rp_End_Tag         => False,
         Optgroup_End_Tag   => False,
         Option_End_Tag     => False,
         Colgroup_Start_Tag => False,
@@ -1114,6 +1164,28 @@ package body XML.SAX.HTML5_Writers is
               or (Local_Name /= Dt_Tag and Local_Name /= Dd_Tag)
             then
                Self.Output.Put ("</dd>");
+            end if;
+
+         when Rt_End_Tag =>
+            --  [HTML5] "An rt element's end tag may be omitted if the rt
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Rt_Tag and Local_Name /= Rp_Tag)
+            then
+               Self.Output.Put ("</rt>");
+            end if;
+
+         when Rp_End_Tag =>
+            --  [HTML5] "An rp element's end tag may be omitted if the rp
+            --  element is immediately followed by an rt or rp element, or if
+            --  there is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Rt_Tag and Local_Name /= Rp_Tag)
+            then
+               Self.Output.Put ("</rp>");
             end if;
       end case;
 
