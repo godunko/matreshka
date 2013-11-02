@@ -73,6 +73,8 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("br");
    Col_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("col");
+   Colgroup_Tag : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("colgroup");
    Dd_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("dd");
    Dt_Tag       : constant League.Strings.Universal_String
@@ -113,10 +115,22 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("source");
    Style_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("style");
+   Tbody_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("tbody");
+   Td_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("td");
    Textarea_Tag : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("textarea");
+   Tfoot_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("tfoot");
+   Th_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("th");
+   Thead_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("thead");
    Title_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("title");
+   Tr_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("tr");
    Track_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("track");
    Wbr_Tag      : constant League.Strings.Universal_String
@@ -371,6 +385,56 @@ package body XML.SAX.HTML5_Writers is
             --  element, or if there is no more content in the parent element."
 
             Self.Output.Put ("</option>");
+
+         when Colgroup_End_Tag =>
+            --  [HTML5] "A colgroup element's end tag may be omitted if the
+            --  colgroup element is not immediately followed by a space
+            --  character or a comment."
+
+            if not Text.Is_Empty and then Is_Space (Text.Slice (1, 1)) then
+               Self.Output.Put ("</colgroup>");
+            end if;
+
+         when Thead_End_Tag =>
+            --  [HTML5] "A thead element's end tag may be omitted if the thead
+            --  element is immediately followed by a tbody or tfoot element."
+
+            Self.Output.Put ("</thead>");
+
+         when Tbody_End_Tag =>
+            --  [HTML5] "A tbody element's end tag may be omitted if the tbody
+            --  element is immediately followed by a tbody or tfoot element, or
+            --  if there is no more content in the parent element."
+
+            Self.Output.Put ("</tbody>");
+
+         when Tfoot_End_Tag =>
+            --  [HTML5] "A tfoot element's end tag may be omitted if the tfoot
+            --  element is immediately followed by a tbody element, or if there
+            --  is no more content in the parent element."
+
+            Self.Output.Put ("</tfoot>");
+
+         when Tr_End_Tag =>
+            --  [HTML5] "A tr element's end tag may be omitted if the tr
+            --  element is immediately followed by another tr element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</tr>");
+
+         when Td_End_Tag =>
+            --  [HTML5] "A td element's end tag may be omitted if the td
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</td>");
+
+         when Th_End_Tag =>
+            --  [HTML5] "A th element's end tag may be omitted if the th
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</th>");
       end case;
 
       Self.Omit := None;
@@ -586,6 +650,54 @@ package body XML.SAX.HTML5_Writers is
             --  element, or if there is no more content in the parent element."
 
             Self.Output.Put ("</option>");
+
+         when Colgroup_End_Tag =>
+            --  [HTML5] "A colgroup element's end tag may be omitted if the
+            --  colgroup element is not immediately followed by a space
+            --  character or a comment."
+
+            Self.Output.Put ("</colgroup>");
+
+         when Thead_End_Tag =>
+            --  [HTML5] "A thead element's end tag may be omitted if the thead
+            --  element is immediately followed by a tbody or tfoot element."
+
+            Self.Output.Put ("</thead>");
+
+         when Tbody_End_Tag =>
+            --  [HTML5] "A tbody element's end tag may be omitted if the tbody
+            --  element is immediately followed by a tbody or tfoot element, or
+            --  if there is no more content in the parent element."
+
+            Self.Output.Put ("</tbody>");
+
+         when Tfoot_End_Tag =>
+            --  [HTML5] "A tfoot element's end tag may be omitted if the tfoot
+            --  element is immediately followed by a tbody element, or if there
+            --  is no more content in the parent element."
+
+            Self.Output.Put ("</tfoot>");
+
+         when Tr_End_Tag =>
+            --  [HTML5] "A tr element's end tag may be omitted if the tr
+            --  element is immediately followed by another tr element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</tr>");
+
+         when Td_End_Tag =>
+            --  [HTML5] "A td element's end tag may be omitted if the td
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</td>");
+
+         when Th_End_Tag =>
+            --  [HTML5] "A th element's end tag may be omitted if the th
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            Self.Output.Put ("</th>");
       end case;
 
       Self.Omit := None;
@@ -734,6 +846,54 @@ package body XML.SAX.HTML5_Writers is
             --  element, or if there is no more content in the parent element."
 
             null;
+
+         when Colgroup_End_Tag =>
+            --  [HTML5] "A colgroup element's end tag may be omitted if the
+            --  colgroup element is not immediately followed by a space
+            --  character or a comment."
+
+            null;
+
+         when Thead_End_Tag =>
+            --  [HTML5] "A thead element's end tag may be omitted if the thead
+            --  element is immediately followed by a tbody or tfoot element."
+
+            Self.Output.Put ("</thead>");
+
+         when Tbody_End_Tag =>
+            --  [HTML5] "A tbody element's end tag may be omitted if the tbody
+            --  element is immediately followed by a tbody or tfoot element, or
+            --  if there is no more content in the parent element."
+
+            null;
+
+         when Tfoot_End_Tag =>
+            --  [HTML5] "A tfoot element's end tag may be omitted if the tfoot
+            --  element is immediately followed by a tbody element, or if there
+            --  is no more content in the parent element."
+
+            null;
+
+         when Tr_End_Tag =>
+            --  [HTML5] "A tr element's end tag may be omitted if the tr
+            --  element is immediately followed by another tr element, or if
+            --  there is no more content in the parent element."
+
+            null;
+
+         when Td_End_Tag =>
+            --  [HTML5] "A td element's end tag may be omitted if the td
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            null;
+
+         when Th_End_Tag =>
+            --  [HTML5] "A th element's end tag may be omitted if the th
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            null;
       end case;
 
       Self.Omit := None;
@@ -769,6 +929,27 @@ package body XML.SAX.HTML5_Writers is
 
             elsif Local_Name = Rt_Tag then
                Self.Omit := Rt_End_Tag;
+
+            elsif Local_Name = Colgroup_Tag then
+               Self.Omit := Colgroup_End_Tag;
+
+            elsif Local_Name = Thead_Tag then
+               Self.Omit := Thead_End_Tag;
+
+            elsif Local_Name = Tbody_Tag then
+               Self.Omit := Tbody_End_Tag;
+
+            elsif Local_Name = Tfoot_Tag then
+               Self.Omit := Tfoot_End_Tag;
+
+            elsif Local_Name = Tr_Tag then
+               Self.Omit := Tr_End_Tag;
+
+            elsif Local_Name = Td_Tag then
+               Self.Omit := Td_End_Tag;
+
+            elsif Local_Name = Th_Tag then
+               Self.Omit := Th_End_Tag;
 
             else
                Self.Output.Put ("</");
@@ -1088,14 +1269,7 @@ package body XML.SAX.HTML5_Writers is
        (Element_Kind       => Normal,
         P_End_Tag          => False,
         Colgroup_Start_Tag => False,
-        Colgroup_End_Tag   => False,
-        Thead_End_Tag      => False,
-        Tbody_Start_Tag    => False,
-        TBody_End_Tag      => False,
-        Tfoot_End_Tag      => False,
-        Tr_End_Tag         => False,
-        Td_End_Tag         => False,
-        Th_End_Tag         => False);
+        Tbody_Start_Tag    => False);
       Self.Omit            := None;
       Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
@@ -1260,6 +1434,74 @@ package body XML.SAX.HTML5_Writers is
               or (Local_Name /= Option_Tag and Local_Name /= Optgroup_Tag)
             then
                Self.Output.Put ("</option>");
+            end if;
+
+         when Colgroup_End_Tag =>
+            --  [HTML5] "A colgroup element's end tag may be omitted if the
+            --  colgroup element is not immediately followed by a space
+            --  character or a comment."
+
+            null;
+
+         when Thead_End_Tag =>
+            --  [HTML5] "A thead element's end tag may be omitted if the thead
+            --  element is immediately followed by a tbody or tfoot element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Tbody_Tag and Local_Name /= Tfoot_Tag)
+            then
+               Self.Output.Put ("</thead>");
+            end if;
+
+         when Tbody_End_Tag =>
+            --  [HTML5] "A tbody element's end tag may be omitted if the tbody
+            --  element is immediately followed by a tbody or tfoot element, or
+            --  if there is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Tbody_Tag and Local_Name /= Tfoot_Tag)
+            then
+               Self.Output.Put ("</tbody>");
+            end if;
+
+         when Tfoot_End_Tag =>
+            --  [HTML5] "A tfoot element's end tag may be omitted if the tfoot
+            --  element is immediately followed by a tbody element, or if there
+            --  is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI or Local_Name /= Tbody_Tag then
+               Self.Output.Put ("</tfoot>");
+            end if;
+
+         when Tr_End_Tag =>
+            --  [HTML5] "A tr element's end tag may be omitted if the tr
+            --  element is immediately followed by another tr element, or if
+            --  there is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI or Local_Name /= Tr_Tag then
+               Self.Output.Put ("</tr>");
+            end if;
+
+         when Td_End_Tag =>
+            --  [HTML5] "A td element's end tag may be omitted if the td
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Td_Tag and Local_Name /= Th_Tag)
+            then
+               Self.Output.Put ("</td>");
+            end if;
+
+         when Th_End_Tag =>
+            --  [HTML5] "A th element's end tag may be omitted if the th
+            --  element is immediately followed by a td or th element, or if
+            --  there is no more content in the parent element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Td_Tag and Local_Name /= Th_Tag)
+            then
+               Self.Output.Put ("</th>");
             end if;
       end case;
 

@@ -82,25 +82,27 @@ private
      Li_End_Tag,
      Dt_End_Tag,
      Dd_End_Tag,
---      P_End_Tag,
+--     P_End_Tag,
      Rt_End_Tag,
      Rp_End_Tag,
      Optgroup_End_Tag,
-     Option_End_Tag);
+     Option_End_Tag,
+--     Colgroup_Start_Tag,
+     Colgroup_End_Tag,
+     Thead_End_Tag,
+--     Tbody_Start_Tag,
+     Tbody_End_Tag,
+     Tfoot_End_Tag,
+     Tr_End_Tag,
+     Td_End_Tag,
+     Th_End_Tag);
 
    type Writer_State is record
       Element_Kind       : Element_Kinds := Normal;
 
       P_End_Tag          : Boolean       := False;
       Colgroup_Start_Tag : Boolean       := False;
-      Colgroup_End_Tag   : Boolean       := False;
-      Thead_End_Tag      : Boolean       := False;
       Tbody_Start_Tag    : Boolean       := False;
-      TBody_End_Tag      : Boolean       := False;
-      Tfoot_End_Tag      : Boolean       := False;
-      Tr_End_Tag         : Boolean       := False;
-      Td_End_Tag         : Boolean       := False;
-      Th_End_Tag         : Boolean       := False;
 
 --    (A_Parent,
 --     Colgroup_End_Omitted,
