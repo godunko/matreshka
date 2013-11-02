@@ -90,7 +90,7 @@ private
      Colgroup_Start_Tag,
      Colgroup_End_Tag,
      Thead_End_Tag,
---     Tbody_Start_Tag,
+     Tbody_Start_Tag,
      Tbody_End_Tag,
      Tfoot_End_Tag,
      Tr_End_Tag,
@@ -99,16 +99,13 @@ private
 
    type Omit_History_Kinds is
     (None,
-     Colgroup_End_Tag);
+     Colgroup_End_Tag,
+     Tbody_End_Tag,
+     Thead_End_Tag,
+     Tfoot_End_Tag);
 
    type Writer_State is record
-      Element_Kind    : Element_Kinds := Normal;
-
-      Tbody_Start_Tag : Boolean       := False;
-
---     Tbody_End_Omitted,
---     Thead_End_Omitted,
---     Tfoot_End_Omitted);
+      Element_Kind : Element_Kinds := Normal;
    end record;
 
    package State_Stacks is

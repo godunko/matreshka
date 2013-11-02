@@ -467,6 +467,15 @@ package body XML.SAX.HTML5_Writers is
 
             Self.Output.Put ("</thead>");
 
+         when Tbody_Start_Tag =>
+            --  [HTML5] "A tbody element's start tag may be omitted if the
+            --  first thing inside the tbody element is a tr element, and if
+            --  the element is not immediately preceded by a tbody, thead, or
+            --  tfoot element whose end tag has been omitted. (It can't be
+            --  omitted if the element is empty.)"
+
+            Self.Output.Put ("<tbody>");
+
          when Tbody_End_Tag =>
             --  [HTML5] "A tbody element's end tag may be omitted if the tbody
             --  element is immediately followed by a tbody or tfoot element, or
@@ -750,6 +759,15 @@ package body XML.SAX.HTML5_Writers is
 
             Self.Output.Put ("</thead>");
 
+         when Tbody_Start_Tag =>
+            --  [HTML5] "A tbody element's start tag may be omitted if the
+            --  first thing inside the tbody element is a tr element, and if
+            --  the element is not immediately preceded by a tbody, thead, or
+            --  tfoot element whose end tag has been omitted. (It can't be
+            --  omitted if the element is empty.)"
+
+            Self.Output.Put ("<tbody>");
+
          when Tbody_End_Tag =>
             --  [HTML5] "A tbody element's end tag may be omitted if the tbody
             --  element is immediately followed by a tbody or tfoot element, or
@@ -967,19 +985,28 @@ package body XML.SAX.HTML5_Writers is
 
             Self.Output.Put ("</thead>");
 
+         when Tbody_Start_Tag =>
+            --  [HTML5] "A tbody element's start tag may be omitted if the
+            --  first thing inside the tbody element is a tr element, and if
+            --  the element is not immediately preceded by a tbody, thead, or
+            --  tfoot element whose end tag has been omitted. (It can't be
+            --  omitted if the element is empty.)"
+
+            Self.Output.Put ("<tbody>");
+
          when Tbody_End_Tag =>
             --  [HTML5] "A tbody element's end tag may be omitted if the tbody
             --  element is immediately followed by a tbody or tfoot element, or
             --  if there is no more content in the parent element."
 
-            null;
+            History := Tbody_End_Tag;
 
          when Tfoot_End_Tag =>
             --  [HTML5] "A tfoot element's end tag may be omitted if the tfoot
             --  element is immediately followed by a tbody element, or if there
             --  is no more content in the parent element."
 
-            null;
+            History := Tfoot_End_Tag;
 
          when Tr_End_Tag =>
             --  [HTML5] "A tr element's end tag may be omitted if the tr
@@ -1388,9 +1415,7 @@ package body XML.SAX.HTML5_Writers is
      Success : in out Boolean) is
    begin
       Self.Diagnosis.Clear;
-      Self.State :=
-       (Element_Kind    => Normal,
-        Tbody_Start_Tag => False);
+      Self.State := (Element_Kind => Normal);
       Self.Omit            := None;
       Self.History         := None;
       Self.Stack.Clear;
@@ -1590,6 +1615,25 @@ package body XML.SAX.HTML5_Writers is
               or (Local_Name /= Tbody_Tag and Local_Name /= Tfoot_Tag)
             then
                Self.Output.Put ("</thead>");
+
+            else
+               History := Thead_End_Tag;
+            end if;
+
+         when Tbody_Start_Tag =>
+            --  [HTML5] "A tbody element's start tag may be omitted if the
+            --  first thing inside the tbody element is a tr element, and if
+            --  the element is not immediately preceded by a tbody, thead, or
+            --  tfoot element whose end tag has been omitted. (It can't be
+            --  omitted if the element is empty.)"
+
+            if Namespace_URI /= HTML_URI
+              or Local_Name /= Tr_Tag
+              or Self.History = Thead_End_Tag
+              or Self.History = Tbody_End_Tag
+              or Self.History = Tfoot_End_Tag
+            then
+               Self.Output.Put ("<tbody>");
             end if;
 
          when Tbody_End_Tag =>
@@ -1601,6 +1645,9 @@ package body XML.SAX.HTML5_Writers is
               or (Local_Name /= Tbody_Tag and Local_Name /= Tfoot_Tag)
             then
                Self.Output.Put ("</tbody>");
+
+            else
+               History := Tbody_End_Tag;
             end if;
 
          when Tfoot_End_Tag =>
@@ -1610,6 +1657,9 @@ package body XML.SAX.HTML5_Writers is
 
             if Namespace_URI /= HTML_URI or Local_Name /= Tbody_Tag then
                Self.Output.Put ("</tfoot>");
+
+            else
+               History := Tfoot_End_Tag;
             end if;
 
          when Tr_End_Tag =>
@@ -1726,6 +1776,15 @@ package body XML.SAX.HTML5_Writers is
          elsif Local_Name = Colgroup_Tag then
             if Attributes.Is_Empty and Self.History /= Colgroup_End_Tag then
                Self.Omit := Colgroup_Start_Tag;
+            end if;
+
+         elsif Local_Name = Tbody_Tag then
+            if Attributes.Is_Empty
+              and (Self.History /= Tbody_End_Tag
+                     or Self.History /= Thead_End_Tag
+                     or Self.History /= Tfoot_End_Tag)
+            then
+               Self.Omit := Tbody_Start_Tag;
             end if;
          end if;
 
