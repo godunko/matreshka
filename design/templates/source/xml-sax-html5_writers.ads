@@ -84,14 +84,14 @@ private
      Dd_End_Tag,
 --      P_End_Tag,
      Rt_End_Tag,
-     Rp_End_Tag);
+     Rp_End_Tag,
+     Optgroup_End_Tag,
+     Option_End_Tag);
 
    type Writer_State is record
       Element_Kind       : Element_Kinds := Normal;
 
       P_End_Tag          : Boolean       := False;
-      Optgroup_End_Tag   : Boolean       := False;
-      Option_End_Tag     : Boolean       := False;
       Colgroup_Start_Tag : Boolean       := False;
       Colgroup_End_Tag   : Boolean       := False;
       Thead_End_Tag      : Boolean       := False;

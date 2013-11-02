@@ -97,6 +97,10 @@ package body XML.SAX.HTML5_Writers is
      := League.Strings.To_Universal_String ("link");
    Meta_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("meta");
+   Optgroup_Tag : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("optgroup");
+   Option_Tag   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("option");
    Param_Tag    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("param");
    Rp_Tag       : constant League.Strings.Universal_String
@@ -352,6 +356,21 @@ package body XML.SAX.HTML5_Writers is
             --  there is no more content in the parent element."
 
             Self.Output.Put ("</rp>");
+
+         when Optgroup_End_Tag =>
+            --  [HTML5] "An optgroup element's end tag may be omitted if the
+            --  optgroup element is immediately followed by another optgroup
+            --  element, or if there is no more content in the parent element."
+
+            Self.Output.Put ("</optgroup>");
+
+         when Option_End_Tag =>
+            --  [HTML5] "An option element's end tag may be omitted if the
+            --  option element is immediately followed by another option
+            --  element, or if it is immediately followed by an optgroup
+            --  element, or if there is no more content in the parent element."
+
+            Self.Output.Put ("</option>");
       end case;
 
       Self.Omit := None;
@@ -552,6 +571,21 @@ package body XML.SAX.HTML5_Writers is
             --  there is no more content in the parent element."
 
             Self.Output.Put ("</rp>");
+
+         when Optgroup_End_Tag =>
+            --  [HTML5] "An optgroup element's end tag may be omitted if the
+            --  optgroup element is immediately followed by another optgroup
+            --  element, or if there is no more content in the parent element."
+
+            Self.Output.Put ("</optgroup>");
+
+         when Option_End_Tag =>
+            --  [HTML5] "An option element's end tag may be omitted if the
+            --  option element is immediately followed by another option
+            --  element, or if it is immediately followed by an optgroup
+            --  element, or if there is no more content in the parent element."
+
+            Self.Output.Put ("</option>");
       end case;
 
       Self.Omit := None;
@@ -685,6 +719,21 @@ package body XML.SAX.HTML5_Writers is
             --  there is no more content in the parent element."
 
             null;
+
+         when Optgroup_End_Tag =>
+            --  [HTML5] "An optgroup element's end tag may be omitted if the
+            --  optgroup element is immediately followed by another optgroup
+            --  element, or if there is no more content in the parent element."
+
+            null;
+
+         when Option_End_Tag =>
+            --  [HTML5] "An option element's end tag may be omitted if the
+            --  option element is immediately followed by another option
+            --  element, or if it is immediately followed by an optgroup
+            --  element, or if there is no more content in the parent element."
+
+            null;
       end case;
 
       Self.Omit := None;
@@ -708,6 +757,12 @@ package body XML.SAX.HTML5_Writers is
 
             elsif Local_Name = Li_Tag then
                Self.Omit := Li_End_Tag;
+
+            elsif Local_Name = Optgroup_Tag then
+               Self.Omit := Optgroup_End_Tag;
+
+            elsif Local_Name = Option_Tag then
+               Self.Omit := Option_End_Tag;
 
             elsif Local_Name = Rp_Tag then
                Self.Omit := Rp_End_Tag;
@@ -1032,8 +1087,6 @@ package body XML.SAX.HTML5_Writers is
       Self.State :=
        (Element_Kind       => Normal,
         P_End_Tag          => False,
-        Optgroup_End_Tag   => False,
-        Option_End_Tag     => False,
         Colgroup_Start_Tag => False,
         Colgroup_End_Tag   => False,
         Thead_End_Tag      => False,
@@ -1186,6 +1239,25 @@ package body XML.SAX.HTML5_Writers is
               or (Local_Name /= Rt_Tag and Local_Name /= Rp_Tag)
             then
                Self.Output.Put ("</rp>");
+            end if;
+
+         when Optgroup_End_Tag =>
+            --  [HTML5] "An optgroup element's end tag may be omitted if the
+            --  optgroup element is immediately followed by another optgroup
+            --  element, or if there is no more content in the parent element."
+
+            if Namespace_URI = HTML_URI and Local_Name /= Optgroup_Tag then
+               Self.Output.Put ("</optgroup>");
+            end if;
+
+         when Option_End_Tag =>
+            --  [HTML5] "An option element's end tag may be omitted if the
+            --  option element is immediately followed by another option
+            --  element, or if it is immediately followed by an optgroup
+            --  element, or if there is no more content in the parent element."
+
+            if Local_Name /= Option_Tag and Local_Name /= Optgroup_Tag then
+               Self.Output.Put ("</option>");
             end if;
       end case;
 
