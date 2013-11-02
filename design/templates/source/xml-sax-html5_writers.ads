@@ -87,7 +87,7 @@ private
      Rp_End_Tag,
      Optgroup_End_Tag,
      Option_End_Tag,
---     Colgroup_Start_Tag,
+     Colgroup_Start_Tag,
      Colgroup_End_Tag,
      Thead_End_Tag,
 --     Tbody_Start_Tag,
@@ -97,13 +97,15 @@ private
      Td_End_Tag,
      Th_End_Tag);
 
+   type Omit_History_Kinds is
+    (None,
+     Colgroup_End_Tag);
+
    type Writer_State is record
-      Element_Kind       : Element_Kinds := Normal;
+      Element_Kind    : Element_Kinds := Normal;
 
-      Colgroup_Start_Tag : Boolean       := False;
-      Tbody_Start_Tag    : Boolean       := False;
+      Tbody_Start_Tag : Boolean       := False;
 
---     Colgroup_End_Omitted,
 --     Tbody_End_Omitted,
 --     Thead_End_Omitted,
 --     Tfoot_End_Omitted);
@@ -129,6 +131,7 @@ private
       --  In CDATA mode writer doesn't escape text.
 
       Omit            : Simple_Omit_Kinds := None;
+      History         : Omit_History_Kinds := None;
    end record;
 
    overriding procedure Set_Output

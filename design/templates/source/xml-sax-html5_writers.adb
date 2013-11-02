@@ -440,6 +440,15 @@ package body XML.SAX.HTML5_Writers is
 
             Self.Output.Put ("</option>");
 
+         when Colgroup_Start_Tag =>
+            --  [HTML5] "A colgroup element's start tag may be omitted if the
+            --  first thing inside the colgroup element is a col element, and
+            --  if the element is not immediately preceded by another colgroup
+            --  element whose end tag has been omitted. (It can't be omitted if
+            --  the element is empty.)"
+
+            Self.Output.Put ("<colgroup>");
+
          when Colgroup_End_Tag =>
             --  [HTML5] "A colgroup element's end tag may be omitted if the
             --  colgroup element is not immediately followed by a space
@@ -447,6 +456,9 @@ package body XML.SAX.HTML5_Writers is
 
             if not Text.Is_Empty and then Is_Space (Text.Slice (1, 1)) then
                Self.Output.Put ("</colgroup>");
+
+            else
+               Self.History := Colgroup_End_Tag;
             end if;
 
          when Thead_End_Tag =>
@@ -502,6 +514,7 @@ package body XML.SAX.HTML5_Writers is
       end case;
 
       Self.Omit := None;
+      Self.History := None;
 
       if not Self.Document_Start or else not Is_Space (Text) then
          case Self.State.Element_Kind is
@@ -715,6 +728,15 @@ package body XML.SAX.HTML5_Writers is
 
             Self.Output.Put ("</option>");
 
+         when Colgroup_Start_Tag =>
+            --  [HTML5] "A colgroup element's start tag may be omitted if the
+            --  first thing inside the colgroup element is a col element, and
+            --  if the element is not immediately preceded by another colgroup
+            --  element whose end tag has been omitted. (It can't be omitted if
+            --  the element is empty.)"
+
+            Self.Output.Put ("<colgroup>");
+
          when Colgroup_End_Tag =>
             --  [HTML5] "A colgroup element's end tag may be omitted if the
             --  colgroup element is not immediately followed by a space
@@ -775,6 +797,7 @@ package body XML.SAX.HTML5_Writers is
       end case;
 
       Self.Omit := None;
+      Self.History := None;
 
       Self.Output.Put ("<!--");
       Self.Output.Put (Text);
@@ -821,6 +844,7 @@ package body XML.SAX.HTML5_Writers is
      Success        : in out Boolean)
    is
       Foreign_Closed : Boolean := False;
+      History        : Omit_History_Kinds := None;
 
    begin
       case Self.Omit is
@@ -921,12 +945,21 @@ package body XML.SAX.HTML5_Writers is
 
             null;
 
+         when Colgroup_Start_Tag =>
+            --  [HTML5] "A colgroup element's start tag may be omitted if the
+            --  first thing inside the colgroup element is a col element, and
+            --  if the element is not immediately preceded by another colgroup
+            --  element whose end tag has been omitted. (It can't be omitted if
+            --  the element is empty.)"
+
+            Self.Output.Put ("<colgroup>");
+
          when Colgroup_End_Tag =>
             --  [HTML5] "A colgroup element's end tag may be omitted if the
             --  colgroup element is not immediately followed by a space
             --  character or a comment."
 
-            null;
+            History := Colgroup_End_Tag;
 
          when Thead_End_Tag =>
             --  [HTML5] "A thead element's end tag may be omitted if the thead
@@ -982,7 +1015,8 @@ package body XML.SAX.HTML5_Writers is
             end if;
       end case;
 
-      Self.Omit := None;
+      Self.Omit    := None;
+      Self.History := History;
 
       case Self.State.Element_Kind is
          when Normal | Raw_Text | Escapable_Raw_Text =>
@@ -1355,10 +1389,10 @@ package body XML.SAX.HTML5_Writers is
    begin
       Self.Diagnosis.Clear;
       Self.State :=
-       (Element_Kind       => Normal,
-        Colgroup_Start_Tag => False,
-        Tbody_Start_Tag    => False);
+       (Element_Kind    => Normal,
+        Tbody_Start_Tag => False);
       Self.Omit            := None;
+      Self.History         := None;
       Self.Stack.Clear;
       Self.DOCTYPE_Written := False;
       Self.Document_Start  := True;
@@ -1389,7 +1423,10 @@ package body XML.SAX.HTML5_Writers is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean) is
+     Success        : in out Boolean)
+   is
+      History : Omit_History_Kinds := None;
+
    begin
       Self.Stack.Append (Self.State);
 
@@ -1524,12 +1561,26 @@ package body XML.SAX.HTML5_Writers is
                Self.Output.Put ("</option>");
             end if;
 
+         when Colgroup_Start_Tag =>
+            --  [HTML5] "A colgroup element's start tag may be omitted if the
+            --  first thing inside the colgroup element is a col element, and
+            --  if the element is not immediately preceded by another colgroup
+            --  element whose end tag has been omitted. (It can't be omitted if
+            --  the element is empty.)"
+
+            if Namespace_URI /= HTML_URI
+              or Local_Name /= Col_Tag
+              or Self.History = Colgroup_End_Tag
+            then
+               Self.Output.Put ("<colgroup>");
+            end if;
+
          when Colgroup_End_Tag =>
             --  [HTML5] "A colgroup element's end tag may be omitted if the
             --  colgroup element is not immediately followed by a space
             --  character or a comment."
 
-            null;
+            History := Colgroup_End_Tag;
 
          when Thead_End_Tag =>
             --  [HTML5] "A thead element's end tag may be omitted if the thead
@@ -1633,7 +1684,8 @@ package body XML.SAX.HTML5_Writers is
             end if;
       end case;
 
-      Self.Omit := None;
+      Self.Omit    := None;
+      Self.History := History;
 
       if Namespace_URI = HTML_URI then
          if Is_Void_Element (Local_Name) then
@@ -1669,6 +1721,11 @@ package body XML.SAX.HTML5_Writers is
          elsif Local_Name = HTML_Tag then
             if Attributes.Is_Empty then
                Self.Omit := HTML_Start_Tag;
+            end if;
+
+         elsif Local_Name = Colgroup_Tag then
+            if Attributes.Is_Empty and Self.History /= Colgroup_End_Tag then
+               Self.Omit := Colgroup_Start_Tag;
             end if;
          end if;
 
