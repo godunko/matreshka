@@ -63,77 +63,131 @@ package body XML.SAX.HTML5_Writers is
    XMLNS_URI  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/2000/xmlns/");
 
-   Area_Tag     : constant League.Strings.Universal_String
+   A_Tag          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("a");
+   Address_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("address");
+   Area_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("area");
-   Base_Tag     : constant League.Strings.Universal_String
+   Article_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("article");
+   Aside_Tag      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("aside");
+   Base_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("base");
-   Body_Tag     : constant League.Strings.Universal_String
+   Blockquote_Tag : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("blockquote");
+   Body_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("body");
-   Br_Tag       : constant League.Strings.Universal_String
+   Br_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("br");
-   Col_Tag      : constant League.Strings.Universal_String
+   Col_Tag        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("col");
-   Colgroup_Tag : constant League.Strings.Universal_String
+   Colgroup_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("colgroup");
-   Dd_Tag       : constant League.Strings.Universal_String
+   Dd_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("dd");
-   Dt_Tag       : constant League.Strings.Universal_String
+   Dir_Tag        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("dir");
+   Div_Tag        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("div");
+   Dl_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("dl");
+   Dt_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("dt");
-   Embed_Tag    : constant League.Strings.Universal_String
+   Embed_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("embed");
+   Fieldset_Tag   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("fieldset");
+   Footer_Tag     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("footer");
+   Form_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("form");
+   H1_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("h1");
+   H2_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("h2");
+   H3_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("h3");
+   H4_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("h4");
+   H5_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("h5");
+   H6_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("h6");
    Head_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("head");
-   Hr_Tag       : constant League.Strings.Universal_String
+   Header_Tag     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("header");
+   Hgroup_Tag     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("hgroup");
+   Hr_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("hr");
-   HTML_Tag     : constant League.Strings.Universal_String
+   HTML_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("html");
-   Img_Tag      : constant League.Strings.Universal_String
+   Img_Tag        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("img");
-   Input_Tag    : constant League.Strings.Universal_String
+   Input_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("input");
-   Keygen_Tag   : constant League.Strings.Universal_String
+   Keygen_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("keygen");
-   Li_Tag       : constant League.Strings.Universal_String
+   Li_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("li");
-   Link_Tag     : constant League.Strings.Universal_String
+   Link_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("link");
-   Meta_Tag     : constant League.Strings.Universal_String
+   Main_Tag       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("main");
+   Meta_Tag       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("meta");
-   Optgroup_Tag : constant League.Strings.Universal_String
+   Nav_Tag        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("nav");
+   Ol_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("ol");
+   Optgroup_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("optgroup");
-   Option_Tag   : constant League.Strings.Universal_String
+   Option_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("option");
-   Param_Tag    : constant League.Strings.Universal_String
+   P_Tag          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("p");
+   Param_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("param");
-   Rp_Tag       : constant League.Strings.Universal_String
+   Pre_Tag        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("pre");
+   Rp_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("rp");
-   Rt_Tag       : constant League.Strings.Universal_String
+   Rt_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("rt");
-   Script_Tag   : constant League.Strings.Universal_String
+   Script_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("script");
-   Source_Tag   : constant League.Strings.Universal_String
+   Section_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("section");
+   Source_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("source");
-   Style_Tag    : constant League.Strings.Universal_String
+   Style_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("style");
-   Tbody_Tag    : constant League.Strings.Universal_String
+   Table_Tag      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("table");
+   Tbody_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("tbody");
-   Td_Tag       : constant League.Strings.Universal_String
+   Td_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("td");
-   Textarea_Tag : constant League.Strings.Universal_String
+   Textarea_Tag   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("textarea");
-   Tfoot_Tag    : constant League.Strings.Universal_String
+   Tfoot_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("tfoot");
-   Th_Tag       : constant League.Strings.Universal_String
+   Th_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("th");
-   Thead_Tag    : constant League.Strings.Universal_String
+   Thead_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("thead");
-   Title_Tag    : constant League.Strings.Universal_String
+   Title_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("title");
-   Tr_Tag       : constant League.Strings.Universal_String
+   Tr_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("tr");
-   Track_Tag    : constant League.Strings.Universal_String
+   Track_Tag      : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("track");
-   Wbr_Tag      : constant League.Strings.Universal_String
+   Ul_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("ul");
+   Wbr_Tag        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("wbr");
 
    Actuate_Attribute        : constant League.Strings.Universal_String
@@ -435,6 +489,16 @@ package body XML.SAX.HTML5_Writers is
             --  there is no more content in the parent element."
 
             Self.Output.Put ("</th>");
+
+         when P_End_Tag =>
+            --  [HTML5] "A p element's end tag may be omitted if the p element
+            --  is immediately followed by an address, article, aside,
+            --  blockquote, dir, div, dl, fieldset, footer, form, h1, h2, h3,
+            --  h4, h5, h6, header, hgroup, hr, main, nav, ol, p, pre, section,
+            --  table, or ul, element, or if there is no more content in the
+            --  parent element and the parent element is not an a element."
+
+            Self.Output.Put ("</p>");
       end case;
 
       Self.Omit := None;
@@ -698,6 +762,16 @@ package body XML.SAX.HTML5_Writers is
             --  there is no more content in the parent element."
 
             Self.Output.Put ("</th>");
+
+         when P_End_Tag =>
+            --  [HTML5] "A p element's end tag may be omitted if the p element
+            --  is immediately followed by an address, article, aside,
+            --  blockquote, dir, div, dl, fieldset, footer, form, h1, h2, h3,
+            --  h4, h5, h6, header, hgroup, hr, main, nav, ol, p, pre, section,
+            --  table, or ul, element, or if there is no more content in the
+            --  parent element and the parent element is not an a element."
+
+            Self.Output.Put ("</p>");
       end case;
 
       Self.Omit := None;
@@ -894,6 +968,18 @@ package body XML.SAX.HTML5_Writers is
             --  there is no more content in the parent element."
 
             null;
+
+         when P_End_Tag =>
+            --  [HTML5] "A p element's end tag may be omitted if the p element
+            --  is immediately followed by an address, article, aside,
+            --  blockquote, dir, div, dl, fieldset, footer, form, h1, h2, h3,
+            --  h4, h5, h6, header, hgroup, hr, main, nav, ol, p, pre, section,
+            --  table, or ul, element, or if there is no more content in the
+            --  parent element and the parent element is not an a element."
+
+            if Namespace_URI = HTML_URI and Local_Name = A_Tag then
+               Self.Output.Put ("</p>");
+            end if;
       end case;
 
       Self.Omit := None;
@@ -950,6 +1036,9 @@ package body XML.SAX.HTML5_Writers is
 
             elsif Local_Name = Th_Tag then
                Self.Omit := Th_End_Tag;
+
+            elsif Local_Name = P_Tag then
+               Self.Omit := P_End_Tag;
 
             else
                Self.Output.Put ("</");
@@ -1267,7 +1356,6 @@ package body XML.SAX.HTML5_Writers is
       Self.Diagnosis.Clear;
       Self.State :=
        (Element_Kind       => Normal,
-        P_End_Tag          => False,
         Colgroup_Start_Tag => False,
         Tbody_Start_Tag    => False);
       Self.Omit            := None;
@@ -1502,6 +1590,46 @@ package body XML.SAX.HTML5_Writers is
               or (Local_Name /= Td_Tag and Local_Name /= Th_Tag)
             then
                Self.Output.Put ("</th>");
+            end if;
+
+         when P_End_Tag =>
+            --  [HTML5] "A p element's end tag may be omitted if the p element
+            --  is immediately followed by an address, article, aside,
+            --  blockquote, dir, div, dl, fieldset, footer, form, h1, h2, h3,
+            --  h4, h5, h6, header, hgroup, hr, main, nav, ol, p, pre, section,
+            --  table, or ul, element, or if there is no more content in the
+            --  parent element and the parent element is not an a element."
+
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Address_Tag
+                    and Local_Name /= Article_Tag
+                    and Local_Name /= Aside_Tag
+                    and Local_Name /= Blockquote_Tag
+                    and Local_Name /= Dir_Tag
+                    and Local_Name /= Div_Tag
+                    and Local_Name /= Dl_Tag
+                    and Local_Name /= Fieldset_Tag
+                    and Local_Name /= Footer_Tag
+                    and Local_Name /= Form_Tag
+                    and Local_Name /= H1_Tag
+                    and Local_Name /= H2_Tag
+                    and Local_Name /= H3_Tag
+                    and Local_Name /= H4_Tag
+                    and Local_Name /= H5_Tag
+                    and Local_Name /= H6_Tag
+                    and Local_Name /= Header_Tag
+                    and Local_Name /= Hgroup_Tag
+                    and Local_Name /= Hr_Tag
+                    and Local_Name /= Main_Tag
+                    and Local_Name /= Nav_Tag
+                    and Local_Name /= Ol_Tag
+                    and Local_Name /= P_Tag
+                    and Local_Name /= Pre_Tag
+                    and Local_Name /= Section_Tag
+                    and Local_Name /= Table_Tag
+                    and Local_Name /= Ul_Tag)
+            then
+               Self.Output.Put ("</p>");
             end if;
       end case;
 

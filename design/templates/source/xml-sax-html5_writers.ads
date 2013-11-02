@@ -82,7 +82,7 @@ private
      Li_End_Tag,
      Dt_End_Tag,
      Dd_End_Tag,
---     P_End_Tag,
+     P_End_Tag,
      Rt_End_Tag,
      Rp_End_Tag,
      Optgroup_End_Tag,
@@ -100,11 +100,9 @@ private
    type Writer_State is record
       Element_Kind       : Element_Kinds := Normal;
 
-      P_End_Tag          : Boolean       := False;
       Colgroup_Start_Tag : Boolean       := False;
       Tbody_Start_Tag    : Boolean       := False;
 
---    (A_Parent,
 --     Colgroup_End_Omitted,
 --     Tbody_End_Omitted,
 --     Thead_End_Omitted,
