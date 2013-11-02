@@ -1246,7 +1246,7 @@ package body XML.SAX.HTML5_Writers is
             --  optgroup element is immediately followed by another optgroup
             --  element, or if there is no more content in the parent element."
 
-            if Namespace_URI = HTML_URI and Local_Name /= Optgroup_Tag then
+            if Namespace_URI /= HTML_URI or Local_Name /= Optgroup_Tag then
                Self.Output.Put ("</optgroup>");
             end if;
 
@@ -1256,7 +1256,9 @@ package body XML.SAX.HTML5_Writers is
             --  element, or if it is immediately followed by an optgroup
             --  element, or if there is no more content in the parent element."
 
-            if Local_Name /= Option_Tag and Local_Name /= Optgroup_Tag then
+            if Namespace_URI /= HTML_URI
+              or (Local_Name /= Option_Tag and Local_Name /= Optgroup_Tag)
+            then
                Self.Output.Put ("</option>");
             end if;
       end case;
