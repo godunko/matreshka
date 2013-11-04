@@ -278,7 +278,7 @@ package body XSD_To_Ada.Utils is
          & "with Web_Services.SOAP.Payloads;" & LF
          & "with Ada.Strings.Unbounded;"
          & LF & LF
-         & "package Payloads_2 is"
+         & "package Payloads is"
          & LF & LF
          & "   type Decimal_String is new Ada.Strings.Unbounded.Unbounded_String;"
          & LF
@@ -481,10 +481,10 @@ package body XSD_To_Ada.Utils is
 
      Create_Element_Type (Model, Payload_Writer);
 
-      Writers.N (Payload_Writer, "end Payloads_2;");
+      Writers.N (Payload_Writer, "end Payloads;");
 
       Ada.Text_IO.Create
-        (Current_Out_File, Ada.Text_IO.Out_File, "./Payloads_2.ads");
+        (Current_Out_File, Ada.Text_IO.Out_File, "./Payloads.ads");
       Ada.Text_IO.Put_Line
         (Current_Out_File, Payload_Type_Writer.Text.To_UTF_8_String);
       Ada.Text_IO.Put_Line
@@ -568,7 +568,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       return League.Strings.To_Universal_String
-        ("Payloads_2." & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
+        ("Payloads." & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
    end Find_Type;
 
    --------------------
@@ -1037,7 +1037,7 @@ package body XSD_To_Ada.Utils is
            (Writer,
             Gen_Type_Line ("      "
             & Add_Separator (Type_D.Get_Base_Type.Get_Name.To_Wide_Wide_String)
-            & " : Payloads_2."
+            & " : Payloads."
             & Add_Separator (Type_D.Get_Base_Type.Get_Name.To_Wide_Wide_String)
             & ";", 8));
       end if;
