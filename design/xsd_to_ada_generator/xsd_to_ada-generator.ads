@@ -47,10 +47,13 @@ private with Ada.Text_IO;
 with XSD_To_Ada.Writers;
 
 with XML.Schema.Models;
+with League.Strings;
 
 package XSD_To_Ada.Generator is
 
-   procedure Generate (Model : XML.Schema.Models.XS_Model);
+   procedure Generate
+     (Model        : XML.Schema.Models.XS_Model;
+      Mapping_Path : League.Strings.Universal_String);
 
 private
 

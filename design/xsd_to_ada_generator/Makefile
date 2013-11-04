@@ -1,10 +1,12 @@
 
 all:
+	AMF_DATA_DIR=../schema/driver
 	gprbuild -j0 -p -P schema.gpr
 	gprbuild -j0 -p -P xsd_to_ada.gpr
 	(./xsd_to_ada_generator ../../../trading_server/src/client/soap/iats.xsd)
+	
 gen: all
-	AMF_DATA_DIR=../schema/driver ./xsd_to_ada_generator ../../../trading_server/src/client/soap/iats.xsd
+	AMF_DATA_DIR=../schema/driver
 
 clean:
 	rm -rf .objs

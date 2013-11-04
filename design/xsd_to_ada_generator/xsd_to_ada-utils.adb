@@ -431,7 +431,9 @@ package body XSD_To_Ada.Utils is
    -- Create_Complex_Type --
    -------------------------
 
-   procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model)
+   procedure Create_Complex_Type
+     (Model        : XML.Schema.Models.XS_Model;
+      Mapping_Path : League.Strings.Universal_String)
    is
       XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -446,9 +448,7 @@ package body XSD_To_Ada.Utils is
 
       Current_Out_File : Ada.Text_IO.File_Type;
    begin
-      Map :=
-        XSD_To_Ada.Utils.Read_Mapping
-          (League.Strings.To_Universal_String ("./mapping.xml"));
+      Map := XSD_To_Ada.Utils.Read_Mapping (Mapping_Path);
 
       for J in 1 .. Complex_Types.Length loop
          Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
@@ -484,7 +484,10 @@ package body XSD_To_Ada.Utils is
       Writers.N (Payload_Writer, "end Payloads;");
 
       Ada.Text_IO.Create
-        (Current_Out_File, Ada.Text_IO.Out_File, "./Payloads.ads");
+        (Current_Out_File,
+         Ada.Text_IO.Out_File,
+         "./src/client/soap/Payloads.ads");
+
       Ada.Text_IO.Put_Line
         (Current_Out_File, Payload_Type_Writer.Text.To_UTF_8_String);
       Ada.Text_IO.Put_Line

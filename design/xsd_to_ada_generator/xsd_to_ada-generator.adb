@@ -83,10 +83,12 @@ package body XSD_To_Ada.Generator is
    -- Generate --
    --------------
 
-   procedure Generate (Model : XML.Schema.Models.XS_Model) is
+   procedure Generate
+     (Model        : XML.Schema.Models.XS_Model;
+      Mapping_Path : League.Strings.Universal_String) is
    begin
-      XSD_To_Ada.Utils.Create_Complex_Type (Model);
-      XSD_To_Ada.Encoder.Create_Complex_Type (Model);
+      XSD_To_Ada.Utils.Create_Complex_Type (Model, Mapping_Path);
+      XSD_To_Ada.Encoder.Create_Complex_Type (Model, Mapping_Path);
    end Generate;
 
    ---------

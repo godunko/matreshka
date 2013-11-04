@@ -548,7 +548,9 @@ package body XSD_To_Ada.Encoder is
    -- Create_Complex_Type --
    -------------------------
 
-   procedure Create_Complex_Type (Model  : XML.Schema.Models.XS_Model)
+   procedure Create_Complex_Type
+     (Model        : XML.Schema.Models.XS_Model;
+      Mapping_Path : League.Strings.Universal_String)
    is
       XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -562,9 +564,7 @@ package body XSD_To_Ada.Encoder is
 
       Current_Out_File : Ada.Text_IO.File_Type;
    begin
-      Map :=
-        XSD_To_Ada.Encoder.Read_Mapping
-          (League.Strings.To_Universal_String ("./mapping.xml"));
+      Map := XSD_To_Ada.Encoder.Read_Mapping (Mapping_Path);
 
       for J in 1 .. Complex_Types.Length loop
          Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
