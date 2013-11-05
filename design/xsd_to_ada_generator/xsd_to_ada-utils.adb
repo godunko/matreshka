@@ -1323,10 +1323,10 @@ package body XSD_To_Ada.Utils is
 
                Name_Case.Append
                  ("   type "
-                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Case "
+                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Case"
                   & Wide_Wide_Character'Val (10)
                   & "     (Kind : "
-                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Kind "
+                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Kind"
                     & Wide_Wide_Character'Val (10)
                   & "      := "
                   & XSD_To_Ada.Utils.Add_Separator (Name)
