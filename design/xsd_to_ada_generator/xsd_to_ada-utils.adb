@@ -192,7 +192,7 @@ package body XSD_To_Ada.Utils is
                         "   type "
                         & Add_Separator
                           (Element_Declarations.Item (J).Get_Name)
-                        & " is "
+                        & " is"
                         & Wide_Wide_Character'Val (10)
                         & "     new Abstract_IATS_Responce with "
                         & Wide_Wide_Character'Val (10)
@@ -220,7 +220,7 @@ package body XSD_To_Ada.Utils is
                            "   type "
                            & Add_Separator
                              (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
-                           & " is "
+                           & " is"
                            & Wide_Wide_Character'Val (10)
                            & "     new "
                            & Name.To_Wide_Wide_String
@@ -236,7 +236,7 @@ package body XSD_To_Ada.Utils is
                               "   type "
                               & Add_Separator
                                 (Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String)
-                              & " is "
+                              & " is"
                               & Wide_Wide_Character'Val (10)
                               & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
                               & " with record");
@@ -402,7 +402,7 @@ package body XSD_To_Ada.Utils is
                  (Writer,
                   "   type " &
                     XSD_To_Ada.Utils.Add_Separator
-                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is "
+                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is"
                     & Wide_Wide_Character'Val (10) & "     (");
 
                for J in 1 .. List.Length loop
@@ -528,7 +528,7 @@ package body XSD_To_Ada.Utils is
           Writers.P
            (Writer_Types,
             "   package "
-            & Add_Separator (Type_D_Name) & "_Vectors is "
+            & Add_Separator (Type_D_Name) & "_Vectors is"
             & Wide_Wide_Character'Val (10)
             & Gen_Type_Line
               ("     new Ada.Containers.Indefinite_Vectors "
@@ -1318,7 +1318,7 @@ package body XSD_To_Ada.Utils is
 
                Name_Kind.Append
                  ("   type "
-                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Kind is "
+                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Kind is"
                   & Wide_Wide_Character'Val (10) &  "     (");
 
                Name_Case.Append
@@ -1354,7 +1354,7 @@ package body XSD_To_Ada.Utils is
                Anonym_Vector.Append
                  ("   package "
                   & XSD_To_Ada.Utils.Add_Separator (Name)
-                  & "_Anonyms_Vectors is "
+                  & "_Anonyms_Vectors is"
                   & Wide_Wide_Character'Val (10)
                   & "     new Ada.Containers.Indefinite_Vectors "
                   & Wide_Wide_Character'Val (10)
