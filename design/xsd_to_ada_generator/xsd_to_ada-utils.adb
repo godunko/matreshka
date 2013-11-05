@@ -194,7 +194,7 @@ package body XSD_To_Ada.Utils is
                           (Element_Declarations.Item (J).Get_Name)
                         & " is"
                         & Wide_Wide_Character'Val (10)
-                        & "     new Abstract_IATS_Responce with "
+                        & "     new Abstract_IATS_Responce with"
                         & Wide_Wide_Character'Val (10)
                         & "       record"
                         & Wide_Wide_Character'Val (10)
@@ -623,7 +623,7 @@ package body XSD_To_Ada.Utils is
    begin
       Writers.N
         (Self,
-         "   type " & Name & "_Access is access all "
+         "   type " & Name & "_Access is access all"
          & Wide_Wide_Character'Val (10)
          & "      " & Name & "'Class;"
          & Wide_Wide_Character'Val (10) & Wide_Wide_Character'Val (10));
