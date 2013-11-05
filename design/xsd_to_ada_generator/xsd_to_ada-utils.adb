@@ -1424,7 +1424,7 @@ package body XSD_To_Ada.Utils is
 
                if J /=  XS_List.Get_Length and Choice then
                   Name_Kind.Append
-                    (", " & Wide_Wide_Character'Val (10) & "      ") ;
+                    ("," & Wide_Wide_Character'Val (10) & "      ") ;
                end if;
             end loop;
 
