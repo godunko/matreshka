@@ -198,10 +198,10 @@ package body XSD_To_Ada.Utils is
                         & Wide_Wide_Character'Val (10)
                         & "       record"
                         & Wide_Wide_Character'Val (10)
-                        & "         "
-                        & Gen_Type_Line (Add_Separator (Type_D.Get_Name)
-                        & " : "
-                        & Name.To_Wide_Wide_String & ";", 12)
+                        & Gen_Type_Line ("         "
+                          & Add_Separator (Type_D.Get_Name)
+                          & " : "
+                          & Name.To_Wide_Wide_String & ";", 12)
                         & Wide_Wide_Character'Val (10)
                         & "       end record;" & Wide_Wide_Character'Val (10));
 
@@ -1358,7 +1358,7 @@ package body XSD_To_Ada.Utils is
                   & XSD_To_Ada.Utils.Add_Separator (Name)
                   & "_Anonyms_Vectors is"
                   & Wide_Wide_Character'Val (10)
-                  & "     new Ada.Containers.Indefinite_Vectors "
+                  & "     new Ada.Containers.Indefinite_Vectors"
                   & Wide_Wide_Character'Val (10)
                   & "        (Positive, "
                   & XSD_To_Ada.Utils.Add_Separator (Name) & "_Anonym);"
