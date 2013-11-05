@@ -731,16 +731,18 @@ package body XSD_To_Ada.Utils is
    begin
       if US.Length > 79 then
          for J in 1 .. US.Length loop
-            if US.Element (J).To_Wide_Wide_Character = ':'
-              or US.Element (J).To_Wide_Wide_Character = '('
-            then
-               US_New.Append (Wide_Wide_Character'Val (10));
+            if US.Element (J).To_Wide_Wide_Character = ' '
+              and then
+                (US.Element (J + 1).To_Wide_Wide_Character = '('
+                 or US.Element (J + 1).To_Wide_Wide_Character = ':')
+                 then
+                 US_New.Append (Wide_Wide_Character'Val (10));
 
-               for Count in 1 .. Tab loop
-                  US_New.Append (" ");
-               end loop;
+                 for Count in 1 .. Tab loop
+                 US_New.Append (" ");
+                 end loop;
 
-               US_New.Append (US.Element (J));
+                 US_New.Append (US.Element (J));
 
             elsif US.Element (J).To_Wide_Wide_Character = ' '
               and then US.Element (J + 1).To_Wide_Wide_Character = 'i'
