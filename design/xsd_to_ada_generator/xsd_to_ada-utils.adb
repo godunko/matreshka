@@ -486,7 +486,7 @@ package body XSD_To_Ada.Utils is
       Ada.Text_IO.Create
         (Current_Out_File,
          Ada.Text_IO.Out_File,
-         "./src/client/soap/Payloads.ads");
+         "./src/client/soap/payloads.ads");
 
       Ada.Text_IO.Put_Line
         (Current_Out_File, Payload_Type_Writer.Text.To_UTF_8_String);
