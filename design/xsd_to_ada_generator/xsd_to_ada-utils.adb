@@ -1059,7 +1059,8 @@ package body XSD_To_Ada.Utils is
 
             if CTD.Get_Content_Type in Element_Only | Mixed then
                Ada.Wide_Wide_Text_IO.Put_Line
-                (Indent
+                (Ada.Wide_Wide_Text_IO.Standard_Error,
+                 Indent
                    & "Complex_Type :"
                    & Type_D.Get_Name.To_Wide_Wide_String);
 
@@ -1577,7 +1578,8 @@ package body XSD_To_Ada.Utils is
 
             if CTD.Get_Content_Type in Element_Only | Mixed then
                Ada.Wide_Wide_Text_IO.Put_Line
-                (Indent
+                (Ada.Wide_Wide_Text_IO.Standard_Error,
+                 Indent
                    & "Complex_Type :"
                    & Type_D.Get_Name.To_Wide_Wide_String);
                XS_Particle := CTD.Get_Particle;
