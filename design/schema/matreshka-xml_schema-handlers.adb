@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -1907,13 +1907,15 @@ package body Matreshka.XML_Schema.Handlers is
 
          else
             Ada.Wide_Wide_Text_IO.Put_Line
-              ("End_Element:" & Local_Name.To_Wide_Wide_String);
+              (Ada.Wide_Wide_Text_IO.Standard_Error,
+               "End_Element:" & Local_Name.To_Wide_Wide_String);
             raise Program_Error;
          end if;
 
       else
          Ada.Wide_Wide_Text_IO.Put_Line
-           ("End_Element:" & Local_Name.To_Wide_Wide_String);
+           (Ada.Wide_Wide_Text_IO.Standard_Error,
+            "End_Element:" & Local_Name.To_Wide_Wide_String);
          raise Program_Error;
       end if;
    end End_Element;
@@ -2852,7 +2854,8 @@ package body Matreshka.XML_Schema.Handlers is
      Success        : in out Boolean) is
    begin
       Ada.Wide_Wide_Text_IO.Put_Line
-        ("Start_Element:" & Qualified_Name.To_Wide_Wide_String);
+        (Ada.Wide_Wide_Text_IO.Standard_Error,
+         "Start_Element:" & Qualified_Name.To_Wide_Wide_String);
 
       if Self.Ignore_Depth /= 0 then
          Self.Ignore_Depth := Self.Ignore_Depth + 1;
@@ -3417,9 +3420,12 @@ package body Matreshka.XML_Schema.Handlers is
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean) is
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line (">>>>> WARNING <<<<<");
       Ada.Wide_Wide_Text_IO.Put_Line
-       (Occurrence.System_Id.To_Wide_Wide_String
+       (Ada.Wide_Wide_Text_IO.Standard_Error,
+        ">>>>> WARNING <<<<<");
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Ada.Wide_Wide_Text_IO.Standard_Error,
+        Occurrence.System_Id.To_Wide_Wide_String
           & ':'
           & Ada.Strings.Wide_Wide_Fixed.Trim
              (Integer'Wide_Wide_Image (Occurrence.Line),
