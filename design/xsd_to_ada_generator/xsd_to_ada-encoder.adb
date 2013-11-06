@@ -482,11 +482,14 @@ package body XSD_To_Ada.Encoder is
       end loop;
    end Create_Simple_Type;
 
-   procedure Create_Enumeration_Simple_Type
-     (Model  : XML.Schema.Models.XS_Model;
-      Writer : in out XSD_To_Ada.Writers.Writer)
-   is
+   ------------------------------------
+   -- Create_Enumeration_Simple_Type --
+   ------------------------------------
 
+   procedure Create_Enumeration_Simple_Type
+    (Model  : XML.Schema.Models.XS_Model;
+     Writer : in out XSD_To_Ada.Writers.Writer)
+   is
       XS_Object : XML.Schema.Objects.XS_Object;
       STD       : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
       XS_Base   : XML.Schema.Type_Definitions.XS_Type_Definition;
