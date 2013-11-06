@@ -73,6 +73,7 @@ package body XSD_To_Ada.Encoder is
 
    use XML.Schema.Type_Definitions.Complex_Type_Definitions;
    use XSD_To_Ada.Writers;
+   use type League.Strings.Universal_String;
 
    LF : constant Wide_Wide_Character := Ada.Characters.Wide_Wide_Latin_1.LF;
 
@@ -1054,9 +1055,7 @@ package body XSD_To_Ada.Encoder is
       Top_Max_Occurs : Boolean;
       Choice         : Boolean := False;
       Writer         : in out Writers.Writer;
-      Level          : Natural := 0)
-   is
-      use League.Strings;
+      Level          : Natural := 0) is
    begin
 
       Ada.Text_IO.Put_Line ("###" & Level'Img);
@@ -1204,10 +1203,7 @@ package body XSD_To_Ada.Encoder is
       Top_Max_Occurs : Boolean;
       Min_Occurs   : in out Boolean;
       Choice       : Boolean;
-      Writer       : in out Writers.Writer)
-   is
-      use League.Strings;
-
+      Writer       : in out Writers.Writer) is
    begin
       if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string" then
 
@@ -1712,14 +1708,11 @@ package body XSD_To_Ada.Encoder is
       Spec_Writer : in out XSD_To_Ada.Writers.Writer;
       Level       : Positive := 1)
    is
-      use League.Strings;
-
-      Is_Record   : Boolean := False;
-
-      US_Response : League.Strings.Universal_String;
-
+      Is_Record           : Boolean := False;
+      US_Response         : League.Strings.Universal_String;
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
+
    begin
 
       Ada.Text_IO.Put_Line
@@ -1858,8 +1851,6 @@ package body XSD_To_Ada.Encoder is
       Spec_Writer : in out XSD_To_Ada.Writers.Writer;
       Level       : Natural := 0)
    is
-      use League.Strings;
-
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
@@ -1976,7 +1967,6 @@ package body XSD_To_Ada.Encoder is
       Top_Max_Occur : Boolean := False)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
-      use League.Strings;
 
       XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
       XS_Term        : XML.Schema.Objects.Terms.XS_Term;
@@ -2016,7 +2006,6 @@ package body XSD_To_Ada.Encoder is
          Table        : in out Types_Table_Type_Array)
       is
          use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
-         use type League.Strings.Universal_String;
 
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
@@ -2341,12 +2330,11 @@ package body XSD_To_Ada.Encoder is
    -------------------------
 
    function Write_Start_Element
-     (Name : League.Strings.Universal_String)
-      return League.Strings.Universal_String
+    (Name : League.Strings.Universal_String)
+       return League.Strings.Universal_String
    is
-      use League.Strings;
-
       Add : Boolean := False;
+
    begin
 
       for Index in 1 .. Element_Vector.Length loop
