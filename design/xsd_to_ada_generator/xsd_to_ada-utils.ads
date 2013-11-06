@@ -150,23 +150,23 @@ package XSD_To_Ada.Utils is
    procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
 
    procedure Print_Content_Type
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent       : String := "";
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
+    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Indent       : Wide_Wide_String := "";
+     Writer       : in out Writers.Writer;
+     Writer_types : in out Writers.Writer;
+     Name         : League.Strings.Universal_String;
+     Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
 
    procedure Print_Type_Definition
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent       : String := "";
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Name         : League.Strings.Universal_String;
-      Is_Record    : Boolean := False;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-      Table        : in out Types_Table_Type_Array;
-      Is_Max_Occur : Boolean := False);
+    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Indent       : Wide_Wide_String := "";
+     Writer       : in out Writers.Writer;
+     Writer_types : in out Writers.Writer;
+     Name         : League.Strings.Universal_String;
+     Is_Record    : Boolean := False;
+     Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+     Table        : in out Types_Table_Type_Array;
+     Is_Max_Occur : Boolean := False);
 
    procedure Print_Type_Title
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
