@@ -1207,29 +1207,32 @@ package body XSD_To_Ada.Encoder is
       Top_Max_Occurs : Boolean;
       Min_Occurs   : in out Boolean;
       Choice       : Boolean;
-      Writer       : in out Writers.Writer) is
+      Writer       : in out Writers.Writer)
+   is
+      use League.Strings;
+
+      Vector_Element : League.Strings.Universal_String :=
+        League.Strings.Empty_Universal_String;
    begin
+
+      if Top_Max_Occurs then
+         Vector_Element := League.Strings.To_Universal_String
+           ("Element (Index).");
+      end if;
+
       if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string" then
 
          if Min_Occurs then
-            if Top_Max_Occurs then
-               Writers.P
-                 (Writer,
-                  Gen_Type_Line
-                    ("if Data."
-                     & Full_Anonym_Name.To_Wide_Wide_String
-                     & Base_Choice_Name.To_Wide_Wide_String
-                     & "Element (Index)."
-                     & Add_Separator (XS_Term.Get_Name) & ".Is_Set then", 5));
-            else
-               Writers.P
-                 (Writer,
-                  Gen_Type_Line
-                    ("if Data."
-                     & Full_Anonym_Name.To_Wide_Wide_String
-                     & Base_Choice_Name.To_Wide_Wide_String
-                     & Add_Separator (XS_Term.Get_Name) & ".Is_Set then", 5));
-            end if;
+            Writers.P
+              (Writer,
+               Gen_Type_Line
+                 ("if not Data."
+                  & Full_Anonym_Name.To_Wide_Wide_String
+                  & Base_Choice_Name.To_Wide_Wide_String
+                  & Vector_Element.To_Wide_Wide_String
+                  & Add_Separator (XS_Term.Get_Name) & "."
+                  & Add_Separator (XS_Term.Get_Name)
+                  & ".Is_Empty then", 5));
          end if;
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
@@ -1248,59 +1251,33 @@ package body XSD_To_Ada.Encoder is
                & LF & "  --  "
                & Add_Separator (Type_D.Get_Base_Type.Get_Name));
          else
-            if Top_Max_Occurs then
-               if Min_Occurs then
-                  Writers.P
-                    (Writer,
-                     Gen_Type_Line
-                       ("Writer.Characters (Data."
-                        & Full_Anonym_Name.To_Wide_Wide_String
-                        & Base_Choice_Name.To_Wide_Wide_String
-                        & "Element (Index)."
-                        & Add_Separator (XS_Term.Get_Name) & "."
-                        & Add_Separator (XS_Term.Get_Name)
-                        & ");", 6)
-                     & LF & "  --  "
-                     & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-               else
-                  Writers.P
-                    (Writer,
-                     Gen_Type_Line
-                       ("Writer.Characters (Data."
-                        & Full_Anonym_Name.To_Wide_Wide_String
-                        & Base_Choice_Name.To_Wide_Wide_String
-                        & "Element (Index)."
-                        & Add_Separator (XS_Term.Get_Name)
-                        & ");", 6)
-                     & LF & "  --  "
-                     & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-               end if;
+            if Min_Occurs then
+               Writers.P
+                 (Writer,
+                  Gen_Type_Line
+                    ("Writer.Characters (Data."
+                     & Full_Anonym_Name.To_Wide_Wide_String
+                     & Base_Choice_Name.To_Wide_Wide_String
+                     & Vector_Element.To_Wide_Wide_String
+                     & Add_Separator (XS_Term.Get_Name) & "."
+                     & Add_Separator (XS_Term.Get_Name)
+                     & ");", 6)
+                  & LF & "  --  "
+                  & Add_Separator (Type_D.Get_Base_Type.Get_Name));
             else
-               if Min_Occurs then
-                  Writers.P
-                    (Writer,
-                     Gen_Type_Line
-                       ("Writer.Characters (Data."
-                        & Full_Anonym_Name.To_Wide_Wide_String
-                        & Base_Choice_Name.To_Wide_Wide_String
-                        & Add_Separator (XS_Term.Get_Name) & "."
-                        & Add_Separator (XS_Term.Get_Name)
-                        & ");", 6)
-                     & LF & "  --  "
-                     & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-               else
-                  Writers.P
-                    (Writer,
-                     Gen_Type_Line
-                       ("Writer.Characters (Data."
-                        & Full_Anonym_Name.To_Wide_Wide_String
-                        & Base_Choice_Name.To_Wide_Wide_String
-                        & Add_Separator (XS_Term.Get_Name)
-                        & ");", 6)
-                     & LF & "  --  "
-                     & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-               end if;
+               Writers.P
+                 (Writer,
+                  Gen_Type_Line
+                    ("Writer.Characters (Data."
+                     & Full_Anonym_Name.To_Wide_Wide_String
+                     & Base_Choice_Name.To_Wide_Wide_String
+                     & Vector_Element.To_Wide_Wide_String
+                     & Add_Separator (XS_Term.Get_Name)
+                     & ");", 6)
+                  & LF & "  --  "
+                  & Add_Separator (Type_D.Get_Base_Type.Get_Name));
             end if;
+
          end if;
 
          Writers.P
@@ -1317,106 +1294,57 @@ package body XSD_To_Ada.Encoder is
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "decimal" then
 
          if Min_Occurs then
-            if Top_Max_Occurs then
-               Writers.P
-                 (Writer,
-                  (Gen_Type_Line
-                     ("if Data."
-                      & Full_Anonym_Name.To_Wide_Wide_String
-                      & Base_Choice_Name.To_Wide_Wide_String
-                      & "Element (Index)."
-                      & Add_Separator (XS_Term.Get_Name)
-                      & " /= Payloads.Null_Decimal", 5)
-                   & LF
-                   & "      and then CLI.Ws_Utils.Is_Digits"
-                   & LF
-                   & "        (Data."
+            Writers.P
+              (Writer,
+               (Gen_Type_Line
+                  ("if Data."
                    & Full_Anonym_Name.To_Wide_Wide_String
-                   & "Element (Index)."
                    & Base_Choice_Name.To_Wide_Wide_String
-                   & Add_Separator (XS_Term.Get_Name) & ")"
-                   & LF
-                   & "    then"));
-            else
-               Writers.P
-                 (Writer,
-                  (Gen_Type_Line
-                     ("if Data."
-                      & Full_Anonym_Name.To_Wide_Wide_String
-                      & Base_Choice_Name.To_Wide_Wide_String
-                      & Add_Separator (XS_Term.Get_Name)
-                      & " /= Payloads.Null_Decimal", 5)
-                   & LF
-                   & "      and then CLI.Ws_Utils.Is_Digits"
-                   & LF
-                   & "        (Data."
-                   & Base_Choice_Name.To_Wide_Wide_String
-                   & Add_Separator (XS_Term.Get_Name) & ")"
-                   & LF
-                   & "    then"));
-            end if;
+                   & Vector_Element.To_Wide_Wide_String
+                   & Add_Separator (XS_Term.Get_Name)
+                   & " /= Payloads.Null_Decimal", 5)
+                & LF
+                & "      and then CLI.Ws_Utils.Is_Digits"
+                & LF
+                & "        (Data."
+                & Full_Anonym_Name.To_Wide_Wide_String
+                & Vector_Element.To_Wide_Wide_String
+                & Base_Choice_Name.To_Wide_Wide_String
+                & Add_Separator (XS_Term.Get_Name) & ")"
+                & LF
+                & "    then"));
          end if;
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
          if Choice then
-            if Top_Max_Occurs then
-               Writers.P
-                 (Writer,
-                  "      Writer.Characters" & LF
-                  & "        (League.Strings.From_UTF_8_String" & LF
-                  & Gen_Type_Line
-                    ("(To_String (Data."
-                     & Name.To_Wide_Wide_String & "."
-                     & Base_Name.To_Wide_Wide_String
-                     & "Element (Index)."
-                     & Add_Separator (XS_Term.Get_Name)
-                     & ")));", 13)
-                  & LF & "  --  "
-                  & Type_D.Get_Base_Type.Get_Name);
-            else
-               Writers.P
-                 (Writer,
-                  "      Writer.Characters" & LF
-                  & "        (League.Strings.From_UTF_8_String" & LF
-                  & Gen_Type_Line
-                    ("(To_String (Data."
-                     & Name.To_Wide_Wide_String & "."
-                     & Base_Name.To_Wide_Wide_String
-                     & Add_Separator (XS_Term.Get_Name)
-                     & ")));", 13)
-                  & LF & "  --  "
-                  & Type_D.Get_Base_Type.Get_Name);
-            end if;
+            Writers.P
+              (Writer,
+               "      Writer.Characters" & LF
+               & "        (League.Strings.From_UTF_8_String" & LF
+               & Gen_Type_Line
+                 ("(To_String (Data."
+                  & Name.To_Wide_Wide_String & "."
+                  & Base_Name.To_Wide_Wide_String
+                  & Vector_Element.To_Wide_Wide_String
+                  & Add_Separator (XS_Term.Get_Name)
+                  & ")));", 13)
+               & LF & "  --  "
+               & Type_D.Get_Base_Type.Get_Name);
          else
-            if Top_Max_Occurs then
-               Writers.P
-                 (Writer,
-                  "      Writer.Characters" & LF
-                  & "        (League.Strings.From_UTF_8_String" & LF
-                  & Gen_Type_Line
-                    ("(To_String (Data."
-                     & Full_Anonym_Name.To_Wide_Wide_String
-                     & Base_Choice_Name.To_Wide_Wide_String
-                     & "Element (Index)."
-                     & Add_Separator (XS_Term.Get_Name)
-                     & ")));", 13)
-                  & LF & "  --  "
-                  & Type_D.Get_Base_Type.Get_Name);
-            else
-               Writers.P
-                 (Writer,
-                  "      Writer.Characters" & LF
-                  & "        (League.Strings.From_UTF_8_String" & LF
-                  & Gen_Type_Line
-                    ("(To_String (Data."
-                     & Full_Anonym_Name.To_Wide_Wide_String
-                     & Base_Choice_Name.To_Wide_Wide_String
-                     & Add_Separator (XS_Term.Get_Name)
-                     & ")));", 13)
-                  & LF & "  --  "
-                  & Type_D.Get_Base_Type.Get_Name);
-            end if;
+            Writers.P
+              (Writer,
+               "      Writer.Characters" & LF
+               & "        (League.Strings.From_UTF_8_String" & LF
+               & Gen_Type_Line
+                 ("(To_String (Data."
+                  & Full_Anonym_Name.To_Wide_Wide_String
+                  & Base_Choice_Name.To_Wide_Wide_String
+                  & Vector_Element.To_Wide_Wide_String
+                  & Add_Separator (XS_Term.Get_Name)
+                  & ")));", 13)
+               & LF & "  --  "
+               & Type_D.Get_Base_Type.Get_Name);
          end if;
 
          Writers.P
@@ -1434,39 +1362,23 @@ package body XSD_To_Ada.Encoder is
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
-         if Top_Max_Occurs then
-            Writers.P
-              (Writer,
-               "      Writer.Characters" & LF
-               & "        (League.Strings.To_Universal_String" & LF
-               & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
-               & "              (" & Find_Type (Type_D.Get_Name, Map)
-               & "'Wide_Wide_Image" & LF
-               & Gen_Type_Line
-                 ("(Data."
-                  & Full_Anonym_Name.To_Wide_Wide_String
-                  & Base_Choice_Name.To_Wide_Wide_String
-                  & "Element (Index)."
-                  & Add_Separator (XS_Term.Get_Name) & "),", 15)
-               & LF
-               & "            Ada.Strings.Both)));"
-               & LF &  "  --  "
-               & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-         else
-            Writers.P
-              (Writer,
-               "      Writer.Characters" & LF
-               & "        (League.Strings.To_Universal_String" & LF
-               & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
-               & "              (" & Find_Type (Type_D.Get_Name, Map)
-               & "'Wide_Wide_Image" & LF
-               & "               (Data."
-               & Full_Anonym_Name & Base_Choice_Name
-               & Add_Separator (XS_Term.Get_Name) & ")," & LF
-               & "            Ada.Strings.Both)));"
-               & LF & "  --  "
-               & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-         end if;
+         Writers.P
+           (Writer,
+            "      Writer.Characters" & LF
+            & "        (League.Strings.To_Universal_String" & LF
+            & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
+            & "              (" & Find_Type (Type_D.Get_Name, Map)
+            & "'Wide_Wide_Image" & LF
+            & Gen_Type_Line
+              ("(Data."
+               & Full_Anonym_Name.To_Wide_Wide_String
+               & Base_Choice_Name.To_Wide_Wide_String
+               & Vector_Element.To_Wide_Wide_String
+               & Add_Separator (XS_Term.Get_Name) & "),", 15)
+            & LF
+            & "            Ada.Strings.Both)));"
+            & LF &  "  --  "
+            & Add_Separator (Type_D.Get_Base_Type.Get_Name));
 
          Writers.P
            (Writer,
@@ -1479,29 +1391,18 @@ package body XSD_To_Ada.Encoder is
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
-         if Top_Max_Occurs then
-            Writers.P
-              (Writer,
-               "      Writer.Characters (CLI.Ws_Utils.Image"
-               & LF
-               & "        (Data."
-               & Full_Anonym_Name & Base_Choice_Name & "Element (Index)."
-               & Add_Separator (XS_Term.Get_Name)
-               & "));"
-               & LF & "  --  "
-               & Type_D.Get_Base_Type.Get_Name);
-         else
-            Writers.P
-              (Writer,
-               "      Writer.Characters (CLI.Ws_Utils.Image"
-               & LF
-               & "        (Data."
-               & Full_Anonym_Name & Base_Choice_Name
-               & Add_Separator (XS_Term.Get_Name)
-               & "));"
-               & LF & "  --  "
-               & Type_D.Get_Base_Type.Get_Name);
-         end if;
+         Writers.P
+           (Writer,
+            "      Writer.Characters (CLI.Ws_Utils.Image"
+            & LF
+            & "        (Data."
+            & Full_Anonym_Name
+            & Base_Choice_Name
+            & Vector_Element.To_Wide_Wide_String
+            & Add_Separator (XS_Term.Get_Name)
+            & "));"
+            & LF & "  --  "
+            & Type_D.Get_Base_Type.Get_Name);
 
          Writers.P
            (Writer,
@@ -1513,25 +1414,16 @@ package body XSD_To_Ada.Encoder is
       else
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
-         if Top_Max_Occurs then
-            Writers.P
-              (Writer,
-               "      Writer.Characters (IATS_URI, Data."
-               & Full_Anonym_Name & Base_Choice_Name & "Element (Index)."
-               & Add_Separator (XS_Term.Get_Name)
-               & "));"
-               & LF & "  --  "
-               & Type_D.Get_Base_Type.Get_Name);
-         else
-            Writers.P
-              (Writer,
-               "      Writer.Characters (IATS_URI, Data."
-               & Full_Anonym_Name & Base_Choice_Name
-               & Add_Separator (XS_Term.Get_Name)
-               & "));"
-               & LF & "  --  "
-               & Type_D.Get_Base_Type.Get_Name);
-         end if;
+         Writers.P
+           (Writer,
+            "      Writer.Characters (IATS_URI, Data."
+            & Full_Anonym_Name
+            & Base_Choice_Name
+            & Vector_Element.To_Wide_Wide_String
+            & Add_Separator (XS_Term.Get_Name)
+            & "));"
+            & LF & "  --  "
+            & Type_D.Get_Base_Type.Get_Name);
 
          Writers.P
            (Writer,
