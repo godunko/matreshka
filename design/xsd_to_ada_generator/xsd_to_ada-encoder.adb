@@ -248,8 +248,6 @@ package body XSD_To_Ada.Encoder is
                            & LF
                            & "   is" & LF
                            & "     pragma Unreferenced (Self);" & LF & LF
-                           & "     use Ada.Strings.Unbounded;"
-                           & LF
                            & "     use Payloads;" & LF & LF
                            & "     Data : Payloads."
                            & Add_Separator (Decl.Get_Name)  & LF
@@ -343,8 +341,6 @@ package body XSD_To_Ada.Encoder is
                               & LF
                               & "   is" & LF
                               & "     pragma Unreferenced (Self);" & LF & LF
-                              & "     use Ada.Strings.Unbounded;"
-                              & LF
                               & "     use Payloads;" & LF & LF
                               & "     Data : Payloads."
                               & Add_Separator (Decl.Get_Name)  & LF
@@ -572,8 +568,8 @@ package body XSD_To_Ada.Encoder is
 
       Put_Header (Payload_Writer);
 
-      Create_Package_Name (Payload_Writer);
-      Create_Enumeration_Simple_Type (Model, Payload_Writer);
+--      Create_Package_Name (Payload_Writer);
+--      Create_Enumeration_Simple_Type (Model, Payload_Writer);
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
@@ -597,15 +593,17 @@ package body XSD_To_Ada.Encoder is
          end if;
       end loop;
 
---      Create_Element_Type (Model, Payload_Writer);
+      Create_Element_Type (Model, Payload_Writer);
 
-      Ada.Wide_Wide_Text_IO.Put_Line ("with Ada.Strings.Unbounded;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with Ada.Strings.Wide_Wide_Fixed;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with League.Strings;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with Payloads;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with ICTS.Forex;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with ICTS.Types;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with CLI.Ws_Utils;");
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+         ("with Web_Services.SOAP.Payloads.Encoders.Registry;");
 
       Ada.Wide_Wide_Text_IO.Put_Line ("package body Encoder is");
 
@@ -635,7 +633,7 @@ package body XSD_To_Ada.Encoder is
               & League.Strings.To_Universal_String
                  (Add_Separator
                    (Tag_Vector.Element (Index))).To_Wide_Wide_String
-              & "'Tag, "
+              & "'Tag,"
               & League.Strings.To_Universal_String
                  (Add_Separator
                    (Tag_Vector.Element (Index))).To_Wide_Wide_String
@@ -1266,7 +1264,7 @@ package body XSD_To_Ada.Encoder is
                         & Add_Separator (XS_Term.Get_Name) & "."
                         & Add_Separator (XS_Term.Get_Name)
                         & ");", 6)
-                     & LF & "  -- "
+                     & LF & "  --  "
                      & Add_Separator (Type_D.Get_Base_Type.Get_Name));
                else
                   Writers.P
@@ -1825,7 +1823,6 @@ package body XSD_To_Ada.Encoder is
                      & "   is" & LF
                      & "     pragma Unreferenced (Self);" & LF & LF
                      & "     use Payloads;" & LF
-                     & "     use Ada.Strings.Unbounded;" & LF & LF
                      & "     Data : Payloads."
                      & Add_Separator (Type_D.Get_Name)  & LF
                      & "       renames Payloads."
@@ -1948,7 +1945,6 @@ package body XSD_To_Ada.Encoder is
                      & "      Name : League.Strings.Universal_String)" & LF
                      & "   is" & LF
                      & "      use Payloads;" & LF
-                     & "      use Ada.Strings.Unbounded;" & LF
                      &"   begin");
 
                   Writers.P
