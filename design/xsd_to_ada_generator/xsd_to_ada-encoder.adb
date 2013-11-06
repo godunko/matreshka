@@ -560,8 +560,6 @@ package body XSD_To_Ada.Encoder is
 
       Payload_Writer : XSD_To_Ada.Writers.Writer;
 
-      Current_Out_File : Ada.Text_IO.File_Type;
-
    begin
       Map := XSD_To_Ada.Encoder.Read_Mapping (Mapping_Path);
 
@@ -599,65 +597,54 @@ package body XSD_To_Ada.Encoder is
 
 --      Create_Element_Type (Model, Payload_Writer);
 
-      Ada.Text_IO.Create
-        (Current_Out_File, Ada.Text_IO.Out_File, "./Encoder.adb");
-      Ada.Text_IO.Put_Line (Current_Out_File, "with Ada.Strings.Unbounded;");
-      Ada.Text_IO.Put_Line (Current_Out_File, "with Ada.Strings.Wide_Wide_Fixed;");
-      Ada.Text_IO.Put_Line (Current_Out_File, "with League.Strings;");
-      Ada.Text_IO.Put_Line (Current_Out_File, "with Payloads;");
-      Ada.Text_IO.Put_Line (Current_Out_File, "with ICTS.Forex;");
-      Ada.Text_IO.Put_Line (Current_Out_File, "with ICTS.Types;");
-      Ada.Text_IO.Put_Line (Current_Out_File, "with CLI.Ws_Utils;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with Ada.Strings.Unbounded;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with Ada.Strings.Wide_Wide_Fixed;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with League.Strings;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with Payloads;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with ICTS.Forex;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with ICTS.Types;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with CLI.Ws_Utils;");
 
-      Ada.Text_IO.Put_Line (Current_Out_File, "package body Encoder is");
+      Ada.Wide_Wide_Text_IO.Put_Line ("package body Encoder is");
 
-      Ada.Text_IO.Put_Line
-        (Current_Out_File, "   IATS_URI : constant League.Strings.Universal_String :=");
-        Ada.Text_IO.Put_Line
-        (Current_Out_File, "     League.Strings.To_Universal_String (""http://www.actforex.com/iats"");");
-      Ada.Text_IO.Put_Line
-        (Current_Out_File, "   IATS_Prefix : constant League.Strings.Universal_String :=");
-        Ada.Text_IO.Put_Line
-        (Current_Out_File, "     League.Strings.To_Universal_String (""iats"");");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("   IATS_URI : constant League.Strings.Universal_String :=");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("     League.Strings.To_Universal_String"
+           & " (""http://www.actforex.com/iats"");");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("   IATS_Prefix : constant League.Strings.Universal_String :=");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("     League.Strings.To_Universal_String (""iats"");");
 
-      Ada.Text_IO.Put
-        (Current_Out_File, Element_Name.Text.To_UTF_8_String);
-      Ada.Text_IO.Put_Line
-        (Current_Out_File, Encoder_Top_Writer.Text.To_UTF_8_String);
-      Ada.Text_IO.Put_Line
-        (Current_Out_File, Payload_Writer.Text.To_UTF_8_String);
+      Ada.Wide_Wide_Text_IO.Put (Element_Name.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Encoder_Top_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
 
-      Ada.Text_IO.Put_Line (Current_Out_File, "   begin");
+      Ada.Wide_Wide_Text_IO.Put_Line ("   begin");
 
       for Index in 1 .. Tag_Vector.Length loop
-         Ada.Text_IO.Put_Line
-           (Current_Out_File,
-            "   Web_Services.SOAP.Payloads.Encoders.Registry.Register");
+         Ada.Wide_Wide_Text_IO.Put_Line
+           ("   Web_Services.SOAP.Payloads.Encoders.Registry.Register");
 
-         Ada.Text_IO.Put_Line
-           (Current_Out_File,
-            "     (Payloads."
-            & League.Strings.To_Universal_String
-              (Add_Separator (Tag_Vector.Element (Index))).To_UTF_8_String
-            & "'Tag, "
-            & League.Strings.To_Universal_String
-              (Add_Separator (Tag_Vector.Element (Index))).To_UTF_8_String
+         Ada.Wide_Wide_Text_IO.Put_Line
+           ("     (Payloads."
+              & League.Strings.To_Universal_String
+                 (Add_Separator
+                   (Tag_Vector.Element (Index))).To_Wide_Wide_String
+              & "'Tag, "
+              & League.Strings.To_Universal_String
+                 (Add_Separator
+                   (Tag_Vector.Element (Index))).To_Wide_Wide_String
               & "_Encoder'Tag);");
       end loop;
 
-      Ada.Text_IO.Put_Line (Current_Out_File, "end Encoder;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
 
-      Ada.Text_IO.Close (Current_Out_File);
-
-      Ada.Text_IO.Create
-        (Current_Out_File, Ada.Text_IO.Out_File, "./Encoder.ads");
-
-      Ada.Text_IO.Put_Line (Current_Out_File, "package Encoder is");
-      Ada.Text_IO.Put_Line
-        (Current_Out_File, Spec_Writer.Text.To_UTF_8_String);
-      Ada.Text_IO.Put_Line (Current_Out_File, "end Encoder;");
-
-      Ada.Text_IO.Close (Current_Out_File);
+      Ada.Wide_Wide_Text_IO.Put_Line ("package Encoder is");
+      Ada.Wide_Wide_Text_IO.Put_Line (Spec_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
    end Create_Complex_Type;
 
    ---------------------------
