@@ -1216,23 +1216,19 @@ package body XSD_To_Ada.Encoder is
                Writers.P
                  (Writer,
                   Gen_Type_Line
-                    ("if not Data."
+                    ("if Data."
                      & Full_Anonym_Name.To_Wide_Wide_String
                      & Base_Choice_Name.To_Wide_Wide_String
                      & "Element (Index)."
-                     & Add_Separator (XS_Term.Get_Name) & "."
-                     & Add_Separator (XS_Term.Get_Name)
-                     & ".Is_Empty then", 5));
+                     & Add_Separator (XS_Term.Get_Name) & ".Is_Set then", 5));
             else
                Writers.P
                  (Writer,
                   Gen_Type_Line
-                    ("if not Data."
+                    ("if Data."
                      & Full_Anonym_Name.To_Wide_Wide_String
                      & Base_Choice_Name.To_Wide_Wide_String
-                     & Add_Separator (XS_Term.Get_Name) & "."
-                     & Add_Separator (XS_Term.Get_Name)
-                     & ".Is_Empty then", 5));
+                     & Add_Separator (XS_Term.Get_Name) & ".Is_Set then", 5));
             end if;
          end if;
 
