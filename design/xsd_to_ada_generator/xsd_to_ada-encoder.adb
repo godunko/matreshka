@@ -558,6 +558,7 @@ package body XSD_To_Ada.Encoder is
       Payload_Writer : XSD_To_Ada.Writers.Writer;
 
       Current_Out_File : Ada.Text_IO.File_Type;
+
    begin
       Map := XSD_To_Ada.Encoder.Read_Mapping (Mapping_Path);
 
@@ -568,8 +569,8 @@ package body XSD_To_Ada.Encoder is
 
       Put_Header (Payload_Writer);
 
-   Create_Package_Name (Payload_Writer);
-    Create_Enumeration_Simple_Type (Model, Payload_Writer);
+      Create_Package_Name (Payload_Writer);
+      Create_Enumeration_Simple_Type (Model, Payload_Writer);
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
@@ -591,8 +592,7 @@ package body XSD_To_Ada.Encoder is
                Payload_Writer,
                Spec_Writer);
          end if;
-        end loop;
-
+      end loop;
 
 --      Create_Element_Type (Model, Payload_Writer);
 
@@ -655,7 +655,6 @@ package body XSD_To_Ada.Encoder is
       Ada.Text_IO.Put_Line (Current_Out_File, "end Encoder;");
 
       Ada.Text_IO.Close (Current_Out_File);
-
    end Create_Complex_Type;
 
    ---------------------------
