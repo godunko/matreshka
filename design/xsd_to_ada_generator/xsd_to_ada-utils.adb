@@ -443,10 +443,11 @@ package body XSD_To_Ada.Utils is
           (Object_Type => XML.Schema.Complex_Type,
            Namespace   => Namespace);
 
-      Payload_Writer          : XSD_To_Ada.Writers.Writer;
-      Payload_Type_Writer     : XSD_To_Ada.Writers.Writer;
+      Payload_Writer      : XSD_To_Ada.Writers.Writer;
+      Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
       Current_Out_File : Ada.Text_IO.File_Type;
+
    begin
       Map := XSD_To_Ada.Utils.Read_Mapping (Mapping_Path);
 
@@ -479,7 +480,7 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
-     Create_Element_Type (Model, Payload_Writer);
+      Create_Element_Type (Model, Payload_Writer);
 
       Writers.N (Payload_Writer, "end Payloads;");
 
