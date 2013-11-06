@@ -41,43 +41,38 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
-with Ada.Text_IO;
-
-
+with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Strings.Wide_Wide_Fixed;
 with Ada.Strings.Wide_Wide_Maps;
 with Ada.Strings.Wide_Wide_Unbounded;
+with Ada.Text_IO;
+with Ada.Wide_Wide_Text_IO;
+
 with League.Strings;
+with League.String_Vectors;
 
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
+with XML.Schema.Element_Declarations;
+with XML.Schema.Complex_Type_Definitions;
+with XML.Schema.Models;
 with XML.Schema.Model_Groups;
+with XML.Schema.Named_Maps;
 with XML.Schema.Objects.Particles;
 with XML.Schema.Objects.Terms.Model_Groups;
 with XML.Schema.Object_Lists;
-with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Simple_Type_Definitions;
-with XML.Schema.Element_Declarations;
-with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
-use XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions;
+with XML.Schema.Type_Definitions.Complex_Type_Definitions;
 
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Mappings_XML;
-with League.String_Vectors;
-with XML.Schema.Named_Maps;
-
-with XML.Schema.Models;
-with XML.Schema.Objects;
 with XSD_To_Ada.Writers;
-use XSD_To_Ada.Writers;
-
-with Ada.Characters.Wide_Wide_Latin_1;
-
-with Ada.Wide_Wide_Text_IO;
 
 package body XSD_To_Ada.Encoder is
+
+   use XML.Schema.Type_Definitions.Complex_Type_Definitions;
+   use XSD_To_Ada.Writers;
 
    LF : constant Wide_Wide_Character := Ada.Characters.Wide_Wide_Latin_1.LF;
 
