@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2013, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -70,15 +70,20 @@ package body Matreshka.XML_Schema.Name_Resolvers is
       use type Matreshka.XML_Schema.AST.Simple_Type_Definition_Access;
 
       Type_Definition : Matreshka.XML_Schema.AST.Type_Definition_Access;
+
    begin
       if AST.Is_Empty (Node.Type_Name) then
          if Node.Type_Definition = null then
             --  XXX  default ·xs:anySimpleType· not implemented yet
             Ada.Wide_Wide_Text_IO.Put_Line
-              ("Name_Resolver Attribute_Declaration no type for attr for '"
-               & Node.Name.To_Wide_Wide_String & "' !!!");
+             (Ada.Wide_Wide_Text_IO.Standard_Error,
+              "Name_Resolver Attribute_Declaration no type for attr for '"
+                 & Node.Name.To_Wide_Wide_String
+                 & "' !!!");
+
 --            raise Program_Error;
          end if;
+
       else
          -- XXX should we check Node.Type_Definition = null here?
 
@@ -149,7 +154,9 @@ package body Matreshka.XML_Schema.Name_Resolvers is
          --  decalration only. Can non-abstract element declarations be used
          --  without type declaration?
 
-         Ada.Wide_Wide_Text_IO.Put_Line (Node.Name.To_Wide_Wide_String);
+         Ada.Wide_Wide_Text_IO.Put_Line
+          (Ada.Wide_Wide_Text_IO.Standard_Error,
+           Node.Name.To_Wide_Wide_String);
 
          Node.Type_Definition := Self.Resolve_Type (Node.Type_Name);
       end if;
@@ -246,10 +253,11 @@ package body Matreshka.XML_Schema.Name_Resolvers is
         Self.Model.Get_Namespace (Name.Namespace_URI);
    begin
       Ada.Wide_Wide_Text_IO.Put_Line
-        ('('
-         & Name.Namespace_URI.To_Wide_Wide_String
-         & ')'
-         & Name.Local_Name.To_Wide_Wide_String);
+        (Ada.Wide_Wide_Text_IO.Standard_Error,
+         '{'
+           & Name.Namespace_URI.To_Wide_Wide_String
+           & '}'
+           & Name.Local_Name.To_Wide_Wide_String);
 
       if Namespace = null then
          raise Program_Error;
@@ -281,10 +289,11 @@ package body Matreshka.XML_Schema.Name_Resolvers is
         Self.Model.Get_Namespace (Name.Namespace_URI);
    begin
       Ada.Wide_Wide_Text_IO.Put_Line
-        ('<'
-         & Name.Namespace_URI.To_Wide_Wide_String
-         & '>'
-         & Name.Local_Name.To_Wide_Wide_String);
+       (Ada.Wide_Wide_Text_IO.Standard_Error,
+        '{'
+          & Name.Namespace_URI.To_Wide_Wide_String
+          & '}'
+          & Name.Local_Name.To_Wide_Wide_String);
 
       if Namespace = null then
          raise Program_Error;
@@ -343,10 +352,11 @@ package body Matreshka.XML_Schema.Name_Resolvers is
         Self.Model.Get_Namespace (Name.Namespace_URI);
    begin
       Ada.Wide_Wide_Text_IO.Put_Line
-        ('{'
-         & Name.Namespace_URI.To_Wide_Wide_String
-         & '}'
-         & Name.Local_Name.To_Wide_Wide_String);
+       (Ada.Wide_Wide_Text_IO.Standard_Error,
+        '{'
+          & Name.Namespace_URI.To_Wide_Wide_String
+          & '}'
+          & Name.Local_Name.To_Wide_Wide_String);
 
       if Namespace = null then
          raise Program_Error;

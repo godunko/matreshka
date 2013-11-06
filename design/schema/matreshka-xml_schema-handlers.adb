@@ -1929,7 +1929,8 @@ package body Matreshka.XML_Schema.Handlers is
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception;
      Success    : in out Boolean) is
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line (">>>>> ERROR <<<<<");
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Ada.Wide_Wide_Text_IO.Standard_Error, ">>>>> ERROR <<<<<");
    end Error;
 
    ------------------
@@ -2008,9 +2009,11 @@ package body Matreshka.XML_Schema.Handlers is
     (Self       : in out XML_Schema_Handler;
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception) is
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line (">>>>> FATAL ERROR <<<<<");
       Ada.Wide_Wide_Text_IO.Put_Line
-       (Occurrence.System_Id.To_Wide_Wide_String
+       (Ada.Wide_Wide_Text_IO.Standard_Error, ">>>>> FATAL ERROR <<<<<");
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Ada.Wide_Wide_Text_IO.Standard_Error,
+        Occurrence.System_Id.To_Wide_Wide_String
           & ':'
           & Ada.Strings.Wide_Wide_Fixed.Trim
              (Integer'Wide_Wide_Image (Occurrence.Line),
@@ -3257,12 +3260,13 @@ package body Matreshka.XML_Schema.Handlers is
 
    exception
       when others =>
-      Ada.Wide_Wide_Text_IO.Put_Line
-       ("HERE "
-          & Prefix.To_Wide_Wide_String
-          & " "
-          & Namespace_URI.To_Wide_Wide_String);
-      raise;
+         Ada.Wide_Wide_Text_IO.Put_Line
+          (Ada.Wide_Wide_Text_IO.Standard_Error,
+           "HERE "
+             & Prefix.To_Wide_Wide_String
+             & " "
+             & Namespace_URI.To_Wide_Wide_String);
+         raise;
    end Start_Prefix_Mapping;
 
    --------------------------
@@ -3382,7 +3386,9 @@ package body Matreshka.XML_Schema.Handlers is
            (Namespace_URI => League.Strings.Empty_Universal_String,
             Local_Name    => League.Strings.Empty_Universal_String);
       elsif Index = 0 then
-         Ada.Wide_Wide_Text_IO.Put_Line (">>>>> To_Qualified_Name <<<<< '" & Name.To_Wide_Wide_String & ''');
+         Ada.Wide_Wide_Text_IO.Put_Line
+          (Ada.Wide_Wide_Text_IO.Standard_Error,
+           ">>>>> To_Qualified_Name <<<<< '" & Name.To_Wide_Wide_String & ''');
       end if;
 
       return
@@ -3489,8 +3495,11 @@ package body Matreshka.XML_Schema.Handlers is
          Value := Attributes.Value (Index);
 
          Ada.Wide_Wide_Text_IO.Put_Line
-           ("Required: " & Name.To_Wide_Wide_String
-            & " = " & Value.To_Wide_Wide_String);
+          (Ada.Wide_Wide_Text_IO.Standard_Error,
+           "Required: "
+             & Name.To_Wide_Wide_String
+             & " = "
+             & Value.To_Wide_Wide_String);
       end Required;
 
       --------------
