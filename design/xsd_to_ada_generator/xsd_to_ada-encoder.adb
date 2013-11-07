@@ -620,7 +620,7 @@ package body XSD_To_Ada.Encoder is
       Ada.Wide_Wide_Text_IO.Put (Element_Name.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
        (Encoder_Top_Writer.Text.To_Wide_Wide_String);
---      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
 
       Ada.Wide_Wide_Text_IO.Put_Line ("begin");
 
