@@ -633,8 +633,9 @@ package body XSD_To_Ada.Encoder is
               & League.Strings.To_Universal_String
                  (Add_Separator
                    (Tag_Vector.Element (Index))).To_Wide_Wide_String
-              & "'Tag,"
-              & League.Strings.To_Universal_String
+            & "'Tag,");
+         Ada.Wide_Wide_Text_IO.Put_Line
+              ("        " & League.Strings.To_Universal_String
                  (Add_Separator
                    (Tag_Vector.Element (Index))).To_Wide_Wide_String
               & "_Encoder'Tag);");
