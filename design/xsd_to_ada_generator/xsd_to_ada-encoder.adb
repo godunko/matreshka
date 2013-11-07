@@ -961,10 +961,6 @@ package body XSD_To_Ada.Encoder is
       begin
 
          for J in reverse 1 .. Temp_US.Length loop
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              Integer'Wide_Wide_Image (J));
-
             if (Temp_US.Element (J).To_Wide_Wide_Character = ':'
                 and then J /= 1)
               or (Temp_US.Element (J).To_Wide_Wide_Character = '('
