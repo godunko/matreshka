@@ -209,7 +209,7 @@ package body XSD_To_Ada.Encoder is
                            & LF & LF
                            & "   overriding function Create"
                            & LF
-                           & "     (Dummy : not null access Boolean) return "
+                           & "     (Dummy : not null access Boolean) return"
                            & LF
                            & "      " & Add_Separator (Decl.Get_Name) & "_Encoder;"
                            & LF & LF
@@ -302,7 +302,7 @@ package body XSD_To_Ada.Encoder is
                               & LF & LF
                               & "   overriding function Create"
                               & LF
-                              & "     (Dummy : not null access Boolean) return "
+                              & "     (Dummy : not null access Boolean) return"
                               & LF
                               & "      " & Add_Separator (Decl.Get_Name) & "_Encoder;"
                               & LF & LF
@@ -643,7 +643,7 @@ package body XSD_To_Ada.Encoder is
       Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
 
       Ada.Wide_Wide_Text_IO.Put_Line ("package Encoder is");
-      Ada.Wide_Wide_Text_IO.Put_Line (Spec_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put (Spec_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
    end Create_Complex_Type;
 
@@ -1671,7 +1671,7 @@ package body XSD_To_Ada.Encoder is
                & LF & LF
                & "   overriding function Create"
                & LF
-               & "     (Dummy : not null access Boolean) return "
+               & "     (Dummy : not null access Boolean) return"
                & LF
                & "      " & Add_Separator (Type_D.Get_Name) & "_Encoder;"
                & LF & LF
