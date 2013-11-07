@@ -600,7 +600,6 @@ package body XSD_To_Ada.Encoder is
       Ada.Wide_Wide_Text_IO.Put_Line ("with Payloads;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with ICTS.Forex;");
       Ada.Wide_Wide_Text_IO.Put_Line ("with ICTS.Types;");
-      Ada.Wide_Wide_Text_IO.Put_Line ("with CLI.Ws_Utils;");
 
       Ada.Wide_Wide_Text_IO.Put_Line
          ("with Web_Services.SOAP.Payloads.Encoders.Registry;");
@@ -616,6 +615,18 @@ package body XSD_To_Ada.Encoder is
         ("   IATS_Prefix : constant League.Strings.Universal_String :=");
       Ada.Wide_Wide_Text_IO.Put_Line
         ("     League.Strings.To_Universal_String (""iats"");");
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("   function Image (Item : Boolean) return League.Strings.Universal_String is");
+      Ada.Wide_Wide_Text_IO.Put_Line ("     begin");
+      Ada.Wide_Wide_Text_IO.Put_Line ("       if Item then");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("         return League.Strings.To_Universal_String (""true"");");
+      Ada.Wide_Wide_Text_IO.Put_Line ("           else");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("         return League.Strings.To_Universal_String (""false"");");
+        Ada.Wide_Wide_Text_IO.Put_Line ("       end if;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("   end Image;");
 
       Ada.Wide_Wide_Text_IO.Put (Element_Name.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
@@ -1299,17 +1310,7 @@ package body XSD_To_Ada.Encoder is
                    & Base_Choice_Name.To_Wide_Wide_String
                    & Vector_Element.To_Wide_Wide_String
                    & Add_Separator (XS_Term.Get_Name)
-                   & " /= Payloads.Null_Decimal", 5)
-                & LF
-                & "      and then CLI.Ws_Utils.Is_Digits"
-                & LF
-                & "        (Data."
-                & Full_Anonym_Name.To_Wide_Wide_String
-                & Vector_Element.To_Wide_Wide_String
-                & Base_Choice_Name.To_Wide_Wide_String
-                & Add_Separator (XS_Term.Get_Name) & ")"
-                & LF
-                & "    then"));
+                   & " /= Payloads.Null_Decimal then", 5)));
          end if;
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
@@ -1390,7 +1391,7 @@ package body XSD_To_Ada.Encoder is
 
          Writers.P
            (Writer,
-            "      Writer.Characters (CLI.Ws_Utils.Image"
+            "      Writer.Characters (Image"
             & LF
             & "        (Data."
             & Full_Anonym_Name
