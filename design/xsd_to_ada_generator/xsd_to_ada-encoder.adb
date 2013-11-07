@@ -1320,7 +1320,7 @@ package body XSD_To_Ada.Encoder is
                   (Gen_Type_Line
                      ("if Data."
                       & Name.To_Wide_Wide_String & "."
-                      & Base_Choice_Name.To_Wide_Wide_String
+                      & Base_Name.To_Wide_Wide_String
                       & Vector_Element.To_Wide_Wide_String
                       & Add_Separator (XS_Term.Get_Name)
                       & " /= Payloads.Null_Decimal then", 5)));
