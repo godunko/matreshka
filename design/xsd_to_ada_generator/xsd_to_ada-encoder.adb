@@ -616,6 +616,12 @@ package body XSD_To_Ada.Encoder is
       Ada.Wide_Wide_Text_IO.Put_Line
         ("     League.Strings.To_Universal_String (""iats"");");
 
+      Ada.Wide_Wide_Text_IO.Put_Line ("");
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ("   function Image (Item : Boolean) return League.Strings.Universal_String;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("");
+
       Ada.Wide_Wide_Text_IO.Put_Line
         ("   function Image (Item : Boolean) return League.Strings.Universal_String is");
       Ada.Wide_Wide_Text_IO.Put_Line ("     begin");
@@ -627,6 +633,8 @@ package body XSD_To_Ada.Encoder is
         ("         return League.Strings.To_Universal_String (""false"");");
         Ada.Wide_Wide_Text_IO.Put_Line ("       end if;");
       Ada.Wide_Wide_Text_IO.Put_Line ("   end Image;");
+
+      Ada.Wide_Wide_Text_IO.Put_Line ("");
 
       Ada.Wide_Wide_Text_IO.Put (Element_Name.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
@@ -1306,15 +1314,27 @@ package body XSD_To_Ada.Encoder is
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "decimal" then
 
          if Min_Occurs then
-            Writers.P
-              (Writer,
-               (Gen_Type_Line
-                  ("if Data."
-                   & Full_Anonym_Name.To_Wide_Wide_String
-                   & Base_Choice_Name.To_Wide_Wide_String
-                   & Vector_Element.To_Wide_Wide_String
-                   & Add_Separator (XS_Term.Get_Name)
-                   & " /= Payloads.Null_Decimal then", 5)));
+            if Choice then
+               Writers.P
+                 (Writer,
+                  (Gen_Type_Line
+                     ("if Data."
+                      & Name.To_Wide_Wide_String & "."
+                      & Base_Choice_Name.To_Wide_Wide_String
+                      & Vector_Element.To_Wide_Wide_String
+                      & Add_Separator (XS_Term.Get_Name)
+                      & " /= Payloads.Null_Decimal then", 5)));
+            else
+               Writers.P
+                 (Writer,
+                  (Gen_Type_Line
+                     ("if Data."
+                      & Full_Anonym_Name.To_Wide_Wide_String
+                      & Base_Choice_Name.To_Wide_Wide_String
+                      & Vector_Element.To_Wide_Wide_String
+                      & Add_Separator (XS_Term.Get_Name)
+                      & " /= Payloads.Null_Decimal then", 5)));
+            end if;
          end if;
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
