@@ -1246,13 +1246,13 @@ package body XSD_To_Ada.Encoder is
             Writers.P
               (Writer,
                Gen_Type_Line
-                 ("if not Data."
+                 ("if Data."
                   & Full_Anonym_Name.To_Wide_Wide_String
                   & Base_Choice_Name.To_Wide_Wide_String
                   & Vector_Element.To_Wide_Wide_String
                   & Add_Separator (XS_Term.Get_Name) & "."
                   & Add_Separator (XS_Term.Get_Name)
-                  & ".Is_Empty then", 5));
+                  & ".Is_Set then", 5));
          end if;
 
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
@@ -1312,7 +1312,6 @@ package body XSD_To_Ada.Encoder is
          end if;
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "decimal" then
-
          if Min_Occurs then
             if Choice then
                Writers.P

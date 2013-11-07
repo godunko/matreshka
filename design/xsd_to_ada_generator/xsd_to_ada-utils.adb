@@ -444,6 +444,7 @@ package body XSD_To_Ada.Utils is
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
+      Current_Out_File : Ada.Wide_Wide_Text_IO.File_Type;
    begin
       Map := XSD_To_Ada.Utils.Read_Mapping (Mapping_Path);
 
@@ -479,6 +480,12 @@ package body XSD_To_Ada.Utils is
       Create_Element_Type (Model, Payload_Writer);
 
       Writers.N (Payload_Writer, "end Payloads;");
+
+      Ada.Wide_Wide_Text_IO.Create
+        (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./Payloads.ads");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
       Ada.Wide_Wide_Text_IO.Put_Line
        (Payload_Type_Writer.Text.To_Wide_Wide_String);
@@ -847,6 +854,7 @@ package body XSD_To_Ada.Utils is
                XS_Term,
                Type_Name,
                Min_Occurs,
+               Max_Occurs,
                Writer,
                Writer_types);
 
@@ -865,13 +873,15 @@ package body XSD_To_Ada.Utils is
       XS_Term      : XML.Schema.Objects.Terms.XS_Term;
       Type_Name    : League.Strings.Universal_String;
       Min_Occurs   : in out Boolean;
+      Max_Occurs   : in out Boolean;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer) is
    begin
       if Min_Occurs
-        and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string"
+        and then not Max_Occurs
+        --  and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string"
       then
-         if not Is_Type_In_Optional_Vector (Type_D.Get_Base_Type.Get_Name) then
+         if not Is_Type_In_Optional_Vector (XS_Term.Get_Name) then
             Writers.P
               (Writer_Types,
                "   type Optional_"
