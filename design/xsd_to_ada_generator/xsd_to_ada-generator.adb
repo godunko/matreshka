@@ -57,7 +57,6 @@ package body XSD_To_Ada.Generator is
    is
       Mapping : constant XSD_To_Ada.Mappings.XML.Mapping_XML
         := XSD_To_Ada.Mappings.XML.Read_Mapping (Mapping_Path);
-
    begin
       XSD_To_Ada.Utils.Create_Complex_Type (Model, Mapping);
       XSD_To_Ada.Encoder.Create_Complex_Type (Model, Mapping);

@@ -558,15 +558,9 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
---        if Min_Occur and then Max_Occur then
---           return League.Strings.To_Universal_String
---             ("Payloads.Optional_"
---              & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
---        else
-         return League.Strings.To_Universal_String
-           ("Payloads."
-            & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
---      end if;
+      return League.Strings.To_Universal_String
+        ("Payloads."
+         & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
    end Find_Type;
 
    --------------------
@@ -817,9 +811,7 @@ package body XSD_To_Ada.Utils is
                & LF
                & "     Is_Set : Boolean := False;"
                & LF
-               & "     "
-               & Add_Separator (Type_D.Get_Name)
-               & " : "
+               & "     Value : "
                & Type_Name.To_Wide_Wide_String
                & ";"
                & LF
@@ -928,9 +920,7 @@ package body XSD_To_Ada.Utils is
                & Wide_Wide_Character'Val (10)
                & "     Is_Set : Boolean := False;"
                & Wide_Wide_Character'Val (10)
-               & "     "
-               & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-               & " : "
+               & "     Value : "
                & Type_Name.To_Wide_Wide_String
                & ";"
                & Wide_Wide_Character'Val (10)

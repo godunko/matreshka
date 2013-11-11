@@ -176,7 +176,8 @@ package XSD_To_Ada.Encoder is
      Table            : in out Types_Table_Type_Array;
      Is_Max_Occur     : Boolean := False;
      Is_Min_Occur     : Boolean := False;
-     Top_Max_Occur    : Boolean := False);
+     Top_Max_Occur    : Boolean := False;
+     Optional         : Boolean := False);
 
    procedure Print_Type_Title
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -185,12 +186,13 @@ package XSD_To_Ada.Encoder is
       Spec_Writer : in out XSD_To_Ada.Writers.Writer;
       Level       : Positive := 1);
 
-   procedure Print_Type_Title
+   procedure Print_Type_Title_XX
     (XS_Term     : XML.Schema.Objects.Terms.XS_Term;
      Indent      : Wide_Wide_String;
      Writer      : in out XSD_To_Ada.Writers.Writer;
      Spec_Writer : in out XSD_To_Ada.Writers.Writer;
-     Level       : Natural := 0);
+     Level       : Natural := 0;
+     Optional    : Boolean);
 
    function Has_Element_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
