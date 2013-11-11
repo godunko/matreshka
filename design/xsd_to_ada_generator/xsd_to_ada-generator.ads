@@ -41,31 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
-private with Ada.Text_IO;
-
-with XSD_To_Ada.Writers;
-
-with XML.Schema.Models;
 with League.Strings;
+with XML.Schema.Models;
 
 package XSD_To_Ada.Generator is
 
    procedure Generate
      (Model        : XML.Schema.Models.XS_Model;
       Mapping_Path : League.Strings.Universal_String);
-
-private
-
-   procedure Delete_File (Name : String);
-
-   procedure P
-     (Self : in out XSD_To_Ada.Writers.Writer;
-      Txt  : Wide_Wide_String);
-
-   procedure Inc;
-   procedure Dec;
-
-   Current_Out_File : Ada.Text_IO.File_Type;
 
 end XSD_To_Ada.Generator;

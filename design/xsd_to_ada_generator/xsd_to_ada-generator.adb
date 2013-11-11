@@ -41,43 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
-with Ada.Directories;
-with Ada.Containers.Vectors;
-
-with League.Strings;
-with League.String_Vectors;
-
-with XSD_To_Ada.Utils;
 with XSD_To_Ada.Encoder;
-with XSD_To_Ada.Mappings_XML;
+with XSD_To_Ada.Utils;
 
 package body XSD_To_Ada.Generator is
-
-   Tab   : Natural := 0;
-
-   ---------
-   -- Dec --
-   ---------
-
-   procedure Dec is begin
-      if Tab > 2 then
-         Tab := Tab - 3;
-      else
-         Tab := 0;
-      end if;
-   end Dec;
-
-   -----------------
-   -- Delete_File --
-   -----------------
-
-   procedure Delete_File (Name : String) is
-   begin
-      if Ada.Directories.Exists (Name) then
-         Ada.Directories.Delete_File (Name);
-      end if;
-   end Delete_File;
 
    --------------
    -- Generate --
@@ -90,23 +57,5 @@ package body XSD_To_Ada.Generator is
       XSD_To_Ada.Utils.Create_Complex_Type (Model, Mapping_Path);
       XSD_To_Ada.Encoder.Create_Complex_Type (Model, Mapping_Path);
    end Generate;
-
-   ---------
-   -- Inc --
-   ---------
-
-   procedure Inc is begin
-      Tab := Tab + 3;
-   end Inc;
-
-   -------
-   -- P --
-   -------
-
-   procedure P
-     (Self : in out XSD_To_Ada.Writers.Writer; Txt : Wide_Wide_String) is
-   begin
-      Self.P (Txt);
-   end P;
 
 end XSD_To_Ada.Generator;
