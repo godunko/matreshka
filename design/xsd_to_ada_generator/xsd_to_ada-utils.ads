@@ -179,8 +179,10 @@ package XSD_To_Ada.Utils is
       return Boolean;
 
    function Find_Type
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
+     (Type_D_Name  : League.Strings.Universal_String;
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Min_Occur    : Boolean;
+      Max_Occur    : Boolean)
       return League.Strings.Universal_String;
 
    function Is_Type_In_Map

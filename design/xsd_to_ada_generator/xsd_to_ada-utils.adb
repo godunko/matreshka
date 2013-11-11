@@ -171,11 +171,10 @@ package body XSD_To_Ada.Utils is
                Decl := Element_Declarations.Item (J).To_Element_Declaration;
                Type_D := Decl.Get_Type_Definition;
 
-               Name := Find_Type (Type_D.Get_Name, Map);
+               Name := Find_Type (Type_D.Get_Name, Map, False, False);
 
-               if Element_Declarations.Item (J).Get_Name.Length > 10
-               then
-                  if  League.Strings.Slice
+               if Element_Declarations.Item (J).Get_Name.Length > 10 then
+                  if League.Strings.Slice
                     (Element_Declarations.Item (J).Get_Name,
                      Element_Declarations.Item (J).Get_Name.Length - 7,
                      Element_Declarations.Item (J).Get_Name.Length).To_UTF_8_String = "Response"
@@ -202,12 +201,10 @@ package body XSD_To_Ada.Utils is
                        (Writer,
                         Add_Separator (Element_Declarations.Item (J).Get_Name));
                   else
-
                      if XSD_To_Ada.Utils.Has_Element_Session
                        (Type_D.To_Type_Definition)
                        and then Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = ""
                      then
-
                         Writers.P
                           (Writer,
                            "   type "
@@ -220,7 +217,6 @@ package body XSD_To_Ada.Utils is
                            & " with null record;"
                            & Wide_Wide_Character'Val (10));
                      else
-
                         if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
                           /= "OpenSession2"
                         then
@@ -551,10 +547,11 @@ package body XSD_To_Ada.Utils is
    ---------------
 
    function Find_Type
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
-      return League.Strings.Universal_String
-   is
+     (Type_D_Name  : League.Strings.Universal_String;
+      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+      Min_Occur    : Boolean;
+      Max_Occur    : Boolean)
+      return League.Strings.Universal_String is
    begin
       for j in 1 .. Map.Map_Vector.Length loop
          if Type_D_Name.To_UTF_8_String =
@@ -564,8 +561,15 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
-      return League.Strings.To_Universal_String
-        ("Payloads." & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
+--        if Min_Occur and then Max_Occur then
+--           return League.Strings.To_Universal_String
+--             ("Payloads.Optional_"
+--              & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
+--        else
+         return League.Strings.To_Universal_String
+           ("Payloads."
+            & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
+--      end if;
    end Find_Type;
 
    --------------------
@@ -794,6 +798,7 @@ package body XSD_To_Ada.Utils is
       XS_Term      : XML.Schema.Objects.Terms.XS_Term;
       Type_Name    : League.Strings.Universal_String;
       Table        : in out Types_Table_Type_Array;
+      Min_Occurs   : in out Boolean;
       Max_Occurs   : in out Boolean;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer) is
@@ -805,12 +810,42 @@ package body XSD_To_Ada.Utils is
             Writer_types);
       end if;
 
-      Writers.N
-        (Writer,
-         "      "
-         & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-         & " : "
-         & Type_Name.To_Wide_Wide_String);
+      if Min_Occurs
+        and then not Max_Occurs
+      then
+         if not Is_Type_In_Optional_Vector (Type_D.Get_Name) then
+            Writers.P
+              (Writer_Types,
+               "   type Optional_"
+               & Add_Separator (Type_D.Get_Name)
+               & " is record"
+               & LF
+               & "     Is_Set : Boolean := False;"
+               & LF
+               & "     "
+               & Add_Separator (Type_D.Get_Name)
+               & " : "
+               & Type_Name.To_Wide_Wide_String
+               & ";"
+               & LF
+               & "   end record;"
+               & LF);
+         end if;
+
+         Writers.N
+           (Writer,
+            "      "
+            & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+            & " : "
+            & "Optional_" & Add_Separator (Type_D.Get_Name));
+      else
+         Writers.N
+           (Writer,
+            "      "
+            & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+            & " : "
+            & Type_Name.To_Wide_Wide_String);
+      end if;
 
       if Max_Occurs then
          Max_Occurs := False;
@@ -841,6 +876,7 @@ package body XSD_To_Ada.Utils is
                XS_Term,
                Type_Name,
                Table,
+               Min_Occurs,
                Max_Occurs,
                Writer,
                Writer_types);
@@ -872,11 +908,21 @@ package body XSD_To_Ada.Utils is
       Min_Occurs   : in out Boolean;
       Max_Occurs   : in out Boolean;
       Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer) is
+      Writer_types : in out Writers.Writer)
+   is
+--        Optional       : Boolean := False;
+--        Full_Type_Name : League.Strings.Universal_String;
    begin
+
+--        if Min_Occurs
+--          and then not Max_Occurs
+--        then
+--           Optional := True;
+--           Full_Type_Name := Find_Type (Type_D.Get_Name, Map, Optional);
+--        end if;
+
       if Min_Occurs
         and then not Max_Occurs
-        --  and Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string"
       then
          if not Is_Type_In_Optional_Vector (XS_Term.Get_Name) then
             Writers.P
@@ -1030,7 +1076,7 @@ package body XSD_To_Ada.Utils is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            Type_Name := Find_Type (Type_D.Get_Name, Map);
+            Type_Name := Find_Type (Type_D.Get_Name, Map, False, False);
 
             case Type_D.Get_Type_Category is
                when XML.Schema.Complex_Type | XML.Schema.Simple_Type =>
@@ -1442,14 +1488,14 @@ package body XSD_To_Ada.Utils is
 
                      if Choice then
 
-                     Writers.P
-                       (Writer,
-                        Gen_Type_Line
-                          ("      "
-                           & XSD_To_Ada.Utils.Add_Separator (Name)
-                           & " : "
-                           & XSD_To_Ada.Utils.Add_Separator (Name)
-                           & "_Cases;", 8));
+                        Writers.P
+                          (Writer,
+                           Gen_Type_Line
+                             ("      "
+                              & XSD_To_Ada.Utils.Add_Separator (Name)
+                              & " : "
+                              & XSD_To_Ada.Utils.Add_Separator (Name)
+                              & "_Cases;", 8));
 
                         Max_Occurs := False;
                      else
@@ -1487,7 +1533,8 @@ package body XSD_To_Ada.Utils is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            Type_Name := Find_Type (Type_D.Get_Name, Map);
+            Type_Name :=
+              Find_Type (Type_D.Get_Name, Map, Min_Occurs, Max_Occurs);
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
 
@@ -1724,7 +1771,7 @@ package body XSD_To_Ada.Utils is
    begin
       Self.P (Lin);
       Self.P
-        ("--  This file is generated by pipe_api_generator, don't edit it.");
+        ("--  This file is generated by xsd_to_ada_generator, don't edit it.");
       Self.P (Lin);
       Self.P ("");
    end Put_Header;
