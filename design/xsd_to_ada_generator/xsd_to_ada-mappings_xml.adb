@@ -55,15 +55,44 @@ package body XSD_To_Ada.Mappings_XML is
 
    type XML_Tags is (Map, Ada);
 
+   -----------------
+   -- End_Element --
+   -----------------
+
+   overriding procedure End_Element
+    (Self           : in out Mapping_XML;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String;
+     Success        : in out Boolean) is
+   begin
+      null;
+   end End_Element;
+
+   ------------------
+   -- Error_String --
+   ------------------
+
+   overriding function Error_String
+    (Self : Mapping_XML) return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Error_String;
+
+   -------------------
+   -- Start_Element --
+   -------------------
+
    overriding procedure Start_Element
-     (Self           : in out Mapping_XML;
-      Namespace_URI  : League.Strings.Universal_String;
-      Local_Name     : League.Strings.Universal_String;
-      Qualified_Name : League.Strings.Universal_String;
-      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-      Success        : in out Boolean)
+    (Self           : in out Mapping_XML;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String;
+     Attributes     : XML.SAX.Attributes.SAX_Attributes;
+     Success        : in out Boolean)
    is
       Tag : XML_Tags;
+
    begin
       begin
          Tag := XML_Tags'Wide_Wide_Value (Local_Name.To_Wide_Wide_String);
@@ -75,30 +104,10 @@ package body XSD_To_Ada.Mappings_XML is
       case Tag is
          when Map =>
             Self.Map_Vector.Append (Attributes.Value (1));
+
          when Ada =>
             Self.Ada_Vector.Append (Attributes.Value (2));
       end case;
-
    end Start_Element;
-
-   overriding function Error_String
-     (Self : Mapping_XML)
-      return League.Strings.Universal_String
-   is
-      pragma Unreferenced (Self);
-   begin
-      return X : League.Strings.Universal_String;
-   end Error_String;
-
-   overriding procedure End_Element
-     (Self           : in out Mapping_XML;
-      Namespace_URI  : League.Strings.Universal_String;
-      Local_Name     : League.Strings.Universal_String;
-      Qualified_Name : League.Strings.Universal_String;
-      Success        : in out Boolean)
-   is
-   begin
-      null;
-   end End_Element;
 
 end XSD_To_Ada.Mappings_XML;
