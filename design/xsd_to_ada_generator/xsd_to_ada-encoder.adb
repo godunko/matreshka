@@ -47,21 +47,13 @@ with Ada.Strings.Wide_Wide_Maps;
 with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Wide_Wide_Text_IO;
 
-with League.Strings;
-with League.String_Vectors;
-
 with XML.Schema.Element_Declarations;
 with XML.Schema.Complex_Type_Definitions;
-with XML.Schema.Models;
 with XML.Schema.Model_Groups;
 with XML.Schema.Named_Maps;
 with XML.Schema.Objects.Particles;
-with XML.Schema.Objects.Terms.Model_Groups;
 with XML.Schema.Object_Lists;
 with XML.Schema.Simple_Type_Definitions;
-with XML.Schema.Type_Definitions.Complex_Type_Definitions;
-
-with XSD_To_Ada.Writers;
 
 package body XSD_To_Ada.Encoder is
 
@@ -796,7 +788,8 @@ package body XSD_To_Ada.Encoder is
    ----------------
 
    procedure Gen_Line
-     (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "") is
+    (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "")
+   is
       use Ada.Strings.Wide_Wide_Unbounded;
       use Ada.Strings.Wide_Wide_Maps;
 
@@ -819,6 +812,7 @@ package body XSD_To_Ada.Encoder is
 
       procedure Put (Txt : Wide_Wide_String) is
          use Ada.Strings.Wide_Wide_Fixed;
+
       begin
          if In_Comment then
             Self.P (Tab (Tab'First .. Tab'Last - 2) & "--  " & Txt
