@@ -111,8 +111,8 @@ package XSD_To_Ada.Utils is
       Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Create_Complex_Type
-     (Model        : XML.Schema.Models.XS_Model;
-      Mapping_Path : League.Strings.Universal_String);
+    (Model   : XML.Schema.Models.XS_Model;
+     Mapping : XSD_To_Ada.Mappings_XML.Mapping_XML);
 
    procedure Create_Vector_Package
      (Type_D_Name  : League.Strings.Universal_String;
@@ -177,10 +177,6 @@ package XSD_To_Ada.Utils is
    function Has_Element_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
       return Boolean;
-
-   function Read_Mapping
-     (File_Name : League.Strings.Universal_String)
-      return XSD_To_Ada.Mappings_XML.Mapping_XML;
 
    function Find_Type
      (Type_D_Name : League.Strings.Universal_String;

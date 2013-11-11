@@ -116,8 +116,8 @@ package XSD_To_Ada.Encoder is
       Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Create_Complex_Type
-     (Model        : XML.Schema.Models.XS_Model;
-      Mapping_Path : League.Strings.Universal_String);
+    (Model   : XML.Schema.Models.XS_Model;
+     Mapping : XSD_To_Ada.Mappings_XML.Mapping_XML);
 
    procedure Create_Vector_Package
      (Type_D_Name  : League.Strings.Universal_String;

@@ -50,9 +50,6 @@ with Ada.Wide_Wide_Text_IO;
 with League.Strings;
 with League.String_Vectors;
 
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
-
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
@@ -429,8 +426,8 @@ package body XSD_To_Ada.Utils is
    -------------------------
 
    procedure Create_Complex_Type
-     (Model        : XML.Schema.Models.XS_Model;
-      Mapping_Path : League.Strings.Universal_String)
+    (Model   : XML.Schema.Models.XS_Model;
+     Mapping : XSD_To_Ada.Mappings_XML.Mapping_XML)
    is
       XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -444,8 +441,9 @@ package body XSD_To_Ada.Utils is
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
       Current_Out_File : Ada.Wide_Wide_Text_IO.File_Type;
+
    begin
-      Map := XSD_To_Ada.Utils.Read_Mapping (Mapping_Path);
+      Map := Mapping;
 
       for J in 1 .. Complex_Types.Length loop
          Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
@@ -1730,19 +1728,5 @@ package body XSD_To_Ada.Utils is
       Self.P (Lin);
       Self.P ("");
    end Put_Header;
-
-   function Read_Mapping
-     (File_Name : League.Strings.Universal_String)
-      return XSD_To_Ada.Mappings_XML.Mapping_XML
-   is
-      Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      Handler : aliased XSD_To_Ada.Mappings_XML.Mapping_XML;
-   begin
-      Reader.Set_Content_Handler (Handler'Unchecked_Access);
-      Source.Open_By_File_Name (File_Name);
-      Reader.Parse (Source'Access);
-      return Handler;
-   end Read_Mapping;
 
 end XSD_To_Ada.Utils;

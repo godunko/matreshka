@@ -41,15 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
-with Ada.Containers.Vectors;
-with Ada.Text_IO;
-
-with League.Strings;
-with League.String_Vectors;
-
-with XML.SAX.Content_Handlers;
-with XML.SAX.Attributes;
+with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Simple_Readers;
 
 package body XSD_To_Ada.Mappings_XML is
 
@@ -78,6 +71,26 @@ package body XSD_To_Ada.Mappings_XML is
    begin
       return League.Strings.Empty_Universal_String;
    end Error_String;
+
+   ------------------
+   -- Read_Mapping --
+   ------------------
+
+   function Read_Mapping
+    (File_Name : League.Strings.Universal_String)
+       return XSD_To_Ada.Mappings_XML.Mapping_XML
+   is
+      Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Handler : aliased XSD_To_Ada.Mappings_XML.Mapping_XML;
+
+   begin
+      Reader.Set_Content_Handler (Handler'Unchecked_Access);
+      Source.Open_By_File_Name (File_Name);
+      Reader.Parse (Source'Access);
+
+      return Handler;
+   end Read_Mapping;
 
    -------------------
    -- Start_Element --

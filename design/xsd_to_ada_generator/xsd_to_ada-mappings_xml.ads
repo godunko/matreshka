@@ -58,6 +58,10 @@ package XSD_To_Ada.Mappings_XML is
      and XML.SAX.Content_Handlers.SAX_Content_Handler
    with private;
 
+   function Read_Mapping
+    (File_Name : League.Strings.Universal_String)
+       return XSD_To_Ada.Mappings_XML.Mapping_XML;
+
 private
 
 --     package Mapping_Vectors is new Ada.Containers.Vectors

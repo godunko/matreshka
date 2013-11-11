@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with XSD_To_Ada.Encoder;
+with XSD_To_Ada.Mappings_XML;
 with XSD_To_Ada.Utils;
 
 package body XSD_To_Ada.Generator is
@@ -51,11 +52,15 @@ package body XSD_To_Ada.Generator is
    --------------
 
    procedure Generate
-     (Model        : XML.Schema.Models.XS_Model;
-      Mapping_Path : League.Strings.Universal_String) is
+    (Model        : XML.Schema.Models.XS_Model;
+     Mapping_Path : League.Strings.Universal_String)
+   is
+      Mapping : XSD_To_Ada.Mappings_XML.Mapping_XML
+        := XSD_To_Ada.Mappings_XML.Read_Mapping (Mapping_Path);
+
    begin
-      XSD_To_Ada.Utils.Create_Complex_Type (Model, Mapping_Path);
-      XSD_To_Ada.Encoder.Create_Complex_Type (Model, Mapping_Path);
+      XSD_To_Ada.Utils.Create_Complex_Type (Model, Mapping);
+      XSD_To_Ada.Encoder.Create_Complex_Type (Model, Mapping);
    end Generate;
 
 end XSD_To_Ada.Generator;
