@@ -640,7 +640,7 @@ package body XSD_To_Ada.Encoder is
          Writers.P (Payload_Writer, "end Encoder;");
 
 --        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./Encoder.adb");
+--          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./encoder.adb");
 --
 --        Ada.Wide_Wide_Text_IO.Put_Line
 --          (Current_Out_File, Head_Writer.Text.To_Wide_Wide_String);
@@ -654,6 +654,15 @@ package body XSD_To_Ada.Encoder is
 --        Ada.Wide_Wide_Text_IO.Put_Line
 --          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
 --        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Head_Writer.Text.To_Wide_Wide_String);
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Element_Name.Text.To_Wide_Wide_String);
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Encoder_Top_Writer.Text.To_Wide_Wide_String);
 
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
 
