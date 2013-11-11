@@ -41,15 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
 with Ada.Containers.Indefinite_Vectors;
 
 with XML.Schema.Models;
 with XML.Schema.Type_Definitions;
 with XML.Schema.Objects.Terms;
 
-with XSD_To_Ada.Mappings;
-with XSD_To_Ada.Mappings_XML;
+with XSD_To_Ada.Mappings.XML;
 with XSD_To_Ada.Writers;
 
 with League.Strings;
@@ -117,7 +115,7 @@ package XSD_To_Ada.Encoder is
 
    procedure Create_Complex_Type
     (Model   : XML.Schema.Models.XS_Model;
-     Mapping : XSD_To_Ada.Mappings_XML.Mapping_XML);
+     Mapping : XSD_To_Ada.Mappings.XML.Mapping_XML);
 
    procedure Create_Vector_Package
      (Type_D_Name  : League.Strings.Universal_String;
@@ -166,7 +164,7 @@ package XSD_To_Ada.Encoder is
      Writer       : in out Writers.Writer;
      Writer_Types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
-     Map          : XSD_To_Ada.Mappings_XML.Mapping_XML);
+     Map          : XSD_To_Ada.Mappings.Mapping'Class);
 
    procedure Print_Type_Definition
     (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -198,19 +196,14 @@ package XSD_To_Ada.Encoder is
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
       return Boolean;
 
-   function Read_Mapping
-     (File_Name : League.Strings.Universal_String)
-      return XSD_To_Ada.Mappings_XML.Mapping_XML;
-
    function Find_Type
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
-      return League.Strings.Universal_String;
+    (Type_D_Name : League.Strings.Universal_String;
+     Map         : XSD_To_Ada.Mappings.Mapping'Class)
+       return League.Strings.Universal_String;
 
    function Is_Type_In_Map
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
-      return Boolean;
+    (Type_D_Name : League.Strings.Universal_String;
+     Map         : XSD_To_Ada.Mappings.Mapping'Class) return Boolean;
 
    function Is_Type_In_Optional_Vector
      (Type_Name : League.Strings.Universal_String)
@@ -224,7 +217,7 @@ package XSD_To_Ada.Encoder is
      := League.Strings.To_Universal_String
        ("http://www.actforex.com/iats");
 
-   Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+   Map : XSD_To_Ada.Mappings.XML.Mapping_XML;
 
    Encoder_Writer     : Writers.Writer;
    Encoder_Top_Writer : Writers.Writer;

@@ -59,8 +59,6 @@ with XML.Schema.Object_Lists;
 with XML.Schema.Objects.Particles;
 with XML.Schema.Simple_Type_Definitions;
 
-with XSD_To_Ada.Mappings;
-with XSD_To_Ada.Mappings_XML;
 with XSD_To_Ada.Writers;
 
 package body XSD_To_Ada.Utils is
@@ -423,7 +421,7 @@ package body XSD_To_Ada.Utils is
 
    procedure Create_Complex_Type
     (Model   : XML.Schema.Models.XS_Model;
-     Mapping : XSD_To_Ada.Mappings_XML.Mapping_XML)
+     Mapping : XSD_To_Ada.Mappings.XML.Mapping_XML)
    is
       XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -547,11 +545,10 @@ package body XSD_To_Ada.Utils is
    ---------------
 
    function Find_Type
-     (Type_D_Name  : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-      Min_Occur    : Boolean;
-      Max_Occur    : Boolean)
-      return League.Strings.Universal_String is
+    (Type_D_Name  : League.Strings.Universal_String;
+     Map          : XSD_To_Ada.Mappings.Mapping'Class;
+     Min_Occur    : Boolean;
+     Max_Occur    : Boolean) return League.Strings.Universal_String is
    begin
       for j in 1 .. Map.Map_Vector.Length loop
          if Type_D_Name.To_UTF_8_String =
@@ -577,10 +574,8 @@ package body XSD_To_Ada.Utils is
    --------------------
 
    function Is_Type_In_Map
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
-      return Boolean
-   is
+    (Type_D_Name : League.Strings.Universal_String;
+     Map         : XSD_To_Ada.Mappings.Mapping'Class) return Boolean is
    begin
       for j in 1 .. Map.Map_Vector.Length loop
          if Type_D_Name.To_UTF_8_String =
@@ -1003,7 +998,7 @@ package body XSD_To_Ada.Utils is
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
-     Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
+     Map          : XSD_To_Ada.Mappings.Mapping'Class)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -1018,12 +1013,12 @@ package body XSD_To_Ada.Utils is
       ----------------
 
       procedure Print_Term
-        (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
-         Indent       : Wide_Wide_String := "";
-         Writer       : in out Writers.Writer;
-         Writer_types : in out Writers.Writer;
-         Name         : League.Strings.Universal_String;
-         Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
+       (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+        Indent       : Wide_Wide_String := "";
+        Writer       : in out Writers.Writer;
+        Writer_types : in out Writers.Writer;
+        Name         : League.Strings.Universal_String;
+        Map          : XSD_To_Ada.Mappings.Mapping'Class)
       is
          use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
 
@@ -1288,7 +1283,7 @@ package body XSD_To_Ada.Utils is
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
      Is_Record    : Boolean := False;
-     Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+     Map          : XSD_To_Ada.Mappings.Mapping'Class;
      Table        : in out Types_Table_Type_Array;
      Is_Max_Occur : Boolean := False)
    is
@@ -1327,7 +1322,7 @@ package body XSD_To_Ada.Utils is
         Writer       : in out Writers.Writer;
         Writer_types : in out Writers.Writer;
         Name         : League.Strings.Universal_String;
-        Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
+        Map          : XSD_To_Ada.Mappings.Mapping'Class;
         Table        : in out Types_Table_Type_Array)
       is
          use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;

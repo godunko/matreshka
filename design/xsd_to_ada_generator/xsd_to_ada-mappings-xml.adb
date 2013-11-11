@@ -41,58 +41,87 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Simple_Readers;
 
-with Ada.Containers.Vectors;
+package body XSD_To_Ada.Mappings.XML is
 
-with League.Strings;
-with League.String_Vectors;
+   type XML_Tags is (Map, Ada);
 
-with XML.SAX.Content_Handlers;
-with XML.SAX.Attributes;
+   -----------------
+   -- End_Element --
+   -----------------
 
-with XSD_To_Ada.Mappings;
+   overriding procedure End_Element
+    (Self           : in out Mapping_XML;
+     Namespace_URI  : League.Strings.Universal_String;
+     Local_Name     : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String;
+     Success        : in out Boolean) is
+   begin
+      null;
+   end End_Element;
 
-package XSD_To_Ada.Mappings_XML is
+   ------------------
+   -- Error_String --
+   ------------------
 
-   type Mapping_XML is new XSD_To_Ada.Mappings.Mapping
-     and XML.SAX.Content_Handlers.SAX_Content_Handler
-   with private;
+   overriding function Error_String
+    (Self : Mapping_XML) return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Error_String;
+
+   ------------------
+   -- Read_Mapping --
+   ------------------
 
    function Read_Mapping
     (File_Name : League.Strings.Universal_String)
-       return XSD_To_Ada.Mappings_XML.Mapping_XML;
+       return XSD_To_Ada.Mappings.XML.Mapping_XML
+   is
+      Source  : aliased
+        Standard.XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Reader  : aliased Standard.XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Handler : aliased XSD_To_Ada.Mappings.XML.Mapping_XML;
 
-private
+   begin
+      Reader.Set_Content_Handler (Handler'Unchecked_Access);
+      Source.Open_By_File_Name (File_Name);
+      Reader.Parse (Source'Access);
 
---     package Mapping_Vectors is new Ada.Containers.Vectors
---       (Index_Type   => Positive,
---        Element_Type => League.Strings.Universal_String
---          "=" => ICTS.Forex."=");
+      return Handler;
+   end Read_Mapping;
 
-   type Mapping_XML is new XSD_To_Ada.Mappings.Mapping
-     and XML.SAX.Content_Handlers.SAX_Content_Handler
-     with
-      record
-         Last_Text        : League.Strings.Universal_String;
-      end record;
+   -------------------
+   -- Start_Element --
+   -------------------
 
    overriding procedure Start_Element
     (Self           : in out Mapping_XML;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
+     Attributes     : Standard.XML.SAX.Attributes.SAX_Attributes;
+     Success        : in out Boolean)
+   is
+      Tag : XML_Tags;
 
-   overriding function Error_String
-     (Self : Mapping_XML)
-     return League.Strings.Universal_String;
+   begin
+      begin
+         Tag := XML_Tags'Wide_Wide_Value (Local_Name.To_Wide_Wide_String);
+      exception
+         when Constraint_Error =>
+            return;
+      end;
 
-   overriding procedure End_Element
-     (Self           : in out Mapping_XML;
-      Namespace_URI  : League.Strings.Universal_String;
-      Local_Name     : League.Strings.Universal_String;
-      Qualified_Name : League.Strings.Universal_String;
-      Success        : in out Boolean);
+      case Tag is
+         when Map =>
+            Self.Map_Vector.Append (Attributes.Value (1));
 
-end XSD_To_Ada.Mappings_XML;
+         when Ada =>
+            Self.Ada_Vector.Append (Attributes.Value (2));
+      end case;
+   end Start_Element;
+
+end XSD_To_Ada.Mappings.XML;

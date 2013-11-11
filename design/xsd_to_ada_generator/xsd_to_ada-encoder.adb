@@ -50,9 +50,6 @@ with Ada.Wide_Wide_Text_IO;
 with League.Strings;
 with League.String_Vectors;
 
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
-
 with XML.Schema.Element_Declarations;
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Models;
@@ -64,8 +61,6 @@ with XML.Schema.Object_Lists;
 with XML.Schema.Simple_Type_Definitions;
 with XML.Schema.Type_Definitions.Complex_Type_Definitions;
 
-with XSD_To_Ada.Mappings;
-with XSD_To_Ada.Mappings_XML;
 with XSD_To_Ada.Writers;
 
 package body XSD_To_Ada.Encoder is
@@ -551,7 +546,7 @@ package body XSD_To_Ada.Encoder is
 
    procedure Create_Complex_Type
     (Model   : XML.Schema.Models.XS_Model;
-     Mapping : XSD_To_Ada.Mappings_XML.Mapping_XML)
+     Mapping : XSD_To_Ada.Mappings.XML.Mapping_XML)
    is
       XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -727,10 +722,9 @@ package body XSD_To_Ada.Encoder is
    ---------------
 
    function Find_Type
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
-      return League.Strings.Universal_String
-   is
+    (Type_D_Name : League.Strings.Universal_String;
+     Map         : XSD_To_Ada.Mappings.Mapping'Class)
+       return League.Strings.Universal_String is
    begin
       for j in 1 .. Map.Map_Vector.Length loop
          if Type_D_Name.To_UTF_8_String =
@@ -749,10 +743,8 @@ package body XSD_To_Ada.Encoder is
    --------------------
 
    function Is_Type_In_Map
-     (Type_D_Name : League.Strings.Universal_String;
-      Map         : XSD_To_Ada.Mappings_XML.Mapping_XML)
-      return Boolean
-   is
+    (Type_D_Name : League.Strings.Universal_String;
+     Map         : XSD_To_Ada.Mappings.Mapping'Class) return Boolean is
    begin
       for j in 1 .. Map.Map_Vector.Length loop
          if Type_D_Name.To_UTF_8_String =
@@ -1493,7 +1485,7 @@ package body XSD_To_Ada.Encoder is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
+      Map          : XSD_To_Ada.Mappings.Mapping'Class)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -1508,12 +1500,12 @@ package body XSD_To_Ada.Encoder is
       ----------------
 
       procedure Print_Term
-        (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
-         Indent       : Wide_Wide_String := "";
-         Writer       : in out Writers.Writer;
-         Writer_types : in out Writers.Writer;
-         Name         : League.Strings.Universal_String;
-         Map          : XSD_To_Ada.Mappings_XML.Mapping_XML)
+       (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+        Indent       : Wide_Wide_String := "";
+        Writer       : in out Writers.Writer;
+        Writer_types : in out Writers.Writer;
+        Name         : League.Strings.Universal_String;
+        Map          : XSD_To_Ada.Mappings.Mapping'Class)
       is
          use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
 
@@ -1934,12 +1926,12 @@ package body XSD_To_Ada.Encoder is
       ----------------
 
       procedure Print_Term
-        (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
-         Indent       : Wide_Wide_String := "";
-         Writer       : in out Writers.Writer;
-         Name         : League.Strings.Universal_String;
-         Map          : XSD_To_Ada.Mappings_XML.Mapping_XML;
-         Table        : in out Types_Table_Type_Array)
+       (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+        Indent       : Wide_Wide_String := "";
+        Writer       : in out Writers.Writer;
+        Name         : League.Strings.Universal_String;
+        Map          : XSD_To_Ada.Mappings.Mapping'Class;
+        Table        : in out Types_Table_Type_Array)
       is
          use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
 
@@ -2272,24 +2264,6 @@ package body XSD_To_Ada.Encoder is
       Self.P (Lin);
       Self.P ("");
    end Put_Header;
-
-   ------------------
-   -- Read_Mapping --
-   ------------------
-
-   function Read_Mapping
-     (File_Name : League.Strings.Universal_String)
-      return XSD_To_Ada.Mappings_XML.Mapping_XML
-   is
-      Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      Handler : aliased XSD_To_Ada.Mappings_XML.Mapping_XML;
-   begin
-      Reader.Set_Content_Handler (Handler'Unchecked_Access);
-      Source.Open_By_File_Name (File_Name);
-      Reader.Parse (Source'Access);
-      return Handler;
-   end Read_Mapping;
 
    -------------------------
    -- Write_Start_Element --
