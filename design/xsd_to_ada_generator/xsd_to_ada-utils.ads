@@ -97,8 +97,9 @@ package XSD_To_Ada.Utils is
       return Wide_Wide_String;
 
    procedure Create_Element_Type
-     (Model  : XML.Schema.Models.XS_Model;
-      Writer : in out XSD_To_Ada.Writers.Writer);
+    (Model  : XML.Schema.Models.XS_Model;
+     Mapping : XSD_To_Ada.Mappings.Mapping'Class;
+     Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Create_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
@@ -113,9 +114,10 @@ package XSD_To_Ada.Utils is
      Mapping : XSD_To_Ada.Mappings.XML.Mapping_XML);
 
    procedure Create_Vector_Package
-     (Type_D_Name  : League.Strings.Universal_String;
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer);
+    (Type_D_Name  : League.Strings.Universal_String;
+     Mapping      : XSD_To_Ada.Mappings.Mapping'Class;
+     Writer       : in out Writers.Writer;
+     Writer_types : in out Writers.Writer);
 
    procedure Gen_Access_Type
      (Self   : in out XSD_To_Ada.Writers.Writer;
@@ -163,15 +165,16 @@ package XSD_To_Ada.Utils is
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
      Is_Record    : Boolean := False;
-     Map          : XSD_To_Ada.Mappings.Mapping'Class;
+     Mapping      : XSD_To_Ada.Mappings.Mapping'Class;
      Table        : in out Types_Table_Type_Array;
      Is_Max_Occur : Boolean := False;
      Is_Min_Occur : Boolean := False);
 
    procedure Print_Type_Title
-     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
-      Type_Writer : in out XSD_To_Ada.Writers.Writer);
+    (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Mapping     : XSD_To_Ada.Mappings.Mapping'Class;
+     Writer      : in out XSD_To_Ada.Writers.Writer;
+     Type_Writer : in out XSD_To_Ada.Writers.Writer);
 
    function Has_Element_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
@@ -195,7 +198,5 @@ package XSD_To_Ada.Utils is
    Namespace : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
        ("http://www.actforex.com/iats");
-
-   Map : XSD_To_Ada.Mappings.XML.Mapping_XML;
 
 end XSD_To_Ada.Utils;
