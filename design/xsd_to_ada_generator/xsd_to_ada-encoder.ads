@@ -142,9 +142,9 @@ package XSD_To_Ada.Encoder is
       Full_Anonym_Name : League.Strings.Universal_String;
       Base_Choice_Name : League.Strings.Universal_String;
       Base_Name    : League.Strings.Universal_String;
+      Min_Occurs   : in out Boolean;
       Max_Occurs   : in out Boolean;
       Top_Max_Occurs : Boolean;
-      Min_Occurs   : in out Boolean;
       Choice       : Boolean;
       Writer       : in out Writers.Writer);
 
@@ -152,8 +152,14 @@ package XSD_To_Ada.Encoder is
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
       Table  : Types_Table_Type_Array)
       return Boolean;
+   --  This function returns True if Type_D has Top Level Types.
+
+   function Has_Top_Level_Type_Used
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Table  : Types_Table_Type_Array)
+      return Boolean;
    --  This function returns True if Type_D has Top Level Types and
-   --  it was not created.
+   --  it was not created/used.
 
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
    procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
@@ -186,7 +192,7 @@ package XSD_To_Ada.Encoder is
       Spec_Writer : in out XSD_To_Ada.Writers.Writer;
       Level       : Positive := 1);
 
-   procedure Print_Type_Title_XX
+   procedure Print_Type_Title
     (XS_Term     : XML.Schema.Objects.Terms.XS_Term;
      Indent      : Wide_Wide_String;
      Writer      : in out XSD_To_Ada.Writers.Writer;
