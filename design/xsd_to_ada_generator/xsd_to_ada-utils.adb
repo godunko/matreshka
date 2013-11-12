@@ -440,10 +440,7 @@ package body XSD_To_Ada.Utils is
           (Object_Type => XML.Schema.Complex_Type,
            Namespace   => Namespace);
 
-      Payload_Writer      : XSD_To_Ada.Writers.Writer;
-      Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
-
-      Current_Out_File : Ada.Wide_Wide_Text_IO.File_Type;
+      Payload_Writer : XSD_To_Ada.Writers.Writer;
 
    begin
       for J in 1 .. Complex_Types.Length loop
@@ -478,14 +475,6 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Payload_Writer, "end Payloads;");
 
---        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.ads");
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Payload_Type_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
 
