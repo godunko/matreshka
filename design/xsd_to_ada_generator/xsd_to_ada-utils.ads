@@ -171,10 +171,9 @@ package XSD_To_Ada.Utils is
      Is_Min_Occur : Boolean := False);
 
    procedure Print_Type_Title
-    (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Mapping     : XSD_To_Ada.Mappings.Mapping;
-     Writer      : in out XSD_To_Ada.Writers.Writer;
-     Type_Writer : in out XSD_To_Ada.Writers.Writer);
+    (Type_D  : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Mapping : XSD_To_Ada.Mappings.Mapping;
+     Writer  : in out XSD_To_Ada.Writers.Writer);
 
    function Has_Element_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)

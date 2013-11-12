@@ -470,10 +470,7 @@ package body XSD_To_Ada.Utils is
 --             if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateCloseOrder"
          then
             Print_Type_Title
-             (XS_Object.To_Type_Definition,
-              Mapping,
-              Payload_Writer,
-              Payload_Type_Writer);
+             (XS_Object.To_Type_Definition, Mapping, Payload_Writer);
          end if;
       end loop;
 
@@ -805,10 +802,7 @@ package body XSD_To_Ada.Utils is
    begin
       if Has_Top_Level_Type (Type_D, Table) then
          XSD_To_Ada.Utils.Print_Type_Title
-          (Type_D,
-           Mapping,
-           Writer_types,
-           Writer_types);
+          (Type_D, Mapping, Writer_Types);
       end if;
 
       if Min_Occurs
@@ -1150,10 +1144,9 @@ package body XSD_To_Ada.Utils is
    ----------------------
 
    procedure Print_Type_Title
-    (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Mapping     : XSD_To_Ada.Mappings.Mapping;
-     Writer      : in out XSD_To_Ada.Writers.Writer;
-     Type_Writer : in out XSD_To_Ada.Writers.Writer)
+    (Type_D  : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Mapping : XSD_To_Ada.Mappings.Mapping;
+     Writer  : in out XSD_To_Ada.Writers.Writer)
    is
       use type League.Strings.Universal_String;
 
@@ -1596,7 +1589,7 @@ package body XSD_To_Ada.Utils is
 
                if Has_Top_Level_Type (Type_D, Table) then
                   XSD_To_Ada.Utils.Print_Type_Title
-                   (Type_D, Mapping, Writer_types, Writer_types);
+                   (Type_D, Mapping, Writer_Types);
                end if;
 
                Name_Kind.Append
