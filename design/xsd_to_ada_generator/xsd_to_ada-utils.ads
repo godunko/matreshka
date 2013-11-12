@@ -165,7 +165,8 @@ package XSD_To_Ada.Utils is
      Is_Record    : Boolean := False;
      Map          : XSD_To_Ada.Mappings.Mapping'Class;
      Table        : in out Types_Table_Type_Array;
-     Is_Max_Occur : Boolean := False);
+     Is_Max_Occur : Boolean := False;
+     Is_Min_Occur : Boolean := False);
 
    procedure Print_Type_Title
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;

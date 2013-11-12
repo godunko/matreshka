@@ -446,9 +446,9 @@ package body XSD_To_Ada.Utils is
 
       Put_Header (Payload_Writer);
 
-      Create_Package_Name (Payload_Writer);
+        Create_Package_Name (Payload_Writer);
 
-      Create_Enumeration_Simple_Type (Model, Payload_Writer);
+        Create_Enumeration_Simple_Type (Model, Payload_Writer);
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
@@ -459,7 +459,7 @@ package body XSD_To_Ada.Utils is
          end loop;
 
          if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyOrderBase"
+--           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase"
 --             if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateCloseOrder"
          then
             Print_Type_Title
@@ -472,11 +472,11 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Payload_Writer, "end Payloads;");
 
---        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.ads");
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
+      Ada.Wide_Wide_Text_IO.Create
+        (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.ads");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
       Ada.Wide_Wide_Text_IO.Put_Line
        (Payload_Type_Writer.Text.To_Wide_Wide_String);
@@ -1275,7 +1275,8 @@ package body XSD_To_Ada.Utils is
      Is_Record    : Boolean := False;
      Map          : XSD_To_Ada.Mappings.Mapping'Class;
      Table        : in out Types_Table_Type_Array;
-     Is_Max_Occur : Boolean := False)
+     Is_Max_Occur : Boolean := False;
+     Is_Min_Occur : Boolean := False)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -1326,7 +1327,14 @@ package body XSD_To_Ada.Utils is
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
          Type_Name      : League.Strings.Universal_String;
 
+         Optional_Type : League.Strings.Universal_String :=
+           League.Strings.Empty_Universal_String;
       begin
+
+         if Is_Min_Occur then
+            Optional_Type :=
+              League.Strings.To_Universal_String ("Payloads.Optional_");
+         end if;
 
          Now_Term_Level := Now_Term_Level + 1;
 
@@ -1362,13 +1370,13 @@ package body XSD_To_Ada.Utils is
                Choice := True;
 
                if Is_Max_Occur then
-
                   Writers.N
                     (Writer,
                      Gen_Type_Line
                        ("      "
                         & XSD_To_Ada.Utils.Add_Separator (Name)
                         & " : "
+                        & Optional_Type.To_Wide_Wide_String
                         & XSD_To_Ada.Utils.Add_Separator (Name)
                         & "_Case", 8));
 
@@ -1386,8 +1394,19 @@ package body XSD_To_Ada.Utils is
                        ("      "
                         & XSD_To_Ada.Utils.Add_Separator (Name)
                         & " : "
+                        & Optional_Type.To_Wide_Wide_String
                         & XSD_To_Ada.Utils.Add_Separator (Name)
                         & "_Case;", 8));
+               end if;
+
+               if Is_Min_Occur then
+                  Writers.P
+                    (Vector_Package,
+                     "   type Optional_" & Add_Separator (Name) & "_Case is record"
+                     & LF
+                     & "     Is_Set : Boolean := False;" & LF
+                     & "     Value  : Payloads." & Add_Separator (Name) & "_Case;" & LF
+                     & "   end record;" & LF);
                end if;
 
                Name_Kind.Append
@@ -1531,7 +1550,9 @@ package body XSD_To_Ada.Utils is
                      Name & '_' & Decl.Get_Name,
                      False,
                      Map,
-                     Table, Max_Occurs);
+                     Table,
+                     Max_Occurs,
+                     Min_Occurs);
 
                   Max_Occurs := False;
                else
@@ -1540,7 +1561,9 @@ package body XSD_To_Ada.Utils is
                      Name & "_" & Decl.Get_Name,
                      False,
                      Map,
-                     Table);
+                     Table,
+                     Max_Occurs,
+                     Min_Occurs);
                end if;
 
                Add_Anonym := False;
