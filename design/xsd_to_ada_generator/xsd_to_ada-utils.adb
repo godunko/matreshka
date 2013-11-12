@@ -178,7 +178,9 @@ package body XSD_To_Ada.Utils is
                Decl := Element_Declarations.Item (J).To_Element_Declaration;
                Type_D := Decl.Get_Type_Definition;
 
-               Name := Find_Type (Type_D.Get_Name, Mapping, False, False);
+               Name :=
+                 Mapping.Ada_Type_Qualified_Name
+                  (Type_D.Get_Name, False, False);
 
                if Element_Declarations.Item (J).Get_Name.Length > 10 then
                   if League.Strings.Slice
@@ -498,7 +500,7 @@ package body XSD_To_Ada.Utils is
          then
             Added_Vector_Type := False;
 
-            if not Is_Type_In_Map (Type_D_Name, Mapping) then
+            if not Mapping.Is_Type_In_Map (Type_D_Name) then
                Writers.N (Writer, "s");
             end if;
 
@@ -528,55 +530,13 @@ package body XSD_To_Ada.Utils is
 
          Is_Vector_Type.Append (Type_D_Name);
 
-         if not Is_Type_In_Map (Type_D_Name, Mapping) then
+         if not Mapping.Is_Type_In_Map (Type_D_Name) then
             Writers.N (Writer, "s");
          end if;
       end if;
 
       Writers.P (Writer, ";");
    end Create_Vector_Package;
-
-   ---------------
-   -- Find_Type --
-   ---------------
-
-   function Find_Type
-    (Type_D_Name  : League.Strings.Universal_String;
-     Map          : XSD_To_Ada.Mappings.Mapping;
-     Min_Occur    : Boolean;
-     Max_Occur    : Boolean) return League.Strings.Universal_String is
-   begin
-      for j in 1 .. Map.Map_Vector.Length loop
-         if Type_D_Name.To_UTF_8_String =
-           Map.Map_Vector.Element (J).To_UTF_8_String
-         then
-            return Map.Ada_Vector.Element (J);
-         end if;
-      end loop;
-
-      return League.Strings.To_Universal_String
-        ("Payloads."
-         & XSD_To_Ada.Utils.Add_Separator (Type_D_Name));
-   end Find_Type;
-
-   --------------------
-   -- Is_Type_In_Map --
-   --------------------
-
-   function Is_Type_In_Map
-    (Type_D_Name : League.Strings.Universal_String;
-     Map         : XSD_To_Ada.Mappings.Mapping) return Boolean is
-   begin
-      for j in 1 .. Map.Map_Vector.Length loop
-         if Type_D_Name.To_UTF_8_String =
-           Map.Map_Vector.Element (J).To_UTF_8_String
-         then
-            return True;
-         end if;
-      end loop;
-
-      return False;
-   end Is_Type_In_Map;
 
    function Is_Type_In_Optional_Vector
      (Type_Name : League.Strings.Universal_String)
@@ -1060,7 +1020,8 @@ package body XSD_To_Ada.Utils is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            Type_Name := Find_Type (Type_D.Get_Name, Map, False, False);
+            Type_Name :=
+              Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False);
 
             case Type_D.Get_Type_Category is
                when XML.Schema.Complex_Type | XML.Schema.Simple_Type =>
@@ -1543,7 +1504,8 @@ package body XSD_To_Ada.Utils is
             Type_D := Decl.Get_Type_Definition;
 
             Type_Name :=
-              Find_Type (Type_D.Get_Name, Map, Min_Occurs, Max_Occurs);
+              Map.Ada_Type_Qualified_Name
+               (Type_D.Get_Name, Min_Occurs, Max_Occurs);
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
 

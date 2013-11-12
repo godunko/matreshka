@@ -204,15 +204,6 @@ package XSD_To_Ada.Encoder is
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
       return Boolean;
 
-   function Find_Type
-    (Type_D_Name : League.Strings.Universal_String;
-     Map         : XSD_To_Ada.Mappings.Mapping'Class)
-       return League.Strings.Universal_String;
-
-   function Is_Type_In_Map
-    (Type_D_Name : League.Strings.Universal_String;
-     Map         : XSD_To_Ada.Mappings.Mapping'Class) return Boolean;
-
    function Is_Type_In_Optional_Vector
      (Type_Name : League.Strings.Universal_String)
      return Boolean;

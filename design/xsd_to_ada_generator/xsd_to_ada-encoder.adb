@@ -169,7 +169,8 @@ package body XSD_To_Ada.Encoder is
                Decl := Element_Declarations.Item (J).To_Element_Declaration;
                Type_D := Decl.Get_Type_Definition;
 
-               Name := Find_Type (Type_D.Get_Name, Map);
+               Name :=
+                 Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False);
 
                if Element_Declarations.Item (J).Get_Name.Length > 10
                then
@@ -690,7 +691,7 @@ package body XSD_To_Ada.Encoder is
 
          Is_Vector_Type.Append (Type_D_Name);
 
-         if not Is_Type_In_Map (Type_D_Name, Map) then
+         if not Map.Is_Type_In_Map (Type_D_Name) then
             Writers.N (Writer, "s");
          end if;
 
@@ -698,46 +699,6 @@ package body XSD_To_Ada.Encoder is
 
       Writers.P (Writer, ";");
    end Create_Vector_Package;
-
-   ---------------
-   -- Find_Type --
-   ---------------
-
-   function Find_Type
-    (Type_D_Name : League.Strings.Universal_String;
-     Map         : XSD_To_Ada.Mappings.Mapping'Class)
-       return League.Strings.Universal_String is
-   begin
-      for j in 1 .. Map.Map_Vector.Length loop
-         if Type_D_Name.To_UTF_8_String =
-           Map.Map_Vector.Element (J).To_UTF_8_String
-         then
-            return Map.Ada_Vector.Element (J);
-         end if;
-      end loop;
-
-      return League.Strings.To_Universal_String
-        ("Payloads." & XSD_To_Ada.Encoder.Add_Separator (Type_D_Name));
-   end Find_Type;
-
-   --------------------
-   -- Is_Type_In_Map --
-   --------------------
-
-   function Is_Type_In_Map
-    (Type_D_Name : League.Strings.Universal_String;
-     Map         : XSD_To_Ada.Mappings.Mapping'Class) return Boolean is
-   begin
-      for j in 1 .. Map.Map_Vector.Length loop
-         if Type_D_Name.To_UTF_8_String =
-           Map.Map_Vector.Element (J).To_UTF_8_String
-         then
-            return True;
-         end if;
-      end loop;
-
-      return False;
-   end Is_Type_In_Map;
 
    function Is_Type_In_Optional_Vector
      (Type_Name : League.Strings.Universal_String)
@@ -1435,7 +1396,9 @@ package body XSD_To_Ada.Encoder is
             "      Writer.Characters" & LF
             & "        (League.Strings.To_Universal_String" & LF
             & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
-            & "              (" & Find_Type (Type_D.Get_Name, Map)
+            & "              ("
+            & Map.Ada_Type_Qualified_Name
+               (Type_D.Get_Name, False, False).To_Wide_Wide_String
             & "'Wide_Wide_Image" & LF
             & Gen_Type_Line
               ("(Data."
@@ -1632,7 +1595,8 @@ package body XSD_To_Ada.Encoder is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            Type_Name := Find_Type (Type_D.Get_Name, Map);
+            Type_Name :=
+              Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False);
 
             case Type_D.Get_Type_Category is
                when XML.Schema.Complex_Type | XML.Schema.Simple_Type =>
@@ -1872,7 +1836,9 @@ package body XSD_To_Ada.Encoder is
       Type_D := Decl.Get_Type_Definition;
 
       if not Optional then
-         Mapping_Name := Find_Type (Type_D.Get_Name, Map);
+         Mapping_Name :=
+           Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False);
+
       else
          Mapping_Name :=
            League.Strings.To_Universal_String
@@ -2158,7 +2124,8 @@ package body XSD_To_Ada.Encoder is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            Type_Name := Find_Type (Type_D.Get_Name, Map);
+            Type_Name :=
+              Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False);
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
 

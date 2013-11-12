@@ -41,14 +41,40 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Hashed_Maps;
 
-with League.String_Vectors;
+with League.Strings.Hash;
 
 package XSD_To_Ada.Mappings is
 
-   type Mapping is abstract tagged record
-      Map_Vector : League.String_Vectors.Universal_String_Vector;
-      Ada_Vector : League.String_Vectors.Universal_String_Vector;
+   type Mapping is tagged private;
+
+   function Ada_Type_Qualified_Name
+    (Self          : Mapping'Class;
+     XSD_Type_Name : League.Strings.Universal_String;
+     Min_Occur     : Boolean;
+     Max_Occur     : Boolean) return League.Strings.Universal_String;
+
+   function Is_Type_In_Map
+    (Self          : Mapping'Class;
+     XSD_Type_Name : League.Strings.Universal_String) return Boolean;
+   --  XXX Must be removed or renamed.
+
+private
+
+   type Ada_Mapping is record
+      Ada_Name : League.Strings.Universal_String;
+   end record;
+
+   package Mappings is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Ada_Mapping,
+           League.Strings.Hash,
+           League.Strings."=");
+
+   type Mapping is tagged record
+      Mapping : Mappings.Map;
    end record;
 
 end XSD_To_Ada.Mappings;

@@ -41,93 +41,39 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
+with XSD_To_Ada.Utils;
 
-package body XSD_To_Ada.Mappings.XML is
+package body XSD_To_Ada.Mappings is
 
-   Map_Tag : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("map");
-   Ada_Tag : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("ada");
+   -----------------------------
+   -- Ada_Type_Qualified_Name --
+   -----------------------------
 
-   Type_Attribute : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("type");
-
-   -----------------
-   -- End_Element --
-   -----------------
-
-   overriding procedure End_Element
-    (Self           : in out Mapping_XML;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean) is
+   function Ada_Type_Qualified_Name
+    (Self          : Mapping'Class;
+     XSD_Type_Name : League.Strings.Universal_String;
+     Min_Occur     : Boolean;
+     Max_Occur     : Boolean) return League.Strings.Universal_String is
    begin
-      null;
-   end End_Element;
+      if Self.Mapping.Contains (XSD_Type_Name) then
+         return Self.Mapping.Element (XSD_Type_Name).Ada_Name;
 
-   ------------------
-   -- Error_String --
-   ------------------
-
-   overriding function Error_String
-    (Self : Mapping_XML) return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Error_String;
-
-   ------------------
-   -- Read_Mapping --
-   ------------------
-
-   function Read_Mapping
-    (File_Name : League.Strings.Universal_String)
-       return XSD_To_Ada.Mappings.XML.Mapping_XML
-   is
-      Source  : aliased
-        Standard.XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Reader  : aliased Standard.XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      Handler : aliased XSD_To_Ada.Mappings.XML.Mapping_XML;
-
-   begin
-      Reader.Set_Content_Handler (Handler'Unchecked_Access);
-      Source.Open_By_File_Name (File_Name);
-      Reader.Parse (Source'Access);
-
-      return Handler;
-   end Read_Mapping;
-
-   -------------------
-   -- Start_Element --
-   -------------------
-
-   overriding procedure Start_Element
-    (Self           : in out Mapping_XML;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : Standard.XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean)
-   is
-      use type League.Strings.Universal_String;
-
-   begin
-      if Qualified_Name = Map_Tag then
-         Self.Current := Attributes.Value (Type_Attribute);
-
-      elsif Qualified_Name = Ada_Tag then
-         if Self.Mapping.Contains (Self.Current) then
-            raise Constraint_Error
-              with "Duplicate mapping for '"
-                     & Self.Current.To_UTF_8_String & ''';
-
-         else
-            Self.Mapping.Insert
-             (Self.Current, (Ada_Name => Attributes.Value (Type_Attribute)));
-         end if;
+      else
+         return
+           League.Strings.To_Universal_String
+            ("Payloads." & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name));
       end if;
-   end Start_Element;
+   end Ada_Type_Qualified_Name;
 
-end XSD_To_Ada.Mappings.XML;
+   --------------------
+   -- Is_Type_In_Map --
+   --------------------
+
+   function Is_Type_In_Map
+    (Self          : Mapping'Class;
+     XSD_Type_Name : League.Strings.Universal_String) return Boolean is
+   begin
+      return Self.Mapping.Contains (XSD_Type_Name);
+   end Is_Type_In_Map;
+
+end XSD_To_Ada.Mappings;
