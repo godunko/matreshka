@@ -44,6 +44,8 @@
 
 package body Generator.Units is
 
+   use type League.Strings.Universal_String;
+
    --------------
    -- Finalize --
    --------------
@@ -80,12 +82,10 @@ package body Generator.Units is
       --  Output code.
 
       for J in Self.Sections'Range loop
-         if not Self.Sections (J).Is_Empty then
-            for K in 1 .. Self.Sections (J).Length loop
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (File, Self.Sections (J).Element (K).To_Wide_Wide_String);
-            end loop;
-         end if;
+         for K in 1 .. Self.Sections (J).Lines.Length loop
+            Ada.Wide_Wide_Text_IO.Put_Line
+             (File, Self.Sections (J).Lines (K).To_Wide_Wide_String);
+         end loop;
       end loop;
    end Internal_Save;
 
@@ -94,17 +94,38 @@ package body Generator.Units is
    --------------
 
    procedure New_Line (Self : in out Abstract_Unit'Class) is
+      S : Section renames Self.Sections (Self.Current);
+
    begin
       Self.Is_Saved := False;
 
-      if Self.Sections (Self.Current).Is_Empty then
-         Self.Sections (Self.Current).Append
-          (League.Strings.Empty_Universal_String);
-      end if;
+      if S.Complete then
+         S.Lines.Append (League.Strings.Empty_Universal_String);
 
-      Self.Sections (Self.Current).Append
-       (League.Strings.Empty_Universal_String);
+      else
+         S.Complete := True;
+      end if;
    end New_Line;
+
+   ---------
+   -- Put --
+   ---------
+
+   procedure Put
+    (Self : in out Abstract_Unit'Class;
+     Item : League.Strings.Universal_String)
+   is
+      S : Section renames Self.Sections (Self.Current);
+
+   begin
+      if S.Complete then
+         S.Complete := False;
+         S.Lines.Append (Item);
+
+      else
+         S.Lines.Replace (S.Lines.Length, S.Lines (S.Lines.Length) & Item);
+      end if;
+   end Put;
 
    --------------
    -- Put_Line --
@@ -114,24 +135,18 @@ package body Generator.Units is
     (Self : in out Abstract_Unit'Class;
      Item : League.Strings.Universal_String)
    is
-      use type League.Strings.Universal_String;
+      S : Section renames Self.Sections (Self.Current);
 
    begin
       Self.Is_Saved := False;
 
-      if Self.Sections (Self.Current).Is_Empty then
-         Self.Sections (Self.Current).Append (Item);
+      if S.Complete then
+         S.Lines.Append (Item);
 
       else
-         Self.Sections (Self.Current).Replace
-          (Self.Sections (Self.Current).Length,
-           Self.Sections (Self.Current).Element
-            (Self.Sections (Self.Current).Length)
-             & Item);
+         S.Lines.Replace (S.Lines.Length, S.Lines (S.Lines.Length) & Item);
+         S.Complete := True;
       end if;
-
-      Self.Sections (Self.Current).Append
-       (League.Strings.Empty_Universal_String);
    end Put_Line;
 
    -----------------

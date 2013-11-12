@@ -44,6 +44,9 @@
 
 package body Generator.Units.Ada_Units is
 
+   procedure Construct_Unit_Context_Clauses (Self : in out Ada_Unit'Class);
+   --  Constructs unit's context clauses section.
+
    ----------------------
    -- Add_Private_With --
    ----------------------
@@ -66,6 +69,31 @@ package body Generator.Units.Ada_Units is
       Self.Contexts.Include (Name);
    end Add_With;
 
+   ------------------------------------
+   -- Construct_Unit_Context_Clauses --
+   ------------------------------------
+
+   procedure Construct_Unit_Context_Clauses (Self : in out Ada_Unit'Class) is
+      use type League.Strings.Universal_String;
+
+   begin
+      Self.Set_Section (Unit_Context_Clauses_Section);
+
+      for Unit of Self.Contexts loop
+         Self.Put_Line ("with " & Unit & ';');
+      end loop;
+   end Construct_Unit_Context_Clauses;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   overriding procedure Finalize (Self : in out Ada_Unit) is
+   begin
+      Self.Construct_Unit_Context_Clauses;
+      Abstract_Unit (Self).Finalize;
+   end Finalize;
+
    ----------------
    -- Initialize --
    ----------------
@@ -80,7 +108,8 @@ package body Generator.Units.Ada_Units is
       Self.Is_Saved := False;
 
       for J in Self.Sections'Range loop
-         Self.Sections (J).Clear;
+         Self.Sections (J).Lines.Clear;
+         Self.Sections (J).Complete := True;
       end loop;
    end Initialize;
 
@@ -90,14 +119,7 @@ package body Generator.Units.Ada_Units is
 
    overriding procedure Save (Self : in out Ada_Unit) is
    begin
-      --  Output context clauses.
-
-      for Unit of Self.Contexts loop
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Output,
-           "with " & Unit.To_Wide_Wide_String & ';');
-      end loop;
-
+      Self.Construct_Unit_Context_Clauses;
       Self.Internal_Save (Ada.Wide_Wide_Text_IO.Standard_Output);
       Self.Is_Saved := True;
    end Save;

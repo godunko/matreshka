@@ -63,11 +63,20 @@ package Generator.Units is
     (Self : in out Abstract_Unit'Class;
      Item : League.Strings.Universal_String);
 
+   procedure Put
+    (Self : in out Abstract_Unit'Class;
+     Item : League.Strings.Universal_String);
+
 private
 
-   type Section_Array is
-     array (Positive range 1 .. 10)
-       of League.String_Vectors.Universal_String_Vector;
+   type Section is record
+      Lines    : League.String_Vectors.Universal_String_Vector;
+      Complete : Boolean := True;
+      --  True means that last line was completed and new element must be added
+      --  to Lines next time.
+   end record;
+
+   type Section_Array is array (Positive range 1 .. 10) of Section;
 
    type Abstract_Unit is
      abstract limited new Ada.Finalization.Limited_Controlled with record

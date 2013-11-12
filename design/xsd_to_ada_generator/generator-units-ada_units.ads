@@ -48,6 +48,10 @@ package Generator.Units.Ada_Units is
 
    type Ada_Unit is new Generator.Units.Abstract_Unit with private;
 
+   Unit_Header_Section          : constant Positive := 1;
+   Unit_Context_Clauses_Section : constant Positive := 2;
+   Unit_Declaration_Section     : constant Positive := 3;
+
    procedure Initialize
     (Self    : in out Ada_Unit'Class;
      Name    : League.Strings.Universal_String;
@@ -79,5 +83,7 @@ private
    end record;
 
    overriding procedure Save (Self : in out Ada_Unit);
+
+   overriding procedure Finalize (Self : in out Ada_Unit);
 
 end Generator.Units.Ada_Units;
