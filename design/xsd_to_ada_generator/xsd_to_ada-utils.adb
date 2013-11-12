@@ -450,9 +450,9 @@ package body XSD_To_Ada.Utils is
 
       Put_Header (Payload_Writer);
 
-        Create_Package_Name (Payload_Writer);
+      Create_Package_Name (Payload_Writer);
 
-        Create_Enumeration_Simple_Type (Model, Payload_Writer);
+      Create_Enumeration_Simple_Type (Model, Payload_Writer);
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
