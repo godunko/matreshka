@@ -47,7 +47,7 @@ with XML.Schema.Models;
 with XML.Schema.Type_Definitions;
 with XML.Schema.Objects.Terms;
 
-with XSD_To_Ada.Mappings.XML;
+with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
 
 with League.Strings;
@@ -98,7 +98,7 @@ package XSD_To_Ada.Utils is
 
    procedure Create_Element_Type
     (Model  : XML.Schema.Models.XS_Model;
-     Mapping : XSD_To_Ada.Mappings.Mapping'Class;
+     Mapping : XSD_To_Ada.Mappings.Mapping;
      Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Create_Simple_Type
@@ -111,11 +111,11 @@ package XSD_To_Ada.Utils is
 
    procedure Create_Complex_Type
     (Model   : XML.Schema.Models.XS_Model;
-     Mapping : XSD_To_Ada.Mappings.XML.Mapping_XML);
+     Mapping : XSD_To_Ada.Mappings.Mapping);
 
    procedure Create_Vector_Package
     (Type_D_Name  : League.Strings.Universal_String;
-     Mapping      : XSD_To_Ada.Mappings.Mapping'Class;
+     Mapping      : XSD_To_Ada.Mappings.Mapping;
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer);
 
@@ -156,7 +156,7 @@ package XSD_To_Ada.Utils is
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
-     Map          : XSD_To_Ada.Mappings.Mapping'Class);
+     Map          : XSD_To_Ada.Mappings.Mapping);
 
    procedure Print_Type_Definition
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -165,14 +165,14 @@ package XSD_To_Ada.Utils is
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
      Is_Record    : Boolean := False;
-     Mapping      : XSD_To_Ada.Mappings.Mapping'Class;
+     Mapping      : XSD_To_Ada.Mappings.Mapping;
      Table        : in out Types_Table_Type_Array;
      Is_Max_Occur : Boolean := False;
      Is_Min_Occur : Boolean := False);
 
    procedure Print_Type_Title
     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Mapping     : XSD_To_Ada.Mappings.Mapping'Class;
+     Mapping     : XSD_To_Ada.Mappings.Mapping;
      Writer      : in out XSD_To_Ada.Writers.Writer;
      Type_Writer : in out XSD_To_Ada.Writers.Writer);
 
@@ -182,14 +182,14 @@ package XSD_To_Ada.Utils is
 
    function Find_Type
     (Type_D_Name : League.Strings.Universal_String;
-     Map         : XSD_To_Ada.Mappings.Mapping'Class;
+     Map         : XSD_To_Ada.Mappings.Mapping;
      Min_Occur   : Boolean;
      Max_Occur   : Boolean)
        return League.Strings.Universal_String;
 
    function Is_Type_In_Map
     (Type_D_Name : League.Strings.Universal_String;
-     Map         : XSD_To_Ada.Mappings.Mapping'Class) return Boolean;
+     Map         : XSD_To_Ada.Mappings.Mapping) return Boolean;
 
    function Is_Type_In_Optional_Vector
      (Type_Name : League.Strings.Universal_String)
