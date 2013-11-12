@@ -59,7 +59,7 @@ private
 
    type Mapping_XML is new XSD_To_Ada.Mappings.Mapping
      and Standard.XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Last_Text : League.Strings.Universal_String;
+      null;
    end record;
 
    overriding procedure Start_Element
