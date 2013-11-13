@@ -822,78 +822,6 @@ package body XSD_To_Ada.Encoder is
       end if;
    end Gen_Line;
 
-   -------------------
-   -- Gen_Type_Line --
-   -------------------
-
---     function Gen_Type_Line
---       (Str : Wide_Wide_String := "";
---        Tab : Natural := 0)
---        return Wide_Wide_String
---     is
---        use Ada.Strings.Wide_Wide_Unbounded;
---        use Ada.Strings.Wide_Wide_Maps;
---
---        US      : League.Strings.Universal_String
---          := League.Strings.To_Universal_String (Str);
---        US_New : League.Strings.Universal_String;
---
---        Char_Count  : Natural := US.Length + Tab;
---        Used_Char_Count : Natural := 0;
---        Tab_Count : Natural := Tab;
---
---        Index : Natural := 0;
---     begin
---
---        for J in 1 .. Tab_Count loop
---           US_New.Append (" ");
---           Used_Char_Count := Used_Char_Count + 1;
---           Char_Count := Char_Count - 1;
---        end loop;
---
---        for J in 1 .. US.Length loop
---           if Char_Count + Used_Char_Count > 78 then
---              if (US.Element (J).To_Wide_Wide_Character = ':'
---                  and then J /= 1)
---                or (US.Element (J).To_Wide_Wide_Character = '('
---                    and then J /= 1)
---                or (J + 4 < US.Length
---                    and then US.Element (J).To_Wide_Wide_Character = ' '
---                    and then US.Element (J + 1).To_Wide_Wide_Character = 'i'
---                    and then US.Element (J + 2).To_Wide_Wide_Character = 's'
---                    and then US.Element (J + 3).To_Wide_Wide_Character = ' ')
---                or (US.Element (J).To_Wide_Wide_Character = ' '
---                    and then US.Element (J + 1).To_Wide_Wide_Character = '/'
---                    and then US.Element (J + 2).To_Wide_Wide_Character = '='
---                    and then US.Element (J + 3).To_Wide_Wide_Character = ' ')
---                or (J /= 1
---                    and then J + 1 < US.Length
---                    and then US.Element (J).To_Wide_Wide_Character = '.'
---                    and then US.Element (J + 1).To_Wide_Wide_Character /= '.')
---              then
---
---                 Tab_Count := Tab_Count + 2;
---                 Char_Count := US.Length - J;
---                 Used_Char_Count := Tab_Count;
---
---                 US_New.Append (LF & "--  LF");
---
---                 for Count in 1 .. Tab_Count loop
---                    US_New.Append (" ");
---                 end loop;
---
---                 US_New.Append (US.Element (J));
---              else
---                 US_New.Append (US.Element (J));
---              end if;
---           else
---              US_New.Append (US.Element (J));
---           end if;
---        end loop;
---
---        return US_New.To_Wide_Wide_String;
---     end Gen_Type_Line;
-
    function Gen_Type_Line
      (Str : Wide_Wide_String := "";
       Tab : Natural := 0)
@@ -2060,7 +1988,6 @@ package body XSD_To_Ada.Encoder is
                    (Add_Separator (Name) & ".");
 
                if Top_Max_Occur then
-
                   if Optional then
                      Writer.P
                        (Gen_Type_Line
@@ -2159,13 +2086,14 @@ package body XSD_To_Ada.Encoder is
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
 
-               if Max_Occurs then
---                    Writer.P
---                      (Gen_Type_Line
---                         ("for Index in 1 .. Natural (Data."
---                          & Add_Separator (Name & "_" & XS_Term.Get_Name)
---                          & ".Length) loop", 5));
+               if Min_Occurs then
+                  Writer.P
+                    ("   if Data."
+                     & Add_Separator (Name & "_" & XS_Term.Get_Name)
+                     & ".Is_Set then");
+               end if;
 
+               if Max_Occurs then
                   if Min_Occurs then
                      Writer.P
                        (Gen_Type_Line
@@ -2208,6 +2136,10 @@ package body XSD_To_Ada.Encoder is
 
                if Max_Occurs then
                   Writer.P ("     end loop;" & LF);
+               end if;
+
+               if Min_Occurs then
+                  Writer.P ("   end if;");
                end if;
 
                Add_Anonym := False;
