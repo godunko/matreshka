@@ -473,8 +473,6 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Payload_Writer, "end Payloads;");
 
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Payload_Type_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
 
@@ -1292,8 +1290,6 @@ package body XSD_To_Ada.Utils is
          Optional_Type : League.Strings.Universal_String :=
            League.Strings.Empty_Universal_String;
       begin
-
-         Ada.Text_IO.Put_Line ("Payloads.Optional_");
 
          if Is_Min_Occur then
             Optional_Type :=
