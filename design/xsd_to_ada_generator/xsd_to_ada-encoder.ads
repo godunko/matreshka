@@ -143,6 +143,7 @@ package XSD_To_Ada.Encoder is
      Min_Occurs       : in out Boolean;
      Max_Occurs       : in out Boolean;
      Top_Max_Occurs   : Boolean;
+     Top_Min_Occurs   : Boolean;
      Choice           : Boolean;
      Writer           : in out Writers.Writer);
 
