@@ -41,17 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Indefinite_Vectors;
+with League.Strings;
+with League.String_Vectors;
 
 with XML.Schema.Models;
+with XML.Schema.Terms;
 with XML.Schema.Type_Definitions;
-with XML.Schema.Objects.Terms;
 
 with XSD_To_Ada.Mappings.XML;
 with XSD_To_Ada.Writers;
-
-with League.Strings;
-with League.String_Vectors;
 
 package XSD_To_Ada.Encoder is
 
@@ -135,18 +133,18 @@ package XSD_To_Ada.Encoder is
       Offset : Positive := 3);
 
    procedure Generate_Simple_Type
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
-      Type_Name    : League.Strings.Universal_String;
-      Name         : League.Strings.Universal_String;
-      Full_Anonym_Name : League.Strings.Universal_String;
-      Base_Choice_Name : League.Strings.Universal_String;
-      Base_Name    : League.Strings.Universal_String;
-      Min_Occurs   : in out Boolean;
-      Max_Occurs   : in out Boolean;
-      Top_Max_Occurs : Boolean;
-      Choice       : Boolean;
-      Writer       : in out Writers.Writer);
+    (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
+     XS_Term          : XML.Schema.Terms.XS_Term;
+     Type_Name        : League.Strings.Universal_String;
+     Name             : League.Strings.Universal_String;
+     Full_Anonym_Name : League.Strings.Universal_String;
+     Base_Choice_Name : League.Strings.Universal_String;
+     Base_Name        : League.Strings.Universal_String;
+     Min_Occurs       : in out Boolean;
+     Max_Occurs       : in out Boolean;
+     Top_Max_Occurs   : Boolean;
+     Choice           : Boolean;
+     Writer           : in out Writers.Writer);
 
    function Has_Top_Level_Type
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -193,7 +191,7 @@ package XSD_To_Ada.Encoder is
       Level       : Positive := 1);
 
    procedure Print_Type_Title
-    (XS_Term     : XML.Schema.Objects.Terms.XS_Term;
+    (XS_Term     : XML.Schema.Terms.XS_Term;
      Indent      : Wide_Wide_String;
      Writer      : in out XSD_To_Ada.Writers.Writer;
      Spec_Writer : in out XSD_To_Ada.Writers.Writer;
