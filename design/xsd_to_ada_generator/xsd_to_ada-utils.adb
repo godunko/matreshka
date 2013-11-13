@@ -460,6 +460,7 @@ package body XSD_To_Ada.Utils is
          end loop;
 
          if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
+--           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyOrderBase"
 --           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase"
 --             if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateCloseOrder"
          then
@@ -472,6 +473,8 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Payload_Writer, "end Payloads;");
 
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Payload_Type_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
 
@@ -1290,6 +1293,8 @@ package body XSD_To_Ada.Utils is
            League.Strings.Empty_Universal_String;
       begin
 
+         Ada.Text_IO.Put_Line ("Payloads.Optional_");
+
          if Is_Min_Occur then
             Optional_Type :=
               League.Strings.To_Universal_String ("Payloads.Optional_");
@@ -1395,38 +1400,66 @@ package body XSD_To_Ada.Utils is
             if Anonyn_Vector (Now_Term_Level - 1).Term_State
               and not Choice
             then
+               declare
+                  Vector_Symbol : League.Strings.Universal_String :=
+                    League.Strings.Empty_Universal_String;
+               begin
+                  if Is_Max_Occur then
+                     Vector_Symbol := League.Strings.To_Universal_String ("s");
+                  end if;
 
-               Writers.P
-                 (Writer,
-                  Gen_Type_Line
-                    ("      "
+                  Writers.P
+                    (Anonym_Kind,
+                     "   type "
                      & XSD_To_Ada.Utils.Add_Separator (Name)
-                     & " : "
-                     & XSD_To_Ada.Utils.Add_Separator (Name)
-                     & "_Anonyms;", 8));
+                     & "_Anonym is record");
 
-               Anonym_Vector.Append
-                 ("   package "
-                  & XSD_To_Ada.Utils.Add_Separator (Name)
-                  & "_Anonyms_Vectors is"
-                  & Wide_Wide_Character'Val (10)
-                  & "     new Ada.Containers.Indefinite_Vectors"
-                  & Wide_Wide_Character'Val (10)
-                  & "        (Positive, "
-                  & XSD_To_Ada.Utils.Add_Separator (Name) & "_Anonym);"
-                  & Wide_Wide_Character'Val (10)
-                  & Wide_Wide_Character'Val (10)
-                  & Gen_Type_Line
-                    ("   subtype " & XSD_To_Ada.Utils.Add_Separator (Name)
-                     & "_Anonyms is " & XSD_To_Ada.Utils.Add_Separator (Name)
-                     & "_Anonyms_Vectors.Vector;", 5)
-                  & Wide_Wide_Character'Val (10));
+                  Writers.P
+                    (Writer,
+                     Gen_Type_Line
+                       ("      "
+                        & XSD_To_Ada.Utils.Add_Separator (Name)
+                        & " : "
+                        & Optional_Type.To_Wide_Wide_String
+                        & XSD_To_Ada.Utils.Add_Separator (Name)
+                        & "_Anonym"
+                        & Vector_Symbol.To_Wide_Wide_String & ";", 8));
 
-               Writers.P
-                 (Anonym_Kind,
-                  "   type "
-                   & XSD_To_Ada.Utils.Add_Separator (Name)
-                   & "_Anonym is record");
+                  if Is_Max_Occur then
+                     Anonym_Vector.Append
+                       ("   package "
+                        & XSD_To_Ada.Utils.Add_Separator (Name)
+                        & "_Anonyms_Vectors is"
+                        & Wide_Wide_Character'Val (10)
+                        & "     new Ada.Containers.Indefinite_Vectors"
+                        & Wide_Wide_Character'Val (10)
+                        & "        (Positive, "
+                        & XSD_To_Ada.Utils.Add_Separator (Name) & "_Anonym);"
+                        & Wide_Wide_Character'Val (10)
+                        & Wide_Wide_Character'Val (10)
+                        & Gen_Type_Line
+                          ("   subtype " & XSD_To_Ada.Utils.Add_Separator (Name)
+                           & "_Anonyms is " & XSD_To_Ada.Utils.Add_Separator (Name)
+                           & "_Anonyms_Vectors.Vector;", 5)
+                        & LF & LF);
+                  end if;
+
+                  if Is_Min_Occur then
+                     Anonym_Vector.Append
+                       ("   type Optional_"
+                        & XSD_To_Ada.Utils.Add_Separator (Name)
+                        & "_Anonym" & Vector_Symbol.To_Wide_Wide_String
+                        & " is record" & LF
+                        & "     Is_Set : Boolean := False;" & LF
+                        & "     Value  : "
+                        & XSD_To_Ada.Utils.Add_Separator (Name)
+                        & "_Anonym"
+                        & Vector_Symbol.To_Wide_Wide_String
+                        & ";" & LF
+                        & "   end record;"
+                        & LF);
+                  end if;
+               end;
                Add_Anonym := True;
             end if;
 
@@ -1590,7 +1623,6 @@ package body XSD_To_Ada.Utils is
       end Print_Term;
 
    begin
-
       Now_Print_Level := Now_Print_Level + 1;
 
       XS_Base := Type_D.Get_Base_Type;
