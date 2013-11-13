@@ -41,17 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Indefinite_Vectors;
+with League.Strings;
+with League.String_Vectors;
 
 with XML.Schema.Models;
 with XML.Schema.Type_Definitions;
-with XML.Schema.Objects.Terms;
+with XML.Schema.Terms;
 
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
-
-with League.Strings;
-with League.String_Vectors;
 
 package XSD_To_Ada.Utils is
 
@@ -133,7 +131,7 @@ package XSD_To_Ada.Utils is
 
    procedure Generate_Simple_Type
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      XS_Term      : XML.Schema.Terms.XS_Term;
       Type_Name    : League.Strings.Universal_String;
       Min_Occurs   : in out Boolean;
       Max_Occurs   : in out Boolean;

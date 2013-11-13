@@ -47,19 +47,14 @@ with Ada.Strings.Wide_Wide_Maps;
 with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Wide_Wide_Text_IO;
 
-with League.Strings;
-with League.String_Vectors;
-
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
-with XML.Schema.Models;
 with XML.Schema.Named_Maps;
 with XML.Schema.Object_Lists;
-with XML.Schema.Objects.Particles;
+with XML.Schema.Objects;
+with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
-
-with XSD_To_Ada.Writers;
 
 package body XSD_To_Ada.Utils is
 
@@ -171,7 +166,7 @@ package body XSD_To_Ada.Utils is
            /= "Transaction"
          then
             declare
-               XS_Term : XML.Schema.Objects.Terms.XS_Term;
+               XS_Term : XML.Schema.Terms.XS_Term;
                Decl    : XML.Schema.Element_Declarations.XS_Element_Declaration;
                Name    : League.Strings.Universal_String;
             begin
@@ -740,7 +735,7 @@ package body XSD_To_Ada.Utils is
 
    procedure Generate_Complex_Type
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+     XS_Term      : XML.Schema.Terms.XS_Term;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Type_Name    : League.Strings.Universal_String;
      Table        : in out Types_Table_Type_Array;
@@ -805,7 +800,7 @@ package body XSD_To_Ada.Utils is
 
    procedure Generate_Type
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+     XS_Term      : XML.Schema.Terms.XS_Term;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Type_Name    : League.Strings.Universal_String;
      Table        : in out Types_Table_Type_Array;
@@ -849,7 +844,7 @@ package body XSD_To_Ada.Utils is
 
    procedure Generate_Simple_Type
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+      XS_Term      : XML.Schema.Terms.XS_Term;
       Type_Name    : League.Strings.Universal_String;
       Min_Occurs   : in out Boolean;
       Max_Occurs   : in out Boolean;
@@ -951,8 +946,8 @@ package body XSD_To_Ada.Utils is
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
-      XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
-      XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
 
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
       STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
@@ -962,18 +957,18 @@ package body XSD_To_Ada.Utils is
       ----------------
 
       procedure Print_Term
-       (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+       (XS_Term      : XML.Schema.Terms.XS_Term;
         Indent       : Wide_Wide_String := "";
         Writer       : in out Writers.Writer;
         Writer_types : in out Writers.Writer;
         Name         : League.Strings.Universal_String;
         Map          : XSD_To_Ada.Mappings.Mapping)
       is
-         use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
+         use type XML.Schema.Model_Groups.Compositor_Kinds;
 
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-         XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+         XS_Particle    : XML.Schema.Particles.XS_Particle;
          Decl           :
            XML.Schema.Element_Declarations.XS_Element_Declaration;
 
@@ -1244,8 +1239,8 @@ package body XSD_To_Ada.Utils is
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
-      XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
-      XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
       XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
@@ -1272,7 +1267,7 @@ package body XSD_To_Ada.Utils is
       ----------------
 
       procedure Print_Term
-       (XS_Term      : XML.Schema.Objects.Terms.XS_Term;
+       (XS_Term      : XML.Schema.Terms.XS_Term;
         Indent       : Wide_Wide_String := "";
         Writer       : in out Writers.Writer;
         Writer_types : in out Writers.Writer;
@@ -1280,12 +1275,12 @@ package body XSD_To_Ada.Utils is
         Map          : XSD_To_Ada.Mappings.Mapping;
         Table        : in out Types_Table_Type_Array)
       is
-         use type XML.Schema.Objects.Terms.Model_Groups.Compositor_Kinds;
+         use type XML.Schema.Model_Groups.Compositor_Kinds;
          use type League.Strings.Universal_String;
 
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-         XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
+         XS_Particle    : XML.Schema.Particles.XS_Particle;
          Decl           :
            XML.Schema.Element_Declarations.XS_Element_Declaration;
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -1329,7 +1324,7 @@ package body XSD_To_Ada.Utils is
                (XS_Model_Group.Get_Compositor));
 
             if XS_Model_Group.Get_Compositor =
-              XML.Schema.Objects.Terms.Model_Groups.Compositor_Choice
+              XML.Schema.Model_Groups.Compositor_Choice
             then
                Choice := True;
 
@@ -1706,8 +1701,8 @@ package body XSD_To_Ada.Utils is
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
-      XS_Particle    : XML.Schema.Objects.Particles.XS_Particle;
-      XS_Term        : XML.Schema.Objects.Terms.XS_Term;
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
       XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
       XS_List        : XML.Schema.Object_Lists.XS_Object_List;
 
