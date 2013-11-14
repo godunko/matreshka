@@ -446,7 +446,7 @@ package body XSD_To_Ada.Encoder is
       Writers.P
         (Payload_Writer,
          "with Ada.Strings.Wide_Wide_Fixed;" & LF
-         & "with League.Strings;" & LF
+--         & "with League.Strings;" & LF
          & "with Payloads;" & LF
          & "with ICTS.Forex;" & LF
          & "with ICTS.Types;" & LF
@@ -706,6 +706,7 @@ package body XSD_To_Ada.Encoder is
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
 
       Ada.Wide_Wide_Text_IO.Put_Line ("with XML.SAX.Writers;");
+      Ada.Wide_Wide_Text_IO.Put_Line ("with League.Strings;");
       Ada.Wide_Wide_Text_IO.Put_Line
         ("with Web_Services.SOAP.Payloads.Encoders;");
       Ada.Wide_Wide_Text_IO.Put_Line ("package Encoder is");
