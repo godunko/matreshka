@@ -56,8 +56,6 @@ with XML.Schema.Objects;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
 
-with Ada.Text_IO;
-
 package body XSD_To_Ada.Encoder is
 
    use XML.Schema.Type_Definitions.Complex_Type_Definitions;
@@ -1198,33 +1196,17 @@ package body XSD_To_Ada.Encoder is
                & LF & "  --  "
                & Add_Separator (Type_D.Get_Base_Type.Get_Name));
          else
-            if Min_Occurs then
-               Writers.P
-                 (Writer,
-                  Gen_Type_Line
-                    ("Writer.Characters (Data."
-                     & Full_Anonym_Name.To_Wide_Wide_String
-                     & Top_Optional_Value.To_Wide_Wide_String
-                     & Vector_Element.To_Wide_Wide_String
-                     & Add_Separator (XS_Term.Get_Name)
-                     & Optional_Value.To_Wide_Wide_String
-                     & ");", 6)
-                  & LF & "  --  "
-                  & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-            else
-               Writers.P
-                 (Writer,
-                  Gen_Type_Line
-                    ("Writer.Characters (Data."
-                     & Full_Anonym_Name.To_Wide_Wide_String
-                     & Top_Optional_Value.To_Wide_Wide_String
-                     & Vector_Element.To_Wide_Wide_String
-                     & Add_Separator (XS_Term.Get_Name)
-                     & ");", 6)
-                  & LF & "  --  "
-                  & Add_Separator (Type_D.Get_Base_Type.Get_Name));
-            end if;
-
+            Writers.P
+              (Writer,
+               Gen_Type_Line
+                 ("Writer.Characters (Data."
+                  & Full_Anonym_Name.To_Wide_Wide_String
+                  & Top_Optional_Value.To_Wide_Wide_String
+                  & Vector_Element.To_Wide_Wide_String
+                  & Add_Separator (XS_Term.Get_Name)
+                  & Optional_Value.To_Wide_Wide_String & ");", 6)
+               & LF & "  --  "
+               & Add_Separator (Type_D.Get_Base_Type.Get_Name));
          end if;
 
          Writers.P
@@ -1245,11 +1227,8 @@ package body XSD_To_Ada.Encoder is
                  (Writer,
                   (Gen_Type_Line
                      ("if Data."
---                      & Name.To_Wide_Wide_String & "."
---                      & Base_Name.To_Wide_Wide_String
                       & Top_Optional_Value.To_Wide_Wide_String
                       & Vector_Element.To_Wide_Wide_String
---                      & Add_Separator (XS_Term.Get_Name)
                       & "Is_Set then", 5)));
             else
                Writers.P
@@ -1312,8 +1291,7 @@ package body XSD_To_Ada.Encoder is
                   & Base_Choice_Name.To_Wide_Wide_String
                   & Vector_Element.To_Wide_Wide_String
                   & Add_Separator (XS_Term.Get_Name)
-                  & Optional_Value.To_Wide_Wide_String
-                  & ")));", 13)
+                  & Optional_Value.To_Wide_Wide_String & ")));", 13)
                & LF & "  --  "
                & Type_D.Get_Base_Type.Get_Name);
          end if;
@@ -1340,15 +1318,15 @@ package body XSD_To_Ada.Encoder is
             & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
             & "              ("
             & Map.Ada_Type_Qualified_Name
-               (Type_D.Get_Name, False, False).To_Wide_Wide_String
+              (Type_D.Get_Name, False, False).To_Wide_Wide_String
             & "'Wide_Wide_Image" & LF
             & Gen_Type_Line
               ("(Data."
                & Full_Anonym_Name.To_Wide_Wide_String
                & Top_Optional_Value.To_Wide_Wide_String
---               & Optional_Value.To_Wide_Wide_String
                & Vector_Element.To_Wide_Wide_String
-               & Add_Separator (XS_Term.Get_Name) & "),", 15)
+               & Add_Separator (XS_Term.Get_Name)
+               & Optional_Value.To_Wide_Wide_String & "),", 15)
             & LF
             & "            Ada.Strings.Both)));"
             & LF &  "  --  "
@@ -1376,7 +1354,7 @@ package body XSD_To_Ada.Encoder is
             & "        (Data."
             & Full_Anonym_Name
             & Base_Choice_Name
-            & Vector_Element.To_Wide_Wide_String
+            & Vector_Element
             & Add_Separator (XS_Term.Get_Name)
             & "));"
             & LF & "  --  "
@@ -1397,7 +1375,7 @@ package body XSD_To_Ada.Encoder is
             "      Writer.Characters (IATS_URI, Data."
             & Full_Anonym_Name
             & Base_Choice_Name
-            & Vector_Element.To_Wide_Wide_String
+            & Vector_Element
             & Add_Separator (XS_Term.Get_Name)
             & "));"
             & LF & "  --  "
@@ -1946,7 +1924,13 @@ package body XSD_To_Ada.Encoder is
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
          Type_Name      : League.Strings.Universal_String;
 
+         Optional_Value : League.Strings.Universal_String :=
+           League.Strings.Empty_Universal_String;
+
          Top_Optional_Value : League.Strings.Universal_String :=
+           League.Strings.Empty_Universal_String;
+
+         Element_Vector : League.Strings.Universal_String :=
            League.Strings.Empty_Universal_String;
       begin
 
@@ -1954,7 +1938,14 @@ package body XSD_To_Ada.Encoder is
             Top_Optional_Value := League.Strings.To_Universal_String ("Value.");
          end if;
 
-         Ada.Text_IO.Put_Line ("Min_Occurs" & Min_Occurs'Img);
+         if Optional then
+            Optional_Value := League.Strings.To_Universal_String ("Value.");
+         end if;
+
+         if Top_Max_Occur then
+            Element_Vector :=
+              League.Strings.To_Universal_String ("Element (Index).");
+         end if;
 
          Now_Term_Level := Now_Term_Level + 1;
 
@@ -1987,48 +1978,15 @@ package body XSD_To_Ada.Encoder is
                  League.Strings.To_Universal_String
                    (Add_Separator (Name) & ".");
 
-               if Top_Max_Occur then
-                  if Optional then
-                     Writer.P
-                       (Gen_Type_Line
-                          ("case Data.Value."
-                           & Add_Separator (Name) & "."
-                           & Base_Name.To_Wide_Wide_String
-                           & "Element (Index)."
---                           & Add_Separator (Name)
-                           & "Kind is", 5));
-                  else
-                     Writer.P
-                       (Gen_Type_Line
-                          ("case Data."
-                           & Add_Separator (Name) & "."
-                           & Base_Name.To_Wide_Wide_String
-                           & Top_Optional_Value.To_Wide_Wide_String
-                           & "Element (Index).Kind is", 5));
-                  end if;
-               else
-                  if Optional then
-                     Writer.P
-                       (Gen_Type_Line
-                          ("case Data.Value."
-                           & Add_Separator (Name) & "."
-                           & Base_Name.To_Wide_Wide_String
---                           & Add_Separator (Name)
-                           & "Kind is", 5));
-                  else
-                     Writer.P
-                       (Gen_Type_Line
-                          ("case Data."
-                           & Add_Separator (Name) & "."
-                           & Base_Name.To_Wide_Wide_String
-                           & Top_Optional_Value.To_Wide_Wide_String
-                           & "Kind is", 5));
-                  end if;
-               end if;
-
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 "!!!!!!!!!!!   Choice := True;");
+               Writer.P
+                 (Gen_Type_Line
+                    ("case Data."
+                     & Optional_Value.To_Wide_Wide_String
+                     & Add_Separator (Name) & "."
+                     & Base_Name.To_Wide_Wide_String
+                     & Top_Optional_Value.To_Wide_Wide_String
+                     & Element_Vector.To_Wide_Wide_String
+                     & "Kind is", 5));
             end if;
 
             for J in 1 .. XS_List.Get_Length loop
@@ -2194,7 +2152,7 @@ package body XSD_To_Ada.Encoder is
          Print_Type_Definition
            (Type_D => XS_Base,
             Indent => Indent & "   ",
-            Writer => Writer, --  Writer_types,
+            Writer => Writer,
             Name => League.Strings.To_Universal_String
               (Add_Separator (XS_Base.Get_Name)),
             Full_Anonym_Name => League.Strings.To_Universal_String
