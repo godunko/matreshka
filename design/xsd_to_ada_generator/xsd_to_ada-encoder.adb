@@ -446,7 +446,7 @@ package body XSD_To_Ada.Encoder is
       Writers.P
         (Payload_Writer,
          "with Ada.Strings.Wide_Wide_Fixed;" & LF
---         & "with League.Strings;" & LF
+         & "with League.Strings;" & LF
          & "with Payloads;" & LF
          & "with ICTS.Forex;" & LF
          & "with ICTS.Types;" & LF
@@ -461,8 +461,6 @@ package body XSD_To_Ada.Encoder is
          & " (""http://www.actforex.com/iats"");" & LF
          & "   IATS_Prefix : constant League.Strings.Universal_String :=" & LF
          & "     League.Strings.To_Universal_String (""iats"");"
-         & LF & LF
-         & "--   function Image (Item : Boolean) return League.Strings.Universal_String;"
          & LF & LF
          & "   function Image (Item : Boolean) return League.Strings.Universal_String is" & LF
          & "     begin" & LF
@@ -711,6 +709,8 @@ package body XSD_To_Ada.Encoder is
       Ada.Wide_Wide_Text_IO.Put_Line
         ("with Web_Services.SOAP.Payloads.Encoders;");
       Ada.Wide_Wide_Text_IO.Put_Line ("package Encoder is");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        ( "   function Image (Item : Boolean) return League.Strings.Universal_String;");
       Ada.Wide_Wide_Text_IO.Put (Spec_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
    end Create_Complex_Type;
