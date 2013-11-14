@@ -1785,6 +1785,8 @@ package body XSD_To_Ada.Encoder is
                      & "   end Encode;"
                      & LF);
                else
+                  Tag_Vector.Append (Type_D.Get_Name);
+
                   if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
                           "anyType"
                         then
