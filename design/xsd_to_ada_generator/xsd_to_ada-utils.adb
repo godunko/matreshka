@@ -55,7 +55,6 @@ with XML.Schema.Object_Lists;
 with XML.Schema.Objects;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
-with Ada.Text_IO;
 
 package body XSD_To_Ada.Utils is
 
@@ -240,9 +239,6 @@ package body XSD_To_Ada.Utils is
                              (Element_Declarations.Item (J).Get_Name));
 
                      else
-                        Ada.Text_IO.Put_Line
-                          (Type_D.Get_Base_Type.Get_Name.To_UTF_8_String);
-
                            Writers.P
                              (Writer,
                               "   type "
@@ -489,13 +485,13 @@ package body XSD_To_Ada.Utils is
 
       Create_Element_Type (Model, Mapping, Payload_Writer);
 
---        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.adb");
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
-
       Writers.N (Payload_Writer, "end Payloads;");
+
+      Ada.Wide_Wide_Text_IO.Create
+        (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.adb");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
