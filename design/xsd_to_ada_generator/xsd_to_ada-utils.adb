@@ -55,6 +55,7 @@ with XML.Schema.Object_Lists;
 with XML.Schema.Objects;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
+with Ada.Text_IO;
 
 package body XSD_To_Ada.Utils is
 
@@ -221,9 +222,27 @@ package body XSD_To_Ada.Utils is
                            & " with null record;"
                            & Wide_Wide_Character'Val (10));
                      else
-                        if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
-                          /= "OpenSession2"
-                        then
+                        if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
+                          = "anyType" then
+                        Writers.P
+                          (Writer,
+                           "   type "
+                           & Add_Separator (Element_Declarations.Item (J).Get_Name)
+                           & " is" & LF
+                           & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
+                           & "   with record" & LF
+                           & "     null;" & LF
+                           & "   end record;" & LF);
+
+                        XSD_To_Ada.Utils.Gen_Access_Type
+                          (Writer,
+                           Add_Separator
+                             (Element_Declarations.Item (J).Get_Name));
+
+                     else
+                        Ada.Text_IO.Put_Line
+                          (Type_D.Get_Base_Type.Get_Name.To_UTF_8_String);
+
                            Writers.P
                              (Writer,
                               "   type "
@@ -439,6 +458,7 @@ package body XSD_To_Ada.Utils is
 
       Payload_Writer : XSD_To_Ada.Writers.Writer;
 
+      Current_Out_File : Ada.Wide_Wide_Text_IO.File_Type;
    begin
       for J in 1 .. Complex_Types.Length loop
          Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
@@ -459,17 +479,21 @@ package body XSD_To_Ada.Utils is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
-         if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyOrderBase"
 --           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase"
 --             if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateCloseOrder"
-         then
+--         then
             Print_Type_Title
              (XS_Object.To_Type_Definition, Mapping, Payload_Writer);
-         end if;
+--         end if;
       end loop;
 
       Create_Element_Type (Model, Mapping, Payload_Writer);
+
+--        Ada.Wide_Wide_Text_IO.Create
+--          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.adb");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+--        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
       Writers.N (Payload_Writer, "end Payloads;");
 
@@ -1188,27 +1212,45 @@ package body XSD_To_Ada.Utils is
                   Writers.P (Payload_Writer,
                              "   end record;" & Wide_Wide_Character'Val (10));
                else
-                  Is_Record := True;
+                  if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
+                    "anyType"
+                  then
+                     Writers.P
+                       (Payload_Writer,
+                        "   type "
+                        & Add_Separator (Type_D.Get_Name)
+                        & " is" & LF
+                        & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
+                        & "   with record" & LF
+                        & "     null;" & LF
+                        & "   end record;" & LF);
 
-                  Writers.N
-                    (Payload_Writer,
-                     "   type "
-                     & XSD_To_Ada.Utils.Add_Separator
-                       (Type_D.Get_Name.To_Wide_Wide_String) & " ");
+                     XSD_To_Ada.Utils.Gen_Access_Type
+                       (Payload_Writer, Add_Separator (Type_D.Get_Name));
+                  else
 
-                  XSD_To_Ada.Utils.Print_Type_Definition
-                   (Type_D.To_Type_Definition,
-                    "",
-                    Payload_Writer,
-                    Payload_Type_Writer,
-                    Type_D.Get_Name,
-                    Is_Record,
-                    Mapping,
-                    Types_Table);
+                     Is_Record := True;
 
-                  Writers.P
-                   (Payload_Writer,
-                    "   end record;" & Wide_Wide_Character'Val (10));
+                     Writers.N
+                       (Payload_Writer,
+                        "   type "
+                        & XSD_To_Ada.Utils.Add_Separator
+                          (Type_D.Get_Name.To_Wide_Wide_String) & " ");
+
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                       (Type_D.To_Type_Definition,
+                        "",
+                        Payload_Writer,
+                        Payload_Type_Writer,
+                        Type_D.Get_Name,
+                        Is_Record,
+                        Mapping,
+                        Types_Table);
+
+                     Writers.P
+                       (Payload_Writer,
+                        "   end record;" & Wide_Wide_Character'Val (10));
+                  end if;
               end if;
             end if;
 
