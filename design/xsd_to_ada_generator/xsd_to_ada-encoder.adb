@@ -271,6 +271,8 @@ package body XSD_To_Ada.Encoder is
                         if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
                           "anyType"
                         then
+                           Tag_Vector.Append (Decl.Get_Name);
+
                            Writers.P
                              (Spec_Writer,
                               "   type " & Add_Separator (Decl.Get_Name) & "_Encoder is"
