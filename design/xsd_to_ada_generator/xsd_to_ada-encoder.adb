@@ -56,6 +56,8 @@ with XML.Schema.Objects;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
 
+with Ada.Text_IO;
+
 package body XSD_To_Ada.Encoder is
 
    use XML.Schema.Type_Definitions.Complex_Type_Definitions;
@@ -131,6 +133,8 @@ package body XSD_To_Ada.Encoder is
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer)
    is
+      use XML.Schema;
+
       Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map :=
         Model.Get_Components_By_Namespace
           (Object_Type => XML.Schema.Element_Declaration,
@@ -186,7 +190,6 @@ package body XSD_To_Ada.Encoder is
                        (Type_D.To_Type_Definition)
                        and then Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = ""
                      then
-
                         Tag_Vector.Append (Decl.Get_Name);
 
                         Writers.P
@@ -267,15 +270,80 @@ package body XSD_To_Ada.Encoder is
                            & LF);
 
                      else
-                        null;
-                        if Element_Declarations.Item (J).Get_Name.To_UTF_8_String
-                          /= "OpenSession2"
---                              and then (Element_Declarations.Item (J).Get_Name.To_UTF_8_String
---                                        = "CreateStopOpenOrder"
---                                        or Element_Declarations.Item (J).Get_Name.To_UTF_8_String
---                            = "CreateStopCloseOrder")
+                        if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
+                          "anyType"
                         then
+                           Writers.P
+                             (Spec_Writer,
+                              "   type " & Add_Separator (Decl.Get_Name) & "_Encoder is"
+                              & LF
+                              & "   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder"
+                              & LF & "   with null record;"
+                              & LF & LF
+                              & "   overriding function Create"
+                              & LF
+                              & "     (Dummy : not null access Boolean) return"
+                              & LF
+                              & "      " & Add_Separator (Decl.Get_Name) & "_Encoder;"
+                              & LF & LF
+                              & "   overriding procedure Encode" & LF
+                              & "     (Self    : "
+                              & Add_Separator (Decl.Get_Name)
+                              & "_Encoder;" & LF
+                              & "      Message : Web_Services.SOAP.Payloads."
+                              & "Abstract_SOAP_Payload'Class;" & LF
+                              & "      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);"
+                              & LF);
 
+                           Writers.P
+                             (Writer,
+                              "   overriding function Create" & LF
+                              & "     (Dummy : not null access Boolean)" & LF
+                              & "      return " & Add_Separator (Decl.Get_Name) & "_Encoder"
+                              & LF
+                              & "   is" & LF
+                              & "     pragma Unreferenced (Dummy);" & LF
+                              & "   begin" & LF
+                              & "     return X : "
+                              & Add_Separator (Decl.Get_Name) & "_Encoder;"
+                              & LF
+                              & "   end Create;" & LF);
+
+                           Writers.P
+                             (Writer,
+                              "   overriding procedure Encode" & LF
+                              & "     (Self    : "
+                              & Add_Separator (Decl.Get_Name)
+                              & "_Encoder;" & LF
+                              & "      Message : Web_Services.SOAP.Payloads."
+                              & "Abstract_SOAP_Payload'Class;" & LF
+                              & "      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)"
+                              & LF
+                              & "   is" & LF
+                              & "     pragma Unreferenced (Self, Message);" & LF & LF
+                              & "   begin" & LF
+                              & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);"
+                              & LF & LF
+                              & Write_Start_Element
+                                (Decl.Get_Name).To_Wide_Wide_String);
+
+                           XSD_To_Ada.Encoder.Print_Type_Definition
+                             (Type_D => Type_D,
+                              Indent => "",
+                              Writer => Writer,
+                              Name => Decl.Get_Name,
+                              Full_Anonym_Name => League.Strings.Empty_Universal_String,
+                              Base_Name => League.Strings.Empty_Universal_String,
+                              Table => Types_Table);
+
+                           Writers.P
+                             (Writer,
+                              "      Writer.End_Element (IATS_URI, "
+                              & Add_Separator (Decl.Get_Name) & "_Name);"
+                              & LF
+                              & "   end Encode;"
+                              & LF);
+                        else
                            XSD_To_Ada.Encoder.Gen_Proc_Header
                              (Writer,
                               XSD_To_Ada.Encoder.Add_Separator (Decl.Get_Name));
@@ -567,7 +635,6 @@ package body XSD_To_Ada.Encoder is
       Put_Header (Head_Writer);
 
       Create_Package_Name (Head_Writer);
---      Create_Enumeration_Simple_Type (Model, Payload_Writer);
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
@@ -577,18 +644,18 @@ package body XSD_To_Ada.Encoder is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
-         if Complex_Types.Item (J).Get_Name.To_UTF_8_String /= "OpenSession"
+--         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "OpenSession"
 --         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase"
 --           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "SetPositionItemApplicationData"
 --           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateOpenOrder"
 --           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "BindOrders"
-         then
+--         then
             Print_Type_Title
               (XS_Object.To_Type_Definition,
                "",
                Payload_Writer,
                Spec_Writer);
-         end if;
+--         end if;
       end loop;
 
       Create_Element_Type (Model, Payload_Writer);
@@ -617,17 +684,17 @@ package body XSD_To_Ada.Encoder is
 
       Writers.P (Payload_Writer, "end Encoder;");
 
---        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./encoder.adb");
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Head_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Element_Name.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Encoder_Top_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
+      Ada.Wide_Wide_Text_IO.Create
+        (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./encoder.adb");
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Current_Out_File, Head_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Current_Out_File, Element_Name.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Current_Out_File, Encoder_Top_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
       Ada.Wide_Wide_Text_IO.Put_Line
         (Head_Writer.Text.To_Wide_Wide_String);
@@ -1717,8 +1784,80 @@ package body XSD_To_Ada.Encoder is
                      & "   end Encode;"
                      & LF);
                else
-                  Ada.Wide_Wide_Text_IO.Put_Line
-                   (Ada.Wide_Wide_Text_IO.Standard_Error, "else 1408");
+                  if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
+                          "anyType"
+                        then
+                            Writers.P
+              (Spec_Writer,
+               "   type " & Add_Separator (Type_D.Get_Name) & "_Encoder is"
+               & LF
+               & "   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder"
+               & LF & "   with null record;"
+               & LF & LF
+               & "   overriding function Create"
+               & LF
+               & "     (Dummy : not null access Boolean) return"
+               & LF
+               & "      " & Add_Separator (Type_D.Get_Name) & "_Encoder;"
+               & LF & LF
+               & "   overriding procedure Encode" & LF
+               & "     (Self    : "
+               & Add_Separator (Type_D.Get_Name)
+               & "_Encoder;" & LF
+               & "      Message : Web_Services.SOAP.Payloads."
+               & "Abstract_SOAP_Payload'Class;" & LF
+               & "      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);"
+               & LF);
+
+            Writers.P
+              (Top_Level_Writer (Level),
+               "   overriding function Create" & LF
+               & "     (Dummy : not null access Boolean)" & LF
+               & "      return " & Add_Separator (Type_D.Get_Name) & "_Encoder"
+               & LF
+               & "   is" & LF
+               & "     pragma Unreferenced (Dummy);" & LF
+               & "   begin" & LF
+               & "     return X : "
+               & Add_Separator (Type_D.Get_Name) & "_Encoder;"
+               & LF
+               & "   end Create;" & LF);
+
+                  Writers.P
+                    (Top_Level_Writer (Level),
+                     "   overriding procedure Encode" & LF
+                     & "     (Self    : "
+                     & Add_Separator (Type_D.Get_Name)
+                     & "_Encoder;" & LF
+                     & "      Message : Web_Services.SOAP.Payloads."
+                     & "Abstract_SOAP_Payload'Class;" & LF
+                     & "      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)"
+                     & LF
+                     & "   is" & LF
+                     & "     pragma Unreferenced (Self, Message);" & LF
+                     & "   begin" & LF
+                     & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
+
+            Writers.P
+              (Top_Level_Writer (Level),
+               XSD_To_Ada.Encoder.Write_Start_Element (Type_D.Get_Name));
+
+                  XSD_To_Ada.Encoder.Print_Type_Definition
+                    (Type_D => Type_D,
+                     Indent => "",
+                     Writer => Top_Level_Writer (Level),
+                     Name => Type_D.Get_Name,
+                     Full_Anonym_Name => League.Strings.Empty_Universal_String,
+                     Base_Name => League.Strings.Empty_Universal_String,
+                     Table => Types_Table);
+
+                  Writers.P
+                    (Top_Level_Writer (Level),
+                     "      Writer.End_Element (IATS_URI, "
+                     & Add_Separator (Type_D.Get_Name) & "_Name);"
+                     & LF
+                     & "   end Encode;"
+                     & LF);
               end if;
             end if;
 
@@ -1727,7 +1866,7 @@ package body XSD_To_Ada.Encoder is
 
             Top_Level_Writer (Level).Text.Clear;
          end if;
-
+         end if;
          US_Response.Clear;
       end loop;
 
@@ -1963,7 +2102,8 @@ package body XSD_To_Ada.Encoder is
             XS_Model_Group := XS_Term.To_Model_Group;
             XS_List := XS_Model_Group.Get_Particles;
             Ada.Wide_Wide_Text_IO.Put
-             (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
+              (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
+
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
               XML.Schema.Model_Groups.Compositor_Kinds'Wide_Wide_Image
@@ -2018,6 +2158,9 @@ package body XSD_To_Ada.Encoder is
                else
                   Min_Occurs := False;
                end if;
+
+               Ada.Text_IO.Put_Line
+                 ("XS_Particle" & XS_Particle.Get_Term.Get_Type'Img);
 
                Print_Term
                  (XS_Particle.Get_Term,
@@ -2148,7 +2291,10 @@ package body XSD_To_Ada.Encoder is
         and XS_Base /= Type_D  --  This is to filter predefined types
       then
          Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
+           (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
+         Ada.Text_IO.Put_Line
+           ("XS_Base" & XS_Base.Get_Type_Category'Img);
+
          Print_Type_Definition
            (Type_D => XS_Base,
             Indent => Indent & "   ",
