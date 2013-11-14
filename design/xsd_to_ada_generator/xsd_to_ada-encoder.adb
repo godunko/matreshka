@@ -56,8 +56,6 @@ with XML.Schema.Objects;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
 
-with Ada.Text_IO;
-
 package body XSD_To_Ada.Encoder is
 
    use XML.Schema.Type_Definitions.Complex_Type_Definitions;
@@ -2160,9 +2158,6 @@ package body XSD_To_Ada.Encoder is
                   Min_Occurs := False;
                end if;
 
-               Ada.Text_IO.Put_Line
-                 ("XS_Particle" & XS_Particle.Get_Term.Get_Type'Img);
-
                Print_Term
                  (XS_Particle.Get_Term,
                   Indent & "   ", Writer,
@@ -2293,8 +2288,6 @@ package body XSD_To_Ada.Encoder is
       then
          Ada.Wide_Wide_Text_IO.Put_Line
            (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
-         Ada.Text_IO.Put_Line
-           ("XS_Base" & XS_Base.Get_Type_Category'Img);
 
          Print_Type_Definition
            (Type_D => XS_Base,
