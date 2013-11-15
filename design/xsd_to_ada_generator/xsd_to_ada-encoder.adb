@@ -642,12 +642,9 @@ package body XSD_To_Ada.Encoder is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
---         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "OpenSession"
---         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase"
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "SetPositionItemApplicationData"
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateOpenOrder"
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "BindOrders"
---         then
+--         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase" then
+--         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateOpenOrder" then
+--           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "GetOrdersLinksResponse" then
             Print_Type_Title
               (XS_Object.To_Type_Definition,
                "",
@@ -694,26 +691,26 @@ package body XSD_To_Ada.Encoder is
         (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Head_Writer.Text.To_Wide_Wide_String);
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Element_Name.Text.To_Wide_Wide_String);
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Encoder_Top_Writer.Text.To_Wide_Wide_String);
-
-      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
-
-      Ada.Wide_Wide_Text_IO.Put_Line ("with XML.SAX.Writers;");
-      Ada.Wide_Wide_Text_IO.Put_Line ("with League.Strings;");
-      Ada.Wide_Wide_Text_IO.Put_Line
-        ("with Web_Services.SOAP.Payloads.Encoders;");
-      Ada.Wide_Wide_Text_IO.Put_Line ("package Encoder is");
-      Ada.Wide_Wide_Text_IO.Put_Line
-        ( "   function Image (Item : Boolean) return League.Strings.Universal_String;");
-      Ada.Wide_Wide_Text_IO.Put (Spec_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Head_Writer.Text.To_Wide_Wide_String);
+--
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Element_Name.Text.To_Wide_Wide_String);
+--
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Encoder_Top_Writer.Text.To_Wide_Wide_String);
+--
+--        Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
+--
+--        Ada.Wide_Wide_Text_IO.Put_Line ("with XML.SAX.Writers;");
+--        Ada.Wide_Wide_Text_IO.Put_Line ("with League.Strings;");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          ("with Web_Services.SOAP.Payloads.Encoders;");
+--        Ada.Wide_Wide_Text_IO.Put_Line ("package Encoder is");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          ( "   function Image (Item : Boolean) return League.Strings.Universal_String;");
+--        Ada.Wide_Wide_Text_IO.Put (Spec_Writer.Text.To_Wide_Wide_String);
+--        Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
    end Create_Complex_Type;
 
    ---------------------------
@@ -1377,31 +1374,63 @@ package body XSD_To_Ada.Encoder is
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "positiveInteger" then
 
-         Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
-
-         Writers.P
-           (Writer,
-            "      Writer.Characters" & LF
-            & "        (League.Strings.To_Universal_String" & LF
-            & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
-            & "              ("
-            & Map.Ada_Type_Qualified_Name
-              (Type_D.Get_Name, False, False).To_Wide_Wide_String
-            & "'Wide_Wide_Image" & LF
-            & Gen_Type_Line
-              ("(Data."
+         if Max_Occurs then
+            Writers.P
+              (Writer,
+               "   for Index in 1 .. Natural (Data."
                & Full_Anonym_Name.To_Wide_Wide_String
                & Top_Optional_Value.To_Wide_Wide_String
                & Vector_Element.To_Wide_Wide_String
                & Add_Separator (XS_Term.Get_Name)
-               & Optional_Value.To_Wide_Wide_String & "),", 15)
-            & LF
-            & "            Ada.Strings.Both)));"
-            & LF &  "  --  "
-            & Add_Separator (Type_D.Get_Base_Type.Get_Name));
+               & ".Length)"
+               & Optional_Value.To_Wide_Wide_String & " loop");
+         end if;
 
-         if Min_Occurs then
-            Writers.P (Writer, "      Writer.Characters");
+         Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
+
+         if Max_Occurs then
+            Writers.P
+              (Writer,
+               "      Writer.Characters" & LF
+               & "        (League.Strings.To_Universal_String" & LF
+               & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
+               & "              ("
+               & Map.Ada_Type_Qualified_Name
+                 (Type_D.Get_Name, False, False).To_Wide_Wide_String
+               & "'Wide_Wide_Image" & LF
+               & Gen_Type_Line
+                 ("(Data."
+                  & Full_Anonym_Name.To_Wide_Wide_String
+                  & Top_Optional_Value.To_Wide_Wide_String
+                  & Vector_Element.To_Wide_Wide_String
+                  & Add_Separator (XS_Term.Get_Name)
+                  & ".Element (Index)"
+                  & Optional_Value.To_Wide_Wide_String & "),", 15)
+               & LF
+               & "            Ada.Strings.Both)));"
+               & LF &  "  --  "
+               & Add_Separator (Type_D.Get_Base_Type.Get_Name));
+         else
+            Writers.P
+              (Writer,
+               "      Writer.Characters" & LF
+               & "        (League.Strings.To_Universal_String" & LF
+               & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
+               & "              ("
+               & Map.Ada_Type_Qualified_Name
+                 (Type_D.Get_Name, False, False).To_Wide_Wide_String
+               & "'Wide_Wide_Image" & LF
+               & Gen_Type_Line
+                 ("(Data."
+                  & Full_Anonym_Name.To_Wide_Wide_String
+                  & Top_Optional_Value.To_Wide_Wide_String
+                  & Vector_Element.To_Wide_Wide_String
+                  & Add_Separator (XS_Term.Get_Name)
+                  & Optional_Value.To_Wide_Wide_String & "),", 15)
+               & LF
+               & "            Ada.Strings.Both)));"
+               & LF &  "  --  "
+               & Add_Separator (Type_D.Get_Base_Type.Get_Name));
          end if;
 
          Writers.P
@@ -1410,6 +1439,10 @@ package body XSD_To_Ada.Encoder is
             & Add_Separator (XS_Term.Get_Name)
             & "_Name);"
             & LF);
+
+         if Max_Occurs then
+            Writers.P (Writer, "   end loop;");
+         end if;
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "boolean" then
 
@@ -1698,6 +1731,85 @@ package body XSD_To_Ada.Encoder is
                 US_Response.To_UTF_8_String = "Response"
             then
                null;
+--                 Tag_Vector.Append (Type_D.Get_Name);
+--
+--                 Writers.P
+--                   (Spec_Writer,
+--                    "   type " & Add_Separator (Type_D.Get_Name) & "_Encoder is"
+--                    & LF
+--                    & "   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder"
+--                    & LF & "   with null record;"
+--                    & LF & LF
+--                    & "   overriding function Create"
+--                    & LF
+--                    & "     (Dummy : not null access Boolean) return"
+--                    & LF
+--                    & "      " & Add_Separator (Type_D.Get_Name) & "_Encoder;"
+--                    & LF & LF
+--                    & "   overriding procedure Encode" & LF
+--                    & "     (Self    : "
+--                    & Add_Separator (Type_D.Get_Name)
+--                    & "_Encoder;" & LF
+--                    & "      Message : Web_Services.SOAP.Payloads."
+--                    & "Abstract_SOAP_Payload'Class;" & LF
+--                    & "      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);"
+--                    & LF);
+--
+--                 Writers.P
+--                   (Top_Level_Writer (Level),
+--                    "   overriding function Create" & LF
+--                    & "     (Dummy : not null access Boolean)" & LF
+--                    & "      return " & Add_Separator (Type_D.Get_Name) & "_Encoder"
+--                    & LF
+--                    & "   is" & LF
+--                    & "     pragma Unreferenced (Dummy);" & LF
+--                    & "   begin" & LF
+--                    & "     return X : "
+--                    & Add_Separator (Type_D.Get_Name) & "_Encoder;"
+--                    & LF
+--                    & "   end Create;" & LF);
+--
+--                 Writers.P
+--                   (Top_Level_Writer (Level),
+--                    "   overriding procedure Encode" & LF
+--                    & "     (Self    : "
+--                    & Add_Separator (Type_D.Get_Name)
+--                    & "_Encoder;" & LF
+--                    & "      Message : Web_Services.SOAP.Payloads."
+--                    & "Abstract_SOAP_Payload'Class;" & LF
+--                    & "      Writer  : in out XML.SAX.Writers.SAX_Writer'Class)"
+--                    & LF
+--                    & "   is" & LF
+--                    & "     pragma Unreferenced (Self);" & LF & LF
+--                    & "     use Payloads;" & LF
+--                    & "     Data : Payloads."
+--                    & Add_Separator (Type_D.Get_Name)  & LF
+--                    & "       renames Payloads."
+--                    & Add_Separator (Type_D.Get_Name) & " (Message);"
+--                    & LF & LF
+--                    & "   begin" & LF
+--                    & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
+--
+--                 Writers.P
+--                   (Top_Level_Writer (Level),
+--                    XSD_To_Ada.Encoder.Write_Start_Element (Type_D.Get_Name));
+--
+--                 XSD_To_Ada.Encoder.Print_Type_Definition
+--                   (Type_D => Type_D,
+--                    Indent => "",
+--                    Writer => Top_Level_Writer (Level),
+--                    Name => Type_D.Get_Name,
+--                    Full_Anonym_Name => League.Strings.Empty_Universal_String,
+--                    Base_Name => League.Strings.Empty_Universal_String,
+--                    Table => Types_Table);
+--
+--                 Writers.P
+--                   (Top_Level_Writer (Level),
+--                    "      Writer.End_Element (IATS_URI, "
+--                    & Add_Separator (Type_D.Get_Name) & "_Name);"
+--                    & LF
+--                    & "   end Encode;"
+--                    & LF);
             else
                if XSD_To_Ada.Encoder.Has_Element_Session
                  (Type_D.To_Type_Definition)
