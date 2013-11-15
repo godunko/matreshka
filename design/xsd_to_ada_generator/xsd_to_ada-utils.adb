@@ -477,9 +477,10 @@ package body XSD_To_Ada.Utils is
 
 --           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase"
 --             if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateCloseOrder"
+--         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "OrdersLinkInformation"
 --         then
             Print_Type_Title
-             (XS_Object.To_Type_Definition, Mapping, Payload_Writer);
+              (XS_Object.To_Type_Definition, Mapping, Payload_Writer);
 --         end if;
       end loop;
 
@@ -870,19 +871,8 @@ package body XSD_To_Ada.Utils is
       Min_Occurs   : in out Boolean;
       Max_Occurs   : in out Boolean;
       Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer)
-   is
---        Optional       : Boolean := False;
---        Full_Type_Name : League.Strings.Universal_String;
+      Writer_types : in out Writers.Writer) is
    begin
-
---        if Min_Occurs
---          and then not Max_Occurs
---        then
---           Optional := True;
---           Full_Type_Name := Find_Type (Type_D.Get_Name, Map, Optional);
---        end if;
-
       if Min_Occurs
         and then not Max_Occurs
       then
@@ -913,12 +903,31 @@ package body XSD_To_Ada.Utils is
 
          Min_Occurs := False;
       else
-         Writers.P
-           (Writer,
-            "      "
-            & XSD_To_Ada.Utils.Add_Separator
-              (XS_Term.Get_Name.To_Wide_Wide_String)
-            & " : " & Type_Name.To_Wide_Wide_String & ";");
+         if Max_Occurs then
+
+            Writers.P
+              (Writer_types,
+               "   package " & Add_Separator (Type_D.Get_Name)
+               & "_Vector is" & LF
+               &  "     new Ada.Containers.Indefinite_Vectors" & LF
+               & "       (Positive, "
+               & Type_Name.To_Wide_Wide_String & "," & LF
+               & "       ""="" => ICTS.Types.""="");" & LF);
+
+            Writers.P
+              (Writer,
+               "      "
+               & Add_Separator (XS_Term.Get_Name)
+               & " : "
+               & Add_Separator (Type_D.Get_Name) & "_Vector.Vector;");
+         else
+            Writers.P
+              (Writer,
+               "      "
+               & XSD_To_Ada.Utils.Add_Separator
+                 (XS_Term.Get_Name.To_Wide_Wide_String)
+               & " : " & Type_Name.To_Wide_Wide_String & ";");
+         end if;
       end if;
    end Generate_Simple_Type;
 
