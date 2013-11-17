@@ -86,15 +86,17 @@ private
    type Template_Processor is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with record
-      Diagnosis       : League.Strings.Universal_String;
-      Content_Handler : XML.SAX.Readers.SAX_Content_Handler_Access;
-      Lexical_Handler : XML.SAX.Readers.SAX_Lexical_Handler_Access;
-      Namespaces      : XML.Utilities.Namespace_Supports.XML_Namespace_Support;
-      Parameters      : String_Holder_Maps.Map;
-      Stream          : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
-      Accumulate      : Natural := 0;
-      Object_Name     : League.Strings.Universal_String;
-      Container_Name  : League.Strings.Universal_String;
+      Diagnosis        : League.Strings.Universal_String;
+      Content_Handler  : XML.SAX.Readers.SAX_Content_Handler_Access;
+      Lexical_Handler  : XML.SAX.Readers.SAX_Lexical_Handler_Access;
+      Namespaces       : XML.Utilities.Namespace_Supports.XML_Namespace_Support;
+      Parameters       : String_Holder_Maps.Map;
+      Stream           : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+      Accumulate       : Natural := 0;
+      Accumulated_Text : League.Strings.Universal_String;
+      --  Character data is accumulated in this member to simplify processing.
+      Object_Name      : League.Strings.Universal_String;
+      Container_Name   : League.Strings.Universal_String;
    end record;
 
    --  Override SAX event handling subprogram.

@@ -78,6 +78,11 @@ package body XML.Templates.Template_Processors is
    --  Process specified stream be dispatching each event to the template
    --  processor's event handler.
 
+   procedure Process_Characters
+    (Self    : in out Template_Processor'Class;
+     Success : in out Boolean);
+   --  Process accumulated character data.
+
    ----------------
    -- Characters --
    ----------------
@@ -85,16 +90,13 @@ package body XML.Templates.Template_Processors is
    overriding procedure Characters
     (Self    : in out Template_Processor;
      Text    : League.Strings.Universal_String;
-     Success : in out Boolean)
-   is
-      Aux : League.Strings.Universal_String;
-
+     Success : in out Boolean) is
    begin
       if Self.Accumulate /= 0 then
          Self.Stream.Append ((XML.Templates.Streams.Text, Text));
 
       else
-         Self.Substitute (Text, False, Aux, Success);
+         Self.Accumulated_Text.Append (Text);
       end if;
    end Characters;
 
@@ -111,6 +113,12 @@ package body XML.Templates.Template_Processors is
          Self.Stream.Append ((XML.Templates.Streams.Comment, Text));
 
       else
+         Self.Process_Characters (Success);
+
+         if not Success then
+            return;
+         end if;
+
          Self.Lexical_Handler.Comment (Text, Success);
 
          if not Success then
@@ -131,6 +139,12 @@ package body XML.Templates.Template_Processors is
          Self.Stream.Append ((Kind => XML.Templates.Streams.End_CDATA));
 
       else
+         Self.Process_Characters (Success);
+
+         if not Success then
+            return;
+         end if;
+
          Self.Lexical_Handler.End_CDATA (Success);
 
          if not Success then
@@ -226,6 +240,12 @@ package body XML.Templates.Template_Processors is
          end if;
 
       else
+         Self.Process_Characters (Success);
+
+         if not Success then
+            return;
+         end if;
+
          Self.Namespaces.Pop_Context;
          Self.Content_Handler.End_Element
           (Namespace_URI, Local_Name, Qualified_Name, Success);
@@ -281,6 +301,24 @@ package body XML.Templates.Template_Processors is
    begin
       return Self.Diagnosis;
    end Error_String;
+
+   ------------------------
+   -- Process_Characters --
+   ------------------------
+
+   procedure Process_Characters
+    (Self    : in out Template_Processor'Class;
+     Success : in out Boolean)
+   is
+      Text : constant League.Strings.Universal_String := Self.Accumulated_Text;
+      Aux  : League.Strings.Universal_String;
+
+   begin
+      if not Text.Is_Empty then
+         Self.Accumulated_Text.Clear;
+         Self.Substitute (Text, False, Aux, Success);
+      end if;
+   end Process_Characters;
 
    --------------------
    -- Process_Stream --
@@ -362,6 +400,12 @@ package body XML.Templates.Template_Processors is
           ((XML.Templates.Streams.Processing_Instruction, Target, Data));
 
       else
+         Self.Process_Characters (Success);
+
+         if not Success then
+            return;
+         end if;
+
          Self.Content_Handler.Processing_Instruction (Target, Data, Success);
 
          if not Success then
@@ -404,6 +448,12 @@ package body XML.Templates.Template_Processors is
          Self.Stream.Append ((Kind => XML.Templates.Streams.Start_CDATA));
 
       else
+         Self.Process_Characters (Success);
+
+         if not Success then
+            return;
+         end if;
+
          Self.Lexical_Handler.Start_CDATA (Success);
 
          if not Success then
@@ -463,40 +513,50 @@ package body XML.Templates.Template_Processors is
             Qualified_Name,
             Attributes));
 
-      elsif Namespace_URI = Template_URI then
-         if Local_Name = For_Name then
-            --  Enable accumulation of SAX events for future processing.
-
-            Self.Accumulate := 1;
-            Self.Object_Name := Attributes (Object_Name);
-            Self.Container_Name := Attributes (In_Name);
-
-         else
-            raise Program_Error;
-         end if;
-
       else
-         for J in 1 .. Attributes.Length loop
-            Self.Substitute (Attributes (J), True, Aux, Success);
-
-            if not Success then
-               return;
-            end if;
-
-            if Attributes.Namespace_URI (J).Is_Empty then
-               Result.Set_Value (Attributes.Qualified_Name (J), Aux);
-
-            else
-               Result.Set_Value
-                (Attributes.Namespace_URI (J), Attributes.Local_Name (J), Aux);
-            end if;
-         end loop;
-
-         Self.Content_Handler.Start_Element
-          (Namespace_URI, Local_Name, Qualified_Name, Result, Success);
+         Self.Process_Characters (Success);
 
          if not Success then
-            Self.Diagnosis := Self.Content_Handler.Error_String;
+            return;
+         end if;
+
+         if Namespace_URI = Template_URI then
+            if Local_Name = For_Name then
+            --  Enable accumulation of SAX events for future processing.
+
+               Self.Accumulate := 1;
+               Self.Object_Name := Attributes (Object_Name);
+               Self.Container_Name := Attributes (In_Name);
+
+            else
+               raise Program_Error;
+            end if;
+
+         else
+            for J in 1 .. Attributes.Length loop
+               Self.Substitute (Attributes (J), True, Aux, Success);
+
+               if not Success then
+                  return;
+               end if;
+
+               if Attributes.Namespace_URI (J).Is_Empty then
+                  Result.Set_Value (Attributes.Qualified_Name (J), Aux);
+
+               else
+                  Result.Set_Value
+                   (Attributes.Namespace_URI (J),
+                    Attributes.Local_Name (J),
+                    Aux);
+               end if;
+            end loop;
+
+            Self.Content_Handler.Start_Element
+             (Namespace_URI, Local_Name, Qualified_Name, Result, Success);
+
+            if not Success then
+               Self.Diagnosis := Self.Content_Handler.Error_String;
+            end if;
          end if;
       end if;
    end Start_Element;
