@@ -161,7 +161,7 @@ package body XSD_To_Ada.Encoder is
          if Print_Element
            and Element_Declarations.Item (J).Get_Name.To_UTF_8_String
            /= "Transaction"
-             and Element_Declarations.Item (J).Get_Name.To_UTF_8_String
+           and Element_Declarations.Item (J).Get_Name.To_UTF_8_String
            /= "InstrumentUpdated"
          then
             declare
