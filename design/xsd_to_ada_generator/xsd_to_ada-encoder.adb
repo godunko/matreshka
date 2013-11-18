@@ -630,6 +630,15 @@ package body XSD_To_Ada.Encoder is
          Types_Table (J).Type_State := True;
       end loop;
 
+      Writers.P
+        (Spec_Writer,
+         "with XML.SAX.Writers;" & LF
+         & "with League.Strings;" & LF
+         & "with Web_Services.SOAP.Payloads.Encoders;" & LF & LF
+         & "package Encoder is"  & LF & LF
+         & "   function Image (Item : Boolean) return League.Strings.Universal_String;"
+         & LF);
+
       Put_Header (Head_Writer);
 
       Create_Package_Name (Head_Writer);
@@ -678,6 +687,7 @@ package body XSD_To_Ada.Encoder is
       end loop;
 
       Writers.P (Payload_Writer, "end Encoder;");
+      Writers.N (Spec_Writer, "end Encoder;");
 
 --        Ada.Wide_Wide_Text_IO.Create
 --          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./encoder.adb");
@@ -689,6 +699,12 @@ package body XSD_To_Ada.Encoder is
 --          (Current_Out_File, Encoder_Top_Writer.Text.To_Wide_Wide_String);
 --        Ada.Wide_Wide_Text_IO.Put_Line
 --          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+--        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
+--
+--        Ada.Wide_Wide_Text_IO.Create
+--          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./encoder.ads");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Current_Out_File, Spec_Writer.Text.To_Wide_Wide_String);
 --        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
       Ada.Wide_Wide_Text_IO.Put_Line
@@ -702,15 +718,7 @@ package body XSD_To_Ada.Encoder is
 
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
 
-      Ada.Wide_Wide_Text_IO.Put_Line ("with XML.SAX.Writers;");
-      Ada.Wide_Wide_Text_IO.Put_Line ("with League.Strings;");
-      Ada.Wide_Wide_Text_IO.Put_Line
-        ("with Web_Services.SOAP.Payloads.Encoders;");
-      Ada.Wide_Wide_Text_IO.Put_Line ("package Encoder is");
-      Ada.Wide_Wide_Text_IO.Put_Line
-        ( "   function Image (Item : Boolean) return League.Strings.Universal_String;");
       Ada.Wide_Wide_Text_IO.Put (Spec_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Put_Line ("end Encoder;");
    end Create_Complex_Type;
 
    ---------------------------
