@@ -140,6 +140,7 @@ package XSD_To_Ada.Encoder is
      Full_Anonym_Name : League.Strings.Universal_String;
      Base_Choice_Name : League.Strings.Universal_String;
      Base_Name        : League.Strings.Universal_String;
+     Responce_Name    : League.Strings.Universal_String;
      Min_Occurs       : in out Boolean;
      Max_Occurs       : in out Boolean;
      Top_Max_Occurs   : Boolean;
@@ -178,6 +179,7 @@ package XSD_To_Ada.Encoder is
      Name             : League.Strings.Universal_String;
      Full_Anonym_Name : League.Strings.Universal_String;
      Base_Name        : League.Strings.Universal_String;
+     Responce_Name    : League.Strings.Universal_String;
      Table            : in out Types_Table_Type_Array;
      Is_Max_Occur     : Boolean := False;
      Is_Min_Occur     : Boolean := False;

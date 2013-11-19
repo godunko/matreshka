@@ -284,7 +284,8 @@ package body XSD_To_Ada.Utils is
          & "with ICTS.Forex;" & LF
          & "with ICTSClient.Types;" & LF
          & "with Web_Services.SOAP.Payloads;" & LF
-         & "with Ada.Strings.Unbounded;"
+         & "with Ada.Strings.Unbounded;" & LF
+         & "with ICTS.Currencies;"
          & LF & LF
          & "package Payloads is"
          & LF & LF
@@ -376,6 +377,10 @@ package body XSD_To_Ada.Utils is
          end;
       end loop;
    end Create_Simple_Type;
+
+   ------------------------------------
+   -- Create_Enumeration_Simple_Type --
+   ------------------------------------
 
    procedure Create_Enumeration_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
@@ -488,11 +493,11 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Payload_Writer, "end Payloads;");
 
-      Ada.Wide_Wide_Text_IO.Create
-        (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.adb");
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
+--        Ada.Wide_Wide_Text_IO.Create
+--          (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./payloads.adb");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+--        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
