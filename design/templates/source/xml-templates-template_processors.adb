@@ -604,10 +604,115 @@ package body XML.Templates.Template_Processors is
    is
       use type League.Characters.Universal_Character;
 
-      First   : Positive := 1;
-      Dollar  : Natural;
-      Last    : Natural;
-      Object  : League.Holders.Holder;
+      procedure Process_Expression (Text : League.Strings.Universal_String);
+      --  Parse and execute expression.
+
+      ------------------------
+      -- Process_Expression --
+      ------------------------
+
+      procedure Process_Expression (Text : League.Strings.Universal_String) is
+
+         type Token_Kinds is (Token_Identifier, Token_End_Of_Expression);
+
+         function Next_Token return Token_Kinds;
+
+         Current     : Positive := 1;
+         Slice_First : Positive;
+         Slice_Last  : Natural;
+
+         ----------------
+         -- Next_Token --
+         ----------------
+
+         function Next_Token return Token_Kinds is
+            First : Positive := Current;
+
+         begin
+            --  Skip white spaces
+
+            while Current <= Text.Length loop
+               exit when not Text (Current).Is_White_Space;
+
+               Current := Current + 1;
+               First   := Current;
+            end loop;
+
+            if First > Text.Length then
+               return Token_End_Of_Expression;
+            end if;
+
+            --  Extract identifier
+
+            if Text (First).Is_ID_Start then
+               Current := Current + 1;
+
+               while Current <= Text.Length loop
+                  exit when not Text (Current).Is_ID_Continue;
+
+                  Current := Current + 1;
+               end loop;
+
+               Slice_First := First;
+               Slice_Last  := Current - 1;
+
+               return Token_Identifier;
+            end if;
+         end Next_Token;
+
+         Token : Token_Kinds;
+         Value : League.Holders.Holder;
+
+      begin
+         Token := Next_Token;
+
+         case Token is
+            when Token_Identifier =>
+               Value := Self.Parameters (Text.Slice (Slice_First, Slice_Last));
+
+               if League.Holders.Is_Universal_String (Value) then
+                  if In_Attribute then
+                     Result.Append (League.Holders.Element (Value));
+
+                  else
+                     Self.Content_Handler.Characters
+                      (League.Holders.Element (Value), Success);
+
+                     if not Success then
+                        Self.Diagnosis := Self.Content_Handler.Error_String;
+
+                        return;
+                     end if;
+                  end if;
+
+               elsif League.Holders.Has_Tag
+                      (Value, XML.Templates.Streams.Holders.Value_Tag)
+               then
+                  if In_Attribute then
+                     raise Program_Error;
+
+                  else
+                     Self.Process_Stream
+                      (XML.Templates.Streams.Holders.Element (Value),
+                       Success);
+
+                     if not Success then
+                        return;
+                     end if;
+                  end if;
+
+               else
+                  raise Program_Error;
+               end if;
+
+            when Token_End_Of_Expression =>
+               raise Program_Error;
+         end case;
+      end Process_Expression;
+
+      First  : Positive := 1;
+      Dollar : Natural;
+      Last   : Natural;
 
    begin
       Result.Clear;
@@ -679,44 +784,7 @@ package body XML.Templates.Template_Processors is
 
                else
                   Last := Dollar - 1;
-
-                  Object := Self.Parameters (Text.Slice (First, Last));
-
-                  if League.Holders.Is_Universal_String (Object) then
-                     if In_Attribute then
-                        Result.Append (League.Holders.Element (Object));
-
-                     else
-                        Self.Content_Handler.Characters
-                         (League.Holders.Element (Object), Success);
-
-                        if not Success then
-                           Self.Diagnosis := Self.Content_Handler.Error_String;
-
-                           return;
-                        end if;
-                     end if;
-
-                  elsif League.Holders.Has_Tag
-                         (Object, XML.Templates.Streams.Holders.Value_Tag)
-                  then
-                     if In_Attribute then
-                        raise Program_Error;
-
-                     else
-                        Self.Process_Stream
-                         (XML.Templates.Streams.Holders.Element (Object),
-                          Success);
-
-                        if not Success then
-                           return;
-                        end if;
-                     end if;
-
-                  else
-                     raise Program_Error;
-                  end if;
-
+                  Process_Expression (Text.Slice (First, Last));
                   First := Dollar + 1;
                end if;
             end if;
