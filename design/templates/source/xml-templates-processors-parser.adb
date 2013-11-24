@@ -41,10 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Characters.Latin;
+with League.Holders.Booleans;
+with League.Holders.JSON_Arrays;
+with League.Holders.JSON_Objects;
+with League.JSON.Objects;
+with League.JSON.Values;
 
 package body XML.Templates.Processors.Parser is
 
-   type Token_Kinds is (Token_Identifier, Token_End_Of_Expression);
+   type Token_Kinds is
+    (Token_Identifier,
+     Token_Full_Stop,
+     Token_End_Of_Expression);
 
    type Scanner_Type is tagged record
       Text    : League.Strings.Universal_String;
@@ -58,6 +67,9 @@ package body XML.Templates.Processors.Parser is
    function Token_Image
     (Self : Scanner_Type'Class) return League.Strings.Universal_String;
 
+   In_Keyword : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("in");
+
    --------------------------------
    -- Evaluate_Simple_Expression --
    --------------------------------
@@ -68,61 +80,122 @@ package body XML.Templates.Processors.Parser is
      Value   : out League.Holders.Holder;
      Success : out Boolean)
    is
-      Scanner : Scanner_Type;
---      Token   : Token_Kinds;
+      Scanner   : Scanner_Type;
+      JS_Object : League.JSON.Objects.JSON_Object;
+      JS_Value  : League.JSON.Values.JSON_Value;
 
    begin
       Scanner.Text := Text;
 
-      Success := False;
---         Value : League.Holders.Holder;
---
---      begin
---         Token := Next_Token;
---
+      --  Lookup for identifier.
+
       case Scanner.Next_Token is
          when Token_Identifier =>
             Value := Context (Scanner.Token_Image.To_Casefold);
             Success := True;
---
---               if League.Holders.Is_Universal_String (Value) then
---                  if In_Attribute then
---                     Result.Append (League.Holders.Element (Value));
---
---                  else
---                     Self.Content_Handler.Characters
---                      (League.Holders.Element (Value), Success);
---
---                     if not Success then
---                        Self.Diagnosis := Self.Content_Handler.Error_String;
---
---                        return;
---                     end if;
---                  end if;
---
---               elsif League.Holders.Has_Tag
---                      (Value, XML.Templates.Streams.Holders.Value_Tag)
---               then
---                  if In_Attribute then
---                     raise Program_Error;
---
---                  else
---                     Self.Process_Stream
---                      (XML.Templates.Streams.Holders.Element (Value),
---                       Success);
---
---                     if not Success then
---                        return;
---                     end if;
---                  end if;
---
---               else
---                  raise Program_Error;
---               end if;
 
-         when Token_End_Of_Expression =>
-            null;
+         when others =>
+            League.Holders.Clear (Value);
+            Success := False;
+
+            return;
       end case;
+
+      loop
+         --  Lookup for full stop or end of expression.
+
+         case Scanner.Next_Token is
+            when Token_End_Of_Expression =>
+               exit;
+
+            when Token_Full_Stop =>
+               null;
+
+            when others =>
+               League.Holders.Clear (Value);
+               Success := False;
+
+               return;
+         end case;
+
+         --  Lookup for identifier.
+
+         case Scanner.Next_Token is
+            when Token_Identifier =>
+               if League.Holders.Has_Tag
+                   (Value, League.Holders.JSON_Objects.Value_Tag)
+               then
+                  JS_Object := League.Holders.JSON_Objects.Element (Value);
+
+                  if not JS_Object.Contains (Scanner.Token_Image) then
+                     League.Holders.Clear (Value);
+                     Success := False;
+
+                     return;
+                  end if;
+
+                  JS_Value := JS_Object.Value (Scanner.Token_Image);
+
+                  case JS_Value.Kind is
+                     when League.JSON.Values.Empty_Value =>
+                        League.Holders.Clear (Value);
+                        Success := False;
+
+                        return;
+
+                     when League.JSON.Values.Boolean_Value =>
+                        Value :=
+                          League.Holders.Booleans.To_Holder
+                           (JS_Value.To_Boolean);
+
+                     when League.JSON.Values.Number_Value =>
+                        if JS_Value.Is_Integer_Number then
+                           League.Holders.Set_Tag
+                            (Value, League.Holders.Universal_Integer_Tag);
+                           League.Holders.Replace_Element
+                            (Value, JS_Value.To_Integer);
+
+                        else
+                           League.Holders.Set_Tag
+                            (Value, League.Holders.Universal_Float_Tag);
+                           League.Holders.Replace_Element
+                            (Value, JS_Value.To_Float);
+                        end if;
+
+                     when League.JSON.Values.String_Value =>
+                        Value := League.Holders.To_Holder (JS_Value.To_String);
+
+                     when League.JSON.Values.Array_Value =>
+                        Value :=
+                          League.Holders.JSON_Arrays.To_Holder
+                           (JS_Value.To_Array);
+
+                     when League.JSON.Values.Object_Value =>
+                        Value :=
+                          League.Holders.JSON_Objects.To_Holder
+                           (JS_Value.To_Object);
+
+                     when League.JSON.Values.Null_Value =>
+                        League.Holders.Clear (Value);
+                        Success := False;
+
+                        return;
+                  end case;
+
+               else
+                  League.Holders.Clear (Value);
+                  Success := False;
+
+                  return;
+               end if;
+
+            when others =>
+               League.Holders.Clear (Value);
+               Success := False;
+
+               return;
+         end case;
+      end loop;
    end Evaluate_Simple_Expression;
 
    ----------------
@@ -130,6 +203,9 @@ package body XML.Templates.Processors.Parser is
    ----------------
 
    function Next_Token (Self : in out Scanner_Type'Class) return Token_Kinds is
+      use type League.Characters.Universal_Character;
+      use type League.Strings.Universal_String;
+
    begin
       Self.First := Self.Current;
 
@@ -160,6 +236,11 @@ package body XML.Templates.Processors.Parser is
          Self.Last := Self.Current - 1;
 
          return Token_Identifier;
+
+      elsif Self.Text (Self.First) = League.Characters.Latin.Full_Stop then
+         Self.Current := Self.Current + 1;
+
+         return Token_Full_Stop;
       end if;
    end Next_Token;
 
