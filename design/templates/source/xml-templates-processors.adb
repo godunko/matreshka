@@ -166,6 +166,21 @@ package body XML.Templates.Processors is
       end if;
    end End_CDATA;
 
+   ------------------
+   -- End_Document --
+   ------------------
+
+   overriding procedure End_Document
+    (Self    : in out Template_Processor;
+     Success : in out Boolean) is
+   begin
+      Self.Content_Handler.End_Document (Success);
+
+      if not Success then
+         Self.Diagnosis := Self.Content_Handler.Error_String;
+      end if;
+   end End_Document;
+
    -------------
    -- End_DTD --
    -------------
@@ -478,6 +493,21 @@ package body XML.Templates.Processors is
          end if;
       end if;
    end Start_CDATA;
+
+   --------------------
+   -- Start_Document --
+   --------------------
+
+   overriding procedure Start_Document
+    (Self    : in out Template_Processor;
+     Success : in out Boolean) is
+   begin
+      Self.Content_Handler.Start_Document (Success);
+
+      if not Success then
+         Self.Diagnosis := Self.Content_Handler.Error_String;
+      end if;
+   end Start_Document;
 
    ---------------
    -- Start_DTD --

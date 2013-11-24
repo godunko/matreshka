@@ -119,6 +119,10 @@ private
     (Self    : in out Template_Processor;
      Success : in out Boolean);
 
+   overriding procedure End_Document
+    (Self    : in out Template_Processor;
+     Success : in out Boolean);
+
    overriding procedure End_DTD
     (Self    : in out Template_Processor;
      Success : in out Boolean);
@@ -153,6 +157,10 @@ private
     (Self    : in out Template_Processor;
      Success : in out Boolean);
 
+   overriding procedure Start_Document
+    (Self    : in out Template_Processor;
+     Success : in out Boolean);
+
    overriding procedure Start_DTD
     (Self      : in out Template_Processor;
      Name      : League.Strings.Universal_String;
@@ -173,120 +181,6 @@ private
      Prefix        : League.Strings.Universal_String;
      Namespace_URI : League.Strings.Universal_String;
      Success       : in out Boolean);
-
---   not overriding procedure End_Document
---    (Self    : in out SAX_Content_Handler;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram after it has finished parsing. It is
---   --  called just once, and is the last subprogram called. It is called after
---   --  the reader has read all input or has abandoned parsing because of fatal
---   --  error.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
-
---   not overriding procedure Set_Document_Locator
---    (Self    : in out SAX_Content_Handler;
---     Locator : XML.SAX.Locators.SAX_Locator) is null;
---   --  The reader calls this subprogram before is starts parsing the document.
---   --  Argument Locator is object which allows the application to get the
---   --  parsing position within the document.
---   --
---   --  The locator allows the application to determine the end position of any
---   --  document-related event, even if the parser is not reporting an error.
---   --  Typically, the application will use this information for reporting its
---   --  own errors (such as character content that does not match an
---   --  application's business rules). The information returned by the locator
---   --  is probably not sufficient for use with a search engine.
---   --
---   --  Note that the locator will return correct information only during the
---   --  invocation SAX event callbacks after Start_Document returns and before
---   --  End_Document is called. The application should not attempt to use it at
---   --  any other time.
---
---   not overriding procedure Skipped_Entity
---    (Self    : in out SAX_Content_Handler;
---     Name    : League.Strings.Universal_String;
---     Success : in out Boolean) is null;
---   --  Some readers may skip entities if they have not seen the declaration.
---   --  If they do so they report that they skipped the entity called Name by
---   --  calling this subprogram.
---   --
---   --  This is not called for entity references within markup constructs such
---   --  as element start tags or markup declarations. (The XML recommendation
---   --  requires reporting skipped external entities. SAX also reports internal
---   --  entity expansion/non-expansion, except within markup constructs.)
---   --
---   --  Non-validating processors may skip entities if they have not seen the
---   --  declarations (because, for example, the entity was declared in an
---   --  external DTD subset). All processors may skip external entities,
---   --  depending on the values of the
---   --  http://xml.org/sax/features/external-general-entities and the
---   --  http://xml.org/sax/features/external-parameter-entities properties.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
---
---   not overriding procedure Start_Document
---    (Self    : in out SAX_Content_Handler;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram when it starts parsing the document.
---   --  The reader calls this subprogram just once, after the call to
---   --  Set_Document_Locator, and before and other subprogram in this
---   --  interface or in the SAX_DTD_Handler interface are called.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
-
---   not overriding procedure End_Entity
---    (Self    : in out SAX_Lexical_Handler;
---     Name    : League.Strings.Universal_String;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram to report the end of an entity called
---   --  Name.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
---
---   not overriding procedure Start_Entity
---    (Self    : in out SAX_Lexical_Handler;
---     Name    : League.Strings.Universal_String;
---     Success : in out Boolean) is null;
---   --  The reader calls this subprogram to report the start of an internal or
---   --  external entity called Name.
---   --
---   --  General entities are reported with their regular names, parameter
---   --  entities have '%' prepended to their names, and the external DTD subset
---   --  has the pseudo-entity name "[dtd]".
---   --
---   --  Note that if the entity is unknown, the reader reports it through
---   --  SAX_Content_Handler's Skipped_Entity and not through this subprogram.
---   --
---   --  Because of the streaming event model that SAX uses, some entity
---   --  boundaries cannot be reported under any circumstances:
---   --
---   --    * general entities within attribute values
---   --    * parameter entities within declarations
---   --
---   --  These will be silently expanded, with no indication of where the
---   --  original entity boundaries were.
---   --
---   --  Note also that the boundaries of character references (which are not
---   --  really entities anyway) are not reported.
---   --
---   --  The reporting of parameter entities (including the external DTD subset)
---   --  is optional, and SAX2 drivers that report Lexical_Handler events may not
---   --  implement it; you can use the
---   --  http://xml.org/sax/features/lexical-handler/parameter-entities feature
---   --  to query or control the reporting of parameter entities.
---   --
---   --  If this subprogram sets Success to False the reader stops parsing and
---   --  reports an error. The reader uses the function Error_String to get the
---   --  error message.
 
    --  Supplimentary subprograms.
 
