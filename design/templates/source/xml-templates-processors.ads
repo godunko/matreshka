@@ -92,8 +92,11 @@ private
       Lexical_Handler  : XML.SAX.Readers.SAX_Lexical_Handler_Access;
       Namespaces       : XML.Utilities.Namespace_Supports.XML_Namespace_Support;
       Parameters       : String_Holder_Maps.Map;
-      Stream           : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+      Stream           :
+        XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
       Accumulate       : Natural := 0;
+      Skip             : Natural := 0;
+      --  Skip all events. Used to process 'if' directive.
       Accumulated_Text : League.Strings.Universal_String;
       --  Character data is accumulated in this member to simplify processing.
       Object_Name      : League.Strings.Universal_String;

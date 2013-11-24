@@ -58,10 +58,14 @@ package body XML.Templates.Processors is
      := League.Strings.To_Universal_String
          ("http://forge.ada-ru.org/matreshka/template");
 
-   For_Name  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("for");
    Each_Name : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("each");
+   If_Name   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("if");
+   For_Name  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("for");
+   Test_Name : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("test");
 
    procedure Substitute
     (Self         : in out Template_Processor'Class;
@@ -95,6 +99,9 @@ package body XML.Templates.Processors is
       if Self.Accumulate /= 0 then
          Self.Stream.Append ((XML.Templates.Streams.Text, Text));
 
+      elsif Self.Skip /= 0 then
+         null;
+
       else
          Self.Accumulated_Text.Append (Text);
       end if;
@@ -111,6 +118,9 @@ package body XML.Templates.Processors is
    begin
       if Self.Accumulate /= 0 then
          Self.Stream.Append ((XML.Templates.Streams.Comment, Text));
+
+      elsif Self.Skip /= 0 then
+         null;
 
       else
          Self.Process_Characters (Success);
@@ -138,6 +148,9 @@ package body XML.Templates.Processors is
       if Self.Accumulate /= 0 then
          Self.Stream.Append ((Kind => XML.Templates.Streams.End_CDATA));
 
+      elsif Self.Skip /= 0 then
+         null;
+
       else
          Self.Process_Characters (Success);
 
@@ -163,6 +176,9 @@ package body XML.Templates.Processors is
    begin
       if Self.Accumulate /= 0 then
          Self.Stream.Append ((Kind => XML.Templates.Streams.End_DTD));
+
+      elsif Self.Skip /= 0 then
+         null;
 
       else
          Self.Lexical_Handler.End_DTD (Success);
@@ -228,6 +244,9 @@ package body XML.Templates.Processors is
             end if;
          end if;
 
+      elsif Self.Skip /= 0 then
+         Self.Skip := Self.Skip - 1;
+
       else
          Self.Process_Characters (Success);
 
@@ -269,6 +288,9 @@ package body XML.Templates.Processors is
       if Self.Accumulate /= 0 then
          Self.Stream.Append
           ((XML.Templates.Streams.End_Prefix_Mapping, Prefix));
+
+      elsif Self.Skip /= 0 then
+         null;
 
       else
 --         if Self.Namespaces.Namespace_URI (Prefix) /= Template_URI then
@@ -388,6 +410,9 @@ package body XML.Templates.Processors is
          Self.Stream.Append
           ((XML.Templates.Streams.Processing_Instruction, Target, Data));
 
+      elsif Self.Skip /= 0 then
+         null;
+
       else
          Self.Process_Characters (Success);
 
@@ -436,6 +461,9 @@ package body XML.Templates.Processors is
       if Self.Accumulate /= 0 then
          Self.Stream.Append ((Kind => XML.Templates.Streams.Start_CDATA));
 
+      elsif Self.Skip /= 0 then
+         null;
+
       else
          Self.Process_Characters (Success);
 
@@ -466,6 +494,9 @@ package body XML.Templates.Processors is
          Self.Stream.Append
           ((XML.Templates.Streams.Start_DTD, Name, Public_Id, System_Id));
 
+      elsif Self.Skip /= 0 then
+         null;
+
       else
          Self.Lexical_Handler.Start_DTD (Name, Public_Id, System_Id, Success);
 
@@ -489,10 +520,9 @@ package body XML.Templates.Processors is
    is
       Result : XML.SAX.Attributes.SAX_Attributes;
       Aux    : League.Strings.Universal_String;
+      Value  : League.Holders.Holder;
 
    begin
-      Self.Namespaces.Push_Context;
-
       if Self.Accumulate /= 0 then
          Self.Accumulate := Self.Accumulate + 1;
          Self.Stream.Append
@@ -502,8 +532,12 @@ package body XML.Templates.Processors is
             Qualified_Name,
             Attributes));
 
+      elsif Self.Skip /= 0 then
+         null;
+
       else
          Self.Process_Characters (Success);
+         Self.Namespaces.Push_Context;
 
          if not Success then
             return;
@@ -525,6 +559,25 @@ package body XML.Templates.Processors is
                --  Enable accumulation of SAX events for future processing.
 
                Self.Accumulate := 1;
+
+            elsif Local_Name = If_Name then
+               Parser.Evaluate_Simple_Expression
+                (Attributes (Test_Name), Self.Parameters, Value, Success);
+
+               if not Success then
+                  return;
+               end if;
+
+               if League.Holders.Has_Tag
+                   (Value, League.Holders.Booleans.Value_Tag)
+               then
+                  if not League.Holders.Booleans.Element (Value) then
+                     Self.Skip := 1;
+                  end if;
+
+               else
+                  raise Program_Error;
+               end if;
 
             else
                raise Program_Error;
@@ -574,6 +627,9 @@ package body XML.Templates.Processors is
           ((XML.Templates.Streams.Start_Prefix_Mapping,
             Prefix,
             Namespace_URI));
+
+      elsif Self.Skip /= 0 then
+         null;
 
       else
          Self.Namespaces.Declare_Prefix (Prefix, Namespace_URI);
