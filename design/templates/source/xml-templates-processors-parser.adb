@@ -82,7 +82,7 @@ package body XML.Templates.Processors.Parser is
 --
       case Scanner.Next_Token is
          when Token_Identifier =>
-            Value := Context (Scanner.Token_Image);
+            Value := Context (Scanner.Token_Image.To_Casefold);
             Success := True;
 --
 --               if League.Holders.Is_Universal_String (Value) then

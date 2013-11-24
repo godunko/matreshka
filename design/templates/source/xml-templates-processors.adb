@@ -266,7 +266,7 @@ package body XML.Templates.Processors is
      Name  : League.Strings.Universal_String;
      Value : League.Holders.Holder) is
    begin
-      Self.Parameters.Include (Name, Value);
+      Self.Parameters.Include (Name.To_Casefold, Value);
    end Set_Parameter;
 
    ------------------------
