@@ -46,6 +46,7 @@ with League.JSON.Arrays;
 with League.JSON.Values;
 with League.Holders.JSON_Arrays;
 
+with XML.Templates.Processors.Parser;
 with XML.Templates.Streams.Holders;
 
 package body XML.Templates.Processors is
@@ -612,102 +613,51 @@ package body XML.Templates.Processors is
       ------------------------
 
       procedure Process_Expression (Text : League.Strings.Universal_String) is
-
-         type Token_Kinds is (Token_Identifier, Token_End_Of_Expression);
-
-         function Next_Token return Token_Kinds;
-
-         Current     : Positive := 1;
-         Slice_First : Positive;
-         Slice_Last  : Natural;
-
-         ----------------
-         -- Next_Token --
-         ----------------
-
-         function Next_Token return Token_Kinds is
-            First : Positive := Current;
-
-         begin
-            --  Skip white spaces
-
-            while Current <= Text.Length loop
-               exit when not Text (Current).Is_White_Space;
-
-               Current := Current + 1;
-               First   := Current;
-            end loop;
-
-            if First > Text.Length then
-               return Token_End_Of_Expression;
-            end if;
-
-            --  Extract identifier
-
-            if Text (First).Is_ID_Start then
-               Current := Current + 1;
-
-               while Current <= Text.Length loop
-                  exit when not Text (Current).Is_ID_Continue;
-
-                  Current := Current + 1;
-               end loop;
-
-               Slice_First := First;
-               Slice_Last  := Current - 1;
-
-               return Token_Identifier;
-            end if;
-         end Next_Token;
-
-         Token : Token_Kinds;
-         Value : League.Holders.Holder;
+         Value   : League.Holders.Holder;
+         Success : Boolean;
 
       begin
-         Token := Next_Token;
+         Parser.Evaluate_Simple_Expression
+          (Text, Self.Parameters, Value, Success);
 
-         case Token is
-            when Token_Identifier =>
-               Value := Self.Parameters (Text.Slice (Slice_First, Slice_Last));
+         if not Success then
+            raise Program_Error;
+         end if;
 
-               if League.Holders.Is_Universal_String (Value) then
-                  if In_Attribute then
-                     Result.Append (League.Holders.Element (Value));
+         if League.Holders.Is_Universal_String (Value) then
+            if In_Attribute then
+               Result.Append (League.Holders.Element (Value));
 
-                  else
-                     Self.Content_Handler.Characters
-                      (League.Holders.Element (Value), Success);
+            else
+               Self.Content_Handler.Characters
+                (League.Holders.Element (Value), Success);
 
-                     if not Success then
-                        Self.Diagnosis := Self.Content_Handler.Error_String;
+               if not Success then
+                  Self.Diagnosis := Self.Content_Handler.Error_String;
 
-                        return;
-                     end if;
-                  end if;
-
-               elsif League.Holders.Has_Tag
-                      (Value, XML.Templates.Streams.Holders.Value_Tag)
-               then
-                  if In_Attribute then
-                     raise Program_Error;
-
-                  else
-                     Self.Process_Stream
-                      (XML.Templates.Streams.Holders.Element (Value),
-                       Success);
-
-                     if not Success then
-                        return;
-                     end if;
-                  end if;
-
-               else
-                  raise Program_Error;
+                  return;
                end if;
+            end if;
 
-            when Token_End_Of_Expression =>
+         elsif League.Holders.Has_Tag
+                (Value, XML.Templates.Streams.Holders.Value_Tag)
+         then
+            if In_Attribute then
                raise Program_Error;
-         end case;
+
+            else
+               Self.Process_Stream
+                (XML.Templates.Streams.Holders.Element (Value),
+                 Success);
+
+               if not Success then
+                  return;
+               end if;
+            end if;
+
+         else
+            raise Program_Error;
+         end if;
       end Process_Expression;
 
       First  : Positive := 1;
