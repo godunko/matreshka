@@ -44,6 +44,7 @@
 private with Ada.Containers.Hashed_Maps;
 
 with League.Holders;
+private with League.JSON.Values;
 with League.Strings;
 private with League.Strings.Hash;
 private with XML.SAX.Attributes;
@@ -283,5 +284,16 @@ private
 --   --  If this subprogram sets Success to False the reader stops parsing and
 --   --  reports an error. The reader uses the function Error_String to get the
 --   --  error message.
+
+   --  Supplimentary subprograms.
+
+   procedure To_Holder
+    (Value   : League.JSON.Values.JSON_Value;
+     Holder  : out League.Holders.Holder;
+     Success : in out Boolean);
+   --  Converts JSON_Value object to holder of corresponding type. Supported
+   --  types are booleans, strings, numbers, arrays, and objects. For
+   --  unsupported kinds of JSON_Value (empty and null) is resets Holder to
+   --  empty state and sets Success to False.
 
 end XML.Templates.Processors;

@@ -42,11 +42,8 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Characters.Latin;
-with League.Holders.Booleans;
-with League.Holders.JSON_Arrays;
 with League.Holders.JSON_Objects;
 with League.JSON.Objects;
-with League.JSON.Values;
 
 package body XML.Templates.Processors.Parser is
 
@@ -184,53 +181,12 @@ package body XML.Templates.Processors.Parser is
                      return;
                   end if;
 
-                  JS_Value := JS_Object.Value (Scanner.Token_Image);
+                  To_Holder
+                   (JS_Object.Value (Scanner.Token_Image), Value, Success);
 
-                  case JS_Value.Kind is
-                     when League.JSON.Values.Empty_Value =>
-                        League.Holders.Clear (Value);
-                        Success := False;
-
-                        return;
-
-                     when League.JSON.Values.Boolean_Value =>
-                        Value :=
-                          League.Holders.Booleans.To_Holder
-                           (JS_Value.To_Boolean);
-
-                     when League.JSON.Values.Number_Value =>
-                        if JS_Value.Is_Integer_Number then
-                           League.Holders.Set_Tag
-                            (Value, League.Holders.Universal_Integer_Tag);
-                           League.Holders.Replace_Element
-                            (Value, JS_Value.To_Integer);
-
-                        else
-                           League.Holders.Set_Tag
-                            (Value, League.Holders.Universal_Float_Tag);
-                           League.Holders.Replace_Element
-                            (Value, JS_Value.To_Float);
-                        end if;
-
-                     when League.JSON.Values.String_Value =>
-                        Value := League.Holders.To_Holder (JS_Value.To_String);
-
-                     when League.JSON.Values.Array_Value =>
-                        Value :=
-                          League.Holders.JSON_Arrays.To_Holder
-                           (JS_Value.To_Array);
-
-                     when League.JSON.Values.Object_Value =>
-                        Value :=
-                          League.Holders.JSON_Objects.To_Holder
-                           (JS_Value.To_Object);
-
-                     when League.JSON.Values.Null_Value =>
-                        League.Holders.Clear (Value);
-                        Success := False;
-
-                        return;
-                  end case;
+                  if not Success then
+                     return;
+                  end if;
 
                else
                   League.Holders.Clear (Value);

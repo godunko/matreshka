@@ -42,9 +42,10 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Characters;
-with League.JSON.Arrays;
-with League.JSON.Values;
+with League.Holders.Booleans;
 with League.Holders.JSON_Arrays;
+with League.Holders.JSON_Objects;
+with League.JSON.Arrays;
 
 with XML.Templates.Processors.Parser;
 with XML.Templates.Streams.Holders;
@@ -207,22 +208,11 @@ package body XML.Templates.Processors is
 
                begin
                   for Index in 1 .. Container.Length loop
-                     Object := Container.Element (Index);
+                     To_Holder (Container.Element (Index), Holder, Success);
 
-                     case League.JSON.Values.Kind (Object) is
-                        when League.JSON.Values.Empty_Value
-                          | League.JSON.Values.Boolean_Value
-                          | League.JSON.Values.Number_Value
-                          | League.JSON.Values.Array_Value
-                          | League.JSON.Values.Object_Value
-                          | League.JSON.Values.Null_Value
-                        =>
-                           raise Program_Error;
-
-                        when League.JSON.Values.String_Value =>
-                           Holder :=
-                             League.Holders.To_Holder (Object.To_String);
-                     end case;
+                     if not Success then
+                        return;
+                     end if;
 
                      Self.Parameters.Include (Self.Object_Name, Holder);
                      Self.Process_Stream (Self.Stream, Success);
@@ -748,5 +738,53 @@ package body XML.Templates.Processors is
          end if;
       end loop;
    end Substitute;
+
+   ---------------
+   -- To_Holder --
+   ---------------
+
+   procedure To_Holder
+    (Value   : League.JSON.Values.JSON_Value;
+     Holder  : out League.Holders.Holder;
+     Success : in out Boolean) is
+   begin
+      case Value.Kind is
+         when League.JSON.Values.Empty_Value =>
+            League.Holders.Clear (Holder);
+            Success := False;
+
+            return;
+
+         when League.JSON.Values.Boolean_Value =>
+            Holder := League.Holders.Booleans.To_Holder (Value.To_Boolean);
+
+         when League.JSON.Values.Number_Value =>
+            if Value.Is_Integer_Number then
+               League.Holders.Set_Tag
+                (Holder, League.Holders.Universal_Integer_Tag);
+               League.Holders.Replace_Element (Holder, Value.To_Integer);
+
+            else
+               League.Holders.Set_Tag
+                (Holder, League.Holders.Universal_Float_Tag);
+               League.Holders.Replace_Element (Holder, Value.To_Float);
+            end if;
+
+         when League.JSON.Values.String_Value =>
+            Holder := League.Holders.To_Holder (Value.To_String);
+
+         when League.JSON.Values.Array_Value =>
+            Holder := League.Holders.JSON_Arrays.To_Holder (Value.To_Array);
+
+         when League.JSON.Values.Object_Value =>
+            Holder := League.Holders.JSON_Objects.To_Holder (Value.To_Object);
+
+         when League.JSON.Values.Null_Value =>
+            League.Holders.Clear (Holder);
+            Success := False;
+
+            return;
+      end case;
+   end To_Holder;
 
 end XML.Templates.Processors;
