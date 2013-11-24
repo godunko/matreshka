@@ -270,11 +270,19 @@ package body XML.Templates.Processors is
          end if;
 
          Self.Namespaces.Pop_Context;
-         Self.Content_Handler.End_Element
-          (Namespace_URI, Local_Name, Qualified_Name, Success);
 
-         if not Success then
-            Self.Diagnosis := Self.Content_Handler.Error_String;
+         if Namespace_URI = Template_URI then
+            null;
+
+         else
+            Self.Content_Handler.End_Element
+             (Namespace_URI, Local_Name, Qualified_Name, Success);
+
+            if not Success then
+               Self.Diagnosis := Self.Content_Handler.Error_String;
+
+               return;
+            end if;
          end if;
       end if;
    end End_Element;
@@ -563,7 +571,7 @@ package body XML.Templates.Processors is
             Attributes));
 
       elsif Self.Skip /= 0 then
-         null;
+         Self.Skip := Self.Skip + 1;
 
       else
          Self.Process_Characters (Success);
