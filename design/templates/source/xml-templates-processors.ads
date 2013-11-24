@@ -54,7 +54,7 @@ private with XML.Utilities.Namespace_Supports;
 
 private with XML.Templates.Streams;
 
-package XML.Templates.Template_Processors is
+package XML.Templates.Processors is
 
    type Template_Processor is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
@@ -284,4 +284,4 @@ private
 --   --  reports an error. The reader uses the function Error_String to get the
 --   --  error message.
 
-end XML.Templates.Template_Processors;
+end XML.Templates.Processors;

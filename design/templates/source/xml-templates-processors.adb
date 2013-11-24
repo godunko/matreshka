@@ -48,7 +48,7 @@ with League.Holders.JSON_Arrays;
 
 with XML.Templates.Streams.Holders;
 
-package body XML.Templates.Template_Processors is
+package body XML.Templates.Processors is
 
    use type League.Strings.Universal_String;
 
@@ -792,4 +792,4 @@ package body XML.Templates.Template_Processors is
       end loop;
    end Substitute;
 
-end XML.Templates.Template_Processors;
+end XML.Templates.Processors;
