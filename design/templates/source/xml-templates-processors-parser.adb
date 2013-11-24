@@ -53,6 +53,7 @@ package body XML.Templates.Processors.Parser is
    type Token_Kinds is
     (Token_Identifier,
      Token_Full_Stop,
+     Token_In,
      Token_End_Of_Expression);
 
    type Scanner_Type is tagged record
@@ -69,6 +70,55 @@ package body XML.Templates.Processors.Parser is
 
    In_Keyword : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("in");
+
+   -----------------------------
+   -- Evaluate_For_Expression --
+   -----------------------------
+
+   procedure Evaluate_For_Expression
+    (Text     : League.Strings.Universal_String;
+     Context  : String_Holder_Maps.Map;
+     Variable : out League.Strings.Universal_String;
+     Value    : out League.Holders.Holder;
+     Success  : out Boolean)
+   is
+      Scanner : Scanner_Type;
+
+   begin
+      Scanner.Text := Text;
+
+      --  Lookup for identifier.
+
+      case Scanner.Next_Token is
+         when Token_Identifier =>
+            Variable := Scanner.Token_Image.To_Casefold;
+            Success := True;
+
+         when others =>
+            League.Holders.Clear (Value);
+            Success := False;
+
+            return;
+      end case;
+
+      --  Lookup for 'in' keyword.
+
+      case Scanner.Next_Token is
+         when Token_In =>
+            null;
+
+         when others =>
+            League.Holders.Clear (Value);
+            Success := False;
+
+            return;
+      end case;
+
+      --  Evaluate rest of expression.
+
+      Evaluate_Simple_Expression
+       (Text.Slice (Scanner.Current, Text.Length), Context, Value, Success);
+   end Evaluate_For_Expression;
 
    --------------------------------
    -- Evaluate_Simple_Expression --
@@ -235,7 +285,14 @@ package body XML.Templates.Processors.Parser is
 
          Self.Last := Self.Current - 1;
 
-         return Token_Identifier;
+         if Self.Last - Self.First + 1 = 2
+           and then Self.Token_Image = In_Keyword
+         then
+            return Token_In;
+
+         else
+            return Token_Identifier;
+         end if;
 
       elsif Self.Text (Self.First) = League.Characters.Latin.Full_Stop then
          Self.Current := Self.Current + 1;

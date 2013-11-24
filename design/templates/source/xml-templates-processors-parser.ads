@@ -50,4 +50,11 @@ private package XML.Templates.Processors.Parser is
      Value   : out League.Holders.Holder;
      Success : out Boolean);
 
+   procedure Evaluate_For_Expression
+    (Text     : League.Strings.Universal_String;
+     Context  : String_Holder_Maps.Map;
+     Variable : out League.Strings.Universal_String;
+     Value    : out League.Holders.Holder;
+     Success  : out Boolean);
+
 end XML.Templates.Processors.Parser;

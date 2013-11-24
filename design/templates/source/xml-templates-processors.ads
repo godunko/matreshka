@@ -96,7 +96,7 @@ private
       Accumulated_Text : League.Strings.Universal_String;
       --  Character data is accumulated in this member to simplify processing.
       Object_Name      : League.Strings.Universal_String;
-      Container_Name   : League.Strings.Universal_String;
+      Container_Value  : League.Holders.Holder;
    end record;
 
    --  Override SAX event handling subprogram.

@@ -57,12 +57,10 @@ package body XML.Templates.Processors is
      := League.Strings.To_Universal_String
          ("http://forge.ada-ru.org/matreshka/template");
 
-   For_Name     : constant League.Strings.Universal_String
+   For_Name  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("for");
-   In_Name      : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("in");
-   Object_Name  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("object");
+   Each_Name : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("each");
 
    procedure Substitute
     (Self         : in out Template_Processor'Class;
@@ -202,7 +200,7 @@ package body XML.Templates.Processors is
                declare
                   Container : League.JSON.Arrays.JSON_Array
                     := League.Holders.JSON_Arrays.Element
-                        (Self.Parameters (Self.Container_Name));
+                        (Self.Container_Value);
                   Object    : League.JSON.Values.JSON_Value;
                   Holder    : League.Holders.Holder;
                   Success   : Boolean := True;
@@ -523,11 +521,20 @@ package body XML.Templates.Processors is
 
          if Namespace_URI = Template_URI then
             if Local_Name = For_Name then
-            --  Enable accumulation of SAX events for future processing.
+               Parser.Evaluate_For_Expression
+                (Attributes (Each_Name),
+                 Self.Parameters,
+                 Self.Object_Name,
+                 Self.Container_Value,
+                 Success);
+
+               if not Success then
+                  return;
+               end if;
+
+               --  Enable accumulation of SAX events for future processing.
 
                Self.Accumulate := 1;
-               Self.Object_Name := Attributes (Object_Name);
-               Self.Container_Name := Attributes (In_Name);
 
             else
                raise Program_Error;
