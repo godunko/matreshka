@@ -61,7 +61,6 @@ package body XSD_To_Ada.Generator is
    begin
       XSD_To_Ada.Utils.Create_Complex_Type
        (Model, XSD_To_Ada.Mappings.Mapping (Mapping));
---      XSD_To_Ada.Encoder.Create_Complex_Type (Model, Mapping);
    end Generate;
 
 end XSD_To_Ada.Generator;

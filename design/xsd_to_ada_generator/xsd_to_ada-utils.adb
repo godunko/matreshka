@@ -59,7 +59,7 @@ with XML.Schema.Objects.Terms;
 with Ada.Text_IO;
 with XML.Schema.Objects.Particles;
 
-with  XSD_To_Ada.Encoder_2;
+with XSD_To_Ada.Encoder_2;
 
 package body XSD_To_Ada.Utils is
 

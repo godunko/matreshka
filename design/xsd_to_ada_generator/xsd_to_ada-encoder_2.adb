@@ -55,7 +55,6 @@ with XML.Schema.Objects.Type_Definitions;
 
 with XSD_To_Ada.Encoder; use XSD_To_Ada.Encoder;
 with XSD_To_Ada.Mappings;
-with Ada.Text_IO;
 with League.String_Vectors;
 
 package body XSD_To_Ada.Encoder_2 is
@@ -106,10 +105,6 @@ package body XSD_To_Ada.Encoder_2 is
       Optional_Value_Marker       : League.Strings.Universal_String;
       Optional_Value_Check_Marker : League.Strings.Universal_String;
    begin
-
-      Ada.Text_IO.Put_Line ("Min_Occurs" & Min_Occurs'Img);
-      Ada.Text_IO.Put_Line ("Max_Occurs" & Max_Occurs'Img);
-
       if Min_Occurs
         and then not Max_Occurs
       then
@@ -419,13 +414,6 @@ package body XSD_To_Ada.Encoder_2 is
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "positiveInteger"
         or Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "unsignedShort"
       then
-
-         Ada.Text_IO.Put_Line ("<" & Type_D.Get_Name.To_UTF_8_String & ">");
-         Ada.Text_IO.Put_Line
-           (Map.Ada_Type_Qualified_Name
-              (Type_D.Get_Name, False, False).To_UTF_8_String);
-
-
          Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
          Writers.P
@@ -683,11 +671,6 @@ package body XSD_To_Ada.Encoder_2 is
            (Ada.Wide_Wide_Text_IO.Standard_Error,
             Indent & ">>>>>>>>>> NAME : "
             & XS_Base.Get_Name.To_Wide_Wide_String);
-
-         Ada.Text_IO.Put_Line
-           ("Print_Term Base_Name = "
-            & XS_Base.Get_Name.To_UTF_8_String);
-
 
          CTD := XS_Base.To_Complex_Type_Definition;
 
