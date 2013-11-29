@@ -347,24 +347,31 @@ package body XSD_To_Ada.Encoder_2 is
            League.Strings.To_Universal_String (".Is_Set");
          Optional_Value_Marker :=
            League.Strings.To_Universal_String (".Value");
+
+         Writers.P
+           (Writer,
+            "      if Data."
+            & Choice_Name.To_Wide_Wide_String
+            & Base_Name.To_Wide_Wide_String
+            & Add_Separator (XS_Term.Get_Name)
+            & ".Is_Set then");
       end if;
 
       if Max_Occurs then
          Vector := True;
+
+         Writers.P
+           (Writer,
+           "      for Index in 1 .. Natural (Data."
+            & Choice_Name.To_Wide_Wide_String
+            & Base_Name.To_Wide_Wide_String
+            & Add_Separator (XS_Term.Get_Name)
+            & ".Length) loop");
       end if;
 
+      Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
+
       if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string" then
-
-         if Optional then
-            Writers.P
-              (Writer,
-               "      if Data."
-               & Base_Name.To_Wide_Wide_String
-               & Add_Separator (XS_Term.Get_Name)
-               & ".Is_Set then");
-         end if;
-
-         Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
          if not Type_D.To_Simple_Type_Definition.Get_Lexical_Enumeration
            .Is_Empty
@@ -394,92 +401,71 @@ package body XSD_To_Ada.Encoder_2 is
                & Add_Separator (Type_D.Get_Base_Type.Get_Name));
          end if;
 
-         Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
-
-         if Optional then
-            Writers.P (Writer, "      end if;");
-         end if;
-
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "decimal" then
-         if Optional then
-            Writers.P
-              (Writer,
-               "      if Data."
-               & Choice_Name.To_Wide_Wide_String
-               & Base_Name.To_Wide_Wide_String
-               & Add_Separator (XS_Term.Get_Name)
-               & ".Is_Set then");
-         end if;
-
-         Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
          Writers.P
            (Writer,
             "      Writer.Characters" & LF
-            & "        (League.Strings.From_UTF_8_String" & LF
-            & Gen_Type_Line
-              ("(To_String (Data."
+            & XSD_To_Ada.Encoder.Gen_Type_Line
+              ("(League.Strings.From_UTF_8_String (To_String (Data."
                & Base_Name.To_Wide_Wide_String
                & Choice_Name.To_Wide_Wide_String
                & Add_Separator (XS_Term.Get_Name)
                & Optional_Value_Marker.To_Wide_Wide_String
-               & ")));", 13)
+               & ")));", 8)
             & LF & "  --  "
             & Type_D.Get_Base_Type.Get_Name);
-
-         Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
-
-         if Optional then
-            Writers.P (Writer, "      end if;");
-         end if;
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "positiveInteger"
         or Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "unsignedShort"
       then
-         Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
-
          Writers.P
            (Writer,
             "      Writer.Characters" & LF
-            & "        (League.Strings.From_UTF_8_String" & LF
-            & Gen_Type_Line
-              ("(Data."
+            & XSD_To_Ada.Encoder.Gen_Type_Line
+              ("(League.Strings.From_UTF_8_String (Data."
                & Base_Name.To_Wide_Wide_String
+               & Choice_Name.To_Wide_Wide_String
                & Add_Separator (XS_Term.Get_Name)
-               & "'Img)", 15)
+               & Optional_Value_Marker.To_Wide_Wide_String
+               & "'Img)", 8)
             & ");"
             & LF &  "  --  "
             & Add_Separator (Type_D.Get_Base_Type.Get_Name));
 
-         Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
-
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "boolean" then
-
-         Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
 
          Writers.P
            (Writer,
             "      Writer.Characters (Image (Data."
             & Base_Name.To_Wide_Wide_String
+            & Choice_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
+            & Optional_Value_Marker.To_Wide_Wide_String
             & "));"
             & LF & "  --  "
             & Type_D.Get_Base_Type.Get_Name);
-
-         Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
-
       else
-         Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
-
          Writers.P
            (Writer,
             "      Writer.Characters (Data."
+            & Base_Name.To_Wide_Wide_String
+            & Choice_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
+            & Optional_Value_Marker.To_Wide_Wide_String
             & ");"
             & LF & "  --  "
             & Type_D.Get_Base_Type.Get_Name);
+      end if;
 
-         Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
+      Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
+
+      if Optional then
+         Writers.P (Writer, "      end if;");
+      end if;
+
+      if Max_Occurs then
+         Writers.P (Writer, "      end loop;");
       end if;
 
       Writers.P (Writer);
