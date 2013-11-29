@@ -284,15 +284,15 @@ package body XSD_To_Ada.Encoder_2 is
          & LF
          & "      Writer : in out XML.SAX.Writers.SAX_Writer'Class;"
          & LF
-         & "      Name : League.Strings.To_Universal_String);"
+         & "      Name : League.Strings.Universal_String);"
          & LF);
 
       Writers.P
         (Writer,
          "   procedure Encode" & LF
          & "     (Data : " & Procedures_Name & ";" & LF
-         & "      Writer : in out XML.SAX.Writers.SAX_Writer'Class)" & LF
-         & "      Name : League.Strings.To_Universal_String)" & LF
+         & "      Writer : in out XML.SAX.Writers.SAX_Writer'Class;" & LF
+         & "      Name : League.Strings.Universal_String)" & LF
          & "   is" & LF
          & "      use Payloads;" & LF
          &"   begin");
@@ -654,22 +654,11 @@ package body XSD_To_Ada.Encoder_2 is
          Ada.Wide_Wide_Text_IO.Put_Line
            (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
 
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            Indent & ">>>>>>>>>> NAME : "
-            & XS_Base.Get_Name.To_Wide_Wide_String);
-
          CTD := XS_Base.To_Complex_Type_Definition;
 
          if CTD.Get_Content_Type in Element_Only | Mixed then
             XS_Particle := CTD.Get_Particle;
             XS_Term := XS_Particle.Get_Term;
-
-            Ada.Wide_Wide_Text_IO.Put_Line
-              (Ada.Wide_Wide_Text_IO.Standard_Error,
-               Indent
-               & "Complex_Type BASE:" & Type_D.Get_Name.To_Wide_Wide_String);
-
                Print_Term
                  (XS_Term,
                   Indent & "   ",
@@ -680,12 +669,6 @@ package body XSD_To_Ada.Encoder_2 is
                     (Add_Separator (XS_Base.Get_Name)),
                   League.Strings.To_Universal_String
                     (Add_Separator (XS_Base.Get_Name) & "."));
-
-            Ada.Wide_Wide_Text_IO.Put_Line
-              (Ada.Wide_Wide_Text_IO.Standard_Error,
-               Indent
-               & "End Complex_Type BASE:"
-               & Type_D.Get_Name.To_Wide_Wide_String);
          end if;
       end if;
 
@@ -696,11 +679,6 @@ package body XSD_To_Ada.Encoder_2 is
             if CTD.Get_Content_Type in Element_Only | Mixed then
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
-
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 Indent
-                 & "Complex_Type :" & Type_D.Get_Name.To_Wide_Wide_String);
 
                if Name.To_UTF_8_String /= "" then
                   Print_Term
@@ -735,12 +713,6 @@ package body XSD_To_Ada.Encoder_2 is
                         League.Strings.Empty_Universal_String);
                   end if;
                end if;
-
-               Ada.Wide_Wide_Text_IO.Put_Line
-                 (Ada.Wide_Wide_Text_IO.Standard_Error,
-                  Indent
-                  & "End Complex_Type :"
-                  & Type_D.Get_Name.To_Wide_Wide_String);
             end if;
 
          when XML.Schema.Simple_Type =>
@@ -801,13 +773,6 @@ package body XSD_To_Ada.Encoder_2 is
             Vector_Name := Type_D.Get_Name;
          end if;
 
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            Indent & Natural'Wide_Wide_Image (Index)
-            & "; START Print_Type_Title Type_D="
-            & Type_D.Get_Name.To_Wide_Wide_String
-            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String);
-
          if Type_D.Get_Name.Length > 10 then
             US_Response := League.Strings.Slice
               (Type_D.Get_Name,
@@ -834,10 +799,9 @@ package body XSD_To_Ada.Encoder_2 is
                   Generate_Procedure_Encode_Header
                     (Payload_Writer, Anonym_Name);
 
-                  Writers.P
+                  Writers.N
                     (Payload_Writer,
-                     Write_Start_Element
-                       (Node_Vector.Element (Index).Decl_Anonym_Name));
+                    ("      Writer.Start_Element (IATS_URI, Name);" & LF));
 
                   XSD_To_Ada.Encoder_2.Print_Type_Definition
                     (Type_D,
@@ -851,8 +815,7 @@ package body XSD_To_Ada.Encoder_2 is
 
                   Writers.N
                     (Payload_Writer,
-                     Write_End_Element
-                       (Node_Vector.Element (Index).Decl_Anonym_Name));
+                    ("      Writer.End_Element (IATS_URI, Name);" & LF));
 
                   Writers.P (Payload_Writer, "   end Encode;" & LF);
                end if;
@@ -976,9 +939,9 @@ package body XSD_To_Ada.Encoder_2 is
                            XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
                              (Mapping, Type_D.Get_Name, False, False));
 
-                        Writers.P
+                        Writers.N
                           (Payload_Writer,
-                           Write_Start_Element (Type_D.Get_Name));
+                           ("      Writer.Start_Element (IATS_URI, Name);" & LF));
 
                         Print_Type_Definition
                           (Type_D,
@@ -992,7 +955,7 @@ package body XSD_To_Ada.Encoder_2 is
 
                         Writers.N
                           (Payload_Writer,
-                           Write_End_Element (Type_D.Get_Name));
+                           ("      Writer.End_Element (IATS_URI, Name);" & LF));
 
                         Writers.P (Payload_Writer, "   end Encode;" & LF);
                      end if;
@@ -1242,8 +1205,6 @@ package body XSD_To_Ada.Encoder_2 is
 
       Encoder_Names_Writer.P (Element_Name.Text);
 
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "END Print_Type_Title");
    end Print_Type_Title;
 
    -----------------------
