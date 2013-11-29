@@ -150,7 +150,10 @@ package body XSD_To_Ada.Encoder_2 is
             & Vector_Element_Marker.To_Wide_Wide_String
             & ",", 6)
          & LF
-         & "              Writer);");
+         & "              Writer,"
+         & LF
+         & "              League.Strings.To_Universal_String ("""
+         & XS_Term.Get_Name & """));");
 
       if Vector then
          Writers.P (Writer, "      end loop;");
@@ -279,7 +282,9 @@ package body XSD_To_Ada.Encoder_2 is
          & "     (Data : "
          & Procedures_Name & ";"
          & LF
-         & "      Writer : in out XML.SAX.Writers.SAX_Writer'Class);"
+         & "      Writer : in out XML.SAX.Writers.SAX_Writer'Class;"
+         & LF
+         & "      Name : League.Strings.To_Universal_String);"
          & LF);
 
       Writers.P
@@ -287,6 +292,7 @@ package body XSD_To_Ada.Encoder_2 is
          "   procedure Encode" & LF
          & "     (Data : " & Procedures_Name & ";" & LF
          & "      Writer : in out XML.SAX.Writers.SAX_Writer'Class)" & LF
+         & "      Name : League.Strings.To_Universal_String)" & LF
          & "   is" & LF
          & "      use Payloads;" & LF
          &"   begin");
