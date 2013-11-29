@@ -96,24 +96,6 @@ package body XSD_To_Ada.Utils is
                Node_Vector.Append (Difinition_Node);
             end if;
          end if;
-
-
---           if Type_Difinition_Node.Element_Name.To_UTF_8_String
---             /= Type_Difinition_Node.Type_Def.Get_Name.To_UTF_8_String
---  --           and then Type_Difinition_Node.Type_Def.Get_Name.Is_Empty
---             and then Type_Difinition_Node.Anonym_Name.Is_Empty
---           then
---  --            Difinition_Node.Element_Name.Append
---  --              (Type_Difinition_Node.Element_Name);
---
---              if not Node_Vector.Contains (Difinition_Node) then
---                 Node_Vector.Append (Difinition_Node);
---              end if;
---
---              Difinition_Node.Element_Name.Clear;
---           else
---              Node_Vector.Append (Difinition_Node);
---           end if;
       end if;
 
       if Type_Difinition_Node.Max then
@@ -148,7 +130,6 @@ package body XSD_To_Ada.Utils is
             end if;
 
             Difinition_Node.Element_Name.Clear;
---         end if;
       end if;
    end Add_Node;
 
@@ -237,9 +218,6 @@ package body XSD_To_Ada.Utils is
       Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
    begin
       for J in 1 .. Element_Declarations.Length loop
---           if Element_Declarations.Item (J).Get_Name.To_UTF_8_String =
---             "Transaction"
---           then
             Type_D :=
               Element_Declarations.Item
                 (J).To_Element_Declaration.Get_Type_Definition;
@@ -581,72 +559,35 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Payload_Writer, "end Payloads;");
 
-      Ada.Wide_Wide_Text_IO.Create
-        (Current_Out_File, Ada.Wide_Wide_Text_IO.Out_File, "./vector");
+--        Ada.Wide_Wide_Text_IO.Create
+--          (Current_Out_File,
+--           Ada.Wide_Wide_Text_IO.Out_File,
+--           "../../../trading_server/src/client/soap/.wsdl/payloads.ads");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
+--        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
+--
+--        Ada.Wide_Wide_Text_IO.Create
+--          (Current_Out_File,
+--           Ada.Wide_Wide_Text_IO.Out_File,
+--           "../../../trading_server/src/client/soap/.wsdl/encoder.adb");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Current_Out_File, Encoder_Full_Writer.Text.To_Wide_Wide_String);
+--        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
+--
+--        Ada.Wide_Wide_Text_IO.Create
+--          (Current_Out_File,
+--           Ada.Wide_Wide_Text_IO.Out_File,
+--           "../../../trading_server/src/client/soap/.wsdl/encoder.ads");
+--        Ada.Wide_Wide_Text_IO.Put_Line
+--          (Current_Out_File, Encoder_Spec_Writer.Text.To_Wide_Wide_String);
+--        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
 
-      for Index in 1 .. Natural (Node_Vector.Length) loop
-
-         Ada.Wide_Wide_Text_IO.Put
-           (Current_Out_File,
-            Node_Vector.Element (Index).Type_Def.Get_Name.To_Wide_Wide_String);
-
-         if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
-         Ada.Wide_Wide_Text_IO.Put
-           (Current_Out_File,
-            " ANONYM_NAME ="
-            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String);
-         end if;
-
-         if not Node_Vector.Element (Index).Element_Name.Is_Empty then
-         Ada.Wide_Wide_Text_IO.Put
-              (Current_Out_File,
-               " ELEMENT_NAME ="
-               & Node_Vector.Element (Index).Element_Name.To_Wide_Wide_String);
-         end if;
-
-         Ada.Wide_Wide_Text_IO.Put
-           (Current_Out_File,
-            " Max ="
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Max));
-
-         Ada.Wide_Wide_Text_IO.Put
-           (Current_Out_File,
-            " Min = "
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Min));
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Current_Out_File,
-            " Choice = "
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Choice));
-      end loop;
-
-      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
-
-      Ada.Wide_Wide_Text_IO.Create
-        (Current_Out_File,
-         Ada.Wide_Wide_Text_IO.Out_File,
-         "../../../trading_server/src/client/soap/.wsdl/payloads.ads");
+      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
-        (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
-
-      Ada.Wide_Wide_Text_IO.Create
-        (Current_Out_File,
-         Ada.Wide_Wide_Text_IO.Out_File,
-         "../../../trading_server/src/client/soap/.wsdl/encoder.adb");
+        (Encoder_Full_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
-        (Current_Out_File, Encoder_Full_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
-
-      Ada.Wide_Wide_Text_IO.Create
-        (Current_Out_File,
-         Ada.Wide_Wide_Text_IO.Out_File,
-         "../../../trading_server/src/client/soap/.wsdl/encoder.ads");
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Current_Out_File, Encoder_Spec_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
-
---      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
+        (Encoder_Spec_Writer.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
 
    ------------------------
