@@ -1058,10 +1058,10 @@ package body XSD_To_Ada.Encoder_2 is
                      Add_Separator
                        (Node_Vector.Element (Index).Element_Name));
                else
-                  if XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-                  then
+                  if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
-                     Tag_Vector.Append (Type_D.Get_Name);
+                     Tag_Vector.Append
+                       (Node_Vector.Element (Index).Element_Name);
 
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
