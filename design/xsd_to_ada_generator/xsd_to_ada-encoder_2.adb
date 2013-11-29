@@ -1060,6 +1060,9 @@ package body XSD_To_Ada.Encoder_2 is
                else
                   if XSD_To_Ada.Utils.Has_Element_Session (Type_D)
                   then
+
+                     Tag_Vector.Append (Type_D.Get_Name);
+
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
                         Spec_Writer,
