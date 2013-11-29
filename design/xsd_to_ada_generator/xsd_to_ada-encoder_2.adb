@@ -530,28 +530,9 @@ package body XSD_To_Ada.Encoder_2 is
               League.Strings.To_Universal_String ("Value.");
          end if;
 
-         Ada.Wide_Wide_Text_IO.Put
-          (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           "Type "
-             & XML.Schema.Component_Type'Wide_Wide_Image (XS_Term.Get_Type));
-         Ada.Wide_Wide_Text_IO.Put
-          (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           "XS_Term.Get_Name ="
-             & XS_Term.Get_Name.To_Wide_Wide_String);
-
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
             XS_List := XS_Model_Group.Get_Particles;
-            Ada.Wide_Wide_Text_IO.Put
-             (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              XML.Schema.Model_Groups.Compositor_Kinds'Wide_Wide_Image
-               (XS_Model_Group.Get_Compositor));
 
             if XS_Model_Group.Get_Compositor =
               XML.Schema.Model_Groups.Compositor_Choice

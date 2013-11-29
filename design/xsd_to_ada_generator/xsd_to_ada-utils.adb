@@ -240,7 +240,7 @@ package body XSD_To_Ada.Utils is
    begin
       Writers.P
         (Payload_Writer,
-         "with Ada.Containers.Indefinite_Vectors;" & LF
+         "with Ada.Containers.Vectors;" & LF
          & "with League.Strings;" & LF
          & "with Interfaces;" & LF
          & "with ICTS.Types;" & LF
@@ -679,7 +679,7 @@ package body XSD_To_Ada.Utils is
             "   package "
             & Add_Separator (Type_D_Name) & "_Vectors is" & LF
             & Gen_Type_Line
-              ("     new Ada.Containers.Indefinite_Vectors "
+              ("     new Ada.Containers.Vectors "
                & "(Positive, "
                & Add_Separator (Type_D_Name) & ");", 7) & LF & LF
             & Gen_Type_Line
@@ -1030,7 +1030,7 @@ package body XSD_To_Ada.Utils is
               (Writer_types,
                "   package " & Add_Separator (Type_D.Get_Name)
                & "_Vector is" & LF
-               &  "     new Ada.Containers.Indefinite_Vectors" & LF
+               &  "     new Ada.Containers.Vectors" & LF
                & "       (Positive, "
                & Type_Name.To_Wide_Wide_String & "," & LF
                & "       ""="" => ICTS.Types.""="");" & LF);
@@ -1685,7 +1685,7 @@ package body XSD_To_Ada.Utils is
                "   package "
                & Add_Separator (Vector_Name)
                & "_Vectors is" & LF
-               & "     new Ada.Containers.Indefinite_Vectors" & LF
+               & "     new Ada.Containers.Vectors" & LF
                & "      (Positive, "
                & Add_Separator (Vector_Name) & ");" & LF & LF
                & Gen_Type_Line
@@ -1785,31 +1785,9 @@ package body XSD_To_Ada.Utils is
 
          Now_Term_Level := Now_Term_Level + 1;
 
-         Ada.Wide_Wide_Text_IO.Put
-          (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           "Type "
-             & XML.Schema.Component_Type'Wide_Wide_Image (XS_Term.Get_Type));
-         Ada.Wide_Wide_Text_IO.Put
-          (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           "XS_Term.Get_Name ="
-             & XS_Term.Get_Name.To_Wide_Wide_String
-             & "; Anonym="
-             & Boolean'Wide_Wide_Image
-                (Anonyn_Vector (Now_Term_Level - 1).Term_State));
-
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
             XS_List := XS_Model_Group.Get_Particles;
-            Ada.Wide_Wide_Text_IO.Put
-             (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              XML.Schema.Model_Groups.Compositor_Kinds'Wide_Wide_Image
-               (XS_Model_Group.Get_Compositor));
 
             if XS_Model_Group.Get_Compositor =
               XML.Schema.Model_Groups.Compositor_Choice
@@ -1906,7 +1884,7 @@ package body XSD_To_Ada.Utils is
                        ("   package "
                         & XSD_To_Ada.Utils.Add_Separator (Name)
                         & "_Anonyms_Vectors is" & LF
-                        & "     new Ada.Containers.Indefinite_Vectors" & LF
+                        & "     new Ada.Containers.Vectors" & LF
                         & "        (Positive, "
                         & XSD_To_Ada.Utils.Add_Separator (Name) & "_Anonym);"
                         & LF & LF
