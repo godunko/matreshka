@@ -174,8 +174,13 @@ package body XSD_To_Ada.Encoder_2 is
    procedure Generate_Overriding_Procedure_Encode_Header
      (Writer          : in out Writers.Writer;
       Spec_Writer     : in out Writers.Writer;
-      Procedures_Name : League.Strings.Universal_String) is
+      Procedures_Name : League.Strings.Universal_String;
+      Tag_Vector      : in out League.String_Vectors.Universal_String_Vector)
+   is
    begin
+
+      Tag_Vector.Append (Procedures_Name);
+
       Writers.P
         (Spec_Writer,
          "   type " & Add_Separator (Procedures_Name) & "_Encoder is"
@@ -236,6 +241,8 @@ package body XSD_To_Ada.Encoder_2 is
          & LF & LF
          & "   begin" & LF
          & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
+
+      Writers.P (Writer, Write_Start_Element (Procedures_Name));
 
    end Generate_Overriding_Procedure_Encode_Header;
 
@@ -828,16 +835,11 @@ package body XSD_To_Ada.Encoder_2 is
                else
                   if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
-                     Tag_Vector.Append (Type_D.Get_Name);
-
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
                         Spec_Writer,
-                        Type_D.Get_Name);
-
-                     Writers.P
-                       (Payload_Writer,
-                        Write_Start_Element (Type_D.Get_Name));
+                        Type_D.Get_Name,
+                        Tag_Vector);
 
                      Print_Type_Definition
                        (Type_D,
@@ -998,18 +1000,11 @@ package body XSD_To_Ada.Encoder_2 is
                else
                   if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
-                     Tag_Vector.Append
-                       (Node_Vector.Element (Index).Element_Name);
-
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
                         Spec_Writer,
-                        Node_Vector.Element (Index).Element_Name);
-
-                     Writers.P
-                       (Payload_Writer,
-                        Write_Start_Element
-                          (Node_Vector.Element (Index).Element_Name));
+                        Node_Vector.Element (Index).Element_Name,
+                        Tag_Vector);
 
                      XSD_To_Ada.Encoder_2.Print_Type_Definition
                        (Type_D,
@@ -1060,18 +1055,11 @@ package body XSD_To_Ada.Encoder_2 is
                else
                   if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
-                     Tag_Vector.Append
-                       (Node_Vector.Element (Index).Element_Name);
-
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
                         Spec_Writer,
-                        Node_Vector.Element (Index).Element_Name);
-
-                     Writers.N
-                       (Payload_Writer,
-                        Write_Start_Element
-                          (Node_Vector.Element (Index).Element_Name));
+                        Node_Vector.Element (Index).Element_Name,
+                        Tag_Vector);
 
                      Print_Type_Definition
                        (Type_D,

@@ -75,7 +75,8 @@ package XSD_To_Ada.Encoder_2 is
    procedure Generate_Overriding_Procedure_Encode_Header
      (Writer          : in out Writers.Writer;
       Spec_Writer     : in out Writers.Writer;
-      Procedures_Name : League.Strings.Universal_String);
+      Procedures_Name : League.Strings.Universal_String;
+      Tag_Vector      : in out League.String_Vectors.Universal_String_Vector);
 
    procedure Generate_Package_Header
      (Payload_Writer : in out XSD_To_Ada.Writers.Writer);
