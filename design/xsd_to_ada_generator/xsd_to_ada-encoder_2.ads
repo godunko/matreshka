@@ -62,6 +62,10 @@ package XSD_To_Ada.Encoder_2 is
 
    Elements_Name : Name_Vector.Vector;
 
+   function Add_Indent
+     (Spaces_Count : Integer)
+      return League.Strings.Universal_String;
+
    procedure Generate_Complex_Type
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term     : XML.Schema.Terms.XS_Term;

@@ -1522,9 +1522,7 @@ package body XSD_To_Ada.Utils is
                      & Add_Separator (Type_D.Get_Name)
                      & ";");
 
-                  Writers.P
-                    (Writer,
-                     "     end record;   --  Responce  Empty" & LF);
+                  Writers.P (Writer, "     end record;" & LF);
 
                   Gen_Access_Type
                     (Writer,
@@ -1594,7 +1592,7 @@ package body XSD_To_Ada.Utils is
                           False,
                           False))
                      & ";" & LF
-                     & "     end record;   --  Responce" & LF);
+                     & "     end record;" & LF);
 
                   Gen_Access_Type
                     (Writer,
@@ -1937,14 +1935,9 @@ package body XSD_To_Ada.Utils is
                               & " : "
                               & XSD_To_Ada.Utils.Add_Separator (Name)
                               & "_Cases;", 8));
-
-                        Max_Occurs := False;
-                     else
-                        null;
                      end if;
                   else
-                     null;
-
+                     Max_Occurs := False;
                   end if;
                end if;
 
@@ -2130,19 +2123,12 @@ package body XSD_To_Ada.Utils is
          Ada.Wide_Wide_Text_IO.Put_Line
            (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
 
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            Indent & ">>>>>>>>>> NAME : "
-            & XS_Base.Get_Name.To_Wide_Wide_String);
-
          Writers.P (Writer,
                     Gen_Type_Line
                       ("     " & Add_Separator (XS_Base.Get_Name)
                        & " : Payloads."
                        & Add_Separator (XS_Base.Get_Name)
                        & ";", 5));
-
-         Writers.P (Writer, "     --  " & Add_Separator (Element_Name));
       end if;
 
       case Type_D.Get_Type_Category is

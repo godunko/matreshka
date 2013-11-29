@@ -65,6 +65,20 @@ package body XSD_To_Ada.Encoder_2 is
 
    LF : constant Wide_Wide_Character := Ada.Characters.Wide_Wide_Latin_1.LF;
 
+   ----------------
+   -- Add_Indent --
+   ----------------
+
+   function Add_Indent
+     (Spaces_Count : Integer)
+      return League.Strings.Universal_String
+   is
+      Spaces : constant Wide_Wide_String (1 .. 30) := (others => ' ');
+   begin
+      return
+        League.Strings.To_Universal_String (Spaces (1 .. Spaces_Count));
+   end Add_Indent;
+
    ---------------------------
    -- Generate_Complex_Type --
    ---------------------------
@@ -81,22 +95,8 @@ package body XSD_To_Ada.Encoder_2 is
    is
       use League.Strings;
 
-      function Change_Indent
-        (Indent      : in out League.Strings.Universal_String;
-         Space_Count : Integer)
-         return League.Strings.Universal_String is
-      begin
-
-         for Index in 1 .. Indent.Length + Space_Count loop
-            Indent.Clear;
-            Indent.Append (League.Strings.To_Universal_String (" "));
-         end loop;
-
-         return Indent;
-      end Change_Indent;
-
-      Indent : League.Strings.Universal_String :=
-        League.Strings.To_Universal_String ("      ");
+      Spaces_Count : constant Natural := 6;
+      New_Spaces : Natural := 0;
 
       Optional : Boolean := False;
       Vector   : Boolean := False;
@@ -124,19 +124,24 @@ package body XSD_To_Ada.Encoder_2 is
       if Optional then
          Writers.P
            (Writer,
-            "      if Data."
+            Add_Indent (Spaces_Count + New_Spaces) & "if Data."
             & Base_Name
             & Add_Separator (XS_Term.Get_Name)
             & ".Is_Set then");
+
+         New_Spaces := New_Spaces + 3;
       end if;
 
       if Vector then
          Writers.P
            (Writer,
-            "      for Index in 1 .. Natural (Data."
+            Add_Indent (Spaces_Count + New_Spaces)
+            & "for Index in 1 .. Natural (Data."
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
             & ".Length) loop");
+
+         New_Spaces := New_Spaces + 3;
       end if;
 
       Writers.P
@@ -148,19 +153,23 @@ package body XSD_To_Ada.Encoder_2 is
             & Add_Separator (XS_Term.Get_Name)
             & Optional_Value_Marker.To_Wide_Wide_String
             & Vector_Element_Marker.To_Wide_Wide_String
-            & ",", 6)
-         & LF
-         & "              Writer,"
-         & LF
+            & ",", New_Spaces + Spaces_Count) & LF
+         & Add_Indent (New_Spaces) & "              Writer," & LF
+         & Add_Indent (New_Spaces)
          & "              League.Strings.To_Universal_String ("""
          & XS_Term.Get_Name & """));");
 
       if Vector then
-         Writers.P (Writer, "      end loop;");
+         New_Spaces := New_Spaces - 3;
+         Writers.P
+           (Writer, Add_Indent (Spaces_Count + New_Spaces) & "end loop;");
       end if;
 
       if Optional then
-         Writers.P (Writer, "      end if;");
+         New_Spaces := New_Spaces - 3;
+
+         Writers.P
+           (Writer, Add_Indent (Spaces_Count + New_Spaces) & "end if;");
       end if;
 
       Writers.P (Writer);
