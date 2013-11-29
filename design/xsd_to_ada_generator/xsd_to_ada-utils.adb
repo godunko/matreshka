@@ -56,7 +56,6 @@ with XML.Schema.Objects;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
 with XML.Schema.Objects.Terms;
-with Ada.Text_IO;
 with XML.Schema.Objects.Particles;
 
 with XSD_To_Ada.Encoder_2;
@@ -221,10 +220,6 @@ package body XSD_To_Ada.Utils is
             Type_D :=
               Element_Declarations.Item
                 (J).To_Element_Declaration.Get_Type_Definition;
-
-            Ada.Text_IO.Put_Line
-              ("Name => "
-               & Element_Declarations.Item (J).Get_Name.To_UTF_8_String);
 
             Create_Node_Vector
               (Type_D,
@@ -2105,9 +2100,6 @@ package body XSD_To_Ada.Utils is
                        & " : "
                        & Type_Name.To_Wide_Wide_String & ";", 15) & LF);
                end if;
-
-               Ada.Text_IO.Put_Line ("Min_Occurs Choice " &  Min_Occurs'Img);
-
             end if;
 
             if Type_D.Get_Name.To_UTF_8_String /= ""
