@@ -105,8 +105,9 @@ package body XSD_To_Ada.Encoder is
             Uper_Count := 0;
 
          elsif Uper_Count > 1
-                and then Text (J) in Upper_Char_List
-                and then Text (J + 2) in Lower_Char_List
+           and then J + 2 <= Text'Last
+           and then Text (J) in Upper_Char_List
+           and then Text (J + 2) in Lower_Char_List
          then
             US_Text.Append (Text (J));
 
@@ -735,17 +736,11 @@ package body XSD_To_Ada.Encoder is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
---         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "ModifyConditionalOrderBase" then
---         if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "CreateOpenOrder" then
---           if Complex_Types.Item (J).Get_Name.To_UTF_8_String = "GetOrdersLinksResponse" then
---         if Complex_Types.Item (J).Get_Name.To_UTF_8_String =  "GetCurrenciesResponse" then
          Print_Type_Title
               (XS_Object.To_Type_Definition,
                "",
                Payload_Writer,
                Spec_Writer);
-
---                end if;
       end loop;
 
       Create_Element_Type (Model, Payload_Writer);
@@ -1510,8 +1505,7 @@ package body XSD_To_Ada.Encoder is
                & "        (League.Strings.To_Universal_String" & LF
                & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
                & "              ("
-               & Map.Ada_Type_Qualified_Name
-                 (Type_D.Get_Name, False, False).To_Wide_Wide_String
+               & Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False)
                & "'Wide_Wide_Image" & LF
                & Gen_Type_Line
                  ("(Data."
@@ -1533,8 +1527,7 @@ package body XSD_To_Ada.Encoder is
                & "        (League.Strings.To_Universal_String" & LF
                & "           (Ada.Strings.Wide_Wide_Fixed.Trim" & LF
                & "              ("
-               & Map.Ada_Type_Qualified_Name
-                 (Type_D.Get_Name, False, False).To_Wide_Wide_String
+               & Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False)
                & "'Wide_Wide_Image" & LF
                & Gen_Type_Line
                  ("(Data."
@@ -1570,7 +1563,7 @@ package body XSD_To_Ada.Encoder is
             "      Writer.Characters (Image"
             & LF
             & "        (Data."
-            & Responce_Name.To_Wide_Wide_String
+            & Responce_Name
             & Full_Anonym_Name
             & Base_Choice_Name
             & Vector_Element

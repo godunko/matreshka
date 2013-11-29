@@ -39,40 +39,88 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
+--  $Revision: 4279 $ $Date: 2013-11-19 14:27:35 +0200 (Вт., 19 нояб. 2013) $
 ------------------------------------------------------------------------------
+with League.Strings;
+with League.String_Vectors;
+
+with XML.Schema.Models;
+with XML.Schema.Terms;
+with XML.Schema.Type_Definitions;
+
+with XSD_To_Ada.Mappings.XML;
+with XSD_To_Ada.Writers;
+
 with XSD_To_Ada.Utils;
+with Ada.Containers.Vectors;
 
-package body XSD_To_Ada.Mappings is
+package XSD_To_Ada.Encoder_2 is
 
-   -----------------------------
-   -- Ada_Type_Qualified_Name --
-   -----------------------------
+   package Name_Vector is
+     new Ada.Containers.Vectors
+       (Positive, League.Strings.Universal_String, League.Strings."=");
 
-   function Ada_Type_Qualified_Name
-    (Self          : Mapping'Class;
-     XSD_Type_Name : League.Strings.Universal_String;
-     Min_Occur     : Boolean;
-     Max_Occur     : Boolean) return League.Strings.Universal_String is
-   begin
-      if Self.Mapping.Contains (XSD_Type_Name) then
-         return Self.Mapping.Element (XSD_Type_Name).Ada_Name;
-      else
-         return
-           League.Strings.To_Universal_String
-            ("Payloads." & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name));
-      end if;
-   end Ada_Type_Qualified_Name;
+   Elements_Name : Name_Vector.Vector;
 
-   --------------------
-   -- Is_Type_In_Map --
-   --------------------
+   procedure Generate_Complex_Type
+     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term     : XML.Schema.Terms.XS_Term;
+      Writer      : in out Writers.Writer;
+      Type_Name   : League.Strings.Universal_String;
+      Choice_Name : League.Strings.Universal_String;
+      Base_Name   : League.Strings.Universal_String;
+      Min_Occurs  : Boolean;
+      Max_Occurs  : Boolean);
 
-   function Is_Type_In_Map
-    (Self          : Mapping'Class;
-     XSD_Type_Name : League.Strings.Universal_String) return Boolean is
-   begin
-      return Self.Mapping.Contains (XSD_Type_Name);
-   end Is_Type_In_Map;
+   procedure Generate_Overriding_Procedure_Encode_Header
+     (Writer          : in out Writers.Writer;
+      Spec_Writer     : in out Writers.Writer;
+      Procedures_Name : League.Strings.Universal_String);
 
-end XSD_To_Ada.Mappings;
+   procedure Generate_Package_Header
+     (Payload_Writer : in out XSD_To_Ada.Writers.Writer);
+
+   procedure Generate_Procedure_Encode_Header
+     (Writer          : in out Writers.Writer;
+      Procedures_Name : League.Strings.Universal_String);
+
+   procedure Generate_Simple_Type
+     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term     : XML.Schema.Terms.XS_Term;
+      Writer      : in out Writers.Writer;
+      Type_Name   : League.Strings.Universal_String;
+      Choice_Name : League.Strings.Universal_String;
+      Base_Name   : League.Strings.Universal_String;
+      Min_Occurs  : Boolean;
+      Max_Occurs  : Boolean);
+
+   procedure Print_Type_Definition
+    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Indent       : Wide_Wide_String;
+     Writer       : in out Writers.Writer;
+     Writer_types : in out Writers.Writer;
+     Mapping      : XSD_To_Ada.Mappings.Mapping;
+     Name         : League.Strings.Universal_String;
+     Anonym_Name  : League.Strings.Universal_String;
+     Element_Name : League.Strings.Universal_String;
+     Is_Min_Occur : Boolean := False;
+     Is_Max_Occur : Boolean := False);
+
+   procedure Print_Type_Title
+     (Node_Vector : XSD_To_Ada.Utils.Items;
+      Indent      : Wide_Wide_String;
+      Writer      : in out XSD_To_Ada.Writers.Writer;
+      Spec_Writer : in out XSD_To_Ada.Writers.Writer;
+      Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
+      Tag_Vector  : in out League.String_Vectors.Universal_String_Vector;
+      Mapping     : XSD_To_Ada.Mappings.Mapping);
+
+   function Write_End_Element
+     (Name : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+
+   function Write_Start_Element
+     (Name : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+
+end XSD_To_Ada.Encoder_2;

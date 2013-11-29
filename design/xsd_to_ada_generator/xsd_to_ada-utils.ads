@@ -50,6 +50,10 @@ with XML.Schema.Terms;
 
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
+with XML.Schema.Objects;
+with XML.Schema.Objects.Type_Definitions;
+with Ada.Containers.Vectors;
+with XML.Schema.Objects.Particles;
 
 package XSD_To_Ada.Utils is
 
@@ -64,6 +68,20 @@ package XSD_To_Ada.Utils is
    Types_Table    : Types_Table_Type_Array;
 
    Is_Vector_Type : League.String_Vectors.Universal_String_Vector;
+
+   type Item is record
+      Type_Def     : XML.Schema.Objects.Type_Definitions.XS_Type_Definition;
+      Min, Max     : Boolean := False;
+      Choice       : Boolean := False;
+      Anonym_Name  : League.Strings.Universal_String;
+      Decl_Anonym_Name : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
+   end record;
+
+   package Item_Vectors is
+     new Ada.Containers.Vectors (Positive, Item);
+
+   subtype Items is Item_Vectors.Vector;
 
    type Anonyn_Vector_Declatarion is
       record
@@ -95,9 +113,20 @@ package XSD_To_Ada.Utils is
       return Wide_Wide_String;
 
    procedure Create_Element_Type
-    (Model  : XML.Schema.Models.XS_Model;
-     Mapping : XSD_To_Ada.Mappings.Mapping;
-     Writer : in out XSD_To_Ada.Writers.Writer);
+     (Model       : XML.Schema.Models.XS_Model;
+      Node_Vector : in out XSD_To_Ada.Utils.Items;
+      Mapping     : XSD_To_Ada.Mappings.Mapping;
+      Writer      : in out XSD_To_Ada.Writers.Writer);
+
+   procedure Create_Node_Vector
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent       : Wide_Wide_String;
+      Node_Vector  : in out XSD_To_Ada.Utils.Items;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Min_Occurs   : Natural;
+      Max_Occurs   : XML.Schema.Objects.Particles.Unbounded_Natural;
+      Element_Name : League.Strings.Universal_String :=
+        League.Strings.Empty_Universal_String);
 
    procedure Create_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
@@ -146,7 +175,6 @@ package XSD_To_Ada.Utils is
    --  it was not created.
 
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
-   procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
 
    procedure Print_Content_Type
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -158,20 +186,35 @@ package XSD_To_Ada.Utils is
 
    procedure Print_Type_Definition
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String := "";
+     Indent       : Wide_Wide_String;
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
-     Is_Record    : Boolean := False;
+     Anonym_Name  : League.Strings.Universal_String;
+     Element_Name  : League.Strings.Universal_String;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Table        : in out Types_Table_Type_Array;
      Is_Max_Occur : Boolean := False;
      Is_Min_Occur : Boolean := False);
 
+   procedure Node_Type_Definition
+     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent               : Wide_Wide_String;
+      Node_Vector          : in out XSD_To_Ada.Utils.Items;
+      Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
+      Writer               : in out Writers.Writer;
+      Writer_types         : in out Writers.Writer;
+      Name                 : League.Strings.Universal_String;
+      Mapping              : XSD_To_Ada.Mappings.Mapping;
+      Table                : in out Types_Table_Type_Array;
+      Is_Max_Occur         : Boolean := False;
+      Is_Min_Occur         : Boolean := False);
+
    procedure Print_Type_Title
-    (Type_D  : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Mapping : XSD_To_Ada.Mappings.Mapping;
-     Writer  : in out XSD_To_Ada.Writers.Writer);
+     (Node_Vector : XSD_To_Ada.Utils.Items;
+      Indent      : Wide_Wide_String;
+      Writer      : in out XSD_To_Ada.Writers.Writer;
+      Mapping     : XSD_To_Ada.Mappings.Mapping);
 
    function Has_Element_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
