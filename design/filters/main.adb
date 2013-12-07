@@ -1,5 +1,6 @@
 with Ada.Streams;
 with Matreshka.Filters.Deflate.Unpack;
+with Matreshka.Filters.LZMA.XZ_Unpack;
 with League.Stream_Element_Vectors;
 with League.Strings;
 with League.Text_Codecs;
@@ -62,6 +63,22 @@ procedure Main is
 
 begin
    D.Initialize;
+   declare
+      Filter : Matreshka.Filters.LZMA.XZ_Unpack.Filter;
+      Data : constant Ada.Streams.Stream_Element_Array :=
+        (16#FD#, 16#37#, 16#7A#, 16#58#, 16#5A#, 16#00#, 16#00#, 16#04#,
+         16#E6#, 16#D6#, 16#B4#, 16#46#, 16#02#, 16#00#, 16#21#, 16#01#,
+         16#16#, 16#00#, 16#00#, 16#00#, 16#74#, 16#2F#, 16#E5#, 16#A3#,
+         16#E0#, 16#02#, 16#F2#, 16#01#, 16#B6#, 16#5D#, 16#00#, 16#10#,
+         16#6C#, 16#C4#, 16#E6#, 16#53#, 16#61#, 16#7C#, 16#02#, 16#05#,
+         16#40#, 16#0A#, 16#10#, 16#79#, 16#E6#, 16#A8#, 16#D1#, 16#76#,
+         16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+         16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+         16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#);
+   begin
+      Input.Append (Data);
+      Filter.Read (Input, Output);
+   end;
 
    declare
       Filter : D.Filter;
