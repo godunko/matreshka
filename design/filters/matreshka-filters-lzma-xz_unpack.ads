@@ -46,7 +46,7 @@ private with Ada.Streams;
 private with Matreshka.Filters.LZMA.Dictionaries;
 
 package Matreshka.Filters.LZMA.XZ_Unpack is
-   pragma Preelaborate;
+--   pragma Preelaborate;
 
    procedure Initialize;
    --  Initialize fixed tables. Should be executed before other code.
@@ -77,16 +77,19 @@ private
    --  The filter can leave Read function in one of these stages.
 
    type LZMA_Property is record
-      LC : Natural range 0 .. 8;
+      LC : Natural range 0 .. 4;
       --  lc is the number of high bits of the previous byte to use as
       --  a context for literal encoding (the default value used by
       --  the LZMA SDK is 3)
-      LP : Natural;
+      LP : Natural range 0 .. 4;
       --  lp is the number of low bits of the dictionary position to include
       --  in literal_pos_state (the default value used by the LZMA SDK is 0)
-      PB : Natural range 0 .. POS_STATES_BITS - 1;
+      PB : Natural range 0 .. POS_STATES_BITS;
       --  pb is the number of low bits of the dictionary position to include
       --  in pos_state (the default value used by the LZMA SDK is 2)
+      Pos_Mask : Position_State_Index;  --  2 ** PB - 1;
+      Literal_Pos_Mask : Position_State_Index;  --  2 ** LP - 1;
+      --  Invariant: LC + LP in 0 .. 4
    end record;
 
    type Range_Decoder is record
@@ -113,16 +116,53 @@ private
    Half : constant Probability := Probability'Last / 2 + 1;  --  16#400#
 
    type Is_Match_Array is array (State, Position_State_Index) of Probability;
-   type Literal_Array  is array
-     (Position_State_Index, Ada.Streams.Stream_Element) of Probability;
+
+   type Probability_Index is range 1 .. 256;
+   type Probability_Array is array (Probability_Index) of Probability;
+
+   type Codec_Index is range 0 .. 15;
+   type Codec_Kind is (Lit, One, Zero);
+
+   type Literal_Array is array (Codec_Index, Codec_Kind) of Probability_Array;
+
+   type Is_Rep_Array is array (State) of Probability;
+
+   type Length_Index_8 is range 1 .. 8;
+   type Length_Array_8 is array (Length_Index_8) of Probability;
+
+   type Length_Probability_Array is
+     array (Position_State_Index) of Length_Array_8;
+
+   --  Match length is encoded with 4, 5, or 10 bits.
+   --
+   --  Length   Bits
+   --   2-9      4 = Choice=0 + 3 bits
+   --  10-17     5 = Choice=1 + Choice2=0 + 3 bits
+   --  18-273   10 = Choice=1 + Choice2=1 + 8 bits
+
+   -- Minimum length of a match is two bytes.
+   MATCH_LEN_MIN   : constant := 2;
+   LEN_LOW_SYMBOLS : constant := 8;
+   LEN_MID_SYMBOLS : constant := 8;
+
+   type Length_Decoder is record
+      Choice   : Probability;  -- Choice between Low and others lengths
+      Choice_2 : Probability;  -- Choice between Middle and High lengths
+      Low      : Length_Probability_Array;
+      Middle   : Length_Probability_Array;
+      High     : Probability_Array;
+   end record;
 
    type LZMA_Decoder is record
       State            : LZMA.State;
       Property         : LZMA_Property;
       Range_Decoder    : XZ_Unpack.Range_Decoder;
+      --  If 1, it's a match. Otherwise it's a single 8-bit literal.
       Is_Match         : Is_Match_Array;
+      --  If 1, it's a repeated match. The distance is one of rep0 .. rep3.
+      Is_Rep           : Is_Rep_Array;
       Literal          : Literal_Array;
-      Index            : Position_State_Index;
+      Length           : Length_Decoder;
    end record;
 
    procedure Reset (Self : in out LZMA_Decoder);
@@ -191,13 +231,6 @@ private
       Index  : in out Ada.Streams.Stream_Element_Count;
       Prob   : in out Probability) return Boolean;
 
-   not overriding function Range_Coder_Bit_Tree
-     (Self   : in out Filter;
-      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Index  : in out Ada.Streams.Stream_Element_Count;
-      Prob   : in out Probability;
-      Bits   : Positive) return Interfaces.Unsigned_8;
-
    not overriding procedure Normalize_Range_Coder
      (Self   : in out Filter;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
@@ -208,5 +241,17 @@ private
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
       Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
+
+   not overriding procedure Read_Match
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
+
+   not overriding procedure Read_Length
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Length : out Ada.Streams.Stream_Element_Count);
 
 end Matreshka.Filters.LZMA.XZ_Unpack;

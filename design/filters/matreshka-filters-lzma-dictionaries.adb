@@ -43,6 +43,22 @@
 
 package body Matreshka.Filters.LZMA.Dictionaries is
 
+   ---------
+   -- Get --
+   ---------
+
+   function Get
+     (Self  : Dictionary;
+      Index : Ada.Streams.Stream_Element_Count)
+      return Ada.Streams.Stream_Element is
+   begin
+      if Index = 0 and Self.Data.Is_Empty then
+         return 0;
+      else
+         return Self.Data.Element (Self.Data.Length - Index);
+      end if;
+   end Get;
+
    --------------
    -- Set_Size --
    --------------
@@ -61,8 +77,17 @@ package body Matreshka.Filters.LZMA.Dictionaries is
 
    procedure Reset (Self : in out Dictionary) is
    begin
-      null;
+      Self.Position := 0;
    end Reset;
+
+   --------------
+   -- Position --
+   --------------
+
+   function Position (Self : Dictionary) return Position_State_Index is
+   begin
+      return Self.Position;
+   end Position;
 
    ---------
    -- Put --
@@ -74,6 +99,27 @@ package body Matreshka.Filters.LZMA.Dictionaries is
    is
    begin
       Self.Data.Append (Value);
+      Self.Position := Self.Position + Value'Length;
    end Put;
+
+   ------------
+   -- Repeat --
+   ------------
+
+   procedure Repeat
+     (Self   : in out Dictionary;
+      Index  : Ada.Streams.Stream_Element_Count;
+      Length : Ada.Streams.Stream_Element_Count;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector)
+   is
+      Data : Ada.Streams.Stream_Element_Array (1 .. Length);
+   begin
+      for J in Data'Range loop
+         Data (J) := Self.Get (Index + J - 1);
+      end loop;
+
+      Self.Put (Data);
+      Output.Append (Data);
+   end Repeat;
 
 end Matreshka.Filters.LZMA.Dictionaries;

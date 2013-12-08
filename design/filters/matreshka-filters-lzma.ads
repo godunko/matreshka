@@ -124,7 +124,6 @@ package Matreshka.Filters.LZMA is
 
    use type Ada.Streams.Stream_Element_Count;
 
-   subtype Position_State_Index is Ada.Streams.Stream_Element_Count
-     range 0 .. (POS_STATES_MAX - 1);
+   type Position_State_Index is mod POS_STATES_MAX;
 
 end Matreshka.Filters.LZMA;

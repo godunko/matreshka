@@ -61,10 +61,29 @@ package Matreshka.Filters.LZMA.Dictionaries is
      (Self  : in out Dictionary;
       Value : Ada.Streams.Stream_Element_Array);
 
+   function Get
+     (Self  : Dictionary;
+      Index : Ada.Streams.Stream_Element_Count)
+      return Ada.Streams.Stream_Element;
+   --  For Index = 0 get the last element Put into Self.
+   --  For 1 get previous, etc.
+   --  As an exception for empty dictionary and Index = 0 return 0.
+
+   procedure Repeat
+     (Self   : in out Dictionary;
+      Index  : Ada.Streams.Stream_Element_Count;
+      Length : Ada.Streams.Stream_Element_Count;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
+
+   function Position (Self : Dictionary) return Position_State_Index;
+   --  Return a few bits of position in output stream
+   --  Result is 0 on empty buffer and incremented on every next byte
+
 private
 
    type Dictionary is tagged record
       Data : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Position : Position_State_Index := 0;
    end record;
 
 end Matreshka.Filters.LZMA.Dictionaries;
