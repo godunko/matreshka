@@ -1,0 +1,18 @@
+with "../../gnat/matreshka_league.gpr";
+
+project Forge is
+
+   for Main use ("main.adb");
+   for Object_Dir use ".objs";
+   for Source_Dirs use (".", "svn");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g", "-gnat12");
+   end Compiler;
+
+   package Linker is
+      for Default_Switches ("Ada") use ("-lapr-1", "-lpthread", "-ldl", "-lsvn_subr-1", "-lsvn_repos-1");
+--      for Default_Switches ("Ada") use ("-lapr-1", "-lpthread", "-ldl", "-lsvn_subr-1", "-lsvn_fs-1");
+   end Linker;
+
+end Forge;
