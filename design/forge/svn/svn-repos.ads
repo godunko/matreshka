@@ -15,10 +15,12 @@ package SVN.Repos is
    function svn_repos_create
     (repos     : out svn_repos_t_access;
      path      : Interfaces.C.Strings.chars_ptr;
-     unused_1  : Interfaces.C.Strings.chars_ptr;
-     unused_2  : Interfaces.C.Strings.chars_ptr;
-     config    : APR.apr_hash_t_access;
-     fs_config : APR.apr_hash_t_access;
+     unused_1  : Interfaces.C.Strings.chars_ptr
+       := Interfaces.C.Strings.Null_Ptr;
+     unused_2  : Interfaces.C.Strings.chars_ptr
+       := Interfaces.C.Strings.Null_Ptr;
+     config    : APR.apr_hash_t_access := null;
+     fs_config : APR.apr_hash_t_access := null;
      pool      : APR.Pools.apr_pool_t_access)
        return svn_error_t_access
          with Import     => True,

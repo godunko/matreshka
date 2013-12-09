@@ -4,7 +4,7 @@ project Forge is
 
    for Main use ("main.adb");
    for Object_Dir use ".objs";
-   for Source_Dirs use (".", "svn");
+   for Source_Dirs use (".", "svn", "forge");
 
    package Compiler is
       for Default_Switches ("Ada") use ("-g", "-gnat12");
