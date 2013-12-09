@@ -1,10 +1,11 @@
-with "../../gnat/matreshka_league.gpr";
+--with "../../gnat/matreshka_league.gpr";
+with "forge/aws/forge_aws.gpr";
 
-project Forge is
+project AWS_Main is
 
    for Main use ("main.adb");
    for Object_Dir use ".objs";
-   for Source_Dirs use (".", "svn", "forge");
+   for Source_Dirs use (".");
 
    package Compiler is
       for Default_Switches ("Ada") use ("-g", "-gnat12");
@@ -15,4 +16,4 @@ project Forge is
 --      for Default_Switches ("Ada") use ("-lapr-1", "-lpthread", "-ldl", "-lsvn_subr-1", "-lsvn_fs-1");
    end Linker;
 
-end Forge;
+end AWS_Main;

@@ -1,0 +1,13 @@
+with "aws.gpr";
+with "../forge.gpr";
+
+project Forge_AWS is
+
+   for Object_Dir use "../../.objs";
+   for Source_Dirs use (".");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g", "-gnat12");
+   end Compiler;
+
+end Forge_AWS;

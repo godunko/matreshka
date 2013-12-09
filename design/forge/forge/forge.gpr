@@ -1,0 +1,12 @@
+with "../../../gnat/matreshka_league.gpr";
+
+project Forge is
+
+   for Object_Dir use "../.objs";
+   for Source_Dirs use (".", "../svn");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g", "-gnat12");
+   end Compiler;
+
+end Forge;
