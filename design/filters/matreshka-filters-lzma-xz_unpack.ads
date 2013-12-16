@@ -153,16 +153,103 @@ private
       High     : Probability_Array;
    end record;
 
+
+--  Different sets of probabilities are used for match distances that have
+--  very short match length: Lengths of 2, 3, and 4 bytes have a separate
+--  set of probabilities for each length. The matches with longer length
+--  use a shared set of probabilities.
+
+   DIST_STATES : constant := 4;
+
+   type Distance_State is range 2 .. 5;
+   Other_Distance_State : constant := 5;
+
+--  The highest two bits of a 32-bit match distance are encoded using six bits.
+--  This six-bit value is called a distance slot. This way encoding a 32-bit
+--  value takes 6-36 bits, larger values taking more bits.
+
+   DIST_SLOT_BITS : constant := 6;
+   DIST_SLOTS     : constant := 2 ** DIST_SLOT_BITS;  --  (1 << DIST_SLOT_BITS)
+
+--  Match distances up to 127 are fully encoded using probabilities. Since
+--  the highest two bits (distance slot) are always encoded using six bits,
+--  the distances 0-3 don't need any additional bits to encode, since the
+--  distance slot itself is the same as the actual distance. DIST_MODEL_START
+--  indicates the first distance slot where at least one additional bit is
+--  needed.
+
+   DIST_MODEL_START : constant := 4;
+
+--  Match distances greater than 127 are encoded in three pieces:
+--    - distance slot: the highest two bits
+--    - direct bits: 2-26 bits below the highest two bits
+--    - alignment bits: four lowest bits
+--
+--  Direct bits don't use any probabilities.
+--
+--  The distance slot value of 14 is for distances 128-191.
+
+   DIST_MODEL_END : constant  := 14;
+
+   type Slot is range 1 .. DIST_SLOTS;
+   type Slot_Probability_Array is array (Slot) of Probability;
+   type Slot_Array is array (Distance_State) of Slot_Probability_Array;
+
+   type Distance_Array is array (1 .. 4) of Ada.Streams.Stream_Element_Count;
+
+   --  Probility trees for additional bits for match distance
+   --  when the distance is in the range [4, 127].
+
+   --  For match distances greater than 127, only the highest two bits and the
+   --  lowest four bits (alignment) is encoded using probabilities.
+   ALIGN_BITS : constant := 4;
+
+   ALIGN_SIZE : constant := 2 ** ALIGN_BITS;
+
+   Special_Distance_Last : constant := 114 + ALIGN_SIZE;
+   Allign_Offset : constant := 115;
+
+   type Special_Distance_Array is array
+     (Interfaces.Unsigned_8 range 1 .. Special_Distance_Last) of Probability;
+
+   --  x: limit = (dist_slot >> 1) - 1
+   --  y: s->lzma.rep0 = 2 + (dist_slot & 1);
+   --  z: s->lzma.rep0 <<= limit
+   --  p: s->lzma.rep0 - dist_slot
+   --
+   --  ds  x  y  z  p
+   --  4   1  2  4  0
+   --  5   1  3  6  1
+   --  6   2  2  8  2
+   --  7   2  3 12  5
+   --  8   3  2 16  8
+   --  9   3  3 24  15
+   --  10  4  2 32  22
+   --  11  4  3 48  37
+   --  12  5  2 64  52
+   --  13  5  3 96  83
+
+   subtype Dist_Offset is
+     Interfaces.Unsigned_8 range 0 .. Allign_Offset;
+
+   Special_Offset : constant array
+     (Interfaces.Unsigned_8 range 4 .. 13) of Dist_Offset :=
+     (4 => 0, 5 => 1, 6 => 2, 7 => 5, 8 => 8,
+      9 => 15, 10 => 22, 11 => 37, 12 => 52, 13 => 83);
+
    type LZMA_Decoder is record
       State            : LZMA.State;
       Property         : LZMA_Property;
       Range_Decoder    : XZ_Unpack.Range_Decoder;
+      Rep              : Distance_Array;
       --  If 1, it's a match. Otherwise it's a single 8-bit literal.
       Is_Match         : Is_Match_Array;
       --  If 1, it's a repeated match. The distance is one of rep0 .. rep3.
       Is_Rep           : Is_Rep_Array;
       Literal          : Literal_Array;
       Length           : Length_Decoder;
+      Dist_Slot        : Slot_Array;
+      Special_Dist     : Special_Distance_Array;
    end record;
 
    procedure Reset (Self : in out LZMA_Decoder);
@@ -225,14 +312,22 @@ private
       Output : in out League.Stream_Element_Vectors.Stream_Element_Vector)
       return Boolean;
 
-   not overriding function Range_Coder_Bit
-     (Self   : in out Filter;
+   function Range_Coder_Bit
+     (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
       Prob   : in out Probability) return Boolean;
 
-   not overriding procedure Normalize_Range_Coder
-     (Self   : in out Filter;
+   function Range_Coder_Bit_Tree_Reverse
+     (Self   : in out Range_Decoder;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Prob   : in out Special_Distance_Array;
+      Bits   : Positive;
+      Offset : Dist_Offset) return Interfaces.Unsigned_8;
+
+   procedure Normalize_Range_Coder
+     (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count);
 

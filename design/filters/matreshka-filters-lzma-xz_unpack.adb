@@ -47,12 +47,16 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
    State_Move : constant array (Packet_Name, State) of State :=
      (Lit =>
-        (Literal_State      => STATE_LIT_LIT,
-         STATE_LIT_MATCH    => STATE_MATCH_LIT,
-         STATE_LIT_LONGREP  => STATE_REP_LIT,
-         STATE_LIT_SHORTREP => STATE_SHORTREP_LIT,
-         STATE_NONLIT_MATCH => STATE_MATCH_LIT,
-         STATE_NONLIT_REP   => STATE_REP_LIT),
+        (STATE_LIT_LIT | STATE_MATCH_LIT_LIT | STATE_REP_LIT_LIT |
+         STATE_SHORTREP_LIT_LIT => STATE_LIT_LIT,
+         STATE_MATCH_LIT        => STATE_MATCH_LIT_LIT,
+         STATE_REP_LIT          => STATE_REP_LIT_LIT,
+         STATE_SHORTREP_LIT     => STATE_SHORTREP_LIT_LIT,
+         STATE_LIT_MATCH        => STATE_MATCH_LIT,
+         STATE_LIT_LONGREP      => STATE_REP_LIT,
+         STATE_LIT_SHORTREP     => STATE_SHORTREP_LIT,
+         STATE_NONLIT_MATCH     => STATE_MATCH_LIT,
+         STATE_NONLIT_REP       => STATE_REP_LIT),
       Match =>
         (Literal_State      => STATE_LIT_MATCH, others => STATE_NONLIT_MATCH),
       others => (others => STATE_LIT_LIT));  -- TBD
@@ -62,7 +66,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
       type Probability_Array is array (Array_Index) of Probability;
    function Range_Coder_Bit_Tree
-     (Self   : in out Filter;
+     (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
       Prob   : in out Probability_Array) return Interfaces.Unsigned_8;
@@ -94,23 +98,21 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
    -- Normalize_Range_Coder --
    ---------------------------
 
-   not overriding procedure Normalize_Range_Coder
-     (Self   : in out Filter;
+   procedure Normalize_Range_Coder
+     (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count)
    is
       use type Interfaces.Unsigned_32;
-      Range_Decoder : XZ_Unpack.Range_Decoder renames
-        Self.Decoder.Range_Decoder;
    begin
-      if Range_Decoder.Bound < 16#1_00_00_00# then
+      if Self.Bound < 16#1_00_00_00# then
          if Index <= Input.Length then
-            Range_Decoder.Bound := Interfaces.Shift_Left
-              (Range_Decoder.Bound, 8);
-            Range_Decoder.Code := Interfaces.Shift_Left (Range_Decoder.Code, 8)
+            Self.Bound := Interfaces.Shift_Left
+              (Self.Bound, 8);
+            Self.Code := Interfaces.Shift_Left (Self.Code, 8)
               + Interfaces.Unsigned_32 (Input.Element (Index));
             Index := Index + 1;
-            Self.Count := Self.Count + 1;
+--              Self.Count := Self.Count + 1;   FIXME!
          else
             raise Constraint_Error;
          end if;
@@ -121,8 +123,8 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
    -- Range_Coder_Bit --
    ---------------------
 
-   not overriding function Range_Coder_Bit
-     (Self   : in out Filter;
+   function Range_Coder_Bit
+     (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
       Prob   : in out Probability) return Boolean
@@ -131,24 +133,22 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
       Result        : Boolean;
       Bound         : Interfaces.Unsigned_32;
-      Range_Decoder : XZ_Unpack.Range_Decoder renames
-        Self.Decoder.Range_Decoder;
 
    begin
-      Self.Normalize_Range_Coder (Input, Index);
+      Normalize_Range_Coder (Self, Input, Index);
 
       Bound :=
-        Interfaces.Shift_Right (Range_Decoder.Bound, RC_BIT_MODEL_TOTAL_BITS)
+        Interfaces.Shift_Right (Self.Bound, RC_BIT_MODEL_TOTAL_BITS)
         * Interfaces.Unsigned_32 (Prob);
 
-      Result := Range_Decoder.Code >= Bound;
+      Result := Self.Code >= Bound;
 
       if Result then
-         Range_Decoder.Bound := Range_Decoder.Bound - Bound;
-         Range_Decoder.Code := Range_Decoder.Code - Bound;
+         Self.Bound := Self.Bound - Bound;
+         Self.Code := Self.Code - Bound;
          Prob := Prob - Prob / 2 ** RC_MOVE_BITS;
       else
-         Range_Decoder.Bound := Bound;
+         Self.Bound := Bound;
          Prob := Prob + (-Prob) / 2 ** RC_MOVE_BITS;
       end if;
 
@@ -160,7 +160,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
    --------------------------
 
    function Range_Coder_Bit_Tree
-     (Self   : in out Filter;
+     (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
       Prob   : in out Probability_Array) return Interfaces.Unsigned_8
@@ -171,7 +171,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       Bit    : Boolean;
    begin
       while Result < Array_Index'Last loop
-         Bit := Self.Range_Coder_Bit (Input, Index, Prob (Result));
+         Bit := Range_Coder_Bit (Self, Input, Index, Prob (Result));
          Result := 2 * Result + Boolean'Pos (Bit);
       end loop;
 
@@ -183,6 +183,42 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
    function Range_Coder_Bit_Tree_8 is
      new Range_Coder_Bit_Tree (Length_Index_8, Length_Array_8);
+
+   function Range_Coder_Bit_Tree_6 is
+     new Range_Coder_Bit_Tree (Slot, Slot_Probability_Array);
+
+   ----------------------------------
+   -- Range_Coder_Bit_Tree_Reverse --
+   ----------------------------------
+
+   function Range_Coder_Bit_Tree_Reverse
+     (Self   : in out Range_Decoder;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Prob   : in out Special_Distance_Array;
+      Bits   : Positive;
+      Offset : Dist_Offset) return Interfaces.Unsigned_8
+   is
+      use type Interfaces.Unsigned_8;
+
+      Result : Interfaces.Unsigned_8 := 0;
+      Point  : Interfaces.Unsigned_8 := 1;
+      Symbol : Interfaces.Unsigned_8 := 1;
+      Bit    : Boolean;
+   begin
+      for J in 1 .. Bits loop
+         Bit := Range_Coder_Bit (Self, Input, Index, Prob (Symbol + Offset));
+         Symbol := 2 * Symbol + Boolean'Pos (Bit);
+
+         if Bit then
+            Result := Result + Point;
+         end if;
+
+         Point := Interfaces.Shift_Left (Point, 1);
+      end loop;
+
+      return Result;
+   end Range_Coder_Bit_Tree_Reverse;
 
    -----------------------------
    -- Read_Block_Header_Bytes --
@@ -329,15 +365,16 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
                     (Self.Decoder.State,
                      Self.Dictionary.Position
                        and Self.Decoder.Property.Pos_Mask);
-                  Rep_Prob : Probability renames Self.Decoder.Is_Rep
-                    (Self.Decoder.State);
                begin
-                  Bit := Self.Range_Coder_Bit (Input, Index, Lit_Prob);
+                  Bit := Range_Coder_Bit
+                    (Self.Decoder.Range_Decoder, Input, Index, Lit_Prob);
 
                   if Bit = False then
                      Self.Read_Literal (Input, Index, Output);
                   else
-                     Bit := Self.Range_Coder_Bit (Input, Index, Rep_Prob);
+                     Bit := Range_Coder_Bit
+                       (Self.Decoder.Range_Decoder, Input, Index,
+                        Self.Decoder.Is_Rep (Self.Decoder.State));
 
                      if Bit = False then
                         Self.Read_Match (Input, Index, Output);
@@ -424,45 +461,35 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       Index  : in out Ada.Streams.Stream_Element_Count;
       Length : out Ada.Streams.Stream_Element_Count)
    is
-      Prob   : Probability renames Self.Decoder.Length.Choice;
-      Bit    : Boolean := Self.Range_Coder_Bit (Input, Index, Prob);
+      Next  : Interfaces.Unsigned_8;
+      Bit    : Boolean := Range_Coder_Bit
+        (Self.Decoder.Range_Decoder, Input, Index, Self.Decoder.Length.Choice);
       Pos    : constant Position_State_Index :=
         Self.Dictionary.Position and Self.Decoder.Property.Pos_Mask;
    begin
       if Bit = False then  --  Read Low length
-         declare
-            Prob : Length_Array_8 renames Self.Decoder.Length.Low (Pos);
-            Next : Interfaces.Unsigned_8;
-         begin
-            Next := Range_Coder_Bit_Tree_8 (Self, Input, Index, Prob);
-            Length := MATCH_LEN_MIN +
-              Ada.Streams.Stream_Element_Count (Next);
-         end;
+         Next := Range_Coder_Bit_Tree_8
+           (Self.Decoder.Range_Decoder, Input, Index,
+            Self.Decoder.Length.Low (Pos));
+         Length := MATCH_LEN_MIN +
+           Ada.Streams.Stream_Element_Count (Next);
       else
-         declare
-            Prob : Probability renames Self.Decoder.Length.Choice_2;
-         begin
-            Bit := Self.Range_Coder_Bit (Input, Index, Prob);
-         end;
+         Bit := Range_Coder_Bit
+           (Self.Decoder.Range_Decoder, Input, Index,
+            Self.Decoder.Length.Choice_2);
 
          if Bit = False then  --  Read Middle length
-            declare
-               Prob : Length_Array_8 renames Self.Decoder.Length.Middle (Pos);
-               Next : Interfaces.Unsigned_8;
-            begin
-               Next := Range_Coder_Bit_Tree_8 (Self, Input, Index, Prob);
-               Length := MATCH_LEN_MIN + LEN_LOW_SYMBOLS +
-                 Ada.Streams.Stream_Element_Count (Next);
-            end;
+            Next := Range_Coder_Bit_Tree_8
+              (Self.Decoder.Range_Decoder, Input, Index,
+               Self.Decoder.Length.Middle (Pos));
+            Length := MATCH_LEN_MIN + LEN_LOW_SYMBOLS +
+              Ada.Streams.Stream_Element_Count (Next);
          else
-            declare  --  Read High length
-               Prob : Probability_Array renames Self.Decoder.Length.High;
-               Next : Interfaces.Unsigned_8;
-            begin
-               Next := Range_Coder_Bit_Tree_256 (Self, Input, Index, Prob);
-               Length := MATCH_LEN_MIN + LEN_LOW_SYMBOLS + LEN_MID_SYMBOLS +
-                 Ada.Streams.Stream_Element_Count (Next);
-            end;
+            Next := Range_Coder_Bit_Tree_256
+              (Self.Decoder.Range_Decoder, Input, Index,
+               Self.Decoder.Length.High);
+            Length := MATCH_LEN_MIN + LEN_LOW_SYMBOLS + LEN_MID_SYMBOLS +
+              Ada.Streams.Stream_Element_Count (Next);
          end if;
       end if;
    end Read_Length;
@@ -478,8 +505,9 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       Output : in out League.Stream_Element_Vectors.Stream_Element_Vector)
    is
       use type Interfaces.Unsigned_8;
+      use type Ada.Streams.Stream_Element;
 
-      Prev  : constant Ada.Streams.Stream_Element := Self.Dictionary.Get (0);
+      Prev  : Ada.Streams.Stream_Element := Self.Dictionary.Get (0);
       Codec : Codec_Index;
       Pos   : constant Position_State_Index :=
         Self.Dictionary.Position and Self.Decoder.Property.Literal_Pos_Mask;
@@ -492,14 +520,50 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
            (Interfaces.Unsigned_8 (Pos), Self.Decoder.Property.LC));
 
       if Self.Decoder.State in Literal_State then
+         Next := Range_Coder_Bit_Tree_256
+           (Self.Decoder.Range_Decoder, Input, Index,
+            Self.Decoder.Literal (Codec, Lit));
+         Output.Append (Ada.Streams.Stream_Element (Next));
+         Self.Dictionary.Put ((1 => Ada.Streams.Stream_Element (Next)));
+         Ada.Text_IO.Put (Character'Val (Next));
+      else
+         Prev := Self.Dictionary.Get (Self.Decoder.Rep (1));
+
          declare
-            Prob : Probability_Array renames
-              Self.Decoder.Literal (Codec, Lit);
+            Bit      : Boolean;
+            Prev_Bit : Boolean;
+            Kind     : Codec_Kind := One;
+            Symbol   : Probability_Index'Base := 1;
          begin
-            Next := Range_Coder_Bit_Tree_256 (Self, Input, Index, Prob);
-            Output.Append (Ada.Streams.Stream_Element (Next));
-            Self.Dictionary.Put ((1 => Ada.Streams.Stream_Element (Next)));
-            Ada.Text_IO.Put (Character'Val (Next));
+            for J in 1 .. 8 loop
+               if Kind /= Lit then
+                  Prev_Bit := Prev > 127;
+
+                  If Prev_Bit then
+                     Kind := One;
+                  else
+                     Kind := Zero;
+                  end if;
+
+                  Prev := Prev * 2;
+               end if;
+
+               Bit := Range_Coder_Bit
+                 (Self.Decoder.Range_Decoder, Input, Index,
+                  Self.Decoder.Literal (Codec, Kind) (Symbol));
+
+               Symbol := 2 * Symbol + Boolean'Pos (Bit);
+
+               if Kind /= Lit and Bit /= Prev_Bit then
+                  Kind := Lit;
+               end if;
+            end loop;
+
+            Output.Append
+              (Ada.Streams.Stream_Element (Symbol - 256));
+            Self.Dictionary.Put
+              ((1 => Ada.Streams.Stream_Element (Symbol - 256)));
+            Ada.Text_IO.Put (Character'Val (Symbol - 256));
          end;
       end if;
 
@@ -516,13 +580,51 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       Index  : in out Ada.Streams.Stream_Element_Count;
       Output : in out League.Stream_Element_Vectors.Stream_Element_Vector)
    is
-      Length : Ada.Streams.Stream_Element_Count;
+      use type Interfaces.Unsigned_8;
+
+      Distance : Ada.Streams.Stream_Element_Count;
+      Length   : Ada.Streams.Stream_Element_Count;
+      State    : Distance_State;
+      Next     : Interfaces.Unsigned_8;
    begin
       Self.Decoder.State := State_Move (Match, Self.Decoder.State);
+      Self.Decoder.Rep (2 .. 4) := Self.Decoder.Rep (1 .. 3);
 
       Self.Read_Length (Input, Index, Length);
 
-      Self.Dictionary.Repeat (Index => 1, Length => Length, Output => Output);
+      if Length < Other_Distance_State then
+         State := Distance_State (Length);
+      else
+         State := Other_Distance_State;
+      end if;
+
+      Next := Range_Coder_Bit_Tree_6
+        (Self.Decoder.Range_Decoder, Input, Index,
+         Self.Decoder.Dist_Slot (State));
+
+      if Next < DIST_MODEL_START then
+         Distance := Ada.Streams.Stream_Element_Count (Next);
+      elsif Next < DIST_MODEL_END then
+         Next := Next + Special_Offset (Next) +
+           Range_Coder_Bit_Tree_Reverse
+             (Self   => Self.Decoder.Range_Decoder,
+              Input  => Input,
+              Index  => Index,
+              Prob   => Self.Decoder.Special_Dist,
+              Bits   => Positive (Next / 2 - 1),
+              Offset => Special_Offset (Next));
+
+         Distance := Ada.Streams.Stream_Element_Count (Next);
+      else
+         null;
+      end if;
+
+      Self.Dictionary.Repeat
+        (Index  => Distance,
+         Length => Length,
+         Output => Output);
+
+      Self.Decoder.Rep (1) := Distance;
    end Read_Match;
 
    ------------------------------
@@ -810,6 +912,8 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          High   => (others => Half),
          Middle => (others => (others => Half)),
          Low    => (others => (others => Half)));
+      Self.Dist_Slot := (others => (others => Half));
+      Self.Special_Dist := (others => Half);
    end Reset;
 
    -----------

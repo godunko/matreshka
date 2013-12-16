@@ -46,7 +46,7 @@ with Ada.Streams;
 with League.Stream_Element_Vectors;
 
 package Matreshka.Filters.LZMA.Dictionaries is
-   pragma Preelaborate;
+--     pragma Preelaborate;
 
    type Dictionary is tagged private;
    pragma Preelaborable_Initialization (Dictionary);
