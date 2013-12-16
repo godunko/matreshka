@@ -249,34 +249,18 @@ package body XSD_To_Ada.Utils is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
-            Create_Node_Vector
-              (XS_Object.To_Type_Definition,
-               "",
-               Node_Vector,
-               Mapping,
-               1 , (False, 1));
+         Create_Node_Vector
+           (XS_Object.To_Type_Definition,
+            "",
+            Node_Vector,
+            Mapping,
+            1 , (False, 1));
       end loop;
 
       Create_Element_Type (Model, Node_Vector, Mapping, Payload_Writer);
-      Print_Type_Title (Node_Vector, "", Payload_Writer, Mapping);
+      Print_Payloads (Node_Vector, "", Payload_Writer, Mapping);
 
       Node_Vector.Clear;
-
-      for J in 1 .. Complex_Types.Length loop
-         XS_Object := Complex_Types.Item (J);
-
-         if Has_Element_Session (XS_Object.To_Type_Definition)
-           or XS_Object.To_Type_Definition.Get_Name.To_UTF_8_String =
-             "OpenSession"
-         then
-            Create_Node_Vector
-              (XS_Object.To_Type_Definition,
-               "",
-               Node_Vector,
-               Mapping,
-               1 , (False, 1));
-         end if;
-      end loop;
 
       for J in 1 .. Element_Declarations.Length loop
          Type_D :=
@@ -284,7 +268,7 @@ package body XSD_To_Ada.Utils is
              (J).To_Element_Declaration.Get_Type_Definition;
 
          if Has_Element_Session (Type_D)
-           or  Type_D.Get_Name.To_UTF_8_String = "OpenSession"
+           or Type_D.Get_Name.To_UTF_8_String = "OpenSession"
          then
             Create_Node_Vector
               (Type_D,
@@ -349,7 +333,9 @@ package body XSD_To_Ada.Utils is
 --        Ada.Wide_Wide_Text_IO.Create
 --          (Current_Out_File,
 --           Ada.Wide_Wide_Text_IO.Out_File,
---           "../../../trading_server/src/client/soap/.wsdl/payloads.ads");
+--           "src/client/soap/.wsdl/payloads.ads");
+--  --         "../../../trading_server/src/client/soap/.wsdl/payloads.ads");
+--
 --        Ada.Wide_Wide_Text_IO.Put_Line
 --          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
 --        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
@@ -357,7 +343,8 @@ package body XSD_To_Ada.Utils is
 --        Ada.Wide_Wide_Text_IO.Create
 --          (Current_Out_File,
 --           Ada.Wide_Wide_Text_IO.Out_File,
---           "../../../trading_server/src/client/soap/.wsdl/encoder.adb");
+--           "src/client/soap/.wsdl/encoder.adb");
+--  --         "../../../trading_server/src/client/soap/.wsdl/encoder.adb");
 --        Ada.Wide_Wide_Text_IO.Put_Line
 --          (Current_Out_File, Encoder_Full_Writer.Text.To_Wide_Wide_String);
 --        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
@@ -365,7 +352,8 @@ package body XSD_To_Ada.Utils is
 --        Ada.Wide_Wide_Text_IO.Create
 --          (Current_Out_File,
 --           Ada.Wide_Wide_Text_IO.Out_File,
---           "../../../trading_server/src/client/soap/.wsdl/encoder.ads");
+--           "src/client/soap/.wsdl/encoder.ads");
+--  --         "../../../trading_server/src/client/soap/.wsdl/encoder.ads");
 --        Ada.Wide_Wide_Text_IO.Put_Line
 --          (Current_Out_File, Encoder_Spec_Writer.Text.To_Wide_Wide_String);
 --        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
@@ -1171,19 +1159,6 @@ package body XSD_To_Ada.Utils is
       begin
          Now_Term_Level := Now_Term_Level + 1;
 
-         Ada.Wide_Wide_Text_IO.Put
-          (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           "Print_Term; Type "
-             & XML.Schema.Component_Type'Wide_Wide_Image (XS_Term.Get_Type));
-         Ada.Wide_Wide_Text_IO.Put
-          (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           "XS_Term.Get_Name ="
-             & XS_Term.Get_Name.To_Wide_Wide_String);
-
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
             XS_List := XS_Model_Group.Get_Particles;
@@ -1237,12 +1212,11 @@ package body XSD_To_Ada.Utils is
                      Anonym_Type_Difinition_Node.Min := True;
                   end if;
 
-                  if not Name.Is_Empty then
-                     Anonym_Type_Difinition_Node.Anonym_Name :=
-                       (Name & "_" & Decl.Get_Name);
-                  else
-                     Anonym_Type_Difinition_Node.Anonym_Name :=
-                       (Decl.Get_Name);
+                  if Max_Occurs_2.Unbounded
+                    or (not Max_Occurs_2.Unbounded
+                        and then Max_Occurs_2.Value > 1)
+                  then
+                     Anonym_Type_Difinition_Node.Max := True;
                   end if;
 
                   if Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
@@ -1252,11 +1226,12 @@ package body XSD_To_Ada.Utils is
                      Anonym_Type_Difinition_Node.Choice := True;
                   end if;
 
-                  if Max_Occurs_2.Unbounded
-                    or (not Max_Occurs_2.Unbounded
-                        and then Max_Occurs_2.Value > 1)
-                  then
-                     Anonym_Type_Difinition_Node.Max := True;
+                  if not Name.Is_Empty then
+                     Anonym_Type_Difinition_Node.Anonym_Name :=
+                       (Name & "_" & Decl.Get_Name);
+                  else
+                     Anonym_Type_Difinition_Node.Anonym_Name :=
+                       (Decl.Get_Name);
                   end if;
 
                   Add_Node (Node_Vector, Anonym_Type_Difinition_Node);
@@ -2012,15 +1987,12 @@ package body XSD_To_Ada.Utils is
    -- Print_Type_Title --
    ----------------------
 
-   procedure Print_Type_Title
+   procedure Print_Payloads
      (Node_Vector : XSD_To_Ada.Utils.Items;
       Indent      : Wide_Wide_String;
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Mapping     : XSD_To_Ada.Mappings.Mapping)
    is
-      use type League.Strings.Universal_String;
-      use XML.Schema.Objects.Terms.Model_Groups;
-
       US_Response         : League.Strings.Universal_String;
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
@@ -2030,41 +2002,6 @@ package body XSD_To_Ada.Utils is
       Discriminant_Type : League.Strings.Universal_String;
       Vector_Name       : League.Strings.Universal_String;
    begin
-
-      for Index in 1 .. Natural (Node_Vector.Length) - 1 loop
-         Type_D := Node_Vector.Element (Index).Type_Def;
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            Indent & Natural'Wide_Wide_Image (Index)
-            & "; START Print_Type_Title Type_D="
-            & Type_D.Get_Name.To_Wide_Wide_String
-            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String);
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Min " & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Min));
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Max " & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Max));
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Choice "
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Choice));
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Anonym_Name <"
-            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String & ">");
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Element_Name <"
-            & Node_Vector.Element (Index).Element_Name.To_Wide_Wide_String & ">");
-      end loop;
-
 
       for Index in 1 .. Natural (Node_Vector.Length) loop
          Type_D := Node_Vector.Element (Index).Type_Def;
@@ -2214,8 +2151,7 @@ package body XSD_To_Ada.Utils is
 
                   US_Response.Clear;
                else
-                  if Has_Element_Session (Type_D)
-                  then
+                  if Has_Element_Session (Type_D) then
                      XSD_To_Ada.Utils.Gen_Proc_Header
                        (Payload_Writer,
                         Add_Separator (Type_D.Get_Name));
@@ -2279,6 +2215,7 @@ package body XSD_To_Ada.Utils is
                   end if;
                end if;
             end if;
+
          elsif not Node_Vector.Element (Index).Element_Name.Is_Empty then
             if Node_Vector.Element (Index).Element_Name.Length > 10 then
                US_Response := League.Strings.Slice
@@ -2394,7 +2331,6 @@ package body XSD_To_Ada.Utils is
                         & LF
                         & "   with null record;" & LF);
                   else
-
                      if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
                        = "anyType"
                      then
@@ -2486,7 +2422,7 @@ package body XSD_To_Ada.Utils is
 
       Ada.Wide_Wide_Text_IO.Put_Line
        (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "END Print_Type_Title");
-   end Print_Type_Title;
+   end Print_Payloads;
 
    ----------------
    -- Put_Header --

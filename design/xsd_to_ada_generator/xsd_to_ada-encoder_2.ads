@@ -67,10 +67,8 @@ package XSD_To_Ada.Encoder_2 is
       return League.Strings.Universal_String;
 
    procedure Generate_Complex_Type
-     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term     : XML.Schema.Terms.XS_Term;
+     (XS_Term     : XML.Schema.Terms.XS_Term;
       Writer      : in out Writers.Writer;
-      Type_Name   : League.Strings.Universal_String;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
@@ -80,7 +78,8 @@ package XSD_To_Ada.Encoder_2 is
      (Writer          : in out Writers.Writer;
       Spec_Writer     : in out Writers.Writer;
       Procedures_Name : League.Strings.Universal_String;
-      Tag_Vector      : in out League.String_Vectors.Universal_String_Vector);
+      Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
+      Is_AnyType      : Boolean := False);
 
    procedure Generate_Package_Header
      (Payload_Writer : in out XSD_To_Ada.Writers.Writer);
@@ -93,7 +92,6 @@ package XSD_To_Ada.Encoder_2 is
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term     : XML.Schema.Terms.XS_Term;
       Writer      : in out Writers.Writer;
-      Type_Name   : League.Strings.Universal_String;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
       Min_Occurs  : Boolean;

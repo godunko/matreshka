@@ -211,7 +211,7 @@ package XSD_To_Ada.Utils is
       Is_Max_Occur         : Boolean := False;
       Is_Min_Occur         : Boolean := False);
 
-   procedure Print_Type_Title
+   procedure Print_Payloads
      (Node_Vector : XSD_To_Ada.Utils.Items;
       Indent      : Wide_Wide_String;
       Writer      : in out XSD_To_Ada.Writers.Writer;
