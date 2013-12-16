@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision: 4279 $ $Date: 2013-11-19 14:27:35 +0200 (Вт., 19 нояб. 2013) $
 ------------------------------------------------------------------------------
+
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Wide_Wide_Text_IO;
 
@@ -345,17 +346,12 @@ package body XSD_To_Ada.Encoder_2 is
    is
       use League.Strings;
 
-      Optional : Boolean := False;
-      Vector   : Boolean := False;
-
       Optional_Value_Check_Marker : League.Strings.Universal_String;
       Optional_Value_Marker       : League.Strings.Universal_String;
    begin
       if Min_Occurs
         and then not Max_Occurs
       then
-         Optional := True;
-
          Optional_Value_Check_Marker :=
            League.Strings.To_Universal_String (".Is_Set");
          Optional_Value_Marker :=
@@ -371,8 +367,6 @@ package body XSD_To_Ada.Encoder_2 is
       end if;
 
       if Max_Occurs then
-         Vector := True;
-
          Writers.P
            (Writer,
            "      for Index in 1 .. Natural (Data."
@@ -473,7 +467,9 @@ package body XSD_To_Ada.Encoder_2 is
 
       Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
 
-      if Optional then
+      if Min_Occurs
+        and then not Max_Occurs
+      then
          Writers.P (Writer, "      end if;");
       end if;
 
@@ -628,7 +624,6 @@ package body XSD_To_Ada.Encoder_2 is
             end if;
 
             case Type_D.Get_Type_Category is
-
                when XML.Schema.Complex_Type =>
                   Generate_Complex_Type
                     (XS_Term => XS_Term,
@@ -745,13 +740,13 @@ package body XSD_To_Ada.Encoder_2 is
    ----------------------
 
    procedure Print_Type_Title
-     (Node_Vector : XSD_To_Ada.Utils.Items;
-      Indent      : Wide_Wide_String;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
-      Spec_Writer : in out XSD_To_Ada.Writers.Writer;
+     (Node_Vector          : XSD_To_Ada.Utils.Items;
+      Indent               : Wide_Wide_String;
+      Writer               : in out XSD_To_Ada.Writers.Writer;
+      Spec_Writer          : in out XSD_To_Ada.Writers.Writer;
       Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
-      Tag_Vector  : in out League.String_Vectors.Universal_String_Vector;
-      Mapping     : XSD_To_Ada.Mappings.Mapping)
+      Tag_Vector           : in out League.String_Vectors.Universal_String_Vector;
+      Mapping              : XSD_To_Ada.Mappings.Mapping)
    is
       use type League.Strings.Universal_String;
 
