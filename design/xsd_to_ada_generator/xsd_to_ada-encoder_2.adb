@@ -859,18 +859,12 @@ package body XSD_To_Ada.Encoder_2 is
                      if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
                        "anyType"
                      then
-                        Tag_Vector.Append (Type_D.Get_Name);
-
                         Generate_Overriding_Procedure_Encode_Header
                           (Payload_Writer,
                            Spec_Writer,
                            Type_D.Get_Name,
                            Tag_Vector,
                            True);
-
-                        Writers.P
-                          (Payload_Writer,
-                           Write_Start_Element (Type_D.Get_Name));
 
                         Writers.N
                           (Payload_Writer,
@@ -984,20 +978,12 @@ package body XSD_To_Ada.Encoder_2 is
                      if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
                        = "anyType"
                      then
-                        Tag_Vector.Append
-                          (Node_Vector.Element (Index).Element_Name);
-
                         Generate_Overriding_Procedure_Encode_Header
                           (Payload_Writer,
                            Spec_Writer,
                            Node_Vector.Element (Index).Element_Name,
                            Tag_Vector,
                            True);
-
-                        Writers.P
-                          (Payload_Writer,
-                           Write_Start_Element
-                             (Node_Vector.Element (Index).Element_Name));
 
                         Writers.N
                           (Payload_Writer,
