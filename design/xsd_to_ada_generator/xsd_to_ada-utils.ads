@@ -202,8 +202,6 @@ package XSD_To_Ada.Utils is
       Indent               : Wide_Wide_String;
       Node_Vector          : in out XSD_To_Ada.Utils.Items;
       Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
-      Writer               : in out Writers.Writer;
-      Writer_types         : in out Writers.Writer;
       Name                 : League.Strings.Universal_String;
       Mapping              : XSD_To_Ada.Mappings.Mapping;
       Table                : in out Types_Table_Type_Array;

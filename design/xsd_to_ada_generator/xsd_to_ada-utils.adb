@@ -217,17 +217,17 @@ package body XSD_To_Ada.Utils is
       Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
    begin
       for J in 1 .. Element_Declarations.Length loop
-            Type_D :=
-              Element_Declarations.Item
-                (J).To_Element_Declaration.Get_Type_Definition;
+         Type_D :=
+           Element_Declarations.Item
+             (J).To_Element_Declaration.Get_Type_Definition;
 
-            Create_Node_Vector
-              (Type_D,
-               "",
-               Node_Vector,
-               Mapping,
-               1 , (False, 1),
-               Element_Declarations.Item (J).Get_Name);
+         Create_Node_Vector
+           (Type_D,
+            "",
+            Node_Vector,
+            Mapping,
+            1 , (False, 1),
+            Element_Declarations.Item (J).Get_Name);
       end loop;
    end Create_Element_Type;
 
@@ -634,8 +634,6 @@ package body XSD_To_Ada.Utils is
          Indent & "   ",
          Node_Vector,
          Type_Difinition_Node,
-         Payload_Writer,
-         Payload_Type_Writer,
          Type_D.Get_Name,
          Mapping,
          Types_Table);
@@ -696,6 +694,10 @@ package body XSD_To_Ada.Utils is
 
       Writers.P (Writer, ";");
    end Create_Vector_Package;
+
+   --------------------------------
+   -- Is_Type_In_Optional_Vector --
+   --------------------------------
 
    function Is_Type_In_Optional_Vector
      (Type_Name : League.Strings.Universal_String)
@@ -899,15 +901,12 @@ package body XSD_To_Ada.Utils is
 
    procedure Generate_Complex_Type
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent       : Wide_Wide_String;
       XS_Term      : XML.Schema.Terms.XS_Term;
       Mapping      : XSD_To_Ada.Mappings.Mapping;
       Type_Name    : League.Strings.Universal_String;
-      Table        : in out Types_Table_Type_Array;
       Min_Occurs   : in out Boolean;
       Max_Occurs   : in out Boolean;
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer) is
+      Writer       : in out Writers.Writer) is
    begin
       if Min_Occurs
         and then not Max_Occurs
@@ -943,14 +942,11 @@ package body XSD_To_Ada.Utils is
 
    procedure Generate_Type
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent       : Wide_Wide_String := "";
       XS_Term      : XML.Schema.Terms.XS_Term;
       Mapping      : XSD_To_Ada.Mappings.Mapping;
       Type_Name    : League.Strings.Universal_String;
-      Table        : in out Types_Table_Type_Array;
       Max_Occurs   : in out Boolean;
       Min_Occurs   : in out Boolean;
-      Choice       : in out Boolean;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer) is
    begin
@@ -958,15 +954,12 @@ package body XSD_To_Ada.Utils is
          when XML.Schema.Complex_Type =>
             Generate_Complex_Type
               (Type_D,
-               Indent,
                XS_Term,
                Mapping,
                Type_Name,
-               Table,
                Min_Occurs,
                Max_Occurs,
-               Writer,
-               Writer_types);
+               Writer);
 
          when XML.Schema.Simple_Type =>
             Generate_Simple_Type
@@ -1630,7 +1623,6 @@ package body XSD_To_Ada.Utils is
                            Add_Separator
                              (Node_Vector.Element (Index).Element_Name));
                      else
-
                         Writers.P
                           (Writer,
                            "   type "
@@ -1733,7 +1725,6 @@ package body XSD_To_Ada.Utils is
       STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
 
       Choice     : Boolean := False;
-      Now_Add    : Boolean := False;
       Add_Choise : Boolean := False;
       Add_Anonym : Boolean := False;
       Max_Occurs : Boolean := False;
@@ -2079,14 +2070,11 @@ package body XSD_To_Ada.Utils is
             then
                Generate_Type
                  (Type_D,
-                  Indent,
                   XS_Term,
                   Mapping,
                   Type_Name,
-                  Table,
                   Max_Occurs,
                   Min_Occurs,
-                  Choice,
                   Writer,
                   Writer_types);
             end if;
@@ -2096,16 +2084,13 @@ package body XSD_To_Ada.Utils is
             then
                Generate_Type
                  (Type_D,
-                  Indent,
-                 XS_Term,
-                 Mapping,
-                 Type_Name,
-                 Table,
-                 Max_Occurs,
+                  XS_Term,
+                  Mapping,
+                  Type_Name,
+                  Max_Occurs,
                   Min_Occurs,
-                  Choice,
-                 Anonym_Kind,
-                 Writer_types);
+                  Anonym_Kind,
+                  Writer_types);
             end if;
          end if;
          Now_Term_Level := Now_Term_Level - 1;
@@ -2217,7 +2202,6 @@ package body XSD_To_Ada.Utils is
 
          Name_Kind.Clear;
          Name_Case.Clear;
-         Now_Add := False;
          Add_Choise := False;
       end if;
 
@@ -2236,8 +2220,6 @@ package body XSD_To_Ada.Utils is
      Indent       : Wide_Wide_String;
      Node_Vector : in out XSD_To_Ada.Utils.Items;
      Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Table        : in out Types_Table_Type_Array;
@@ -2253,25 +2235,11 @@ package body XSD_To_Ada.Utils is
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
       STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
 
-      Choice     : Boolean := False;
-      Now_Add    : Boolean := False;
-      Add_Choise : Boolean := False;
-      Add_Anonym : Boolean := False;
-
       Max_Occurs : Boolean := False;
       Max_Occurs_2 : XML.Schema.Objects.Particles.Unbounded_Natural;
 
       Min_Occurs : Boolean := False;
       Min_Occurs_2 : Natural;
-
-      Name_Kind   : League.Strings.Universal_String;
-      Name_Case   : League.Strings.Universal_String;
-      Anonym_Vector : League.Strings.Universal_String;
-      Vectop_US   : League.Strings.Universal_String;
-
-      Anonym_Kind : Writers.Writer;
-
-      Vector_Package : Writers.Writer;
 
       ----------------
       -- Print_Term --
@@ -2280,8 +2248,6 @@ package body XSD_To_Ada.Utils is
       procedure Print_Term
        (XS_Term      : XML.Schema.Terms.XS_Term;
         Indent       : Wide_Wide_String := "";
-        Writer       : in out Writers.Writer;
-        Writer_types : in out Writers.Writer;
         Name         : League.Strings.Universal_String;
         Map          : XSD_To_Ada.Mappings.Mapping;
         Table        : in out Types_Table_Type_Array)
@@ -2313,10 +2279,7 @@ package body XSD_To_Ada.Utils is
          Ada.Wide_Wide_Text_IO.Put_Line
           (Ada.Wide_Wide_Text_IO.Standard_Error,
            "XS_Term.Get_Name ="
-             & XS_Term.Get_Name.To_Wide_Wide_String
-             & "; Anonym="
-             & Boolean'Wide_Wide_Image
-                (Anonyn_Vector (Now_Term_Level - 1).Term_State));
+             & XS_Term.Get_Name.To_Wide_Wide_String);
 
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
@@ -2336,7 +2299,7 @@ package body XSD_To_Ada.Utils is
 
                Print_Term
                  (XS_Particle.Get_Term,
-                  Indent & "   ", Writer, Writer_types, Name, Map,
+                  Indent & "   ", Name, Map,
                   Table);
             end loop;
 
@@ -2350,18 +2313,14 @@ package body XSD_To_Ada.Utils is
                (Type_D.Get_Name, Min_Occurs, Max_Occurs);
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
-
-               Anonyn_Vector (Now_Term_Level).Term_State := True;
-
-                  Node_Type_Definition
-                    (Type_D, Indent & "   ",
-                     Node_Vector, Type_Difinition_Node,
-                     Writer, Writer_types,
-                     Name & '_' & Decl.Get_Name,
-                     Map,
-                     Table,
-                     Max_Occurs,
-                     Min_Occurs);
+               Node_Type_Definition
+                 (Type_D, Indent & "   ",
+                  Node_Vector, Type_Difinition_Node,
+                  Name & '_' & Decl.Get_Name,
+                  Map,
+                  Table,
+                  Max_Occurs,
+                  Min_Occurs);
 
                declare
                   Anonym_Type_Difinition_Node : XSD_To_Ada.Utils.Item;
@@ -2401,7 +2360,6 @@ package body XSD_To_Ada.Utils is
                end;
 
                Max_Occurs := False;
-               Add_Anonym := False;
             end if;
 
             if Has_Top_Level_Type (Type_D, Table) then
@@ -2457,8 +2415,6 @@ package body XSD_To_Ada.Utils is
                Print_Term
                 (XS_Term,
                  Indent & "   ",
-                 Writer,
-                 Writer_Types,
                  Name,
                  Mapping,
                  Table);
@@ -2481,7 +2437,6 @@ package body XSD_To_Ada.Utils is
              (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "NONE!!!");
       end case;
 
-      Choice := False;
       Now_Print_Level := Now_Print_Level - 1;
    end Node_Type_Definition;
 

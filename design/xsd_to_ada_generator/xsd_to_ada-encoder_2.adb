@@ -55,7 +55,6 @@ with XML.Schema.Objects.Type_Definitions;
 
 with XSD_To_Ada.Encoder; use XSD_To_Ada.Encoder;
 with XSD_To_Ada.Mappings;
-with League.String_Vectors;
 
 package body XSD_To_Ada.Encoder_2 is
 
