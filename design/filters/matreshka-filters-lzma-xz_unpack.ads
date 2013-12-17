@@ -196,6 +196,7 @@ private
    type Slot_Array is array (Distance_State) of Slot_Probability_Array;
 
    type Distance_Array is array (1 .. 4) of Ada.Streams.Stream_Element_Count;
+   type Rep_Array is array (1 .. 3, State) of Probability;
 
    --  Probility trees for additional bits for match distance
    --  when the distance is in the range [4, 127].
@@ -248,8 +249,11 @@ private
       Is_Rep           : Is_Rep_Array;
       Literal          : Literal_Array;
       Length           : Length_Decoder;
+      Rep_Length       : Length_Decoder;
       Dist_Slot        : Slot_Array;
       Special_Dist     : Special_Distance_Array;
+      Is_Rep_Prob      : Rep_Array;
+      Is_Rep0_Long     : Is_Match_Array;
    end record;
 
    procedure Reset (Self : in out LZMA_Decoder);
@@ -326,6 +330,13 @@ private
       Bits   : Positive;
       Offset : Dist_Offset) return Interfaces.Unsigned_8;
 
+   procedure Range_Coder_Direct
+     (Self   : in out Range_Decoder;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Bits   : Positive;
+      Result : in out Ada.Streams.Stream_Element_Count);
+
    procedure Normalize_Range_Coder
      (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
@@ -343,10 +354,18 @@ private
       Index  : in out Ada.Streams.Stream_Element_Count;
       Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
 
-   not overriding procedure Read_Length
+   not overriding procedure Read_Rep_Match
      (Self   : in out Filter;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
+
+   not overriding procedure Read_Length
+     (Self   : Filter;
+      RD     : in out Range_Decoder;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      LD     : in out Length_Decoder;
       Length : out Ada.Streams.Stream_Element_Count);
 
 end Matreshka.Filters.LZMA.XZ_Unpack;

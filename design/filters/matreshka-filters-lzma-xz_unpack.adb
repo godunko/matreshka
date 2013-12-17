@@ -59,7 +59,10 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          STATE_NONLIT_REP       => STATE_REP_LIT),
       Match =>
         (Literal_State      => STATE_LIT_MATCH, others => STATE_NONLIT_MATCH),
-      others => (others => STATE_LIT_LIT));  -- TBD
+      Short_Rep =>
+        (Literal_State      => STATE_LIT_SHORTREP, others => STATE_NONLIT_REP),
+      Long_Rep =>
+        (Literal_State      => STATE_LIT_LONGREP, others => STATE_NONLIT_REP));
 
    generic
       type Array_Index is range <>;
@@ -107,8 +110,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
    begin
       if Self.Bound < 16#1_00_00_00# then
          if Index <= Input.Length then
-            Self.Bound := Interfaces.Shift_Left
-              (Self.Bound, 8);
+            Self.Bound := Interfaces.Shift_Left (Self.Bound, 8);
             Self.Code := Interfaces.Shift_Left (Self.Code, 8)
               + Interfaces.Unsigned_32 (Input.Element (Index));
             Index := Index + 1;
@@ -220,6 +222,34 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       return Result;
    end Range_Coder_Bit_Tree_Reverse;
 
+   ------------------------
+   -- Range_Coder_Direct --
+   ------------------------
+
+   procedure Range_Coder_Direct
+     (Self   : in out Range_Decoder;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Bits   : Positive;
+      Result : in out Ada.Streams.Stream_Element_Count)
+   is
+      use type Interfaces.Unsigned_32;
+      Bit    : Boolean;
+   begin
+      for J in 1 .. Bits loop
+         Normalize_Range_Coder (Self, Input, Index);
+         Self.Bound := Interfaces.Shift_Right (Self.Bound, 1);
+         Self.Code := Self.Code - Self.Bound;
+         Bit := Self.Code < 16#8000_0000#;
+
+         if not Bit then
+            Self.Code := Self.Code + Self.Bound;
+         end if;
+
+         Result := 2 * Result + Boolean'Pos (Bit);
+      end loop;
+   end Range_Coder_Direct;
+
    -----------------------------
    -- Read_Block_Header_Bytes --
    -----------------------------
@@ -323,6 +353,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
       Init_Bytes : constant := 5;  --  One byte ignored, others go into range
       Bit        : Boolean;
+      Old_Index  : constant Ada.Streams.Stream_Element_Count := Index;
 
       ----------------
       -- Have_Bytes --
@@ -332,18 +363,20 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       begin
          return Input.Length - Index + 1;
       end Have_Bytes;
+
       ----------------
       -- Left_Bytes --
       ----------------
 
       function Left_Bytes return Ada.Streams.Stream_Element_Count is
       begin
-         return Self.Packet_Header.Compressed_Size - Self.Count + 1;
+         return Self.Packet_Header.Compressed_Size - Self.Count + 1
+           + Old_Index - Index;
       end Left_Bytes;
 
       use type Interfaces.Unsigned_32;
    begin
-      while (Left_Bytes <= LZMA_IN_REQUIRED  --  we are at end of chunk
+      while (Left_Bytes in 1 .. LZMA_IN_REQUIRED  --  we are at end of chunk
              --  we have all chunk available
              and Have_Bytes >= Left_Bytes)
           or
@@ -351,13 +384,12 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
              --  we have LZMA_IN_REQUIRED available
              and Have_Bytes >= LZMA_IN_REQUIRED)
       loop
-         case Self.Count is
+         case Self.Count + Index - Old_Index is
             when 1 .. Init_Bytes =>
                Self.Decoder.Range_Decoder.Code :=
                  Interfaces.Shift_Left (Self.Decoder.Range_Decoder.Code, 8)
                    + Interfaces.Unsigned_32 (Input.Element (Index));
 
-               Self.Count := Self.Count + 1;
                Index := Index + 1;
             when others =>
                declare
@@ -378,16 +410,19 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
                      if Bit = False then
                         Self.Read_Match (Input, Index, Output);
+                     else
+                        Self.Read_Rep_Match (Input, Index, Output);
                      end if;
                   end if;
                end;
          end case;
       end loop;
 
-      if Self.Count = Self.Packet_Header.Compressed_Size + 1 then
+      if Left_Bytes = 0 then
          Self.Count := 1;
          return True;
       else
+         Self.Count := Self.Count + Index - Old_Index;
          return False;
       end if;
    end Read_Compressed_Chunk_Bytes;
@@ -456,38 +491,30 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
    -----------------
 
    not overriding procedure Read_Length
-     (Self   : in out Filter;
-      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Index  : in out Ada.Streams.Stream_Element_Count;
-      Length : out Ada.Streams.Stream_Element_Count)
+     (Self    : Filter;
+      RD      : in out Range_Decoder;
+      Input   : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index   : in out Ada.Streams.Stream_Element_Count;
+      LD      : in out Length_Decoder;
+      Length  : out Ada.Streams.Stream_Element_Count)
    is
       Next  : Interfaces.Unsigned_8;
-      Bit    : Boolean := Range_Coder_Bit
-        (Self.Decoder.Range_Decoder, Input, Index, Self.Decoder.Length.Choice);
+      Bit    : Boolean := Range_Coder_Bit (RD, Input, Index, LD.Choice);
       Pos    : constant Position_State_Index :=
         Self.Dictionary.Position and Self.Decoder.Property.Pos_Mask;
    begin
       if Bit = False then  --  Read Low length
-         Next := Range_Coder_Bit_Tree_8
-           (Self.Decoder.Range_Decoder, Input, Index,
-            Self.Decoder.Length.Low (Pos));
-         Length := MATCH_LEN_MIN +
-           Ada.Streams.Stream_Element_Count (Next);
+         Next := Range_Coder_Bit_Tree_8 (RD, Input, Index, LD.Low (Pos));
+         Length := MATCH_LEN_MIN + Ada.Streams.Stream_Element_Count (Next);
       else
-         Bit := Range_Coder_Bit
-           (Self.Decoder.Range_Decoder, Input, Index,
-            Self.Decoder.Length.Choice_2);
+         Bit := Range_Coder_Bit (RD, Input, Index, LD.Choice_2);
 
          if Bit = False then  --  Read Middle length
-            Next := Range_Coder_Bit_Tree_8
-              (Self.Decoder.Range_Decoder, Input, Index,
-               Self.Decoder.Length.Middle (Pos));
+            Next := Range_Coder_Bit_Tree_8 (RD, Input, Index, LD.Middle (Pos));
             Length := MATCH_LEN_MIN + LEN_LOW_SYMBOLS +
               Ada.Streams.Stream_Element_Count (Next);
          else
-            Next := Range_Coder_Bit_Tree_256
-              (Self.Decoder.Range_Decoder, Input, Index,
-               Self.Decoder.Length.High);
+            Next := Range_Coder_Bit_Tree_256 (RD, Input, Index, LD.High);
             Length := MATCH_LEN_MIN + LEN_LOW_SYMBOLS + LEN_MID_SYMBOLS +
               Ada.Streams.Stream_Element_Count (Next);
          end if;
@@ -590,7 +617,10 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       Self.Decoder.State := State_Move (Match, Self.Decoder.State);
       Self.Decoder.Rep (2 .. 4) := Self.Decoder.Rep (1 .. 3);
 
-      Self.Read_Length (Input, Index, Length);
+      Self.Read_Length
+        (Self.Decoder.Range_Decoder,
+         Input, Index,
+         Self.Decoder.Length, Length);
 
       if Length < Other_Distance_State then
          State := Distance_State (Length);
@@ -616,7 +646,26 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
          Distance := Ada.Streams.Stream_Element_Count (Next);
       else
-         null;
+         Distance := 2 + Ada.Streams.Stream_Element_Count (Next and 1);
+
+         Range_Coder_Direct
+           (Self   => Self.Decoder.Range_Decoder,
+            Input  => Input,
+            Index  => Index,
+            Bits   => Positive (Next / 2 - 1 - ALIGN_BITS),
+            Result => Distance);
+
+         Next :=
+           Range_Coder_Bit_Tree_Reverse
+             (Self   => Self.Decoder.Range_Decoder,
+              Input  => Input,
+              Index  => Index,
+              Prob   => Self.Decoder.Special_Dist,
+              Bits   => ALIGN_BITS,
+              Offset => Allign_Offset);
+
+         Distance := Distance * ALIGN_SIZE
+           + Ada.Streams.Stream_Element_Count (Next);
       end if;
 
       Self.Dictionary.Repeat
@@ -696,6 +745,71 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
       return False;
    end Read_Packet_Header_Bytes;
+
+   --------------------
+   -- Read_Rep_Match --
+   --------------------
+
+   not overriding procedure Read_Rep_Match
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector)
+   is
+      Bit : Boolean;
+      Rep_Index : Positive := 4;
+      Distance : Ada.Streams.Stream_Element_Count;
+      Length   : Ada.Streams.Stream_Element_Count := 0;
+   begin
+      for J in Self.Decoder.Is_Rep_Prob'Range (1) loop
+         Bit := Range_Coder_Bit
+           (Self.Decoder.Range_Decoder, Input, Index,
+            Self.Decoder.Is_Rep_Prob (J, Self.Decoder.State));
+
+         if Bit = False then
+            Rep_Index := J;
+            exit;
+         end if;
+      end loop;
+
+      --  Move Rep_Index to first element on Rep
+      Distance := Self.Decoder.Rep (Rep_Index);
+      Self.Decoder.Rep (2 .. Rep_Index) :=
+        Self.Decoder.Rep (1 .. Rep_Index - 1);
+      Self.Decoder.Rep (1) := Distance;
+
+      if Rep_Index = 1 tHen
+         declare
+            Long_Prob : Probability renames Self.Decoder.Is_Rep0_Long
+              (Self.Decoder.State,
+               Self.Dictionary.Position and Self.Decoder.Property.Pos_Mask);
+         begin
+            Bit := Range_Coder_Bit
+              (Self.Decoder.Range_Decoder, Input, Index, Long_Prob);
+
+            if Bit = False then
+               Length := 1;
+               Self.Decoder.State :=
+                 State_Move (Short_Rep, Self.Decoder.State);
+            end if;
+         end;
+      end if;
+
+      if Length = 0 then
+         Self.Read_Length
+           (Self.Decoder.Range_Decoder,
+            Input, Index,
+            Self.Decoder.Rep_Length, Length);
+
+         Self.Decoder.State := State_Move (Long_Rep, Self.Decoder.State);
+      end if;
+
+      Self.Dictionary.Repeat
+        (Index  => Distance,
+         Length => Length,
+         Output => Output);
+
+   end Read_Rep_Match;
 
    ------------------------------
    -- Read_Stream_Header_Bytes --
@@ -914,6 +1028,13 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          Low    => (others => (others => Half)));
       Self.Dist_Slot := (others => (others => Half));
       Self.Special_Dist := (others => Half);
+      Self.Is_Rep_Prob := (others => (others => Half));
+      Self.Is_Rep0_Long := (others => (others => Half));
+      Self.Rep_Length :=
+        (Choice | Choice_2 => Half,
+         High   => (others => Half),
+         Middle => (others => (others => Half)),
+         Low    => (others => (others => Half)));
    end Reset;
 
    -----------

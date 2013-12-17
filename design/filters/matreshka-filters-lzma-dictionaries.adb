@@ -117,10 +117,10 @@ package body Matreshka.Filters.LZMA.Dictionaries is
       Data : Ada.Streams.Stream_Element_Array (1 .. Length);
    begin
       for J in Data'Range loop
-         Data (J) := Self.Get (Index - J + 1);
+         Data (J) := Self.Get (Index);
+         Self.Put (Data (J .. J));
       end loop;
 
-      Self.Put (Data);
       Output.Append (Data);
 
       for J in Data'Range loop
