@@ -277,58 +277,65 @@ private
       Decoder          : LZMA_Decoder;
    end record;
 
-   not overriding function Read_Stream_Header_Bytes
-     (Self   : in out Filter;
-      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Index  : in out Ada.Streams.Stream_Element_Count) return Boolean;
-
-   not overriding function Read_Block_Header_Bytes
-     (Self   : in out Filter;
-      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Index  : in out Ada.Streams.Stream_Element_Count) return Boolean;
-
-   not overriding function Read_Packet_Header_Bytes
-     (Self   : in out Filter;
-      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Index  : in out Ada.Streams.Stream_Element_Count) return Boolean;
-
-   not overriding function Read_Compressed_Size_Bytes
-     (Self   : in out Filter;
-      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Index  : in out Ada.Streams.Stream_Element_Count) return Boolean;
-
-   not overriding function Read_Compressed_Chunk_Bytes
+   not overriding procedure Read_Stream_Header_Bytes
      (Self   : in out Filter;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
-      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector)
-      return Boolean;
+      Ok     : out Boolean);
 
-   not overriding function Read_Uncompressed_Size_Bytes
-     (Self   : in out Filter;
-      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
-      Index  : in out Ada.Streams.Stream_Element_Count) return Boolean;
-
-   not overriding function Read_Uncompressed_Chunk_Bytes
+   not overriding procedure Read_Block_Header_Bytes
      (Self   : in out Filter;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
-      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector)
-      return Boolean;
+      Ok : out Boolean);
 
-   function Range_Coder_Bit
+   not overriding procedure Read_Packet_Header_Bytes
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Ok : out Boolean);
+
+   not overriding procedure Read_Compressed_Size_Bytes
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Ok : out Boolean);
+
+   not overriding procedure Read_Compressed_Chunk_Bytes
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector;
+      Ok     : out Boolean);
+
+   not overriding procedure Read_Uncompressed_Size_Bytes
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Ok     : out Boolean);
+
+   not overriding procedure Read_Uncompressed_Chunk_Bytes
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Index  : in out Ada.Streams.Stream_Element_Count;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector;
+      Ok     : out Boolean);
+
+   procedure Range_Coder_Bit
      (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
-      Prob   : in out Probability) return Boolean;
+      Prob   : in out Probability;
+      Result : out Boolean);
 
-   function Range_Coder_Bit_Tree_Reverse
+   procedure Range_Coder_Bit_Tree_Reverse
      (Self   : in out Range_Decoder;
       Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
       Index  : in out Ada.Streams.Stream_Element_Count;
       Prob   : in out Special_Distance_Array;
       Bits   : Positive;
-      Offset : Dist_Offset) return Interfaces.Unsigned_8;
+      Offset : Dist_Offset;
+      Result : out Interfaces.Unsigned_8);
 
    procedure Range_Coder_Direct
      (Self   : in out Range_Decoder;
