@@ -41,8 +41,6 @@
 --  $Revision: 3946 $ $Date: 2013-06-16 21:48:41 +0300 (Вс., 16 июня 2013) $
 ------------------------------------------------------------------------------
 
-with Ada.Text_IO;
-
 package body Matreshka.Filters.LZMA.XZ_Unpack is
 
    State_Move : constant array (Packet_Name, State) of State :=
@@ -88,15 +86,6 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
    begin
       null;
    end Flush;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize is
-   begin
-      null;
-   end Initialize;
 
    ---------------------------
    -- Normalize_Range_Coder --
@@ -378,13 +367,33 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
       use type Interfaces.Unsigned_32;
    begin
-      while (Left_Bytes in 1 .. LZMA_IN_REQUIRED  --  we are at end of chunk
+      if not Self.Saved.Is_Empty then
+         declare
+            Joined : League.Stream_Element_Vectors.Stream_Element_Vector;
+            Saved  : constant Ada.Streams.Stream_Element_Count :=
+              Self.Saved.Length;
+         begin
+            if Index /= 1 then
+               raise Constraint_Error;
+            end if;
+
+            Self.Saved.Append (Input);
+            Joined := Self.Saved;
+            Self.Saved.Clear;
+            Self.Read_Compressed_Chunk_Bytes (Joined, Index, Output, Ok);
+            Index := Index - Saved;
+            return;
+         end;
+      end if;
+
+      while ((Left_Bytes in 1 .. LZMA_IN_REQUIRED  --  we are at end of chunk
              --  we have all chunk available
              and Have_Bytes >= Left_Bytes)
-          or
+            or
             (Left_Bytes >= LZMA_IN_REQUIRED  --  we are not at end of chunk
              --  we have LZMA_IN_REQUIRED available
-             and Have_Bytes >= LZMA_IN_REQUIRED)
+             and Have_Bytes >= LZMA_IN_REQUIRED))
+          and Self.To_Write > 0
       loop
          case Self.Count + Index - Old_Index is
             when 1 .. Init_Bytes =>
@@ -405,6 +414,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
 
                   if Bit = False then
                      Self.Read_Literal (Input, Index, Output);
+                     Self.To_Write := Self.To_Write - 1;
                   else
                      Range_Coder_Bit
                        (Self.Decoder.Range_Decoder, Input, Index,
@@ -421,11 +431,18 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          end case;
       end loop;
 
-      if Left_Bytes = 0 then
+      if Self.To_Write = 0 then  --  Left_Bytes = 0 or
+         Normalize_Range_Coder (Self.Decoder.Range_Decoder, Input, Index);
+
          Self.Count := 1;
          Ok := True;
       else
          Self.Count := Self.Count + Index - Old_Index;
+
+         for J in Index .. Input.Length loop
+            Self.Saved.Append (Input.Element (J));
+         end loop;
+
          Ok := False;
       end if;
    end Read_Compressed_Chunk_Bytes;
@@ -478,12 +495,14 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       if Self.Packet_Header.Properties_Reset then
          if Self.Count = 5 and Index <= Input.Length then
             Set_Property (Self.Decoder, Natural (Input.Element (Index)));
-            Self.Count := 1;
             Index := Index + 1;
+            Self.Count := 1;
+            Self.To_Write := Self.Packet_Header.Uncompressed_Size;
             Ok := True;
          end if;
       elsif Self.Count = 5 then
          Self.Count := 1;
+         Self.To_Write := Self.Packet_Header.Uncompressed_Size;
          Ok := True;
       else
          Ok := False;
@@ -559,7 +578,6 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
             Next);
          Output.Append (Ada.Streams.Stream_Element (Next));
          Self.Dictionary.Put ((1 => Ada.Streams.Stream_Element (Next)));
-         Ada.Text_IO.Put (Character'Val (Next));
       else
          Prev := Self.Dictionary.Get (Self.Decoder.Rep (1));
 
@@ -598,7 +616,6 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
               (Ada.Streams.Stream_Element (Symbol - 256));
             Self.Dictionary.Put
               ((1 => Ada.Streams.Stream_Element (Symbol - 256)));
-            Ada.Text_IO.Put (Character'Val (Symbol - 256));
          end;
       end if;
 
@@ -686,6 +703,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          Output => Output);
 
       Self.Decoder.Rep (1) := Distance;
+      Self.To_Write := Self.To_Write - Length;
    end Read_Match;
 
    ------------------------------
@@ -823,6 +841,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          Length => Length,
          Output => Output);
 
+      Self.To_Write := Self.To_Write - Length;
    end Read_Rep_Match;
 
    ------------------------------
@@ -975,6 +994,8 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
             goto Read_Uncompressed_Size_Label;
          when Read_Uncompressed_Chunk =>
             goto Read_Uncompressed_Chunk_Label;
+         when Read_Completed =>
+            goto Read_Completed_Label;
       end case;
 
       <<Read_Stream_Header_Label>>
@@ -996,8 +1017,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          Self.Last_Stage := Read_Packet;
          return;
       elsif Self.Packet_Header.Last_Packet then
-         --  ???  Self.Last_Stage := Read_Stream_Header;
-         return;
+         goto Read_Completed_Label;
       elsif not Self.Packet_Header.Compressed_Chunk then
          goto Read_Uncompressed_Size_Label;
       end if;
@@ -1012,7 +1032,7 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       <<Read_Compressed_Chunk_Label>>
       Self.Read_Compressed_Chunk_Bytes (Input, Index, Output, Ok);
       if not Ok then
-         Self.Last_Stage := Read_Uncompressed_Chunk;
+         Self.Last_Stage := Read_Compressed_Chunk;
          return;
       else
          goto Read_Packet_Label;
@@ -1033,6 +1053,10 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
       else
          goto Read_Packet_Label;
       end if;
+
+      <<Read_Completed_Label>>
+      Self.Last_Stage := Read_Completed;
+      return;
    end Read;
 
    -----------

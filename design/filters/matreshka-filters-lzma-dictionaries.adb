@@ -41,8 +41,6 @@
 --  $Revision: 3946 $ $Date: 2013-06-16 21:48:41 +0300 (Вс., 16 июня 2013) $
 ------------------------------------------------------------------------------
 
-with Ada.Text_IO;
-
 package body Matreshka.Filters.LZMA.Dictionaries is
 
    ---------
@@ -122,10 +120,6 @@ package body Matreshka.Filters.LZMA.Dictionaries is
       end loop;
 
       Output.Append (Data);
-
-      for J in Data'Range loop
-         Ada.Text_IO.Put (Character'Val (Data (J)));
-      end loop;
    end Repeat;
 
 end Matreshka.Filters.LZMA.Dictionaries;

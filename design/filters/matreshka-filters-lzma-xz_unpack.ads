@@ -46,10 +46,7 @@ private with Ada.Streams;
 private with Matreshka.Filters.LZMA.Dictionaries;
 
 package Matreshka.Filters.LZMA.XZ_Unpack is
---   pragma Preelaborate;
-
-   procedure Initialize;
-   --  Initialize fixed tables. Should be executed before other code.
+   pragma Preelaborate;
 
    type Filter is new Matreshka.Filters.Filter with private;
    pragma Preelaborable_Initialization (Filter);
@@ -73,7 +70,8 @@ private
       Read_Compressed_Size,
       Read_Compressed_Chunk,
       Read_Uncompressed_Size,
-      Read_Uncompressed_Chunk);
+      Read_Uncompressed_Chunk,
+      Read_Completed);
    --  The filter can leave Read function in one of these stages.
 
    type LZMA_Property is record
@@ -153,41 +151,40 @@ private
       High     : Probability_Array;
    end record;
 
-
---  Different sets of probabilities are used for match distances that have
---  very short match length: Lengths of 2, 3, and 4 bytes have a separate
---  set of probabilities for each length. The matches with longer length
---  use a shared set of probabilities.
+   --  Different sets of probabilities are used for match distances that have
+   --  very short match length: Lengths of 2, 3, and 4 bytes have a separate
+   --  set of probabilities for each length. The matches with longer length
+   --  use a shared set of probabilities.
 
    DIST_STATES : constant := 4;
 
    type Distance_State is range 2 .. 5;
    Other_Distance_State : constant := 5;
 
---  The highest two bits of a 32-bit match distance are encoded using six bits.
---  This six-bit value is called a distance slot. This way encoding a 32-bit
---  value takes 6-36 bits, larger values taking more bits.
+   --  The highest two bits of a 32-bit match distance are encoded using six.
+   --  This six-bit value is called a distance slot. This way encoding a 32-bit
+   --  value takes 6-36 bits, larger values taking more bits.
 
    DIST_SLOT_BITS : constant := 6;
    DIST_SLOTS     : constant := 2 ** DIST_SLOT_BITS;  --  (1 << DIST_SLOT_BITS)
 
---  Match distances up to 127 are fully encoded using probabilities. Since
---  the highest two bits (distance slot) are always encoded using six bits,
---  the distances 0-3 don't need any additional bits to encode, since the
---  distance slot itself is the same as the actual distance. DIST_MODEL_START
---  indicates the first distance slot where at least one additional bit is
---  needed.
+   --  Match distances up to 127 are fully encoded using probabilities. Since
+   --  the highest two bits (distance slot) are always encoded using six bits,
+   --  the distances 0-3 don't need any additional bits to encode, since the
+   --  distance slot itself is the same as the actual distance.DIST_MODEL_START
+   --  indicates the first distance slot where at least one additional bit is
+   --  needed.
 
    DIST_MODEL_START : constant := 4;
 
---  Match distances greater than 127 are encoded in three pieces:
---    - distance slot: the highest two bits
---    - direct bits: 2-26 bits below the highest two bits
---    - alignment bits: four lowest bits
---
---  Direct bits don't use any probabilities.
---
---  The distance slot value of 14 is for distances 128-191.
+   --  Match distances greater than 127 are encoded in three pieces:
+   --    - distance slot: the highest two bits
+   --    - direct bits: 2-26 bits below the highest two bits
+   --    - alignment bits: four lowest bits
+   --
+   --  Direct bits don't use any probabilities.
+   --
+   --  The distance slot value of 14 is for distances 128-191.
 
    DIST_MODEL_END : constant  := 14;
 
@@ -266,6 +263,7 @@ private
    type Filter is new Matreshka.Filters.Filter with record
       Last_Stage       : Stage := Read_Stream_Header;
       Count            : Ada.Streams.Stream_Element_Count := 1;
+      To_Write         : Ada.Streams.Stream_Element_Count;
 
       Stream_Header    : XZ_Stream_Header;
       Block_Header     : XZ_Block_Header;
@@ -275,6 +273,7 @@ private
       Last_Block       : Boolean := False;
 
       Decoder          : LZMA_Decoder;
+      Saved            : League.Stream_Element_Vectors.Stream_Element_Vector;
    end record;
 
    not overriding procedure Read_Stream_Header_Bytes
