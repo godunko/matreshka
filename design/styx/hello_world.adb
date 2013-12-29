@@ -94,20 +94,29 @@ package body Hello_World is
      (Self    : in out Request_Handler;
       Message : Styx.Messages.Reads.Read_Request)
    is
+      use type Interfaces.Unsigned_64;
       Node  : constant Inode := Self.FIDs (Message.FID);
    begin
+      if Message.Offset /= 0 then
+         declare
+            Reply : aliased Styx.Messages.Reads.Read_Reply;
+         begin
+            Reply.Tag := Message.Tag;
+
+            Self.Encoder.Encode (Self.Output, Reply);
+            return;
+         end;
+      end if;
+
       case Node is
          when Root =>
             declare
-               Reply : aliased Styx.Messages.Reads.Read_Directory_Reply (2);
+               Reply : aliased Styx.Messages.Reads.Read_Directory_Reply (1);
             begin
                Reply.Tag := Message.Tag;
 
-               Reply.Data (1) := To_Dir_Entry (Root);
-               Reply.Data (1).Name :=
-                 League.Strings.To_Universal_String ("..");
-
-               Reply.Data (2) := To_Dir_Entry (Hello);
+--                 Reply.Data (1) := To_Dir_Entry (Root);
+               Reply.Data (1) := To_Dir_Entry (Hello);
 
                Self.Encoder.Encode (Self.Output, Reply);
             end;
@@ -119,9 +128,6 @@ package body Hello_World is
                Reply.Tag := Message.Tag;
 
                Reply.Data (1) := To_Dir_Entry (Root);
-               Reply.Data (1).Name :=
-                 League.Strings.To_Universal_String ("..");
-
                Reply.Data (2) := To_Dir_Entry (World);
 
                Self.Encoder.Encode (Self.Output, Reply);
@@ -174,7 +180,7 @@ package body Hello_World is
                Mode        => 16#80_00_43_FF#,
                Access_Time => <>,
                Change_Time => <>,
-               Length      => 10,
+               Length      => 16#36#,
                Name        => League.Strings.To_Universal_String (".."),
                Owner       => League.Strings.To_Universal_String ("max"),
                Group       => League.Strings.To_Universal_String ("users"),
@@ -187,7 +193,7 @@ package body Hello_World is
                Mode        => 16#80_00_43_FF#,
                Access_Time => <>,
                Change_Time => <>,
-               Length      => 10,
+               Length      => 16#3c#,
                Name        => League.Strings.To_Universal_String ("hello"),
                Owner       => League.Strings.To_Universal_String ("max"),
                Group       => League.Strings.To_Universal_String ("users"),

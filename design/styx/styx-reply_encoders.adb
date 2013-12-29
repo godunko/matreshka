@@ -332,7 +332,7 @@ package body Styx.Reply_Encoders is
 
       Temp := Self.Output;
       Self.Output := Save;
-      Self.Write_16 (Interfaces.Unsigned_16 (Temp.Length + 2));
+      Self.Write_16 (Interfaces.Unsigned_16 (Temp.Length));
       Self.Output.Append (Temp);
    end Write;
 
