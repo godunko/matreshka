@@ -51,9 +51,8 @@ package body XSD_To_Ada.Mappings is
 
    function Ada_Type_Qualified_Name
     (Self          : Mapping'Class;
-     XSD_Type_Name : League.Strings.Universal_String;
-     Min_Occur     : Boolean;
-     Max_Occur     : Boolean) return League.Strings.Universal_String is
+     XSD_Type_Name : League.Strings.Universal_String)
+     return League.Strings.Universal_String is
    begin
       if Self.Mapping.Contains (XSD_Type_Name) then
          return Self.Mapping.Element (XSD_Type_Name).Ada_Name;

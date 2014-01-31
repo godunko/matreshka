@@ -115,8 +115,7 @@ package XSD_To_Ada.Utils is
    procedure Create_Element_Type
      (Model       : XML.Schema.Models.XS_Model;
       Node_Vector : in out XSD_To_Ada.Utils.Items;
-      Mapping     : XSD_To_Ada.Mappings.Mapping;
-      Writer      : in out XSD_To_Ada.Writers.Writer);
+      Mapping     : XSD_To_Ada.Mappings.Mapping);
 
    procedure Create_Node_Vector
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -201,15 +200,13 @@ package XSD_To_Ada.Utils is
      Is_Min_Occur : Boolean := False);
 
    procedure Node_Type_Definition
-     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent               : Wide_Wide_String;
-      Node_Vector          : in out XSD_To_Ada.Utils.Items;
-      Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
-      Name                 : League.Strings.Universal_String;
-      Mapping              : XSD_To_Ada.Mappings.Mapping;
-      Table                : in out Types_Table_Type_Array;
-      Is_Max_Occur         : Boolean := False;
-      Is_Min_Occur         : Boolean := False);
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Indent       : Wide_Wide_String;
+     Node_Vector : in out XSD_To_Ada.Utils.Items;
+     Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
+     Name         : League.Strings.Universal_String;
+     Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Table        : in out Types_Table_Type_Array);
 
    procedure Print_Payloads
      (Node_Vector : XSD_To_Ada.Utils.Items;

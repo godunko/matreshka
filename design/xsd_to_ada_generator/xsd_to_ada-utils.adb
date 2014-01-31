@@ -97,10 +97,6 @@ package body XSD_To_Ada.Utils is
       Type_Difinition_Node : XSD_To_Ada.Utils.Item)
    is
       Difinition_Node         : XSD_To_Ada.Utils.Item;
-      Max_Difinition_Node     : XSD_To_Ada.Utils.Item;
-      Min_Difinition_Node     : XSD_To_Ada.Utils.Item;
-      Choice_Difinition_Node  : XSD_To_Ada.Utils.Item;
-      Element_Difinition_Node : XSD_To_Ada.Utils.Item;
    begin
       Difinition_Node := Type_Difinition_Node;
       Difinition_Node.Min := False;
@@ -247,8 +243,6 @@ package body XSD_To_Ada.Utils is
       Encoder_Spec_Writer : XSD_To_Ada.Writers.Writer;
       Encoder_Names_Writer : XSD_To_Ada.Writers.Writer;
 
-      Current_Out_File : Ada.Wide_Wide_Text_IO.File_Type;
-
       Node_Vector : XSD_To_Ada.Utils.Items;
 
       Tag_Vector : League.String_Vectors.Universal_String_Vector;
@@ -278,7 +272,7 @@ package body XSD_To_Ada.Utils is
             1, (False, 1));
       end loop;
 
-      Create_Element_Type (Model, Node_Vector, Mapping, Payload_Writer);
+      Create_Element_Type (Model, Node_Vector, Mapping);
       Print_Payloads (Node_Vector, "", Payload_Writer, Mapping);
 
       Node_Vector.Clear;
@@ -352,34 +346,6 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Payload_Writer, "end Payloads;");
 
---        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File,
---           Ada.Wide_Wide_Text_IO.Out_File,
---           "src/client/soap/.wsdl/payloads.ads");
---  --         "../../../trading_server/src/client/soap/.wsdl/payloads.ads");
---
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Payload_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
---
---        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File,
---           Ada.Wide_Wide_Text_IO.Out_File,
---           "src/client/soap/.wsdl/encoder.adb");
---  --         "../../../trading_server/src/client/soap/.wsdl/encoder.adb");
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Encoder_Full_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
---
---        Ada.Wide_Wide_Text_IO.Create
---          (Current_Out_File,
---           Ada.Wide_Wide_Text_IO.Out_File,
---           "src/client/soap/.wsdl/encoder.ads");
---  --         "../../../trading_server/src/client/soap/.wsdl/encoder.ads");
---        Ada.Wide_Wide_Text_IO.Put_Line
---          (Current_Out_File, Encoder_Spec_Writer.Text.To_Wide_Wide_String);
---        Ada.Wide_Wide_Text_IO.Close (Current_Out_File);
-
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
         (Encoder_Full_Writer.Text.To_Wide_Wide_String);
@@ -394,8 +360,7 @@ package body XSD_To_Ada.Utils is
    procedure Create_Element_Type
      (Model       : XML.Schema.Models.XS_Model;
       Node_Vector : in out XSD_To_Ada.Utils.Items;
-      Mapping     : XSD_To_Ada.Mappings.Mapping;
-      Writer      : in out XSD_To_Ada.Writers.Writer)
+      Mapping     : XSD_To_Ada.Mappings.Mapping)
    is
       Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map
         := Model.Get_Components_By_Namespace
@@ -430,8 +395,6 @@ package body XSD_To_Ada.Utils is
 
       XS_Object : XML.Schema.Objects.XS_Object;
       STD       : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
-      XS_Base   : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       Simple_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
         Model.Get_Components_By_Namespace
@@ -441,8 +404,6 @@ package body XSD_To_Ada.Utils is
    begin
       for J in 1 .. Simple_Types.Length loop
          XS_Object := Simple_Types.Item (J);
-         Type_D    := XS_Object.To_Type_Definition;
-         XS_Base   := Type_D.Get_Base_Type;
 
          STD := XS_Object.To_Simple_Type_Definition;
 
@@ -497,9 +458,6 @@ package body XSD_To_Ada.Utils is
         League.Strings.Empty_Universal_String)
    is
       use XML.Schema.Objects.Terms.Model_Groups;
-
-      Payload_Writer      : XSD_To_Ada.Writers.Writer;
-      Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
       Type_Difinition_Node : XSD_To_Ada.Utils.Item;
    begin
@@ -1051,7 +1009,6 @@ package body XSD_To_Ada.Utils is
 
       Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-      STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
    begin
       case Type_D.Get_Type_Category is
          when XML.Schema.Complex_Type =>
@@ -1077,7 +1034,7 @@ package body XSD_To_Ada.Utils is
             end if;
 
          when XML.Schema.Simple_Type =>
-            STD := Type_D.To_Simple_Type_Definition;
+            null;
 
          when XML.Schema.None =>
             null;
@@ -1140,9 +1097,7 @@ package body XSD_To_Ada.Utils is
      Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
      Name         : League.Strings.Universal_String;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Table        : in out Types_Table_Type_Array;
-     Is_Max_Occur : Boolean := False;
-     Is_Min_Occur : Boolean := False)
+     Table        : in out Types_Table_Type_Array)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -1158,12 +1113,9 @@ package body XSD_To_Ada.Utils is
       XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-      STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
 
-      Max_Occurs : Boolean := False;
       Max_Occurs_2 : XML.Schema.Objects.Particles.Unbounded_Natural;
 
-      Min_Occurs : constant Boolean := False;
       Min_Occurs_2 : Natural;
 
       ----------------
@@ -1186,7 +1138,6 @@ package body XSD_To_Ada.Utils is
          Decl           :
            XML.Schema.Element_Declarations.XS_Element_Declaration;
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
-         Type_Name      : League.Strings.Universal_String;
 
       begin
          Now_Term_Level := Now_Term_Level + 1;
@@ -1218,19 +1169,13 @@ package body XSD_To_Ada.Utils is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            Type_Name :=
-              Map.Ada_Type_Qualified_Name
-               (Type_D.Get_Name, Min_Occurs, Max_Occurs);
-
             if Type_D.Get_Name.To_UTF_8_String = "" then
                Node_Type_Definition
                  (Type_D, Indent & "   ",
                   Node_Vector, Type_Difinition_Node,
                   Name & '_' & Decl.Get_Name,
                   Map,
-                  Table,
-                  Max_Occurs,
-                  Min_Occurs);
+                  Table);
 
                declare
                   Anonym_Type_Difinition_Node : XSD_To_Ada.Utils.Item;
@@ -1269,7 +1214,6 @@ package body XSD_To_Ada.Utils is
                   Add_Node (Node_Vector, Anonym_Type_Difinition_Node);
                end;
 
-               Max_Occurs := False;
             end if;
 
             if Has_Top_Level_Type (Type_D, Table) then
@@ -1340,7 +1284,6 @@ package body XSD_To_Ada.Utils is
             Ada.Wide_Wide_Text_IO.Put
              (Ada.Wide_Wide_Text_IO.Standard_Error,
               Indent & "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
-            STD := Type_D.To_Simple_Type_Definition;
 
          when XML.Schema.None =>
             Ada.Wide_Wide_Text_IO.Put_Line
@@ -1376,7 +1319,6 @@ package body XSD_To_Ada.Utils is
       XS_Term        : XML.Schema.Terms.XS_Term;
 
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-      STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
 
       ----------------
       -- Print_Term --
@@ -1442,8 +1384,7 @@ package body XSD_To_Ada.Utils is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            Type_Name :=
-              Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False);
+            Type_Name := Map.Ada_Type_Qualified_Name (Type_D.Get_Name);
 
             case Type_D.Get_Type_Category is
                when XML.Schema.Complex_Type | XML.Schema.Simple_Type =>
@@ -1502,7 +1443,6 @@ package body XSD_To_Ada.Utils is
                Indent
                  & "Simple_Type : "
                  & Type_D.Get_Name.To_Wide_Wide_String);
-            STD := Type_D.To_Simple_Type_Definition;
 
          when XML.Schema.None =>
             Ada.Wide_Wide_Text_IO.Put_Line
@@ -1639,9 +1579,7 @@ package body XSD_To_Ada.Utils is
                        (Payload_Writer,
                           (XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
                              (Mapping,
-                              Type_D.Get_Name,
-                              False,
-                              False)));
+                              Type_D.Get_Name)));
                      Writers.P
                        (Payload_Writer,
                         "     end record;" & LF);
@@ -1845,9 +1783,7 @@ package body XSD_To_Ada.Utils is
                      & LF & "       : "
                      & (XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
                        (Mapping,
-                          Type_D.Get_Name,
-                          False,
-                          False))
+                          Type_D.Get_Name))
                      & ";" & LF
                      & "     end record;" & LF);
 
@@ -1932,7 +1868,7 @@ package body XSD_To_Ada.Utils is
                   & LF
                   & "     Value : "
                   & XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                    (Mapping, Type_Name, False, False)
+                    (Mapping, Type_Name)
                   & ";"
                   & LF
                   & "   end record;"
@@ -2001,7 +1937,6 @@ package body XSD_To_Ada.Utils is
       XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-      STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
 
       Choice     : Boolean := False;
       Add_Choise : Boolean := False;
@@ -2012,7 +1947,6 @@ package body XSD_To_Ada.Utils is
       Name_Kind   : League.Strings.Universal_String;
       Name_Case   : League.Strings.Universal_String;
       Anonym_Vector : League.Strings.Universal_String;
-      Vectop_US   : League.Strings.Universal_String;
 
       Anonym_Kind : Writers.Writer;
 
@@ -2239,7 +2173,7 @@ package body XSD_To_Ada.Utils is
 
             Type_Name :=
               Map.Ada_Type_Qualified_Name
-                (Type_D.Get_Name, Min_Occurs, Max_Occurs);
+                (Type_D.Get_Name);
 
             if Type_D.Get_Name.Is_Empty then
 
@@ -2456,7 +2390,6 @@ package body XSD_To_Ada.Utils is
             Ada.Wide_Wide_Text_IO.Put
              (Ada.Wide_Wide_Text_IO.Standard_Error,
               Indent & "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
-            STD := Type_D.To_Simple_Type_Definition;
 
          when XML.Schema.None =>
             Ada.Wide_Wide_Text_IO.Put_Line
@@ -2490,7 +2423,6 @@ package body XSD_To_Ada.Utils is
 
       Writers.N (Writer_types, Vector_Package.Text);
 
-      Choice := False;
       Now_Print_Level := Now_Print_Level - 1;
    end Print_Type_Definition;
 

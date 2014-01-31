@@ -44,15 +44,14 @@
 with League.Strings;
 with League.String_Vectors;
 
-with XML.Schema.Models;
 with XML.Schema.Terms;
 with XML.Schema.Type_Definitions;
 
-with XSD_To_Ada.Mappings.XML;
 with XSD_To_Ada.Writers;
 
 with XSD_To_Ada.Utils;
 with Ada.Containers.Vectors;
+with XSD_To_Ada.Mappings;
 
 package XSD_To_Ada.Encoder_2 is
 
@@ -98,7 +97,7 @@ package XSD_To_Ada.Encoder_2 is
       Max_Occurs  : Boolean);
 
    procedure Print_Type_Definition
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
      Indent       : Wide_Wide_String;
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer;
@@ -106,8 +105,7 @@ package XSD_To_Ada.Encoder_2 is
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
      Element_Name : League.Strings.Universal_String;
-     Is_Min_Occur : Boolean := False;
-     Is_Max_Occur : Boolean := False);
+      Is_Min_Occur : Boolean := False);
 
    procedure Print_Type_Title
      (Node_Vector : XSD_To_Ada.Utils.Items;

@@ -50,10 +50,8 @@ with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
-with XML.Schema.Simple_Type_Definitions;
 
 with XSD_To_Ada.Encoder; use XSD_To_Ada.Encoder;
-with XSD_To_Ada.Mappings;
 
 package body XSD_To_Ada.Encoder_2 is
 
@@ -99,14 +97,11 @@ package body XSD_To_Ada.Encoder_2 is
 
       Vector_Element_Marker       : League.Strings.Universal_String;
       Optional_Value_Marker       : League.Strings.Universal_String;
-      Optional_Value_Check_Marker : League.Strings.Universal_String;
    begin
       if Min_Occurs
         and then not Max_Occurs
       then
          Optional := True;
-         Optional_Value_Check_Marker :=
-           League.Strings.To_Universal_String (".Is_Set");
          Optional_Value_Marker :=
            League.Strings.To_Universal_String (".Value");
       end if;
@@ -350,14 +345,11 @@ package body XSD_To_Ada.Encoder_2 is
    is
       use League.Strings;
 
-      Optional_Value_Check_Marker : League.Strings.Universal_String;
       Optional_Value_Marker       : League.Strings.Universal_String;
    begin
       if Min_Occurs
         and then not Max_Occurs
       then
-         Optional_Value_Check_Marker :=
-           League.Strings.To_Universal_String (".Is_Set");
          Optional_Value_Marker :=
            League.Strings.To_Universal_String (".Value");
 
@@ -497,8 +489,7 @@ package body XSD_To_Ada.Encoder_2 is
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
      Element_Name : League.Strings.Universal_String;
-     Is_Min_Occur : Boolean := False;
-     Is_Max_Occur : Boolean := False)
+     Is_Min_Occur : Boolean := False)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
       use League.Strings;
@@ -517,7 +508,6 @@ package body XSD_To_Ada.Encoder_2 is
       XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-      STD  : XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition;
 
       Choice     : Boolean := False;
       Min_Occurs : Boolean := False;
@@ -546,14 +536,10 @@ package body XSD_To_Ada.Encoder_2 is
          Decl           :
            XML.Schema.Element_Declarations.XS_Element_Declaration;
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
-         Type_Name      : League.Strings.Universal_String;
 
-         Optional_Type   : League.Strings.Universal_String;
          Optional_Marker : League.Strings.Universal_String;
       begin
          if Is_Min_Occur then
-            Optional_Type :=
-              League.Strings.To_Universal_String ("Payloads.Optional_");
             Optional_Marker :=
               League.Strings.To_Universal_String ("Value.");
          end if;
@@ -624,9 +610,6 @@ package body XSD_To_Ada.Encoder_2 is
          elsif XS_Term.Is_Element_Declaration then
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
-
-            Type_Name :=
-              Map.Ada_Type_Qualified_Name (Type_D.Get_Name, False, False);
 
             if Choice then
                Writer.P
@@ -737,14 +720,12 @@ package body XSD_To_Ada.Encoder_2 is
             Ada.Wide_Wide_Text_IO.Put
              (Ada.Wide_Wide_Text_IO.Standard_Error,
               Indent & "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
-            STD := Type_D.To_Simple_Type_Definition;
 
          when XML.Schema.None =>
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "NONE!!!");
       end case;
 
-      Choice := False;
    end Print_Type_Definition;
 
    ----------------------
@@ -811,8 +792,7 @@ package body XSD_To_Ada.Encoder_2 is
                        (Mapping,
                         Add_Separator (Node_Vector.Element (Index).Anonym_Name)
                         & "_Anonym"
-                        & Discriminant_Type,
-                        False, False);
+                        & Discriminant_Type);
 
                   Generate_Procedure_Encode_Header
                     (Payload_Writer, Anonym_Name);
@@ -887,7 +867,7 @@ package body XSD_To_Ada.Encoder_2 is
                         Generate_Procedure_Encode_Header
                           (Payload_Writer,
                            XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                             (Mapping, Type_D.Get_Name, False, False));
+                             (Mapping, Type_D.Get_Name));
 
                         Writers.P
                           (Payload_Writer,

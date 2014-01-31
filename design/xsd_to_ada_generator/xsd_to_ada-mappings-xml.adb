@@ -73,7 +73,9 @@ package body XSD_To_Ada.Mappings.XML is
    ------------------
 
    overriding function Error_String
-    (Self : Mapping_XML) return League.Strings.Universal_String is
+     (Self : Mapping_XML) return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
    begin
       return League.Strings.Empty_Universal_String;
    end Error_String;
@@ -111,6 +113,9 @@ package body XSD_To_Ada.Mappings.XML is
      Attributes     : Standard.XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
+      pragma Unreferenced (Namespace_URI);
+      pragma Unreferenced (Local_Name);
+      pragma Unreferenced (Success);
       use type League.Strings.Universal_String;
 
    begin

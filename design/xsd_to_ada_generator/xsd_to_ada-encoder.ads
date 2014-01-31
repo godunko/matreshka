@@ -134,7 +134,6 @@ package XSD_To_Ada.Encoder is
    procedure Generate_Simple_Type
      (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term          : XML.Schema.Terms.XS_Term;
-      Type_Name        : League.Strings.Universal_String;
       Name             : League.Strings.Universal_String;
       Full_Anonym_Name : League.Strings.Universal_String;
       Base_Choice_Name : League.Strings.Universal_String;
@@ -172,33 +171,29 @@ package XSD_To_Ada.Encoder is
      Map          : XSD_To_Ada.Mappings.Mapping'Class);
 
    procedure Print_Type_Definition
-    (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent           : Wide_Wide_String := "";
-     Writer           : in out Writers.Writer;
-     Name             : League.Strings.Universal_String;
-     Full_Anonym_Name : League.Strings.Universal_String;
-     Base_Name        : League.Strings.Universal_String;
-     Responce_Name    : League.Strings.Universal_String;
-     Table            : in out Types_Table_Type_Array;
-     Is_Max_Occur     : Boolean := False;
-     Is_Min_Occur     : Boolean := False;
-     Top_Max_Occur    : Boolean := False;
-     Optional         : Boolean := False);
+     (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent           : Wide_Wide_String := "";
+      Writer           : in out Writers.Writer;
+      Name             : League.Strings.Universal_String;
+      Full_Anonym_Name : League.Strings.Universal_String;
+      Base_Name        : League.Strings.Universal_String;
+      Responce_Name    : League.Strings.Universal_String;
+      Table            : in out Types_Table_Type_Array;
+      Is_Min_Occur     : Boolean := False;
+      Top_Max_Occur    : Boolean := False;
+      Optional         : Boolean := False);
 
    procedure Print_Type_Title
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent      : String;
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Spec_Writer : in out XSD_To_Ada.Writers.Writer;
       Level       : Positive := 1);
 
    procedure Print_Type_Title
-    (XS_Term     : XML.Schema.Terms.XS_Term;
-     Indent      : Wide_Wide_String;
-     Writer      : in out XSD_To_Ada.Writers.Writer;
-     Spec_Writer : in out XSD_To_Ada.Writers.Writer;
-     Level       : Natural := 0;
-     Optional    : Boolean);
+     (XS_Term     : XML.Schema.Terms.XS_Term;
+      Indent      : Wide_Wide_String;
+      Level       : Natural := 0;
+      Optional    : Boolean);
 
    function Has_Element_Session
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
