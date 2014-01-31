@@ -743,8 +743,6 @@ package body XSD_To_Ada.Encoder_2 is
       Mapping              : XSD_To_Ada.Mappings.Mapping)
    is
 
-      US_Response         : League.Strings.Universal_String;
-
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
@@ -753,44 +751,39 @@ package body XSD_To_Ada.Encoder_2 is
       Discriminant_Type : League.Strings.Universal_String;
       Vector_Name       : League.Strings.Universal_String;
       Anonym_Name       : League.Strings.Universal_String;
+      Item              : XSD_To_Ada.Utils.Item;
    begin
       for Index in 1 .. Natural (Node_Vector.Length) loop
-         Type_D := Node_Vector.Element (Index).Type_Def;
+         Item := Node_Vector.Element (Index);
+         Type_D := Item.Type_Def;
 
          Discriminant_Type.Clear;
 
-         if Node_Vector.Element (Index).Choice then
+         if Item.Choice then
             Discriminant_Type := League.Strings.From_UTF_8_String ("_Case");
          end if;
 
          if Type_D.Get_Name.Is_Empty then
             Vector_Name.Clear;
-            Vector_Name.Append (Node_Vector.Element (Index).Anonym_Name);
+            Vector_Name.Append (Item.Anonym_Name);
             Vector_Name.Append ("_Anonym");
             Vector_Name.Append (Discriminant_Type);
          else
             Vector_Name := Type_D.Get_Name;
          end if;
 
-         if Type_D.Get_Name.Length > 10 then
-            US_Response := League.Strings.Slice
-              (Type_D.Get_Name,
-               Type_D.Get_Name.Length - 7,
-               Type_D.Get_Name.Length);
-         end if;
-
-         if not Node_Vector.Element (Index).Max
-           and then not Node_Vector.Element (Index).Min
-           and then Node_Vector.Element (Index).Element_Name.Is_Empty
-           and then Node_Vector.Element (Index).Type_Def
+         if not Item.Max
+           and then not Item.Min
+           and then Item.Element_Name.Is_Empty
+           and then Item.Type_Def
                       .Is_Complex_Type_Definition
          then
-            if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
-               if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
+            if not Item.Anonym_Name.Is_Empty then
+               if not Item.Anonym_Name.Is_Empty then
                   Anonym_Name :=
                     XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
                        (Mapping,
-                        Add_Separator (Node_Vector.Element (Index).Anonym_Name)
+                        Add_Separator (Item.Anonym_Name)
                         & "_Anonym"
                         & Discriminant_Type);
 
@@ -808,8 +801,8 @@ package body XSD_To_Ada.Encoder_2 is
                      Payload_Type_Writer,
                      Mapping,
                      Type_D.Get_Name,
-                     Node_Vector.Element (Index).Anonym_Name,
-                     Node_Vector.Element (Index).Element_Name);
+                     Item.Anonym_Name,
+                     Item.Element_Name);
 
                   Writers.N
                     (Payload_Writer,
@@ -818,12 +811,7 @@ package body XSD_To_Ada.Encoder_2 is
                   Writers.P (Payload_Writer, "   end Encode;" & LF);
                end if;
             else
-               if Type_D.Get_Name.Length > 10
-                 and US_Response.To_UTF_8_String = "Response"
-               then
-                  null;
-                  US_Response.Clear;
-               else
+               if not Type_D.Get_Name.Ends_With ("Response") then
                   if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
                      Generate_Overriding_Procedure_Encode_Header
@@ -839,8 +827,8 @@ package body XSD_To_Ada.Encoder_2 is
                         Payload_Type_Writer,
                         Mapping,
                         Type_D.Get_Name,
-                        Node_Vector.Element (Index).Anonym_Name,
-                        Node_Vector.Element (Index).Element_Name);
+                        Item.Anonym_Name,
+                        Item.Element_Name);
 
                      Writers.N
                        (Payload_Writer,
@@ -880,8 +868,8 @@ package body XSD_To_Ada.Encoder_2 is
                            Payload_Type_Writer,
                            Mapping,
                            Type_D.Get_Name,
-                           Node_Vector.Element (Index).Anonym_Name,
-                           Node_Vector.Element (Index).Element_Name);
+                           Item.Anonym_Name,
+                           Item.Element_Name);
 
                         Writers.P
                           (Payload_Writer,
@@ -893,27 +881,16 @@ package body XSD_To_Ada.Encoder_2 is
                end if;
             end if;
 
-         elsif not Node_Vector.Element (Index).Element_Name.Is_Empty then
-            if Node_Vector.Element (Index).Element_Name.Length > 10 then
-               US_Response := League.Strings.Slice
-                 (Node_Vector.Element (Index).Element_Name,
-                  Node_Vector.Element (Index).Element_Name.Length - 7,
-                  Node_Vector.Element (Index).Element_Name.Length);
-            end if;
+         elsif not Item.Element_Name.Is_Empty then
+            if Item.Type_Def.Get_Name.Is_Empty then
 
-            if Node_Vector.Element (Index).Type_Def.Get_Name.Is_Empty then
-
-               if Node_Vector.Element (Index).Element_Name.Length > 10
-                 and US_Response.To_UTF_8_String = "Response"
-               then
-                  null;
-               else
+               if not Item.Element_Name.Ends_With ("Response") then
                   if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
                         Spec_Writer,
-                        Node_Vector.Element (Index).Element_Name,
+                        Item.Element_Name,
                         Tag_Vector);
 
                      XSD_To_Ada.Encoder_2.Print_Type_Definition
@@ -923,13 +900,13 @@ package body XSD_To_Ada.Encoder_2 is
                         Payload_Type_Writer,
                         Mapping,
                         Type_D.Get_Name,
-                        Node_Vector.Element (Index).Anonym_Name,
-                        Node_Vector.Element (Index).Element_Name);
+                        Item.Anonym_Name,
+                        Item.Element_Name);
 
                      Writers.N
                        (Payload_Writer,
                         Write_End_Element
-                          (Node_Vector.Element (Index).Element_Name));
+                          (Item.Element_Name));
 
                      Writers.P (Payload_Writer, "   end Encode;" & LF);
                   else
@@ -937,17 +914,13 @@ package body XSD_To_Ada.Encoder_2 is
                   end if;
                end if;
             else
-               if Node_Vector.Element (Index).Element_Name.Length > 10
-                 and US_Response.To_UTF_8_String = "Response"
-               then
-                  null;
-               else
+               if not Item.Element_Name.Ends_With ("Response") then
                   if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
                         Spec_Writer,
-                        Node_Vector.Element (Index).Element_Name,
+                        Item.Element_Name,
                         Tag_Vector);
 
                      Print_Type_Definition
@@ -957,13 +930,13 @@ package body XSD_To_Ada.Encoder_2 is
                         Payload_Type_Writer,
                         Mapping,
                         Type_D.Get_Name,
-                        Node_Vector.Element (Index).Anonym_Name,
-                        Node_Vector.Element (Index).Element_Name);
+                        Item.Anonym_Name,
+                        Item.Element_Name);
 
                      Writers.N
                        (Payload_Writer,
                         Write_End_Element
-                          (Node_Vector.Element (Index).Element_Name));
+                          (Item.Element_Name));
 
                      Writers.P (Payload_Writer, "   end Encode;" & LF);
                   else
@@ -973,14 +946,14 @@ package body XSD_To_Ada.Encoder_2 is
                         Generate_Overriding_Procedure_Encode_Header
                           (Payload_Writer,
                            Spec_Writer,
-                           Node_Vector.Element (Index).Element_Name,
+                           Item.Element_Name,
                            Tag_Vector,
                            True);
 
                         Writers.N
                           (Payload_Writer,
                            Write_End_Element
-                             (Node_Vector.Element (Index).Element_Name));
+                             (Item.Element_Name));
 
                         Writers.P (Payload_Writer, "   end Encode;" & LF);
                      else
@@ -988,16 +961,16 @@ package body XSD_To_Ada.Encoder_2 is
                           (Writer,
                            "   --  type "
                            & Add_Separator
-                             (Node_Vector.Element (Index).Element_Name));
+                             (Item.Element_Name));
                      end if;
                   end if;
                end if;
             end if;
 
-         elsif Node_Vector.Element (Index).Min then
+         elsif Item.Min then
             null;
 
-         elsif Node_Vector.Element (Index).Max then
+         elsif Item.Max then
             null;
          end if;
 
@@ -1006,8 +979,6 @@ package body XSD_To_Ada.Encoder_2 is
 
          Payload_Type_Writer.Text.Clear;
          Payload_Writer.Text.Clear;
-
-         US_Response.Clear;
       end loop;
 
       Encoder_Names_Writer.P (Element_Name.Text);
