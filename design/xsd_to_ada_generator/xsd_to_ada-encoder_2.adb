@@ -191,7 +191,8 @@ package body XSD_To_Ada.Encoder_2 is
         (Spec_Writer,
          "   type " & Add_Separator (Procedures_Name) & "_Encoder is"
          & LF
-         & "   limited new Web_Services.SOAP.Payloads.Encoders.SOAP_Payload_Encoder"
+         & "   limited new Web_Services.SOAP.Payloads.Encoders."
+         & "SOAP_Payload_Encoder"
          & LF & "   with null record;"
          & LF & LF
          & "   overriding function Create"
@@ -291,12 +292,15 @@ package body XSD_To_Ada.Encoder_2 is
          & "   IATS_Prefix : constant League.Strings.Universal_String :=" & LF
          & "     League.Strings.To_Universal_String (""iats"");"
          & LF & LF
-         & "   function Image (Item : Boolean) return League.Strings.Universal_String is" & LF
+         & "   function Image (Item : Boolean) return League.Strings."
+         & "Universal_String is" & LF
          & "     begin" & LF
          & "       if Item then" & LF
-         & "         return League.Strings.To_Universal_String (""true"");" & LF
+         & "         return League.Strings.To_Universal_String (""true"");"
+         & LF
          & "           else" & LF
-         & "         return League.Strings.To_Universal_String (""false"");" & LF
+         & "         return League.Strings.To_Universal_String (""false"");"
+         & LF
          & "       end if;" & LF
          & "   end Image;");
    end Generate_Package_Header;
@@ -499,6 +503,15 @@ package body XSD_To_Ada.Encoder_2 is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
       use League.Strings;
 
+      procedure Print_Term
+        (XS_Term      : XML.Schema.Terms.XS_Term;
+         Indent       : Wide_Wide_String := "";
+         Writer       : in out Writers.Writer;
+         Writer_types : in out Writers.Writer;
+         Map          : XSD_To_Ada.Mappings.Mapping;
+         Name         : League.Strings.Universal_String;
+         Base_Name    : League.Strings.Universal_String);
+
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
       XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -517,16 +530,15 @@ package body XSD_To_Ada.Encoder_2 is
       ----------------
 
       procedure Print_Term
-       (XS_Term      : XML.Schema.Terms.XS_Term;
-        Indent       : Wide_Wide_String := "";
-        Writer       : in out Writers.Writer;
-        Writer_types : in out Writers.Writer;
-        Map          : XSD_To_Ada.Mappings.Mapping;
-        Name         : League.Strings.Universal_String;
-        Base_Name    : League.Strings.Universal_String)
+        (XS_Term      : XML.Schema.Terms.XS_Term;
+         Indent       : Wide_Wide_String := "";
+         Writer       : in out Writers.Writer;
+         Writer_types : in out Writers.Writer;
+         Map          : XSD_To_Ada.Mappings.Mapping;
+         Name         : League.Strings.Universal_String;
+         Base_Name    : League.Strings.Universal_String)
       is
          use type XML.Schema.Model_Groups.Compositor_Kinds;
-         use type League.Strings.Universal_String;
 
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
@@ -605,7 +617,7 @@ package body XSD_To_Ada.Encoder_2 is
 
             if Choice then
                Choice := False;
-               Writer.P ( "     end case;" & LF);
+               Writer.P ("     end case;" & LF);
                Choice_Name.Clear;
             end if;
 
@@ -669,7 +681,7 @@ package body XSD_To_Ada.Encoder_2 is
                  (XS_Term,
                   Indent & "   ",
                   Writer,
-                  Writer_Types,
+                  Writer_types,
                   Mapping,
                   League.Strings.To_Universal_String
                     (Add_Separator (XS_Base.Get_Name)),
@@ -691,7 +703,7 @@ package body XSD_To_Ada.Encoder_2 is
                     (XS_Term,
                      Indent & "   ",
                      Writer,
-                     Writer_Types,
+                     Writer_types,
                      Mapping,
                      League.Strings.To_Universal_String
                        (Add_Separator (Name)),
@@ -702,7 +714,7 @@ package body XSD_To_Ada.Encoder_2 is
                        (XS_Term,
                         Indent & "   ",
                         Writer,
-                        Writer_Types,
+                        Writer_types,
                         Mapping,
                         League.Strings.To_Universal_String
                           (Add_Separator (Anonym_Name)),
@@ -712,7 +724,7 @@ package body XSD_To_Ada.Encoder_2 is
                        (XS_Term,
                         Indent & "   ",
                         Writer,
-                        Writer_Types,
+                        Writer_types,
                         Mapping,
                         League.Strings.To_Universal_String
                           (Add_Separator (Element_Name)),
@@ -745,10 +757,10 @@ package body XSD_To_Ada.Encoder_2 is
       Writer               : in out XSD_To_Ada.Writers.Writer;
       Spec_Writer          : in out XSD_To_Ada.Writers.Writer;
       Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
-      Tag_Vector           : in out League.String_Vectors.Universal_String_Vector;
+      Tag_Vector           : in out League.String_Vectors
+                                       .Universal_String_Vector;
       Mapping              : XSD_To_Ada.Mappings.Mapping)
    is
-      use type League.Strings.Universal_String;
 
       US_Response         : League.Strings.Universal_String;
 
@@ -789,10 +801,10 @@ package body XSD_To_Ada.Encoder_2 is
          if not Node_Vector.Element (Index).Max
            and then not Node_Vector.Element (Index).Min
            and then Node_Vector.Element (Index).Element_Name.Is_Empty
-           and then Node_Vector.Element (Index).Type_Def.Is_Complex_Type_Definition
+           and then Node_Vector.Element (Index).Type_Def
+                      .Is_Complex_Type_Definition
          then
-            if Node_Vector.Element (Index).Anonym_Name.To_UTF_8_String /= ""
-            then
+            if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
                if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
                   Anonym_Name :=
                     XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
@@ -877,9 +889,9 @@ package body XSD_To_Ada.Encoder_2 is
                            XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
                              (Mapping, Type_D.Get_Name, False, False));
 
-                        Writers.N
+                        Writers.P
                           (Payload_Writer,
-                           ("      Writer.Start_Element (IATS_URI, Name);" & LF));
+                           "      Writer.Start_Element (IATS_URI, Name);");
 
                         Print_Type_Definition
                           (Type_D,
@@ -891,9 +903,9 @@ package body XSD_To_Ada.Encoder_2 is
                            Node_Vector.Element (Index).Anonym_Name,
                            Node_Vector.Element (Index).Element_Name);
 
-                        Writers.N
+                        Writers.P
                           (Payload_Writer,
-                           ("      Writer.End_Element (IATS_URI, Name);" & LF));
+                           "      Writer.End_Element (IATS_URI, Name);");
 
                         Writers.P (Payload_Writer, "   end Encode;" & LF);
                      end if;

@@ -166,7 +166,7 @@ package XSD_To_Ada.Utils is
       XS_Term      : XML.Schema.Terms.XS_Term;
       Type_Name    : League.Strings.Universal_String;
       Min_Occurs   : in out Boolean;
-      Max_Occurs   : in out Boolean;
+      Max_Occurs   : Boolean;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer);
 

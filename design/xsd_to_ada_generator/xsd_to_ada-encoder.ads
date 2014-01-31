@@ -83,7 +83,6 @@ package XSD_To_Ada.Encoder is
 
    Optional_Vector : League.String_Vectors.Universal_String_Vector;
 
-
    type Writers_Array is array (1 .. 20) of Writers.Writer;
 
    Top_Level_Writer : Writers_Array;
@@ -133,20 +132,20 @@ package XSD_To_Ada.Encoder is
       Offset : Positive := 3);
 
    procedure Generate_Simple_Type
-    (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
-     XS_Term          : XML.Schema.Terms.XS_Term;
-     Type_Name        : League.Strings.Universal_String;
-     Name             : League.Strings.Universal_String;
-     Full_Anonym_Name : League.Strings.Universal_String;
-     Base_Choice_Name : League.Strings.Universal_String;
-     Base_Name        : League.Strings.Universal_String;
-     Responce_Name    : League.Strings.Universal_String;
-     Min_Occurs       : in out Boolean;
-     Max_Occurs       : in out Boolean;
-     Top_Max_Occurs   : Boolean;
-     Top_Min_Occurs   : Boolean;
-     Choice           : Boolean;
-     Writer           : in out Writers.Writer);
+     (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term          : XML.Schema.Terms.XS_Term;
+      Type_Name        : League.Strings.Universal_String;
+      Name             : League.Strings.Universal_String;
+      Full_Anonym_Name : League.Strings.Universal_String;
+      Base_Choice_Name : League.Strings.Universal_String;
+      Base_Name        : League.Strings.Universal_String;
+      Responce_Name    : League.Strings.Universal_String;
+      Min_Occurs       : Boolean;
+      Max_Occurs       : Boolean;
+      Top_Max_Occurs   : Boolean;
+      Top_Min_Occurs   : Boolean;
+      Choice           : Boolean;
+      Writer           : in out Writers.Writer);
 
    function Has_Top_Level_Type
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;

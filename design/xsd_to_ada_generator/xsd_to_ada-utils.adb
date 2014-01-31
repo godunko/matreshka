@@ -52,11 +52,9 @@ with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
 with XML.Schema.Named_Maps;
 with XML.Schema.Object_Lists;
-with XML.Schema.Objects;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
 with XML.Schema.Objects.Terms;
-with XML.Schema.Objects.Particles;
 
 with XSD_To_Ada.Encoder_2;
 
@@ -66,6 +64,29 @@ package body XSD_To_Ada.Utils is
    use XSD_To_Ada.Writers;
 
    LF : constant Wide_Wide_Character := Ada.Characters.Wide_Wide_Latin_1.LF;
+
+   procedure Add_Node
+     (Node_Vector          : in out XSD_To_Ada.Utils.Items;
+      Type_Difinition_Node : XSD_To_Ada.Utils.Item);
+
+   procedure Generate_Complex_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Terms.XS_Term;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Type_Name    : League.Strings.Universal_String;
+      Min_Occurs   : Boolean;
+      Max_Occurs   : in out Boolean;
+      Writer       : in out Writers.Writer);
+
+   procedure Generate_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Terms.XS_Term;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Type_Name    : League.Strings.Universal_String;
+      Max_Occurs   : in out Boolean;
+      Min_Occurs   : in out Boolean;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer);
 
    --------------
    -- Add_Node --
@@ -254,7 +275,7 @@ package body XSD_To_Ada.Utils is
             "",
             Node_Vector,
             Mapping,
-            1 , (False, 1));
+            1, (False, 1));
       end loop;
 
       Create_Element_Type (Model, Node_Vector, Mapping, Payload_Writer);
@@ -275,7 +296,7 @@ package body XSD_To_Ada.Utils is
                "",
                Node_Vector,
                Mapping,
-               1 , (False, 1),
+               1, (False, 1),
                Element_Declarations.Item (J).Get_Name);
          end if;
       end loop;
@@ -289,7 +310,8 @@ package body XSD_To_Ada.Utils is
          & "with League.Strings;" & LF
          & "with Web_Services.SOAP.Payloads.Encoders;" & LF & LF
          & "package Encoder is"  & LF & LF
-         & "   function Image (Item : Boolean) return League.Strings.Universal_String;"
+         & "   function Image (Item : Boolean) return League.Strings."
+         & "Universal_String;"
          & LF);
 
       XSD_To_Ada.Encoder_2.Print_Type_Title
@@ -392,7 +414,7 @@ package body XSD_To_Ada.Utils is
             "",
             Node_Vector,
             Mapping,
-            1 , (False, 1),
+            1, (False, 1),
             Element_Declarations.Item (J).Get_Name);
       end loop;
    end Create_Element_Type;
@@ -537,23 +559,28 @@ package body XSD_To_Ada.Utils is
          & LF & LF
          & "package Payloads is"
          & LF & LF
-         & "   type Decimal_String is new Ada.Strings.Unbounded.Unbounded_String;"
+         & "   type Decimal_String is new Ada.Strings.Unbounded."
+         & "Unbounded_String;"
          & LF
          & "   Null_Decimal : constant Decimal_String :=" & LF
          & "     Decimal_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
          & LF & LF
-         & "   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;" & LF
+         & "   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;"
+         & LF
          & "   Null_Rate : constant Rate_String :=" & LF
-         & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);" & LF & LF
+         & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
+         & LF & LF
          & "   type TimeT is new Interfaces.Unsigned_64;" & LF & LF
          & "   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;"
          & LF & LF
          & "   type Abstract_IATS_Responce is" & LF
-         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
+         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
+         & LF
          & "     with null record;"
          & LF & LF
          & "   type Abstract_IATS_Request is" & LF
-         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
+         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
+         & LF
          & "     with record" & LF
          & "       Session : League.Strings.Universal_String;"
          & LF
@@ -633,7 +660,7 @@ package body XSD_To_Ada.Utils is
     (Type_D_Name  : League.Strings.Universal_String;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Writer       : in out Writers.Writer;
-     Writer_Types : in out Writers.Writer)
+     Writer_types : in out Writers.Writer)
    is
       Added_Vector_Type : Boolean := False;
    begin
@@ -657,7 +684,7 @@ package body XSD_To_Ada.Utils is
 
       if Added_Vector_Type then
           Writers.P
-           (Writer_Types,
+           (Writer_types,
             "   package "
             & Add_Separator (Type_D_Name) & "_Vectors is" & LF
             & Gen_Type_Line
@@ -812,7 +839,7 @@ package body XSD_To_Ada.Utils is
       use Ada.Strings.Wide_Wide_Unbounded;
       use Ada.Strings.Wide_Wide_Maps;
 
-      US      : League.Strings.Universal_String
+      US      : constant League.Strings.Universal_String
         := League.Strings.To_Universal_String (Str);
       US_New : League.Strings.Universal_String;
 
@@ -866,7 +893,7 @@ package body XSD_To_Ada.Utils is
       XS_Term      : XML.Schema.Terms.XS_Term;
       Mapping      : XSD_To_Ada.Mappings.Mapping;
       Type_Name    : League.Strings.Universal_String;
-      Min_Occurs   : in out Boolean;
+      Min_Occurs   : Boolean;
       Max_Occurs   : in out Boolean;
       Writer       : in out Writers.Writer) is
    begin
@@ -888,8 +915,8 @@ package body XSD_To_Ada.Utils is
             & Type_Name.To_Wide_Wide_String);
       end if;
 
-      if Max_Occurs
-        and then not XSD_To_Ada.Mappings.Is_Type_In_Map (Mapping, Type_D.Get_Name)
+      if Max_Occurs and then not XSD_To_Ada.Mappings.Is_Type_In_Map
+        (Mapping, Type_D.Get_Name)
       then
          Max_Occurs := False;
          Writers.P (Writer, "_Vector;");
@@ -897,47 +924,6 @@ package body XSD_To_Ada.Utils is
          Writers.P (Writer, ";");
       end if;
    end Generate_Complex_Type;
-
-   -------------------
-   -- Generate_Type --
-   -------------------
-
-   procedure Generate_Type
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term      : XML.Schema.Terms.XS_Term;
-      Mapping      : XSD_To_Ada.Mappings.Mapping;
-      Type_Name    : League.Strings.Universal_String;
-      Max_Occurs   : in out Boolean;
-      Min_Occurs   : in out Boolean;
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer) is
-   begin
-      case Type_D.Get_Type_Category is
-         when XML.Schema.Complex_Type =>
-            Generate_Complex_Type
-              (Type_D,
-               XS_Term,
-               Mapping,
-               Type_Name,
-               Min_Occurs,
-               Max_Occurs,
-               Writer);
-
-         when XML.Schema.Simple_Type =>
-            Generate_Simple_Type
-              (Type_D,
-               XS_Term,
-               Type_Name,
-               Min_Occurs,
-               Max_Occurs,
-               Writer,
-               Writer_types);
-
-         when XML.Schema.None =>
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
-      end case;
-   end Generate_Type;
 
    --------------------------
    -- Generate_Simple_Type --
@@ -948,7 +934,7 @@ package body XSD_To_Ada.Utils is
       XS_Term      : XML.Schema.Terms.XS_Term;
       Type_Name    : League.Strings.Universal_String;
       Min_Occurs   : in out Boolean;
-      Max_Occurs   : in out Boolean;
+      Max_Occurs   : Boolean;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer)
    is
@@ -959,7 +945,7 @@ package body XSD_To_Ada.Utils is
       then
          if not Is_Type_In_Optional_Vector (XS_Term.Get_Name) then
             Writers.P
-              (Writer_Types,
+              (Writer_types,
                "   type Optional_"
                & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
                & " is record" & LF
@@ -1006,6 +992,47 @@ package body XSD_To_Ada.Utils is
          end if;
       end if;
    end Generate_Simple_Type;
+
+   -------------------
+   -- Generate_Type --
+   -------------------
+
+   procedure Generate_Type
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Terms.XS_Term;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Type_Name    : League.Strings.Universal_String;
+      Max_Occurs   : in out Boolean;
+      Min_Occurs   : in out Boolean;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer) is
+   begin
+      case Type_D.Get_Type_Category is
+         when XML.Schema.Complex_Type =>
+            Generate_Complex_Type
+              (Type_D,
+               XS_Term,
+               Mapping,
+               Type_Name,
+               Min_Occurs,
+               Max_Occurs,
+               Writer);
+
+         when XML.Schema.Simple_Type =>
+            Generate_Simple_Type
+              (Type_D,
+               XS_Term,
+               Type_Name,
+               Min_Occurs,
+               Max_Occurs,
+               Writer,
+               Writer_types);
+
+         when XML.Schema.None =>
+            Ada.Wide_Wide_Text_IO.Put_Line
+             (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
+      end case;
+   end Generate_Type;
 
    -------------------------
    -- Has_Element_Session --
@@ -1070,8 +1097,8 @@ package body XSD_To_Ada.Utils is
    begin
       for j in 1 .. Table'Last loop
          if Type_D.Get_Name.To_Wide_Wide_String =
-           Table (J).Type_Name.To_Wide_Wide_String
-           and Table (J).Type_State
+           Table (j).Type_Name.To_Wide_Wide_String
+           and Table (j).Type_State
          then
             return True;
          end if;
@@ -1119,6 +1146,13 @@ package body XSD_To_Ada.Utils is
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
+      procedure Print_Term
+        (XS_Term      : XML.Schema.Terms.XS_Term;
+         Indent       : Wide_Wide_String := "";
+         Name         : League.Strings.Universal_String;
+         Map          : XSD_To_Ada.Mappings.Mapping;
+         Table        : in out Types_Table_Type_Array);
+
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
       XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -1129,7 +1163,7 @@ package body XSD_To_Ada.Utils is
       Max_Occurs : Boolean := False;
       Max_Occurs_2 : XML.Schema.Objects.Particles.Unbounded_Natural;
 
-      Min_Occurs : Boolean := False;
+      Min_Occurs : constant Boolean := False;
       Min_Occurs_2 : Natural;
 
       ----------------
@@ -1143,10 +1177,8 @@ package body XSD_To_Ada.Utils is
         Map          : XSD_To_Ada.Mappings.Mapping;
         Table        : in out Types_Table_Type_Array)
       is
-         use type XML.Schema.Model_Groups.Compositor_Kinds;
          use XML.Schema.Objects.Terms.Model_Groups;
          use type League.Strings.Universal_String;
-         use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
@@ -1332,6 +1364,14 @@ package body XSD_To_Ada.Utils is
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
+      procedure Print_Term
+       (XS_Term      : XML.Schema.Terms.XS_Term;
+        Indent       : Wide_Wide_String := "";
+        Writer       : in out Writers.Writer;
+        Writer_types : in out Writers.Writer;
+        Name         : League.Strings.Universal_String;
+        Map          : XSD_To_Ada.Mappings.Mapping);
+
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
 
@@ -1470,6 +1510,464 @@ package body XSD_To_Ada.Utils is
       end case;
    end Print_Content_Type;
 
+   --------------------
+   -- Print_Payloads --
+   --------------------
+
+   procedure Print_Payloads
+     (Node_Vector : XSD_To_Ada.Utils.Items;
+      Indent      : Wide_Wide_String;
+      Writer      : in out XSD_To_Ada.Writers.Writer;
+      Mapping     : XSD_To_Ada.Mappings.Mapping)
+   is
+      US_Response         : League.Strings.Universal_String;
+      Payload_Writer      : XSD_To_Ada.Writers.Writer;
+      Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
+
+      Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      Discriminant_Type : League.Strings.Universal_String;
+      Vector_Name       : League.Strings.Universal_String;
+   begin
+
+      for Index in 1 .. Natural (Node_Vector.Length) loop
+         Type_D := Node_Vector.Element (Index).Type_Def;
+
+         Discriminant_Type.Clear;
+
+         if Node_Vector.Element (Index).Choice then
+            Discriminant_Type := League.Strings.From_UTF_8_String ("_Case");
+         end if;
+
+         if Type_D.Get_Name.Is_Empty then
+            Vector_Name.Clear;
+            Vector_Name.Append (Node_Vector.Element (Index).Anonym_Name);
+            Vector_Name.Append ("_Anonym");
+            Vector_Name.Append (Discriminant_Type);
+         else
+            Vector_Name := Type_D.Get_Name;
+         end if;
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Ada.Wide_Wide_Text_IO.Standard_Error,
+            Indent & Natural'Wide_Wide_Image (Index)
+            & "; START Print_Type_Title Type_D="
+            & Type_D.Get_Name.To_Wide_Wide_String
+            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String);
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Ada.Wide_Wide_Text_IO.Standard_Error,
+            "Min "
+            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Min));
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Ada.Wide_Wide_Text_IO.Standard_Error,
+            "Max "
+            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Max));
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Ada.Wide_Wide_Text_IO.Standard_Error,
+            "Choice "
+            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Choice));
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Ada.Wide_Wide_Text_IO.Standard_Error,
+            "Anonym_Name <"
+            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String
+            & ">");
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (Ada.Wide_Wide_Text_IO.Standard_Error,
+            "Element_Name <"
+            & Node_Vector.Element (Index).Element_Name.To_Wide_Wide_String
+            & ">");
+
+         if Type_D.Get_Name.Length > 10 then
+            US_Response := League.Strings.Slice
+              (Type_D.Get_Name,
+               Type_D.Get_Name.Length - 7,
+               Type_D.Get_Name.Length);
+         end if;
+
+         if not Node_Vector.Element (Index).Max
+           and then not Node_Vector.Element (Index).Min
+           and then Node_Vector.Element (Index).Element_Name.Is_Empty
+           and then Node_Vector.Element (Index).Type_Def
+                      .Is_Complex_Type_Definition
+         then
+            if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
+               Writers.P
+                 (Payload_Writer,
+                  "   type "
+                  & Add_Separator (Node_Vector.Element (Index).Anonym_Name)
+                  & "_Anonym"
+                  & Discriminant_Type
+                  & " is record");
+
+               XSD_To_Ada.Utils.Print_Type_Definition
+                 (Type_D,
+                  Indent & "   ",
+                  Payload_Writer, Payload_Type_Writer,
+                  Type_D.Get_Name,
+                  Node_Vector.Element (Index).Anonym_Name,
+                  Node_Vector.Element (Index).Element_Name,
+                  Mapping,
+                  Types_Table);
+
+               Writers.P (Payload_Writer, "   end record;" & LF);
+            else
+               if Type_D.Get_Name.Length > 10
+                 and US_Response.To_UTF_8_String = "Response"
+               then
+
+                  if Node_Vector.Element
+                       (Index).Element_Name.To_UTF_8_String /= ""
+                  then
+                     Writers.N
+                       (Payload_Writer,
+                        "   type "
+                        & Add_Separator
+                          (Node_Vector.Element (Index).Element_Name)
+                        & " is new Abstract_IATS_Responce with" & LF
+                        & "     record" & LF
+                        & "     "
+                        & Add_Separator (Type_D.Get_Name)
+                        & LF
+                        & "      : ");
+
+                     Writers.P
+                       (Payload_Writer,
+                          (XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
+                             (Mapping,
+                              Type_D.Get_Name,
+                              False,
+                              False)));
+                     Writers.P
+                       (Payload_Writer,
+                        "     end record;" & LF);
+
+                     Gen_Access_Type
+                       (Payload_Writer,
+                        Add_Separator
+                          (Node_Vector.Element (Index).Element_Name));
+                  else
+                     XSD_To_Ada.Utils.Gen_Proc_Header
+                       (Payload_Writer,
+                        XSD_To_Ada.Utils.Add_Separator
+                          (Type_D.Get_Name.To_Wide_Wide_String));
+
+                     Writers.P
+                       (Payload_Writer,
+                        "   type "
+                        & XSD_To_Ada.Utils.Add_Separator
+                          (Type_D.Get_Name.To_Wide_Wide_String)
+                        & " is new Abstract_IATS_Responce with" & LF
+                        & "     record");
+
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                       (Type_D,
+                        Indent & "   ",
+                        Payload_Writer, Payload_Type_Writer,
+                        Type_D.Get_Name,
+                        Node_Vector.Element (Index).Anonym_Name,
+                        Node_Vector.Element (Index).Element_Name,
+                        Mapping,
+                        Types_Table);
+
+                     Writers.P (Payload_Writer, "     end record;" & LF);
+
+                     XSD_To_Ada.Utils.Gen_Access_Type
+                       (Payload_Writer,
+                        Add_Separator (Type_D.Get_Name.To_Wide_Wide_String));
+                  end if;
+
+                  US_Response.Clear;
+               else
+                  if Has_Element_Session (Type_D) then
+                     XSD_To_Ada.Utils.Gen_Proc_Header
+                       (Payload_Writer,
+                        Add_Separator (Type_D.Get_Name));
+
+                     Writers.P
+                       (Payload_Writer,
+                        "   type "
+                        & Add_Separator (Type_D.Get_Name)
+                        & " is" & LF
+                        & "     new Web_Services.SOAP.Payloads."
+                        & "Abstract_SOAP_Payload"
+                        & LF
+                        & "   with record");
+
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                       (Type_D,
+                        Indent & "   ",
+                        Payload_Writer,
+                        Payload_Type_Writer,
+                        Type_D.Get_Name,
+                        Node_Vector.Element (Index).Anonym_Name,
+                        Node_Vector.Element (Index).Element_Name,
+                        Mapping,
+                        Types_Table);
+
+                     Writers.P (Payload_Writer, "   end record;" & LF);
+                  else
+                     if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
+                       "anyType"
+                     then
+                        Writers.P
+                          (Payload_Writer,
+                           "   type "
+                           & Add_Separator (Type_D.Get_Name)
+                           & " is" & LF
+                           & "     new Web_Services.SOAP.Payloads."
+                           & "Abstract_SOAP_Payload" & LF
+                           & "   with record" & LF
+                           & "     null;" & LF
+                           & "   end record;" & LF);
+
+                        XSD_To_Ada.Utils.Gen_Access_Type
+                          (Payload_Writer, Add_Separator (Type_D.Get_Name));
+                     else
+                        Writers.P
+                          (Payload_Writer,
+                           "   type "
+                           & Add_Separator (Type_D.Get_Name) & " is record");
+
+                        XSD_To_Ada.Utils.Print_Type_Definition
+                          (Type_D.To_Type_Definition,
+                           Indent & "   ",
+                           Payload_Writer,
+                           Payload_Type_Writer,
+                           Type_D.Get_Name,
+                           Node_Vector.Element (Index).Anonym_Name,
+                           Node_Vector.Element (Index).Element_Name,
+                           Mapping,
+                           Types_Table);
+
+                        Writers.P (Payload_Writer, "   end record;" & LF);
+                     end if;
+                  end if;
+               end if;
+            end if;
+
+         elsif not Node_Vector.Element (Index).Element_Name.Is_Empty then
+            if Node_Vector.Element (Index).Element_Name.Length > 10 then
+               US_Response := League.Strings.Slice
+                 (Node_Vector.Element (Index).Element_Name,
+                  Node_Vector.Element (Index).Element_Name.Length - 7,
+                  Node_Vector.Element (Index).Element_Name.Length);
+            end if;
+
+            if Node_Vector.Element (Index).Type_Def.Get_Name.Is_Empty then
+               if Node_Vector.Element (Index).Element_Name.Length > 10
+                 and US_Response.To_UTF_8_String = "Response"
+               then
+                  Writers.P
+                    (Writer,
+                     "   type "
+                     & Add_Separator
+                       (Node_Vector.Element (Index).Element_Name)
+                     & " is new Abstract_IATS_Responce with" & LF
+                     & "     record" & LF
+                     & "     "
+                     & Add_Separator (Type_D.Get_Name)
+                     & LF
+                     & "      : Payloads."
+                     & Add_Separator (Type_D.Get_Name)
+                     & ";");
+
+                  Writers.P (Writer, "     end record;" & LF);
+
+                  Gen_Access_Type
+                    (Writer,
+                     Add_Separator
+                       (Node_Vector.Element (Index).Element_Name));
+               else
+                  if Has_Element_Session (Type_D) then
+                     Writers.P
+                       (Payload_Writer,
+                        "   type "
+                        & Add_Separator
+                          (Node_Vector.Element (Index).Element_Name)
+                        & " is" & LF
+                        & "     new Web_Services.SOAP.Payloads."
+                        & "Abstract_SOAP_Payload"
+                        & LF
+                        & "   with record");
+
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                       (Type_D,
+                        Indent & "   ",
+                        Payload_Writer,
+                        Payload_Type_Writer,
+                        Type_D.Get_Name,
+                        Node_Vector.Element (Index).Anonym_Name,
+                        Node_Vector.Element (Index).Element_Name,
+                        Mapping,
+                        Types_Table);
+
+                     Writers.P (Payload_Writer, "   end record;" & LF);
+                  else
+                     Writers.P
+                       (Payload_Writer,
+                        "   type "
+                        & Add_Separator
+                          (Node_Vector.Element (Index).Element_Name)
+                        & " is record");
+
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                       (Type_D,
+                        Indent & "   ",
+                        Payload_Writer,
+                        Payload_Type_Writer,
+                        Type_D.Get_Name,
+                        Node_Vector.Element (Index).Anonym_Name,
+                        Node_Vector.Element (Index).Element_Name,
+                        Mapping,
+                        Types_Table);
+
+                     Writers.P (Payload_Writer, "   end record;" & LF);
+                  end if;
+               end if;
+            else
+               if Node_Vector.Element (Index).Element_Name.Length > 10
+                 and US_Response.To_UTF_8_String = "Response"
+               then
+                  Writers.P
+                    (Writer,
+                     "   type "
+                     & Add_Separator
+                       (Node_Vector.Element (Index).Element_Name)
+                     & " is new Abstract_IATS_Responce with" & LF
+                     & "     record" & LF
+                     & "     "
+                     & Add_Separator (Type_D.Get_Name)
+                     & LF & "       : "
+                     & (XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
+                       (Mapping,
+                          Type_D.Get_Name,
+                          False,
+                          False))
+                     & ";" & LF
+                     & "     end record;" & LF);
+
+                  Gen_Access_Type
+                    (Writer,
+                     Add_Separator
+                       (Node_Vector.Element (Index).Element_Name));
+               else
+                  if XSD_To_Ada.Utils.Has_Element_Session
+                    (Type_D.To_Type_Definition) then
+                     Writers.P
+                       (Writer,
+                        "   type "
+                        & Add_Separator
+                          (Node_Vector.Element (Index).Element_Name)
+                        & " is" & LF
+                        & "     new Payloads."
+                        & Add_Separator
+                          (Node_Vector.Element (Index).Type_Def.Get_Name)
+                        & LF
+                        & "   with null record;" & LF);
+                  else
+                     if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
+                       = "anyType"
+                     then
+                        Writers.P
+                          (Writer,
+                           "   type "
+                           & Add_Separator
+                             (Node_Vector.Element (Index).Element_Name)
+                           & " is" & LF
+                           & "     new Web_Services.SOAP.Payloads."
+                           & "Abstract_SOAP_Payload" & LF
+                           & "   with record" & LF
+                           & "     null;" & LF
+                           & "   end record;" & LF);
+
+                        XSD_To_Ada.Utils.Gen_Access_Type
+                          (Writer,
+                           Add_Separator
+                             (Node_Vector.Element (Index).Element_Name));
+                     else
+                        Writers.P
+                          (Writer,
+                           "   type "
+                           & Add_Separator
+                             (Node_Vector.Element (Index).Element_Name)
+                           & " is record" & LF
+                           & "     "
+                           & Add_Separator
+                             (Node_Vector.Element (Index).Type_Def.Get_Name)
+                           & " : Payloads."
+                           & Add_Separator
+                             (Node_Vector.Element (Index).Type_Def.Get_Name)
+                           & ";" & LF
+                           & "   end record;" & LF);
+                     end if;
+                  end if;
+               end if;
+            end if;
+         elsif Node_Vector.Element (Index).Min then
+            declare
+               Type_Name : League.Strings.Universal_String;
+            begin
+
+               if Type_D.Get_Name.Is_Empty then
+                  Type_Name :=
+                    Node_Vector.Element (Index).Anonym_Name
+                    & "_Anonym"
+                    & Discriminant_Type;
+               else
+                  Type_Name := Type_D.Get_Name & Discriminant_Type;
+               end if;
+
+               Writers.P
+                 (Payload_Writer,
+                  "   type Optional_"
+                  & Add_Separator (Type_Name)
+                  & " is record"
+                  & LF
+                  & "     Is_Set : Boolean := False;"
+                  & LF
+                  & "     Value : "
+                  & XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
+                    (Mapping, Type_Name, False, False)
+                  & ";"
+                  & LF
+                  & "   end record;"
+                  & LF);
+            end;
+
+         elsif Node_Vector.Element (Index).Max then
+            Writers.P
+              (Payload_Writer,
+               "   package "
+               & Add_Separator (Vector_Name)
+               & "_Vectors is" & LF
+               & "     new Ada.Containers.Vectors" & LF
+               & "      (Positive, "
+               & Add_Separator (Vector_Name) & ");" & LF & LF
+               & Gen_Type_Line
+                 ("   subtype "
+                  & Add_Separator (Vector_Name)
+                  & "_Vector is "
+                  & Add_Separator (Vector_Name) & "_Vectors.Vector;", 3)
+               & LF);
+         end if;
+
+         Writer.N (Payload_Type_Writer.Text);
+         Writer.N (Payload_Writer.Text);
+
+         Payload_Type_Writer.Text.Clear;
+         Payload_Writer.Text.Clear;
+         US_Response.Clear;
+      end loop;
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+       (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "END Print_Type_Title");
+   end Print_Payloads;
+
    ---------------------------
    -- Print_Type_Definition --
    ---------------------------
@@ -1488,6 +1986,15 @@ package body XSD_To_Ada.Utils is
      Is_Min_Occur : Boolean := False)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      procedure Print_Term
+       (XS_Term      : XML.Schema.Terms.XS_Term;
+        Indent       : Wide_Wide_String := "";
+        Writer       : in out Writers.Writer;
+        Writer_types : in out Writers.Writer;
+        Name         : League.Strings.Universal_String;
+        Map          : XSD_To_Ada.Mappings.Mapping;
+        Table        : in out Types_Table_Type_Array);
 
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
@@ -1589,10 +2096,12 @@ package body XSD_To_Ada.Utils is
                if Is_Min_Occur then
                   Writers.P
                     (Vector_Package,
-                     "   type Optional_" & Add_Separator (Name) & "_Case is record"
+                     "   type Optional_" & Add_Separator (Name)
+                     & "_Case is record"
                      & LF
                      & "     Is_Set : Boolean := False;" & LF
-                     & "     Value  : Payloads." & Add_Separator (Name) & "_Case;" & LF
+                     & "     Value  : Payloads." & Add_Separator (Name)
+                     & "_Case;" & LF
                      & "   end record;" & LF);
                end if;
 
@@ -1650,8 +2159,10 @@ package body XSD_To_Ada.Utils is
                         & XSD_To_Ada.Utils.Add_Separator (Name) & "_Anonym);"
                         & LF & LF
                         & Gen_Type_Line
-                          ("   subtype " & XSD_To_Ada.Utils.Add_Separator (Name)
-                           & "_Anonyms is " & XSD_To_Ada.Utils.Add_Separator (Name)
+                          ("   subtype "
+                           & XSD_To_Ada.Utils.Add_Separator (Name)
+                           & "_Anonyms is "
+                           & XSD_To_Ada.Utils.Add_Separator (Name)
                            & "_Anonyms_Vectors.Vector;", 5)
                         & LF & LF);
                   end if;
@@ -1715,7 +2226,7 @@ package body XSD_To_Ada.Utils is
 
                if J /=  XS_List.Get_Length and Choice then
                   Name_Kind.Append
-                    ("," & Wide_Wide_Character'Val (10) & "      ") ;
+                    ("," & Wide_Wide_Character'Val (10) & "      ");
                end if;
             end loop;
 
@@ -1729,7 +2240,6 @@ package body XSD_To_Ada.Utils is
             Type_Name :=
               Map.Ada_Type_Qualified_Name
                 (Type_D.Get_Name, Min_Occurs, Max_Occurs);
-
 
             if Type_D.Get_Name.Is_Empty then
 
@@ -1805,7 +2315,7 @@ package body XSD_To_Ada.Utils is
 
                   if not Is_Type_In_Optional_Vector (Type_Name) then
                      Writers.P
-                       (Writer_Types,
+                       (Writer_types,
                         "   type Optional_"
                         & XSD_To_Ada.Utils.Add_Separator (Type_Name)
                         & " is record" & LF
@@ -1823,7 +2333,8 @@ package body XSD_To_Ada.Utils is
                      & Gen_Type_Line ("           "
                        & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
                        & " : "
-                       & "Optional_" & Type_Name.To_Wide_Wide_String & ";", 15) & LF);
+                       & "Optional_" & Type_Name.To_Wide_Wide_String & ";", 15)
+                     & LF);
                else
                   Name_Case.Append
                     ("        when "
@@ -1907,7 +2418,7 @@ package body XSD_To_Ada.Utils is
                     (XS_Term,
                      Indent & "   ",
                      Writer,
-                     Writer_Types,
+                     Writer_types,
                      League.Strings.To_Universal_String (Add_Separator (Name)),
                      Mapping,
                      Table);
@@ -1917,7 +2428,7 @@ package body XSD_To_Ada.Utils is
                        (XS_Term,
                         Indent & "   ",
                         Writer,
-                        Writer_Types,
+                        Writer_types,
                         League.Strings.To_Universal_String
                           (Add_Separator (Anonym_Name)),
                         Mapping,
@@ -1927,7 +2438,7 @@ package body XSD_To_Ada.Utils is
                        (XS_Term,
                         Indent & "   ",
                         Writer,
-                        Writer_Types,
+                        Writer_types,
                         League.Strings.To_Universal_String
                           (Add_Separator (Element_Name)),
                         Mapping,
@@ -1982,447 +2493,6 @@ package body XSD_To_Ada.Utils is
       Choice := False;
       Now_Print_Level := Now_Print_Level - 1;
    end Print_Type_Definition;
-
-   ----------------------
-   -- Print_Type_Title --
-   ----------------------
-
-   procedure Print_Payloads
-     (Node_Vector : XSD_To_Ada.Utils.Items;
-      Indent      : Wide_Wide_String;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
-      Mapping     : XSD_To_Ada.Mappings.Mapping)
-   is
-      US_Response         : League.Strings.Universal_String;
-      Payload_Writer      : XSD_To_Ada.Writers.Writer;
-      Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
-
-      Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-
-      Discriminant_Type : League.Strings.Universal_String;
-      Vector_Name       : League.Strings.Universal_String;
-   begin
-
-      for Index in 1 .. Natural (Node_Vector.Length) loop
-         Type_D := Node_Vector.Element (Index).Type_Def;
-
-         Discriminant_Type.Clear;
-
-         if Node_Vector.Element (Index).Choice then
-            Discriminant_Type := League.Strings.From_UTF_8_String ("_Case");
-         end if;
-
-         if Type_D.Get_Name.Is_Empty then
-            Vector_Name.Clear;
-            Vector_Name.Append (Node_Vector.Element (Index).Anonym_Name);
-            Vector_Name.Append ("_Anonym");
-            Vector_Name.Append (Discriminant_Type);
-         else
-            Vector_Name := Type_D.Get_Name;
-         end if;
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            Indent & Natural'Wide_Wide_Image (Index)
-            & "; START Print_Type_Title Type_D="
-            & Type_D.Get_Name.To_Wide_Wide_String
-            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String);
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Min " & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Min));
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Max " & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Max));
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Choice "
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Choice));
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Anonym_Name <"
-            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String & ">");
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error,
-            "Element_Name <"
-            & Node_Vector.Element (Index).Element_Name.To_Wide_Wide_String & ">");
-
-         if Type_D.Get_Name.Length > 10 then
-            US_Response := League.Strings.Slice
-              (Type_D.Get_Name,
-               Type_D.Get_Name.Length - 7,
-               Type_D.Get_Name.Length);
-         end if;
-
-         if not Node_Vector.Element (Index).Max
-           and then not Node_Vector.Element (Index).Min
-           and then Node_Vector.Element (Index).Element_Name.Is_Empty
-           and then Node_Vector.Element (Index).Type_Def.Is_Complex_Type_Definition
-         then
-            if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
-               Writers.P
-                 (Payload_Writer,
-                  "   type "
-                  & Add_Separator (Node_Vector.Element (Index).Anonym_Name)
-                  & "_Anonym"
-                  & Discriminant_Type
-                  & " is record");
-
-               XSD_To_Ada.Utils.Print_Type_Definition
-                 (Type_D,
-                  Indent & "   ",
-                  Payload_Writer, Payload_Type_Writer,
-                  Type_D.Get_Name,
-                  Node_Vector.Element (Index).Anonym_Name,
-                  Node_Vector.Element (Index).Element_Name,
-                  Mapping,
-                  Types_Table);
-
-               Writers.P (Payload_Writer, "   end record;" & LF);
-            else
-               if Type_D.Get_Name.Length > 10
-                 and US_Response.To_UTF_8_String = "Response"
-               then
-
-                  if Node_Vector.Element
-                       (Index).Element_Name.To_UTF_8_String /= ""
-                  then
-                     Writers.N
-                       (Payload_Writer,
-                        "   type "
-                        & Add_Separator
-                          (Node_Vector.Element (Index).Element_Name)
-                        & " is new Abstract_IATS_Responce with" & LF
-                        & "     record" & LF
-                        & "     "
-                        & Add_Separator (Type_D.Get_Name)
-                        & LF
-                        & "      : ");
-
-                     Writers.P
-                       (Payload_Writer,
-                          (XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                             (Mapping,
-                              Type_D.Get_Name,
-                              False,
-                              False)));
-                     Writers.P
-                       (Payload_Writer,
-                        "     end record;" & LF);
-
-                     Gen_Access_Type
-                       (Payload_Writer,
-                        Add_Separator
-                          (Node_Vector.Element (Index).Element_Name));
-                  else
-                     XSD_To_Ada.Utils.Gen_Proc_Header
-                       (Payload_Writer,
-                        XSD_To_Ada.Utils.Add_Separator
-                          (Type_D.Get_Name.To_Wide_Wide_String));
-
-                     Writers.P
-                       (Payload_Writer,
-                        "   type "
-                        & XSD_To_Ada.Utils.Add_Separator
-                          (Type_D.Get_Name.To_Wide_Wide_String)
-                        & " is new Abstract_IATS_Responce with" & LF
-                        & "     record");
-
-                     XSD_To_Ada.Utils.Print_Type_Definition
-                       (Type_D,
-                        Indent & "   ",
-                        Payload_Writer, Payload_Type_Writer,
-                        Type_D.Get_Name,
-                        Node_Vector.Element (Index).Anonym_Name,
-                        Node_Vector.Element (Index).Element_Name,
-                        Mapping,
-                        Types_Table);
-
-                     Writers.P (Payload_Writer, "     end record;" & LF);
-
-                     XSD_To_Ada.Utils.Gen_Access_Type
-                       (Payload_Writer,
-                        Add_Separator (Type_D.Get_Name.To_Wide_Wide_String));
-                  end if;
-
-                  US_Response.Clear;
-               else
-                  if Has_Element_Session (Type_D) then
-                     XSD_To_Ada.Utils.Gen_Proc_Header
-                       (Payload_Writer,
-                        Add_Separator (Type_D.Get_Name));
-
-                     Writers.P
-                       (Payload_Writer,
-                        "   type "
-                        & Add_Separator (Type_D.Get_Name)
-                        & " is" & LF
-                        & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
-                        & LF
-                        & "   with record");
-
-                     XSD_To_Ada.Utils.Print_Type_Definition
-                       (Type_D,
-                        Indent & "   ",
-                        Payload_Writer,
-                        Payload_Type_Writer,
-                        Type_D.Get_Name,
-                        Node_Vector.Element (Index).Anonym_Name,
-                        Node_Vector.Element (Index).Element_Name,
-                        Mapping,
-                        Types_Table);
-
-                     Writers.P (Payload_Writer, "   end record;" & LF);
-                  else
-                     if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
-                       "anyType"
-                     then
-                        Writers.P
-                          (Payload_Writer,
-                           "   type "
-                           & Add_Separator (Type_D.Get_Name)
-                           & " is" & LF
-                           & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
-                           & "   with record" & LF
-                           & "     null;" & LF
-                           & "   end record;" & LF);
-
-                        XSD_To_Ada.Utils.Gen_Access_Type
-                          (Payload_Writer, Add_Separator (Type_D.Get_Name));
-                     else
-                        Writers.P
-                          (Payload_Writer,
-                           "   type "
-                           & Add_Separator (Type_D.Get_Name) & " is record");
-
-                        XSD_To_Ada.Utils.Print_Type_Definition
-                          (Type_D.To_Type_Definition,
-                           Indent & "   ",
-                           Payload_Writer,
-                           Payload_Type_Writer,
-                           Type_D.Get_Name,
-                           Node_Vector.Element (Index).Anonym_Name,
-                           Node_Vector.Element (Index).Element_Name,
-                           Mapping,
-                           Types_Table);
-
-                        Writers.P (Payload_Writer, "   end record;" & LF);
-                     end if;
-                  end if;
-               end if;
-            end if;
-
-         elsif not Node_Vector.Element (Index).Element_Name.Is_Empty then
-            if Node_Vector.Element (Index).Element_Name.Length > 10 then
-               US_Response := League.Strings.Slice
-                 (Node_Vector.Element (Index).Element_Name,
-                  Node_Vector.Element (Index).Element_Name.Length - 7,
-                  Node_Vector.Element (Index).Element_Name.Length);
-            end if;
-
-            if Node_Vector.Element (Index).Type_Def.Get_Name.Is_Empty then
-               if Node_Vector.Element (Index).Element_Name.Length > 10
-                 and US_Response.To_UTF_8_String = "Response"
-               then
-                  Writers.P
-                    (Writer,
-                     "   type "
-                     & Add_Separator
-                       (Node_Vector.Element (Index).Element_Name)
-                     & " is new Abstract_IATS_Responce with" & LF
-                     & "     record" & LF
-                     & "     "
-                     & Add_Separator (Type_D.Get_Name)
-                     & LF
-                     & "      : Payloads."
-                     & Add_Separator (Type_D.Get_Name)
-                     & ";");
-
-                  Writers.P (Writer, "     end record;" & LF);
-
-                  Gen_Access_Type
-                    (Writer,
-                     Add_Separator
-                       (Node_Vector.Element (Index).Element_Name));
-               else
-                  if Has_Element_Session (Type_D) then
-                     Writers.P
-                       (Payload_Writer,
-                        "   type "
-                        & Add_Separator (Node_Vector.Element (Index).Element_Name)
-                        & " is" & LF
-                        & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
-                        & LF
-                        & "   with record");
-
-                     XSD_To_Ada.Utils.Print_Type_Definition
-                       (Type_D,
-                        Indent & "   ",
-                        Payload_Writer,
-                        Payload_Type_Writer,
-                        Type_D.Get_Name,
-                        Node_Vector.Element (Index).Anonym_Name,
-                        Node_Vector.Element (Index).Element_Name,
-                        Mapping,
-                        Types_Table);
-
-                     Writers.P (Payload_Writer, "   end record;" & LF);
-                  else
-                     Writers.P
-                       (Payload_Writer,
-                        "   type "
-                        & Add_Separator (Node_Vector.Element (Index).Element_Name)
-                        & " is record");
-
-                     XSD_To_Ada.Utils.Print_Type_Definition
-                       (Type_D,
-                        Indent & "   ",
-                        Payload_Writer,
-                        Payload_Type_Writer,
-                        Type_D.Get_Name,
-                        Node_Vector.Element (Index).Anonym_Name,
-                        Node_Vector.Element (Index).Element_Name,
-                        Mapping,
-                        Types_Table);
-
-                     Writers.P (Payload_Writer, "   end record;" & LF);
-                  end if;
-               end if;
-            else
-               if Node_Vector.Element (Index).Element_Name.Length > 10
-                 and US_Response.To_UTF_8_String = "Response"
-               then
-                  Writers.P
-                    (Writer,
-                     "   type "
-                     & Add_Separator
-                       (Node_Vector.Element (Index).Element_Name)
-                     & " is new Abstract_IATS_Responce with" & LF
-                     & "     record" & LF
-                     & "     "
-                     & Add_Separator (Type_D.Get_Name)
-                     & LF & "       : "
-                     & (XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                       (Mapping,
-                          Type_D.Get_Name,
-                          False,
-                          False))
-                     & ";" & LF
-                     & "     end record;" & LF);
-
-                  Gen_Access_Type
-                    (Writer,
-                     Add_Separator
-                       (Node_Vector.Element (Index).Element_Name));
-               else
-                  if XSD_To_Ada.Utils.Has_Element_Session
-                    (Type_D.To_Type_Definition) then
-                     Writers.P
-                       (Writer,
-                        "   type "
-                        & Add_Separator (Node_Vector.Element (Index).Element_Name)
-                        & " is" & LF
-                        & "     new Payloads."
-                        & Add_Separator (Node_Vector.Element (Index).Type_Def.Get_Name)
-                        & LF
-                        & "   with null record;" & LF);
-                  else
-                     if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
-                       = "anyType"
-                     then
-                        Writers.P
-                          (Writer,
-                           "   type "
-                           & Add_Separator (Node_Vector.Element (Index).Element_Name)
-                           & " is" & LF
-                           & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload" & LF
-                           & "   with record" & LF
-                           & "     null;" & LF
-                           & "   end record;" & LF);
-
-                        XSD_To_Ada.Utils.Gen_Access_Type
-                          (Writer,
-                           Add_Separator
-                             (Node_Vector.Element (Index).Element_Name));
-                     else
-                        Writers.P
-                          (Writer,
-                           "   type "
-                           & Add_Separator (Node_Vector.Element (Index).Element_Name)
-                           & " is record" & LF
-                           & "     "
-                           & Add_Separator (Node_Vector.Element (Index).Type_Def.Get_Name)
-                           & " : Payloads."
-                           & Add_Separator (Node_Vector.Element (Index).Type_Def.Get_Name)
-                           & ";" & LF
-                           & "   end record;" & LF);
-                     end if;
-                  end if;
-               end if;
-            end if;
-         elsif Node_Vector.Element (Index).Min then
-            declare
-               Type_Name : League.Strings.Universal_String;
-            begin
-
-               if Type_D.Get_Name.Is_Empty then
-                  Type_Name :=
-                    Node_Vector.Element (Index).Anonym_Name
-                    & "_Anonym"
-                    & Discriminant_Type;
-               else
-                  Type_Name := Type_D.Get_Name & Discriminant_Type;
-               end if;
-
-               Writers.P
-                 (Payload_Writer,
-                  "   type Optional_"
-                  & Add_Separator (Type_Name)
-                  & " is record"
-                  & LF
-                  & "     Is_Set : Boolean := False;"
-                  & LF
-                  & "     Value : "
-                  & XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                    (Mapping, Type_Name, False, False)
-                  & ";"
-                  & LF
-                  & "   end record;"
-                  & LF);
-            end;
-
-         elsif Node_Vector.Element (Index).Max then
-            Writers.P
-              (Payload_Writer,
-               "   package "
-               & Add_Separator (Vector_Name)
-               & "_Vectors is" & LF
-               & "     new Ada.Containers.Vectors" & LF
-               & "      (Positive, "
-               & Add_Separator (Vector_Name) & ");" & LF & LF
-               & Gen_Type_Line
-                 ("   subtype "
-                  & Add_Separator (Vector_Name)
-                  & "_Vector is "
-                  & Add_Separator (Vector_Name) & "_Vectors.Vector;", 3)
-               & LF);
-         end if;
-
-         Writer.N (Payload_Type_Writer.Text);
-         Writer.N (Payload_Writer.Text);
-
-         Payload_Type_Writer.Text.Clear;
-         Payload_Writer.Text.Clear;
-         US_Response.Clear;
-      end loop;
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "END Print_Type_Title");
-   end Print_Payloads;
 
    ----------------
    -- Put_Header --

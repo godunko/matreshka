@@ -9,12 +9,52 @@ project Xsd_To_Ada is
    for Object_Dir use ".objs";
    for Exec_Dir use ".";
 
+   Default_Ada_Switches :=
+     ("-g",             --  Generates debug information
+      --  GNAT GPL 2011 bug
+      --  "-gnato",     --  Enable overflow checks
+      "-fstack-check",  --  Enable stack checks
+      "-gnat12",        --  Enable Ada 2012 mode
+      "-gnatW8",        --  Interpret source files as UTF-8 encoded.
+      "-gnatwe",        --  Warnings as errors
+      "-gnatwjkrv",
+      --  Enable warnings:
+      --   j+   turn on warnings for obsolescent (annex J) feature
+      --   k+   turn on warnings on constant variable
+      --   m+   turn on warnings for variable assigned but not read
+      --   r+   turn on warnings for redundant construct
+      --   v*+  turn on warnings for unassigned variable
+      "-gnatyaAbcdefhiIkmnoOprsStux");
+      --  Enable style checks:
+      --   a    check attribute casing
+      --   A    check array attribute indexes
+      --   b    check no blanks at end of lines
+      --   c    check comment format (two spaces)
+      --   d    check no DOS line terminators
+      --   e    check end/exit labels present
+      --   f    check no form feeds/vertical tabs in source
+      --   h    check no horizontal tabs in source
+      --   i    check if-then layout
+      --   I    check mode in
+      --   k    check casing rules for keywords
+      --   m    check line length <= 79 characters
+      --   n    check casing of package Standard identifiers
+      --   o    check subprogram bodies in alphabetical order
+      --   O    check overriding indicators
+      --   p    check pragma casing
+      --   r    check casing for identifier references
+      --   s    check separate subprogram specs present
+      --   S    check separate lines after THEN or ELSE
+      --   t    check token separation rules
+      --   u    check no unnecessary blank lines
+      --   x    check extra parentheses around conditionals
+
    package Builder is
       for Default_Switches ("ada") use ("-g");
    end Builder;
 
    package Compiler is
-      for Default_Switches ("ada") use ("-g");
+      for Default_Switches ("ada") use Default_Ada_Switches;
    end Compiler;
 
 end Xsd_To_Ada;
