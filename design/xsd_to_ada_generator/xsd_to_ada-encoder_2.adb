@@ -113,9 +113,8 @@ package body XSD_To_Ada.Encoder_2 is
       end if;
 
       if Optional then
-         Writers.P
-           (Writer,
-            Add_Indent (Spaces_Count + New_Spaces) & "if Data."
+         Writer.P
+           (Add_Indent (Spaces_Count + New_Spaces) & "if Data."
             & Base_Name
             & Add_Separator (XS_Term.Get_Name)
             & ".Is_Set then");
@@ -124,9 +123,8 @@ package body XSD_To_Ada.Encoder_2 is
       end if;
 
       if Vector then
-         Writers.P
-           (Writer,
-            Add_Indent (Spaces_Count + New_Spaces)
+         Writer.P
+           (Add_Indent (Spaces_Count + New_Spaces)
             & "for Index in 1 .. Natural (Data."
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -135,9 +133,8 @@ package body XSD_To_Ada.Encoder_2 is
          New_Spaces := New_Spaces + 3;
       end if;
 
-      Writers.P
-        (Writer,
-         Gen_Type_Line
+      Writer.P
+        (Gen_Type_Line
            ("Encode (Data."
             & Choice_Name.To_Wide_Wide_String
             & Base_Name.To_Wide_Wide_String
@@ -152,18 +149,16 @@ package body XSD_To_Ada.Encoder_2 is
 
       if Vector then
          New_Spaces := New_Spaces - 3;
-         Writers.P
-           (Writer, Add_Indent (Spaces_Count + New_Spaces) & "end loop;");
+         Writer.P (Add_Indent (Spaces_Count + New_Spaces) & "end loop;");
       end if;
 
       if Optional then
          New_Spaces := New_Spaces - 3;
 
-         Writers.P
-           (Writer, Add_Indent (Spaces_Count + New_Spaces) & "end if;");
+         Writer.P (Add_Indent (Spaces_Count + New_Spaces) & "end if;");
       end if;
 
-      Writers.P (Writer);
+      Writer.P;
 
    end Generate_Complex_Type;
 
@@ -182,9 +177,8 @@ package body XSD_To_Ada.Encoder_2 is
 
       Tag_Vector.Append (Procedures_Name);
 
-      Writers.P
-        (Spec_Writer,
-         "   type " & Add_Separator (Procedures_Name) & "_Encoder is"
+      Spec_Writer.P
+        ("   type " & Add_Separator (Procedures_Name) & "_Encoder is"
          & LF
          & "   limited new Web_Services.SOAP.Payloads.Encoders."
          & "SOAP_Payload_Encoder"
@@ -209,9 +203,8 @@ package body XSD_To_Ada.Encoder_2 is
         (Writer,
          XSD_To_Ada.Utils.Add_Separator (Procedures_Name));
 
-      Writers.P
-        (Writer,
-         "   overriding function Create" & LF
+      Writer.P
+        ("   overriding function Create" & LF
          & "     (Dummy : not null access Boolean)" & LF
          & "      return " & Add_Separator (Procedures_Name) & "_Encoder"
          & LF
@@ -224,9 +217,8 @@ package body XSD_To_Ada.Encoder_2 is
          & "   end Create;" & LF);
 
       if Is_AnyType then
-         Writers.P
-           (Writer,
-            "   overriding procedure Encode" & LF
+         Writer.P
+           ("   overriding procedure Encode" & LF
             & "     (Self    : "
             & Add_Separator (Procedures_Name)
             & "_Encoder;" & LF
@@ -242,9 +234,8 @@ package body XSD_To_Ada.Encoder_2 is
             & "   begin" & LF
             & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
       else
-         Writers.P
-           (Writer,
-            "   overriding procedure Encode" & LF
+         Writer.P
+           ("   overriding procedure Encode" & LF
             & "     (Self    : "
             & Add_Separator (Procedures_Name)
             & "_Encoder;" & LF
@@ -264,16 +255,14 @@ package body XSD_To_Ada.Encoder_2 is
             & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
       end if;
 
-      Writers.P (Writer, Write_Start_Element (Procedures_Name));
-
+      Writer.P (Write_Start_Element (Procedures_Name));
    end Generate_Overriding_Procedure_Encode_Header;
 
    procedure Generate_Package_Header
      (Payload_Writer : in out XSD_To_Ada.Writers.Writer) is
    begin
-      Writers.N
-        (Payload_Writer,
-         "with Payloads;" & LF
+      Payload_Writer.N
+        ("with Payloads;" & LF
          & "with ICTS.Forex;" & LF
          & "with Web_Services.SOAP.Payloads.Encoders.Registry;"
          & LF & LF
@@ -308,9 +297,8 @@ package body XSD_To_Ada.Encoder_2 is
      (Writer          : in out Writers.Writer;
       Procedures_Name : League.Strings.Universal_String) is
    begin
-      Writers.P
-        (Writer,
-         "   procedure Encode" & LF
+      Writer.P
+        ("   procedure Encode" & LF
          & "     (Data : "
          & Procedures_Name & ";"
          & LF
@@ -319,9 +307,8 @@ package body XSD_To_Ada.Encoder_2 is
          & "      Name : League.Strings.Universal_String);"
          & LF);
 
-      Writers.P
-        (Writer,
-         "   procedure Encode" & LF
+      Writer.P
+        ("   procedure Encode" & LF
          & "     (Data : " & Procedures_Name & ";" & LF
          & "      Writer : in out XML.SAX.Writers.SAX_Writer'Class;" & LF
          & "      Name : League.Strings.Universal_String)" & LF
@@ -353,9 +340,8 @@ package body XSD_To_Ada.Encoder_2 is
          Optional_Value_Marker :=
            League.Strings.To_Universal_String (".Value");
 
-         Writers.P
-           (Writer,
-            "      if Data."
+         Writer.P
+           ("      if Data."
             & Choice_Name.To_Wide_Wide_String
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -363,25 +349,23 @@ package body XSD_To_Ada.Encoder_2 is
       end if;
 
       if Max_Occurs then
-         Writers.P
-           (Writer,
-           "      for Index in 1 .. Natural (Data."
+         Writer.P
+           ("      for Index in 1 .. Natural (Data."
             & Choice_Name.To_Wide_Wide_String
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
             & ".Length) loop");
       end if;
 
-      Writers.N (Writer, Write_Start_Element (XS_Term.Get_Name));
+      Writer.N (Write_Start_Element (XS_Term.Get_Name));
 
       if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string" then
 
          if not Type_D.To_Simple_Type_Definition.Get_Lexical_Enumeration
            .Is_Empty
          then
-            Writers.P
-              (Writer,
-               Gen_Type_Line
+            Writer.P
+              (Gen_Type_Line
                  ("Writer.Characters (League.Strings.From_UTF_8_String (Data."
                   & Choice_Name.To_Wide_Wide_String
                   & Base_Name.To_Wide_Wide_String
@@ -391,9 +375,8 @@ package body XSD_To_Ada.Encoder_2 is
                & LF & "  --  "
                & Add_Separator (Type_D.Get_Base_Type.Get_Name));
          else
-            Writers.P
-              (Writer,
-               Gen_Type_Line
+            Writer.P
+              (Gen_Type_Line
                  ("Writer.Characters (Data."
                   & Choice_Name.To_Wide_Wide_String
                   & Base_Name.To_Wide_Wide_String
@@ -406,9 +389,8 @@ package body XSD_To_Ada.Encoder_2 is
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "decimal" then
 
-         Writers.P
-           (Writer,
-            "      Writer.Characters" & LF
+         Writer.P
+           ("      Writer.Characters" & LF
             & XSD_To_Ada.Encoder.Gen_Type_Line
               ("(League.Strings.From_UTF_8_String (To_String (Data."
                & Base_Name.To_Wide_Wide_String
@@ -422,9 +404,8 @@ package body XSD_To_Ada.Encoder_2 is
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "positiveInteger"
         or Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "unsignedShort"
       then
-         Writers.P
-           (Writer,
-            "      Writer.Characters" & LF
+         Writer.P
+           ("      Writer.Characters" & LF
             & XSD_To_Ada.Encoder.Gen_Type_Line
               ("(League.Strings.From_UTF_8_String (Data."
                & Base_Name.To_Wide_Wide_String
@@ -438,9 +419,8 @@ package body XSD_To_Ada.Encoder_2 is
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "boolean" then
 
-         Writers.P
-           (Writer,
-            "      Writer.Characters (Image (Data."
+         Writer.P
+           ("      Writer.Characters (Image (Data."
             & Base_Name.To_Wide_Wide_String
             & Choice_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -449,9 +429,8 @@ package body XSD_To_Ada.Encoder_2 is
             & LF & "  --  "
             & Type_D.Get_Base_Type.Get_Name);
       else
-         Writers.P
-           (Writer,
-            "      Writer.Characters (Data."
+         Writer.P
+           ("      Writer.Characters (Data."
             & Base_Name.To_Wide_Wide_String
             & Choice_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -461,19 +440,19 @@ package body XSD_To_Ada.Encoder_2 is
             & Type_D.Get_Base_Type.Get_Name);
       end if;
 
-      Writers.N (Writer, Write_End_Element (XS_Term.Get_Name));
+      Writer.N (Write_End_Element (XS_Term.Get_Name));
 
       if Min_Occurs
         and then not Max_Occurs
       then
-         Writers.P (Writer, "      end if;");
+         Writer.P ("      end if;");
       end if;
 
       if Max_Occurs then
-         Writers.P (Writer, "      end loop;");
+         Writer.P ("      end loop;");
       end if;
 
-      Writers.P (Writer);
+      Writer.P;
    end Generate_Simple_Type;
 
    ---------------------------
@@ -779,22 +758,41 @@ package body XSD_To_Ada.Encoder_2 is
                       .Is_Complex_Type_Definition
          then
             if not Item.Anonym_Name.Is_Empty then
-               if not Item.Anonym_Name.Is_Empty then
-                  Anonym_Name :=
-                    XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                       (Mapping,
-                        Add_Separator (Item.Anonym_Name)
-                        & "_Anonym"
-                        & Discriminant_Type);
+               Anonym_Name :=
+                 XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
+                   (Mapping,
+                    Add_Separator (Item.Anonym_Name)
+                    & "_Anonym"
+                    & Discriminant_Type);
 
-                  Generate_Procedure_Encode_Header
-                    (Payload_Writer, Anonym_Name);
+               Generate_Procedure_Encode_Header (Payload_Writer, Anonym_Name);
 
-                  Writers.N
+               Payload_Writer.P
+                 ("      Writer.Start_Element (IATS_URI, Name);");
+
+               XSD_To_Ada.Encoder_2.Print_Type_Definition
+                 (Type_D,
+                  Indent & "   ",
+                  Payload_Writer,
+                  Payload_Type_Writer,
+                  Mapping,
+                  Type_D.Get_Name,
+                  Item.Anonym_Name,
+                  Item.Element_Name);
+
+               Payload_Writer.P ("      Writer.End_Element (IATS_URI, Name);");
+
+               Payload_Writer.P ("   end Encode;" & LF);
+            elsif not Type_D.Get_Name.Ends_With ("Response") then
+               if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
+
+                  Generate_Overriding_Procedure_Encode_Header
                     (Payload_Writer,
-                    ("      Writer.Start_Element (IATS_URI, Name);" & LF));
+                     Spec_Writer,
+                     Type_D.Get_Name,
+                     Tag_Vector);
 
-                  XSD_To_Ada.Encoder_2.Print_Type_Definition
+                  Print_Type_Definition
                     (Type_D,
                      Indent & "   ",
                      Payload_Writer,
@@ -804,89 +802,54 @@ package body XSD_To_Ada.Encoder_2 is
                      Item.Anonym_Name,
                      Item.Element_Name);
 
-                  Writers.N
+                  Payload_Writer.N
+                    (Write_End_Element (Type_D.Get_Name));
+
+                  Payload_Writer.P ("   end Encode;" & LF);
+               elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
+                 "anyType"
+               then
+                  Generate_Overriding_Procedure_Encode_Header
                     (Payload_Writer,
-                    ("      Writer.End_Element (IATS_URI, Name);" & LF));
+                     Spec_Writer,
+                     Type_D.Get_Name,
+                     Tag_Vector,
+                     True);
 
-                  Writers.P (Payload_Writer, "   end Encode;" & LF);
-               end if;
-            else
-               if not Type_D.Get_Name.Ends_With ("Response") then
-                  if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
+                  Payload_Writer.N (Write_End_Element (Type_D.Get_Name));
 
-                     Generate_Overriding_Procedure_Encode_Header
-                       (Payload_Writer,
-                        Spec_Writer,
-                        Type_D.Get_Name,
-                        Tag_Vector);
+                  Payload_Writer.P ("   end Encode;" & LF);
+               else
+                  Generate_Procedure_Encode_Header
+                    (Payload_Writer,
+                     XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
+                       (Mapping, Type_D.Get_Name));
 
-                     Print_Type_Definition
-                       (Type_D,
-                        Indent & "   ",
-                        Payload_Writer,
-                        Payload_Type_Writer,
-                        Mapping,
-                        Type_D.Get_Name,
-                        Item.Anonym_Name,
-                        Item.Element_Name);
+                  Payload_Writer.P
+                    ("      Writer.Start_Element (IATS_URI, Name);");
 
-                     Writers.N
-                       (Payload_Writer,
-                        Write_End_Element (Type_D.Get_Name));
+                  Print_Type_Definition
+                    (Type_D,
+                     Indent & "   ",
+                     Payload_Writer,
+                     Payload_Type_Writer,
+                     Mapping,
+                     Type_D.Get_Name,
+                     Item.Anonym_Name,
+                     Item.Element_Name);
 
-                     Writers.P (Payload_Writer, "   end Encode;" & LF);
-                  else
-                     if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
-                       "anyType"
-                     then
-                        Generate_Overriding_Procedure_Encode_Header
-                          (Payload_Writer,
-                           Spec_Writer,
-                           Type_D.Get_Name,
-                           Tag_Vector,
-                           True);
+                  Payload_Writer.P
+                    ("      Writer.End_Element (IATS_URI, Name);");
 
-                        Writers.N
-                          (Payload_Writer,
-                           Write_End_Element (Type_D.Get_Name));
-
-                        Writers.P (Payload_Writer, "   end Encode;" & LF);
-                     else
-                        Generate_Procedure_Encode_Header
-                          (Payload_Writer,
-                           XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                             (Mapping, Type_D.Get_Name));
-
-                        Writers.P
-                          (Payload_Writer,
-                           "      Writer.Start_Element (IATS_URI, Name);");
-
-                        Print_Type_Definition
-                          (Type_D,
-                           Indent & "   ",
-                           Payload_Writer,
-                           Payload_Type_Writer,
-                           Mapping,
-                           Type_D.Get_Name,
-                           Item.Anonym_Name,
-                           Item.Element_Name);
-
-                        Writers.P
-                          (Payload_Writer,
-                           "      Writer.End_Element (IATS_URI, Name);");
-
-                        Writers.P (Payload_Writer, "   end Encode;" & LF);
-                     end if;
-                  end if;
+                  Payload_Writer.P ("   end Encode;" & LF);
                end if;
             end if;
 
          elsif not Item.Element_Name.Is_Empty then
             if Item.Type_Def.Get_Name.Is_Empty then
-
-               if not Item.Element_Name.Ends_With ("Response") then
-                  if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
-
+               if not Item.Element_Name.Ends_With ("Response")
+                 and then XSD_To_Ada.Utils.Has_Element_Session (Type_D)
+               then
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
                         Spec_Writer,
@@ -903,75 +866,50 @@ package body XSD_To_Ada.Encoder_2 is
                         Item.Anonym_Name,
                         Item.Element_Name);
 
-                     Writers.N
-                       (Payload_Writer,
-                        Write_End_Element
-                          (Item.Element_Name));
+                     Payload_Writer.N (Write_End_Element (Item.Element_Name));
 
-                     Writers.P (Payload_Writer, "   end Encode;" & LF);
-                  else
-                     null;
-                  end if;
+                     Payload_Writer.P ("   end Encode;" & LF);
                end if;
-            else
-               if not Item.Element_Name.Ends_With ("Response") then
-                  if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
+            elsif not Item.Element_Name.Ends_With ("Response") then
+               if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
-                     Generate_Overriding_Procedure_Encode_Header
-                       (Payload_Writer,
-                        Spec_Writer,
-                        Item.Element_Name,
-                        Tag_Vector);
+                  Generate_Overriding_Procedure_Encode_Header
+                    (Payload_Writer,
+                     Spec_Writer,
+                     Item.Element_Name,
+                     Tag_Vector);
 
-                     Print_Type_Definition
-                       (Type_D,
-                        Indent & "   ",
-                        Payload_Writer,
-                        Payload_Type_Writer,
-                        Mapping,
-                        Type_D.Get_Name,
-                        Item.Anonym_Name,
-                        Item.Element_Name);
+                  Print_Type_Definition
+                    (Type_D,
+                     Indent & "   ",
+                     Payload_Writer,
+                     Payload_Type_Writer,
+                     Mapping,
+                     Type_D.Get_Name,
+                     Item.Anonym_Name,
+                     Item.Element_Name);
 
-                     Writers.N
-                       (Payload_Writer,
-                        Write_End_Element
-                          (Item.Element_Name));
+                  Payload_Writer.N (Write_End_Element (Item.Element_Name));
 
-                     Writers.P (Payload_Writer, "   end Encode;" & LF);
-                  else
-                     if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
-                       = "anyType"
-                     then
-                        Generate_Overriding_Procedure_Encode_Header
-                          (Payload_Writer,
-                           Spec_Writer,
-                           Item.Element_Name,
-                           Tag_Vector,
-                           True);
+                  Payload_Writer.P ("   end Encode;" & LF);
+               elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
+                 = "anyType"
+               then
+                  Generate_Overriding_Procedure_Encode_Header
+                    (Payload_Writer,
+                     Spec_Writer,
+                     Item.Element_Name,
+                     Tag_Vector,
+                     True);
 
-                        Writers.N
-                          (Payload_Writer,
-                           Write_End_Element
-                             (Item.Element_Name));
+                  Payload_Writer.N (Write_End_Element (Item.Element_Name));
 
-                        Writers.P (Payload_Writer, "   end Encode;" & LF);
-                     else
-                        Writers.P
-                          (Writer,
-                           "   --  type "
-                           & Add_Separator
-                             (Item.Element_Name));
-                     end if;
-                  end if;
+                  Payload_Writer.P ("   end Encode;" & LF);
+               else
+                  Writer.P
+                    ("   --  type " & Add_Separator (Item.Element_Name));
                end if;
             end if;
-
-         elsif Item.Min then
-            null;
-
-         elsif Item.Max then
-            null;
          end if;
 
          Writer.N (Payload_Type_Writer.Text);
