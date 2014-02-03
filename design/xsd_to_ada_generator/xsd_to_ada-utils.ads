@@ -178,14 +178,6 @@ package XSD_To_Ada.Utils is
 
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
 
-   procedure Print_Content_Type
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String := "";
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
-     Name         : League.Strings.Universal_String;
-     Map          : XSD_To_Ada.Mappings.Mapping);
-
    procedure Print_Type_Definition
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
      Indent       : Wide_Wide_String;

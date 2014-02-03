@@ -44,10 +44,6 @@
 with League.Strings;
 with League.String_Vectors;
 
-with XML.Schema.Models;
-with XML.Schema.Terms;
-with XML.Schema.Type_Definitions;
-
 with XSD_To_Ada.Mappings.XML;
 with XSD_To_Ada.Writers;
 
@@ -97,115 +93,6 @@ package XSD_To_Ada.Encoder is
      (Str : Wide_Wide_String := "";
       Tab : Natural := 0)
       return Wide_Wide_String;
-
-   procedure Create_Element_Type
-     (Model  : XML.Schema.Models.XS_Model;
-      Writer : in out XSD_To_Ada.Writers.Writer);
-
-   procedure Create_Simple_Type
-     (Model  : XML.Schema.Models.XS_Model;
-      Writer : in out XSD_To_Ada.Writers.Writer);
-
-   procedure Create_Enumeration_Simple_Type
-     (Model  : XML.Schema.Models.XS_Model;
-      Writer : in out XSD_To_Ada.Writers.Writer);
-
-   procedure Create_Complex_Type
-    (Model   : XML.Schema.Models.XS_Model;
-     Mapping : XSD_To_Ada.Mappings.XML.Mapping_XML);
-
-   procedure Create_Vector_Package
-     (Type_D_Name  : League.Strings.Universal_String;
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer);
-
-   procedure Gen_Access_Type
-     (Self   : in out XSD_To_Ada.Writers.Writer;
-      Name   : Wide_Wide_String);
-
-   procedure Gen_Line
-     (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "");
-
-   procedure Gen_Proc_Header
-     (Self   : in out XSD_To_Ada.Writers.Writer;
-      Name   : Wide_Wide_String;
-      Offset : Positive := 3);
-
-   procedure Generate_Simple_Type
-     (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term          : XML.Schema.Terms.XS_Term;
-      Name             : League.Strings.Universal_String;
-      Full_Anonym_Name : League.Strings.Universal_String;
-      Base_Choice_Name : League.Strings.Universal_String;
-      Base_Name        : League.Strings.Universal_String;
-      Responce_Name    : League.Strings.Universal_String;
-      Min_Occurs       : Boolean;
-      Max_Occurs       : Boolean;
-      Top_Max_Occurs   : Boolean;
-      Top_Min_Occurs   : Boolean;
-      Choice           : Boolean;
-      Writer           : in out Writers.Writer);
-
-   function Has_Top_Level_Type
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Table  : Types_Table_Type_Array)
-      return Boolean;
-   --  This function returns True if Type_D has Top Level Types.
-
-   function Has_Top_Level_Type_Used
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Table  : Types_Table_Type_Array)
-      return Boolean;
-   --  This function returns True if Type_D has Top Level Types and
-   --  it was not created/used.
-
-   procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
-   procedure New_Line (Self : in out XSD_To_Ada.Writers.Writer);
-
-   procedure Print_Content_Type
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String := "";
-     Writer       : in out Writers.Writer;
-     Writer_Types : in out Writers.Writer;
-     Name         : League.Strings.Universal_String;
-     Map          : XSD_To_Ada.Mappings.Mapping'Class);
-
-   procedure Print_Type_Definition
-     (Type_D           : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent           : Wide_Wide_String := "";
-      Writer           : in out Writers.Writer;
-      Name             : League.Strings.Universal_String;
-      Full_Anonym_Name : League.Strings.Universal_String;
-      Base_Name        : League.Strings.Universal_String;
-      Responce_Name    : League.Strings.Universal_String;
-      Table            : in out Types_Table_Type_Array;
-      Is_Min_Occur     : Boolean := False;
-      Top_Max_Occur    : Boolean := False;
-      Optional         : Boolean := False);
-
-   procedure Print_Type_Title
-     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
-      Spec_Writer : in out XSD_To_Ada.Writers.Writer;
-      Level       : Positive := 1);
-
-   procedure Print_Type_Title
-     (XS_Term     : XML.Schema.Terms.XS_Term;
-      Indent      : Wide_Wide_String;
-      Level       : Natural := 0;
-      Optional    : Boolean);
-
-   function Has_Element_Session
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
-      return Boolean;
-
-   function Is_Type_In_Optional_Vector
-     (Type_Name : League.Strings.Universal_String)
-     return Boolean;
-
-   function Write_Start_Element
-     (Name : League.Strings.Universal_String)
-      return League.Strings.Universal_String;
 
    Namespace : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
