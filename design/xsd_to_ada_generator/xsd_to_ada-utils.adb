@@ -47,6 +47,8 @@ with Ada.Strings.Wide_Wide_Maps;
 with Ada.Strings.Wide_Wide_Unbounded;
 with Ada.Wide_Wide_Text_IO;
 
+with League.Characters;
+
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
@@ -328,16 +330,13 @@ package body XSD_To_Ada.Utils is
 
          Writers.P (Encoder_Full_Writer,
                     ("     (Payloads."
-                     & League.Strings.To_Universal_String
-                       (Add_Separator
-                          (Tag_Vector.Element (Index))).To_Wide_Wide_String
+                     & Add_Separator (Tag_Vector.Element (Index))
                      & "'Tag,"));
 
          Writers.P
            (Encoder_Full_Writer,
-            ("        " & League.Strings.To_Universal_String
-               (Add_Separator
-                  (Tag_Vector.Element (Index))).To_Wide_Wide_String
+            ("        "
+             & Add_Separator (Tag_Vector.Element (Index))
              & "_Encoder'Tag);"));
       end loop;
 
@@ -412,12 +411,11 @@ package body XSD_To_Ada.Utils is
               := STD.Get_Lexical_Enumeration;
          begin
             if not List.Is_Empty then
-               XSD_To_Ada.Writers.N
-                 (Writer,
-                  "   type " &
-                    XSD_To_Ada.Utils.Add_Separator
-                    (XS_Object.Get_Name.To_Wide_Wide_String) & " is"
-                    & Wide_Wide_Character'Val (10) & "     (");
+               Writer.N
+                 ("   type "
+                  & XSD_To_Ada.Utils.Add_Separator (XS_Object.Get_Name)
+                  & " is"
+                  & Wide_Wide_Character'Val (10) & "     (");
 
                for J in 1 .. List.Length loop
                   Ada.Wide_Wide_Text_IO.Put_Line
@@ -425,17 +423,12 @@ package body XSD_To_Ada.Utils is
                     List.Element (J).To_Wide_Wide_String);
 
                   if J /= List.Length then
-                     XSD_To_Ada.Writers.N
-                       (Writer,
-                        League.Strings.To_Lowercase
-                          (List.Element (J)).To_Wide_Wide_String & ", ");
+                     Writer.N (List.Element (J).To_Lowercase);
+                     Writer.N (", ");
                   else
-                     XSD_To_Ada.Writers.P
-                       (Writer,
-                        League.Strings.To_Lowercase
-                          (List.Element (J)).To_Wide_Wide_String
-                        & ");"
-                        & Wide_Wide_Character'Val (10));
+                     Writer.N (List.Element (J).To_Lowercase);
+                     Writer.P (");");
+                     Writer.P;
                   end if;
                end loop;
             end if;
@@ -577,32 +570,26 @@ package body XSD_To_Ada.Utils is
          begin
 
             if List.Is_Empty then
-               XSD_To_Ada.Writers.P
-                 (Writer,
-                  "type "
+               Writer.P
+                 ("type "
                   & XSD_To_Ada.Utils.Add_Separator (XS_Object.Get_Name)
                   & " is new "
                   & XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
                   & ";" & LF);
             else
-               XSD_To_Ada.Writers.N
-                 (Writer,
-                  "type " &
+               Writer.N
+                 ("type " &
                     XSD_To_Ada.Utils.Add_Separator (XS_Object.Get_Name)
                   & " is (");
 
                for J in 1 .. List.Length loop
                   if J /= List.Length then
-                     XSD_To_Ada.Writers.N
-                       (Writer,
-                        League.Strings.To_Lowercase
-                          (List.Element (J)).To_Wide_Wide_String & ", ");
+                     Writer.N (List.Element (J).To_Lowercase);
+                     Writer.N (", ");
                   else
-                     XSD_To_Ada.Writers.P
-                       (Writer,
-                        League.Strings.To_Lowercase
-                          (List.Element (J)).To_Wide_Wide_String
-                        & ");" & LF);
+                     Writer.N (List.Element (J).To_Lowercase);
+                     Writer.P (");");
+                     Writer.P;
                   end if;
                end loop;
             end if;
@@ -794,6 +781,7 @@ package body XSD_To_Ada.Utils is
      (Str : Wide_Wide_String := "";
       Tab : Natural := 0) return Wide_Wide_String
    is
+      use type League.Characters.Universal_Character;
       use Ada.Strings.Wide_Wide_Unbounded;
       use Ada.Strings.Wide_Wide_Maps;
 
@@ -805,23 +793,23 @@ package body XSD_To_Ada.Utils is
    begin
       if US.Length > 79 then
          for J in 1 .. US.Length loop
-            if US.Element (J).To_Wide_Wide_Character = ' '
+            if US.Element (J) = ' '
               and then
-                (US.Element (J + 1).To_Wide_Wide_Character = '('
-                 or US.Element (J + 1).To_Wide_Wide_Character = ':')
-                 then
-                 US_New.Append (Wide_Wide_Character'Val (10));
+                (US.Element (J + 1) = '('
+                 or US.Element (J + 1) = ':')
+            then
+               US_New.Append (Wide_Wide_Character'Val (10));
 
-                 for Count in 1 .. Tab loop
-                 US_New.Append (" ");
-                 end loop;
+               for Count in 1 .. Tab loop
+                  US_New.Append (" ");
+               end loop;
 
-                 US_New.Append (US.Element (J));
+               US_New.Append (US.Element (J));
 
-            elsif US.Element (J).To_Wide_Wide_Character = ' '
-              and then US.Element (J + 1).To_Wide_Wide_Character = 'i'
-              and then US.Element (J + 2).To_Wide_Wide_Character = 's'
-              and then US.Element (J + 3).To_Wide_Wide_Character = ' '
+            elsif US.Element (J) = ' '
+              and then US.Element (J + 1) = 'i'
+              and then US.Element (J + 2) = 's'
+              and then US.Element (J + 3) = ' '
             then
                US_New.Append (Wide_Wide_Character'Val (10));
                Tab_Count := Tab_Count + 2;
@@ -1050,13 +1038,12 @@ package body XSD_To_Ada.Utils is
    function Has_Top_Level_Type
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
       Table  : Types_Table_Type_Array)
-      return Boolean is
+      return Boolean
+   is
+      use type League.Strings.Universal_String;
    begin
       for j in 1 .. Table'Last loop
-         if Type_D.Get_Name.To_Wide_Wide_String =
-           Table (j).Type_Name.To_Wide_Wide_String
-           and Table (j).Type_State
-         then
+         if Type_D.Get_Name = Table (j).Type_Name and Table (j).Type_State then
             return True;
          end if;
       end loop;
@@ -1070,20 +1057,15 @@ package body XSD_To_Ada.Utils is
 
    function Is_Type_In_Optional_Vector
      (Type_Name : League.Strings.Universal_String)
-      return Boolean
-   is
+      return Boolean is
    begin
-      for Index in 1 .. Optional_Vector.Length loop
-         if Optional_Vector.Element (Index).To_Wide_Wide_String =
-           Type_Name.To_Wide_Wide_String
-         then
-            return True;
-         end if;
-      end loop;
+      if Optional_Vector.Index (Type_Name) = 0 then
+         Optional_Vector.Append (Type_Name);
 
-      Optional_Vector.Append (Type_Name);
+         return False;
+      end if;
 
-      return False;
+      return True;
    end Is_Type_In_Optional_Vector;
 
    --------------------------
@@ -2253,13 +2235,14 @@ package body XSD_To_Ada.Utils is
       end if;
 
       if Add_Choise then
-         Writers.P (Writer_types, Name_Kind.To_Wide_Wide_String &  ");" & LF);
+         Writer_types.N (Name_Kind);
+         Writer_types.P (");");
+         Writer_types.P;
 
-         Writers.P
-           (Writer_types,
-            Name_Case.To_Wide_Wide_String
-            & "      end case;" & LF
-            & "   end record;" & LF);
+         Writer_types.N (Name_Case);
+         Writer_types.P ("      end case;");
+         Writer_types.P ("   end record;");
+         Writer_types.P;
 
          Name_Kind.Clear;
          Name_Case.Clear;

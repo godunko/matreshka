@@ -42,46 +42,10 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
-with League.String_Vectors;
 
-with XSD_To_Ada.Mappings.XML;
 with XSD_To_Ada.Writers;
 
 package XSD_To_Ada.Encoder is
-
-   type Types_Table_Type is
-      record
-         Type_Name  : League.Strings.Universal_String;
-         Type_State : Boolean;
-      end record;
-
-   type Types_Table_Type_Array is array (1 .. 200) of Types_Table_Type;
-
-   Types_Table    : Types_Table_Type_Array;
-
-   Is_Vector_Type : League.String_Vectors.Universal_String_Vector;
-
-   type Anonyn_Vector_Declatarion is
-      record
-         Print_Level : Natural := 2;
-         Print_State : Boolean := False;
-         Term_Level  : Natural := 2;
-         Term_State  : Boolean := False;
-      end record;
-
-   type Anonyn_Vector_Declatarion_Array is
-     array (1 .. 100) of Anonyn_Vector_Declatarion;
-
-   Anonyn_Vector : Anonyn_Vector_Declatarion_Array;
-
-   Now_Print_Level : Natural := 2;
-   Now_Term_Level  : Natural := 2;
-
-   Optional_Vector : League.String_Vectors.Universal_String_Vector;
-
-   type Writers_Array is array (1 .. 20) of Writers.Writer;
-
-   Top_Level_Writer : Writers_Array;
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
@@ -94,20 +58,6 @@ package XSD_To_Ada.Encoder is
       Tab : Natural := 0)
       return Wide_Wide_String;
 
-   Namespace : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-       ("http://www.actforex.com/iats");
-
-   Map : XSD_To_Ada.Mappings.XML.Mapping_XML;
-
-   Encoder_Writer     : Writers.Writer;
-   Encoder_Top_Writer : Writers.Writer;
-
-   Spec_Writer  : XSD_To_Ada.Writers.Writer;
    Element_Name : XSD_To_Ada.Writers.Writer;
-
-   Element_Vector : League.String_Vectors.Universal_String_Vector;
-
-   Tag_Vector : League.String_Vectors.Universal_String_Vector;
 
 end XSD_To_Ada.Encoder;
