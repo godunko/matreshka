@@ -45,7 +45,7 @@ with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Strings.Wide_Wide_Fixed;
 with Ada.Strings.Wide_Wide_Maps;
 with Ada.Strings.Wide_Wide_Unbounded;
-with Ada.Wide_Wide_Text_IO;
+with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
 with League.Characters;
 
@@ -226,6 +226,8 @@ package body XSD_To_Ada.Utils is
     (Model   : XML.Schema.Models.XS_Model;
      Mapping : XSD_To_Ada.Mappings.Mapping)
    is
+      use type League.Strings.Universal_String;
+
       XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -239,6 +241,11 @@ package body XSD_To_Ada.Utils is
           (Object_Type => XML.Schema.Element_Declaration,
            Namespace   => Namespace);
 
+      Simple_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Simple_Type,
+           Namespace   => Namespace);
+
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Full_Writer : XSD_To_Ada.Writers.Writer;
@@ -248,6 +255,9 @@ package body XSD_To_Ada.Utils is
       Node_Vector : XSD_To_Ada.Utils.Items;
 
       Tag_Vector : League.String_Vectors.Universal_String_Vector;
+
+      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
+
    begin
       for J in 1 .. Complex_Types.Length loop
          Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
@@ -274,8 +284,63 @@ package body XSD_To_Ada.Utils is
             1, (False, 1));
       end loop;
 
+      for J in 1 .. Simple_Types.Length loop
+         XS_Object := Simple_Types.Item (J);
+         Type_D    := XS_Object.To_Type_Definition;
+
+         Create_Node_Vector
+           (Type_D,
+            "",
+            Node_Vector,
+            Mapping,
+            1, (False, 1));
+      end loop;
+
       Create_Element_Type (Model, Node_Vector, Mapping);
       Print_Payloads (Node_Vector, "", Payload_Writer, Mapping);
+
+      Ada.Wide_Wide_Text_IO.Create (File_Type, Out_File, "Vector");
+
+      for Index in 1 .. Natural (Node_Vector.Length) loop
+         Ada.Wide_Wide_Text_IO.Put
+           (File_Type,
+            "Name = "
+            & Node_Vector.Element (Index).Type_Def.Get_Name.To_Wide_Wide_String);
+
+         Ada.Wide_Wide_Text_IO.Put
+           (File_Type,
+            "; TYPE = "
+            & League.Strings.To_Wide_Wide_String
+              (League.Strings.From_UTF_8_String
+                 (Node_Vector.Element (Index).Type_Def.Get_Type_Category'Img)));
+
+         Ada.Wide_Wide_Text_IO.Put
+           (File_Type,
+            "; Min ="
+            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Min));
+
+         Ada.Wide_Wide_Text_IO.Put
+           (File_Type,
+            "; Max ="
+            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Max));
+
+         Ada.Wide_Wide_Text_IO.Put
+           (File_Type,
+            "; Choice "
+            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Choice));
+
+         Ada.Wide_Wide_Text_IO.Put
+           (File_Type,
+            "; Anonym_Name <"
+            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String
+            & ">");
+
+         Ada.Wide_Wide_Text_IO.Put_Line
+           (File_Type,
+            "; Element_Name <"
+            & Node_Vector.Element (Index).Element_Name.To_Wide_Wide_String
+            & ">");
+      end loop;
 
       Node_Vector.Clear;
 
@@ -451,8 +516,16 @@ package body XSD_To_Ada.Utils is
         League.Strings.Empty_Universal_String)
    is
       use XML.Schema.Objects.Terms.Model_Groups;
+      use type XML.Schema.Extended_XML_Schema_Component_Type;
 
       Type_Difinition_Node : XSD_To_Ada.Utils.Item;
+
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
+      XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+
    begin
       Type_Difinition_Node.Type_Def := Type_D;
       Type_Difinition_Node.Element_Name := Element_Name;
@@ -477,16 +550,20 @@ package body XSD_To_Ada.Utils is
          Type_Difinition_Node.Choice := True;
       end if;
 
-      XSD_To_Ada.Utils.Node_Type_Definition
-        (Type_D,
-         Indent & "   ",
-         Node_Vector,
-         Type_Difinition_Node,
-         Type_D.Get_Name,
-         Mapping,
-         Types_Table);
+      if Type_D.Get_Type_Category = XML.Schema.Complex_Type then
+         XSD_To_Ada.Utils.Node_Type_Definition
+           (Type_D,
+            Indent & "   ",
+            Node_Vector,
+            Type_Difinition_Node,
+            Type_D.Get_Name,
+            Mapping,
+            Types_Table);
 
-      Add_Node (Node_Vector, Type_Difinition_Node);
+         Add_Node (Node_Vector, Type_Difinition_Node);
+      else
+         Add_Node (Node_Vector, Type_Difinition_Node);
+      end if;
    end Create_Node_Vector;
 
    -------------------------
@@ -1061,7 +1138,6 @@ package body XSD_To_Ada.Utils is
    begin
       if Optional_Vector.Index (Type_Name) = 0 then
          Optional_Vector.Append (Type_Name);
-
          return False;
       end if;
 
@@ -1072,14 +1148,14 @@ package body XSD_To_Ada.Utils is
    -- Node_Type_Definition --
    --------------------------
 
-   procedure Node_Type_Definition
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
-     Node_Vector : in out XSD_To_Ada.Utils.Items;
-     Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
-     Name         : League.Strings.Universal_String;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Table        : in out Types_Table_Type_Array)
+      procedure Node_Type_Definition
+        (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
+         Indent               : Wide_Wide_String;
+         Node_Vector          : in out XSD_To_Ada.Utils.Items;
+         Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
+         Name                 : League.Strings.Universal_String;
+         Mapping              : XSD_To_Ada.Mappings.Mapping;
+         Table                : in out Types_Table_Type_Array)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -1196,9 +1272,7 @@ package body XSD_To_Ada.Utils is
                   Add_Node (Node_Vector, Anonym_Type_Difinition_Node);
                end;
 
-            end if;
-
-            if Has_Top_Level_Type (Type_D, Table) then
+            elsif Has_Top_Level_Type (Type_D, Table) then
                Create_Node_Vector
                  (Type_D,
                   Indent & "   ",
@@ -1206,6 +1280,32 @@ package body XSD_To_Ada.Utils is
                   Mapping,
                   Min_Occurs_2,
                   Max_Occurs_2);
+            else
+               declare
+                  Simple_Type_Difinition_Node : XSD_To_Ada.Utils.Item;
+               begin
+                  Simple_Type_Difinition_Node.Type_Def := Type_D;
+
+                  if Min_Occurs_2 = 0 then
+                     Simple_Type_Difinition_Node.Min := True;
+                  end if;
+
+                  if Max_Occurs_2.Unbounded
+                    or (not Max_Occurs_2.Unbounded
+                        and then Max_Occurs_2.Value > 1)
+                  then
+                     Simple_Type_Difinition_Node.Max := True;
+                  end if;
+
+                  if Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
+                    .To_Model_Group.Get_Compositor =
+                      XML.Schema.Model_Groups.Compositor_Choice
+                  then
+                     Simple_Type_Difinition_Node.Choice := True;
+                  end if;
+
+                  Add_Node (Node_Vector, Simple_Type_Difinition_Node);
+               end;
             end if;
          end if;
          Now_Term_Level := Now_Term_Level - 1;
@@ -1217,8 +1317,7 @@ package body XSD_To_Ada.Utils is
       XS_Base := Type_D.Get_Base_Type;
 
       if XS_Base.Get_Type_Category in
-        XML.Schema.Complex_Type --  .. XML.Schema.Simple_Type
-        and XS_Base /= Type_D
+        XML.Schema.Complex_Type and XS_Base /= Type_D
       then
 
          if XS_Base.Get_Name.To_UTF_8_String /= "anyType" then
@@ -1298,6 +1397,8 @@ package body XSD_To_Ada.Utils is
    begin
 
       for Index in 1 .. Natural (Node_Vector.Length) loop
+         if not Node_Vector.Element (Index).Type_Def.Is_Simple_Type_Definition then
+
          Type_D := Node_Vector.Element (Index).Type_Def;
 
          Discriminant_Type.Clear;
@@ -1724,8 +1825,10 @@ package body XSD_To_Ada.Utils is
 
          Payload_Type_Writer.Text.Clear;
          Payload_Writer.Text.Clear;
-         US_Response.Clear;
-      end loop;
+            US_Response.Clear;
+         end if;
+         end loop;
+
 
       Ada.Wide_Wide_Text_IO.Put_Line
        (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "END Print_Type_Title");

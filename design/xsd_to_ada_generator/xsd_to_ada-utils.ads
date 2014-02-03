@@ -70,12 +70,12 @@ package XSD_To_Ada.Utils is
    Is_Vector_Type : League.String_Vectors.Universal_String_Vector;
 
    type Item is record
-      Type_Def     : XML.Schema.Objects.Type_Definitions.XS_Type_Definition;
-      Min, Max     : Boolean := False;
-      Choice       : Boolean := False;
-      Anonym_Name  : League.Strings.Universal_String;
+      Type_Def         : XML.Schema.Objects.Type_Definitions.XS_Type_Definition;
+      Min, Max         : Boolean := False;
+      Choice           : Boolean := False;
+      Anonym_Name      : League.Strings.Universal_String;
       Decl_Anonym_Name : League.Strings.Universal_String;
-      Element_Name : League.Strings.Universal_String;
+      Element_Name     : League.Strings.Universal_String;
    end record;
 
    package Item_Vectors is
@@ -192,13 +192,13 @@ package XSD_To_Ada.Utils is
      Is_Min_Occur : Boolean := False);
 
    procedure Node_Type_Definition
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
-     Node_Vector : in out XSD_To_Ada.Utils.Items;
-     Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
-     Name         : League.Strings.Universal_String;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
-      Table        : in out Types_Table_Type_Array);
+     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Indent               : Wide_Wide_String;
+      Node_Vector          : in out XSD_To_Ada.Utils.Items;
+      Type_Difinition_Node : in out XSD_To_Ada.Utils.Item;
+      Name                 : League.Strings.Universal_String;
+      Mapping              : XSD_To_Ada.Mappings.Mapping;
+      Table                : in out Types_Table_Type_Array);
 
    procedure Print_Payloads
      (Node_Vector : XSD_To_Ada.Utils.Items;
