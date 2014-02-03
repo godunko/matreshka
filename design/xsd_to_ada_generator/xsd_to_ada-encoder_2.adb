@@ -945,7 +945,7 @@ package body XSD_To_Ada.Encoder_2 is
      (Name : League.Strings.Universal_String)
      return League.Strings.Universal_String is
    begin
-      if not Elements_Name.Contains (Name) then
+      if Elements_Name.Index (Name) = 0 then
          Elements_Name.Append (Name);
 
          Element_Name.P

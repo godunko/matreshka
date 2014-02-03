@@ -50,16 +50,11 @@ with XML.Schema.Type_Definitions;
 with XSD_To_Ada.Writers;
 
 with XSD_To_Ada.Utils;
-with Ada.Containers.Vectors;
 with XSD_To_Ada.Mappings;
 
 package XSD_To_Ada.Encoder_2 is
 
-   package Name_Vector is
-     new Ada.Containers.Vectors
-       (Positive, League.Strings.Universal_String, League.Strings."=");
-
-   Elements_Name : Name_Vector.Vector;
+   Elements_Name : League.String_Vectors.Universal_String_Vector;
 
    function Add_Indent
      (Spaces_Count : Integer)
