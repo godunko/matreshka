@@ -154,14 +154,6 @@ package XSD_To_Ada.Utils is
      Is_Max_Occur : Boolean := False;
      Is_Min_Occur : Boolean := False);
 
-   procedure Node_Type_Definition
-     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Node_Vector          : in out XSD2Ada.Analyzer.Items;
-      Type_Difinition_Node : in out XSD2Ada.Analyzer.Item;
-      Name                 : League.Strings.Universal_String;
-      Mapping              : XSD_To_Ada.Mappings.Mapping;
-      Table                : in out Types_Table_Type_Array);
-
    procedure Print_Payloads
      (Node_Vector : XSD2Ada.Analyzer.Items;
       Indent      : Wide_Wide_String;

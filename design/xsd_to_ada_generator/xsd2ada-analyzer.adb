@@ -41,7 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Wide_Wide_Text_IO;
+
 with XML.Schema.Complex_Type_Definitions;
+with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
 with XML.Schema.Named_Maps;
 with XML.Schema.Object_Lists;
@@ -192,13 +195,13 @@ package body XSD2Ada.Analyzer is
       end if;
 
       if Type_D.Get_Type_Category = XML.Schema.Complex_Type then
-         XSD_To_Ada.Utils.Node_Type_Definition
-           (Type_D,
-            Node_Vector,
-            Type_Difinition_Node,
-            Type_D.Get_Name,
-            Mapping,
-            XSD_To_Ada.Utils.Types_Table);
+         Node_Type_Definition
+          (Type_D,
+           Node_Vector,
+           Type_Difinition_Node,
+           Type_D.Get_Name,
+           Mapping,
+           XSD_To_Ada.Utils.Types_Table);
 
          Add_Node (Node_Vector, Type_Difinition_Node);
 
@@ -206,5 +209,234 @@ package body XSD2Ada.Analyzer is
          Add_Node (Node_Vector, Type_Difinition_Node);
       end if;
    end Create_Node_Vector;
+
+   --------------------------
+   -- Node_Type_Definition --
+   --------------------------
+
+   procedure Node_Type_Definition
+    (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Node_Vector          : in out Items;
+     Type_Difinition_Node : in out Item;
+     Name                 : League.Strings.Universal_String;
+     Mapping              : XSD_To_Ada.Mappings.Mapping;
+     Table                : in out XSD_To_Ada.Utils.Types_Table_Type_Array)
+   is
+      use type League.Strings.Universal_String;
+      use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      procedure Print_Term
+       (XS_Term : XML.Schema.Terms.XS_Term;
+        Name    : League.Strings.Universal_String;
+        Map     : XSD_To_Ada.Mappings.Mapping;
+        Table   : in out XSD_To_Ada.Utils.Types_Table_Type_Array);
+
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
+      XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+
+      Max_Occurs_2 : XML.Schema.Particles.Unbounded_Natural;
+
+      Min_Occurs_2 : Natural;
+
+      ----------------
+      -- Print_Term --
+      ----------------
+
+      procedure Print_Term
+       (XS_Term : XML.Schema.Terms.XS_Term;
+        Name    : League.Strings.Universal_String;
+        Map     : XSD_To_Ada.Mappings.Mapping;
+        Table   : in out XSD_To_Ada.Utils.Types_Table_Type_Array)
+      is
+         use XML.Schema.Terms.Model_Groups;
+
+         XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+         XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+         XS_Particle    : XML.Schema.Particles.XS_Particle;
+         Decl           :
+           XML.Schema.Element_Declarations.XS_Element_Declaration;
+         Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      begin
+         XSD_To_Ada.Utils.Now_Term_Level :=
+           XSD_To_Ada.Utils.Now_Term_Level + 1;
+
+         if XS_Term.Is_Model_Group then
+            XS_Model_Group := XS_Term.To_Model_Group;
+            XS_List := XS_Model_Group.Get_Particles;
+
+            Ada.Wide_Wide_Text_IO.Put_Line
+             (Ada.Wide_Wide_Text_IO.Standard_Error,
+              XML.Schema.Model_Groups.Compositor_Kinds'Wide_Wide_Image
+               (XS_Model_Group.Get_Compositor));
+
+            for J in 1 .. XS_List.Get_Length loop
+               XS_Particle := XS_List.Item (J).To_Particle;
+
+               Max_Occurs_2 := XS_Particle.Get_Max_Occurs;
+               Min_Occurs_2 := XS_Particle.Get_Min_Occurs;
+
+               Print_Term (XS_Particle.Get_Term, Name, Map, Table);
+            end loop;
+
+         elsif XS_Term.Is_Element_Declaration then
+
+            Decl := XS_Term.To_Element_Declaration;
+            Type_D := Decl.Get_Type_Definition;
+
+            if Type_D.Get_Name.To_UTF_8_String = "" then
+               Node_Type_Definition
+                (Type_D,
+                 Node_Vector,
+                 Type_Difinition_Node,
+                 Name & '_' & Decl.Get_Name,
+                 Map,
+                 Table);
+
+               declare
+                  Anonym_Type_Difinition_Node : XSD2Ada.Analyzer.Item;
+
+               begin
+                  Anonym_Type_Difinition_Node.Type_Def := Type_D;
+
+                  Anonym_Type_Difinition_Node.Decl_Anonym_Name
+                    := Decl.Get_Name;
+
+                  if Min_Occurs_2 = 0 then
+                     Anonym_Type_Difinition_Node.Min := True;
+                  end if;
+
+                  if Max_Occurs_2.Unbounded
+                    or (not Max_Occurs_2.Unbounded
+                        and then Max_Occurs_2.Value > 1)
+                  then
+                     Anonym_Type_Difinition_Node.Max := True;
+                  end if;
+
+                  if Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
+                    .To_Model_Group.Get_Compositor =
+                      XML.Schema.Model_Groups.Compositor_Choice
+                  then
+                     Anonym_Type_Difinition_Node.Choice := True;
+                  end if;
+
+                  if not Name.Is_Empty then
+                     Anonym_Type_Difinition_Node.Anonym_Name :=
+                       (Name & "_" & Decl.Get_Name);
+                  else
+                     Anonym_Type_Difinition_Node.Anonym_Name :=
+                       (Decl.Get_Name);
+                  end if;
+
+                  XSD2Ada.Analyzer.Add_Node
+                   (Node_Vector, Anonym_Type_Difinition_Node);
+               end;
+
+            elsif XSD_To_Ada.Utils.Has_Top_Level_Type (Type_D, Table) then
+               XSD2Ada.Analyzer.Create_Node_Vector
+                (Type_D,
+                 Node_Vector,
+                 Mapping,
+                 Min_Occurs_2,
+                 Max_Occurs_2);
+
+            else
+               declare
+                  Simple_Type_Difinition_Node : XSD2Ada.Analyzer.Item;
+
+               begin
+                  Simple_Type_Difinition_Node.Type_Def := Type_D;
+
+                  if Min_Occurs_2 = 0 then
+                     Simple_Type_Difinition_Node.Min := True;
+                  end if;
+
+                  if Max_Occurs_2.Unbounded
+                    or (not Max_Occurs_2.Unbounded
+                        and then Max_Occurs_2.Value > 1)
+                  then
+                     Simple_Type_Difinition_Node.Max := True;
+                  end if;
+
+                  if Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
+                    .To_Model_Group.Get_Compositor =
+                      XML.Schema.Model_Groups.Compositor_Choice
+                  then
+                     Simple_Type_Difinition_Node.Choice := True;
+                  end if;
+
+                  XSD2Ada.Analyzer.Add_Node
+                   (Node_Vector, Simple_Type_Difinition_Node);
+               end;
+            end if;
+         end if;
+
+         XSD_To_Ada.Utils.Now_Term_Level :=
+           XSD_To_Ada.Utils.Now_Term_Level - 1;
+      end Print_Term;
+
+   begin
+      XSD_To_Ada.Utils.Now_Print_Level :=
+        XSD_To_Ada.Utils.Now_Print_Level + 1;
+
+      XS_Base := Type_D.Get_Base_Type;
+
+      if XS_Base.Get_Type_Category in
+        XML.Schema.Complex_Type and XS_Base /= Type_D
+      then
+
+         if XS_Base.Get_Name.To_UTF_8_String /= "anyType" then
+            XSD2Ada.Analyzer.Create_Node_Vector
+              (XS_Base,
+               Node_Vector,
+               Mapping,
+               1, (False, 1));
+         end if;
+      end if;
+
+      case Type_D.Get_Type_Category is
+         when XML.Schema.Complex_Type =>
+            CTD := Type_D.To_Complex_Type_Definition;
+
+            if CTD.Get_Content_Type
+              in XML.Schema.Complex_Type_Definitions.Element_Only
+                   | XML.Schema.Complex_Type_Definitions.Mixed
+            then
+               XS_Particle := CTD.Get_Particle;
+               XS_Term := XS_Particle.Get_Term;
+
+               Ada.Wide_Wide_Text_IO.Put_Line
+                (Ada.Wide_Wide_Text_IO.Standard_Error,
+                 "Complex_Type :"
+                 & Type_D.Get_Name.To_Wide_Wide_String);
+
+               Print_Term
+                (XS_Term,
+                 Name,
+                 Mapping,
+                 Table);
+
+               Ada.Wide_Wide_Text_IO.Put_Line
+                (Ada.Wide_Wide_Text_IO.Standard_Error,
+                 "End Complex_Type :"
+                 & Type_D.Get_Name.To_Wide_Wide_String);
+            end if;
+
+         when XML.Schema.Simple_Type =>
+            Ada.Wide_Wide_Text_IO.Put
+             (Ada.Wide_Wide_Text_IO.Standard_Error,
+              "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
+
+         when XML.Schema.None =>
+            Ada.Wide_Wide_Text_IO.Put_Line
+             (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
+      end case;
+
+      XSD_To_Ada.Utils.Now_Print_Level :=
+        XSD_To_Ada.Utils.Now_Print_Level - 1;
+   end Node_Type_Definition;
 
 end XSD2Ada.Analyzer;

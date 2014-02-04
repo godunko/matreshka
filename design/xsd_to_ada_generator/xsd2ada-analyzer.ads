@@ -52,6 +52,7 @@ with XML.Schema.Type_Definitions;
 with XML.Schema.Models;
 
 with XSD_To_Ada.Mappings;
+limited with XSD_To_Ada.Utils;
 
 package XSD2Ada.Analyzer is
 
@@ -90,5 +91,13 @@ package XSD2Ada.Analyzer is
      Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
      Element_Name : League.Strings.Universal_String
        := League.Strings.Empty_Universal_String);
+
+   procedure Node_Type_Definition
+    (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Node_Vector          : in out Items;
+     Type_Difinition_Node : in out Item;
+     Name                 : League.Strings.Universal_String;
+     Mapping              : XSD_To_Ada.Mappings.Mapping;
+     Table                : in out XSD_To_Ada.Utils.Types_Table_Type_Array);
 
 end XSD2Ada.Analyzer;
