@@ -56,6 +56,10 @@ package body XSD2Ada.Analyzer is
 
    use type League.Strings.Universal_String;
 
+   procedure Add_Node
+    (Node_Vector          : in out Items;
+     Type_Difinition_Node : Item);
+
    function Has_Top_Level_Type
     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
      Table  : XSD_To_Ada.Utils.Types_Table_Type_Array) return Boolean;

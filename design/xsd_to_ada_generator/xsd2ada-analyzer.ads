@@ -74,10 +74,6 @@ package XSD2Ada.Analyzer is
    -- Old subprograms --
    ---------------------
 
-   procedure Add_Node
-    (Node_Vector          : in out Items;
-     Type_Difinition_Node : Item);
-
    procedure Create_Element_Type
     (Model       : XML.Schema.Models.XS_Model;
      Node_Vector : in out Items;
