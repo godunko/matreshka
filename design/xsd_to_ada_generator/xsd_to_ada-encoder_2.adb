@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -201,7 +201,7 @@ package body XSD_To_Ada.Encoder_2 is
 
       XSD_To_Ada.Utils.Gen_Proc_Header
         (Writer,
-         XSD_To_Ada.Utils.Add_Separator (Procedures_Name));
+         XSD_To_Ada.Utils.Add_Separator (Procedures_Name).To_Wide_Wide_String);
 
       Writer.P
         ("   overriding function Create" & LF

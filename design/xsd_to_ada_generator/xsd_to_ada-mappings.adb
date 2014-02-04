@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -45,6 +45,8 @@ with XSD_To_Ada.Utils;
 
 package body XSD_To_Ada.Mappings is
 
+   use type League.Strings.Universal_String;
+
    -----------------------------
    -- Ada_Type_Qualified_Name --
    -----------------------------
@@ -57,9 +59,7 @@ package body XSD_To_Ada.Mappings is
       if Self.Mapping.Contains (XSD_Type_Name) then
          return Self.Mapping.Element (XSD_Type_Name).Ada_Name;
       else
-         return
-           League.Strings.To_Universal_String
-            ("Payloads." & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name));
+         return "Payloads." & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
       end if;
    end Ada_Type_Qualified_Name;
 

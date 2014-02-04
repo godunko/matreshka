@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -105,7 +105,8 @@ package XSD_To_Ada.Utils is
      (Text : Wide_Wide_String) return Wide_Wide_String;
 
    function Add_Separator
-     (Text : League.Strings.Universal_String) return Wide_Wide_String;
+    (Text : League.Strings.Universal_String)
+       return League.Strings.Universal_String;
 
    function Gen_Type_Line
      (Str : Wide_Wide_String := "";
