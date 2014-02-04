@@ -56,7 +56,7 @@ with XML.Schema.Named_Maps;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
-with XML.Schema.Objects.Terms;
+with XML.Schema.Terms;
 
 with Generator.Units.Ada_Units;
 with XSD_To_Ada.Encoder_2;
@@ -1072,7 +1072,7 @@ package body XSD_To_Ada.Utils is
         Map          : XSD_To_Ada.Mappings.Mapping;
         Table        : in out Types_Table_Type_Array)
       is
-         use XML.Schema.Objects.Terms.Model_Groups;
+         use XML.Schema.Terms.Model_Groups;
 
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
