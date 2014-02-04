@@ -83,7 +83,6 @@ package XSD_To_Ada.Utils is
 
    Anonyn_Vector : Anonyn_Vector_Declatarion_Array;
 
-   Now_Print_Level : Natural := 2;
    Now_Term_Level  : Natural := 2;
 
    Optional_Vector : League.String_Vectors.Universal_String_Vector;

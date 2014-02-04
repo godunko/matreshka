@@ -1905,8 +1905,6 @@ package body XSD_To_Ada.Utils is
       end Print_Term;
 
    begin
-      Now_Print_Level := Now_Print_Level + 1;
-
       XS_Base := Type_D.Get_Base_Type;
 
       if XS_Base.Get_Type_Category in
@@ -2017,8 +2015,6 @@ package body XSD_To_Ada.Utils is
       end if;
 
       Writers.N (Writer_types, Vector_Package.Text);
-
-      Now_Print_Level := Now_Print_Level - 1;
    end Print_Type_Definition;
 
    ----------------

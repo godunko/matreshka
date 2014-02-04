@@ -279,9 +279,6 @@ package body XSD2Ada.Analyzer is
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       begin
-         XSD_To_Ada.Utils.Now_Term_Level :=
-           XSD_To_Ada.Utils.Now_Term_Level + 1;
-
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
             XS_List := XS_Model_Group.Get_Particles;
@@ -391,15 +388,9 @@ package body XSD2Ada.Analyzer is
                end;
             end if;
          end if;
-
-         XSD_To_Ada.Utils.Now_Term_Level :=
-           XSD_To_Ada.Utils.Now_Term_Level - 1;
       end Print_Term;
 
    begin
-      XSD_To_Ada.Utils.Now_Print_Level :=
-        XSD_To_Ada.Utils.Now_Print_Level + 1;
-
       XS_Base := Type_D.Get_Base_Type;
 
       if XS_Base.Get_Type_Category in
@@ -452,9 +443,6 @@ package body XSD2Ada.Analyzer is
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
       end case;
-
-      XSD_To_Ada.Utils.Now_Print_Level :=
-        XSD_To_Ada.Utils.Now_Print_Level - 1;
    end Node_Type_Definition;
 
 end XSD2Ada.Analyzer;
