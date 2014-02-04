@@ -132,16 +132,9 @@ package XSD_To_Ada.Utils is
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer);
 
-   procedure Create_Enumeration_Simple_Type
-     (Model  : XML.Schema.Models.XS_Model;
-      Writer : in out XSD_To_Ada.Writers.Writer);
-
    procedure Create_Complex_Type
     (Model   : XML.Schema.Models.XS_Model;
      Mapping : XSD_To_Ada.Mappings.Mapping);
-
-   procedure Create_Package_Name
-     (Payload_Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Create_Vector_Package
     (Type_D_Name  : League.Strings.Universal_String;

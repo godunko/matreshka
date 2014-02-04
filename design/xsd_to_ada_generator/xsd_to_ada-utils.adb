@@ -58,6 +58,7 @@ with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
 with XML.Schema.Objects.Terms;
 
+with Generator.Units.Ada_Units;
 with XSD_To_Ada.Encoder_2;
 
 package body XSD_To_Ada.Utils is
@@ -90,6 +91,19 @@ package body XSD_To_Ada.Utils is
       Min_Occurs   : in out Boolean;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer);
+
+   procedure Put_Header (Unit : in out Generator.Units.Ada_Units.Ada_Unit);
+   --  Outputs file's title
+
+   procedure Create_Package_Name
+    (Unit : in out Generator.Units.Ada_Units.Ada_Unit);
+
+   procedure Create_Enumeration_Simple_Type
+    (Model : XML.Schema.Models.XS_Model;
+     Unit  : in out Generator.Units.Ada_Units.Ada_Unit);
+
+   function "+" (Item : Wide_Wide_String) return League.Strings.Universal_String
+     renames League.Strings.To_Universal_String;
 
    --------------
    -- Add_Node --
@@ -151,6 +165,10 @@ package body XSD_To_Ada.Utils is
             Difinition_Node.Element_Name.Clear;
       end if;
    end Add_Node;
+
+   -------------------
+   -- Add_Separator --
+   -------------------
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String
@@ -217,9 +235,9 @@ package body XSD_To_Ada.Utils is
     (Text : League.Strings.Universal_String)
        return League.Strings.Universal_String is
    begin
-     return
-       League.Strings.To_Universal_String
-        (Add_Separator (Text.To_Wide_Wide_String));
+      return
+        League.Strings.To_Universal_String
+         (Add_Separator (Text.To_Wide_Wide_String));
    end Add_Separator;
 
    -------------------------
@@ -248,6 +266,7 @@ package body XSD_To_Ada.Utils is
           (Object_Type => XML.Schema.Simple_Type,
            Namespace   => Namespace);
 
+      Payload_Spec        : Generator.Units.Ada_Units.Ada_Unit;
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Full_Writer : XSD_To_Ada.Writers.Writer;
@@ -266,9 +285,9 @@ package body XSD_To_Ada.Utils is
          Types_Table (J).Type_State := True;
       end loop;
 
-      Put_Header (Payload_Writer);
-      Create_Package_Name (Payload_Writer);
-      Create_Enumeration_Simple_Type (Model, Payload_Writer);
+      Put_Header (Payload_Spec);
+      Create_Package_Name (Payload_Spec);
+      Create_Enumeration_Simple_Type (Model, Payload_Spec);
 
       for J in 1 .. Complex_Types.Length loop
          XS_Object := Complex_Types.Item (J);
@@ -411,6 +430,7 @@ package body XSD_To_Ada.Utils is
       Encoder_Spec_Writer.N ("end Encoder;");
 
       Writers.N (Payload_Writer, "end Payloads;");
+      Payload_Spec.Save;
 
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
@@ -455,8 +475,8 @@ package body XSD_To_Ada.Utils is
    ------------------------------------
 
    procedure Create_Enumeration_Simple_Type
-     (Model  : XML.Schema.Models.XS_Model;
-      Writer : in out XSD_To_Ada.Writers.Writer)
+     (Model : XML.Schema.Models.XS_Model;
+      Unit  : in out Generator.Units.Ada_Units.Ada_Unit)
    is
 
       XS_Object : XML.Schema.Objects.XS_Object;
@@ -478,26 +498,22 @@ package body XSD_To_Ada.Utils is
               := STD.Get_Lexical_Enumeration;
          begin
             if not List.Is_Empty then
-               Writer.N
-                 ("   type "
-                  & Add_Separator (XS_Object.Get_Name)
-                  & " is"
-                  & Wide_Wide_Character'Val (10) & "     (");
+               Unit.New_Line;
+               Unit.Put_Line
+                ("   type " & Add_Separator (XS_Object.Get_Name) & " is");
+               Unit.Put (+"    (");
 
                for J in 1 .. List.Length loop
-                  Ada.Wide_Wide_Text_IO.Put_Line
-                   (Ada.Wide_Wide_Text_IO.Standard_Error,
-                    List.Element (J).To_Wide_Wide_String);
-
-                  if J /= List.Length then
-                     Writer.N (List.Element (J).To_Lowercase);
-                     Writer.N (", ");
-                  else
-                     Writer.N (List.Element (J).To_Lowercase);
-                     Writer.P (");");
-                     Writer.P;
+                  if J /= 1 then
+                     Unit.Put_Line (+",");
+                     Unit.Put (+"     ");
                   end if;
+
+                  Unit.Put (List.Element (J).To_Simple_Lowercase);
+                  --  XXX Why literal name is converted to lowercase?
                end loop;
+
+               Unit.Put_Line (+");");
             end if;
          end;
       end loop;
@@ -573,48 +589,59 @@ package body XSD_To_Ada.Utils is
    -------------------------
 
    procedure Create_Package_Name
-     (Payload_Writer : in out XSD_To_Ada.Writers.Writer) is
+    (Unit : in out Generator.Units.Ada_Units.Ada_Unit) is
    begin
-      Writers.P
-        (Payload_Writer,
-         "with Ada.Containers.Vectors;" & LF
-         & "with League.Strings;" & LF
-         & "with Interfaces;" & LF
-         & "with ICTS.Types;" & LF
-         & "with ICTS.Forex;" & LF
-         & "with ICTSClient.Types;" & LF
-         & "with Web_Services.SOAP.Payloads;" & LF
-         & "with Ada.Strings.Unbounded;" & LF
-         & "with ICTS.Currencies;"
-         & LF & LF
-         & "package Payloads is"
-         & LF & LF
-         & "   type Decimal_String is new Ada.Strings.Unbounded."
-         & "Unbounded_String;"
-         & LF
-         & "   Null_Decimal : constant Decimal_String :=" & LF
-         & "     Decimal_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
-         & LF & LF
-         & "   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;"
-         & LF
-         & "   Null_Rate : constant Rate_String :=" & LF
-         & "     Rate_String (Ada.Strings.Unbounded.Null_Unbounded_String);"
-         & LF & LF
-         & "   type TimeT is new Interfaces.Unsigned_64;" & LF & LF
-         & "   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;"
-         & LF & LF
-         & "   type Abstract_IATS_Responce is" & LF
-         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
-         & LF
-         & "     with null record;"
-         & LF & LF
-         & "   type Abstract_IATS_Request is" & LF
-         & "     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
-         & LF
-         & "     with record" & LF
-         & "       Session : League.Strings.Universal_String;"
-         & LF
-         & "     end record;" & LF);
+      Unit.Set_Section (Generator.Units.Ada_Units.Unit_Declaration_Section);
+      Unit.New_Line;
+      Unit.Put_Line (+"package Payloads is");
+
+      --  XXX Temporary stuff to generate compilable code for IATS project.
+
+      Unit.Add_With (+"Ada.Strings.Unbounded");
+      Unit.New_Line;
+      Unit.Put_Line
+       (+"   type Decimal_String is"
+          & " new Ada.Strings.Unbounded.Unbounded_String;");
+      Unit.New_Line;
+      Unit.Put_Line (+"   Null_Decimal : constant Decimal_String");
+      Unit.Put_Line
+       (+"     := Decimal_String"
+          & " (Ada.Strings.Unbounded.Null_Unbounded_String);");
+
+      Unit.Add_With (+"Ada.Strings.Unbounded");
+      Unit.New_Line;
+      Unit.Put_Line
+       (+"   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;");
+      Unit.New_Line;
+      Unit.Put_Line (+"   Null_Rate : constant Rate_String");
+      Unit.Put_Line
+       (+"     := Rate_String"
+          & " (Ada.Strings.Unbounded.Null_Unbounded_String);");
+
+      Unit.Add_With (+"Interfaces");
+      Unit.New_Line;
+      Unit.Put_Line (+"   type TimeT is new Interfaces.Unsigned_64;");
+
+      Unit.New_Line;
+      Unit.Put_Line (+"   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;");
+
+      Unit.Add_With (+"Web_Services.SOAP.Payloads");
+      Unit.New_Line;
+      Unit.Put_Line (+"   type Abstract_IATS_Responce is");
+      Unit.Put_Line
+       (+"     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload");
+      Unit.Put_Line (+"       with null record;");
+
+      Unit.Add_With (+"Web_Services.SOAP.Payloads");
+      Unit.New_Line;
+      Unit.Put_Line (+"   type Abstract_IATS_Request is");
+      Unit.Put_Line
+       (+"     abstract new"
+          & " Web_Services.SOAP.Payloads.Abstract_SOAP_Payload with");
+      Unit.Put_Line (+"   record");
+      Unit.Add_With (+"League.Strings");
+      Unit.Put_Line (+"      Session : League.Strings.Universal_String;");
+      Unit.Put_Line (+"   end record;");
    end Create_Package_Name;
 
    ------------------------
@@ -2405,6 +2432,23 @@ package body XSD_To_Ada.Utils is
         ("--  This file is generated by xsd_to_ada_generator, don't edit it.");
       Self.P (Lin);
       Self.P ("");
+   end Put_Header;
+
+   ----------------
+   -- Put_Header --
+   ----------------
+
+   procedure Put_Header (Unit : in out Generator.Units.Ada_Units.Ada_Unit) is
+   begin
+      Unit.Set_Section (Generator.Units.Ada_Units.Unit_Header_Section);
+      Unit.Put_Line
+       (+"-------------------------------------------------------------------"
+           & "-----------");
+      Unit.Put_Line
+       (+"--  This file is generated by xsd_to_ada_generator, don't edit it.");
+      Unit.Put_Line
+       (+"-------------------------------------------------------------------"
+           & "-----------");
    end Put_Header;
 
 end XSD_To_Ada.Utils;
