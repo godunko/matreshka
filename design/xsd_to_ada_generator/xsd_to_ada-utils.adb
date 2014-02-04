@@ -471,17 +471,6 @@ package body XSD_To_Ada.Utils is
        (+"     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload");
       Unit.Put_Line (+"       with null record;");
 
-      Unit.Add_With (+"Web_Services.SOAP.Payloads");
-      Unit.New_Line;
-      Unit.Put_Line (+"   type Abstract_IATS_Request is");
-      Unit.Put_Line
-       (+"     abstract new"
-          & " Web_Services.SOAP.Payloads.Abstract_SOAP_Payload with");
-      Unit.Put_Line (+"   record");
-      Unit.Add_With (+"League.Strings");
-      Unit.Put_Line (+"      Session : League.Strings.Universal_String;");
-      Unit.Put_Line (+"   end record;");
-
       --  XXX Additional 'with's to be able to compile generated code for test
       --  project.
 
@@ -490,6 +479,7 @@ package body XSD_To_Ada.Utils is
       Unit.Add_With (+"ICTS.Forex");
       Unit.Add_With (+"ICTS.Types");
       Unit.Add_With (+"ICTSClient.Types");
+      Unit.Add_With (+"League.Strings");
    end Create_Package_Name;
 
    ------------------------
