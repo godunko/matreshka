@@ -102,9 +102,6 @@ package XSD_To_Ada.Utils is
    Optional_Vector : League.String_Vectors.Universal_String_Vector;
 
    function Add_Separator
-     (Text : Wide_Wide_String) return Wide_Wide_String;
-
-   function Add_Separator
     (Text : League.Strings.Universal_String)
        return League.Strings.Universal_String;
 

@@ -105,6 +105,9 @@ package body XSD_To_Ada.Utils is
    function "+" (Item : Wide_Wide_String) return League.Strings.Universal_String
      renames League.Strings.To_Universal_String;
 
+   function Add_Separator
+     (Text : Wide_Wide_String) return Wide_Wide_String;
+
    --------------
    -- Add_Node --
    --------------
