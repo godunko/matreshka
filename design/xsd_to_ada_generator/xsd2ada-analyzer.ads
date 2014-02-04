@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,85 +39,57 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision: 4279 $ $Date: 2013-11-19 14:27:35 +0200 (Вт., 19 нояб. 2013) $
+--  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package analyze XML schema model.
+------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
+
 with League.Strings;
-with League.String_Vectors;
 
-with XML.Schema.Terms;
+with XML.Schema.Particles;
 with XML.Schema.Type_Definitions;
+with XML.Schema.Models;
 
-with XSD2Ada.Analyzer;
 with XSD_To_Ada.Mappings;
-with XSD_To_Ada.Utils;
-with XSD_To_Ada.Writers;
 
-package XSD_To_Ada.Encoder_2 is
+package XSD2Ada.Analyzer is
 
-   Elements_Name : League.String_Vectors.Universal_String_Vector;
+   type Item is record
+      Type_Def         : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Min, Max         : Boolean := False;
+      Choice           : Boolean := False;
+      Anonym_Name      : League.Strings.Universal_String;
+      Decl_Anonym_Name : League.Strings.Universal_String;
+      Element_Name     : League.Strings.Universal_String;
+   end record;
 
-   function Add_Indent
-     (Spaces_Count : Integer)
-      return League.Strings.Universal_String;
+   package Item_Vectors is
+     new Ada.Containers.Vectors (Positive, Item);
 
-   procedure Generate_Complex_Type
-     (XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out Writers.Writer;
-      Choice_Name : League.Strings.Universal_String;
-      Base_Name   : League.Strings.Universal_String;
-      Min_Occurs  : Boolean;
-      Max_Occurs  : Boolean);
+   subtype Items is Item_Vectors.Vector;
 
-   procedure Generate_Overriding_Procedure_Encode_Header
-     (Writer          : in out Writers.Writer;
-      Spec_Writer     : in out Writers.Writer;
-      Procedures_Name : League.Strings.Universal_String;
-      Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
-      Is_AnyType      : Boolean := False);
+   ---------------------
+   -- Old subprograms --
+   ---------------------
 
-   procedure Generate_Package_Header
-     (Payload_Writer : in out XSD_To_Ada.Writers.Writer);
+   procedure Add_Node
+    (Node_Vector          : in out Items;
+     Type_Difinition_Node : Item);
 
-   procedure Generate_Procedure_Encode_Header
-     (Writer          : in out Writers.Writer;
-      Procedures_Name : League.Strings.Universal_String);
+   procedure Create_Element_Type
+    (Model       : XML.Schema.Models.XS_Model;
+     Node_Vector : in out Items;
+     Mapping     : XSD_To_Ada.Mappings.Mapping);
 
-   procedure Generate_Simple_Type
-     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out Writers.Writer;
-      Choice_Name : League.Strings.Universal_String;
-      Base_Name   : League.Strings.Universal_String;
-      Min_Occurs  : Boolean;
-      Max_Occurs  : Boolean);
-
-   procedure Print_Type_Definition
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+   procedure Create_Node_Vector
+    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
      Indent       : Wide_Wide_String;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
+     Node_Vector  : in out XSD2Ada.Analyzer.Items;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Name         : League.Strings.Universal_String;
-     Anonym_Name  : League.Strings.Universal_String;
-     Element_Name : League.Strings.Universal_String;
-      Is_Min_Occur : Boolean := False);
+     Min_Occurs   : Natural;
+     Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
+     Element_Name : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String);
 
-   procedure Print_Type_Title
-    (Node_Vector          : XSD2Ada.Analyzer.Items;
-     Indent               : Wide_Wide_String;
-     Writer               : in out XSD_To_Ada.Writers.Writer;
-     Spec_Writer          : in out XSD_To_Ada.Writers.Writer;
-     Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
-     Tag_Vector           : in out
-       League.String_Vectors.Universal_String_Vector;
-     Mapping              : XSD_To_Ada.Mappings.Mapping);
-
-   function Write_End_Element
-     (Name : League.Strings.Universal_String)
-      return League.Strings.Universal_String;
-
-   function Write_Start_Element
-     (Name : League.Strings.Universal_String)
-      return League.Strings.Universal_String;
-
-end XSD_To_Ada.Encoder_2;
+end XSD2Ada.Analyzer;

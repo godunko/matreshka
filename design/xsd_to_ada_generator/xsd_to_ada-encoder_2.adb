@@ -712,14 +712,14 @@ package body XSD_To_Ada.Encoder_2 is
    ----------------------
 
    procedure Print_Type_Title
-     (Node_Vector          : XSD_To_Ada.Utils.Items;
-      Indent               : Wide_Wide_String;
-      Writer               : in out XSD_To_Ada.Writers.Writer;
-      Spec_Writer          : in out XSD_To_Ada.Writers.Writer;
-      Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
-      Tag_Vector           : in out League.String_Vectors
-                                       .Universal_String_Vector;
-      Mapping              : XSD_To_Ada.Mappings.Mapping)
+    (Node_Vector          : XSD2Ada.Analyzer.Items;
+     Indent               : Wide_Wide_String;
+     Writer               : in out XSD_To_Ada.Writers.Writer;
+     Spec_Writer          : in out XSD_To_Ada.Writers.Writer;
+     Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
+     Tag_Vector           : in out
+       League.String_Vectors.Universal_String_Vector;
+     Mapping              : XSD_To_Ada.Mappings.Mapping)
    is
 
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
@@ -730,7 +730,8 @@ package body XSD_To_Ada.Encoder_2 is
       Discriminant_Type : League.Strings.Universal_String;
       Vector_Name       : League.Strings.Universal_String;
       Anonym_Name       : League.Strings.Universal_String;
-      Item              : XSD_To_Ada.Utils.Item;
+      Item              : XSD2Ada.Analyzer.Item;
+
    begin
       for Index in 1 .. Natural (Node_Vector.Length) loop
          Item := Node_Vector.Element (Index);
