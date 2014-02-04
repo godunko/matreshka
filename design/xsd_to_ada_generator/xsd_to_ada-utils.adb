@@ -464,13 +464,6 @@ package body XSD_To_Ada.Utils is
       Unit.New_Line;
       Unit.Put_Line (+"   type Diagnosis_Code is range 0 .. 2 ** 32 - 1;");
 
-      Unit.Add_With (+"Web_Services.SOAP.Payloads");
-      Unit.New_Line;
-      Unit.Put_Line (+"   type Abstract_IATS_Responce is");
-      Unit.Put_Line
-       (+"     abstract new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload");
-      Unit.Put_Line (+"       with null record;");
-
       --  XXX Additional 'with's to be able to compile generated code for test
       --  project.
 
@@ -480,6 +473,7 @@ package body XSD_To_Ada.Utils is
       Unit.Add_With (+"ICTS.Types");
       Unit.Add_With (+"ICTSClient.Types");
       Unit.Add_With (+"League.Strings");
+      Unit.Add_With (+"Web_Services.SOAP.Payloads");
    end Create_Package_Name;
 
    ------------------------
@@ -1118,7 +1112,9 @@ package body XSD_To_Ada.Utils is
                         "   type "
                         & Add_Separator
                           (Node_Vector.Element (Index).Element_Name)
-                        & " is new Abstract_IATS_Responce with" & LF
+                        & " is" & LF
+                        & "     new Web_Services.SOAP.Payloads."
+                        & "Abstract_SOAP_Payload with" & LF
                         & "     record" & LF
                         & "     "
                         & Add_Separator (Type_D.Get_Name)
@@ -1151,7 +1147,9 @@ package body XSD_To_Ada.Utils is
                         "   type "
                         & XSD_To_Ada.Utils.Add_Separator
                           (Type_D.Get_Name.To_Wide_Wide_String)
-                        & " is new Abstract_IATS_Responce with" & LF
+                        & " is" & LF
+                        & "     new Web_Services.SOAP.Payloads."
+                        & "Abstract_SOAP_Payload with" & LF
                         & "     record");
 
                      XSD_To_Ada.Utils.Print_Type_Definition
@@ -1259,7 +1257,9 @@ package body XSD_To_Ada.Utils is
                      "   type "
                      & Add_Separator
                        (Node_Vector.Element (Index).Element_Name)
-                     & " is new Abstract_IATS_Responce with" & LF
+                     & " is" & LF
+                     & "     new Web_Services.SOAP.Payloads."
+                     & "Abstract_SOAP_Payload with" & LF
                      & "     record" & LF
                      & "     "
                      & Add_Separator (Type_D.Get_Name)
@@ -1332,7 +1332,9 @@ package body XSD_To_Ada.Utils is
                      "   type "
                      & Add_Separator
                        (Node_Vector.Element (Index).Element_Name)
-                     & " is new Abstract_IATS_Responce with" & LF
+                     & " is" & LF
+                     & "      new Web_Services.SOAP.Payloads."
+                     & "Abstract_SOAP_Payload with" & LF
                      & "     record" & LF
                      & "     "
                      & Add_Separator (Type_D.Get_Name)
