@@ -92,18 +92,4 @@ package XSD2Ada.Analyzer is
      Element_Name : League.Strings.Universal_String
        := League.Strings.Empty_Universal_String);
 
-   function Has_Top_Level_Type
-    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Table  : XSD_To_Ada.Utils.Types_Table_Type_Array) return Boolean;
-   --  This function returns True if Type_D has Top Level Types and
-   --  it was not created.
-
-   procedure Node_Type_Definition
-    (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Node_Vector          : in out Items;
-     Type_Difinition_Node : in out Item;
-     Name                 : League.Strings.Universal_String;
-     Mapping              : XSD_To_Ada.Mappings.Mapping;
-     Table                : in out XSD_To_Ada.Utils.Types_Table_Type_Array);
-
 end XSD2Ada.Analyzer;
