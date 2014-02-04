@@ -55,6 +55,7 @@ with XSD_To_Ada.Utils;
 package body XSD2Ada.Analyzer is
 
    use type League.Strings.Universal_String;
+   use all type XML.Schema.Complex_Type_Definitions.Content_Types;
 
    procedure Add_Node
     (Node_Vector          : in out Items;
@@ -230,6 +231,55 @@ package body XSD2Ada.Analyzer is
       end if;
    end Create_Node_Vector;
 
+   -------------------------
+   -- Has_Element_Session --
+   -------------------------
+
+   function Has_Element_Session
+    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean
+   is
+      use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
+      XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+      XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+
+      Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+   begin
+      case Type_D.Get_Type_Category is
+         when XML.Schema.Complex_Type =>
+            CTD := Type_D.To_Complex_Type_Definition;
+
+            if CTD.Get_Content_Type in Element_Only | Mixed then
+               XS_Particle    := CTD.Get_Particle;
+               XS_Term        := XS_Particle.Get_Term;
+               XS_Model_Group := XS_Term.To_Model_Group;
+               XS_List        := XS_Model_Group.Get_Particles;
+
+               for J in 1 .. XS_List.Get_Length loop
+                  XS_Particle := XS_List.Item (J).To_Particle;
+                  XS_Term := XS_Particle.Get_Term;
+                  Decl := XS_Term.To_Element_Declaration;
+
+                  if Decl.Get_Name.To_UTF_8_String = "Session" then
+                     return True;
+                  end if;
+
+                  return Has_Element_Session (Decl.Get_Type_Definition);
+               end loop;
+            end if;
+
+         when XML.Schema.Simple_Type =>
+            null;
+
+         when XML.Schema.None =>
+            null;
+      end case;
+
+      return False;
+   end Has_Element_Session;
    ------------------------
    -- Has_Top_Level_Type --
    ------------------------
@@ -428,10 +478,7 @@ package body XSD2Ada.Analyzer is
          when XML.Schema.Complex_Type =>
             CTD := Type_D.To_Complex_Type_Definition;
 
-            if CTD.Get_Content_Type
-              in XML.Schema.Complex_Type_Definitions.Element_Only
-                   | XML.Schema.Complex_Type_Definitions.Mixed
-            then
+            if CTD.Get_Content_Type in Element_Only | Mixed then
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 

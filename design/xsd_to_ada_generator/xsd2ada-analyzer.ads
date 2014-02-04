@@ -88,4 +88,7 @@ package XSD2Ada.Analyzer is
      Element_Name : League.Strings.Universal_String
        := League.Strings.Empty_Universal_String);
 
+   function Has_Element_Session
+    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean;
+
 end XSD2Ada.Analyzer;
