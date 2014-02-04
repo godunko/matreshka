@@ -645,6 +645,15 @@ package body XSD_To_Ada.Utils is
       Unit.Add_With (+"League.Strings");
       Unit.Put_Line (+"      Session : League.Strings.Universal_String;");
       Unit.Put_Line (+"   end record;");
+
+      --  XXX Additional 'with's to be able to compile generated code for test
+      --  project.
+
+      Unit.Add_With (+"Ada.Containers.Vectors");
+      Unit.Add_With (+"ICTS.Currencies");
+      Unit.Add_With (+"ICTS.Forex");
+      Unit.Add_With (+"ICTS.Types");
+      Unit.Add_With (+"ICTSClient.Types");
    end Create_Package_Name;
 
    ------------------------
