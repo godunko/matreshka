@@ -992,24 +992,6 @@ package body XSD_To_Ada.Utils is
       return False;
    end Has_Element_Session;
 
-   ------------------------
-   -- Has_Top_Level_Type --
-   ------------------------
-
-   function Has_Top_Level_Type
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Table  : Types_Table_Type_Array)
-      return Boolean is
-   begin
-      for j in 1 .. Table'Last loop
-         if Type_D.Get_Name = Table (j).Type_Name and Table (j).Type_State then
-            return True;
-         end if;
-      end loop;
-
-      return False;
-   end Has_Top_Level_Type;
-
    --------------------------------
    -- Is_Type_In_Optional_Vector --
    --------------------------------

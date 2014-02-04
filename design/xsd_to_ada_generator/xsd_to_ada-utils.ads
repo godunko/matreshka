@@ -132,13 +132,6 @@ package XSD_To_Ada.Utils is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer);
 
-   function Has_Top_Level_Type
-     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Table  : Types_Table_Type_Array)
-      return Boolean;
-   --  This function returns True if Type_D has Top Level Types and
-   --  it was not created.
-
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
 
    procedure Print_Type_Definition

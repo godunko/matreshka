@@ -54,6 +54,8 @@ with XSD_To_Ada.Utils;
 
 package body XSD2Ada.Analyzer is
 
+   use type League.Strings.Universal_String;
+
    --------------
    -- Add_Node --
    --------------
@@ -210,6 +212,23 @@ package body XSD2Ada.Analyzer is
       end if;
    end Create_Node_Vector;
 
+   ------------------------
+   -- Has_Top_Level_Type --
+   ------------------------
+
+   function Has_Top_Level_Type
+    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Table  : XSD_To_Ada.Utils.Types_Table_Type_Array) return Boolean is
+   begin
+      for j in 1 .. Table'Last loop
+         if Type_D.Get_Name = Table (j).Type_Name and Table (j).Type_State then
+            return True;
+         end if;
+      end loop;
+
+      return False;
+   end Has_Top_Level_Type;
+
    --------------------------
    -- Node_Type_Definition --
    --------------------------
@@ -222,7 +241,6 @@ package body XSD2Ada.Analyzer is
      Mapping              : XSD_To_Ada.Mappings.Mapping;
      Table                : in out XSD_To_Ada.Utils.Types_Table_Type_Array)
    is
-      use type League.Strings.Universal_String;
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
       procedure Print_Term
@@ -335,7 +353,7 @@ package body XSD2Ada.Analyzer is
                    (Node_Vector, Anonym_Type_Difinition_Node);
                end;
 
-            elsif XSD_To_Ada.Utils.Has_Top_Level_Type (Type_D, Table) then
+            elsif Has_Top_Level_Type (Type_D, Table) then
                XSD2Ada.Analyzer.Create_Node_Vector
                 (Type_D,
                  Node_Vector,
