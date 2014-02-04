@@ -156,7 +156,6 @@ package XSD_To_Ada.Utils is
 
    procedure Node_Type_Definition
      (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent               : Wide_Wide_String;
       Node_Vector          : in out XSD2Ada.Analyzer.Items;
       Type_Difinition_Node : in out XSD2Ada.Analyzer.Item;
       Name                 : League.Strings.Universal_String;

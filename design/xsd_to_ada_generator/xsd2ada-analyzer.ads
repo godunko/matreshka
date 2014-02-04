@@ -84,7 +84,6 @@ package XSD2Ada.Analyzer is
 
    procedure Create_Node_Vector
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
      Node_Vector  : in out XSD2Ada.Analyzer.Items;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Min_Occurs   : Natural;

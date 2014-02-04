@@ -136,7 +136,6 @@ package body XSD2Ada.Analyzer is
 
          Create_Node_Vector
            (Type_D,
-            "",
             Node_Vector,
             Mapping,
             1, (False, 1),
@@ -150,7 +149,6 @@ package body XSD2Ada.Analyzer is
 
    procedure Create_Node_Vector
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
      Node_Vector  : in out XSD2Ada.Analyzer.Items;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Min_Occurs   : Natural;
@@ -196,7 +194,6 @@ package body XSD2Ada.Analyzer is
       if Type_D.Get_Type_Category = XML.Schema.Complex_Type then
          XSD_To_Ada.Utils.Node_Type_Definition
            (Type_D,
-            Indent & "   ",
             Node_Vector,
             Type_Difinition_Node,
             Type_D.Get_Name,

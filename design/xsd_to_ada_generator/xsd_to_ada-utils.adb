@@ -237,7 +237,6 @@ package body XSD_To_Ada.Utils is
 
          XSD2Ada.Analyzer.Create_Node_Vector
            (XS_Object.To_Type_Definition,
-            "",
             Node_Vector,
             Mapping,
             1, (False, 1));
@@ -249,7 +248,6 @@ package body XSD_To_Ada.Utils is
 
          XSD2Ada.Analyzer.Create_Node_Vector
            (Type_D,
-            "",
             Node_Vector,
             Mapping,
             1, (False, 1));
@@ -313,7 +311,6 @@ package body XSD_To_Ada.Utils is
          then
             XSD2Ada.Analyzer.Create_Node_Vector
               (Type_D,
-               "",
                Node_Vector,
                Mapping,
                1, (False, 1),
@@ -1035,7 +1032,6 @@ package body XSD_To_Ada.Utils is
 
    procedure Node_Type_Definition
     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent               : Wide_Wide_String;
      Node_Vector          : in out XSD2Ada.Analyzer.Items;
      Type_Difinition_Node : in out XSD2Ada.Analyzer.Item;
      Name                 : League.Strings.Universal_String;
@@ -1045,11 +1041,10 @@ package body XSD_To_Ada.Utils is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
       procedure Print_Term
-        (XS_Term      : XML.Schema.Terms.XS_Term;
-         Indent       : Wide_Wide_String := "";
-         Name         : League.Strings.Universal_String;
-         Map          : XSD_To_Ada.Mappings.Mapping;
-         Table        : in out Types_Table_Type_Array);
+       (XS_Term : XML.Schema.Terms.XS_Term;
+        Name    : League.Strings.Universal_String;
+        Map     : XSD_To_Ada.Mappings.Mapping;
+        Table   : in out Types_Table_Type_Array);
 
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
@@ -1066,11 +1061,10 @@ package body XSD_To_Ada.Utils is
       ----------------
 
       procedure Print_Term
-       (XS_Term      : XML.Schema.Terms.XS_Term;
-        Indent       : Wide_Wide_String := "";
-        Name         : League.Strings.Universal_String;
-        Map          : XSD_To_Ada.Mappings.Mapping;
-        Table        : in out Types_Table_Type_Array)
+       (XS_Term : XML.Schema.Terms.XS_Term;
+        Name    : League.Strings.Universal_String;
+        Map     : XSD_To_Ada.Mappings.Mapping;
+        Table   : in out Types_Table_Type_Array)
       is
          use XML.Schema.Terms.Model_Groups;
 
@@ -1087,8 +1081,6 @@ package body XSD_To_Ada.Utils is
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
             XS_List := XS_Model_Group.Get_Particles;
-            Ada.Wide_Wide_Text_IO.Put
-             (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
               XML.Schema.Model_Groups.Compositor_Kinds'Wide_Wide_Image
@@ -1100,10 +1092,7 @@ package body XSD_To_Ada.Utils is
                Max_Occurs_2 := XS_Particle.Get_Max_Occurs;
                Min_Occurs_2 := XS_Particle.Get_Min_Occurs;
 
-               Print_Term
-                 (XS_Particle.Get_Term,
-                  Indent & "   ", Name, Map,
-                  Table);
+               Print_Term (XS_Particle.Get_Term, Name, Map, Table);
             end loop;
 
          elsif XS_Term.Is_Element_Declaration then
@@ -1113,7 +1102,7 @@ package body XSD_To_Ada.Utils is
 
             if Type_D.Get_Name.To_UTF_8_String = "" then
                Node_Type_Definition
-                 (Type_D, Indent & "   ",
+                 (Type_D,
                   Node_Vector, Type_Difinition_Node,
                   Name & '_' & Decl.Get_Name,
                   Map,
@@ -1160,12 +1149,12 @@ package body XSD_To_Ada.Utils is
 
             elsif Has_Top_Level_Type (Type_D, Table) then
                XSD2Ada.Analyzer.Create_Node_Vector
-                 (Type_D,
-                  Indent & "   ",
-                  Node_Vector,
-                  Mapping,
-                  Min_Occurs_2,
-                  Max_Occurs_2);
+                (Type_D,
+                 Node_Vector,
+                 Mapping,
+                 Min_Occurs_2,
+                 Max_Occurs_2);
+
             else
                declare
                   Simple_Type_Difinition_Node : XSD2Ada.Analyzer.Item;
@@ -1209,12 +1198,8 @@ package body XSD_To_Ada.Utils is
       then
 
          if XS_Base.Get_Name.To_UTF_8_String /= "anyType" then
-            Ada.Wide_Wide_Text_IO.Put_Line
-              (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
-
             XSD2Ada.Analyzer.Create_Node_Vector
               (XS_Base,
-               Indent & "   ",
                Node_Vector,
                Mapping,
                1, (False, 1));
@@ -1231,32 +1216,29 @@ package body XSD_To_Ada.Utils is
 
                Ada.Wide_Wide_Text_IO.Put_Line
                 (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 Indent
-                 & "Complex_Type :"
+                 "Complex_Type :"
                  & Type_D.Get_Name.To_Wide_Wide_String);
 
                Print_Term
                 (XS_Term,
-                 Indent & "   ",
                  Name,
                  Mapping,
                  Table);
 
                Ada.Wide_Wide_Text_IO.Put_Line
                 (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 Indent
-                 & "End Complex_Type :"
+                 "End Complex_Type :"
                  & Type_D.Get_Name.To_Wide_Wide_String);
             end if;
 
          when XML.Schema.Simple_Type =>
             Ada.Wide_Wide_Text_IO.Put
              (Ada.Wide_Wide_Text_IO.Standard_Error,
-              Indent & "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
+              "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
 
          when XML.Schema.None =>
             Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "NONE!!!");
+             (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
       end case;
 
       Now_Print_Level := Now_Print_Level - 1;
