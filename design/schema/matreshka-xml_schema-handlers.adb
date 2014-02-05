@@ -2856,10 +2856,6 @@ package body Matreshka.XML_Schema.Handlers is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean) is
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Ada.Wide_Wide_Text_IO.Standard_Error,
-         "Start_Element:" & Qualified_Name.To_Wide_Wide_String);
-
       if Self.Ignore_Depth /= 0 then
          Self.Ignore_Depth := Self.Ignore_Depth + 1;
 
@@ -3493,13 +3489,6 @@ package body Matreshka.XML_Schema.Handlers is
          end if;
 
          Value := Attributes.Value (Index);
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           "Required: "
-             & Name.To_Wide_Wide_String
-             & " = "
-             & Value.To_Wide_Wide_String);
       end Required;
 
       --------------
