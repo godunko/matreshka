@@ -957,21 +957,19 @@ package body XSD_To_Ada.Utils is
       Vector_Name       : League.Strings.Universal_String;
 
    begin
-      for Index in 1 .. Natural (Node_Vector.Length) loop
-         if not Node_Vector.Element
-                 (Index).Type_Def.Is_Simple_Type_Definition
-         then
-            Type_D := Node_Vector.Element (Index).Type_Def;
+      for Current of Node_Vector loop
+         if not Current.Type_Def.Is_Simple_Type_Definition then
+            Type_D := Current.Type_Def;
 
             Discriminant_Type.Clear;
 
-            if Node_Vector.Element (Index).Choice then
+            if Current.Choice then
                Discriminant_Type := League.Strings.From_UTF_8_String ("_Case");
             end if;
 
             if Type_D.Get_Name.Is_Empty then
                Vector_Name.Clear;
-               Vector_Name.Append (Node_Vector.Element (Index).Anonym_Name);
+               Vector_Name.Append (Current.Anonym_Name);
                Vector_Name.Append ("_Anonym");
                Vector_Name.Append (Discriminant_Type);
 
@@ -982,37 +980,31 @@ package body XSD_To_Ada.Utils is
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
               Indent
-                & Natural'Wide_Wide_Image (Index)
+                & Natural'Wide_Wide_Image (Node_Vector.Find_Index (Current))
                 & "; START Print_Type_Title Type_D="
                 & Type_D.Get_Name.To_Wide_Wide_String
-                & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String);
+                & Current.Anonym_Name.To_Wide_Wide_String);
 
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Min "
-               & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Min));
+              "Min " & Boolean'Wide_Wide_Image (Current.Min));
 
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Max "
-                & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Max));
+              "Max " & Boolean'Wide_Wide_Image (Current.Max));
 
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Choice "
-                & Boolean'Wide_Wide_Image
-                   (Node_Vector.Element (Index).Choice));
+              "Choice " & Boolean'Wide_Wide_Image (Current.Choice));
 
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Anonym_Name <"
-                & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String
-                & ">");
+              "Anonym_Name <" & Current.Anonym_Name.To_Wide_Wide_String & ">");
 
             Ada.Wide_Wide_Text_IO.Put_Line
              (Ada.Wide_Wide_Text_IO.Standard_Error,
               "Element_Name <"
-                & Node_Vector.Element (Index).Element_Name.To_Wide_Wide_String
+                & Current.Element_Name.To_Wide_Wide_String
                 & ">");
 
             if Type_D.Get_Name.Length > 10 then
@@ -1021,17 +1013,16 @@ package body XSD_To_Ada.Utils is
                   (Type_D.Get_Name.Length - 7, Type_D.Get_Name.Length);
             end if;
 
-            if not Node_Vector.Element (Index).Max
-              and then not Node_Vector.Element (Index).Min
-              and then Node_Vector.Element (Index).Element_Name.Is_Empty
-              and then Node_Vector.Element (Index).Type_Def
-                         .Is_Complex_Type_Definition
+            if not Current.Max
+              and then not Current.Min
+              and then Current.Element_Name.Is_Empty
+              and then Current.Type_Def.Is_Complex_Type_Definition
             then
-               if not Node_Vector.Element (Index).Anonym_Name.Is_Empty then
+               if not Current.Anonym_Name.Is_Empty then
                   Writers.P
                    (Payload_Writer,
                     "   type "
-                      & Add_Separator (Node_Vector.Element (Index).Anonym_Name)
+                      & Add_Separator (Current.Anonym_Name)
                       & "_Anonym"
                       & Discriminant_Type
                       & " is record");
@@ -1041,8 +1032,8 @@ package body XSD_To_Ada.Utils is
                     Indent & "   ",
                     Payload_Writer, Payload_Type_Writer,
                     Type_D.Get_Name,
-                    Node_Vector.Element (Index).Anonym_Name,
-                    Node_Vector.Element (Index).Element_Name,
+                    Current.Anonym_Name,
+                    Current.Element_Name,
                     Mapping);
 
                   Writers.P (Payload_Writer, "   end record;" & LF);
@@ -1051,14 +1042,11 @@ package body XSD_To_Ada.Utils is
                   if Type_D.Get_Name.Length > 10
                     and US_Response.To_UTF_8_String = "Response"
                   then
-                     if not Node_Vector.Element
-                             (Index).Element_Name.Is_Empty
-                     then
+                     if not Current.Element_Name.Is_Empty then
                         Writers.N
                          (Payload_Writer,
                           "   type "
-                            & Add_Separator
-                               (Node_Vector.Element (Index).Element_Name)
+                            & Add_Separator (Current.Element_Name)
                             & " is" & LF
                             & "     new Web_Services.SOAP.Payloads."
                             & "Abstract_SOAP_Payload with" & LF
@@ -1077,8 +1065,7 @@ package body XSD_To_Ada.Utils is
                         Gen_Access_Type
                          (Payload_Writer,
                           Add_Separator
-                           (Node_Vector.Element
-                             (Index).Element_Name).To_Wide_Wide_String);
+                           (Current.Element_Name).To_Wide_Wide_String);
 
                      else
                         XSD_To_Ada.Utils.Gen_Proc_Header
@@ -1100,8 +1087,8 @@ package body XSD_To_Ada.Utils is
                           Indent & "   ",
                           Payload_Writer, Payload_Type_Writer,
                           Type_D.Get_Name,
-                          Node_Vector.Element (Index).Anonym_Name,
-                          Node_Vector.Element (Index).Element_Name,
+                          Current.Anonym_Name,
+                          Current.Element_Name,
                           Mapping);
 
                         Writers.P (Payload_Writer, "     end record;" & LF);
@@ -1135,8 +1122,8 @@ package body XSD_To_Ada.Utils is
                           Payload_Writer,
                           Payload_Type_Writer,
                           Type_D.Get_Name,
-                          Node_Vector.Element (Index).Anonym_Name,
-                          Node_Vector.Element (Index).Element_Name,
+                          Current.Anonym_Name,
+                          Current.Element_Name,
                           Mapping);
 
                         Writers.P (Payload_Writer, "   end record;" & LF);
@@ -1174,8 +1161,8 @@ package body XSD_To_Ada.Utils is
                              Payload_Writer,
                              Payload_Type_Writer,
                              Type_D.Get_Name,
-                             Node_Vector.Element (Index).Anonym_Name,
-                             Node_Vector.Element (Index).Element_Name,
+                             Current.Anonym_Name,
+                             Current.Element_Name,
                              Mapping);
 
                            Writers.P (Payload_Writer, "   end record;" & LF);
@@ -1184,23 +1171,22 @@ package body XSD_To_Ada.Utils is
                   end if;
                end if;
 
-            elsif not Node_Vector.Element (Index).Element_Name.Is_Empty then
-               if Node_Vector.Element (Index).Element_Name.Length > 10 then
+            elsif not Current.Element_Name.Is_Empty then
+               if Current.Element_Name.Length > 10 then
                   US_Response :=
-                   Node_Vector.Element (Index).Element_Name.Slice
-                    (Node_Vector.Element (Index).Element_Name.Length - 7,
-                     Node_Vector.Element (Index).Element_Name.Length);
+                   Current.Element_Name.Slice
+                    (Current.Element_Name.Length - 7,
+                     Current.Element_Name.Length);
                end if;
 
-               if Node_Vector.Element (Index).Type_Def.Get_Name.Is_Empty then
-                  if Node_Vector.Element (Index).Element_Name.Length > 10
+               if Current.Type_Def.Get_Name.Is_Empty then
+                  if Current.Element_Name.Length > 10
                     and US_Response.To_UTF_8_String = "Response"
                   then
                      Writers.P
                       (Writer,
                        "   type "
-                         & Add_Separator
-                            (Node_Vector.Element (Index).Element_Name)
+                         & Add_Separator (Current.Element_Name)
                          & " is" & LF
                          & "     new Web_Services.SOAP.Payloads."
                          & "Abstract_SOAP_Payload with" & LF
@@ -1217,16 +1203,14 @@ package body XSD_To_Ada.Utils is
                      Gen_Access_Type
                       (Writer,
                        Add_Separator
-                        (Node_Vector.Element
-                          (Index).Element_Name).To_Wide_Wide_String);
+                        (Current.Element_Name).To_Wide_Wide_String);
 
                   else
                      if XSD2Ada.Analyzer.Has_Element_Session (Type_D) then
                         Writers.P
                          (Payload_Writer,
                           "   type "
-                            & Add_Separator
-                               (Node_Vector.Element (Index).Element_Name)
+                            & Add_Separator (Current.Element_Name)
                             & " is" & LF
                             & "     new Web_Services.SOAP.Payloads."
                             & "Abstract_SOAP_Payload"
@@ -1239,8 +1223,8 @@ package body XSD_To_Ada.Utils is
                           Payload_Writer,
                           Payload_Type_Writer,
                           Type_D.Get_Name,
-                          Node_Vector.Element (Index).Anonym_Name,
-                          Node_Vector.Element (Index).Element_Name,
+                          Current.Anonym_Name,
+                          Current.Element_Name,
                           Mapping);
 
                         Writers.P (Payload_Writer, "   end record;" & LF);
@@ -1249,8 +1233,7 @@ package body XSD_To_Ada.Utils is
                         Writers.P
                          (Payload_Writer,
                           "   type "
-                            & Add_Separator
-                               (Node_Vector.Element (Index).Element_Name)
+                            & Add_Separator (Current.Element_Name)
                             & " is record");
 
                         XSD_To_Ada.Utils.Print_Type_Definition
@@ -1259,22 +1242,21 @@ package body XSD_To_Ada.Utils is
                           Payload_Writer,
                           Payload_Type_Writer,
                           Type_D.Get_Name,
-                          Node_Vector.Element (Index).Anonym_Name,
-                          Node_Vector.Element (Index).Element_Name,
+                          Current.Anonym_Name,
+                          Current.Element_Name,
                           Mapping);
 
                         Writers.P (Payload_Writer, "   end record;" & LF);
                      end if;
                   end if;
                else
-                  if Node_Vector.Element (Index).Element_Name.Length > 10
+                  if Current.Element_Name.Length > 10
                     and US_Response.To_Wide_Wide_String = "Response"
                   then
                      Writers.P
                       (Writer,
                        "   type "
-                         & Add_Separator
-                            (Node_Vector.Element (Index).Element_Name)
+                         & Add_Separator (Current.Element_Name)
                          & " is" & LF
                          & "      new Web_Services.SOAP.Payloads."
                          & "Abstract_SOAP_Payload with" & LF
@@ -1290,8 +1272,7 @@ package body XSD_To_Ada.Utils is
                      Gen_Access_Type
                       (Writer,
                        Add_Separator
-                        (Node_Vector.Element
-                          (Index).Element_Name).To_Wide_Wide_String);
+                        (Current.Element_Name).To_Wide_Wide_String);
 
                   else
                      if XSD2Ada.Analyzer.Has_Element_Session
@@ -1300,12 +1281,10 @@ package body XSD_To_Ada.Utils is
                         Writers.P
                          (Writer,
                           "   type "
-                            & Add_Separator
-                               (Node_Vector.Element (Index).Element_Name)
+                            & Add_Separator (Current.Element_Name)
                             & " is" & LF
                             & "     new Payloads."
-                            & Add_Separator
-                               (Node_Vector.Element (Index).Type_Def.Get_Name)
+                            & Add_Separator (Current.Type_Def.Get_Name)
                             & LF
                             & "   with null record;" & LF);
                      else
@@ -1315,8 +1294,7 @@ package body XSD_To_Ada.Utils is
                            Writers.P
                             (Writer,
                              "   type "
-                               & Add_Separator
-                                  (Node_Vector.Element (Index).Element_Name)
+                               & Add_Separator (Current.Element_Name)
                                & " is" & LF
                                & "     new Web_Services.SOAP.Payloads."
                                & "Abstract_SOAP_Payload" & LF
@@ -1327,24 +1305,18 @@ package body XSD_To_Ada.Utils is
                            XSD_To_Ada.Utils.Gen_Access_Type
                             (Writer,
                              Add_Separator
-                              (Node_Vector.Element
-                                (Index).Element_Name).To_Wide_Wide_String);
+                              (Current.Element_Name).To_Wide_Wide_String);
 
                         else
                            Writers.P
                             (Writer,
                              "   type "
-                               & Add_Separator
-                                  (Node_Vector.Element (Index).Element_Name)
+                               & Add_Separator (Current.Element_Name)
                                & " is record" & LF
                                & "     "
-                               & Add_Separator
-                                  (Node_Vector.Element
-                                    (Index).Type_Def.Get_Name)
+                               & Add_Separator (Current.Type_Def.Get_Name)
                                & " : Payloads."
-                               & Add_Separator
-                                  (Node_Vector.Element
-                                    (Index).Type_Def.Get_Name)
+                               & Add_Separator (Current.Type_Def.Get_Name)
                                & ";" & LF
                                & "   end record;" & LF);
                         end if;
@@ -1352,16 +1324,14 @@ package body XSD_To_Ada.Utils is
                   end if;
                end if;
 
-            elsif Node_Vector.Element (Index).Min then
+            elsif Current.Min then
                declare
                   Type_Name : League.Strings.Universal_String;
 
                begin
                   if Type_D.Get_Name.Is_Empty then
                      Type_Name :=
-                       Node_Vector.Element (Index).Anonym_Name
-                         & "_Anonym"
-                        & Discriminant_Type;
+                       Current.Anonym_Name & "_Anonym" & Discriminant_Type;
 
                   else
                      Type_Name := Type_D.Get_Name & Discriminant_Type;
@@ -1384,7 +1354,7 @@ package body XSD_To_Ada.Utils is
                       & LF);
                end;
 
-            elsif Node_Vector.Element (Index).Max then
+            elsif Current.Max then
                Writers.P
                 (Payload_Writer,
                  "   package "
