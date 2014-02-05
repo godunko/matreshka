@@ -73,7 +73,9 @@ package body XSD2Ada.Analyzer is
       Min_Occurs   : Natural;
       Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
       Element_Name : League.Strings.Universal_String
-      := League.Strings.Empty_Universal_String);
+        := League.Strings.Empty_Universal_String;
+      Anonym_Name  : League.Strings.Universal_String
+        := League.Strings.Empty_Universal_String);
 
    --------------
    -- Add_Node --
@@ -214,6 +216,8 @@ package body XSD2Ada.Analyzer is
      Min_Occurs   : Natural;
      Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
      Element_Name : League.Strings.Universal_String
+       := League.Strings.Empty_Universal_String;
+     Anonym_Name  : League.Strings.Universal_String
        := League.Strings.Empty_Universal_String)
    is
       use type XML.Schema.Particles.Unbounded_Natural;
@@ -223,6 +227,7 @@ package body XSD2Ada.Analyzer is
    begin
       Item.Type_Def := Type_D;
       Item.Element_Name := Element_Name;
+      Item.Anonym_Name := Anonym_Name;
 
       Item.Max := Max_Occurs /= (False, 1);
       Item.Min := Min_Occurs = 0;
@@ -349,7 +354,7 @@ package body XSD2Ada.Analyzer is
          Decl           :
            XML.Schema.Element_Declarations.XS_Element_Declaration;
          Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
-
+         Anonym_Name    : League.Strings.Universal_String;
       begin
          if XS_Term.Is_Model_Group then
             XS_Model_Group := XS_Term.To_Model_Group;
@@ -371,38 +376,22 @@ package body XSD2Ada.Analyzer is
             Type_D := Decl.Get_Type_Definition;
 
             if Type_D.Get_Name.Is_Empty then
-               Traverse_Type_Definition
-                (Type_D,
-                 Node_Vector,
-                 Anonym_Prefix & '_' & Decl.Get_Name);
+               if not Anonym_Prefix.Is_Empty then
+                  Anonym_Name := Anonym_Prefix;
+                  Anonym_Name.Append ("_");
+               end if;
 
-               declare
-                  Item : XSD2Ada.Analyzer.Item;
-
-               begin
-                  Item.Type_Def := Type_D;
-                  Item.Min := Min_Occurs = 0;
-                  Item.Max := Max_Occurs /= (False, 1);
-
-                  if not Anonym_Prefix.Is_Empty then
-                     Item.Anonym_Name := Anonym_Prefix;
-                     Item.Anonym_Name.Append ("_");
-                  end if;
-
-                  Item.Anonym_Name.Append
-                    (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name));
-
-                  XSD2Ada.Analyzer.Add_Node (Node_Vector, Item);
-               end;
-
-            else
-               XSD2Ada.Analyzer.Create_Node_Vector
-                (Type_D,
-                 Node_Vector,
-                 Min_Occurs,
-                 Max_Occurs);
+               Anonym_Name.Append
+                 (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name));
 
             end if;
+
+            Create_Node_Vector
+              (Type_D       => Type_D,
+               Node_Vector  => Node_Vector,
+               Min_Occurs   => Min_Occurs,
+               Max_Occurs   => Max_Occurs,
+               Anonym_Name  => Anonym_Name);
          end if;
       end Traverse_Term;
 
