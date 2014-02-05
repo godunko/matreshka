@@ -947,7 +947,6 @@ package body XSD_To_Ada.Utils is
      Writer      : in out XSD_To_Ada.Writers.Writer;
      Mapping     : XSD_To_Ada.Mappings.Mapping)
    is
-      US_Response         : League.Strings.Universal_String;
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
@@ -1007,12 +1006,6 @@ package body XSD_To_Ada.Utils is
                 & Current.Element_Name.To_Wide_Wide_String
                 & ">");
 
-            if Type_D.Get_Name.Length > 10 then
-               US_Response :=
-                 Type_D.Get_Name.Slice
-                  (Type_D.Get_Name.Length - 7, Type_D.Get_Name.Length);
-            end if;
-
             if not Current.Max
               and then not Current.Min
               and then Current.Element_Name.Is_Empty
@@ -1039,9 +1032,7 @@ package body XSD_To_Ada.Utils is
                   Writers.P (Payload_Writer, "   end record;" & LF);
 
                else
-                  if Type_D.Get_Name.Length > 10
-                    and US_Response.To_UTF_8_String = "Response"
-                  then
+                  if Type_D.Get_Name.Ends_With ("Response") then
                      if not Current.Element_Name.Is_Empty then
                         Writers.N
                          (Payload_Writer,
@@ -1097,8 +1088,6 @@ package body XSD_To_Ada.Utils is
                          (Payload_Writer,
                           Add_Separator (Type_D.Get_Name.To_Wide_Wide_String));
                      end if;
-
-                     US_Response.Clear;
 
                   else
                      if XSD2Ada.Analyzer.Has_Element_Session (Type_D) then
@@ -1172,17 +1161,8 @@ package body XSD_To_Ada.Utils is
                end if;
 
             elsif not Current.Element_Name.Is_Empty then
-               if Current.Element_Name.Length > 10 then
-                  US_Response :=
-                   Current.Element_Name.Slice
-                    (Current.Element_Name.Length - 7,
-                     Current.Element_Name.Length);
-               end if;
-
                if Current.Type_Def.Get_Name.Is_Empty then
-                  if Current.Element_Name.Length > 10
-                    and US_Response.To_UTF_8_String = "Response"
-                  then
+                  if Current.Element_Name.Ends_With ("Response") then
                      Writers.P
                       (Writer,
                        "   type "
@@ -1250,9 +1230,7 @@ package body XSD_To_Ada.Utils is
                      end if;
                   end if;
                else
-                  if Current.Element_Name.Length > 10
-                    and US_Response.To_Wide_Wide_String = "Response"
-                  then
+                  if Current.Element_Name.Ends_With ("Response") then
                      Writers.P
                       (Writer,
                        "   type "
@@ -1378,7 +1356,6 @@ package body XSD_To_Ada.Utils is
 
             Payload_Type_Writer.Text.Clear;
             Payload_Writer.Text.Clear;
-            US_Response.Clear;
          end if;
       end loop;
 
