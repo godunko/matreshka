@@ -51,10 +51,6 @@ with XML.Schema.Terms;
 with XSD2Ada.Analyzer;
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
-with XML.Schema.Objects;
-with XML.Schema.Objects.Type_Definitions;
-with Ada.Containers.Vectors;
-with XML.Schema.Objects.Particles;
 
 package XSD_To_Ada.Utils is
 

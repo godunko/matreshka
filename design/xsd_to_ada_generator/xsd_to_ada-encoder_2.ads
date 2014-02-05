@@ -49,7 +49,6 @@ with XML.Schema.Type_Definitions;
 
 with XSD2Ada.Analyzer;
 with XSD_To_Ada.Mappings;
-with XSD_To_Ada.Utils;
 with XSD_To_Ada.Writers;
 
 package XSD_To_Ada.Encoder_2 is

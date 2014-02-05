@@ -185,12 +185,6 @@ package body XSD2Ada.Analyzer is
 
       Type_Difinition_Node : XSD2Ada.Analyzer.Item;
 
-      XS_Particle    : XML.Schema.Particles.XS_Particle;
-      XS_Term        : XML.Schema.Terms.XS_Term;
-      XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-
-      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-
    begin
       Type_Difinition_Node.Type_Def := Type_D;
       Type_Difinition_Node.Element_Name := Element_Name;

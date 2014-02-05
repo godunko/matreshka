@@ -51,6 +51,7 @@ with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
 with XSD_To_Ada.Encoder; use XSD_To_Ada.Encoder;
+with XSD_To_Ada.Utils;
 
 package body XSD_To_Ada.Encoder_2 is
 

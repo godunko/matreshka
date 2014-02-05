@@ -53,10 +53,10 @@ with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
 with XML.Schema.Named_Maps;
+with XML.Schema.Objects;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
-with XML.Schema.Terms;
 
 with Generator.Units.Ada_Units;
 with XSD_To_Ada.Encoder_2;
@@ -98,8 +98,9 @@ package body XSD_To_Ada.Utils is
     (Model : XML.Schema.Models.XS_Model;
      Unit  : in out Generator.Units.Ada_Units.Ada_Unit);
 
-   function "+" (Item : Wide_Wide_String) return League.Strings.Universal_String
-     renames League.Strings.To_Universal_String;
+   function "+"
+     (Item : Wide_Wide_String) return League.Strings.Universal_String
+       renames League.Strings.To_Universal_String;
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
@@ -262,14 +263,14 @@ package body XSD_To_Ada.Utils is
          Ada.Wide_Wide_Text_IO.Put
            (File_Type,
             "Name = "
-            & Node_Vector.Element (Index).Type_Def.Get_Name.To_Wide_Wide_String);
+            & Node_Vector.Element (Index).Type_Def
+               .Get_Name.To_Wide_Wide_String);
 
          Ada.Wide_Wide_Text_IO.Put
            (File_Type,
             "; TYPE = "
-            & League.Strings.To_Wide_Wide_String
-              (League.Strings.From_UTF_8_String
-                 (Node_Vector.Element (Index).Type_Def.Get_Type_Category'Img)));
+            & XML.Schema.Type_Category'Wide_Wide_Image
+              (Node_Vector.Element (Index).Type_Def.Get_Type_Category));
 
          Ada.Wide_Wide_Text_IO.Put
            (File_Type,
@@ -1812,7 +1813,8 @@ package body XSD_To_Ada.Utils is
                       & LF
                       & Gen_Type_Line
                          ("           "
-                            & Add_Separator (XS_Term.Get_Name).To_Wide_Wide_String
+                            & Add_Separator (XS_Term.Get_Name)
+                               .To_Wide_Wide_String
                             & " : "
                             & Type_Name.To_Wide_Wide_String
                             & ";",

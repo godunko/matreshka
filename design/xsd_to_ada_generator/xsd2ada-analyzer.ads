@@ -52,7 +52,6 @@ with XML.Schema.Type_Definitions;
 with XML.Schema.Models;
 
 with XSD_To_Ada.Mappings;
-limited with XSD_To_Ada.Utils;
 
 package XSD2Ada.Analyzer is
 
