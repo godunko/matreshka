@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.AST.Complex_Types is
@@ -76,9 +77,19 @@ package body Matreshka.XML_Schema.AST.Complex_Types is
 
    overriding function Get_Target_Namespace
     (Self : not null access Complex_Type_Definition_Node)
-     return League.Strings.Universal_String is
+       return League.Strings.Universal_String is
    begin
-      return Self.Target_Namespace;
+      --  For global type definition Namespace member specify enclosing
+      --  namespace. For local type definitions this member is null and empty
+      --  string is returned by convention.
+
+      if Self.Namespace /= null then
+         return Self.Namespace.Namespace_URI;
+
+      else
+
+         return League.Strings.Empty_Universal_String;
+      end if;
    end Get_Target_Namespace;
 
    -----------------------

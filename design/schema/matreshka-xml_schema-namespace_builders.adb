@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -95,9 +95,11 @@ package body Matreshka.XML_Schema.Namespace_Builders is
       --  XXX Only global type definitions must be processed.
 
       --  Global type definition has name
+
       if not Node.Name.Is_Empty then
          Self.Namespace.Type_Definitions.Insert
            (Node.Name, Matreshka.XML_Schema.AST.Type_Definition_Access (Node));
+         Node.Namespace := Self.Namespace;
       end if;
    end Enter_Complex_Type_Definition;
 

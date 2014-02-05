@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -105,7 +105,10 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       Name  : League.Strings.Universal_String;
       --  An xs:NCName value. Optional.
 
-      Target_Namespace  : League.Strings.Universal_String;
+      Namespace : Namespace_Access;
+      --  Owning namespace for type definition. It is set for 'global' type
+      --  definitions only. Used to compute:
+      --
       --  {target namespace}
       --  An xs:anyURI value. Optional.
 
