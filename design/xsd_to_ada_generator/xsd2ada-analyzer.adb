@@ -368,8 +368,7 @@ package body XSD2Ada.Analyzer is
                   end if;
 
                   if Max_Occurs_2.Unbounded
-                    or (not Max_Occurs_2.Unbounded
-                        and then Max_Occurs_2.Value > 1)
+                    or else Max_Occurs_2.Value > 1
                   then
                      Anonym_Type_Difinition_Node.Max := True;
                   end if;
@@ -412,8 +411,7 @@ package body XSD2Ada.Analyzer is
                   end if;
 
                   if Max_Occurs_2.Unbounded
-                    or (not Max_Occurs_2.Unbounded
-                        and then Max_Occurs_2.Value > 1)
+                    or else Max_Occurs_2.Value > 1
                   then
                      Simple_Type_Difinition_Node.Max := True;
                   end if;
