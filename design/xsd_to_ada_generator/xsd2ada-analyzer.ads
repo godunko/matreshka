@@ -107,7 +107,6 @@ private
    type Item is tagged record
       Type_Def         : XML.Schema.Type_Definitions.XS_Type_Definition;
       Min, Max         : Boolean := False;
-      Choice           : Boolean := False;
       Anonym_Name      : League.Strings.Universal_String;
       Element_Name     : League.Strings.Universal_String;
 

@@ -820,6 +820,27 @@ package body XSD_To_Ada.Utils is
       end case;
    end Generate_Type;
 
+   ---------------
+   -- Is_Choice --
+   ---------------
+
+   function Is_Choice
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean
+   is
+      use type XML.Schema.Model_Groups.Compositor_Kinds;
+   begin
+      if Type_D.To_Complex_Type_Definition.Get_Content_Type in
+         Element_Only | Mixed
+        and then Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
+                   .To_Model_Group.Get_Compositor =
+                      XML.Schema.Model_Groups.Compositor_Choice
+      then
+         return True;
+      else
+         return False;
+      end if;
+   end Is_Choice;
+
    --------------------------------
    -- Is_Type_In_Optional_Vector --
    --------------------------------
@@ -1229,9 +1250,8 @@ package body XSD_To_Ada.Utils is
                Choice := True;
 
                if Is_Max_Occur then
-                  Writers.N
-                   (Writer,
-                    Split_Line
+                  Writer.N
+                   (Split_Line
                      ("      "
                         & Name
                         & " : "
@@ -1245,9 +1265,8 @@ package body XSD_To_Ada.Utils is
                     Writer,
                     Vector_Package);
                else
-                  Writers.P
-                   (Writer,
-                    Split_Line
+                  Writer.P
+                   (Split_Line
                      ("      "
                         & Name
                         & " : "

@@ -140,6 +140,10 @@ package XSD_To_Ada.Utils is
      (Type_Name : League.Strings.Universal_String)
      return Boolean;
 
+   function Is_Choice
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean;
+   --  Check if type is Choice
+
    Namespace : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
        ("http://www.actforex.com/iats");

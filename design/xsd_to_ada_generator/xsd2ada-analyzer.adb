@@ -162,7 +162,7 @@ package body XSD2Ada.Analyzer is
 
    function Choice (Self : Item) return Boolean is
    begin
-      return Self.Choice;
+      return XSD_To_Ada.Utils.Is_Choice (Self.Type_Def);
    end Choice;
 
    -------------------------
@@ -217,6 +217,7 @@ package body XSD2Ada.Analyzer is
    is
       use XML.Schema.Model_Groups;
       use type XML.Schema.Extended_XML_Schema_Component_Type;
+      use type XML.Schema.Particles.Unbounded_Natural;
 
       Type_Difinition_Node : XSD2Ada.Analyzer.Item;
 
@@ -224,25 +225,8 @@ package body XSD2Ada.Analyzer is
       Type_Difinition_Node.Type_Def := Type_D;
       Type_Difinition_Node.Element_Name := Element_Name;
 
-      if Max_Occurs.Unbounded
-        or (not Max_Occurs.Unbounded and then Max_Occurs.Value > 1)
-      then
-         Type_Difinition_Node.Max := True;
-      end if;
-
-      if Min_Occurs = 0 then
-         Type_Difinition_Node.Min := True;
-      end if;
-
-      if Type_D.To_Complex_Type_Definition.Is_Particle
-        and then Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
-          .Is_Model_Group
-          and then Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
-            .To_Model_Group.Get_Compositor =
-              XML.Schema.Model_Groups.Compositor_Choice
-      then
-         Type_Difinition_Node.Choice := True;
-      end if;
+      Type_Difinition_Node.Max := Max_Occurs /= (False, 1);
+      Type_Difinition_Node.Min := Min_Occurs = 0;
 
       Node_Type_Definition
         (Type_D,
@@ -395,7 +379,7 @@ package body XSD2Ada.Analyzer is
        (XS_Term : XML.Schema.Terms.XS_Term;
         Name    : League.Strings.Universal_String)
       is
-         use XML.Schema.Terms.Model_Groups;
+         use type XML.Schema.Particles.Unbounded_Natural;
 
          XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
          XS_List        : XML.Schema.Object_Lists.XS_Object_List;
@@ -431,20 +415,12 @@ package body XSD2Ada.Analyzer is
                  Name & '_' & Decl.Get_Name);
 
                declare
-                  use type XML.Schema.Particles.Unbounded_Natural;
                   Item : XSD2Ada.Analyzer.Item;
 
                begin
                   Item.Type_Def := Type_D;
                   Item.Min := Min_Occurs_2 = 0;
                   Item.Max := Max_Occurs_2 /= (False, 1);
-
-                  if Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
-                    .To_Model_Group.Get_Compositor =
-                      XML.Schema.Model_Groups.Compositor_Choice
-                  then
-                     Item.Choice := True;
-                  end if;
 
                   if not Name.Is_Empty then
                      Item.Anonym_Name := Name;
@@ -466,30 +442,15 @@ package body XSD2Ada.Analyzer is
 
             else
                declare
-                  Simple_Type_Difinition_Node : XSD2Ada.Analyzer.Item;
+                  Item : XSD2Ada.Analyzer.Item;
 
                begin
-                  Simple_Type_Difinition_Node.Type_Def := Type_D;
-
-                  if Min_Occurs_2 = 0 then
-                     Simple_Type_Difinition_Node.Min := True;
-                  end if;
-
-                  if Max_Occurs_2.Unbounded
-                    or else Max_Occurs_2.Value > 1
-                  then
-                     Simple_Type_Difinition_Node.Max := True;
-                  end if;
-
-                  if Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
-                    .To_Model_Group.Get_Compositor =
-                      XML.Schema.Model_Groups.Compositor_Choice
-                  then
-                     Simple_Type_Difinition_Node.Choice := True;
-                  end if;
+                  Item.Type_Def := Type_D;
+                  Item.Min := Min_Occurs_2 = 0;
+                  Item.Max := Max_Occurs_2 /= (False, 1);
 
                   XSD2Ada.Analyzer.Add_Node
-                   (Node_Vector, Simple_Type_Difinition_Node);
+                   (Node_Vector, Item);
                end;
             end if;
          end if;
