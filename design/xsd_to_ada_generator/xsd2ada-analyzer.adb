@@ -47,6 +47,7 @@ with XML.Schema.Model_Groups;
 with XML.Schema.Named_Maps;
 with XML.Schema.Object_Lists;
 with XML.Schema.Terms;
+with XML.Schema.Particles;
 
 with XSD_To_Ada.Utils;
 
@@ -64,6 +65,14 @@ package body XSD2Ada.Analyzer is
      Node_Vector          : in out Items;
      Type_Difinition_Node : Item;
      Name                 : League.Strings.Universal_String);
+
+   procedure Create_Node_Vector
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Node_Vector  : in out XSD2Ada.Analyzer.Items;
+      Min_Occurs   : Natural;
+      Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
+      Element_Name : League.Strings.Universal_String
+      := League.Strings.Empty_Universal_String);
 
    --------------
    -- Add_Node --
@@ -181,7 +190,7 @@ package body XSD2Ada.Analyzer is
    -- Create_Element_Type --
    -------------------------
 
-   procedure Create_Element_Type
+   procedure Create_Element_Nodes
     (Model       : XML.Schema.Models.XS_Model;
      Node_Vector : in out Items)
    is
@@ -195,7 +204,7 @@ package body XSD2Ada.Analyzer is
            (Element_Declarations.Item (J).To_Element_Declaration,
             Node_Vector);
       end loop;
-   end Create_Element_Type;
+   end Create_Element_Nodes;
 
    ------------------------
    -- Create_Node_Vector --
@@ -231,6 +240,21 @@ package body XSD2Ada.Analyzer is
       Add_Node (Node_Vector, Type_Difinition_Node);
    end Create_Node_Vector;
 
+   ----------------------
+   -- Create_Type_Node --
+   ----------------------
+
+   procedure Create_Type_Node
+     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Node_Vector : in out XSD2Ada.Analyzer.Items) is
+   begin
+      Create_Node_Vector
+        (Type_D       => Type_D,
+         Node_Vector  => Node_Vector,
+         Min_Occurs   => 1,
+         Max_Occurs   => (False, 1));
+   end Create_Type_Node;
+
    ------------------
    -- Element_Name --
    ------------------
@@ -260,56 +284,6 @@ package body XSD2Ada.Analyzer is
    begin
       return Self.Full_Ada_Type_Name;
    end Full_Ada_Type_Name;
-
-   -------------------------
-   -- Has_Element_Session --
-   -------------------------
-
-   function Has_Element_Session
-    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean
-   is
-      use type XML.Schema.Type_Definitions.XS_Type_Definition;
-
-      XS_Particle    : XML.Schema.Particles.XS_Particle;
-      XS_Term        : XML.Schema.Terms.XS_Term;
-      XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
-      XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-
-      Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
-      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-   begin
-      case Type_D.Get_Type_Category is
-         when XML.Schema.Complex_Type =>
-            CTD := Type_D.To_Complex_Type_Definition;
-
-            if CTD.Get_Content_Type in Element_Only | Mixed then
-               XS_Particle    := CTD.Get_Particle;
-               XS_Term        := XS_Particle.Get_Term;
-               XS_Model_Group := XS_Term.To_Model_Group;
-               XS_List        := XS_Model_Group.Get_Particles;
-
-               for J in 1 .. XS_List.Get_Length loop
-                  XS_Particle := XS_List.Item (J).To_Particle;
-                  XS_Term := XS_Particle.Get_Term;
-                  Decl := XS_Term.To_Element_Declaration;
-
-                  if Decl.Get_Name.To_UTF_8_String = "Session" then
-                     return True;
-                  end if;
-
-                  return Has_Element_Session (Decl.Get_Type_Definition);
-               end loop;
-            end if;
-
-         when XML.Schema.Simple_Type =>
-            null;
-
-         when XML.Schema.None =>
-            null;
-      end case;
-
-      return False;
-   end Has_Element_Session;
 
    ---------
    -- Max --

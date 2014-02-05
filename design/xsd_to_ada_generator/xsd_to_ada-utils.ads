@@ -144,6 +144,9 @@ package XSD_To_Ada.Utils is
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean;
    --  Check if type is Choice
 
+   function Has_Element_Session
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean;
+
    Namespace : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
        ("http://www.actforex.com/iats");

@@ -47,7 +47,6 @@ with Ada.Containers.Vectors;
 
 with League.Strings;
 
-with XML.Schema.Particles;
 with XML.Schema.Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Models;
@@ -82,25 +81,23 @@ package XSD2Ada.Analyzer is
    -- Old subprograms --
    ---------------------
 
-   procedure Create_Element_Type
+   procedure Create_Element_Nodes
      (Model       : XML.Schema.Models.XS_Model;
       Node_Vector : in out Items);
-
-   procedure Create_Node_Vector
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Node_Vector  : in out XSD2Ada.Analyzer.Items;
-     Min_Occurs   : Natural;
-     Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
-     Element_Name : League.Strings.Universal_String
-       := League.Strings.Empty_Universal_String);
+   --  Add new node to Node_Vector for each Element declaration in Model
+   --  Also add types from dependencies
 
    procedure Create_Element_Node
      (Element     : XML.Schema.Element_Declarations.XS_Element_Declaration;
       Node_Vector : in out XSD2Ada.Analyzer.Items);
    --  Add new node to Node_Vector for given Element declaration
+   --  Also add types from dependencies
 
-   function Has_Element_Session
-    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean;
+   procedure Create_Type_Node
+     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Node_Vector : in out XSD2Ada.Analyzer.Items);
+   --  Add new node to Node_Vector for given type definition
+   --  Also add types from dependencies
 
 private
 

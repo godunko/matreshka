@@ -234,23 +234,19 @@ package body XSD_To_Ada.Utils is
             Anonyn_Vector (J).Term_State := False;
          end loop;
 
-         XSD2Ada.Analyzer.Create_Node_Vector
-           (XS_Object.To_Type_Definition,
-            Node_Vector,
-            1, (False, 1));
+         XSD2Ada.Analyzer.Create_Type_Node
+           (XS_Object.To_Type_Definition, Node_Vector);
       end loop;
 
       for J in 1 .. Simple_Types.Length loop
          XS_Object := Simple_Types.Item (J);
          Type_D    := XS_Object.To_Type_Definition;
 
-         XSD2Ada.Analyzer.Create_Node_Vector
-           (Type_D,
-            Node_Vector,
-            1, (False, 1));
+         XSD2Ada.Analyzer.Create_Type_Node
+           (Type_D, Node_Vector);
       end loop;
 
-      XSD2Ada.Analyzer.Create_Element_Type (Model, Node_Vector);
+      XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
       Print_Payloads (Node_Vector, Payload_Writer, Mapping);
 
       Ada.Wide_Wide_Text_IO.Create (File_Type, Out_File, "Vector");
@@ -262,7 +258,7 @@ package body XSD_To_Ada.Utils is
            Element_Declarations.Item
              (J).To_Element_Declaration.Get_Type_Definition;
 
-         if XSD2Ada.Analyzer.Has_Element_Session (Type_D)
+         if Has_Element_Session (Type_D)
            or Type_D.Get_Name.To_UTF_8_String = "OpenSession"
          then
             XSD2Ada.Analyzer.Create_Element_Node
@@ -820,6 +816,56 @@ package body XSD_To_Ada.Utils is
       end case;
    end Generate_Type;
 
+   -------------------------
+   -- Has_Element_Session --
+   -------------------------
+
+   function Has_Element_Session
+     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean
+   is
+      use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
+      XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+      XS_List        : XML.Schema.Object_Lists.XS_Object_List;
+
+      Decl : XML.Schema.Element_Declarations.XS_Element_Declaration;
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+   begin
+      case Type_D.Get_Type_Category is
+         when XML.Schema.Complex_Type =>
+            CTD := Type_D.To_Complex_Type_Definition;
+
+            if CTD.Get_Content_Type in Element_Only | Mixed then
+               XS_Particle    := CTD.Get_Particle;
+               XS_Term        := XS_Particle.Get_Term;
+               XS_Model_Group := XS_Term.To_Model_Group;
+               XS_List        := XS_Model_Group.Get_Particles;
+
+               for J in 1 .. XS_List.Get_Length loop
+                  XS_Particle := XS_List.Item (J).To_Particle;
+                  XS_Term := XS_Particle.Get_Term;
+                  Decl := XS_Term.To_Element_Declaration;
+
+                  if Decl.Get_Name.To_UTF_8_String = "Session" then
+                     return True;
+                  end if;
+
+                  return Has_Element_Session (Decl.Get_Type_Definition);
+               end loop;
+            end if;
+
+         when XML.Schema.Simple_Type =>
+            null;
+
+         when XML.Schema.None =>
+            null;
+      end case;
+
+      return False;
+   end Has_Element_Session;
+
    ---------------
    -- Is_Choice --
    ---------------
@@ -919,7 +965,7 @@ package body XSD_To_Ada.Utils is
                   Payload_Writer.P ("   end record;" & LF);
 
                else
-                  if XSD2Ada.Analyzer.Has_Element_Session (Type_D)
+                  if Has_Element_Session (Type_D)
                     or Type_D.Get_Name.Ends_With ("Response")
                   then
                      XSD_To_Ada.Utils.Gen_Proc_Header
@@ -989,7 +1035,7 @@ package body XSD_To_Ada.Utils is
 
             elsif not Current.Element_Name.Is_Empty then
                if Current.Type_Def.Get_Name.Is_Empty then
-                  if XSD2Ada.Analyzer.Has_Element_Session (Type_D)
+                  if Has_Element_Session (Type_D)
                     or Current.Element_Name.Ends_With ("Response")
                   then
                      Writers.P
@@ -1059,7 +1105,7 @@ package body XSD_To_Ada.Utils is
                       (Writer, Add_Separator (Current.Element_Name));
 
                   else
-                     if XSD2Ada.Analyzer.Has_Element_Session
+                     if Has_Element_Session
                          (Type_D.To_Type_Definition)
                      then
                         Writers.P

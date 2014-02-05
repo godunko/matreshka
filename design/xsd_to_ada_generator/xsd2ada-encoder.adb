@@ -775,7 +775,7 @@ package body XSD2Ada.Encoder is
                Payload_Writer.P ("   end Encode;" & LF);
 
             elsif not Type_D.Get_Name.Ends_With ("Response") then
-               if XSD2Ada.Analyzer.Has_Element_Session (Type_D) then
+               if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
 
                   Generate_Overriding_Procedure_Encode_Header
                     (Payload_Writer,
@@ -839,7 +839,7 @@ package body XSD2Ada.Encoder is
          elsif not Item.Element_Name.Is_Empty then
             if Item.Type_Def.Get_Name.Is_Empty then
                if not Item.Element_Name.Ends_With ("Response")
-                 and then XSD2Ada.Analyzer.Has_Element_Session (Type_D)
+                 and then XSD_To_Ada.Utils.Has_Element_Session (Type_D)
                then
                      Generate_Overriding_Procedure_Encode_Header
                        (Payload_Writer,
@@ -863,7 +863,7 @@ package body XSD2Ada.Encoder is
                end if;
 
             elsif not Item.Element_Name.Ends_With ("Response") then
-               if XSD2Ada.Analyzer.Has_Element_Session (Type_D) then
+               if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
                   Generate_Overriding_Procedure_Encode_Header
                     (Payload_Writer,
                      Spec_Writer,
