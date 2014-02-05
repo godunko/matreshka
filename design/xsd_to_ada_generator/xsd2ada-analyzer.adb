@@ -274,6 +274,7 @@ package body XSD2Ada.Analyzer is
 
       return False;
    end Has_Element_Session;
+
    ------------------------
    -- Has_Top_Level_Type --
    ------------------------
