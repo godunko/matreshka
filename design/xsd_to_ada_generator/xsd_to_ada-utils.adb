@@ -219,10 +219,6 @@ package body XSD_To_Ada.Utils is
       File_Type : Ada.Wide_Wide_Text_IO.File_Type;
 
    begin
-      for J in 1 .. Complex_Types.Length loop
-         Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
-      end loop;
-
       Put_Header (Payload_Spec);
       Create_Package_Name (Payload_Spec);
       Create_Enumeration_Simple_Type (Model, Payload_Spec);
@@ -1047,8 +1043,7 @@ package body XSD_To_Ada.Utils is
                     Type_D.Get_Name,
                     Node_Vector.Element (Index).Anonym_Name,
                     Node_Vector.Element (Index).Element_Name,
-                    Mapping,
-                    Types_Table);
+                    Mapping);
 
                   Writers.P (Payload_Writer, "   end record;" & LF);
 
@@ -1107,8 +1102,7 @@ package body XSD_To_Ada.Utils is
                           Type_D.Get_Name,
                           Node_Vector.Element (Index).Anonym_Name,
                           Node_Vector.Element (Index).Element_Name,
-                          Mapping,
-                          Types_Table);
+                          Mapping);
 
                         Writers.P (Payload_Writer, "     end record;" & LF);
 
@@ -1143,8 +1137,7 @@ package body XSD_To_Ada.Utils is
                           Type_D.Get_Name,
                           Node_Vector.Element (Index).Anonym_Name,
                           Node_Vector.Element (Index).Element_Name,
-                          Mapping,
-                          Types_Table);
+                          Mapping);
 
                         Writers.P (Payload_Writer, "   end record;" & LF);
 
@@ -1183,8 +1176,7 @@ package body XSD_To_Ada.Utils is
                              Type_D.Get_Name,
                              Node_Vector.Element (Index).Anonym_Name,
                              Node_Vector.Element (Index).Element_Name,
-                             Mapping,
-                             Types_Table);
+                             Mapping);
 
                            Writers.P (Payload_Writer, "   end record;" & LF);
                         end if;
@@ -1249,8 +1241,7 @@ package body XSD_To_Ada.Utils is
                           Type_D.Get_Name,
                           Node_Vector.Element (Index).Anonym_Name,
                           Node_Vector.Element (Index).Element_Name,
-                          Mapping,
-                          Types_Table);
+                          Mapping);
 
                         Writers.P (Payload_Writer, "   end record;" & LF);
 
@@ -1270,8 +1261,7 @@ package body XSD_To_Ada.Utils is
                           Type_D.Get_Name,
                           Node_Vector.Element (Index).Anonym_Name,
                           Node_Vector.Element (Index).Element_Name,
-                          Mapping,
-                          Types_Table);
+                          Mapping);
 
                         Writers.P (Payload_Writer, "   end record;" & LF);
                      end if;
@@ -1437,9 +1427,8 @@ package body XSD_To_Ada.Utils is
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
-     Element_Name  : League.Strings.Universal_String;
+     Element_Name : League.Strings.Universal_String;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Table        : in out Types_Table_Type_Array;
      Is_Max_Occur : Boolean := False;
      Is_Min_Occur : Boolean := False)
    is
@@ -1451,8 +1440,7 @@ package body XSD_To_Ada.Utils is
         Writer       : in out Writers.Writer;
         Writer_types : in out Writers.Writer;
         Name         : League.Strings.Universal_String;
-        Map          : XSD_To_Ada.Mappings.Mapping;
-        Table        : in out Types_Table_Type_Array);
+        Map          : XSD_To_Ada.Mappings.Mapping);
 
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
@@ -1484,8 +1472,7 @@ package body XSD_To_Ada.Utils is
         Writer       : in out Writers.Writer;
         Writer_types : in out Writers.Writer;
         Name         : League.Strings.Universal_String;
-        Map          : XSD_To_Ada.Mappings.Mapping;
-        Table        : in out Types_Table_Type_Array)
+        Map          : XSD_To_Ada.Mappings.Mapping)
       is
          use type XML.Schema.Model_Groups.Compositor_Kinds;
 
@@ -1681,9 +1668,12 @@ package body XSD_To_Ada.Utils is
                end if;
 
                Print_Term
-                 (XS_Particle.Get_Term,
-                  Indent & "   ", Writer, Writer_types, Name, Map,
-                  Table);
+                (XS_Particle.Get_Term,
+                 Indent & "   ",
+                 Writer,
+                 Writer_types,
+                 Name,
+                 Map);
 
                if J /=  XS_List.Get_Length and Choice then
                   Name_Kind.Append
@@ -1895,8 +1885,7 @@ package body XSD_To_Ada.Utils is
                     Writer,
                     Writer_types,
                     Add_Separator (Name),
-                    Mapping,
-                    Table);
+                    Mapping);
 
                else
                   if not Anonym_Name.Is_Empty then
@@ -1906,8 +1895,7 @@ package body XSD_To_Ada.Utils is
                        Writer,
                        Writer_types,
                        Add_Separator (Anonym_Name),
-                       Mapping,
-                       Table);
+                       Mapping);
 
                   elsif not Element_Name.Is_Empty then
                      Print_Term
@@ -1916,8 +1904,7 @@ package body XSD_To_Ada.Utils is
                        Writer,
                        Writer_types,
                        Add_Separator (Element_Name),
-                       Mapping,
-                       Table);
+                       Mapping);
                   end if;
                end if;
 

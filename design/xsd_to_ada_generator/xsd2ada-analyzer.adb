@@ -62,8 +62,8 @@ package body XSD2Ada.Analyzer is
      Type_Difinition_Node : Item);
 
    function Has_Top_Level_Type
-    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Table  : XSD_To_Ada.Utils.Types_Table_Type_Array) return Boolean;
+    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
+       return Boolean;
    --  This function returns True if Type_D has Top Level Types and
    --  it was not created.
 
@@ -72,8 +72,7 @@ package body XSD2Ada.Analyzer is
      Node_Vector          : in out Items;
      Type_Difinition_Node : in out Item;
      Name                 : League.Strings.Universal_String;
-     Mapping              : XSD_To_Ada.Mappings.Mapping;
-     Table                : in out XSD_To_Ada.Utils.Types_Table_Type_Array);
+     Mapping              : XSD_To_Ada.Mappings.Mapping);
 
    --------------
    -- Add_Node --
@@ -215,8 +214,7 @@ package body XSD2Ada.Analyzer is
            Node_Vector,
            Type_Difinition_Node,
            Type_D.Get_Name,
-           Mapping,
-           XSD_To_Ada.Utils.Types_Table);
+           Mapping);
 
          Add_Node (Node_Vector, Type_Difinition_Node);
 
@@ -280,8 +278,8 @@ package body XSD2Ada.Analyzer is
    ------------------------
 
    function Has_Top_Level_Type
-    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Table  : XSD_To_Ada.Utils.Types_Table_Type_Array) return Boolean is
+    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
+       return Boolean is
    begin
       return Type_D.Get_Namespace = XSD_To_Ada.Utils.Namespace;
    end Has_Top_Level_Type;
@@ -295,16 +293,14 @@ package body XSD2Ada.Analyzer is
      Node_Vector          : in out Items;
      Type_Difinition_Node : in out Item;
      Name                 : League.Strings.Universal_String;
-     Mapping              : XSD_To_Ada.Mappings.Mapping;
-     Table                : in out XSD_To_Ada.Utils.Types_Table_Type_Array)
+     Mapping              : XSD_To_Ada.Mappings.Mapping)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
       procedure Print_Term
        (XS_Term : XML.Schema.Terms.XS_Term;
         Name    : League.Strings.Universal_String;
-        Map     : XSD_To_Ada.Mappings.Mapping;
-        Table   : in out XSD_To_Ada.Utils.Types_Table_Type_Array);
+        Map     : XSD_To_Ada.Mappings.Mapping);
 
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
@@ -323,8 +319,7 @@ package body XSD2Ada.Analyzer is
       procedure Print_Term
        (XS_Term : XML.Schema.Terms.XS_Term;
         Name    : League.Strings.Universal_String;
-        Map     : XSD_To_Ada.Mappings.Mapping;
-        Table   : in out XSD_To_Ada.Utils.Types_Table_Type_Array)
+        Map     : XSD_To_Ada.Mappings.Mapping)
       is
          use XML.Schema.Terms.Model_Groups;
 
@@ -351,7 +346,7 @@ package body XSD2Ada.Analyzer is
                Max_Occurs_2 := XS_Particle.Get_Max_Occurs;
                Min_Occurs_2 := XS_Particle.Get_Min_Occurs;
 
-               Print_Term (XS_Particle.Get_Term, Name, Map, Table);
+               Print_Term (XS_Particle.Get_Term, Name, Map);
             end loop;
 
          elsif XS_Term.Is_Element_Declaration then
@@ -365,8 +360,7 @@ package body XSD2Ada.Analyzer is
                  Node_Vector,
                  Type_Difinition_Node,
                  Name & '_' & Decl.Get_Name,
-                 Map,
-                 Table);
+                 Map);
 
                declare
                   Anonym_Type_Difinition_Node : XSD2Ada.Analyzer.Item;
@@ -407,7 +401,7 @@ package body XSD2Ada.Analyzer is
                    (Node_Vector, Anonym_Type_Difinition_Node);
                end;
 
-            elsif Has_Top_Level_Type (Type_D, Table) then
+            elsif Has_Top_Level_Type (Type_D) then
                XSD2Ada.Analyzer.Create_Node_Vector
                 (Type_D,
                  Node_Vector,
@@ -476,11 +470,7 @@ package body XSD2Ada.Analyzer is
                  "Complex_Type :"
                  & Type_D.Get_Name.To_Wide_Wide_String);
 
-               Print_Term
-                (XS_Term,
-                 Name,
-                 Mapping,
-                 Table);
+               Print_Term (XS_Term, Name, Mapping);
 
                Ada.Wide_Wide_Text_IO.Put_Line
                 (Ada.Wide_Wide_Text_IO.Standard_Error,

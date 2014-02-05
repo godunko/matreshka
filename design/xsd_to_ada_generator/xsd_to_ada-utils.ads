@@ -54,14 +54,6 @@ with XSD_To_Ada.Writers;
 
 package XSD_To_Ada.Utils is
 
-   type Types_Table_Type is record
-      Type_Name : League.Strings.Universal_String;
-   end record;
-
-   type Types_Table_Type_Array is array (1 .. 200) of Types_Table_Type;
-
-   Types_Table    : Types_Table_Type_Array;
-
    Is_Vector_Type : League.String_Vectors.Universal_String_Vector;
 
    type Anonyn_Vector_Declatarion is
@@ -134,9 +126,8 @@ package XSD_To_Ada.Utils is
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
-     Element_Name  : League.Strings.Universal_String;
+     Element_Name : League.Strings.Universal_String;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Table        : in out Types_Table_Type_Array;
      Is_Max_Occur : Boolean := False;
      Is_Min_Occur : Boolean := False);
 
