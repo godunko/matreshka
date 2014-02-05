@@ -79,6 +79,23 @@ package body XSD2Ada.Analyzer is
     (Node_Vector          : in out Items;
      Type_Difinition_Node : Item)
    is
+      function Contains (X : Item'Class) return Boolean;
+
+      --------------
+      -- Contains --
+      --------------
+
+      function Contains (X : Item'Class) return Boolean is
+      begin
+         for J of Node_Vector loop
+            if J.all = X then
+               return True;
+            end if;
+         end loop;
+
+         return False;
+      end Contains;
+
       Difinition_Node : XSD2Ada.Analyzer.Item;
    begin
       Difinition_Node := Type_Difinition_Node;
@@ -86,20 +103,20 @@ package body XSD2Ada.Analyzer is
       Difinition_Node.Max := False;
       Difinition_Node.Element_Name.Clear;
 
-      if not Node_Vector.Contains (Difinition_Node) then
+      if not Contains (Difinition_Node) then
 
          if not Type_Difinition_Node.Type_Def.Get_Name.Is_Empty
            or not Type_Difinition_Node.Anonym_Name.Is_Empty
          then
-            Node_Vector.Append (Difinition_Node);
+            Node_Vector.Append (new Item'(Difinition_Node));
          end if;
       end if;
 
       if Type_Difinition_Node.Max then
          Difinition_Node.Max := True;
 
-         if not Node_Vector.Contains (Difinition_Node) then
-            Node_Vector.Append (Difinition_Node);
+         if not Contains (Difinition_Node) then
+            Node_Vector.Append (new Item'(Difinition_Node));
          end if;
 
          Difinition_Node.Max := False;
@@ -108,8 +125,8 @@ package body XSD2Ada.Analyzer is
       if Type_Difinition_Node.Min then
          Difinition_Node.Min := True;
 
-         if not Node_Vector.Contains (Difinition_Node) then
-            Node_Vector.Append (Difinition_Node);
+         if not Contains (Difinition_Node) then
+            Node_Vector.Append (new Item'(Difinition_Node));
          end if;
 
          Difinition_Node.Min := False;
@@ -122,13 +139,31 @@ package body XSD2Ada.Analyzer is
          Difinition_Node.Element_Name.Append
            (Type_Difinition_Node.Element_Name);
 
-         if not Node_Vector.Contains (Difinition_Node) then
-            Node_Vector.Append (Difinition_Node);
+         if not Contains (Difinition_Node) then
+            Node_Vector.Append (new Item'(Difinition_Node));
          end if;
 
          Difinition_Node.Element_Name.Clear;
       end if;
    end Add_Node;
+
+   -----------------
+   -- Anonym_Name --
+   -----------------
+
+   function Anonym_Name (Self : Item) return League.Strings.Universal_String is
+   begin
+      return Self.Anonym_Name;
+   end Anonym_Name;
+
+   ------------
+   -- Choice --
+   ------------
+
+   function Choice (Self : Item) return Boolean is
+   begin
+      return Self.Choice;
+   end Choice;
 
    -------------------------
    -- Create_Element_Node --
@@ -218,6 +253,36 @@ package body XSD2Ada.Analyzer is
       Add_Node (Node_Vector, Type_Difinition_Node);
    end Create_Node_Vector;
 
+   ------------------
+   -- Element_Name --
+   ------------------
+
+   function Element_Name
+     (Self : Item) return League.Strings.Universal_String is
+   begin
+      return Self.Element_Name;
+   end Element_Name;
+
+   ---------------------------
+   -- Full_Ada_Package_Name --
+   ---------------------------
+
+   function Full_Ada_Package_Name
+     (Self : Item) return League.Strings.Universal_String is
+   begin
+      return Self.Full_Ada_Package_Name;
+   end Full_Ada_Package_Name;
+
+   ------------------------
+   -- Full_Ada_Type_Name --
+   ------------------------
+
+   function Full_Ada_Type_Name
+     (Self : Item) return League.Strings.Universal_String is
+   begin
+      return Self.Full_Ada_Type_Name;
+   end Full_Ada_Type_Name;
+
    -------------------------
    -- Has_Element_Session --
    -------------------------
@@ -278,6 +343,24 @@ package body XSD2Ada.Analyzer is
    begin
       return Type_D.Get_Namespace = XSD_To_Ada.Utils.Namespace;
    end Has_Top_Level_Type;
+
+   ---------
+   -- Max --
+   ---------
+
+   function Max (Self : Item) return Boolean is
+   begin
+      return Self.Max;
+   end Max;
+
+   ---------
+   -- Min --
+   ---------
+
+   function Min (Self : Item) return Boolean is
+   begin
+      return Self.Min;
+   end Min;
 
    --------------------------
    -- Node_Type_Definition --
@@ -454,5 +537,25 @@ package body XSD2Ada.Analyzer is
             raise Constraint_Error;
       end case;
    end Node_Type_Definition;
+
+   -------------------------
+   -- Short_Ada_Type_Name --
+   -------------------------
+
+   function Short_Ada_Type_Name
+     (Self : Item) return League.Strings.Universal_String is
+   begin
+      return Self.Short_Ada_Type_Name;
+   end Short_Ada_Type_Name;
+
+   --------------
+   -- Type_Def --
+   --------------
+
+   function Type_Def
+     (Self : Item) return XML.Schema.Type_Definitions.XS_Type_Definition is
+   begin
+      return Self.Type_Def;
+   end Type_Def;
 
 end XSD2Ada.Analyzer;

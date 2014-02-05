@@ -54,22 +54,27 @@ with XML.Schema.Models;
 
 package XSD2Ada.Analyzer is
 
-   type Item is record
-      Type_Def         : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Min, Max         : Boolean := False;
-      Choice           : Boolean := False;
-      Anonym_Name      : League.Strings.Universal_String;
-      Element_Name     : League.Strings.Universal_String;
+   type Item is tagged private;
+   type Item_Access is access all Item'Class;
 
-      Short_Ada_Type_Name   : League.Strings.Universal_String;
-      Full_Ada_Type_Name    : League.Strings.Universal_String;
-      Full_Ada_Package_Name : League.Strings.Universal_String;
-      --  Short and full names of Ada type described by the element. Full name
-      --  of Ada compilation unit enclosing Ada type declaration.
-   end record;
+   function Type_Def
+     (Self : Item) return XML.Schema.Type_Definitions.XS_Type_Definition;
+   function Min (Self : Item) return Boolean;
+   function Max (Self : Item) return Boolean;
+   function Choice (Self : Item) return Boolean;
+   function Anonym_Name (Self : Item) return League.Strings.Universal_String;
+   function Element_Name (Self : Item) return League.Strings.Universal_String;
+   function Short_Ada_Type_Name
+     (Self : Item) return League.Strings.Universal_String;
+   function Full_Ada_Type_Name
+     (Self : Item) return League.Strings.Universal_String;
+   function Full_Ada_Package_Name
+     (Self : Item) return League.Strings.Universal_String;
+   --  Short and full names of Ada type described by the element. Full name
+   --  of Ada compilation unit enclosing Ada type declaration.
 
    package Item_Vectors is
-     new Ada.Containers.Vectors (Positive, Item);
+     new Ada.Containers.Vectors (Positive, Item_Access);
 
    subtype Items is Item_Vectors.Vector;
 
@@ -97,4 +102,19 @@ package XSD2Ada.Analyzer is
    function Has_Element_Session
     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean;
 
+private
+
+   type Item is tagged record
+      Type_Def         : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Min, Max         : Boolean := False;
+      Choice           : Boolean := False;
+      Anonym_Name      : League.Strings.Universal_String;
+      Element_Name     : League.Strings.Universal_String;
+
+      Short_Ada_Type_Name   : League.Strings.Universal_String;
+      Full_Ada_Type_Name    : League.Strings.Universal_String;
+      Full_Ada_Package_Name : League.Strings.Universal_String;
+      --  Short and full names of Ada type described by the element. Full name
+      --  of Ada compilation unit enclosing Ada type declaration.
+   end record;
 end XSD2Ada.Analyzer;

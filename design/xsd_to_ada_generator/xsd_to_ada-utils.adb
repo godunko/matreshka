@@ -672,104 +672,6 @@ package body XSD_To_Ada.Utils is
       Gen_Line (Self);
    end Gen_Proc_Header;
 
-   ----------------
-   -- Split_Line --
-   ----------------
-
-   function Split_Line
-     (Str : Wide_Wide_String := "";
-      Tab : Natural := 0)
-      return Wide_Wide_String
-   is
-
-      US      : League.Strings.Universal_String
-        := League.Strings.To_Universal_String (Str);
-      US_New : League.Strings.Universal_String;
-
-      Tab_Count : Natural := Tab;
-
-      procedure Trim
-        (US        : in out League.Strings.Universal_String;
-         US_New    : in out League.Strings.Universal_String;
-         Tab_Count : in out Natural);
-
-      procedure Trim
-        (US        : in out League.Strings.Universal_String;
-         US_New    : in out League.Strings.Universal_String;
-         Tab_Count : in out Natural)
-      is
-         use type League.Characters.Universal_Character;
-
-         Temp_US : constant League.Strings.Universal_String
-           := US.Slice (1, 79 - Tab_Count);
-      begin
-
-         for J in reverse 1 .. Temp_US.Length loop
-            if (Temp_US.Element (J) = ' '
-                and then Temp_US.Element (J + 1) = ':'
-                and then J /= 1)
-              or (Temp_US.Element (J) = '('
-                  and then J /= 1)
-              or (J + 3 < Temp_US.Length
-                  and then Temp_US.Element (J) = ' '
-                  and then Temp_US.Element (J + 1) = 'i'
-                  and then Temp_US.Element (J + 2) = 's'
-                  and then Temp_US.Element (J + 3) = ' ')
-              or (J + 2 < Temp_US.Length
-                  and then Temp_US.Element (J) = ' '
-                  and then Temp_US.Element (J + 1) = '/'
-                  and then Temp_US.Element (J + 2) = '=')
-              or (J /= 1
-                  and then J + 1 < Temp_US.Length
-                  and then Temp_US.Element (J) = '.'
-                  and then Temp_US.Element (J + 1) /= '.')
-            then
-               Tab_Count := Tab_Count + 2;
-               US_New.Append (Temp_US.Slice (1, J - 1));
-               US_New.Append (LF);
-
-               for Count in 1 .. Tab_Count loop
-                  US_New.Append (" ");
-               end loop;
-
-               US := US.Slice (J, US.Length);
-               exit;
-            end if;
-         end loop;
-      end Trim;
-
-   begin
-      for Count in 1 .. Tab_Count loop
-         US_New.Append (" ");
-      end loop;
-
-      if US.Length + Tab_Count < 79 then
-         US_New.Append (US);
-         return US_New.To_Wide_Wide_String;
-      end if;
-
-      loop
-         if US.Length + Tab > 79 then
-            Trim (US, US_New, Tab_Count);
-         else
-            US_New.Append (US);
-            return US_New.To_Wide_Wide_String;
-         end if;
-      end loop;
-   end Split_Line;
-
-   ----------------
-   -- Split_Line --
-   ----------------
-
-   function Split_Line
-     (Str : League.Strings.Universal_String;
-      Tab : Natural := 0)
-      return Wide_Wide_String is
-   begin
-      return Split_Line (Str.To_Wide_Wide_String, Tab);
-   end Split_Line;
-
    ---------------------------
    -- Generate_Complex_Type --
    ---------------------------
@@ -1781,5 +1683,103 @@ package body XSD_To_Ada.Utils is
        (+"-------------------------------------------------------------------"
            & "-----------");
    end Put_Header;
+
+   ----------------
+   -- Split_Line --
+   ----------------
+
+   function Split_Line
+     (Str : Wide_Wide_String := "";
+      Tab : Natural := 0)
+      return Wide_Wide_String
+   is
+
+      US      : League.Strings.Universal_String
+        := League.Strings.To_Universal_String (Str);
+      US_New : League.Strings.Universal_String;
+
+      Tab_Count : Natural := Tab;
+
+      procedure Trim
+        (US        : in out League.Strings.Universal_String;
+         US_New    : in out League.Strings.Universal_String;
+         Tab_Count : in out Natural);
+
+      procedure Trim
+        (US        : in out League.Strings.Universal_String;
+         US_New    : in out League.Strings.Universal_String;
+         Tab_Count : in out Natural)
+      is
+         use type League.Characters.Universal_Character;
+
+         Temp_US : constant League.Strings.Universal_String
+           := US.Slice (1, 79 - Tab_Count);
+      begin
+
+         for J in reverse 1 .. Temp_US.Length loop
+            if (Temp_US.Element (J) = ' '
+                and then Temp_US.Element (J + 1) = ':'
+                and then J /= 1)
+              or (Temp_US.Element (J) = '('
+                  and then J /= 1)
+              or (J + 3 < Temp_US.Length
+                  and then Temp_US.Element (J) = ' '
+                  and then Temp_US.Element (J + 1) = 'i'
+                  and then Temp_US.Element (J + 2) = 's'
+                  and then Temp_US.Element (J + 3) = ' ')
+              or (J + 2 < Temp_US.Length
+                  and then Temp_US.Element (J) = ' '
+                  and then Temp_US.Element (J + 1) = '/'
+                  and then Temp_US.Element (J + 2) = '=')
+              or (J /= 1
+                  and then J + 1 < Temp_US.Length
+                  and then Temp_US.Element (J) = '.'
+                  and then Temp_US.Element (J + 1) /= '.')
+            then
+               Tab_Count := Tab_Count + 2;
+               US_New.Append (Temp_US.Slice (1, J - 1));
+               US_New.Append (LF);
+
+               for Count in 1 .. Tab_Count loop
+                  US_New.Append (" ");
+               end loop;
+
+               US := US.Slice (J, US.Length);
+               exit;
+            end if;
+         end loop;
+      end Trim;
+
+   begin
+      for Count in 1 .. Tab_Count loop
+         US_New.Append (" ");
+      end loop;
+
+      if US.Length + Tab_Count < 79 then
+         US_New.Append (US);
+         return US_New.To_Wide_Wide_String;
+      end if;
+
+      loop
+         if US.Length + Tab > 79 then
+            Trim (US, US_New, Tab_Count);
+         else
+            US_New.Append (US);
+            return US_New.To_Wide_Wide_String;
+         end if;
+      end loop;
+   end Split_Line;
+
+   ----------------
+   -- Split_Line --
+   ----------------
+
+   function Split_Line
+     (Str : League.Strings.Universal_String;
+      Tab : Natural := 0)
+      return Wide_Wide_String is
+   begin
+      return Split_Line (Str.To_Wide_Wide_String, Tab);
+   end Split_Line;
 
 end XSD_To_Ada.Utils;

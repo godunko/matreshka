@@ -719,7 +719,7 @@ package body XSD2Ada.Encoder is
       Discriminant_Type : League.Strings.Universal_String;
       Vector_Name       : League.Strings.Universal_String;
       Anonym_Name       : League.Strings.Universal_String;
-      Item              : XSD2Ada.Analyzer.Item;
+      Item              : XSD2Ada.Analyzer.Item_Access;
 
    begin
       for Index in 1 .. Natural (Node_Vector.Length) loop
