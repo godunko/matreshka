@@ -361,9 +361,6 @@ package body XSD2Ada.Analyzer is
                begin
                   Anonym_Type_Difinition_Node.Type_Def := Type_D;
 
-                  Anonym_Type_Difinition_Node.Decl_Anonym_Name
-                    := Decl.Get_Name;
-
                   if Min_Occurs_2 = 0 then
                      Anonym_Type_Difinition_Node.Min := True;
                   end if;

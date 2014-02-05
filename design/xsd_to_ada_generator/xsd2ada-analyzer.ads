@@ -60,7 +60,6 @@ package XSD2Ada.Analyzer is
       Min, Max         : Boolean := False;
       Choice           : Boolean := False;
       Anonym_Name      : League.Strings.Universal_String;
-      Decl_Anonym_Name : League.Strings.Universal_String;
       Element_Name     : League.Strings.Universal_String;
    end record;
 
