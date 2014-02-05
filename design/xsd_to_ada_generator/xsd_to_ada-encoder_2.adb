@@ -172,12 +172,14 @@ package body XSD_To_Ada.Encoder_2 is
       Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
       Is_AnyType      : Boolean := False)
    is
+      Name : constant League.Strings.Universal_String :=
+        Add_Separator (Procedures_Name);
    begin
 
       Tag_Vector.Append (Procedures_Name);
 
       Spec_Writer.P
-        ("   type " & Add_Separator (Procedures_Name) & "_Encoder is"
+        ("   type " & Name & "_Encoder is"
          & LF
          & "   limited new Web_Services.SOAP.Payloads.Encoders."
          & "SOAP_Payload_Encoder"
@@ -187,31 +189,29 @@ package body XSD_To_Ada.Encoder_2 is
          & LF
          & "     (Dummy : not null access Boolean) return"
          & LF
-         & "      " & Add_Separator (Procedures_Name) & "_Encoder;"
+         & "      " & Name & "_Encoder;"
          & LF & LF
          & "   overriding procedure Encode" & LF
          & "     (Self    : "
-         & Add_Separator (Procedures_Name)
+         & Name
          & "_Encoder;" & LF
          & "      Message : Web_Services.SOAP.Payloads."
          & "Abstract_SOAP_Payload'Class;" & LF
          & "      Writer  : in out XML.SAX.Writers.SAX_Writer'Class);"
          & LF);
 
-      XSD_To_Ada.Utils.Gen_Proc_Header
-        (Writer,
-         XSD_To_Ada.Utils.Add_Separator (Procedures_Name).To_Wide_Wide_String);
+      XSD_To_Ada.Utils.Gen_Proc_Header (Writer, Name.To_Wide_Wide_String);
 
       Writer.P
         ("   overriding function Create" & LF
          & "     (Dummy : not null access Boolean)" & LF
-         & "      return " & Add_Separator (Procedures_Name) & "_Encoder"
+         & "      return " & Name & "_Encoder"
          & LF
          & "   is" & LF
          & "     pragma Unreferenced (Dummy);" & LF
          & "   begin" & LF
          & "     return X : "
-         & Add_Separator (Procedures_Name) & "_Encoder;"
+         & Name & "_Encoder;"
          & LF
          & "   end Create;" & LF);
 
@@ -219,7 +219,7 @@ package body XSD_To_Ada.Encoder_2 is
          Writer.P
            ("   overriding procedure Encode" & LF
             & "     (Self    : "
-            & Add_Separator (Procedures_Name)
+            & Name
             & "_Encoder;" & LF
             & "      Message : Web_Services.SOAP.Payloads."
             & "Abstract_SOAP_Payload'Class;" & LF
@@ -236,7 +236,7 @@ package body XSD_To_Ada.Encoder_2 is
          Writer.P
            ("   overriding procedure Encode" & LF
             & "     (Self    : "
-            & Add_Separator (Procedures_Name)
+            & Name
             & "_Encoder;" & LF
             & "      Message : Web_Services.SOAP.Payloads."
             & "Abstract_SOAP_Payload'Class;" & LF
@@ -246,9 +246,9 @@ package body XSD_To_Ada.Encoder_2 is
             & "     pragma Unreferenced (Self);" & LF & LF
             & "     use Payloads;" & LF
             & "     Data : Payloads."
-            & Add_Separator (Procedures_Name)  & LF
+            & Name  & LF
             & "       renames Payloads."
-            & Add_Separator (Procedures_Name) & " (Message);"
+            & Name & " (Message);"
             & LF & LF
             & "   begin" & LF
             & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
