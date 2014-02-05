@@ -161,19 +161,11 @@ package body XSD2Ada.Analyzer is
         := Model.Get_Components_By_Namespace
             (Object_Type => XML.Schema.Element_Declaration,
              Namespace   => XSD_To_Ada.Utils.Namespace);
-      Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
-
    begin
       for J in 1 .. Element_Declarations.Length loop
-         Type_D :=
-           Element_Declarations.Item
-            (J).To_Element_Declaration.Get_Type_Definition;
-
-         Create_Node_Vector
-           (Type_D,
-            Node_Vector,
-            1, (False, 1),
-            Element_Declarations.Item (J).Get_Name);
+         Create_Element_Node
+           (Element_Declarations.Item (J).To_Element_Declaration,
+            Node_Vector);
       end loop;
    end Create_Element_Type;
 

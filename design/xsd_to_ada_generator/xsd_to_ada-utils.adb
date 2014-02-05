@@ -266,11 +266,9 @@ package body XSD_To_Ada.Utils is
          if XSD2Ada.Analyzer.Has_Element_Session (Type_D)
            or Type_D.Get_Name.To_UTF_8_String = "OpenSession"
          then
-            XSD2Ada.Analyzer.Create_Node_Vector
-              (Type_D,
-               Node_Vector,
-               1, (False, 1),
-               Element_Declarations.Item (J).Get_Name);
+            XSD2Ada.Analyzer.Create_Element_Node
+              (Element_Declarations.Item (J).To_Element_Declaration,
+               Node_Vector);
          end if;
       end loop;
 

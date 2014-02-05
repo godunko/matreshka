@@ -92,13 +92,13 @@ package XSD_To_Ada.Encoder_2 is
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Name         : League.Strings.Universal_String;
-     Anonym_Name  : League.Strings.Universal_String;
-     Element_Name : League.Strings.Universal_String;
+      Indent       : Wide_Wide_String;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Name         : League.Strings.Universal_String;
+      Anonym_Name  : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
       Is_Min_Occur : Boolean := False);
 
    procedure Print_Type_Title
