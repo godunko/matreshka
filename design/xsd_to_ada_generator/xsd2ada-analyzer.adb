@@ -59,12 +59,6 @@ package body XSD2Ada.Analyzer is
     (Node_Vector          : in out Items;
      Type_Difinition_Node : Item);
 
-   function Has_Top_Level_Type
-    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
-       return Boolean;
-   --  This function returns True if Type_D has Top Level Types and
-   --  it was not created.
-
    procedure Node_Type_Definition
     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
      Node_Vector          : in out Items;
@@ -317,17 +311,6 @@ package body XSD2Ada.Analyzer is
       return False;
    end Has_Element_Session;
 
-   ------------------------
-   -- Has_Top_Level_Type --
-   ------------------------
-
-   function Has_Top_Level_Type
-    (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition)
-       return Boolean is
-   begin
-      return Type_D.Get_Namespace = XSD_To_Ada.Utils.Namespace;
-   end Has_Top_Level_Type;
-
    ---------
    -- Max --
    ---------
@@ -433,25 +416,13 @@ package body XSD2Ada.Analyzer is
                   XSD2Ada.Analyzer.Add_Node (Node_Vector, Item);
                end;
 
-            elsif Has_Top_Level_Type (Type_D) then
+            else
                XSD2Ada.Analyzer.Create_Node_Vector
                 (Type_D,
                  Node_Vector,
                  Min_Occurs_2,
                  Max_Occurs_2);
 
-            else
-               declare
-                  Item : XSD2Ada.Analyzer.Item;
-
-               begin
-                  Item.Type_Def := Type_D;
-                  Item.Min := Min_Occurs_2 = 0;
-                  Item.Max := Max_Occurs_2 /= (False, 1);
-
-                  XSD2Ada.Analyzer.Add_Node
-                   (Node_Vector, Item);
-               end;
             end if;
          end if;
       end Print_Term;
