@@ -1036,71 +1036,56 @@ package body XSD_To_Ada.Utils is
 
             elsif not Current.Element_Name.Is_Empty then
                if Current.Type_Def.Get_Name.Is_Empty then
-                  if Current.Element_Name.Ends_With ("Response") then
+                  if XSD2Ada.Analyzer.Has_Element_Session (Type_D)
+                    or Current.Element_Name.Ends_With ("Response")
+                  then
                      Writers.P
-                      (Writer,
+                      (Payload_Writer,
                        "   type "
                          & Add_Separator (Current.Element_Name)
                          & " is" & LF
                          & "     new Web_Services.SOAP.Payloads."
-                         & "Abstract_SOAP_Payload with" & LF
-                         & "     record" & LF
-                         & "     "
-                         & Add_Separator (Type_D.Get_Name)
+                         & "Abstract_SOAP_Payload"
                          & LF
-                         & "      : Payloads."
-                         & Add_Separator (Type_D.Get_Name)
-                         & ";");
+                         & "   with record");
 
-                     Writers.P (Writer, "     end record;" & LF);
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                      (Type_D,
+                       Indent & "   ",
+                       Payload_Writer,
+                       Payload_Type_Writer,
+                       Type_D.Get_Name,
+                       Current.Anonym_Name,
+                       Current.Element_Name,
+                       Mapping);
 
-                     Gen_Access_Type
-                      (Writer, Add_Separator (Current.Element_Name));
+                     Writers.P (Payload_Writer, "   end record;" & LF);
+
+                     if Current.Element_Name.Ends_With ("Response") then
+                        Gen_Access_Type
+                         (Writer, Add_Separator (Current.Element_Name));
+                     end if;
 
                   else
-                     if XSD2Ada.Analyzer.Has_Element_Session (Type_D) then
-                        Writers.P
-                         (Payload_Writer,
-                          "   type "
-                            & Add_Separator (Current.Element_Name)
-                            & " is" & LF
-                            & "     new Web_Services.SOAP.Payloads."
-                            & "Abstract_SOAP_Payload"
-                            & LF
-                            & "   with record");
+                     Writers.P
+                      (Payload_Writer,
+                       "   type "
+                         & Add_Separator (Current.Element_Name)
+                         & " is record");
 
-                        XSD_To_Ada.Utils.Print_Type_Definition
-                         (Type_D,
-                          Indent & "   ",
-                          Payload_Writer,
-                          Payload_Type_Writer,
-                          Type_D.Get_Name,
-                          Current.Anonym_Name,
-                          Current.Element_Name,
-                          Mapping);
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                      (Type_D,
+                       Indent & "   ",
+                       Payload_Writer,
+                       Payload_Type_Writer,
+                       Type_D.Get_Name,
+                       Current.Anonym_Name,
+                       Current.Element_Name,
+                       Mapping);
 
-                        Writers.P (Payload_Writer, "   end record;" & LF);
-
-                     else
-                        Writers.P
-                         (Payload_Writer,
-                          "   type "
-                            & Add_Separator (Current.Element_Name)
-                            & " is record");
-
-                        XSD_To_Ada.Utils.Print_Type_Definition
-                         (Type_D,
-                          Indent & "   ",
-                          Payload_Writer,
-                          Payload_Type_Writer,
-                          Type_D.Get_Name,
-                          Current.Anonym_Name,
-                          Current.Element_Name,
-                          Mapping);
-
-                        Writers.P (Payload_Writer, "   end record;" & LF);
-                     end if;
+                     Writers.P (Payload_Writer, "   end record;" & LF);
                   end if;
+
                else
                   if Current.Element_Name.Ends_With ("Response") then
                      Writers.P
