@@ -1235,17 +1235,14 @@ package body XSD_To_Ada.Utils is
                    (Writer,
                     Split_Line
                      ("      "
-                        & Add_Separator (Name).To_Wide_Wide_String
+                        & Name
                         & " : "
-                        & Optional_Type.To_Wide_Wide_String
-                        & Add_Separator (Name).To_Wide_Wide_String
+                        & Optional_Type
+                        & Name
                         & "_Case", 0));
 
                   Create_Vector_Package
-                   (League.Strings.To_Universal_String
-                     (Name.To_Wide_Wide_String
-                        & "_"
-                        & Decl.Get_Name.To_Wide_Wide_String & "Case"),
+                   (Name & "_" & Decl.Get_Name & "Case",
                     Mapping,
                     Writer,
                     Vector_Package);
@@ -1254,10 +1251,10 @@ package body XSD_To_Ada.Utils is
                    (Writer,
                     Split_Line
                      ("      "
-                        & Add_Separator (Name).To_Wide_Wide_String
+                        & Name
                         & " : "
-                        & Optional_Type.To_Wide_Wide_String
-                        & Add_Separator (Name).To_Wide_Wide_String
+                        & Optional_Type
+                        & Name
                         & "_Case;", 0));
                end if;
 
@@ -1310,12 +1307,12 @@ package body XSD_To_Ada.Utils is
                    (Writer,
                     Split_Line
                      ("      "
-                        & Add_Separator (Name).To_Wide_Wide_String
+                        & Name
                         & " : "
-                        & Optional_Type.To_Wide_Wide_String
-                        & Add_Separator (Name).To_Wide_Wide_String
+                        & Optional_Type
+                        & Name
                         & "_Anonym"
-                        & Vector_Symbol.To_Wide_Wide_String
+                        & Vector_Symbol
                         & ";",
                       8));
 
@@ -1330,9 +1327,9 @@ package body XSD_To_Ada.Utils is
                          & LF & LF
                          & Split_Line
                             ("   subtype "
-                               & Add_Separator (Name).To_Wide_Wide_String
+                               & Name
                                & "_Anonyms is "
-                               & Add_Separator (Name).To_Wide_Wide_String
+                               & Name
                                & "_Anonyms_Vectors.Vector;",
                              5)
                          & LF & LF);
@@ -1342,13 +1339,13 @@ package body XSD_To_Ada.Utils is
                      Anonym_Vector.Append
                        ("   type Optional_"
                         & XSD_To_Ada.Utils.Add_Separator (Name)
-                        & "_Anonym" & Vector_Symbol.To_Wide_Wide_String
+                        & "_Anonym" & Vector_Symbol
                         & " is record" & LF
                         & "     Is_Set : Boolean := False;" & LF
                         & "     Value  : "
                         & XSD_To_Ada.Utils.Add_Separator (Name)
                         & "_Anonym"
-                        & Vector_Symbol.To_Wide_Wide_String
+                        & Vector_Symbol
                         & ";" & LF
                         & "   end record;"
                         & LF);
@@ -1373,9 +1370,9 @@ package body XSD_To_Ada.Utils is
                          (Writer,
                           Split_Line
                            ("      "
-                              & Add_Separator (Name).To_Wide_Wide_String
+                              & Name
                               & " : "
-                              & Add_Separator (Name).To_Wide_Wide_String
+                              & Name
                               & "_Cases;",
                             8));
                      end if;
@@ -1449,15 +1446,13 @@ package body XSD_To_Ada.Utils is
 
                      Name_Case.Append
                       ("        when "
-                         & Add_Separator (XS_Term.Get_Name).To_Wide_Wide_String
+                         & Add_Separator (XS_Term.Get_Name)
                          & "_Case =>" & LF
                          & Split_Line
                             ("           "
-                               & Add_Separator
-                                  (XS_Term.Get_Name).To_Wide_Wide_String
+                               & Add_Separator (XS_Term.Get_Name)
                                & " : Payloads."
-                               & Add_Separator
-                                  (XS_Term.Get_Name).To_Wide_Wide_String
+                               & Add_Separator (XS_Term.Get_Name)
                                & "_Anonym;",
                              15)
                          & LF);
@@ -1494,38 +1489,36 @@ package body XSD_To_Ada.Utils is
                         & " is record" & LF
                         & "     Is_Set : Boolean := False;" & LF
                         & "     Value : "
-                        & Type_Name.To_Wide_Wide_String
+                        & Type_Name
                         & ";" & LF
                         & "   end record;" & LF);
                   end if;
 
                   Name_Case.Append
                    ("        when "
-                      & Add_Separator (XS_Term.Get_Name).To_Wide_Wide_String
+                      & Add_Separator (XS_Term.Get_Name)
                       & "_Case =>"
                       & LF
                       & Split_Line
                          ("           "
-                            & Add_Separator
-                               (XS_Term.Get_Name).To_Wide_Wide_String
+                            & Add_Separator (XS_Term.Get_Name)
                             & " : "
                             & "Optional_"
-                            & Type_Name.To_Wide_Wide_String
+                            & Type_Name
                             & ";",
                           15)
                      & LF);
                else
                   Name_Case.Append
                    ("        when "
-                      & Add_Separator (XS_Term.Get_Name).To_Wide_Wide_String
+                      & Add_Separator (XS_Term.Get_Name)
                       & "_Case =>"
                       & LF
                       & Split_Line
                          ("           "
                             & Add_Separator (XS_Term.Get_Name)
-                               .To_Wide_Wide_String
                             & " : "
-                            & Type_Name.To_Wide_Wide_String
+                            & Type_Name
                             & ";",
                           15)
                       & LF);
@@ -1575,9 +1568,9 @@ package body XSD_To_Ada.Utils is
           (Writer,
            Split_Line
             ("     "
-               & Add_Separator (XS_Base.Get_Name).To_Wide_Wide_String
+               & Add_Separator (XS_Base.Get_Name)
                & " : Payloads."
-               & Add_Separator (XS_Base.Get_Name).To_Wide_Wide_String
+               & Add_Separator (XS_Base.Get_Name)
                & ";", 5));
       end if;
 
@@ -1625,12 +1618,10 @@ package body XSD_To_Ada.Utils is
       end case;
 
       if Add_Anonym then
-         Writers.P
-           (Writer_types,
-            Anonym_Kind.Text.To_Wide_Wide_String
-            & "   end record;" & LF);
+         Writer_types.P
+           (Anonym_Kind.Text & "   end record;" & LF);
 
-         Writers.P (Writer_types, Anonym_Vector);
+         Writer_types.P (Anonym_Vector);
 
          Anonym_Kind.Text.Clear;
       end if;
