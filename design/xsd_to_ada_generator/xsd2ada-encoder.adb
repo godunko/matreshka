@@ -751,7 +751,7 @@ package body XSD2Ada.Encoder is
                Anonym_Name :=
                  XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
                    (Mapping,
-                    Add_Separator (Item.Anonym_Name)
+                    Item.Anonym_Name
                     & "_Anonym"
                     & Discriminant_Type);
 

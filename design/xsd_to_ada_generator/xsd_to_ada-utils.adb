@@ -124,8 +124,7 @@ package body XSD_To_Ada.Utils is
    begin
 
       if Text = "" then
-         return "Add_Separator ERROR";
-         --         raise Constraint_Error with "Add_Separator ERROR";
+         return "";
       end if;
 
       US_Text.Append (Text (Text'First));
@@ -881,10 +880,9 @@ package body XSD_To_Ada.Utils is
               and then Current.Type_Def.Is_Complex_Type_Definition
             then
                if not Current.Anonym_Name.Is_Empty then
-                  Writers.P
-                   (Payload_Writer,
-                    "   type "
-                      & Add_Separator (Current.Anonym_Name)
+                  Payload_Writer.P
+                   ("   type "
+                      & Current.Anonym_Name
                       & "_Anonym"
                       & Discriminant_Type
                       & " is record");
@@ -897,7 +895,7 @@ package body XSD_To_Ada.Utils is
                     Current.Element_Name,
                     Mapping);
 
-                  Writers.P (Payload_Writer, "   end record;" & LF);
+                  Payload_Writer.P ("   end record;" & LF);
 
                else
                   if XSD2Ada.Analyzer.Has_Element_Session (Type_D)

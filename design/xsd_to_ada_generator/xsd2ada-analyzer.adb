@@ -248,7 +248,7 @@ package body XSD2Ada.Analyzer is
         (Type_D,
          Node_Vector,
          Type_Difinition_Node,
-         Type_D.Get_Name);
+         XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name));
 
       Add_Node (Node_Vector, Type_Difinition_Node);
    end Create_Node_Vector;
@@ -431,38 +431,30 @@ package body XSD2Ada.Analyzer is
                  Name & '_' & Decl.Get_Name);
 
                declare
-                  Anonym_Type_Difinition_Node : XSD2Ada.Analyzer.Item;
+                  use type XML.Schema.Particles.Unbounded_Natural;
+                  Item : XSD2Ada.Analyzer.Item;
 
                begin
-                  Anonym_Type_Difinition_Node.Type_Def := Type_D;
-
-                  if Min_Occurs_2 = 0 then
-                     Anonym_Type_Difinition_Node.Min := True;
-                  end if;
-
-                  if Max_Occurs_2.Unbounded
-                    or else Max_Occurs_2.Value > 1
-                  then
-                     Anonym_Type_Difinition_Node.Max := True;
-                  end if;
+                  Item.Type_Def := Type_D;
+                  Item.Min := Min_Occurs_2 = 0;
+                  Item.Max := Max_Occurs_2 /= (False, 1);
 
                   if Type_D.To_Complex_Type_Definition.Get_Particle.Get_Term
                     .To_Model_Group.Get_Compositor =
                       XML.Schema.Model_Groups.Compositor_Choice
                   then
-                     Anonym_Type_Difinition_Node.Choice := True;
+                     Item.Choice := True;
                   end if;
 
                   if not Name.Is_Empty then
-                     Anonym_Type_Difinition_Node.Anonym_Name :=
-                       (Name & "_" & Decl.Get_Name);
-                  else
-                     Anonym_Type_Difinition_Node.Anonym_Name :=
-                       (Decl.Get_Name);
+                     Item.Anonym_Name := Name;
+                     Item.Anonym_Name.Append ("_");
                   end if;
 
-                  XSD2Ada.Analyzer.Add_Node
-                   (Node_Vector, Anonym_Type_Difinition_Node);
+                  Item.Anonym_Name.Append
+                    (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name));
+
+                  XSD2Ada.Analyzer.Add_Node (Node_Vector, Item);
                end;
 
             elsif Has_Top_Level_Type (Type_D) then
