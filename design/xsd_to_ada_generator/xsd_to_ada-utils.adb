@@ -105,6 +105,10 @@ package body XSD_To_Ada.Utils is
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
 
+   procedure Gen_Access_Type
+    (Self : in out XSD_To_Ada.Writers.Writer;
+     Name : League.Strings.Universal_String);
+
    -------------------
    -- Add_Separator --
    -------------------
@@ -597,8 +601,8 @@ package body XSD_To_Ada.Utils is
    ---------------------
 
    procedure Gen_Access_Type
-     (Self   : in out XSD_To_Ada.Writers.Writer;
-      Name   : Wide_Wide_String) is
+    (Self : in out XSD_To_Ada.Writers.Writer;
+     Name : League.Strings.Universal_String) is
    begin
       Writers.N
         (Self,
@@ -1055,8 +1059,7 @@ package body XSD_To_Ada.Utils is
 
                         Gen_Access_Type
                          (Payload_Writer,
-                          Add_Separator
-                           (Current.Element_Name).To_Wide_Wide_String);
+                          Add_Separator (Current.Element_Name));
 
                      else
                         XSD_To_Ada.Utils.Gen_Proc_Header
@@ -1085,8 +1088,7 @@ package body XSD_To_Ada.Utils is
                         Writers.P (Payload_Writer, "     end record;" & LF);
 
                         XSD_To_Ada.Utils.Gen_Access_Type
-                         (Payload_Writer,
-                          Add_Separator (Type_D.Get_Name.To_Wide_Wide_String));
+                         (Payload_Writer, Add_Separator (Type_D.Get_Name));
                      end if;
 
                   else
@@ -1133,9 +1135,7 @@ package body XSD_To_Ada.Utils is
                                & "   end record;" & LF);
 
                            XSD_To_Ada.Utils.Gen_Access_Type
-                            (Payload_Writer,
-                             Add_Separator
-                              (Type_D.Get_Name).To_Wide_Wide_String);
+                            (Payload_Writer, Add_Separator (Type_D.Get_Name));
 
                         else
                            Writers.P
@@ -1181,9 +1181,7 @@ package body XSD_To_Ada.Utils is
                      Writers.P (Writer, "     end record;" & LF);
 
                      Gen_Access_Type
-                      (Writer,
-                       Add_Separator
-                        (Current.Element_Name).To_Wide_Wide_String);
+                      (Writer, Add_Separator (Current.Element_Name));
 
                   else
                      if XSD2Ada.Analyzer.Has_Element_Session (Type_D) then
@@ -1248,9 +1246,7 @@ package body XSD_To_Ada.Utils is
                          & "     end record;" & LF);
 
                      Gen_Access_Type
-                      (Writer,
-                       Add_Separator
-                        (Current.Element_Name).To_Wide_Wide_String);
+                      (Writer, Add_Separator (Current.Element_Name));
 
                   else
                      if XSD2Ada.Analyzer.Has_Element_Session
@@ -1281,9 +1277,7 @@ package body XSD_To_Ada.Utils is
                                & "   end record;" & LF);
 
                            XSD_To_Ada.Utils.Gen_Access_Type
-                            (Writer,
-                             Add_Separator
-                              (Current.Element_Name).To_Wide_Wide_String);
+                            (Writer, Add_Separator (Current.Element_Name));
 
                         else
                            Writers.P

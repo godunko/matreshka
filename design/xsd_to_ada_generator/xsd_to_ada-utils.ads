@@ -96,10 +96,6 @@ package XSD_To_Ada.Utils is
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer);
 
-   procedure Gen_Access_Type
-     (Self   : in out XSD_To_Ada.Writers.Writer;
-      Name   : Wide_Wide_String);
-
    procedure Gen_Line
      (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "");
 
