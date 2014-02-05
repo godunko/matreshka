@@ -254,7 +254,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       XSD2Ada.Analyzer.Create_Element_Type (Model, Node_Vector, Mapping);
-      Print_Payloads (Node_Vector, "", Payload_Writer, Mapping);
+      Print_Payloads (Node_Vector, Payload_Writer, Mapping);
 
       Ada.Wide_Wide_Text_IO.Create (File_Type, Out_File, "Vector");
 
@@ -905,7 +905,6 @@ package body XSD_To_Ada.Utils is
 
    procedure Print_Payloads
     (Node_Vector : XSD2Ada.Analyzer.Items;
-     Indent      : Wide_Wide_String;
      Writer      : in out XSD_To_Ada.Writers.Writer;
      Mapping     : XSD_To_Ada.Mappings.Mapping)
    is
@@ -954,7 +953,6 @@ package body XSD_To_Ada.Utils is
 
                   XSD_To_Ada.Utils.Print_Type_Definition
                    (Type_D,
-                    Indent & "   ",
                     Payload_Writer, Payload_Type_Writer,
                     Type_D.Get_Name,
                     Current.Anonym_Name,
@@ -982,7 +980,6 @@ package body XSD_To_Ada.Utils is
                          & "   with record");
                      XSD_To_Ada.Utils.Print_Type_Definition
                       (Type_D,
-                       Indent & "   ",
                        Payload_Writer,
                        Payload_Type_Writer,
                        Type_D.Get_Name,
@@ -1022,7 +1019,6 @@ package body XSD_To_Ada.Utils is
                             & " is record");
                         XSD_To_Ada.Utils.Print_Type_Definition
                          (Type_D.To_Type_Definition,
-                          Indent & "   ",
                           Payload_Writer,
                           Payload_Type_Writer,
                           Type_D.Get_Name,
@@ -1051,7 +1047,6 @@ package body XSD_To_Ada.Utils is
 
                      XSD_To_Ada.Utils.Print_Type_Definition
                       (Type_D,
-                       Indent & "   ",
                        Payload_Writer,
                        Payload_Type_Writer,
                        Type_D.Get_Name,
@@ -1075,7 +1070,6 @@ package body XSD_To_Ada.Utils is
 
                      XSD_To_Ada.Utils.Print_Type_Definition
                       (Type_D,
-                       Indent & "   ",
                        Payload_Writer,
                        Payload_Type_Writer,
                        Type_D.Get_Name,
@@ -1219,7 +1213,6 @@ package body XSD_To_Ada.Utils is
 
    procedure Print_Type_Definition
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
@@ -1233,7 +1226,6 @@ package body XSD_To_Ada.Utils is
 
       procedure Print_Term
        (XS_Term      : XML.Schema.Terms.XS_Term;
-        Indent       : Wide_Wide_String := "";
         Writer       : in out Writers.Writer;
         Writer_types : in out Writers.Writer;
         Name         : League.Strings.Universal_String;
@@ -1265,7 +1257,6 @@ package body XSD_To_Ada.Utils is
 
       procedure Print_Term
        (XS_Term      : XML.Schema.Terms.XS_Term;
-        Indent       : Wide_Wide_String := "";
         Writer       : in out Writers.Writer;
         Writer_types : in out Writers.Writer;
         Name         : League.Strings.Universal_String;
@@ -1463,7 +1454,6 @@ package body XSD_To_Ada.Utils is
 
                Print_Term
                 (XS_Particle.Get_Term,
-                 Indent & "   ",
                  Writer,
                  Writer_types,
                  Name,
@@ -1666,7 +1656,6 @@ package body XSD_To_Ada.Utils is
                if Name.To_UTF_8_String /= "" then
                   Print_Term
                    (XS_Term,
-                    Indent & "   ",
                     Writer,
                     Writer_types,
                     Add_Separator (Name),
@@ -1676,7 +1665,6 @@ package body XSD_To_Ada.Utils is
                   if not Anonym_Name.Is_Empty then
                      Print_Term
                       (XS_Term,
-                       Indent & "   ",
                        Writer,
                        Writer_types,
                        Add_Separator (Anonym_Name),
@@ -1685,7 +1673,6 @@ package body XSD_To_Ada.Utils is
                   elsif not Element_Name.Is_Empty then
                      Print_Term
                       (XS_Term,
-                       Indent & "   ",
                        Writer,
                        Writer_types,
                        Add_Separator (Element_Name),

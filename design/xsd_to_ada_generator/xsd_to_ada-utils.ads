@@ -117,7 +117,6 @@ package XSD_To_Ada.Utils is
 
    procedure Print_Type_Definition
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
      Writer       : in out Writers.Writer;
      Writer_types : in out Writers.Writer;
      Name         : League.Strings.Universal_String;
@@ -129,7 +128,6 @@ package XSD_To_Ada.Utils is
 
    procedure Print_Payloads
      (Node_Vector : XSD2Ada.Analyzer.Items;
-      Indent      : Wide_Wide_String;
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Mapping     : XSD_To_Ada.Mappings.Mapping);
 
