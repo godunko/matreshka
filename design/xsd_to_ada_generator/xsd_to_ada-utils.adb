@@ -258,47 +258,6 @@ package body XSD_To_Ada.Utils is
 
       Ada.Wide_Wide_Text_IO.Create (File_Type, Out_File, "Vector");
 
-      for Index in 1 .. Natural (Node_Vector.Length) loop
-         Ada.Wide_Wide_Text_IO.Put
-           (File_Type,
-            "Name = "
-            & Node_Vector.Element (Index).Type_Def
-               .Get_Name.To_Wide_Wide_String);
-
-         Ada.Wide_Wide_Text_IO.Put
-           (File_Type,
-            "; TYPE = "
-            & XML.Schema.Type_Category'Wide_Wide_Image
-              (Node_Vector.Element (Index).Type_Def.Get_Type_Category));
-
-         Ada.Wide_Wide_Text_IO.Put
-           (File_Type,
-            "; Min ="
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Min));
-
-         Ada.Wide_Wide_Text_IO.Put
-           (File_Type,
-            "; Max ="
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Max));
-
-         Ada.Wide_Wide_Text_IO.Put
-           (File_Type,
-            "; Choice "
-            & Boolean'Wide_Wide_Image (Node_Vector.Element (Index).Choice));
-
-         Ada.Wide_Wide_Text_IO.Put
-           (File_Type,
-            "; Anonym_Name <"
-            & Node_Vector.Element (Index).Anonym_Name.To_Wide_Wide_String
-            & ">");
-
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (File_Type,
-            "; Element_Name <"
-            & Node_Vector.Element (Index).Element_Name.To_Wide_Wide_String
-            & ">");
-      end loop;
-
       Node_Vector.Clear;
 
       for J in 1 .. Element_Declarations.Length loop
@@ -920,8 +879,7 @@ package body XSD_To_Ada.Utils is
                Writer_types);
 
          when XML.Schema.None =>
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
+            raise Constraint_Error;
       end case;
    end Generate_Type;
 
@@ -980,36 +938,6 @@ package body XSD_To_Ada.Utils is
                Vector_Name := Type_D.Get_Name;
             end if;
 
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              Indent
-                & Natural'Wide_Wide_Image (Node_Vector.Find_Index (Current))
-                & "; START Print_Type_Title Type_D="
-                & Type_D.Get_Name.To_Wide_Wide_String
-                & Current.Anonym_Name.To_Wide_Wide_String);
-
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Min " & Boolean'Wide_Wide_Image (Current.Min));
-
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Max " & Boolean'Wide_Wide_Image (Current.Max));
-
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Choice " & Boolean'Wide_Wide_Image (Current.Choice));
-
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Anonym_Name <" & Current.Anonym_Name.To_Wide_Wide_String & ">");
-
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Element_Name <"
-                & Current.Element_Name.To_Wide_Wide_String
-                & ">");
-
             if not Current.Max
               and then not Current.Min
               and then Current.Element_Name.Is_Empty
@@ -1064,8 +992,8 @@ package body XSD_To_Ada.Utils is
                      Writers.P (Payload_Writer, "   end record;" & LF);
 
                      if Type_D.Get_Name.Ends_With ("Response") then
-	                XSD_To_Ada.Utils.Gen_Access_Type
-        	         (Payload_Writer, Add_Separator (Type_D.Get_Name));
+                        XSD_To_Ada.Utils.Gen_Access_Type
+                         (Payload_Writer, Add_Separator (Type_D.Get_Name));
                      end if;
 
                   else
@@ -1298,9 +1226,6 @@ package body XSD_To_Ada.Utils is
             Payload_Writer.Text.Clear;
          end if;
       end loop;
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "END Print_Type_Title");
    end Print_Payloads;
 
    ---------------------------
@@ -1521,9 +1446,6 @@ package body XSD_To_Ada.Utils is
             end if;
 
             for J in 1 .. XS_List.Get_Length loop
-               Ada.Wide_Wide_Text_IO.Put
-                (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-
                XS_Particle := XS_List.Item (J).To_Particle;
 
                Min_Occurs := False;
@@ -1738,9 +1660,6 @@ package body XSD_To_Ada.Utils is
         XML.Schema.Complex_Type .. XML.Schema.Simple_Type
         and XS_Base /= Type_D
       then
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
-
          Writers.P
           (Writer,
            Gen_Type_Line
@@ -1758,12 +1677,6 @@ package body XSD_To_Ada.Utils is
             if CTD.Get_Content_Type in Element_Only | Mixed then
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
-
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 Indent
-                 & "Complex_Type :"
-                 & Type_D.Get_Name.To_Wide_Wide_String);
 
                if Name.To_UTF_8_String /= "" then
                   Print_Term
@@ -1794,22 +1707,13 @@ package body XSD_To_Ada.Utils is
                        Mapping);
                   end if;
                end if;
-
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 Indent
-                   & "End Complex_Type :"
-                   & Type_D.Get_Name.To_Wide_Wide_String);
             end if;
 
          when XML.Schema.Simple_Type =>
-            Ada.Wide_Wide_Text_IO.Put
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              Indent & "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
+            null;
 
          when XML.Schema.None =>
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "NONE!!!");
+            raise Constraint_Error;
       end case;
 
       if Add_Anonym then

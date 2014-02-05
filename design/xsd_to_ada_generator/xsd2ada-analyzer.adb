@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO;
 
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
@@ -328,11 +327,6 @@ package body XSD2Ada.Analyzer is
             XS_Model_Group := XS_Term.To_Model_Group;
             XS_List := XS_Model_Group.Get_Particles;
 
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              XML.Schema.Model_Groups.Compositor_Kinds'Wide_Wide_Image
-               (XS_Model_Group.Get_Compositor));
-
             for J in 1 .. XS_List.Get_Length loop
                XS_Particle := XS_List.Item (J).To_Particle;
 
@@ -455,27 +449,15 @@ package body XSD2Ada.Analyzer is
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 "Complex_Type :"
-                 & Type_D.Get_Name.To_Wide_Wide_String);
-
                Print_Term (XS_Term, Name, Mapping);
 
-               Ada.Wide_Wide_Text_IO.Put_Line
-                (Ada.Wide_Wide_Text_IO.Standard_Error,
-                 "End Complex_Type :"
-                 & Type_D.Get_Name.To_Wide_Wide_String);
             end if;
 
          when XML.Schema.Simple_Type =>
-            Ada.Wide_Wide_Text_IO.Put
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
+            null;
 
          when XML.Schema.None =>
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
+            raise Constraint_Error;
       end case;
    end Node_Type_Definition;
 

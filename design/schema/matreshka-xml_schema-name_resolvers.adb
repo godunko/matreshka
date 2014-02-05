@@ -154,10 +154,6 @@ package body Matreshka.XML_Schema.Name_Resolvers is
          --  decalration only. Can non-abstract element declarations be used
          --  without type declaration?
 
-         Ada.Wide_Wide_Text_IO.Put_Line
-          (Ada.Wide_Wide_Text_IO.Standard_Error,
-           Node.Name.To_Wide_Wide_String);
-
          Node.Type_Definition := Self.Resolve_Type (Node.Type_Name);
       end if;
    end Enter_Element_Declaration;
@@ -252,13 +248,6 @@ package body Matreshka.XML_Schema.Name_Resolvers is
       Namespace : constant Matreshka.XML_Schema.AST.Namespace_Access :=
         Self.Model.Get_Namespace (Name.Namespace_URI);
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Ada.Wide_Wide_Text_IO.Standard_Error,
-         '{'
-           & Name.Namespace_URI.To_Wide_Wide_String
-           & '}'
-           & Name.Local_Name.To_Wide_Wide_String);
-
       if Namespace = null then
          raise Program_Error;
       end if;
@@ -288,13 +277,6 @@ package body Matreshka.XML_Schema.Name_Resolvers is
       Namespace : constant Matreshka.XML_Schema.AST.Namespace_Access :=
         Self.Model.Get_Namespace (Name.Namespace_URI);
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Ada.Wide_Wide_Text_IO.Standard_Error,
-        '{'
-          & Name.Namespace_URI.To_Wide_Wide_String
-          & '}'
-          & Name.Local_Name.To_Wide_Wide_String);
-
       if Namespace = null then
          raise Program_Error;
       end if;
@@ -351,13 +333,6 @@ package body Matreshka.XML_Schema.Name_Resolvers is
       Namespace : constant Matreshka.XML_Schema.AST.Namespace_Access :=
         Self.Model.Get_Namespace (Name.Namespace_URI);
    begin
-      Ada.Wide_Wide_Text_IO.Put_Line
-       (Ada.Wide_Wide_Text_IO.Standard_Error,
-        '{'
-          & Name.Namespace_URI.To_Wide_Wide_String
-          & '}'
-          & Name.Local_Name.To_Wide_Wide_String);
-
       if Namespace = null then
          raise Program_Error;
       end if;

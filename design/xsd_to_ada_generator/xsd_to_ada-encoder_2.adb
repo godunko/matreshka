@@ -631,9 +631,6 @@ package body XSD_To_Ada.Encoder_2 is
         XML.Schema.Complex_Type  -- .. XML.Schema.Simple_Type
         and XS_Base /= Type_D
       then
-         Ada.Wide_Wide_Text_IO.Put_Line
-           (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & " is new");
-
          CTD := XS_Base.To_Complex_Type_Definition;
 
          if CTD.Get_Content_Type in Element_Only | Mixed then
