@@ -52,7 +52,7 @@ with XML.Schema.Particles;
 
 with XSD_To_Ada.Utils; use XSD_To_Ada.Utils;
 
-package body XSD_To_Ada.Encoder_2 is
+package body XSD2Ada.Encoder is
 
    use XML.Schema.Type_Definitions.Complex_Type_Definitions;
    use XSD_To_Ada.Writers;
@@ -80,7 +80,7 @@ package body XSD_To_Ada.Encoder_2 is
 
    procedure Generate_Complex_Type
      (XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out Writers.Writer;
+      Writer      : in out XSD_To_Ada.Writers.Writer;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
@@ -166,8 +166,8 @@ package body XSD_To_Ada.Encoder_2 is
    -------------------------------------------------
 
    procedure Generate_Overriding_Procedure_Encode_Header
-     (Writer          : in out Writers.Writer;
-      Spec_Writer     : in out Writers.Writer;
+     (Writer          : in out XSD_To_Ada.Writers.Writer;
+      Spec_Writer     : in out XSD_To_Ada.Writers.Writer;
       Procedures_Name : League.Strings.Universal_String;
       Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
       Is_AnyType      : Boolean := False)
@@ -293,7 +293,7 @@ package body XSD_To_Ada.Encoder_2 is
    --------------------------------------
 
    procedure Generate_Procedure_Encode_Header
-     (Writer          : in out Writers.Writer;
+     (Writer          : in out XSD_To_Ada.Writers.Writer;
       Procedures_Name : League.Strings.Universal_String) is
    begin
       Writer.P
@@ -323,7 +323,7 @@ package body XSD_To_Ada.Encoder_2 is
    procedure Generate_Simple_Type
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out Writers.Writer;
+      Writer      : in out XSD_To_Ada.Writers.Writer;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
@@ -461,8 +461,8 @@ package body XSD_To_Ada.Encoder_2 is
    procedure Print_Type_Definition
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
      Indent       : Wide_Wide_String;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
+     Writer       : in out XSD_To_Ada.Writers.Writer;
+     Writer_types : in out XSD_To_Ada.Writers.Writer;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
@@ -475,8 +475,8 @@ package body XSD_To_Ada.Encoder_2 is
       procedure Print_Term
         (XS_Term      : XML.Schema.Terms.XS_Term;
          Indent       : Wide_Wide_String := "";
-         Writer       : in out Writers.Writer;
-         Writer_types : in out Writers.Writer;
+         Writer       : in out XSD_To_Ada.Writers.Writer;
+         Writer_types : in out XSD_To_Ada.Writers.Writer;
          Map          : XSD_To_Ada.Mappings.Mapping;
          Name         : League.Strings.Universal_String;
          Base_Name    : League.Strings.Universal_String);
@@ -500,8 +500,8 @@ package body XSD_To_Ada.Encoder_2 is
       procedure Print_Term
         (XS_Term      : XML.Schema.Terms.XS_Term;
          Indent       : Wide_Wide_String := "";
-         Writer       : in out Writers.Writer;
-         Writer_types : in out Writers.Writer;
+         Writer       : in out XSD_To_Ada.Writers.Writer;
+         Writer_types : in out XSD_To_Ada.Writers.Writer;
          Map          : XSD_To_Ada.Mappings.Mapping;
          Name         : League.Strings.Universal_String;
          Base_Name    : League.Strings.Universal_String)
@@ -760,7 +760,7 @@ package body XSD_To_Ada.Encoder_2 is
                Payload_Writer.P
                  ("      Writer.Start_Element (IATS_URI, Name);");
 
-               XSD_To_Ada.Encoder_2.Print_Type_Definition
+               Print_Type_Definition
                  (Type_D,
                   Indent & "   ",
                   Payload_Writer,
@@ -847,7 +847,7 @@ package body XSD_To_Ada.Encoder_2 is
                         Item.Element_Name,
                         Tag_Vector);
 
-                     XSD_To_Ada.Encoder_2.Print_Type_Definition
+                     Print_Type_Definition
                        (Type_D,
                         Indent & "   ",
                         Payload_Writer,
@@ -950,4 +950,4 @@ package body XSD_To_Ada.Encoder_2 is
         & Add_Separator (Name) & "_Name);" & LF;
    end Write_Start_Element;
 
-end XSD_To_Ada.Encoder_2;
+end XSD2Ada.Encoder;

@@ -59,7 +59,7 @@ with XML.Schema.Particles;
 with XML.Schema.Simple_Type_Definitions;
 
 with Generator.Units.Ada_Units;
-with XSD_To_Ada.Encoder_2;
+with XSD2Ada.Encoder;
 
 package body XSD_To_Ada.Utils is
 
@@ -273,7 +273,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       Put_Header (Encoder_Full_Writer);
-      XSD_To_Ada.Encoder_2.Generate_Package_Header (Encoder_Full_Writer);
+      XSD2Ada.Encoder.Generate_Package_Header (Encoder_Full_Writer);
 
       Writers.P
         (Encoder_Spec_Writer,
@@ -285,7 +285,7 @@ package body XSD_To_Ada.Utils is
          & "Universal_String;"
          & LF);
 
-      XSD_To_Ada.Encoder_2.Print_Type_Title
+      XSD2Ada.Encoder.Print_Type_Title
         (Node_Vector,
          "",
          Encoder_Writer,

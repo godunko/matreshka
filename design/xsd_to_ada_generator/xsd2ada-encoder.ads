@@ -51,7 +51,7 @@ with XSD2Ada.Analyzer;
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
 
-package XSD_To_Ada.Encoder_2 is
+package XSD2Ada.Encoder is
 
    Elements_Name : League.String_Vectors.Universal_String_Vector;
    Element_Name  : XSD_To_Ada.Writers.Writer;
@@ -62,15 +62,15 @@ package XSD_To_Ada.Encoder_2 is
 
    procedure Generate_Complex_Type
      (XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out Writers.Writer;
+      Writer      : in out XSD_To_Ada.Writers.Writer;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
       Max_Occurs  : Boolean);
 
    procedure Generate_Overriding_Procedure_Encode_Header
-     (Writer          : in out Writers.Writer;
-      Spec_Writer     : in out Writers.Writer;
+     (Writer          : in out XSD_To_Ada.Writers.Writer;
+      Spec_Writer     : in out XSD_To_Ada.Writers.Writer;
       Procedures_Name : League.Strings.Universal_String;
       Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
       Is_AnyType      : Boolean := False);
@@ -79,13 +79,13 @@ package XSD_To_Ada.Encoder_2 is
      (Payload_Writer : in out XSD_To_Ada.Writers.Writer);
 
    procedure Generate_Procedure_Encode_Header
-     (Writer          : in out Writers.Writer;
+     (Writer          : in out XSD_To_Ada.Writers.Writer;
       Procedures_Name : League.Strings.Universal_String);
 
    procedure Generate_Simple_Type
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out Writers.Writer;
+      Writer      : in out XSD_To_Ada.Writers.Writer;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
@@ -94,8 +94,8 @@ package XSD_To_Ada.Encoder_2 is
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
      Indent       : Wide_Wide_String;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
+     Writer       : in out XSD_To_Ada.Writers.Writer;
+     Writer_types : in out XSD_To_Ada.Writers.Writer;
      Mapping      : XSD_To_Ada.Mappings.Mapping;
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
@@ -120,4 +120,4 @@ package XSD_To_Ada.Encoder_2 is
      (Name : League.Strings.Universal_String)
       return League.Strings.Universal_String;
 
-end XSD_To_Ada.Encoder_2;
+end XSD2Ada.Encoder;
