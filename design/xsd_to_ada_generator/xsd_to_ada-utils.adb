@@ -524,14 +524,14 @@ package body XSD_To_Ada.Utils is
            (Writer_types,
             "   package "
               & Add_Separator (Type_D_Name) & "_Vectors is" & LF
-              & Gen_Type_Line
+              & Split_Line
                  ("     new Ada.Containers.Vectors "
                     & "(Positive, "
                     & Add_Separator (Type_D_Name).To_Wide_Wide_String
                     & ");",
                   7)
               & LF & LF
-              & Gen_Type_Line
+              & Split_Line
                  ("   subtype "
                     & Add_Separator (Type_D_Name).To_Wide_Wide_String
                     & "s is "
@@ -672,11 +672,11 @@ package body XSD_To_Ada.Utils is
       Gen_Line (Self);
    end Gen_Proc_Header;
 
-   -------------------
-   -- Gen_Type_Line --
-   -------------------
+   ----------------
+   -- Split_Line --
+   ----------------
 
-   function Gen_Type_Line
+   function Split_Line
      (Str : Wide_Wide_String := "";
       Tab : Natural := 0)
       return Wide_Wide_String
@@ -756,19 +756,19 @@ package body XSD_To_Ada.Utils is
             return US_New.To_Wide_Wide_String;
          end if;
       end loop;
-   end Gen_Type_Line;
+   end Split_Line;
 
-   -------------------
-   -- Gen_Type_Line --
-   -------------------
+   ----------------
+   -- Split_Line --
+   ----------------
 
-   function Gen_Type_Line
+   function Split_Line
      (Str : League.Strings.Universal_String;
       Tab : Natural := 0)
       return Wide_Wide_String is
    begin
-      return Gen_Type_Line (Str.To_Wide_Wide_String, Tab);
-   end Gen_Type_Line;
+      return Split_Line (Str.To_Wide_Wide_String, Tab);
+   end Split_Line;
 
    ---------------------------
    -- Generate_Complex_Type --
@@ -1224,7 +1224,7 @@ package body XSD_To_Ada.Utils is
                    & "     new Ada.Containers.Vectors" & LF
                    & "      (Positive, "
                    & Add_Separator (Vector_Name) & ");" & LF & LF
-                   & Gen_Type_Line
+                   & Split_Line
                       ("   subtype "
                          & Add_Separator (Vector_Name).To_Wide_Wide_String
                          & "_Vector is "
@@ -1331,7 +1331,7 @@ package body XSD_To_Ada.Utils is
                if Is_Max_Occur then
                   Writers.N
                    (Writer,
-                    Gen_Type_Line
+                    Split_Line
                      ("      "
                         & Add_Separator (Name).To_Wide_Wide_String
                         & " : "
@@ -1350,7 +1350,7 @@ package body XSD_To_Ada.Utils is
                else
                   Writers.P
                    (Writer,
-                    Gen_Type_Line
+                    Split_Line
                      ("      "
                         & Add_Separator (Name).To_Wide_Wide_String
                         & " : "
@@ -1406,7 +1406,7 @@ package body XSD_To_Ada.Utils is
 
                   Writers.P
                    (Writer,
-                    Gen_Type_Line
+                    Split_Line
                      ("      "
                         & Add_Separator (Name).To_Wide_Wide_String
                         & " : "
@@ -1426,7 +1426,7 @@ package body XSD_To_Ada.Utils is
                          & "        (Positive, "
                          & Add_Separator (Name) & "_Anonym);"
                          & LF & LF
-                         & Gen_Type_Line
+                         & Split_Line
                             ("   subtype "
                                & Add_Separator (Name).To_Wide_Wide_String
                                & "_Anonyms is "
@@ -1469,7 +1469,7 @@ package body XSD_To_Ada.Utils is
                      if Choice then
                         Writers.P
                          (Writer,
-                          Gen_Type_Line
+                          Split_Line
                            ("      "
                               & Add_Separator (Name).To_Wide_Wide_String
                               & " : "
@@ -1549,7 +1549,7 @@ package body XSD_To_Ada.Utils is
                       ("        when "
                          & Add_Separator (XS_Term.Get_Name).To_Wide_Wide_String
                          & "_Case =>" & LF
-                         & Gen_Type_Line
+                         & Split_Line
                             ("           "
                                & Add_Separator
                                   (XS_Term.Get_Name).To_Wide_Wide_String
@@ -1602,7 +1602,7 @@ package body XSD_To_Ada.Utils is
                       & Add_Separator (XS_Term.Get_Name).To_Wide_Wide_String
                       & "_Case =>"
                       & LF
-                      & Gen_Type_Line
+                      & Split_Line
                          ("           "
                             & Add_Separator
                                (XS_Term.Get_Name).To_Wide_Wide_String
@@ -1618,7 +1618,7 @@ package body XSD_To_Ada.Utils is
                       & Add_Separator (XS_Term.Get_Name).To_Wide_Wide_String
                       & "_Case =>"
                       & LF
-                      & Gen_Type_Line
+                      & Split_Line
                          ("           "
                             & Add_Separator (XS_Term.Get_Name)
                                .To_Wide_Wide_String
@@ -1671,7 +1671,7 @@ package body XSD_To_Ada.Utils is
       then
          Writers.P
           (Writer,
-           Gen_Type_Line
+           Split_Line
             ("     "
                & Add_Separator (XS_Base.Get_Name).To_Wide_Wide_String
                & " : Payloads."

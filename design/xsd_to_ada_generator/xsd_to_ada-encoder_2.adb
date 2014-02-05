@@ -133,7 +133,7 @@ package body XSD_To_Ada.Encoder_2 is
       end if;
 
       Writer.P
-        (Gen_Type_Line
+        (Split_Line
            ("Encode (Data."
             & Choice_Name.To_Wide_Wide_String
             & Base_Name.To_Wide_Wide_String
@@ -364,7 +364,7 @@ package body XSD_To_Ada.Encoder_2 is
            .Is_Empty
          then
             Writer.P
-              (Gen_Type_Line
+              (Split_Line
                  ("Writer.Characters (League.Strings.From_UTF_8_String (Data."
                   & Choice_Name.To_Wide_Wide_String
                   & Base_Name.To_Wide_Wide_String
@@ -375,7 +375,7 @@ package body XSD_To_Ada.Encoder_2 is
                & Add_Separator (Type_D.Get_Base_Type.Get_Name));
          else
             Writer.P
-              (Gen_Type_Line
+              (Split_Line
                  ("Writer.Characters (Data."
                   & Choice_Name.To_Wide_Wide_String
                   & Base_Name.To_Wide_Wide_String
@@ -390,7 +390,7 @@ package body XSD_To_Ada.Encoder_2 is
 
          Writer.P
            ("      Writer.Characters" & LF
-            & XSD_To_Ada.Utils.Gen_Type_Line
+            & XSD_To_Ada.Utils.Split_Line
               ("(League.Strings.From_UTF_8_String (To_String (Data."
                & Base_Name.To_Wide_Wide_String
                & Choice_Name.To_Wide_Wide_String
@@ -405,7 +405,7 @@ package body XSD_To_Ada.Encoder_2 is
       then
          Writer.P
            ("      Writer.Characters" & LF
-            & XSD_To_Ada.Utils.Gen_Type_Line
+            & XSD_To_Ada.Utils.Split_Line
               ("(League.Strings.From_UTF_8_String (Data."
                & Base_Name.To_Wide_Wide_String
                & Choice_Name.To_Wide_Wide_String
@@ -535,14 +535,14 @@ package body XSD_To_Ada.Encoder_2 is
 
                if Base_Name.Is_Empty then
                   Writer.P
-                    (Gen_Type_Line
+                    (Split_Line
                        ("case Data."
                         & Optional_Marker.To_Wide_Wide_String
                         & Add_Separator (Name) & "."
                         & "Kind is", 5));
                else
                   Writer.P
-                    (Gen_Type_Line
+                    (Split_Line
                        ("case Data."
                         & Optional_Marker.To_Wide_Wide_String
                         & Add_Separator (Base_Name)
@@ -938,7 +938,7 @@ package body XSD_To_Ada.Encoder_2 is
          Elements_Name.Append (Name);
 
          Element_Name.P
-           (XSD_To_Ada.Utils.Gen_Type_Line
+           (XSD_To_Ada.Utils.Split_Line
               (Add_Separator (Name)
                & "_Name : constant League.Strings.Universal_String :=", 3)
             & LF
