@@ -50,8 +50,7 @@ with XML.Schema.Model_Groups;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
-with XSD_To_Ada.Encoder; use XSD_To_Ada.Encoder;
-with XSD_To_Ada.Utils;
+with XSD_To_Ada.Utils; use XSD_To_Ada.Utils;
 
 package body XSD_To_Ada.Encoder_2 is
 
@@ -391,7 +390,7 @@ package body XSD_To_Ada.Encoder_2 is
 
          Writer.P
            ("      Writer.Characters" & LF
-            & XSD_To_Ada.Encoder.Gen_Type_Line
+            & XSD_To_Ada.Utils.Gen_Type_Line
               ("(League.Strings.From_UTF_8_String (To_String (Data."
                & Base_Name.To_Wide_Wide_String
                & Choice_Name.To_Wide_Wide_String
@@ -406,7 +405,7 @@ package body XSD_To_Ada.Encoder_2 is
       then
          Writer.P
            ("      Writer.Characters" & LF
-            & XSD_To_Ada.Encoder.Gen_Type_Line
+            & XSD_To_Ada.Utils.Gen_Type_Line
               ("(League.Strings.From_UTF_8_String (Data."
                & Base_Name.To_Wide_Wide_String
                & Choice_Name.To_Wide_Wide_String
@@ -532,9 +531,7 @@ package body XSD_To_Ada.Encoder_2 is
             then
                Choice := True;
 
-               Choice_Name :=
-                 League.Strings.To_Universal_String
-                   (Add_Separator (Name) & ".");
+               Choice_Name := Add_Separator (Name) & ".";
 
                if Base_Name.Is_Empty then
                   Writer.P
@@ -642,10 +639,8 @@ package body XSD_To_Ada.Encoder_2 is
                   Writer,
                   Writer_types,
                   Mapping,
-                  League.Strings.To_Universal_String
-                    (Add_Separator (XS_Base.Get_Name)),
-                  League.Strings.To_Universal_String
-                    (Add_Separator (XS_Base.Get_Name) & "."));
+                  Add_Separator (XS_Base.Get_Name),
+                  Add_Separator (XS_Base.Get_Name) & ".");
          end if;
       end if;
 
@@ -664,8 +659,7 @@ package body XSD_To_Ada.Encoder_2 is
                      Writer,
                      Writer_types,
                      Mapping,
-                     League.Strings.To_Universal_String
-                       (Add_Separator (Name)),
+                     Add_Separator (Name),
                      League.Strings.Empty_Universal_String);
                else
                   if not Anonym_Name.Is_Empty then
@@ -675,8 +669,7 @@ package body XSD_To_Ada.Encoder_2 is
                         Writer,
                         Writer_types,
                         Mapping,
-                        League.Strings.To_Universal_String
-                          (Add_Separator (Anonym_Name)),
+                        Add_Separator (Anonym_Name),
                        League.Strings.Empty_Universal_String);
                   elsif not Element_Name.Is_Empty then
                      Print_Term
@@ -685,8 +678,7 @@ package body XSD_To_Ada.Encoder_2 is
                         Writer,
                         Writer_types,
                         Mapping,
-                        League.Strings.To_Universal_String
-                          (Add_Separator (Element_Name)),
+                        Add_Separator (Element_Name),
                         League.Strings.Empty_Universal_String);
                   end if;
                end if;
@@ -930,10 +922,8 @@ package body XSD_To_Ada.Encoder_2 is
      (Name : League.Strings.Universal_String)
      return League.Strings.Universal_String is
    begin
-      return
-        League.Strings.To_Universal_String
-          ("      Writer.End_Element (IATS_URI, "
-           & Add_Separator (Name) & "_Name);" & LF);
+      return "      Writer.End_Element (IATS_URI, "
+        & Add_Separator (Name) & "_Name);" & LF;
    end Write_End_Element;
 
    -------------------------
@@ -948,7 +938,7 @@ package body XSD_To_Ada.Encoder_2 is
          Elements_Name.Append (Name);
 
          Element_Name.P
-           (XSD_To_Ada.Encoder.Gen_Type_Line
+           (XSD_To_Ada.Utils.Gen_Type_Line
               (Add_Separator (Name)
                & "_Name : constant League.Strings.Universal_String :=", 3)
             & LF
@@ -956,10 +946,8 @@ package body XSD_To_Ada.Encoder_2 is
             & Name & """);" & LF);
       end if;
 
-      return
-        League.Strings.To_Universal_String
-          ("      Writer.Start_Element (IATS_URI, "
-           & Add_Separator (Name) & "_Name);" & LF);
+      return "      Writer.Start_Element (IATS_URI, "
+        & Add_Separator (Name) & "_Name);" & LF;
    end Write_Start_Element;
 
 end XSD_To_Ada.Encoder_2;

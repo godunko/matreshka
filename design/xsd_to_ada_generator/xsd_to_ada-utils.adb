@@ -678,55 +678,95 @@ package body XSD_To_Ada.Utils is
 
    function Gen_Type_Line
      (Str : Wide_Wide_String := "";
-      Tab : Natural := 0) return Wide_Wide_String
+      Tab : Natural := 0)
+      return Wide_Wide_String
    is
-      use type League.Characters.Universal_Character;
-      use Ada.Strings.Wide_Wide_Unbounded;
-      use Ada.Strings.Wide_Wide_Maps;
 
-      US      : constant League.Strings.Universal_String
+      US      : League.Strings.Universal_String
         := League.Strings.To_Universal_String (Str);
       US_New : League.Strings.Universal_String;
 
       Tab_Count : Natural := Tab;
-   begin
-      if US.Length > 79 then
-         for J in 1 .. US.Length loop
-            if US.Element (J) = ' '
-              and then
-                (US.Element (J + 1) = '('
-                 or US.Element (J + 1) = ':')
+
+      procedure Trim
+        (US        : in out League.Strings.Universal_String;
+         US_New    : in out League.Strings.Universal_String;
+         Tab_Count : in out Natural);
+
+      procedure Trim
+        (US        : in out League.Strings.Universal_String;
+         US_New    : in out League.Strings.Universal_String;
+         Tab_Count : in out Natural)
+      is
+         use type League.Characters.Universal_Character;
+
+         Temp_US : constant League.Strings.Universal_String
+           := US.Slice (1, 79 - Tab_Count);
+      begin
+
+         for J in reverse 1 .. Temp_US.Length loop
+            if (Temp_US.Element (J) = ':'
+                and then J /= 1)
+              or (Temp_US.Element (J) = '('
+                  and then J /= 1)
+              or (J + 3 < Temp_US.Length
+                  and then Temp_US.Element (J) = ' '
+                  and then Temp_US.Element (J + 1) = 'i'
+                  and then Temp_US.Element (J + 2) = 's'
+                  and then Temp_US.Element (J + 3) = ' ')
+              or (J + 2 < Temp_US.Length
+                  and then Temp_US.Element (J) = ' '
+                  and then Temp_US.Element (J + 1) = '/'
+                  and then Temp_US.Element (J + 2) = '=')
+              or (J /= 1
+                  and then J + 1 < Temp_US.Length
+                  and then Temp_US.Element (J) = '.'
+                  and then Temp_US.Element (J + 1) /= '.')
             then
-               US_New.Append (Wide_Wide_Character'Val (10));
-
-               for Count in 1 .. Tab loop
-                  US_New.Append (" ");
-               end loop;
-
-               US_New.Append (US.Element (J));
-
-            elsif US.Element (J) = ' '
-              and then US.Element (J + 1) = 'i'
-              and then US.Element (J + 2) = 's'
-              and then US.Element (J + 3) = ' '
-            then
-               US_New.Append (Wide_Wide_Character'Val (10));
                Tab_Count := Tab_Count + 2;
+               US_New.Append (Temp_US.Slice (1, J - 1));
+               US_New.Append (LF);
 
                for Count in 1 .. Tab_Count loop
                   US_New.Append (" ");
                end loop;
 
-               US_New.Append (US.Element (J));
-            else
-               US_New.Append (US.Element (J));
+               US := US.Slice (J, US.Length);
+               exit;
             end if;
          end loop;
+      end Trim;
 
+   begin
+      for Count in 1 .. Tab_Count loop
+         US_New.Append (" ");
+      end loop;
+
+      if US.Length + Tab_Count < 80 then
+         US_New.Append (US);
          return US_New.To_Wide_Wide_String;
-      else
-         return Str;
       end if;
+
+      loop
+         if US.Length + Tab > 80 then
+            Trim (US, US_New, Tab_Count);
+         else
+            US_New.Append (US);
+            return US_New.To_Wide_Wide_String;
+         end if;
+      end loop;
+   end Gen_Type_Line;
+
+   -------------------
+   -- Gen_Type_Line --
+   -------------------
+
+   function Gen_Type_Line
+     (Str : League.Strings.Universal_String;
+      Tab : Natural := 0)
+      return Wide_Wide_String is
+   begin
+      return Gen_Type_Line (Str.To_Wide_Wide_String, Tab);
    end Gen_Type_Line;
 
    ---------------------------

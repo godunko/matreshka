@@ -82,6 +82,11 @@ package XSD_To_Ada.Utils is
       Tab : Natural := 0)
       return Wide_Wide_String;
 
+   function Gen_Type_Line
+     (Str : League.Strings.Universal_String;
+      Tab : Natural := 0)
+      return Wide_Wide_String;
+
    procedure Create_Simple_Type
      (Model  : XML.Schema.Models.XS_Model;
       Writer : in out XSD_To_Ada.Writers.Writer);

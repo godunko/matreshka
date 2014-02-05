@@ -54,6 +54,7 @@ with XSD_To_Ada.Writers;
 package XSD_To_Ada.Encoder_2 is
 
    Elements_Name : League.String_Vectors.Universal_String_Vector;
+   Element_Name  : XSD_To_Ada.Writers.Writer;
 
    function Add_Indent
      (Spaces_Count : Integer)
@@ -92,13 +93,13 @@ package XSD_To_Ada.Encoder_2 is
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Indent       : Wide_Wide_String;
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Mapping      : XSD_To_Ada.Mappings.Mapping;
-      Name         : League.Strings.Universal_String;
-      Anonym_Name  : League.Strings.Universal_String;
-      Element_Name : League.Strings.Universal_String;
+     Indent       : Wide_Wide_String;
+     Writer       : in out Writers.Writer;
+     Writer_types : in out Writers.Writer;
+     Mapping      : XSD_To_Ada.Mappings.Mapping;
+     Name         : League.Strings.Universal_String;
+     Anonym_Name  : League.Strings.Universal_String;
+     Element_Name : League.Strings.Universal_String;
       Is_Min_Occur : Boolean := False);
 
    procedure Print_Type_Title
