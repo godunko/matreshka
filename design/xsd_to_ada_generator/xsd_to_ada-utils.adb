@@ -1036,79 +1036,64 @@ package body XSD_To_Ada.Utils is
                   Writers.P (Payload_Writer, "   end record;" & LF);
 
                else
-                  if Type_D.Get_Name.Ends_With ("Response") then
-                     if not Current.Element_Name.Is_Empty then
-                        Writers.N
-                         (Payload_Writer,
-                          "   type "
-                            & Add_Separator (Current.Element_Name)
-                            & " is" & LF
-                            & "     new Web_Services.SOAP.Payloads."
-                            & "Abstract_SOAP_Payload with" & LF
-                            & "     record" & LF
-                            & "     "
-                            & Add_Separator (Type_D.Get_Name)
-                            & LF
-                            & "      : ");
+                  if XSD2Ada.Analyzer.Has_Element_Session (Type_D)
+                    or Type_D.Get_Name.Ends_With ("Response")
+                  then
+                     XSD_To_Ada.Utils.Gen_Proc_Header
+                      (Payload_Writer,
+                       Add_Separator (Type_D.Get_Name).To_Wide_Wide_String);
 
-                        Writers.P
-                         (Payload_Writer,
-                          (XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                            (Mapping, Type_D.Get_Name)));
-                        Writers.P (Payload_Writer, "     end record;" & LF);
+                     Writers.P
+                      (Payload_Writer,
+                       "   type "
+                         & Add_Separator (Type_D.Get_Name)
+                         & " is" & LF
+                         & "     new Web_Services.SOAP.Payloads."
+                         & "Abstract_SOAP_Payload"
+                         & LF
+                         & "   with record");
+                     XSD_To_Ada.Utils.Print_Type_Definition
+                      (Type_D,
+                       Indent & "   ",
+                       Payload_Writer,
+                       Payload_Type_Writer,
+                       Type_D.Get_Name,
+                       Current.Anonym_Name,
+                       Current.Element_Name,
+                       Mapping);
+                     Writers.P (Payload_Writer, "   end record;" & LF);
 
-                        Gen_Access_Type
-                         (Payload_Writer,
-                          Add_Separator (Current.Element_Name));
-
-                     else
-                        XSD_To_Ada.Utils.Gen_Proc_Header
-                         (Payload_Writer,
-                          Add_Separator (Type_D.Get_Name).To_Wide_Wide_String);
-
-                        Writers.P
-                         (Payload_Writer,
-                          "   type "
-                            & Add_Separator
-                               (Type_D.Get_Name.To_Wide_Wide_String)
-                            & " is" & LF
-                            & "     new Web_Services.SOAP.Payloads."
-                            & "Abstract_SOAP_Payload with" & LF
-                            & "     record");
-
-                        XSD_To_Ada.Utils.Print_Type_Definition
-                         (Type_D,
-                          Indent & "   ",
-                          Payload_Writer, Payload_Type_Writer,
-                          Type_D.Get_Name,
-                          Current.Anonym_Name,
-                          Current.Element_Name,
-                          Mapping);
-
-                        Writers.P (Payload_Writer, "     end record;" & LF);
-
-                        XSD_To_Ada.Utils.Gen_Access_Type
-                         (Payload_Writer, Add_Separator (Type_D.Get_Name));
+                     if Type_D.Get_Name.Ends_With ("Response") then
+	                XSD_To_Ada.Utils.Gen_Access_Type
+        	         (Payload_Writer, Add_Separator (Type_D.Get_Name));
                      end if;
 
                   else
-                     if XSD2Ada.Analyzer.Has_Element_Session (Type_D) then
-                        XSD_To_Ada.Utils.Gen_Proc_Header
-                         (Payload_Writer,
-                          Add_Separator (Type_D.Get_Name).To_Wide_Wide_String);
-
+                     if Type_D.Get_Base_Type.Get_Name.To_Wide_Wide_String
+                          = "anyType"
+                     then
                         Writers.P
                          (Payload_Writer,
                           "   type "
                             & Add_Separator (Type_D.Get_Name)
                             & " is" & LF
                             & "     new Web_Services.SOAP.Payloads."
-                            & "Abstract_SOAP_Payload"
-                            & LF
-                            & "   with record");
+                            & "Abstract_SOAP_Payload" & LF
+                            & "   with record" & LF
+                            & "     null;" & LF
+                            & "   end record;" & LF);
 
+                        XSD_To_Ada.Utils.Gen_Access_Type
+                         (Payload_Writer, Add_Separator (Type_D.Get_Name));
+
+                     else
+                        Writers.P
+                         (Payload_Writer,
+                          "   type "
+                            & Add_Separator (Type_D.Get_Name)
+                            & " is record");
                         XSD_To_Ada.Utils.Print_Type_Definition
-                         (Type_D,
+                         (Type_D.To_Type_Definition,
                           Indent & "   ",
                           Payload_Writer,
                           Payload_Type_Writer,
@@ -1116,46 +1101,7 @@ package body XSD_To_Ada.Utils is
                           Current.Anonym_Name,
                           Current.Element_Name,
                           Mapping);
-
                         Writers.P (Payload_Writer, "   end record;" & LF);
-
-                     else
-                        if Type_D.Get_Base_Type.Get_Name.To_Wide_Wide_String
-                             = "anyType"
-                        then
-                           Writers.P
-                            (Payload_Writer,
-                             "   type "
-                               & Add_Separator (Type_D.Get_Name)
-                               & " is" & LF
-                               & "     new Web_Services.SOAP.Payloads."
-                               & "Abstract_SOAP_Payload" & LF
-                               & "   with record" & LF
-                               & "     null;" & LF
-                               & "   end record;" & LF);
-
-                           XSD_To_Ada.Utils.Gen_Access_Type
-                            (Payload_Writer, Add_Separator (Type_D.Get_Name));
-
-                        else
-                           Writers.P
-                            (Payload_Writer,
-                             "   type "
-                               & Add_Separator (Type_D.Get_Name)
-                               & " is record");
-
-                           XSD_To_Ada.Utils.Print_Type_Definition
-                            (Type_D.To_Type_Definition,
-                             Indent & "   ",
-                             Payload_Writer,
-                             Payload_Type_Writer,
-                             Type_D.Get_Name,
-                             Current.Anonym_Name,
-                             Current.Element_Name,
-                             Mapping);
-
-                           Writers.P (Payload_Writer, "   end record;" & LF);
-                        end if;
                      end if;
                   end if;
                end if;
