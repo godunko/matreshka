@@ -238,7 +238,6 @@ package body XSD_To_Ada.Utils is
          XSD2Ada.Analyzer.Create_Node_Vector
            (XS_Object.To_Type_Definition,
             Node_Vector,
-            Mapping,
             1, (False, 1));
       end loop;
 
@@ -249,11 +248,10 @@ package body XSD_To_Ada.Utils is
          XSD2Ada.Analyzer.Create_Node_Vector
            (Type_D,
             Node_Vector,
-            Mapping,
             1, (False, 1));
       end loop;
 
-      XSD2Ada.Analyzer.Create_Element_Type (Model, Node_Vector, Mapping);
+      XSD2Ada.Analyzer.Create_Element_Type (Model, Node_Vector);
       Print_Payloads (Node_Vector, Payload_Writer, Mapping);
 
       Ada.Wide_Wide_Text_IO.Create (File_Type, Out_File, "Vector");
@@ -271,7 +269,6 @@ package body XSD_To_Ada.Utils is
             XSD2Ada.Analyzer.Create_Node_Vector
               (Type_D,
                Node_Vector,
-               Mapping,
                1, (False, 1),
                Element_Declarations.Item (J).Get_Name);
          end if;

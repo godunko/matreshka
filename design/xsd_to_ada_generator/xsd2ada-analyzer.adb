@@ -43,7 +43,6 @@
 ------------------------------------------------------------------------------
 
 with XML.Schema.Complex_Type_Definitions;
-with XML.Schema.Element_Declarations;
 with XML.Schema.Model_Groups;
 with XML.Schema.Named_Maps;
 with XML.Schema.Object_Lists;
@@ -70,8 +69,7 @@ package body XSD2Ada.Analyzer is
     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
      Node_Vector          : in out Items;
      Type_Difinition_Node : Item;
-     Name                 : League.Strings.Universal_String;
-     Mapping              : XSD_To_Ada.Mappings.Mapping);
+     Name                 : League.Strings.Universal_String);
 
    --------------
    -- Add_Node --
@@ -134,13 +132,30 @@ package body XSD2Ada.Analyzer is
    end Add_Node;
 
    -------------------------
+   -- Create_Element_Node --
+   -------------------------
+
+   procedure Create_Element_Node
+     (Element     : XML.Schema.Element_Declarations.XS_Element_Declaration;
+      Node_Vector : in out XSD2Ada.Analyzer.Items)
+   is
+      Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
+   begin
+      Type_D := Element.Get_Type_Definition;
+      XSD2Ada.Analyzer.Create_Node_Vector
+        (Type_D,
+         Node_Vector,
+         1, (False, 1),
+         Element.Get_Name);
+   end Create_Element_Node;
+
+   -------------------------
    -- Create_Element_Type --
    -------------------------
 
    procedure Create_Element_Type
     (Model       : XML.Schema.Models.XS_Model;
-     Node_Vector : in out Items;
-     Mapping     : XSD_To_Ada.Mappings.Mapping)
+     Node_Vector : in out Items)
    is
       Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map
         := Model.Get_Components_By_Namespace
@@ -157,7 +172,6 @@ package body XSD2Ada.Analyzer is
          Create_Node_Vector
            (Type_D,
             Node_Vector,
-            Mapping,
             1, (False, 1),
             Element_Declarations.Item (J).Get_Name);
       end loop;
@@ -170,7 +184,6 @@ package body XSD2Ada.Analyzer is
    procedure Create_Node_Vector
     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
      Node_Vector  : in out XSD2Ada.Analyzer.Items;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
      Min_Occurs   : Natural;
      Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
      Element_Name : League.Strings.Universal_String
@@ -209,8 +222,7 @@ package body XSD2Ada.Analyzer is
         (Type_D,
          Node_Vector,
          Type_Difinition_Node,
-         Type_D.Get_Name,
-         Mapping);
+         Type_D.Get_Name);
 
       Add_Node (Node_Vector, Type_Difinition_Node);
    end Create_Node_Vector;
@@ -284,15 +296,13 @@ package body XSD2Ada.Analyzer is
      (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
       Node_Vector          : in out Items;
       Type_Difinition_Node : Item;
-      Name                 : League.Strings.Universal_String;
-      Mapping              : XSD_To_Ada.Mappings.Mapping)
+      Name                 : League.Strings.Universal_String)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
       procedure Print_Term
        (XS_Term : XML.Schema.Terms.XS_Term;
-        Name    : League.Strings.Universal_String;
-        Map     : XSD_To_Ada.Mappings.Mapping);
+        Name    : League.Strings.Universal_String);
 
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
@@ -310,8 +320,7 @@ package body XSD2Ada.Analyzer is
 
       procedure Print_Term
        (XS_Term : XML.Schema.Terms.XS_Term;
-        Name    : League.Strings.Universal_String;
-        Map     : XSD_To_Ada.Mappings.Mapping)
+        Name    : League.Strings.Universal_String)
       is
          use XML.Schema.Terms.Model_Groups;
 
@@ -333,7 +342,7 @@ package body XSD2Ada.Analyzer is
                Max_Occurs_2 := XS_Particle.Get_Max_Occurs;
                Min_Occurs_2 := XS_Particle.Get_Min_Occurs;
 
-               Print_Term (XS_Particle.Get_Term, Name, Map);
+               Print_Term (XS_Particle.Get_Term, Name);
             end loop;
 
          elsif XS_Term.Is_Element_Declaration then
@@ -346,8 +355,7 @@ package body XSD2Ada.Analyzer is
                 (Type_D,
                  Node_Vector,
                  Type_Difinition_Node,
-                 Name & '_' & Decl.Get_Name,
-                 Map);
+                 Name & '_' & Decl.Get_Name);
 
                declare
                   Anonym_Type_Difinition_Node : XSD2Ada.Analyzer.Item;
@@ -389,7 +397,6 @@ package body XSD2Ada.Analyzer is
                XSD2Ada.Analyzer.Create_Node_Vector
                 (Type_D,
                  Node_Vector,
-                 Mapping,
                  Min_Occurs_2,
                  Max_Occurs_2);
 
@@ -436,7 +443,6 @@ package body XSD2Ada.Analyzer is
             XSD2Ada.Analyzer.Create_Node_Vector
               (XS_Base,
                Node_Vector,
-               Mapping,
                1, (False, 1));
          end if;
       end if;
@@ -449,7 +455,7 @@ package body XSD2Ada.Analyzer is
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 
-               Print_Term (XS_Term, Name, Mapping);
+               Print_Term (XS_Term, Name);
 
             end if;
 
