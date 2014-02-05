@@ -283,13 +283,7 @@ package body XSD2Ada.Analyzer is
     (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
      Table  : XSD_To_Ada.Utils.Types_Table_Type_Array) return Boolean is
    begin
-      for j in 1 .. Table'Last loop
-         if Type_D.Get_Name = Table (j).Type_Name then
-            return True;
-         end if;
-      end loop;
-
-      return False;
+      return Type_D.Get_Namespace = XSD_To_Ada.Utils.Namespace;
    end Has_Top_Level_Type;
 
    --------------------------
