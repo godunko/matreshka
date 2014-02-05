@@ -705,7 +705,8 @@ package body XSD_To_Ada.Utils is
       begin
 
          for J in reverse 1 .. Temp_US.Length loop
-            if (Temp_US.Element (J) = ':'
+            if (Temp_US.Element (J) = ' '
+                and then Temp_US.Element (J + 1) = ':'
                 and then J /= 1)
               or (Temp_US.Element (J) = '('
                   and then J /= 1)
@@ -742,13 +743,13 @@ package body XSD_To_Ada.Utils is
          US_New.Append (" ");
       end loop;
 
-      if US.Length + Tab_Count < 80 then
+      if US.Length + Tab_Count < 79 then
          US_New.Append (US);
          return US_New.To_Wide_Wide_String;
       end if;
 
       loop
-         if US.Length + Tab > 80 then
+         if US.Length + Tab > 79 then
             Trim (US, US_New, Tab_Count);
          else
             US_New.Append (US);
@@ -1336,8 +1337,7 @@ package body XSD_To_Ada.Utils is
                         & " : "
                         & Optional_Type.To_Wide_Wide_String
                         & Add_Separator (Name).To_Wide_Wide_String
-                        & "_Case",
-                      8));
+                        & "_Case", 0));
 
                   Create_Vector_Package
                    (League.Strings.To_Universal_String
@@ -1356,8 +1356,7 @@ package body XSD_To_Ada.Utils is
                         & " : "
                         & Optional_Type.To_Wide_Wide_String
                         & Add_Separator (Name).To_Wide_Wide_String
-                        & "_Case;",
-                      8));
+                        & "_Case;", 0));
                end if;
 
                if Is_Min_Occur then

@@ -80,7 +80,6 @@ package body XSD2Ada.Analyzer is
      Type_Difinition_Node : Item)
    is
       Difinition_Node : XSD2Ada.Analyzer.Item;
-
    begin
       Difinition_Node := Type_Difinition_Node;
       Difinition_Node.Min := False;
@@ -303,7 +302,6 @@ package body XSD2Ada.Analyzer is
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
 
       Max_Occurs_2 : XML.Schema.Particles.Unbounded_Natural;
-
       Min_Occurs_2 : Natural;
 
       ----------------
