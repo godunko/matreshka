@@ -70,7 +70,7 @@ package body XSD2Ada.Analyzer is
    procedure Node_Type_Definition
     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
      Node_Vector          : in out Items;
-     Type_Difinition_Node : in out Item;
+     Type_Difinition_Node : Item;
      Name                 : League.Strings.Universal_String;
      Mapping              : XSD_To_Ada.Mappings.Mapping);
 
@@ -95,9 +95,7 @@ package body XSD2Ada.Analyzer is
          if not Type_Difinition_Node.Type_Def.Get_Name.Is_Empty
            or not Type_Difinition_Node.Anonym_Name.Is_Empty
          then
-            if not Node_Vector.Contains (Difinition_Node) then
-               Node_Vector.Append (Difinition_Node);
-            end if;
+            Node_Vector.Append (Difinition_Node);
          end if;
       end if;
 
@@ -122,17 +120,17 @@ package body XSD2Ada.Analyzer is
       end if;
 
       if not Type_Difinition_Node.Element_Name.Is_Empty
-        and then Type_Difinition_Node.Type_Def.Get_Name.To_UTF_8_String /=
-          Type_Difinition_Node.Element_Name.To_UTF_8_String
+        and then Type_Difinition_Node.Type_Def.Get_Name /=
+          Type_Difinition_Node.Element_Name
       then
-            Difinition_Node.Element_Name.Append
-              (Type_Difinition_Node.Element_Name);
+         Difinition_Node.Element_Name.Append
+           (Type_Difinition_Node.Element_Name);
 
-            if not Node_Vector.Contains (Difinition_Node) then
-               Node_Vector.Append (Difinition_Node);
-            end if;
+         if not Node_Vector.Contains (Difinition_Node) then
+            Node_Vector.Append (Difinition_Node);
+         end if;
 
-            Difinition_Node.Element_Name.Clear;
+         Difinition_Node.Element_Name.Clear;
       end if;
    end Add_Node;
 
@@ -208,19 +206,14 @@ package body XSD2Ada.Analyzer is
          Type_Difinition_Node.Choice := True;
       end if;
 
-      if Type_D.Get_Type_Category = XML.Schema.Complex_Type then
-         Node_Type_Definition
-          (Type_D,
-           Node_Vector,
-           Type_Difinition_Node,
-           Type_D.Get_Name,
-           Mapping);
+      Node_Type_Definition
+        (Type_D,
+         Node_Vector,
+         Type_Difinition_Node,
+         Type_D.Get_Name,
+         Mapping);
 
-         Add_Node (Node_Vector, Type_Difinition_Node);
-
-      else
-         Add_Node (Node_Vector, Type_Difinition_Node);
-      end if;
+      Add_Node (Node_Vector, Type_Difinition_Node);
    end Create_Node_Vector;
 
    -------------------------
@@ -289,11 +282,11 @@ package body XSD2Ada.Analyzer is
    --------------------------
 
    procedure Node_Type_Definition
-    (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Node_Vector          : in out Items;
-     Type_Difinition_Node : in out Item;
-     Name                 : League.Strings.Universal_String;
-     Mapping              : XSD_To_Ada.Mappings.Mapping)
+     (Type_D               : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Node_Vector          : in out Items;
+      Type_Difinition_Node : Item;
+      Name                 : League.Strings.Universal_String;
+      Mapping              : XSD_To_Ada.Mappings.Mapping)
    is
       use type XML.Schema.Type_Definitions.XS_Type_Definition;
 
@@ -354,7 +347,7 @@ package body XSD2Ada.Analyzer is
             Decl := XS_Term.To_Element_Declaration;
             Type_D := Decl.Get_Type_Definition;
 
-            if Type_D.Get_Name.To_UTF_8_String = "" then
+            if Type_D.Get_Name.Is_Empty then
                Node_Type_Definition
                 (Type_D,
                  Node_Vector,
