@@ -60,6 +60,12 @@ package XSD2Ada.Analyzer is
       Choice           : Boolean := False;
       Anonym_Name      : League.Strings.Universal_String;
       Element_Name     : League.Strings.Universal_String;
+
+      Short_Ada_Type_Name   : League.Strings.Universal_String;
+      Full_Ada_Type_Name    : League.Strings.Universal_String;
+      Full_Ada_Package_Name : League.Strings.Universal_String;
+      --  Short and full names of Ada type described by the element. Full name
+      --  of Ada compilation unit enclosing Ada type declaration.
    end record;
 
    package Item_Vectors is
