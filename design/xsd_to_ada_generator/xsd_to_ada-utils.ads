@@ -54,11 +54,9 @@ with XSD_To_Ada.Writers;
 
 package XSD_To_Ada.Utils is
 
-   type Types_Table_Type is
-      record
-         Type_Name  : League.Strings.Universal_String;
-         Type_State : Boolean;
-      end record;
+   type Types_Table_Type is record
+      Type_Name : League.Strings.Universal_String;
+   end record;
 
    type Types_Table_Type_Array is array (1 .. 200) of Types_Table_Type;
 

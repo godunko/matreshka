@@ -221,7 +221,6 @@ package body XSD_To_Ada.Utils is
    begin
       for J in 1 .. Complex_Types.Length loop
          Types_Table (J).Type_Name := Complex_Types.Item (J).Get_Name;
-         Types_Table (J).Type_State := True;
       end loop;
 
       Put_Header (Payload_Spec);

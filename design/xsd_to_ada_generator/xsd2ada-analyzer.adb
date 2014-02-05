@@ -283,7 +283,7 @@ package body XSD2Ada.Analyzer is
      Table  : XSD_To_Ada.Utils.Types_Table_Type_Array) return Boolean is
    begin
       for j in 1 .. Table'Last loop
-         if Type_D.Get_Name = Table (j).Type_Name and Table (j).Type_State then
+         if Type_D.Get_Name = Table (j).Type_Name then
             return True;
          end if;
       end loop;
