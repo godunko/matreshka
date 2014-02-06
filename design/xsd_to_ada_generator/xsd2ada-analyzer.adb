@@ -57,8 +57,8 @@ package body XSD2Ada.Analyzer is
    use all type XML.Schema.Complex_Type_Definitions.Content_Types;
 
    procedure Add_Node
-    (Node_Vector          : in out Items;
-     Type_Difinition_Node : Item);
+    (Vector : in out Items;
+     Value  : Item);
 
    procedure Traverse_Type_Definition
     (Type_D        : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -82,8 +82,8 @@ package body XSD2Ada.Analyzer is
    --------------
 
    procedure Add_Node
-    (Node_Vector          : in out Items;
-     Type_Difinition_Node : Item)
+    (Vector          : in out Items;
+     Value : Item)
    is
       function Contains (X : Item'Class) return Boolean;
 
@@ -93,7 +93,7 @@ package body XSD2Ada.Analyzer is
 
       function Contains (X : Item'Class) return Boolean is
       begin
-         for J of Node_Vector loop
+         for J of Vector loop
             if J.all = X then
                return True;
             end if;
@@ -104,49 +104,57 @@ package body XSD2Ada.Analyzer is
 
       Difinition_Node : XSD2Ada.Analyzer.Item;
    begin
-      Difinition_Node := Type_Difinition_Node;
+      Difinition_Node := Value;
       Difinition_Node.Min := False;
       Difinition_Node.Max := False;
       Difinition_Node.Element_Name.Clear;
 
+      if not Value.Anonym_Name.Is_Empty then
+         Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
+           (Value.Anonym_Name) & "_Anonym";
+      else
+         Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
+           (Value.Type_Def.Get_Name);
+      end if;
+
       if not Contains (Difinition_Node) then
 
-         if not Type_Difinition_Node.Type_Def.Get_Name.Is_Empty
-           or not Type_Difinition_Node.Anonym_Name.Is_Empty
+         if not Value.Type_Def.Get_Name.Is_Empty
+           or not Value.Anonym_Name.Is_Empty
          then
-            Node_Vector.Append (new Item'(Difinition_Node));
+            Vector.Append (new Item'(Difinition_Node));
          end if;
       end if;
 
-      if Type_Difinition_Node.Max then
+      if Value.Max then
          Difinition_Node.Max := True;
 
          if not Contains (Difinition_Node) then
-            Node_Vector.Append (new Item'(Difinition_Node));
+            Vector.Append (new Item'(Difinition_Node));
          end if;
 
          Difinition_Node.Max := False;
       end if;
 
-      if Type_Difinition_Node.Min then
+      if Value.Min then
          Difinition_Node.Min := True;
 
          if not Contains (Difinition_Node) then
-            Node_Vector.Append (new Item'(Difinition_Node));
+            Vector.Append (new Item'(Difinition_Node));
          end if;
 
          Difinition_Node.Min := False;
       end if;
 
-      if not Type_Difinition_Node.Element_Name.Is_Empty
-        and then Type_Difinition_Node.Type_Def.Get_Name /=
-          Type_Difinition_Node.Element_Name
+      if not Value.Element_Name.Is_Empty
+        and then Value.Type_Def.Get_Name /=
+          Value.Element_Name
       then
          Difinition_Node.Element_Name.Append
-           (Type_Difinition_Node.Element_Name);
+           (Value.Element_Name);
 
          if not Contains (Difinition_Node) then
-            Node_Vector.Append (new Item'(Difinition_Node));
+            Vector.Append (new Item'(Difinition_Node));
          end if;
 
          Difinition_Node.Element_Name.Clear;
@@ -270,9 +278,11 @@ package body XSD2Ada.Analyzer is
    ---------------------------
 
    function Full_Ada_Package_Name
-     (Self : Item) return League.Strings.Universal_String is
+     (Self : Item) return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
    begin
-      return Self.Full_Ada_Package_Name;
+      return League.Strings.To_Universal_String ("Payloads");
    end Full_Ada_Package_Name;
 
    ------------------------
@@ -282,7 +292,7 @@ package body XSD2Ada.Analyzer is
    function Full_Ada_Type_Name
      (Self : Item) return League.Strings.Universal_String is
    begin
-      return Self.Full_Ada_Type_Name;
+      return Self.Full_Ada_Package_Name & "." & Self.Short_Ada_Type_Name;
    end Full_Ada_Type_Name;
 
    ---------

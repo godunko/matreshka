@@ -65,12 +65,13 @@ package XSD2Ada.Analyzer is
    function Element_Name (Self : Item) return League.Strings.Universal_String;
    function Short_Ada_Type_Name
      (Self : Item) return League.Strings.Universal_String;
+   --  Short name of Ada type described by the element.
    function Full_Ada_Type_Name
      (Self : Item) return League.Strings.Universal_String;
+   --  Full name of Ada type described by the element.
    function Full_Ada_Package_Name
      (Self : Item) return League.Strings.Universal_String;
-   --  Short and full names of Ada type described by the element. Full name
-   --  of Ada compilation unit enclosing Ada type declaration.
+   --  Full name of Ada compilation unit enclosing Ada type declaration.
 
    package Item_Vectors is
      new Ada.Containers.Vectors (Positive, Item_Access);
@@ -108,9 +109,5 @@ private
       Element_Name     : League.Strings.Universal_String;
 
       Short_Ada_Type_Name   : League.Strings.Universal_String;
-      Full_Ada_Type_Name    : League.Strings.Universal_String;
-      Full_Ada_Package_Name : League.Strings.Universal_String;
-      --  Short and full names of Ada type described by the element. Full name
-      --  of Ada compilation unit enclosing Ada type declaration.
    end record;
 end XSD2Ada.Analyzer;
