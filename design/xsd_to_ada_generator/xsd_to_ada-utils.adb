@@ -1162,7 +1162,7 @@ package body XSD_To_Ada.Utils is
                        Current.Anonym_Name & "_Anonym" & Discriminant_Type;
 
                   else
-                     Type_Name := Type_D.Get_Name & Discriminant_Type;
+                     Type_Name := Type_D.Get_Name; -- & Discriminant_Type;
                   end if;
 
                   Writers.P
