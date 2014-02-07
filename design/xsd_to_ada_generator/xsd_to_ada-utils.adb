@@ -922,7 +922,7 @@ package body XSD_To_Ada.Utils is
 
    begin
       for Current of Node_Vector loop
-         if not Current.Type_Def.Is_Simple_Type_Definition then
+         if Current.Object.Is_Complex_Type_Definition then
             Type_D := Current.Type_Def;
 
             Discriminant_Type.Clear;

@@ -719,11 +719,13 @@ package body XSD2Ada.Encoder is
       Discriminant_Type : League.Strings.Universal_String;
       Vector_Name       : League.Strings.Universal_String;
       Anonym_Name       : League.Strings.Universal_String;
-      Item              : XSD2Ada.Analyzer.Item_Access;
 
    begin
-      for Index in 1 .. Natural (Node_Vector.Length) loop
-         Item := Node_Vector.Element (Index);
+      for Item of Node_Vector loop
+         if not Item.Object.Is_Type_Definition then
+            goto Continue;
+         end if;
+
          Type_D := Item.Type_Def;
 
          Discriminant_Type.Clear;
@@ -908,6 +910,8 @@ package body XSD2Ada.Encoder is
 
          Payload_Type_Writer.Text.Clear;
          Payload_Writer.Text.Clear;
+
+         <<Continue>>
       end loop;
 
       Encoder_Names_Writer.P (Element_Name.Text);

@@ -50,12 +50,15 @@ with League.Strings;
 with XML.Schema.Type_Definitions;
 with XML.Schema.Element_Declarations;
 with XML.Schema.Models;
+with XML.Schema.Objects;
 
 package XSD2Ada.Analyzer is
 
    type Item is tagged private;
    type Item_Access is access all Item'Class;
 
+   function Object
+     (Self : Item) return XML.Schema.Objects.XS_Object;
    function Type_Def
      (Self : Item) return XML.Schema.Type_Definitions.XS_Type_Definition;
    function Min (Self : Item) return Boolean;
@@ -103,7 +106,7 @@ package XSD2Ada.Analyzer is
 private
 
    type Item is tagged record
-      Type_Def         : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Object           : XML.Schema.Objects.XS_Object;
       Min, Max         : Boolean := False;
       Anonym_Name      : League.Strings.Universal_String;
       Element_Name     : League.Strings.Universal_String;
