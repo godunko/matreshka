@@ -191,8 +191,14 @@ package body XSD2Ada.Analyzer is
    ------------
 
    function Choice (Self : Item) return Boolean is
+      use type XML.Schema.Model_Groups.Compositor_Kinds;
    begin
-      return XSD_To_Ada.Utils.Is_Choice (Self.Type_Def);
+      if Self.Object.Is_Type_Definition then
+         return XSD_To_Ada.Utils.Is_Choice (Self.Type_Def);
+      else
+         return Self.Object.To_Model_Group.Get_Compositor =
+           XML.Schema.Model_Groups.Compositor_Choice;
+      end if;
    end Choice;
 
    -------------------------
