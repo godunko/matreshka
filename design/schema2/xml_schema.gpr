@@ -1,0 +1,14 @@
+with "../../gnat/matreshka_league.gpr";
+with "../../gnat/matreshka_xml.gpr";
+
+project XML_Schema is
+
+   for Object_Dir use ".objs";
+   for Source_Dirs use ("source", ".");
+   for Main use ("driver.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g");
+   end Compiler;
+
+end XML_Schema;

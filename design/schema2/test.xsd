@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:annotation>
+    <xs:documentation source="../structures/structures-with-errata.html.html">
+      The schema corresponding to this document is normative,
+      with respect to the syntactic constraints it expresses in the
+      XML Schema language. The documentation (within &lt;documentation> elements)
+      below, is not normative, but rather highlights important aspects of
+      the W3C Recommendation of which this is a part
+    </xs:documentation>
+  </xs:annotation>
+  <xs:annotation>
+    <xs:documentation>
+      The simpleType element and all of its members are defined
+      in datatypes.xsd
+    </xs:documentation>
+  </xs:annotation>
+  <xs:include schemaLocation="datatypes.xsd"/>
+</xs:schema>
