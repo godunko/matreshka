@@ -303,7 +303,6 @@ package body Matreshka.XML_Schema.Document_Parsers is
                else
                   Self.Fatal_Error ("unexpected XML element", Success);
                end if;
-
          end case;
 
       else
