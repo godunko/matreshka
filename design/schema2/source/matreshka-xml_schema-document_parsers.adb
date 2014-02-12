@@ -41,9 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.String_Vectors;
+
 with Matreshka.XML_Schema.AST.Schemas;
 
 package body Matreshka.XML_Schema.Document_Parsers is
+
+   use type League.Strings.Universal_String;
 
    XML_Schema_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
@@ -74,8 +78,35 @@ package body Matreshka.XML_Schema.Document_Parsers is
    Schema_Tag          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schema");
 
-   Schema_Location_Attribute : constant League.Strings.Universal_String
+   Attribute_Form_Default_Attribute : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("attributeFormDefault");
+   Block_Default_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("blockDefault");
+   Element_Form_Default_Attribute   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("elementFormDefault");
+   Final_Default_Attribute          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("finalDefault");
+   Schema_Location_Attribute        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schemaLocation");
+   Target_Namespace_Attribute       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("targetNamespace");
+
+   All_Image          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("#all");
+   Extension_Image    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("extension");
+   List_Image         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("list");
+   Qualified_Image    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("qualified");
+   Restriction_Image  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("restriction");
+   Substitution_Image : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("substitution");
+   Union_Image        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("union");
+   Unqualified_Image  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("unqualified");
 
    procedure Push_Ignore (Self : in out Document_Parser'Class);
    procedure Push_Include (Self : in out Document_Parser'Class);
@@ -237,10 +268,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean)
-   is
-      use type League.Strings.Universal_String;
-
+     Success        : in out Boolean) is
    begin
       if Self.Current.State = Ignore then
          Self.Current.Depth := Self.Current.Depth + 1;
@@ -318,10 +346,121 @@ package body Matreshka.XML_Schema.Document_Parsers is
    procedure Start_Schema_Element
     (Self       : in out Document_Parser'Class;
      Attributes : XML.SAX.Attributes.SAX_Attributes;
-     Success    : in out Boolean) is
+     Success    : in out Boolean)
+   is
+      use all type Matreshka.XML_Schema.AST.Schemas.Block_Kinds;
+      use all type Matreshka.XML_Schema.AST.Schemas.Final_Kinds;
+      use all type Matreshka.XML_Schema.AST.Schemas.Form_Kinds;
+
+      Image : League.Strings.Universal_String;
+      Items : League.String_Vectors.Universal_String_Vector;
+
    begin
-      Self.Schema := new Matreshka.XML_Schema.AST.Schemas.Schema_Node;
       Self.Push_Schema;
+      Self.Schema := new Matreshka.XML_Schema.AST.Schemas.Schema_Node;
+
+      --  Process 'attributeFormDefault' attribute.
+
+      if Attributes.Is_Specified (Attribute_Form_Default_Attribute) then
+         Image := Attributes.Value (Attribute_Form_Default_Attribute);
+
+         if Image = Qualified_Image then
+            Self.Schema.Attribute_Form_Default := Qualified;
+
+         elsif Image = Unqualified_Image then
+            Self.Schema.Attribute_Form_Default := Unqualified;
+
+         else
+            raise Constraint_Error;
+         end if;
+      end if;
+
+      --  Process 'blockDefault' attribute.
+
+      if Attributes.Is_Specified (Block_Default_Attribute) then
+         Image := Attributes.Value (Block_Default_Attribute);
+
+         if Image = All_Image then
+            Self.Schema.Block_Default := (others => True);
+
+         else
+            Items := Image.Split (' ');
+
+            for J in 1 .. Items.Length loop
+               Image := Items.Element (J);
+
+               if Image = Extension_Image then
+                  Self.Schema.Block_Default (Extension) := True;
+
+               elsif Image = Restriction_Image then
+                  Self.Schema.Block_Default (Restriction) := True;
+
+               elsif Image = Substitution_Image then
+                  Self.Schema.Block_Default (substitution) := True;
+
+               else
+                  raise Constraint_Error;
+               end if;
+            end loop;
+         end if;
+      end if;
+
+      --  Process 'elementFormDefault' attribute.
+
+      if Attributes.Is_Specified (Element_Form_Default_Attribute) then
+         Image := Attributes.Value (Element_Form_Default_Attribute);
+
+         if Image = Qualified_Image then
+            Self.Schema.Element_Form_Default := Qualified;
+
+         elsif Image = Unqualified_Image then
+            Self.Schema.Element_Form_Default := Unqualified;
+
+         else
+            raise Constraint_Error;
+         end if;
+      end if;
+
+      --  Process 'finalDefault' attribute.
+
+      if Attributes.Is_Specified (Final_Default_Attribute) then
+         Image := Attributes.Value (Final_Default_Attribute);
+
+         if Image = All_Image then
+            Self.Schema.Final_Default := (others => True);
+
+         else
+            Items := Image.Split (' ');
+
+            for J in 1 .. Items.Length loop
+               Image := Items.Element (J);
+
+               if Image = Extension_Image then
+                  Self.Schema.Final_Default (Extension) := True;
+
+               elsif Image = Restriction_Image then
+                  Self.Schema.Final_Default (Restriction) := True;
+
+               elsif Image = List_Image then
+                  Self.Schema.Final_Default (List) := True;
+
+               elsif Image = Union_Image then
+                  Self.Schema.Final_Default (Union) := True;
+
+               else
+                  raise Constraint_Error;
+               end if;
+            end loop;
+         end if;
+      end if;
+
+      --  Process 'targetNamespace' attribute.
+
+      if Attributes.Is_Specified (Target_Namespace_Attribute) then
+         Self.Schema.Target_Namespace_Defined := True;
+         Self.Schema.Target_Namespace :=
+           Attributes.Value (Target_Namespace_Attribute);
+      end if;
    end Start_Schema_Element;
 
 end Matreshka.XML_Schema.Document_Parsers;

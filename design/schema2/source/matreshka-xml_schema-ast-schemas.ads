@@ -51,6 +51,16 @@ package Matreshka.XML_Schema.AST.Schemas is
 
    pragma Preelaborate;
 
+   type Form_Kinds is (Qualified, Unqualified);
+
+   type Block_Kinds is (Extension, Restriction, Substitution);
+
+   type Block_Flags is array (Block_Kinds) of Boolean;
+
+   type Final_Kinds is (Extension, Restriction, List, Union);
+
+   type Final_Flags is array (Final_Kinds) of Boolean;
+
    type Include_Information is record
       Base_URI : League.Strings.Universal_String;
       Location : League.Strings.Universal_String;
@@ -61,7 +71,13 @@ package Matreshka.XML_Schema.AST.Schemas is
      new Ada.Containers.Vectors (Positive, Include_Information);
 
    type Schema_Node is new Abstract_Node with record
-      Includes : Include_Vectors.Vector;
+      Includes                 : Include_Vectors.Vector;
+      Attribute_Form_Default   : Form_Kinds := Unqualified;
+      Element_Form_Default     : Form_Kinds := Unqualified;
+      Block_Default            : Block_Flags := (others => False);
+      Final_Default            : Final_Flags := (others => False);
+      Target_Namespace         : League.Strings.Universal_String;
+      Target_Namespace_Defined : Boolean := False;
    end record;
 
 end Matreshka.XML_Schema.AST.Schemas;
