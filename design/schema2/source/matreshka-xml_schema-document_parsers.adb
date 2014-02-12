@@ -87,11 +87,11 @@ package body Matreshka.XML_Schema.Document_Parsers is
      Success    : in out Boolean);
    --  Parses start of root 'schema' element.
 
-   procedure Error
-    (Self    : in out Document_Parser;
+   procedure Fatal_Error
+    (Self    : in out Document_Parser'Class;
      Text    : Wide_Wide_String;
      Success : in out Boolean);
-   --  Reports error. Sets Success to False.
+   --  Reports fatal error. Sets Success to False.
 
    -----------------
    -- End_Element --
@@ -116,19 +116,6 @@ package body Matreshka.XML_Schema.Document_Parsers is
       end if;
    end End_Element;
 
-   -----------
-   -- Error --
-   -----------
-
-   procedure Error
-    (Self    : in out Document_Parser;
-     Text    : Wide_Wide_String;
-     Success : in out Boolean) is
-   begin
-      Self.Diagnosis := League.Strings.To_Universal_String (Text);
-      Success := False;
-   end Error;
-
    ------------------
    -- Error_String --
    ------------------
@@ -138,6 +125,19 @@ package body Matreshka.XML_Schema.Document_Parsers is
    begin
       return Self.Diagnosis;
    end Error_String;
+
+   -----------------
+   -- Fatal_Error --
+   -----------------
+
+   procedure Fatal_Error
+    (Self    : in out Document_Parser'Class;
+     Text    : Wide_Wide_String;
+     Success : in out Boolean) is
+   begin
+      Self.Diagnosis := League.Strings.To_Universal_String (Text);
+      Success := False;
+   end Fatal_Error;
 
    ----------------
    -- Get_Schema --
@@ -205,7 +205,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
                   Start_Schema_Element (Self, Attributes, Success);
 
                else
-                  raise Program_Error;
+                  Self.Fatal_Error ("unexpected XML element", Success);
                end if;
 
             when Schema =>
@@ -243,7 +243,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
                   raise Program_Error;
 
                else
-                  raise Program_Error;
+                  Self.Fatal_Error ("unexpected XML element", Success);
                end if;
 
             when Ignore =>
@@ -253,7 +253,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
          end case;
 
       else
-         raise Program_Error;
+         Self.Fatal_Error ("unknown XML element", Success);
       end if;
    end Start_Element;
 

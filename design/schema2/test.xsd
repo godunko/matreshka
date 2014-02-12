@@ -15,5 +15,8 @@
       in datatypes.xsd
     </xs:documentation>
   </xs:annotation>
+  <!--
   <xs:include schemaLocation="datatypes.xsd"/>
+  -->
+  <test/>
 </xs:schema>
