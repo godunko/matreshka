@@ -223,7 +223,8 @@ package body Matreshka.XML_Schema.Document_Parsers is
       Self.Push_Include;
       Self.Schema.Includes.Append
        ((Self.Locator.Base_URI.To_Universal_String,
-         Attributes.Value (Schema_Location_Attribute)));
+         Attributes.Value (Schema_Location_Attribute),
+         null));
    end Start_Include_Element;
 
    -------------------

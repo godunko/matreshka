@@ -54,6 +54,7 @@ package Matreshka.XML_Schema.AST.Schemas is
    type Include_Information is record
       Base_URI : League.Strings.Universal_String;
       Location : League.Strings.Universal_String;
+      Schema   : Schema_Access;
    end record;
 
    package Include_Vectors is
