@@ -43,11 +43,24 @@
 ------------------------------------------------------------------------------
 --  Schema_Node represents single schema document.
 ------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
+
+with League.Strings;
 
 package Matreshka.XML_Schema.AST.Schemas is
 
    pragma Preelaborate;
 
-   type Schema_Node is new Abstract_Node with null record;
+   type Include_Information is record
+      Base_URI : League.Strings.Universal_String;
+      Location : League.Strings.Universal_String;
+   end record;
+
+   package Include_Vectors is
+     new Ada.Containers.Vectors (Positive, Include_Information);
+
+   type Schema_Node is new Abstract_Node with record
+      Includes : Include_Vectors.Vector;
+   end record;
 
 end Matreshka.XML_Schema.AST.Schemas;

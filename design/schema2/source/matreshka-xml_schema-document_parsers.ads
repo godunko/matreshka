@@ -49,6 +49,7 @@ private with Ada.Containers.Vectors;
 private with League.Strings;
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
+private with XML.SAX.Locators;
 
 with Matreshka.XML_Schema.AST;
 
@@ -66,18 +67,22 @@ private
    type State_Kinds is
     (Initial,
      Schema,
-     Ignore);
+     Ignore,
+     Include);
 
    type State_Information (State : State_Kinds := Initial) is record
       case State is
          when Initial =>
             null;
 
-         when Schema =>
-            null;
-
          when Ignore =>
             Depth : Natural := 1;
+
+         when Include =>
+            null;
+
+         when Schema =>
+            null;
       end case;
    end record;
 
@@ -87,10 +92,11 @@ private
    type Document_Parser is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with
    record
+      Locator   : XML.SAX.Locators.SAX_Locator;
+      Diagnosis : League.Strings.Universal_String;
       Schema    : Matreshka.XML_Schema.AST.Schema_Access;
       Current   : State_Information;
       Stack     : State_Vectors.Vector;
-      Diagnosis : League.Strings.Universal_String;
    end record;
 
    overriding procedure Characters
@@ -117,6 +123,10 @@ private
     (Self    : in out Document_Parser;
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) renames Characters;
+
+   overriding procedure Set_Document_Locator
+    (Self    : in out Document_Parser;
+     Locator : XML.SAX.Locators.SAX_Locator);
 
    overriding procedure Start_Element
     (Self           : in out Document_Parser;

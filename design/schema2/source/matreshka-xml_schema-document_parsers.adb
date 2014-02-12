@@ -74,12 +74,22 @@ package body Matreshka.XML_Schema.Document_Parsers is
    Schema_Tag          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schema");
 
+   Schema_Location_Attribute : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("schemaLocation");
+
    procedure Push_Ignore (Self : in out Document_Parser'Class);
+   procedure Push_Include (Self : in out Document_Parser'Class);
    procedure Push_Schema (Self : in out Document_Parser'Class);
    --  Push state of parser.
 
    procedure Pop (Self : in out Document_Parser'Class);
    --  Pop state of parser.
+
+   procedure Start_Include_Element
+    (Self       : in out Document_Parser'Class;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean);
+   --  Parses start of 'include' element.
 
    procedure Start_Schema_Element
     (Self       : in out Document_Parser'Class;
@@ -170,6 +180,16 @@ package body Matreshka.XML_Schema.Document_Parsers is
       Self.Current := (State => Ignore, Depth => 1);
    end Push_Ignore;
 
+   ------------------
+   -- Push_Include --
+   ------------------
+
+   procedure Push_Include (Self : in out Document_Parser'Class) is
+   begin
+      Self.Stack.Append (Self.Current);
+      Self.Current := (State => Include);
+   end Push_Include;
+
    -----------------
    -- Push_Schema --
    -----------------
@@ -179,6 +199,32 @@ package body Matreshka.XML_Schema.Document_Parsers is
       Self.Stack.Append (Self.Current);
       Self.Current := (State => Schema);
    end Push_Schema;
+
+   --------------------------
+   -- Set_Document_Locator --
+   --------------------------
+
+   overriding procedure Set_Document_Locator
+    (Self    : in out Document_Parser;
+     Locator : XML.SAX.Locators.SAX_Locator) is
+   begin
+      Self.Locator := Locator;
+   end Set_Document_Locator;
+
+   ---------------------------
+   -- Start_Include_Element --
+   ---------------------------
+
+   procedure Start_Include_Element
+    (Self       : in out Document_Parser'Class;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean) is
+   begin
+      Self.Push_Include;
+      Self.Schema.Includes.Append
+       ((Self.Locator.Base_URI.To_Universal_String,
+         Attributes.Value (Schema_Location_Attribute)));
+   end Start_Include_Element;
 
    -------------------
    -- Start_Element --
@@ -200,6 +246,18 @@ package body Matreshka.XML_Schema.Document_Parsers is
 
       elsif Namespace_URI = XML_Schema_URI then
          case Self.Current.State is
+            when Include =>
+               if Local_Name = Annotation_Tag then
+                  Self.Push_Ignore;
+
+               else
+                  Self.Fatal_Error ("unexpected XML element", Success);
+               end if;
+
+            when Ignore =>
+               pragma Assert (False);
+               --  Must never be happen.
+
             when Initial =>
                if Local_Name = Schema_Tag then
                   Start_Schema_Element (Self, Attributes, Success);
@@ -231,7 +289,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
                   raise Program_Error;
 
                elsif Local_Name = Include_Tag then
-                  raise Program_Error;
+                  Start_Include_Element (Self, Attributes, Success);
 
                elsif Local_Name = Notation_Tag then
                   raise Program_Error;
@@ -245,10 +303,6 @@ package body Matreshka.XML_Schema.Document_Parsers is
                else
                   Self.Fatal_Error ("unexpected XML element", Success);
                end if;
-
-            when Ignore =>
-               pragma Assert (False);
-               --  Must never be happen.
 
          end case;
 
