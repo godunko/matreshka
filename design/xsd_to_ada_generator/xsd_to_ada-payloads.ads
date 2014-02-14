@@ -64,30 +64,10 @@ package XSD_To_Ada.Payloads is
       Name         : League.Strings.Universal_String;
       Map          : XSD_To_Ada.Mappings.Mapping;
       Choice       : Boolean := False);
---
---     procedure Print_Element
---       (XS_Term      : XML.Schema.Terms.XS_Term;
---        Writer       : in out Writers.Writer;
---        Writer_types : in out Writers.Writer;
---        Name         : League.Strings.Universal_String;
---        Map          : XSD_To_Ada.Mappings.Mapping;
---        Choice       : Boolean := False);
 
    procedure Print_Payloads
      (Node_Vector : XSD2Ada.Analyzer.Items;
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Mapping     : XSD_To_Ada.Mappings.Mapping);
-
-   procedure Print_Type_Definition
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
-     Name         : League.Strings.Universal_String;
-     Anonym_Name  : League.Strings.Universal_String;
-     Element_Name : League.Strings.Universal_String;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Choice       : Boolean := False;
-     Is_Max_Occur : Boolean := False;
-     Is_Min_Occur : Boolean := False);
 
 end XSD_To_Ada.Payloads;
