@@ -70,7 +70,7 @@ package body Matreshka.DOM_Builders is
 
    begin
       Self.Current.Append_Child (XML.DOM.Nodes.DOM_Node_Access (Aux));
-      XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Aux));
+--      XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Aux));
    end Characters;
 
    -----------------
@@ -180,7 +180,7 @@ package body Matreshka.DOM_Builders is
            Self.Document.Create_Element_NS (Namespace_URI, Qualified_Name);
          Self.Current := XML.DOM.Nodes.DOM_Node_Access (Element);
          Self.Parent.Append_Child (Self.Current);
-         XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Element));
+--         XML.DOM.Nodes.Dereference (XML.DOM.Nodes.DOM_Node_Access (Element));
       end if;
 
       --  Process attributes.
@@ -196,8 +196,8 @@ package body Matreshka.DOM_Builders is
             XML.DOM.Elements.DOM_Element_Access
              (Self.Current).Set_Attribute_Node_NS (Attribute);
             Attribute.Set_Value (Attributes.Value (J));
-            XML.DOM.Nodes.Dereference
-             (XML.DOM.Nodes.DOM_Node_Access (Attribute));
+--            XML.DOM.Nodes.Dereference
+--             (XML.DOM.Nodes.DOM_Node_Access (Attribute));
          end if;
       end loop;
    end Start_Element;
