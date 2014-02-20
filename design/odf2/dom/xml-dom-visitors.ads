@@ -238,6 +238,13 @@ package XML.DOM.Visitors is
      Node    : not null XML.DOM.Documents.DOM_Document_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
+   not overriding procedure Visit_Document_Fragment
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    :
+       not null XML.DOM.Document_Fragments.DOM_Document_Fragment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
    not overriding procedure Visit_Document_Type
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
