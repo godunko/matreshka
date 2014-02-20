@@ -43,12 +43,32 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Nodes;
 with XML.DOM.Entities;
+with XML.DOM.Visitors;
 
 package Matreshka.DOM_Entities is
 
    pragma Preelaborate;
 
    type Entity_Node is new Matreshka.DOM_Nodes.Node
-     and XML.DOM.Entitys.DOM_Entity with null record;
+     and XML.DOM.Entities.DOM_Entity with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access Entity_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access Entity_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access Entity_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.DOM_Entities;

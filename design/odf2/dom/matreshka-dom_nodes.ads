@@ -71,4 +71,9 @@ package Matreshka.DOM_Nodes is
      Control  : in out XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   overriding function Append_Child
+    (Self : not null access Node;
+     Node : not null XML.DOM.Nodes.DOM_Node_Access)
+       return not null XML.DOM.Nodes.DOM_Node_Access;
+
 end Matreshka.DOM_Nodes;

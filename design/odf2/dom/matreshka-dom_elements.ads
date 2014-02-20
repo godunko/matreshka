@@ -42,7 +42,9 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Nodes;
+with XML.DOM.Attributes;
 with XML.DOM.Elements;
+with XML.DOM.Visitors;
 
 package Matreshka.DOM_Elements is
 
@@ -50,5 +52,29 @@ package Matreshka.DOM_Elements is
 
    type Element_Node is new Matreshka.DOM_Nodes.Node
      and XML.DOM.Elements.DOM_Element with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access Element_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access Element_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Set_Attribute_Node_NS
+    (Self     : not null access Element_Node;
+     New_Attr : not null XML.DOM.Attributes.DOM_Attribute_Access)
+       return XML.DOM.Attributes.DOM_Attribute_Access;
+
+   overriding procedure Visit_Element
+    (Self     : not null access Element_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.DOM_Elements;

@@ -43,12 +43,32 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Texts;
 with XML.DOM.CDATA_Sections;
+with XML.DOM.Visitors;
 
 package Matreshka.DOM_CDATA_Sections is
 
    pragma Preelaborate;
 
-   type CDATA_Section is new Matreshka.DOM_Texts.Text_Node
-     and XML.DOM.CDATA_Sections.CDATA_Section with null record;
+   type CDATA_Section_Node is new Matreshka.DOM_Texts.Text_Node
+     and XML.DOM.CDATA_Sections.DOM_CDATA_Section with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access CDATA_Section_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access CDATA_Section_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access CDATA_Section_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.DOM_CDATA_Sections;

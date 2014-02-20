@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Nodes;
 with XML.DOM.Processing_Instructions;
+with XML.DOM.Visitors;
 
 package Matreshka.DOM_Processing_Instructions is
 
@@ -51,5 +52,24 @@ package Matreshka.DOM_Processing_Instructions is
    type Processing_Instruction_Node is new Matreshka.DOM_Nodes.Node
      and XML.DOM.Processing_Instructions.DOM_Processing_Instruction
        with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access Processing_Instruction_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access Processing_Instruction_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access Processing_Instruction_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.DOM_Processing_Instructions;

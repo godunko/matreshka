@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Character_Datas;
 with XML.DOM.Texts;
+with XML.DOM.Visitors;
 
 package Matreshka.DOM_Texts is
 
@@ -50,5 +51,24 @@ package Matreshka.DOM_Texts is
 
    type Text_Node is new Matreshka.DOM_Character_Datas.Character_Data_Node
      and XML.DOM.Texts.DOM_Text with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access Text_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access Text_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access Text_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.DOM_Texts;

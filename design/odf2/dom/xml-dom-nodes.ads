@@ -52,34 +52,63 @@ package XML.DOM.Nodes is
    type DOM_Node_Access is access all DOM_Node'Class
      with Storage_Size => 0;
 
-   function Get_First_Child
-    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
+--   function Get_First_Child
+--    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
+--
+--   not overriding function Get_Local_Name
+--    (Self : not null access constant DOM_Node)
+--       return League.Strings.Universal_String is abstract;
+--
+--   not overriding function Get_Namespace_URI
+--    (Self : not null access constant DOM_Node)
+--       return League.Strings.Universal_String is abstract;
+--
+--   function Get_Next_Sibling
+--    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
 
-   not overriding function Get_Local_Name
-    (Self : not null access constant DOM_Node)
-       return League.Strings.Universal_String is abstract;
-
-   not overriding function Get_Namespace_URI
-    (Self : not null access constant DOM_Node)
-       return League.Strings.Universal_String is abstract;
-
-   function Get_Next_Sibling
-    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
+   not overriding function Append_Child
+    (Self : not null access DOM_Node;
+     Node : not null DOM_Node_Access) return not null DOM_Node_Access
+       is abstract;
+   --  Adds the node newChild to the end of the list of children of this node.
+   --  If the newChild is already in the tree, it is first removed.
+   --
+   --  Parameters
+   --
+   --    newChild of type Node
+   --      The node to add.
+   --
+   --      If it is a DocumentFragment object, the entire contents of the
+   --      document fragment are moved into the child list of this node
+   --
+   --  Return Value
+   --
+   --    Node
+   --      The node added.
+   --
+   --  Exceptions
+   --
+   --    DOMException
+   --
+   --      HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does
+   --      not allow children of the type of the newChild node, or if the node
+   --      to append is one of this node's ancestors or this node itself, or if
+   --      this node is of type Document and the DOM application attempts to
+   --      append a second DocumentType or Element node.
+   --
+   --      WRONG_DOCUMENT_ERR: Raised if newChild was created from a different
+   --      document than the one that created this node.
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly or if
+   --      the previous parent of the node being inserted is readonly.
+   --
+   --      NOT_SUPPORTED_ERR: if the newChild node is a child of the Document
+   --      node, this exception might be raised if the DOM implementation
+   --      doesn't support the removal of the DocumentType child or Element
+   --      child.
 
    procedure Append_Child
-    (Self : not null access DOM_Node'Class; Node : not null DOM_Node_Access);
-
-   ---------------
-   -- Internals --
-   ---------------
-
-   procedure Dereference (Node : in out DOM_Node_Access);
-   --  Decrements reference counter; deallocate node when counter reachs zero.
-   --  Sets Node to null on return.
-
-private
-
-   procedure Reference (Node : not null DOM_Node_Access);
-   --  Increments reference counter.
+    (Self : not null access DOM_Node'Class;
+     Node : not null DOM_Node_Access);
 
 end XML.DOM.Nodes;

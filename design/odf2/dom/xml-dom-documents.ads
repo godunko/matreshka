@@ -115,7 +115,7 @@ package XML.DOM.Documents is
     (Self           : not null access DOM_Document;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
-       return XML.DOM.Elements.DOM_Element_Access is abstract;
+       return not null XML.DOM.Elements.DOM_Element_Access is abstract;
    --  Creates an element of the given qualified name and namespace URI.
    --
    --  Per [XML Namespaces], applications must use the value null as the

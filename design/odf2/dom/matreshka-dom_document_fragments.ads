@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Nodes;
 with XML.DOM.Document_Fragments;
+with XML.DOM.Visitors;
 
 package Matreshka.DOM_Document_Fragments is
 
@@ -50,5 +51,24 @@ package Matreshka.DOM_Document_Fragments is
 
    type Document_Fragment_Node is new Matreshka.DOM_Nodes.Node
      and XML.DOM.Document_Fragments.DOM_Document_Fragment with null record;
+
+   overriding procedure Enter_Element
+    (Self    : not null access Document_Fragment_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access Document_Fragment_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access Document_Fragment_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.DOM_Document_Fragments;

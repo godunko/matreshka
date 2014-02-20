@@ -41,8 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with Matreshka.DOM_Nodes;
+with XML.DOM.Attributes;
 with XML.DOM.Documents;
+with XML.DOM.Elements;
+with XML.DOM.Texts;
+with XML.DOM.Visitors;
 
 package Matreshka.DOM_Documents is
 
@@ -50,5 +56,41 @@ package Matreshka.DOM_Documents is
 
    type Document_Node is new Matreshka.DOM_Nodes.Node
      and XML.DOM.Documents.DOM_Document with null record;
+
+   overriding function Create_Attribute_NS
+    (Self           : not null access Document_Node;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null XML.DOM.Attributes.DOM_Attribute_Access;
+
+   overriding function Create_Element_NS
+    (Self           : not null access Document_Node;
+     Namespace_URI  : League.Strings.Universal_String;
+     Qualified_Name : League.Strings.Universal_String)
+       return not null XML.DOM.Elements.DOM_Element_Access;
+
+   overriding function Create_Text_Node
+    (Self : not null access Document_Node;
+     Data : League.Strings.Universal_String)
+       return not null XML.DOM.Texts.DOM_Text_Access;
+
+   overriding procedure Enter_Element
+    (Self    : not null access Document_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Leave_Element
+    (Self    : not null access Document_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding procedure Visit_Element
+    (Self     : not null access Document_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.DOM_Documents;
