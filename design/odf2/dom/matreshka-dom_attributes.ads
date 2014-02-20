@@ -73,22 +73,22 @@ package Matreshka.DOM_Attributes is
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-   type Abstract_Attribute_V1_Node is
+   type Abstract_Attribute_L1_Node is
      abstract new Abstract_Attribute_Node with null record;
 
-   type Abstract_Attribute_V2_Node is
+   type Abstract_Attribute_L2_Node is
      abstract new Abstract_Attribute_Node with null record;
 
-   type Attribute_V1_Node is new Abstract_Attribute_V1_Node with null record;
+   type Attribute_L1_Node is new Abstract_Attribute_L1_Node with null record;
 
    overriding procedure Set_Value
-    (Self  : not null access Attribute_V1_Node;
+    (Self  : not null access Attribute_L1_Node;
      Value : League.Strings.Universal_String);
 
-   type Attribute_V2_Node is new Abstract_Attribute_V2_Node with null record;
+   type Attribute_L2_Node is new Abstract_Attribute_L2_Node with null record;
 
    overriding procedure Set_Value
-    (Self  : not null access Attribute_V2_Node;
+    (Self  : not null access Attribute_L2_Node;
      Value : League.Strings.Universal_String);
 
 end Matreshka.DOM_Attributes;

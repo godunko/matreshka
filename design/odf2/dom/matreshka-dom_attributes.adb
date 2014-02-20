@@ -75,7 +75,7 @@ package body Matreshka.DOM_Attributes is
    ---------------
 
    overriding procedure Set_Value
-    (Self  : not null access Attribute_V1_Node;
+    (Self  : not null access Attribute_L1_Node;
      Value : League.Strings.Universal_String) is
    begin
       raise Program_Error;
@@ -86,7 +86,7 @@ package body Matreshka.DOM_Attributes is
    ---------------
 
    overriding procedure Set_Value
-    (Self  : not null access Attribute_V2_Node;
+    (Self  : not null access Attribute_L2_Node;
      Value : League.Strings.Universal_String) is
    begin
       raise Program_Error;
