@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Nodes;
 
 package XML.DOM.Attributes is
@@ -49,7 +51,30 @@ package XML.DOM.Attributes is
 
    type DOM_Attribute is limited interface and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Attribute_Access is access DOM_Attribute'Class
+   type DOM_Attribute_Access is access all DOM_Attribute'Class
      with Storage_Size => 0;
+
+   not overriding procedure Set_Value
+    (Self  : not null access DOM_Attribute;
+     Value : League.Strings.Universal_String) is abstract;
+   --  On retrieval, the value of the attribute is returned as a string.
+   --  Character and general entity references are replaced with their values.
+   --  See also the method getAttribute on the Element interface.
+   --
+   --  On setting, this creates a Text node with the unparsed contents of the
+   --  string, i.e. any characters that an XML processor would recognize as
+   --  markup are instead treated as literal text. See also the method
+   --  Element.setAttribute().
+   --
+   --  Some specialized implementations, such as some [SVG 1.1]
+   --  implementations, may do normalization automatically, even after
+   --  mutation; in such case, the value on retrieval may differ from the value
+   --  on setting.
+   --
+   --  Exceptions on setting
+   --
+   --    DOMException
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
 
 end XML.DOM.Attributes;

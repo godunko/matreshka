@@ -49,7 +49,7 @@ package XML.DOM.Character_Datas is
 
    type DOM_Character_Data is limited interface and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Character_Data_Access is access DOM_Character_Data'Class
+   type DOM_Character_Data_Access is access all DOM_Character_Data'Class
      with Storage_Size => 0;
 
 end XML.DOM.Character_Datas;

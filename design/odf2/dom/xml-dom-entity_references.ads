@@ -50,7 +50,7 @@ package XML.DOM.Entity_References is
    type DOM_Entity_Reference is limited interface
      and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Entity_Reference_Access is access DOM_Entity_Reference'Class
+   type DOM_Entity_Reference_Access is access all DOM_Entity_Reference'Class
      with Storage_Size => 0;
 
 end XML.DOM.Entity_References;

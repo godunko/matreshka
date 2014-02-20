@@ -50,7 +50,7 @@ package XML.DOM.CDATA_Sections is
    type DOM_CDATA_Section is limited interface
      and XML.DOM.Texts.DOM_Text;
 
-   type DOM_CDATA_Section_Access is access DOM_CDATA_Section'Class
+   type DOM_CDATA_Section_Access is access all DOM_CDATA_Section'Class
      with Storage_Size => 0;
 
 end XML.DOM.CDATA_Sections;

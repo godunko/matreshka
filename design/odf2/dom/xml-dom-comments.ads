@@ -50,7 +50,7 @@ package XML.DOM.Comments is
    type DOM_Comment is limited interface
      and XML.DOM.Character_Datas.DOM_Character_Data;
 
-   type DOM_Comment_Access is access DOM_Comment'Class
+   type DOM_Comment_Access is access all DOM_Comment'Class
      with Storage_Size => 0;
 
 end XML.DOM.Comments;

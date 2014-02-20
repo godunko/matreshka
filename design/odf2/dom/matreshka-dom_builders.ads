@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,10 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package provides DOM document builder component to construct DOM
+--  document from SAX events stream.
+------------------------------------------------------------------------------
 private with Ada.Containers.Vectors;
 
 private with League.Strings;
-with XML.DOM.Nodes.Documents;
+with XML.DOM.Documents;
+private with XML.DOM.Nodes;
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 
@@ -54,8 +58,8 @@ package Matreshka.DOM_Builders is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
 
    function Get_Document
-    (Self : DOM_Builder'Class)
-       return XML.DOM.Nodes.Documents.DOM_Document_Access;
+    (Self : DOM_Builder'Class) return XML.DOM.Documents.DOM_Document_Access;
+   --  Returns constructed document.
 
 private
 
@@ -67,7 +71,7 @@ private
 
    type DOM_Builder is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Document : XML.DOM.Nodes.Documents.DOM_Document_Access;
+      Document : XML.DOM.Documents.DOM_Document_Access;
       Current  : XML.DOM.Nodes.DOM_Node_Access;
       Parent   : XML.DOM.Nodes.DOM_Node_Access;
       Stack    : Node_Vectors.Vector;

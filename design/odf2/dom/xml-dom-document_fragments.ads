@@ -50,7 +50,7 @@ package XML.DOM.Document_Fragments is
    type DOM_Document_Fragment is limited interface
      and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Document_Fragment_Access is access DOM_Document_Fragment'Class
+   type DOM_Document_Fragment_Access is access all DOM_Document_Fragment'Class
      with Storage_Size => 0;
 
 end XML.DOM.Document_Fragments;

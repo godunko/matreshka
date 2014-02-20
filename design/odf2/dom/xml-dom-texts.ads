@@ -50,7 +50,7 @@ package XML.DOM.Texts is
    type DOM_Text is limited interface
      and XML.DOM.Character_Datas.DOM_Character_Data;
 
-   type DOM_Text_Access is access DOM_Text'Class
+   type DOM_Text_Access is access all DOM_Text'Class
      with Storage_Size => 0;
 
 end XML.DOM.Texts;

@@ -49,7 +49,7 @@ package XML.DOM.Nodes is
 
    type DOM_Node is limited interface;
 
-   type DOM_Node_Access is access DOM_Node'Class
+   type DOM_Node_Access is access all DOM_Node'Class
      with Storage_Size => 0;
 
    function Get_First_Child

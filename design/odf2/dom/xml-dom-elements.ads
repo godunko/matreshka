@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Attributes;
 with XML.DOM.Nodes;
 
 package XML.DOM.Elements is
@@ -49,7 +50,51 @@ package XML.DOM.Elements is
 
    type DOM_Element is limited interface and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Element_Access is access DOM_Element'Class
+   type DOM_Element_Access is access all DOM_Element'Class
      with Storage_Size => 0;
+
+   not overriding function Set_Attribute_Node_NS
+    (Self     : not null access DOM_Element;
+     New_Attr : not null XML.DOM.Attributes.DOM_Attribute_Access)
+       return XML.DOM.Attributes.DOM_Attribute_Access is abstract;
+   --  Adds a new attribute. If an attribute with that local name and that
+   --  namespace URI is already present in the element, it is replaced by the
+   --  new one. Replacing an attribute node by itself has no effect.
+   --
+   --  Per [XML Namespaces], applications must use the value null as the
+   --  namespaceURI parameter for methods if they wish to have no namespace.
+   --
+   --  Parameters
+   --
+   --    newAttr of type Attr
+   --      The Attr node to add to the attribute list.
+   --
+   --  Return Value
+   --
+   --    Attr
+   --      If the newAttr attribute replaces an existing attribute with the
+   --      same local name and namespace URI, the replaced Attr node is
+   --      returned, otherwise null is returned.
+   --
+   --  Exceptions
+   --
+   --    DOMException
+   --
+   --      WRONG_DOCUMENT_ERR: Raised if newAttr was created from a different
+   --      document than the one that created the element.
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+   --
+   --      INUSE_ATTRIBUTE_ERR: Raised if newAttr is already an attribute of
+   --      another Element object. The DOM user must explicitly clone Attr
+   --      nodes to re-use them in other elements.
+   --
+   --      NOT_SUPPORTED_ERR: May be raised if the implementation does not
+   --      support the feature "XML" and the language exposed through the
+   --      Document does not support XML Namespaces (such as [HTML 4.01]).
+
+   procedure Set_Attribute_Node_NS
+    (Self     : not null access DOM_Element'Class;
+     New_Attr : not null XML.DOM.Attributes.DOM_Attribute_Access);
 
 end XML.DOM.Elements;

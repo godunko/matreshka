@@ -50,7 +50,7 @@ package XML.DOM.Entities is
    type DOM_Entity is limited interface
      and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Entity_Access is access DOM_Entity'Class
+   type DOM_Entity_Access is access all DOM_Entity'Class
      with Storage_Size => 0;
 
 end XML.DOM.Entities;

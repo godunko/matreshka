@@ -43,9 +43,11 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
-with XML.DOM.Nodes.Attrs;
-with XML.DOM.Nodes.Character_Datas.Texts;
-with XML.DOM.Nodes.Elements;
+with XML.DOM.Attributes;
+with XML.DOM.Elements;
+with XML.DOM.Nodes;
+with XML.DOM.Texts;
+
 --  with ODF.DOM.Documents;
 
 package body Matreshka.DOM_Builders is
@@ -63,7 +65,7 @@ package body Matreshka.DOM_Builders is
      Text    : League.Strings.Universal_String;
      Success : in out Boolean)
    is
-      Aux : XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access
+      Aux : XML.DOM.Texts.DOM_Text_Access
         := Self.Document.Create_Text_Node (Text);
 
    begin
@@ -100,8 +102,7 @@ package body Matreshka.DOM_Builders is
    ------------------
 
    function Get_Document
-    (Self : DOM_Builder'Class)
-       return XML.DOM.Nodes.Documents.DOM_Document_Access is
+    (Self : DOM_Builder'Class) return XML.DOM.Documents.DOM_Document_Access is
    begin
       return Self.Document;
    end Get_Document;
@@ -158,8 +159,8 @@ package body Matreshka.DOM_Builders is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
-      Element   : XML.DOM.Nodes.Elements.DOM_Element_Access;
-      Attribute : XML.DOM.Nodes.Attrs.DOM_Attr_Access;
+      Element   : XML.DOM.Elements.DOM_Element_Access;
+      Attribute : XML.DOM.Attributes.DOM_Attribute_Access;
 
    begin
       Self.Push;
@@ -192,7 +193,7 @@ package body Matreshka.DOM_Builders is
             Attribute :=
               Self.Document.Create_Attribute_NS
                (Attributes.Namespace_URI (J), Attributes.Qualified_Name (J));
-            XML.DOM.Nodes.Elements.DOM_Element_Access
+            XML.DOM.Elements.DOM_Element_Access
              (Self.Current).Set_Attribute_Node_NS (Attribute);
             Attribute.Set_Value (Attributes.Value (J));
             XML.DOM.Nodes.Dereference

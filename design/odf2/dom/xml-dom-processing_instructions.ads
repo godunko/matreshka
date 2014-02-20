@@ -51,7 +51,7 @@ package XML.DOM.Processing_Instructions is
      and XML.DOM.Nodes.DOM_Node;
 
    type DOM_Processing_Instruction_Access is
-     access DOM_Processing_Instruction'Class
+     access all DOM_Processing_Instruction'Class
        with Storage_Size => 0;
 
 end XML.DOM.Processing_Instructions;

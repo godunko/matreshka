@@ -50,7 +50,7 @@ package XML.DOM.Notations is
    type DOM_Notation is limited interface
      and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Notation_Access is access DOM_Notation'Class
+   type DOM_Notation_Access is access all DOM_Notation'Class
      with Storage_Size => 0;
 
 end XML.DOM.Notations;

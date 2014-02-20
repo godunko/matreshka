@@ -50,7 +50,7 @@ package XML.DOM.Document_Types is
    type DOM_Document_Type is limited interface
      and XML.DOM.Nodes.DOM_Node;
 
-   type DOM_Document_Type_Access is access DOM_Document_Type'Class
+   type DOM_Document_Type_Access is access all DOM_Document_Type'Class
      with Storage_Size => 0;
 
 end XML.DOM.Document_Types;
