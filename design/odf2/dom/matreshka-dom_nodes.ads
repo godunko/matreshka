@@ -52,19 +52,19 @@ package Matreshka.DOM_Nodes is
 
    type Node_Access is access all Node'Class;
 
-   not overriding procedure Enter_Element
+   not overriding procedure Enter_Node
     (Self    : not null access Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   not overriding procedure Leave_Element
+   not overriding procedure Leave_Node
     (Self    : not null access Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   not overriding procedure Visit_Element
+   not overriding procedure Visit_Node
     (Self     : not null access Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;

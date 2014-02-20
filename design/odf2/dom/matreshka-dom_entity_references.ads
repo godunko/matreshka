@@ -52,19 +52,19 @@ package Matreshka.DOM_Entity_References is
    type Entity_Reference_Node is new Matreshka.DOM_Nodes.Node
      and XML.DOM.Entity_References.DOM_Entity_Reference with null record;
 
-   overriding procedure Enter_Element
+   overriding procedure Enter_Node
     (Self    : not null access Entity_Reference_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Leave_Element
+   overriding procedure Leave_Node
     (Self    : not null access Entity_Reference_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Visit_Element
+   overriding procedure Visit_Node
     (Self     : not null access Entity_Reference_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;

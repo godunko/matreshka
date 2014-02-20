@@ -53,19 +53,19 @@ package Matreshka.DOM_Processing_Instructions is
      and XML.DOM.Processing_Instructions.DOM_Processing_Instruction
        with null record;
 
-   overriding procedure Enter_Element
+   overriding procedure Enter_Node
     (Self    : not null access Processing_Instruction_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Leave_Element
+   overriding procedure Leave_Node
     (Self    : not null access Processing_Instruction_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Visit_Element
+   overriding procedure Visit_Node
     (Self     : not null access Processing_Instruction_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;

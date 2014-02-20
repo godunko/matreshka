@@ -54,13 +54,13 @@ package Matreshka.DOM_Attributes is
    type Attribute_Node is new Matreshka.DOM_Nodes.Node
      and XML.DOM.Attributes.DOM_Attribute with null record;
 
-   overriding procedure Enter_Element
+   overriding procedure Enter_Node
     (Self    : not null access Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Leave_Element
+   overriding procedure Leave_Node
     (Self    : not null access Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
@@ -70,7 +70,7 @@ package Matreshka.DOM_Attributes is
     (Self  : not null access Attribute_Node;
      Value : League.Strings.Universal_String);
 
-   overriding procedure Visit_Element
+   overriding procedure Visit_Node
     (Self     : not null access Attribute_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;

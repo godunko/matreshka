@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Nodes;
 
 package body XML.DOM.Visitors is
 
@@ -51,15 +52,19 @@ package body XML.DOM.Visitors is
    procedure Visit
     (Self    : in out Abstract_Iterator'Class;
      Visitor : in out Abstract_Visitor'Class;
-     Element : not null XML.DOM.Nodes.DOM_Node_Access;
-     Control : in out Traverse_Control) is
-   begin
-      Element.Enter_Element (Visitor, Control);
+     Node    : not null XML.DOM.Nodes.DOM_Node_Access;
+     Control : in out Traverse_Control)
+   is
+      N : Matreshka.DOM_Nodes.Node'Class
+        renames Matreshka.DOM_Nodes.Node'Class (Node.all);
 
-      Element.Visit_Element (Self, Visitor, Control);
+   begin
+      N.Enter_Node (Visitor, Control);
+
+      N.Visit_Node (Self, Visitor, Control);
 
       if Control /= Terminate_Immediately then
-         Element.Leave_Element (Visitor, Control);
+         N.Leave_Node (Visitor, Control);
       end if;
    end Visit;
 

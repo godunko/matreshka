@@ -52,19 +52,19 @@ package Matreshka.DOM_Document_Types is
    type Document_Type_Node is new Matreshka.DOM_Nodes.Node
      and XML.DOM.Document_Types.DOM_Document_Type with null record;
 
-   overriding procedure Enter_Element
+   overriding procedure Enter_Node
     (Self    : not null access Document_Type_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Leave_Element
+   overriding procedure Leave_Node
     (Self    : not null access Document_Type_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Visit_Element
+   overriding procedure Visit_Node
     (Self     : not null access Document_Type_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
