@@ -51,30 +51,44 @@ package Matreshka.DOM_Attributes is
 
    pragma Preelaborate;
 
-   type Attribute_Node is new Matreshka.DOM_Nodes.Node
+   type Abstract_Attribute_Node is abstract new Matreshka.DOM_Nodes.Node
      and XML.DOM.Attributes.DOM_Attribute with null record;
 
    overriding procedure Enter_Node
-    (Self    : not null access Attribute_Node;
+    (Self    : not null access Abstract_Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
    overriding procedure Leave_Node
-    (Self    : not null access Attribute_Node;
+    (Self    : not null access Abstract_Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   overriding procedure Set_Value
-    (Self  : not null access Attribute_Node;
-     Value : League.Strings.Universal_String);
-
    overriding procedure Visit_Node
-    (Self     : not null access Attribute_Node;
+    (Self     : not null access Abstract_Attribute_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   type Abstract_Attribute_V1_Node is
+     abstract new Abstract_Attribute_Node with null record;
+
+   type Abstract_Attribute_V2_Node is
+     abstract new Abstract_Attribute_Node with null record;
+
+   type Attribute_V1_Node is new Abstract_Attribute_V1_Node with null record;
+
+   overriding procedure Set_Value
+    (Self  : not null access Attribute_V1_Node;
+     Value : League.Strings.Universal_String);
+
+   type Attribute_V2_Node is new Abstract_Attribute_V2_Node with null record;
+
+   overriding procedure Set_Value
+    (Self  : not null access Attribute_V2_Node;
+     Value : League.Strings.Universal_String);
 
 end Matreshka.DOM_Attributes;

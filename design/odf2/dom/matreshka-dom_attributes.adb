@@ -49,7 +49,7 @@ package body Matreshka.DOM_Attributes is
    ----------------
 
    overriding procedure Enter_Node
-    (Self    : not null access Attribute_Node;
+    (Self    : not null access Abstract_Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
@@ -62,7 +62,7 @@ package body Matreshka.DOM_Attributes is
    ----------------
 
    overriding procedure Leave_Node
-    (Self    : not null access Attribute_Node;
+    (Self    : not null access Abstract_Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
@@ -75,7 +75,18 @@ package body Matreshka.DOM_Attributes is
    ---------------
 
    overriding procedure Set_Value
-    (Self  : not null access Attribute_Node;
+    (Self  : not null access Attribute_V1_Node;
+     Value : League.Strings.Universal_String) is
+   begin
+      raise Program_Error;
+   end Set_Value;
+
+   ---------------
+   -- Set_Value --
+   ---------------
+
+   overriding procedure Set_Value
+    (Self  : not null access Attribute_V2_Node;
      Value : League.Strings.Universal_String) is
    begin
       raise Program_Error;
@@ -86,7 +97,7 @@ package body Matreshka.DOM_Attributes is
    ----------------
 
    overriding procedure Visit_Node
-    (Self     : not null access Attribute_Node;
+    (Self     : not null access Abstract_Attribute_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control) is
