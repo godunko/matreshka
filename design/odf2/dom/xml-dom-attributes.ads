@@ -54,6 +54,12 @@ package XML.DOM.Attributes is
    type DOM_Attribute_Access is access all DOM_Attribute'Class
      with Storage_Size => 0;
 
+   not overriding function Get_Name
+    (Self : not null access constant DOM_Attribute)
+       return League.Strings.Universal_String is abstract;
+   --  Returns the name of this attribute. If Node.localName is different from
+   --  null, this attribute is a qualified name.
+
    not overriding procedure Set_Value
     (Self  : not null access DOM_Attribute;
      Value : League.Strings.Universal_String) is abstract;

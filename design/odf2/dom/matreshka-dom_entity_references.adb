@@ -57,6 +57,21 @@ package body Matreshka.DOM_Entity_References is
        (XML.DOM.Entity_References.DOM_Entity_Reference_Access (Self), Control);
    end Enter_Node;
 
+   -------------------
+   -- Get_Node_Name --
+   -------------------
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Entity_Reference_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Node_Name;
+
    ----------------
    -- Leave_Node --
    ----------------

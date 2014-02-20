@@ -57,6 +57,21 @@ package body Matreshka.DOM_Elements is
        (XML.DOM.Elements.DOM_Element_Access (Self), Control);
    end Enter_Node;
 
+   ------------------
+   -- Get_Tag_Name --
+   ------------------
+
+   overriding function Get_Tag_Name
+    (Self : not null access constant Element_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Tag_Name;
+
    ----------------
    -- Leave_Node --
    ----------------

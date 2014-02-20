@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Nodes;
 
 package XML.DOM.Processing_Instructions is
@@ -53,5 +55,11 @@ package XML.DOM.Processing_Instructions is
    type DOM_Processing_Instruction_Access is
      access all DOM_Processing_Instruction'Class
        with Storage_Size => 0;
+
+   not overriding function Get_Target
+    (Self : not null access constant DOM_Processing_Instruction)
+       return League.Strings.Universal_String is abstract;
+   --  The target of this processing instruction. XML defines this as being the
+   --  first token following the markup that begins the processing instruction.
 
 end XML.DOM.Processing_Instructions;

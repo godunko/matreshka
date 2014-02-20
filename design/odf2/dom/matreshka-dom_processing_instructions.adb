@@ -60,6 +60,21 @@ package body Matreshka.DOM_Processing_Instructions is
    end Enter_Node;
 
    ----------------
+   -- Get_Target --
+   ----------------
+
+   overriding function Get_Target
+    (Self : not null access constant Processing_Instruction_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Target;
+
+   ----------------
    -- Leave_Node --
    ----------------
 

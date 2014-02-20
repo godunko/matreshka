@@ -58,6 +58,20 @@ package body Matreshka.DOM_Document_Fragments is
         Control);
    end Enter_Node;
 
+   -------------------
+   -- Get_Node_Name --
+   -------------------
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Document_Fragment_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return League.Strings.To_Universal_String ("#document-fragment");
+   end Get_Node_Name;
+
    ----------------
    -- Leave_Node --
    ----------------

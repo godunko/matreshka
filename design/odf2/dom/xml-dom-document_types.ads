@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Nodes;
 
 package XML.DOM.Document_Types is
@@ -52,5 +54,11 @@ package XML.DOM.Document_Types is
 
    type DOM_Document_Type_Access is access all DOM_Document_Type'Class
      with Storage_Size => 0;
+
+   not overriding function Get_Name
+    (Self : not null access constant DOM_Document_Type)
+       return League.Strings.Universal_String is abstract;
+   --  The name of DTD; i.e., the name immediately following the DOCTYPE
+   --  keyword.
 
 end XML.DOM.Document_Types;

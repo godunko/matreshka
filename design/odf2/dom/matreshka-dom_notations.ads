@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with Matreshka.DOM_Nodes;
 with XML.DOM.Notations;
 with XML.DOM.Visitors;
@@ -57,6 +59,10 @@ package Matreshka.DOM_Notations is
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Notation_Node)
+       return League.Strings.Universal_String;
 
    overriding procedure Leave_Node
     (Self    : not null access Notation_Node;

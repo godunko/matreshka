@@ -57,6 +57,20 @@ package body Matreshka.DOM_Comments is
        (XML.DOM.Comments.DOM_Comment_Access (Self), Control);
    end Enter_Node;
 
+   -------------------
+   -- Get_Node_Name --
+   -------------------
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Comment_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return League.Strings.To_Universal_String ("#comment");
+   end Get_Node_Name;
+
    ----------------
    -- Leave_Node --
    ----------------

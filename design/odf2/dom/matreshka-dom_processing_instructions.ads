@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with Matreshka.DOM_Nodes;
 with XML.DOM.Processing_Instructions;
 with XML.DOM.Visitors;
@@ -58,6 +60,14 @@ package Matreshka.DOM_Processing_Instructions is
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Get_Target
+    (Self : not null access constant Processing_Instruction_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Processing_Instruction_Node)
+       return League.Strings.Universal_String renames Get_Target;
 
    overriding procedure Leave_Node
     (Self    : not null access Processing_Instruction_Node;

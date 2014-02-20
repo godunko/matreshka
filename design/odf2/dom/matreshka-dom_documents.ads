@@ -80,6 +80,10 @@ package Matreshka.DOM_Documents is
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
+   overriding function Get_Node_Name
+    (Self : not null access constant Document_Node)
+       return League.Strings.Universal_String;
+
    overriding procedure Leave_Node
     (Self    : not null access Document_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

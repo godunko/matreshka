@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Attributes;
 with XML.DOM.Nodes;
 
@@ -52,6 +54,21 @@ package XML.DOM.Elements is
 
    type DOM_Element_Access is access all DOM_Element'Class
      with Storage_Size => 0;
+
+   not overriding function Get_Tag_Name
+    (Self : not null access constant DOM_Element)
+       return League.Strings.Universal_String is abstract;
+   --  The name of the element. If Node.localName is different from null, this
+   --  attribute is a qualified name. For example, in:
+   --
+   --      <elementExample id="demo"> 
+   --        ... 
+   --      </elementExample> ,
+   --
+   --  tagName has the value "elementExample". Note that this is
+   --  case-preserving in XML, as are all of the operations of the DOM. The
+   --  HTML DOM returns the tagName of an HTML element in the canonical
+   --  uppercase form, regardless of the case in the source HTML document.
 
    not overriding function Set_Attribute_Node_NS
     (Self     : not null access DOM_Element;

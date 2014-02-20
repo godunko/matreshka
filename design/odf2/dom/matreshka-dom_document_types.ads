@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with Matreshka.DOM_Nodes;
 with XML.DOM.Document_Types;
 with XML.DOM.Visitors;
@@ -57,6 +59,14 @@ package Matreshka.DOM_Document_Types is
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Get_Name
+    (Self : not null access constant Document_Type_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Document_Type_Node)
+       return League.Strings.Universal_String renames Get_Name;
 
    overriding procedure Leave_Node
     (Self    : not null access Document_Type_Node;

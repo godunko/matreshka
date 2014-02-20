@@ -57,6 +57,21 @@ package body Matreshka.DOM_Document_Types is
        (XML.DOM.Document_Types.DOM_Document_Type_Access (Self), Control);
    end Enter_Node;
 
+   --------------
+   -- Get_Name --
+   --------------
+
+   overriding function Get_Name
+    (Self : not null access constant Document_Type_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Name;
+
    ----------------
    -- Leave_Node --
    ----------------

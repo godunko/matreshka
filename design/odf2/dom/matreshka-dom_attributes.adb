@@ -57,6 +57,30 @@ package body Matreshka.DOM_Attributes is
        (XML.DOM.Attributes.DOM_Attribute_Access (Self), Control);
    end Enter_Node;
 
+   --------------
+   -- Get_Name --
+   --------------
+
+   overriding function Get_Name
+    (Self : not null access constant Attribute_L1_Node)
+       return League.Strings.Universal_String is
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Name;
+
+   --------------
+   -- Get_Name --
+   --------------
+
+   overriding function Get_Name
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String is
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Name;
+
    ----------------
    -- Leave_Node --
    ----------------

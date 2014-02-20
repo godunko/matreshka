@@ -57,6 +57,20 @@ package body Matreshka.DOM_Texts is
        (XML.DOM.Texts.DOM_Text_Access (Self), Control);
    end Enter_Node;
 
+   -------------------
+   -- Get_Node_Name --
+   -------------------
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Text_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return League.Strings.To_Universal_String ("#text");
+   end Get_Node_Name;
+
    ----------------
    -- Leave_Node --
    ----------------

@@ -57,6 +57,20 @@ package body Matreshka.DOM_CDATA_Sections is
        (XML.DOM.CDATA_Sections.DOM_CDATA_Section_Access (Self), Control);
    end Enter_Node;
 
+   -------------------
+   -- Get_Node_Name --
+   -------------------
+
+   overriding function Get_Node_Name
+    (Self : not null access constant CDATA_Section_Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return League.Strings.To_Universal_String ("#cdata-section");
+   end Get_Node_Name;
+
    ----------------
    -- Leave_Node --
    ----------------
