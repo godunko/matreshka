@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,65 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Nodes;
+with XML.DOM.Elements;
 
-package body XML.DOM.Nodes.Character_Datas is
+package Matreshka.DOM_Elements is
 
-   --------------
-   -- Get_Data --
-   --------------
+   pragma Preelaborate;
 
-   function Get_Data
-    (Self : not null access constant DOM_Character_Data'Class)
-       return League.Strings.Universal_String is
-   begin
-      return Self.Data;
-   end Get_Data;
+   type Element_Node is new Matreshka.DOM_Nodes.Node
+     and XML.DOM.Elements.DOM_Element with null record;
 
-   --------------------
-   -- Get_Local_Name --
-   --------------------
-
-   overriding function Get_Local_Name
-    (Self : not null access constant DOM_Character_Data)
-       return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Local_Name;
-
-   -----------------------
-   -- Get_Namespace_URI --
-   -----------------------
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant DOM_Character_Data)
-       return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Namespace_URI;
-
-   -----------------
-   -- Insert_Data --
-   -----------------
-
-   procedure Insert_Data
-    (Self   : not null access DOM_Character_Data'Class;
-     Offset : Positive;
-     Arg    : League.Strings.Universal_String) is
-   begin
-      Self.Data.Replace (Offset, Offset - 1, Arg);
-   end Insert_Data;
-
-   ------------------
-   -- Replace_Data --
-   ------------------
-
-   procedure Replace_Data
-    (Self   : not null access DOM_Character_Data'Class;
-     Offset : Positive;
-     Count  : Natural;
-     Arg    : League.Strings.Universal_String) is
-   begin
-      Self.Data.Replace (Offset, Offset + Count - 1, Arg);
-   end Replace_Data;
-
-end XML.DOM.Nodes.Character_Datas;
+end Matreshka.DOM_Elements;

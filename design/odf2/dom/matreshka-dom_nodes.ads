@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,114 +41,34 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Nodes.Attrs;
-with XML.DOM.Nodes.Character_Datas.Texts;
-with XML.DOM.Nodes.Elements;
+with XML.DOM.Nodes;
 with XML.DOM.Visitors;
 
-package body XML.DOM.Nodes.Documents is
+package Matreshka.DOM_Nodes is
 
-   -------------------------
-   -- Create_Attribute_NS --
-   -------------------------
+   pragma Preelaborate;
 
-   not overriding function Create_Attribute_NS
-    (Self           : not null access DOM_Document;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return XML.DOM.Nodes.Attrs.DOM_Attr_Access is
-   begin
-      return null;
-   end Create_Attribute_NS;
+   type Node is abstract limited new XML.DOM.Nodes.DOM_Node with null record;
 
-   -----------------------
-   -- Create_Element_NS --
-   -----------------------
+   type Node_Access is access all Node'Class;
 
-   not overriding function Create_Element_NS
-    (Self           : not null access DOM_Document;
-     Namespace_URI  : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String)
-       return XML.DOM.Nodes.Elements.DOM_Element_Access is
-   begin
-      return null;
-   end Create_Element_NS;
-
-   ----------------------
-   -- Create_Text_Node --
-   ----------------------
-
-   not overriding function Create_Text_Node
-    (Self : not null access DOM_Document;
-     Data : League.Strings.Universal_String)
-       return XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access is
-   begin
-      return Node : constant
-        XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access
-          := new XML.DOM.Nodes.Character_Datas.Texts.DOM_Text
-      do
-         XML.DOM.Nodes.Character_Datas.Texts.Constructors.Initialize
-          (Node, Data);
-      end return;
-   end Create_Text_Node;
-
-   -------------------
-   -- Enter_Element --
-   -------------------
-
-   overriding procedure Enter_Element
-    (Self    : not null access DOM_Document;
+   not overriding procedure Enter_Element
+    (Self    : not null access Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Visitor.Enter_Document (DOM_Document_Access (Self), Control);
-   end Enter_Element;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
 
-   --------------------
-   -- Get_Local_Name --
-   --------------------
-
-   overriding function Get_Local_Name
-    (Self : not null access constant DOM_Document)
-       return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Local_Name;
-
-   -----------------------
-   -- Get_Namespace_URI --
-   -----------------------
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant DOM_Document)
-       return League.Strings.Universal_String is
-   begin
-      return League.Strings.Empty_Universal_String;
-   end Get_Namespace_URI;
-
-   -------------------
-   -- Leave_Element --
-   -------------------
-
-   overriding procedure Leave_Element
-    (Self    : not null access DOM_Document;
+   not overriding procedure Leave_Element
+    (Self    : not null access Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Document (DOM_Document_Access (Self), Control);
-   end Leave_Element;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
 
-   -------------------
-   -- Visit_Element --
-   -------------------
-
-   overriding procedure Visit_Element
-    (Self     : not null access DOM_Document;
+   not overriding procedure Visit_Element
+    (Self     : not null access Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Document (Visitor, DOM_Document_Access (Self), Control);
-   end Visit_Element;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is abstract;
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
-end XML.DOM.Nodes.Documents;
+end Matreshka.DOM_Nodes;

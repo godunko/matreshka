@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,40 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Nodes;
 
-package XML.DOM.Nodes.Character_Datas is
+package XML.DOM.Elements is
 
-   type DOM_Character_Data is abstract new DOM_Node with private;
+   pragma Preelaborate;
 
-   type DOM_Character_Data_Access is access all DOM_Character_Data'Class;
+   type DOM_Element is limited interface and XML.DOM.Nodes.DOM_Node;
 
-   function Get_Data
-    (Self : not null access constant DOM_Character_Data'Class)
-       return League.Strings.Universal_String;
+   type DOM_Element_Access is access DOM_Element'Class
+     with Storage_Size => 0;
 
-   procedure Insert_Data
-    (Self   : not null access DOM_Character_Data'Class;
-     Offset : Positive;
-     Arg    : League.Strings.Universal_String);
-
-   procedure Replace_Data
-    (Self   : not null access DOM_Character_Data'Class;
-     Offset : Positive;
-     Count  : Natural;
-     Arg    : League.Strings.Universal_String);
-
-private
-
-   type DOM_Character_Data is abstract new DOM_Node with record
-      Data : League.Strings.Universal_String;
-   end record;
-
-   overriding function Get_Local_Name
-    (Self : not null access constant DOM_Character_Data)
-       return League.Strings.Universal_String;
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant DOM_Character_Data)
-       return League.Strings.Universal_String;
-
-end XML.DOM.Nodes.Character_Datas;
+end XML.DOM.Elements;

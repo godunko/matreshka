@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,50 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Hashed_Maps;
+with Matreshka.DOM_Nodes;
+with XML.DOM.Character_Datas;
 
-with XML.DOM.Nodes.Attrs;
+package Matreshka.DOM_Character_Datas is
 
-package XML.DOM.Nodes.Elements is
+   pragma Preelaborate;
 
-   type DOM_Element is abstract new DOM_Node with private;
+   type Character_Data_Node is abstract new Matreshka.DOM_Nodes.Node
+     and XML.DOM.Character_Datas.DOM_Character_Data with null record;
 
-   type DOM_Element_Access is access all DOM_Element'Class;
-
-   function Set_Attribute_Node_NS
-    (Self     : not null access DOM_Element'Class;
-     New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access)
-       return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
-
-   procedure Set_Attribute_Node_NS
-    (Self     : not null access DOM_Element'Class;
-     New_Attr : not null XML.DOM.Nodes.Attrs.DOM_Attr_Access);
-
-   function Get_Attribute_Node_NS
-    (Self          : not null access DOM_Element'Class;
-     Namespace_URI : League.Strings.Universal_String;
-     Local_Name    : League.Strings.Universal_String)
-       return XML.DOM.Nodes.Attrs.DOM_Attr_Access;
-
-private
-
-   type Qualified_Name is record
-      Namespace_URI : League.Strings.Universal_String;
-      Local_Name    : League.Strings.Universal_String;
-   end record;
-
-   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type;
-
-   package Attribute_Maps is
-     new Ada.Containers.Hashed_Maps
-          (Qualified_Name,
-           XML.DOM.Nodes.Attrs.DOM_Attr_Access,
-           Hash,
-           "=",
-           XML.DOM.Nodes.Attrs."=");
-
-   type DOM_Element is abstract new DOM_Node with record
-      Attributes : Attribute_Maps.Map;
-   end record;
-
-end XML.DOM.Nodes.Elements;
+end Matreshka.DOM_Character_Datas;

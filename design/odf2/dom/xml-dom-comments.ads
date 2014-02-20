@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,45 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with XML.DOM.Character_Datas;
 
-package XML.DOM.Nodes is
+package XML.DOM.Comments is
 
    pragma Preelaborate;
 
-   type DOM_Node is limited interface;
+   type DOM_Comment is limited interface
+     and XML.DOM.Character_Datas.DOM_Character_Data;
 
-   type DOM_Node_Access is access DOM_Node'Class
+   type DOM_Comment_Access is access DOM_Comment'Class
      with Storage_Size => 0;
 
-   function Get_First_Child
-    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
-
-   not overriding function Get_Local_Name
-    (Self : not null access constant DOM_Node)
-       return League.Strings.Universal_String is abstract;
-
-   not overriding function Get_Namespace_URI
-    (Self : not null access constant DOM_Node)
-       return League.Strings.Universal_String is abstract;
-
-   function Get_Next_Sibling
-    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
-
-   procedure Append_Child
-    (Self : not null access DOM_Node'Class; Node : not null DOM_Node_Access);
-
-   ---------------
-   -- Internals --
-   ---------------
-
-   procedure Dereference (Node : in out DOM_Node_Access);
-   --  Decrements reference counter; deallocate node when counter reachs zero.
-   --  Sets Node to null on return.
-
-private
-
-   procedure Reference (Node : not null DOM_Node_Access);
-   --  Increments reference counter.
-
-end XML.DOM.Nodes;
+end XML.DOM.Comments;

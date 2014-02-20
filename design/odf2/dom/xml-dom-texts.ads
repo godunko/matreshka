@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,52 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Character_Datas;
 
-package XML.DOM.Nodes.Attrs is
+package XML.DOM.Texts is
 
-   type DOM_Attr is abstract new DOM_Node with private;
+   pragma Preelaborate;
 
-   type DOM_Attr_Access is access all DOM_Attr'Class;
+   type DOM_Text is limited interface
+     and XML.DOM.Character_Datas.DOM_Character_Data;
 
-   not overriding function Get_Value
-    (Self : not null access DOM_Attr)
-       return League.Strings.Universal_String;
---       return League.Strings.Universal_String is abstract;
-   --  XXX Must be abstract to minimize amount of memory and avoid unused
-   --  controlled components in specialized derived types.
+   type DOM_Text_Access is access DOM_Text'Class
+     with Storage_Size => 0;
 
-   not overriding procedure Set_Value
-    (Self  : not null access DOM_Attr;
-     Value : League.Strings.Universal_String);
---     Value : League.Strings.Universal_String) is abstract;
-   --  XXX Must be abstract to minimize amount of memory and avoid unused
-   --  controlled components in specialized derived types.
-
-   overriding procedure Enter_Element
-    (Self    : not null access DOM_Attr;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Leave_Element
-    (Self    : not null access DOM_Attr;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Element
-    (Self     : not null access DOM_Attr;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-private
-
-   type DOM_Attr is abstract new DOM_Node with record
-      Value : League.Strings.Universal_String;
-      --  XXX Must be removed to minimize amount of memory and avoid unused
-      --  controlled components in specialized derived types.
-   end record;
-
-end XML.DOM.Nodes.Attrs;
+end XML.DOM.Texts;

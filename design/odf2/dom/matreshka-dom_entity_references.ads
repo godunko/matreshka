@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,64 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Visitors;
+with Matreshka.DOM_Nodes;
+with XML.DOM.Entity_References;
 
-package body XML.DOM.Nodes.Character_Datas.Texts is
+package Matreshka.DOM_Entity_References is
 
-   ------------------
-   -- Constructors --
-   ------------------
+   pragma Preelaborate;
 
-   package body Constructors is
+   type Entity_Reference_Node is new Matreshka.DOM_Nodes.Node
+     and XML.DOM.Entity_References.DOM_Entity_Reference with null record;
 
-      ----------------
-      -- Initialize --
-      ----------------
-
-      procedure Initialize
-       (Self : not null access DOM_Text'Class;
-        Data : League.Strings.Universal_String) is
-      begin
-         Self.Data := Data;
-      end Initialize;
-
-   end Constructors;
-
-   -------------------
-   -- Enter_Element --
-   -------------------
-
-   overriding procedure Enter_Element
-    (Self    : not null access DOM_Text;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Visitor.Enter_Text (DOM_Text_Access (Self), Control);
-   end Enter_Element;
-
-   -------------------
-   -- Leave_Element --
-   -------------------
-
-   overriding procedure Leave_Element
-    (Self    : not null access DOM_Text;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Text (DOM_Text_Access (Self), Control);
-   end Leave_Element;
-
-   -------------------
-   -- Visit_Element --
-   -------------------
-
-   overriding procedure Visit_Element
-    (Self     : not null access DOM_Text;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Text (Visitor, DOM_Text_Access (Self), Control);
-   end Visit_Element;
-
-end XML.DOM.Nodes.Character_Datas.Texts;
+end Matreshka.DOM_Entity_References;

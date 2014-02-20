@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,11 +41,23 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Nodes.Character_Datas.Texts;
-with XML.DOM.Nodes.Documents;
-with XML.DOM.Nodes.Elements;
+with XML.DOM.Attributes;
+with XML.DOM.CDATA_Sections;
+with XML.DOM.Comments;
+with XML.DOM.Document_Fragments;
+with XML.DOM.Document_Types;
+with XML.DOM.Documents;
+with XML.DOM.Elements;
+with XML.DOM.Entities;
+with XML.DOM.Entity_References;
+with XML.DOM.Nodes;
+with XML.DOM.Notations;
+with XML.DOM.Processing_Instructions;
+with XML.DOM.Texts;
 
 package XML.DOM.Visitors is
+
+   pragma Preelaborate;
 
    type Traverse_Control is
     (Continue,
@@ -59,34 +71,128 @@ package XML.DOM.Visitors is
 
    type Abstract_Visitor is limited interface;
 
+   not overriding procedure Enter_Attribute
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Attributes.DOM_Attribute_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Attribute
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Attributes.DOM_Attribute_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_CDATA_Section
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.CDATA_Sections.DOM_CDATA_Section_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_CDATA_Section
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.CDATA_Sections.DOM_CDATA_Section_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Comment
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Comments.DOM_Comment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Comment
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Comments.DOM_Comment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
    not overriding procedure Enter_Document
     (Self    : in out Abstract_Visitor;
-     Element : not null XML.DOM.Nodes.Documents.DOM_Document_Access;
+     Element : not null XML.DOM.Documents.DOM_Document_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_Document
     (Self    : in out Abstract_Visitor;
-     Element : not null XML.DOM.Nodes.Documents.DOM_Document_Access;
+     Element : not null XML.DOM.Documents.DOM_Document_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Document_Fragment
+    (Self    : in out Abstract_Visitor;
+     Element :
+       not null XML.DOM.Document_Fragments.DOM_Document_Fragment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Document_Fragment
+    (Self    : in out Abstract_Visitor;
+     Element :
+       not null XML.DOM.Document_Fragments.DOM_Document_Fragment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Document_Type
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Document_Types.DOM_Document_Type_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Document_Type
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Document_Types.DOM_Document_Type_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Enter_Element
     (Self    : in out Abstract_Visitor;
-     Element : not null XML.DOM.Nodes.Elements.DOM_Element_Access;
+     Element : not null XML.DOM.Elements.DOM_Element_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_Element
     (Self    : in out Abstract_Visitor;
-     Element : not null XML.DOM.Nodes.Elements.DOM_Element_Access;
+     Element : not null XML.DOM.Elements.DOM_Element_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Entity
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Entities.DOM_Entity_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Entity
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Entities.DOM_Entity_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Entity_Reference
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Entity_References.DOM_Entity_Reference_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Entity_Reference
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Entity_References.DOM_Entity_Reference_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Notation
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Notations.DOM_Notation_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Notation
+    (Self    : in out Abstract_Visitor;
+     Element : not null XML.DOM.Notations.DOM_Notation_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Processing_Instruction
+    (Self    : in out Abstract_Visitor;
+     Element : not null
+       XML.DOM.Processing_Instructions.DOM_Processing_Instruction_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Processing_Instruction
+    (Self    : in out Abstract_Visitor;
+     Element : not null
+       XML.DOM.Processing_Instructions.DOM_Processing_Instruction_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Enter_Text
     (Self    : in out Abstract_Visitor;
-     Element : not null XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access;
+     Element : not null XML.DOM.Texts.DOM_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_Text
     (Self    : in out Abstract_Visitor;
-     Element : not null XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access;
+     Element : not null XML.DOM.Texts.DOM_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    -----------------------
@@ -108,22 +214,71 @@ package XML.DOM.Visitors is
    --
    --   - Leave_<Class> operation on visitor.
 
+   not overriding procedure Visit_Attribute
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null XML.DOM.Attributes.DOM_Attribute_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_CDATA_Section
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null XML.DOM.CDATA_Sections.DOM_CDATA_Section_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Comment
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null XML.DOM.Comments.DOM_Comment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
    not overriding procedure Visit_Document
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Element : not null XML.DOM.Nodes.Documents.DOM_Document_Access;
+     Element : not null XML.DOM.Documents.DOM_Document_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Document_Type
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null XML.DOM.Document_Types.DOM_Document_Type_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Element
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Element : not null XML.DOM.Nodes.Elements.DOM_Element_Access;
+     Element : not null XML.DOM.Elements.DOM_Element_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Entity
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null XML.DOM.Entities.DOM_Entity_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Entity_Reference
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null XML.DOM.Entity_References.DOM_Entity_Reference_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Notation
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null XML.DOM.Notations.DOM_Notation_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Processing_Instruction
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Element : not null
+       XML.DOM.Processing_Instructions.DOM_Processing_Instruction_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_Text
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Element : not null XML.DOM.Nodes.Character_Datas.Texts.DOM_Text_Access;
+     Element : not null XML.DOM.Texts.DOM_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
 end XML.DOM.Visitors;

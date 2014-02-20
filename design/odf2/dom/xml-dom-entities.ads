@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,67 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Visitors;
+with XML.DOM.Nodes;
 
-package body XML.DOM.Nodes.Attrs is
+package XML.DOM.Entities is
 
-   -------------------
-   -- Enter_Element --
-   -------------------
+   pragma Preelaborate;
 
-   overriding procedure Enter_Element
-    (Self    : not null access DOM_Attr;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      raise Program_Error;
-   end Enter_Element;
+   type DOM_Entity is limited interface
+     and XML.DOM.Nodes.DOM_Node;
 
-   ---------------
-   -- Get_Value --
-   ---------------
+   type DOM_Entity_Access is access DOM_Entity'Class
+     with Storage_Size => 0;
 
-   not overriding function Get_Value
-    (Self : not null access DOM_Attr)
-       return League.Strings.Universal_String is
-   begin
-      return Self.Value;
-   end Get_Value;
-
-   -------------------
-   -- Leave_Element --
-   -------------------
-
-   overriding procedure Leave_Element
-    (Self    : not null access DOM_Attr;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      raise Program_Error;
-   end Leave_Element;
-
-   ---------------
-   -- Set_Value --
-   ---------------
-
-   not overriding procedure Set_Value
-    (Self  : not null access DOM_Attr;
-     Value : League.Strings.Universal_String) is
-   begin
-      Self.Value := Value;
-   end Set_Value;
-
-   -------------------
-   -- Visit_Element --
-   -------------------
-
-   overriding procedure Visit_Element
-    (Self     : not null access DOM_Attr;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      raise Program_Error;
-   end Visit_Element;
-
-end XML.DOM.Nodes.Attrs;
+end XML.DOM.Entities;

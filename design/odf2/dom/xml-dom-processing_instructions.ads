@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,42 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Nodes;
 
-package XML.DOM.Nodes.Character_Datas.Texts is
+package XML.DOM.Processing_Instructions is
 
-   type DOM_Text is new DOM_Character_Data with private;
+   pragma Preelaborate;
 
-   type DOM_Text_Access is access all DOM_Text'Class;
+   type DOM_Processing_Instruction is limited interface
+     and XML.DOM.Nodes.DOM_Node;
 
-   package Constructors is
+   type DOM_Processing_Instruction_Access is
+     access DOM_Processing_Instruction'Class
+       with Storage_Size => 0;
 
-      procedure Initialize
-       (Self : not null access DOM_Text'Class;
-        Data : League.Strings.Universal_String);
-
-   end Constructors;
-
-private
-
-   type DOM_Text is new DOM_Character_Data with null record;
-
-   overriding procedure Enter_Element
-    (Self    : not null access DOM_Text;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Leave_Element
-    (Self    : not null access DOM_Text;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Element
-    (Self     : not null access DOM_Text;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-end XML.DOM.Nodes.Character_Datas.Texts;
+end XML.DOM.Processing_Instructions;
