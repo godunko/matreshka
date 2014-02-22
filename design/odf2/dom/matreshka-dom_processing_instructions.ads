@@ -61,6 +61,14 @@ package Matreshka.DOM_Processing_Instructions is
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
+   overriding function Get_Data
+    (Self : not null access constant Processing_Instruction_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Value
+    (Self : not null access constant Processing_Instruction_Node)
+       return League.Strings.Universal_String renames Get_Data;
+
    overriding function Get_Target
     (Self : not null access constant Processing_Instruction_Node)
        return League.Strings.Universal_String;
@@ -68,6 +76,14 @@ package Matreshka.DOM_Processing_Instructions is
    overriding function Get_Node_Name
     (Self : not null access constant Processing_Instruction_Node)
        return League.Strings.Universal_String renames Get_Target;
+
+   overriding procedure Set_Data
+    (Self     : not null access Processing_Instruction_Node;
+     New_Data : League.Strings.Universal_String);
+
+   overriding procedure Set_Node_Value
+    (Self      : not null access Processing_Instruction_Node;
+     New_Value : League.Strings.Universal_String) renames Set_Data;
 
    overriding procedure Leave_Node
     (Self    : not null access Processing_Instruction_Node;

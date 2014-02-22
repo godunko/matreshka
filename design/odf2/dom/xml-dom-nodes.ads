@@ -71,6 +71,30 @@ package XML.DOM.Nodes is
        return League.Strings.Universal_String is abstract;
    --  The name of this node, depending on its type; see the table above.
 
+   not overriding function Get_Node_Value
+    (Self : not null access constant DOM_Node)
+       return League.Strings.Universal_String is abstract;
+   not overriding procedure Set_Node_Value
+    (Self      : not null access DOM_Node;
+     New_Value : League.Strings.Universal_String) is abstract;
+   --  The value of this node, depending on its type; see the table above. When
+   --  it is defined to be null, setting it has no effect, including if the
+   --  node is read-only.
+   --
+   --  Exceptions on setting
+   --
+   --    DOMException
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly and if
+   --      it is not defined to be null.
+   --
+   --  Exceptions on retrieval
+   --
+   --    DOMException
+   --
+   --      DOMSTRING_SIZE_ERR: Raised when it would return more characters than
+   --      fit in a DOMString variable on the implementation platform.
+
    not overriding function Append_Child
     (Self : not null access DOM_Node;
      Node : not null DOM_Node_Access) return not null DOM_Node_Access

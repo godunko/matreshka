@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with Matreshka.DOM_Nodes;
 with XML.DOM.Character_Datas;
 
@@ -50,5 +52,21 @@ package Matreshka.DOM_Character_Datas is
 
    type Character_Data_Node is abstract new Matreshka.DOM_Nodes.Node
      and XML.DOM.Character_Datas.DOM_Character_Data with null record;
+
+   overriding function Get_Data
+    (Self : not null access constant Character_Data_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Value
+    (Self : not null access constant Character_Data_Node)
+       return League.Strings.Universal_String renames Get_Data;
+
+   overriding procedure Set_Data
+    (Self      : not null access Character_Data_Node;
+     New_Value : League.Strings.Universal_String);
+
+   overriding procedure Set_Node_Value
+    (Self      : not null access Character_Data_Node;
+     New_Value : League.Strings.Universal_String) renames Set_Data;
 
 end Matreshka.DOM_Character_Datas;

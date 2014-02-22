@@ -57,4 +57,33 @@ package body Matreshka.DOM_Nodes is
       return Node;
    end Append_Child;
 
+   --------------------
+   -- Get_Node_Value --
+   --------------------
+
+   overriding function Get_Node_Value
+    (Self : not null access constant Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Node_Value;
+
+   --------------------
+   -- Set_Node_Value --
+   --------------------
+
+   overriding procedure Set_Node_Value
+    (Self      : not null access Node;
+     New_Value : League.Strings.Universal_String)
+   is
+      pragma Unreferenced (Self);
+      pragma Unreferenced (New_Value);
+
+   begin
+      null;
+   end Set_Node_Value;
+
 end Matreshka.DOM_Nodes;

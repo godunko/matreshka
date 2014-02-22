@@ -81,6 +81,30 @@ package body Matreshka.DOM_Attributes is
       return League.Strings.Empty_Universal_String;
    end Get_Name;
 
+   ---------------
+   -- Get_Value --
+   ---------------
+
+   overriding function Get_Value
+    (Self : not null access constant Attribute_L1_Node)
+       return League.Strings.Universal_String is
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Value;
+
+   ---------------
+   -- Get_Value --
+   ---------------
+
+   overriding function Get_Value
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String is
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Value;
+
    ----------------
    -- Leave_Node --
    ----------------
@@ -99,8 +123,8 @@ package body Matreshka.DOM_Attributes is
    ---------------
 
    overriding procedure Set_Value
-    (Self  : not null access Attribute_L1_Node;
-     Value : League.Strings.Universal_String) is
+    (Self      : not null access Attribute_L1_Node;
+     New_Value : League.Strings.Universal_String) is
    begin
       raise Program_Error;
    end Set_Value;
@@ -110,8 +134,8 @@ package body Matreshka.DOM_Attributes is
    ---------------
 
    overriding procedure Set_Value
-    (Self  : not null access Attribute_L2_Node;
-     Value : League.Strings.Universal_String) is
+    (Self      : not null access Attribute_L2_Node;
+     New_Value : League.Strings.Universal_String) is
    begin
       raise Program_Error;
    end Set_Value;

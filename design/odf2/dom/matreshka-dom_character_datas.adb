@@ -42,91 +42,29 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Matreshka.DOM_Processing_Instructions is
-
-   ----------------
-   -- Enter_Node --
-   ----------------
-
-   overriding procedure Enter_Node
-    (Self    : not null access Processing_Instruction_Node;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Visitor.Enter_Processing_Instruction
-       (XML.DOM.Processing_Instructions.DOM_Processing_Instruction_Access
-         (Self),
-        Control);
-   end Enter_Node;
+package body Matreshka.DOM_Character_Datas is
 
    --------------
    -- Get_Data --
    --------------
 
    overriding function Get_Data
-    (Self : not null access constant Processing_Instruction_Node)
+    (Self : not null access constant Character_Data_Node)
        return League.Strings.Universal_String is
    begin
       raise Program_Error;
       return League.Strings.Empty_Universal_String;
    end Get_Data;
 
-   ----------------
-   -- Get_Target --
-   ----------------
-
-   overriding function Get_Target
-    (Self : not null access constant Processing_Instruction_Node)
-       return League.Strings.Universal_String
-   is
-      pragma Unreferenced (Self);
-
-   begin
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
-   end Get_Target;
-
-   ----------------
-   -- Leave_Node --
-   ----------------
-
-   overriding procedure Leave_Node
-    (Self    : not null access Processing_Instruction_Node;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Processing_Instruction
-       (XML.DOM.Processing_Instructions.DOM_Processing_Instruction_Access
-         (Self),
-        Control);
-   end Leave_Node;
-
    --------------
    -- Set_Data --
    --------------
 
    overriding procedure Set_Data
-    (Self     : not null access Processing_Instruction_Node;
-     New_Data : League.Strings.Universal_String) is
+    (Self      : not null access Character_Data_Node;
+     New_Value : League.Strings.Universal_String) is
    begin
       raise Program_Error;
    end Set_Data;
 
-   ----------------
-   -- Visit_Node --
-   ----------------
-
-   overriding procedure Visit_Node
-    (Self     : not null access Processing_Instruction_Node;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Processing_Instruction
-       (Visitor,
-        XML.DOM.Processing_Instructions.DOM_Processing_Instruction_Access
-         (Self),
-        Control);
-   end Visit_Node;
-
-end Matreshka.DOM_Processing_Instructions;
+end Matreshka.DOM_Character_Datas;

@@ -60,9 +60,12 @@ package XML.DOM.Attributes is
    --  Returns the name of this attribute. If Node.localName is different from
    --  null, this attribute is a qualified name.
 
+   not overriding function Get_Value
+    (Self : not null access constant DOM_Attribute)
+       return League.Strings.Universal_String is abstract;
    not overriding procedure Set_Value
-    (Self  : not null access DOM_Attribute;
-     Value : League.Strings.Universal_String) is abstract;
+    (Self      : not null access DOM_Attribute;
+     New_Value : League.Strings.Universal_String) is abstract;
    --  On retrieval, the value of the attribute is returned as a string.
    --  Character and general entity references are replaced with their values.
    --  See also the method getAttribute on the Element interface.

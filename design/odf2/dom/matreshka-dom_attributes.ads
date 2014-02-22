@@ -60,10 +60,6 @@ package Matreshka.DOM_Attributes is
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
---   overriding function Get_Node_Name
---    (Self : not null access constant Abstract_Attribute_Node)
---       return League.Strings.Universal_String renames Get_Name;
-
    overriding procedure Leave_Node
     (Self    : not null access Abstract_Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
@@ -89,9 +85,25 @@ package Matreshka.DOM_Attributes is
     (Self : not null access constant Attribute_L1_Node)
        return League.Strings.Universal_String;
 
+   overriding function Get_Node_Name
+    (Self : not null access constant Attribute_L1_Node)
+       return League.Strings.Universal_String renames Get_Name;
+
+   overriding function Get_Value
+    (Self : not null access constant Attribute_L1_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Value
+    (Self : not null access constant Attribute_L1_Node)
+       return League.Strings.Universal_String renames Get_Value;
+
    overriding procedure Set_Value
-    (Self  : not null access Attribute_L1_Node;
-     Value : League.Strings.Universal_String);
+    (Self      : not null access Attribute_L1_Node;
+     New_Value : League.Strings.Universal_String);
+
+   overriding procedure Set_Node_Value
+    (Self      : not null access Attribute_L1_Node;
+     New_Value : League.Strings.Universal_String) renames Set_Value;
 
    type Attribute_L2_Node is new Abstract_Attribute_L2_Node with null record;
 
@@ -99,16 +111,24 @@ package Matreshka.DOM_Attributes is
     (Self : not null access constant Attribute_L2_Node)
        return League.Strings.Universal_String;
 
-   overriding procedure Set_Value
-    (Self  : not null access Attribute_L2_Node;
-     Value : League.Strings.Universal_String);
-
-   overriding function Get_Node_Name
-    (Self : not null access constant Attribute_L1_Node)
-       return League.Strings.Universal_String renames Get_Name;
    overriding function Get_Node_Name
     (Self : not null access constant Attribute_L2_Node)
        return League.Strings.Universal_String renames Get_Name;
-   --  XXX This is needed to workaround potential be bug in GNAT.
+
+   overriding function Get_Value
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Value
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String renames Get_Value;
+
+   overriding procedure Set_Value
+    (Self      : not null access Attribute_L2_Node;
+     New_Value : League.Strings.Universal_String);
+
+   overriding procedure Set_Node_Value
+    (Self      : not null access Attribute_L2_Node;
+     New_Value : League.Strings.Universal_String) renames Set_Value;
 
 end Matreshka.DOM_Attributes;

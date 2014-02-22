@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Nodes;
 
 package XML.DOM.Character_Datas is
@@ -51,5 +53,31 @@ package XML.DOM.Character_Datas is
 
    type DOM_Character_Data_Access is access all DOM_Character_Data'Class
      with Storage_Size => 0;
+
+   not overriding function Get_Data
+    (Self : not null access constant DOM_Character_Data)
+       return League.Strings.Universal_String is abstract;
+   not overriding procedure Set_Data
+    (Self      : not null access DOM_Character_Data;
+     New_Value : League.Strings.Universal_String) is abstract;
+   --  The character data of the node that implements this interface. The DOM
+   --  implementation may not put arbitrary limits on the amount of data that
+   --  may be stored in a CharacterData node. However, implementation limits
+   --  may mean that the entirety of a node's data may not fit into a single
+   --  DOMString. In such cases, the user may call substringData to retrieve
+   --  the data in appropriately sized pieces.
+   --
+   --  Exceptions on setting
+   --
+   --    DOMException
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
+   --
+   --  Exceptions on retrieval
+   --
+   --    DOMException
+   --
+   --      DOMSTRING_SIZE_ERR: Raised when it would return more characters than
+   --      fit in a DOMString variable on the implementation platform.
 
 end XML.DOM.Character_Datas;

@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Nodes;
 with XML.DOM.Visitors;
 
@@ -75,5 +77,13 @@ package Matreshka.DOM_Nodes is
     (Self : not null access Node;
      Node : not null XML.DOM.Nodes.DOM_Node_Access)
        return not null XML.DOM.Nodes.DOM_Node_Access;
+
+   overriding function Get_Node_Value
+    (Self : not null access constant Node)
+       return League.Strings.Universal_String;
+
+   overriding procedure Set_Node_Value
+    (Self      : not null access Node;
+     New_Value : League.Strings.Universal_String);
 
 end Matreshka.DOM_Nodes;

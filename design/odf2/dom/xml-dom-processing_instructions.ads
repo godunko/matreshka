@@ -56,6 +56,22 @@ package XML.DOM.Processing_Instructions is
      access all DOM_Processing_Instruction'Class
        with Storage_Size => 0;
 
+   not overriding function Get_Data
+    (Self : not null access constant DOM_Processing_Instruction)
+       return League.Strings.Universal_String is abstract;
+   not overriding procedure Set_Data
+    (Self     : not null access DOM_Processing_Instruction;
+     New_Data : League.Strings.Universal_String) is abstract;
+   --  The content of this processing instruction. This is from the first non
+   --  white space character after the target to the character immediately
+   --  preceding the ?>.
+   --
+   --  Exceptions on setting
+   --
+   --    DOMException
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
+
    not overriding function Get_Target
     (Self : not null access constant DOM_Processing_Instruction)
        return League.Strings.Universal_String is abstract;
