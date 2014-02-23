@@ -74,7 +74,15 @@ package Matreshka.DOM_Attributes is
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   overriding function Get_Next_Sibling
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Nodes.DOM_Node_Access;
+
    overriding function Get_Parent_Node
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Nodes.DOM_Node_Access;
+
+   overriding function Get_Previous_Sibling
     (Self : not null access constant Abstract_Attribute_Node)
        return XML.DOM.Nodes.DOM_Node_Access;
 

@@ -153,6 +153,17 @@ package body Matreshka.DOM_Nodes is
 
    end Constructors;
 
+   ----------------------
+   -- Get_Next_Sibling --
+   ----------------------
+
+   overriding function Get_Next_Sibling
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access is
+   begin
+      return XML.DOM.Nodes.DOM_Node_Access (Self.Next);
+   end Get_Next_Sibling;
+
    --------------------
    -- Get_Node_Value --
    --------------------
@@ -177,6 +188,17 @@ package body Matreshka.DOM_Nodes is
    begin
       return XML.DOM.Nodes.DOM_Node_Access (Self.Parent);
    end Get_Parent_Node;
+
+   --------------------------
+   -- Get_Previous_Sibling --
+   --------------------------
+
+   overriding function Get_Previous_Sibling
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access is
+   begin
+      return XML.DOM.Nodes.DOM_Node_Access (Self.Previous);
+   end Get_Previous_Sibling;
 
    --------------------
    -- Set_Node_Value --

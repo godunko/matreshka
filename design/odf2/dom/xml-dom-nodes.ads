@@ -62,7 +62,19 @@ package XML.DOM.Nodes is
 
 --   function Get_First_Child
 --    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
---
+
+   not overriding function Get_Previous_Sibling
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The node immediately preceding this node. If there is no such node, this
+   --  returns null.
+
+   not overriding function Get_Next_Sibling
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The node immediately following this node. If there is no such node, this
+   --  returns null.
+
 --   not overriding function Get_Local_Name
 --    (Self : not null access constant DOM_Node)
 --       return League.Strings.Universal_String is abstract;
@@ -70,9 +82,6 @@ package XML.DOM.Nodes is
 --   not overriding function Get_Namespace_URI
 --    (Self : not null access constant DOM_Node)
 --       return League.Strings.Universal_String is abstract;
---
---   function Get_Next_Sibling
---    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
 
    not overriding function Get_Node_Name
     (Self : not null access constant DOM_Node)
