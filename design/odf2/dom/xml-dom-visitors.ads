@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.DOM.Attributes;
 with XML.DOM.CDATA_Sections;
 with XML.DOM.Comments;
 with XML.DOM.Document_Fragments;
@@ -70,16 +69,6 @@ package XML.DOM.Visitors is
    ----------------------
 
    type Abstract_Visitor is limited interface;
-
-   not overriding procedure Enter_Attribute
-    (Self    : in out Abstract_Visitor;
-     Node    : not null XML.DOM.Attributes.DOM_Attribute_Access;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
-
-   not overriding procedure Leave_Attribute
-    (Self    : in out Abstract_Visitor;
-     Node    : not null XML.DOM.Attributes.DOM_Attribute_Access;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Enter_CDATA_Section
     (Self    : in out Abstract_Visitor;
@@ -213,12 +202,6 @@ package XML.DOM.Visitors is
    --   - Visit_<Class> operation on iterator;
    --
    --   - Leave_<Class> operation on visitor.
-
-   not overriding procedure Visit_Attribute
-    (Self    : in out Abstract_Iterator;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Node    : not null XML.DOM.Attributes.DOM_Attribute_Access;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Visit_CDATA_Section
     (Self    : in out Abstract_Iterator;

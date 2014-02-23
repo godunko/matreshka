@@ -51,10 +51,14 @@ package body Matreshka.DOM_Attributes is
    overriding procedure Enter_Node
     (Self    : not null access Abstract_Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      pragma Unreferenced (Self);
+      pragma Unreferenced (Visitor);
+      pragma Unreferenced (Control);
+
    begin
-      Visitor.Enter_Attribute
-       (XML.DOM.Attributes.DOM_Attribute_Access (Self), Control);
+      raise Program_Error;
    end Enter_Node;
 
    --------------
@@ -112,10 +116,14 @@ package body Matreshka.DOM_Attributes is
    overriding procedure Leave_Node
     (Self    : not null access Abstract_Attribute_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control) is
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      pragma Unreferenced (Self);
+      pragma Unreferenced (Visitor);
+      pragma Unreferenced (Control);
+
    begin
-      Visitor.Leave_Attribute
-       (XML.DOM.Attributes.DOM_Attribute_Access (Self), Control);
+      raise Program_Error;
    end Leave_Node;
 
    ---------------
@@ -148,10 +156,14 @@ package body Matreshka.DOM_Attributes is
     (Self     : not null access Abstract_Attribute_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control) is
+     Control  : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      pragma Unreferenced (Self);
+      pragma Unreferenced (Visitor);
+      pragma Unreferenced (Control);
+
    begin
-      Iterator.Visit_Attribute
-       (Visitor, XML.DOM.Attributes.DOM_Attribute_Access (Self), Control);
+      raise Program_Error;
    end Visit_Node;
 
 end Matreshka.DOM_Attributes;
