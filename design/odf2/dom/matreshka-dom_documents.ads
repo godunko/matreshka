@@ -55,7 +55,13 @@ package Matreshka.DOM_Documents is
    pragma Preelaborate;
 
    type Document_Node is new Matreshka.DOM_Nodes.Node
-     and XML.DOM.Documents.DOM_Document with null record;
+     and XML.DOM.Documents.DOM_Document with
+   record
+      First_Detached : Matreshka.DOM_Nodes.Node_Access;
+      Last_Detached  : Matreshka.DOM_Nodes.Node_Access;
+   end record;
+
+   type Document_Access is access all Document_Node'Class;
 
    overriding function Create_Attribute_NS
     (Self           : not null access Document_Node;

@@ -50,9 +50,23 @@ package Matreshka.DOM_Nodes is
 
    pragma Preelaborate;
 
-   type Node is abstract limited new XML.DOM.Nodes.DOM_Node with null record;
+   type Node is tagged;
 
    type Node_Access is access all Node'Class;
+
+   type Node is abstract limited new XML.DOM.Nodes.DOM_Node with record
+      Document : Node_Access;
+      Parent   : Node_Access;
+      First    : Node_Access;
+      Last     : Node_Access;
+      Previous : Node_Access;
+      Next     : Node_Access;
+      --  Previous and next nodes in the doubly linked list of nodes. Each
+      --  node, except document node, is member of one of three lists:
+      --   - parent's list of children nodes;
+      --   - element's list of attribute nodes;
+      --   - document's list of detached nodes.
+   end record;
 
    not overriding procedure Enter_Node
     (Self    : not null access Node;
@@ -77,6 +91,8 @@ package Matreshka.DOM_Nodes is
     (Self : not null access Node;
      Node : not null XML.DOM.Nodes.DOM_Node_Access)
        return not null XML.DOM.Nodes.DOM_Node_Access;
+   --  Generic implementation of appending child node. Specialized nodes must
+   --  override it to add required checks.
 
    overriding function Get_Node_Value
     (Self : not null access constant Node)
@@ -85,5 +101,13 @@ package Matreshka.DOM_Nodes is
    overriding procedure Set_Node_Value
     (Self      : not null access Node;
      New_Value : League.Strings.Universal_String);
+
+   package Constructors is
+
+      procedure Initialize
+       (Self     : not null access Node'Class;
+        Document : not null Node_Access);
+
+   end Constructors;
 
 end Matreshka.DOM_Nodes;

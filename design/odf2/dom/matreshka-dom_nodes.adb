@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Documents;
 
 package body Matreshka.DOM_Nodes is
 
@@ -51,11 +52,110 @@ package body Matreshka.DOM_Nodes is
    overriding function Append_Child
     (Self : not null access Node;
      Node : not null XML.DOM.Nodes.DOM_Node_Access)
-       return not null XML.DOM.Nodes.DOM_Node_Access is
+       return not null XML.DOM.Nodes.DOM_Node_Access
+   is
+      N : constant Node_Access := Node_Access (Node);
+      D : constant Matreshka.DOM_Documents.Document_Access
+        := Matreshka.DOM_Documents.Document_Access (N.Document);
+
    begin
-      raise Program_Error;
+      --  Remove node from its curent position in the tree.
+
+      if N.Parent /= null then
+         if N.Parent.First = N then
+            N.Parent.First := N.Next;
+         end if;
+
+         if N.Parent.Last = N then
+            N.Parent.Last := N.Previous;
+         end if;
+
+         if N.Previous /= null then
+            N.Previous.Next := N.Next;
+         end if;
+
+         if N.Next /= null then
+            N.Next.Previous := N.Previous;
+         end if;
+
+      --  Remove node from the list of detached nodes.
+
+      else
+         if D.First_Detached = N then
+            D.First_Detached := N.Next;
+         end if;
+
+         if D.Last_Detached = N then
+            D.Last_Detached := N.Previous;
+         end if;
+
+         if N.Previous /= null then
+            N.Previous.Next := N.Next;
+         end if;
+
+         if N.Next /= null then
+            N.Next.Previous := N.Previous;
+         end if;
+      end if;
+
+      --  Append node to the requested position.
+
+      N.Parent := Node_Access (Self);
+
+      if Self.First = null then
+         Self.First := N;
+         Self.Last := N;
+         N.Previous := null;
+         N.Next := null;
+
+      else
+         N.Previous := Self.Last;
+         N.Next := null;
+         Self.Last.Next := N;
+         Self.Last := N;
+      end if;
+
       return Node;
    end Append_Child;
+
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self     : not null access Node'Class;
+        Document : not null Node_Access)
+      is
+         S : constant Node_Access := Node_Access (Self);
+         D : constant Matreshka.DOM_Documents.Document_Access
+           := Matreshka.DOM_Documents.Document_Access (Document);
+
+      begin
+         --  Append element to the list of detached nodes of the document.
+
+         Self.Document := Document;
+
+         if D.First_Detached = null then
+            D.First_Detached := S;
+            D.Last_Detached := S;
+            Self.Previous := null;
+            Self.Next := null;
+
+         else
+            S.Previous := D.Last_Detached;
+            S.Next := null;
+            D.Last_Detached.Next := S;
+            D.Last_Detached := S;
+         end if;
+      end Initialize;
+
+   end Constructors;
 
    --------------------
    -- Get_Node_Value --
