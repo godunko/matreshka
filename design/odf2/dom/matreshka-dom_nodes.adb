@@ -55,8 +55,6 @@ package body Matreshka.DOM_Nodes is
        return not null XML.DOM.Nodes.DOM_Node_Access
    is
       N : constant Node_Access := Node_Access (Node);
-      D : constant Matreshka.DOM_Documents.Document_Access
-        := Matreshka.DOM_Documents.Document_Access (N.Document);
 
    begin
       --  Remove node from its curent position in the tree.
@@ -81,12 +79,12 @@ package body Matreshka.DOM_Nodes is
       --  Remove node from the list of detached nodes.
 
       else
-         if D.First_Detached = N then
-            D.First_Detached := N.Next;
+         if N.Document.First_Detached = N then
+            N.Document.First_Detached := N.Next;
          end if;
 
-         if D.Last_Detached = N then
-            D.Last_Detached := N.Previous;
+         if N.Document.Last_Detached = N then
+            N.Document.Last_Detached := N.Previous;
          end if;
 
          if N.Previous /= null then
@@ -130,28 +128,26 @@ package body Matreshka.DOM_Nodes is
 
       procedure Initialize
        (Self     : not null access Node'Class;
-        Document : not null Node_Access)
+        Document : not null Document_Access)
       is
          S : constant Node_Access := Node_Access (Self);
-         D : constant Matreshka.DOM_Documents.Document_Access
-           := Matreshka.DOM_Documents.Document_Access (Document);
 
       begin
          --  Append element to the list of detached nodes of the document.
 
          Self.Document := Document;
 
-         if D.First_Detached = null then
-            D.First_Detached := S;
-            D.Last_Detached := S;
+         if Document.First_Detached = null then
+            Document.First_Detached := S;
+            Document.Last_Detached := S;
             Self.Previous := null;
             Self.Next := null;
 
          else
-            S.Previous := D.Last_Detached;
+            S.Previous := Document.Last_Detached;
             S.Next := null;
-            D.Last_Detached.Next := S;
-            D.Last_Detached := S;
+            Document.Last_Detached.Next := S;
+            Document.Last_Detached := S;
          end if;
       end Initialize;
 

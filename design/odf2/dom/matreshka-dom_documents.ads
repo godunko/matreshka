@@ -61,8 +61,6 @@ package Matreshka.DOM_Documents is
       Last_Detached  : Matreshka.DOM_Nodes.Node_Access;
    end record;
 
-   type Document_Access is access all Document_Node'Class;
-
    overriding function Create_Attribute_NS
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;

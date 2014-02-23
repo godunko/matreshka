@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
+limited with Matreshka.DOM_Documents;
 with XML.DOM.Nodes;
 with XML.DOM.Visitors;
 
@@ -53,9 +54,10 @@ package Matreshka.DOM_Nodes is
    type Node is tagged;
 
    type Node_Access is access all Node'Class;
+   type Document_Access is access all Matreshka.DOM_Documents.Document_Node'Class;
 
    type Node is abstract limited new XML.DOM.Nodes.DOM_Node with record
-      Document : Node_Access;
+      Document : Document_Access;
       Parent   : Node_Access;
       First    : Node_Access;
       Last     : Node_Access;
@@ -106,7 +108,7 @@ package Matreshka.DOM_Nodes is
 
       procedure Initialize
        (Self     : not null access Node'Class;
-        Document : not null Node_Access);
+        Document : not null Document_Access);
 
    end Constructors;
 
