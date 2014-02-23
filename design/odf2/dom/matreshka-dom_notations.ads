@@ -64,6 +64,10 @@ package Matreshka.DOM_Notations is
     (Self : not null access constant Notation_Node)
        return League.Strings.Universal_String;
 
+   overriding function Get_Node_Type
+    (Self : not null access constant Notation_Node)
+       return XML.DOM.Node_Type;
+
    overriding procedure Leave_Node
     (Self    : not null access Notation_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

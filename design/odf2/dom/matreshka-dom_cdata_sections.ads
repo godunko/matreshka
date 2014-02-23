@@ -64,6 +64,10 @@ package Matreshka.DOM_CDATA_Sections is
     (Self : not null access constant CDATA_Section_Node)
        return League.Strings.Universal_String;
 
+   overriding function Get_Node_Type
+    (Self : not null access constant CDATA_Section_Node)
+       return XML.DOM.Node_Type;
+
    overriding procedure Leave_Node
     (Self    : not null access CDATA_Section_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

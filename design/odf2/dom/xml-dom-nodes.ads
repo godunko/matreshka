@@ -112,6 +112,11 @@ package XML.DOM.Nodes is
    --      DOMSTRING_SIZE_ERR: Raised when it would return more characters than
    --      fit in a DOMString variable on the implementation platform.
 
+   not overriding function Get_Node_Type
+    (Self : not null access constant DOM_Node)
+       return XML.DOM.Node_Type is abstract;
+   --  A code representing the type of the underlying object, as defined above.
+
    not overriding function Append_Child
     (Self : not null access DOM_Node;
      Node : not null DOM_Node_Access) return not null DOM_Node_Access

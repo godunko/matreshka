@@ -72,6 +72,20 @@ package body Matreshka.DOM_Document_Fragments is
       return League.Strings.To_Universal_String ("#document-fragment");
    end Get_Node_Name;
 
+   -------------------
+   -- Get_Node_Type --
+   -------------------
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Document_Fragment_Node)
+       return XML.DOM.Node_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.DOM.Document_Fragment_Node;
+   end Get_Node_Type;
+
    ----------------
    -- Leave_Node --
    ----------------

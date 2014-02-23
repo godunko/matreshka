@@ -64,6 +64,10 @@ package Matreshka.DOM_Entity_References is
     (Self : not null access constant Entity_Reference_Node)
        return League.Strings.Universal_String;
 
+   overriding function Get_Node_Type
+    (Self : not null access constant Entity_Reference_Node)
+       return XML.DOM.Node_Type;
+
    overriding procedure Leave_Node
     (Self    : not null access Entity_Reference_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

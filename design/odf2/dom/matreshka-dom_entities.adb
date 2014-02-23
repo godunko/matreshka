@@ -72,6 +72,19 @@ package body Matreshka.DOM_Entities is
       return League.Strings.Empty_Universal_String;
    end Get_Node_Name;
 
+   -------------------
+   -- Get_Node_Type --
+   -------------------
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Entity_Node) return XML.DOM.Node_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.DOM.Entity_Node;
+   end Get_Node_Type;
+
    ----------------
    -- Leave_Node --
    ----------------

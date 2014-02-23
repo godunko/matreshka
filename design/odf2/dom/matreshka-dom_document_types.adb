@@ -72,6 +72,20 @@ package body Matreshka.DOM_Document_Types is
       return League.Strings.Empty_Universal_String;
    end Get_Name;
 
+   -------------------
+   -- Get_Node_Type --
+   -------------------
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Document_Type_Node)
+       return XML.DOM.Node_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.DOM.Document_Type_Node;
+   end Get_Node_Type;
+
    ----------------
    -- Leave_Node --
    ----------------

@@ -68,6 +68,10 @@ package Matreshka.DOM_Document_Types is
     (Self : not null access constant Document_Type_Node)
        return League.Strings.Universal_String renames Get_Name;
 
+   overriding function Get_Node_Type
+    (Self : not null access constant Document_Type_Node)
+       return XML.DOM.Node_Type;
+
    overriding procedure Leave_Node
     (Self    : not null access Document_Type_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

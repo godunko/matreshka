@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -45,5 +45,19 @@
 package XML.DOM is
 
    pragma Pure;
+
+   type Node_Type is
+    (Element_Node,
+     Attribute_Node,
+     Text_Node,
+     CDATA_Section_Node,
+     Entity_Reference_Node,
+     Entity_Node,
+     Processing_Instruction_Node,
+     Comment_Node,
+     Document_Node,
+     Document_Type_Node,
+     Document_Fragment_Node,
+     Notation_Node);
 
 end XML.DOM;

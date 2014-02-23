@@ -99,6 +99,20 @@ package body Matreshka.DOM_Attributes is
       return null;
    end Get_Next_Sibling;
 
+   -------------------
+   -- Get_Node_Type --
+   -------------------
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Node_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.DOM.Attribute_Node;
+   end Get_Node_Type;
+
    ---------------------
    -- Get_Parent_Node --
    ---------------------

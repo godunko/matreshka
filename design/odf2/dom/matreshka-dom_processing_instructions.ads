@@ -65,6 +65,10 @@ package Matreshka.DOM_Processing_Instructions is
     (Self : not null access constant Processing_Instruction_Node)
        return League.Strings.Universal_String;
 
+   overriding function Get_Node_Type
+    (Self : not null access constant Processing_Instruction_Node)
+       return XML.DOM.Node_Type;
+
    overriding function Get_Node_Value
     (Self : not null access constant Processing_Instruction_Node)
        return League.Strings.Universal_String renames Get_Data;

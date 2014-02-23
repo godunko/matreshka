@@ -69,6 +69,10 @@ package Matreshka.DOM_Elements is
     (Self : not null access constant Element_Node)
        return League.Strings.Universal_String renames Get_Tag_Name;
 
+   overriding function Get_Node_Type
+    (Self : not null access constant Element_Node)
+       return XML.DOM.Node_Type;
+
    overriding procedure Leave_Node
     (Self    : not null access Element_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

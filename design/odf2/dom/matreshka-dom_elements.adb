@@ -57,6 +57,20 @@ package body Matreshka.DOM_Elements is
        (XML.DOM.Elements.DOM_Element_Access (Self), Control);
    end Enter_Node;
 
+   -------------------
+   -- Get_Node_Type --
+   -------------------
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Element_Node)
+       return XML.DOM.Node_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.DOM.Element_Node;
+   end Get_Node_Type;
+
    ------------------
    -- Get_Tag_Name --
    ------------------

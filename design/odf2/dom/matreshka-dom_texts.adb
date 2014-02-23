@@ -71,6 +71,20 @@ package body Matreshka.DOM_Texts is
       return League.Strings.To_Universal_String ("#text");
    end Get_Node_Name;
 
+   -------------------
+   -- Get_Node_Type --
+   -------------------
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Text_Node)
+       return XML.DOM.Node_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.DOM.Text_Node;
+   end Get_Node_Type;
+
    ----------------
    -- Leave_Node --
    ----------------

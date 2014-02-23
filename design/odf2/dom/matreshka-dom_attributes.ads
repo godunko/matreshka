@@ -78,6 +78,10 @@ package Matreshka.DOM_Attributes is
     (Self : not null access constant Abstract_Attribute_Node)
        return XML.DOM.Nodes.DOM_Node_Access;
 
+   overriding function Get_Node_Type
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Node_Type;
+
    overriding function Get_Parent_Node
     (Self : not null access constant Abstract_Attribute_Node)
        return XML.DOM.Nodes.DOM_Node_Access;
