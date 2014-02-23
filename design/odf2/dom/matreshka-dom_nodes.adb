@@ -167,6 +167,17 @@ package body Matreshka.DOM_Nodes is
       return League.Strings.Empty_Universal_String;
    end Get_Node_Value;
 
+   ---------------------
+   -- Get_Parent_Node --
+   ---------------------
+
+   overriding function Get_Parent_Node
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access is
+   begin
+      return XML.DOM.Nodes.DOM_Node_Access (Self.Parent);
+   end Get_Parent_Node;
+
    --------------------
    -- Set_Node_Value --
    --------------------

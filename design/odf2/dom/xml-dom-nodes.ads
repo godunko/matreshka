@@ -52,6 +52,14 @@ package XML.DOM.Nodes is
    type DOM_Node_Access is access all DOM_Node'Class
      with Storage_Size => 0;
 
+   not overriding function Get_Parent_Node
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The parent of this node. All nodes, except Attr, Document,
+   --  DocumentFragment, Entity, and Notation may have a parent. However, if a
+   --  node has just been created and not yet added to the tree, or if it has
+   --  been removed from the tree, this is null.
+
 --   function Get_First_Child
 --    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
 --

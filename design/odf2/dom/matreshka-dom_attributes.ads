@@ -45,6 +45,7 @@ with League.Strings;
 
 with Matreshka.DOM_Nodes;
 with XML.DOM.Attributes;
+with XML.DOM.Nodes;
 with XML.DOM.Visitors;
 
 package Matreshka.DOM_Attributes is
@@ -72,6 +73,10 @@ package Matreshka.DOM_Attributes is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   overriding function Get_Parent_Node
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Nodes.DOM_Node_Access;
 
    type Abstract_Attribute_L1_Node is
      abstract new Abstract_Attribute_Node with null record;

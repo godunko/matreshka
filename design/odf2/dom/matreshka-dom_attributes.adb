@@ -85,6 +85,20 @@ package body Matreshka.DOM_Attributes is
       return League.Strings.Empty_Universal_String;
    end Get_Name;
 
+   ---------------------
+   -- Get_Parent_Node --
+   ---------------------
+
+   overriding function Get_Parent_Node
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Nodes.DOM_Node_Access
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return null;
+   end Get_Parent_Node;
+
    ---------------
    -- Get_Value --
    ---------------

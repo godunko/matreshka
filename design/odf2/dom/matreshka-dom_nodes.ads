@@ -100,6 +100,10 @@ package Matreshka.DOM_Nodes is
     (Self : not null access constant Node)
        return League.Strings.Universal_String;
 
+   overriding function Get_Parent_Node
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access;
+
    overriding procedure Set_Node_Value
     (Self      : not null access Node;
      New_Value : League.Strings.Universal_String);
