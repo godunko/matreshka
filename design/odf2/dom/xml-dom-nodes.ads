@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
+limited with XML.DOM.Documents;
+
 package XML.DOM.Nodes is
 
    pragma Preelaborate;
@@ -108,6 +110,13 @@ package XML.DOM.Nodes is
        is abstract;
    --  The node immediately following this node. If there is no such node, this
    --  returns null.
+
+   not overriding function Get_Owner_Document
+    (Self : not null access constant DOM_Node)
+       return XML.DOM.Documents.DOM_Document_Access is abstract;
+   --  The Document object associated with this node. This is also the Document
+   --  object used to create new nodes. When this node is a Document or a
+   --  DocumentType which is not used with any Document yet, this is null.
 
 --   not overriding function Get_Local_Name
 --    (Self : not null access constant DOM_Node)

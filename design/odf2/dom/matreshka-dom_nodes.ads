@@ -44,6 +44,7 @@
 with League.Strings;
 
 limited with Matreshka.DOM_Documents;
+with XML.DOM.Documents;
 with XML.DOM.Nodes;
 with XML.DOM.Visitors;
 
@@ -103,6 +104,10 @@ package Matreshka.DOM_Nodes is
    overriding function Get_Node_Value
     (Self : not null access constant Node)
        return League.Strings.Universal_String;
+
+   overriding function Get_Owner_Document
+    (Self : not null access constant Node)
+       return XML.DOM.Documents.DOM_Document_Access;
 
    overriding function Get_Parent_Node
     (Self : not null access constant Node)

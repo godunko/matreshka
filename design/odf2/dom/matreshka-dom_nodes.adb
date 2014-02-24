@@ -178,6 +178,17 @@ package body Matreshka.DOM_Nodes is
       return League.Strings.Empty_Universal_String;
    end Get_Node_Value;
 
+   ------------------------
+   -- Get_Owner_Document --
+   ------------------------
+
+   overriding function Get_Owner_Document
+    (Self : not null access constant Node)
+       return XML.DOM.Documents.DOM_Document_Access is
+   begin
+      return XML.DOM.Documents.DOM_Document_Access (Self.Document);
+   end Get_Owner_Document;
+
    ---------------------
    -- Get_Parent_Node --
    ---------------------
