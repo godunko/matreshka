@@ -52,37 +52,6 @@ package XML.DOM.Nodes is
    type DOM_Node_Access is access all DOM_Node'Class
      with Storage_Size => 0;
 
-   not overriding function Get_Parent_Node
-    (Self : not null access constant DOM_Node) return DOM_Node_Access
-       is abstract;
-   --  The parent of this node. All nodes, except Attr, Document,
-   --  DocumentFragment, Entity, and Notation may have a parent. However, if a
-   --  node has just been created and not yet added to the tree, or if it has
-   --  been removed from the tree, this is null.
-
---   function Get_First_Child
---    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
-
-   not overriding function Get_Previous_Sibling
-    (Self : not null access constant DOM_Node) return DOM_Node_Access
-       is abstract;
-   --  The node immediately preceding this node. If there is no such node, this
-   --  returns null.
-
-   not overriding function Get_Next_Sibling
-    (Self : not null access constant DOM_Node) return DOM_Node_Access
-       is abstract;
-   --  The node immediately following this node. If there is no such node, this
-   --  returns null.
-
---   not overriding function Get_Local_Name
---    (Self : not null access constant DOM_Node)
---       return League.Strings.Universal_String is abstract;
---
---   not overriding function Get_Namespace_URI
---    (Self : not null access constant DOM_Node)
---       return League.Strings.Universal_String is abstract;
-
    not overriding function Get_Node_Name
     (Self : not null access constant DOM_Node)
        return League.Strings.Universal_String is abstract;
@@ -116,6 +85,37 @@ package XML.DOM.Nodes is
     (Self : not null access constant DOM_Node)
        return XML.DOM.Node_Type is abstract;
    --  A code representing the type of the underlying object, as defined above.
+
+   not overriding function Get_Parent_Node
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The parent of this node. All nodes, except Attr, Document,
+   --  DocumentFragment, Entity, and Notation may have a parent. However, if a
+   --  node has just been created and not yet added to the tree, or if it has
+   --  been removed from the tree, this is null.
+
+--   function Get_First_Child
+--    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
+
+   not overriding function Get_Previous_Sibling
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The node immediately preceding this node. If there is no such node, this
+   --  returns null.
+
+   not overriding function Get_Next_Sibling
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The node immediately following this node. If there is no such node, this
+   --  returns null.
+
+--   not overriding function Get_Local_Name
+--    (Self : not null access constant DOM_Node)
+--       return League.Strings.Universal_String is abstract;
+--
+--   not overriding function Get_Namespace_URI
+--    (Self : not null access constant DOM_Node)
+--       return League.Strings.Universal_String is abstract;
 
    not overriding function Append_Child
     (Self : not null access DOM_Node;
