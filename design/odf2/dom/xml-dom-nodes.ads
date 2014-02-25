@@ -118,13 +118,29 @@ package XML.DOM.Nodes is
    --  object used to create new nodes. When this node is a Document or a
    --  DocumentType which is not used with any Document yet, this is null.
 
---   not overriding function Get_Local_Name
---    (Self : not null access constant DOM_Node)
---       return League.Strings.Universal_String is abstract;
---
---   not overriding function Get_Namespace_URI
---    (Self : not null access constant DOM_Node)
---       return League.Strings.Universal_String is abstract;
+   not overriding function Get_Namespace_URI
+    (Self : not null access constant DOM_Node)
+       return League.Strings.Universal_String is abstract;
+   --  The namespace URI of this node, or null if it is unspecified (see XML
+   --  Namespaces).  This is not a computed value that is the result of a
+   --  namespace lookup based on an examination of the namespace declarations
+   --  in scope. It is merely the namespace URI given at creation time.  For
+   --  nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE and nodes
+   --  created with a DOM Level 1 method, such as Document.createElement(),
+   --  this is always null.
+   --
+   --  Note: Per the Namespaces in XML Specification [XML Namespaces] an
+   --  attribute does not inherit its namespace from the element it is attached
+   --  to. If an attribute is not explicitly given a namespace, it simply has
+   --  no namespace.
+
+   not overriding function Get_Local_Name
+    (Self : not null access constant DOM_Node)
+       return League.Strings.Universal_String is abstract;
+   --  Returns the local part of the qualified name of this node.  For nodes of
+   --  any type other than ELEMENT_NODE and ATTRIBUTE_NODE and nodes created
+   --  with a DOM Level 1 method, such as Document.createElement(), this is
+   --  always null.
 
    not overriding function Append_Child
     (Self : not null access DOM_Node;

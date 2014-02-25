@@ -175,6 +175,34 @@ package body Matreshka.DOM_Nodes is
 
    end Constructors;
 
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   overriding function Get_Local_Name
+    (Self : not null access constant Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Local_Name;
+
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   overriding function Get_Namespace_URI
+    (Self : not null access constant Node)
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Namespace_URI;
+
    ----------------------
    -- Get_Next_Sibling --
    ----------------------
