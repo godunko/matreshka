@@ -100,6 +100,10 @@ package Matreshka.DOM_Documents is
     (Self : not null access constant Document_Node)
        return XML.DOM.Node_Type;
 
+   overriding function Get_Owner_Document
+    (Self : not null access constant Document_Node)
+       return XML.DOM.Documents.DOM_Document_Access;
+
    overriding procedure Leave_Node
     (Self    : not null access Document_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

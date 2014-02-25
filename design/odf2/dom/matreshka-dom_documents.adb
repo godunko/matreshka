@@ -180,6 +180,20 @@ package body Matreshka.DOM_Documents is
       return XML.DOM.Document_Node;
    end Get_Node_Type;
 
+   ------------------------
+   -- Get_Owner_Document --
+   ------------------------
+
+   overriding function Get_Owner_Document
+    (Self : not null access constant Document_Node)
+       return XML.DOM.Documents.DOM_Document_Access
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return null;
+   end Get_Owner_Document;
+
    ----------------
    -- Leave_Node --
    ----------------
