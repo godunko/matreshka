@@ -109,7 +109,9 @@ package body Matreshka.DOM_CDATA_Sections is
      Control  : in out XML.DOM.Visitors.Traverse_Control) is
    begin
       Iterator.Visit_CDATA_Section
-       (Visitor, XML.DOM.CDATA_Sections.DOM_CDATA_Section_Access (Self), Control);
+       (Visitor,
+        XML.DOM.CDATA_Sections.DOM_CDATA_Section_Access (Self),
+        Control);
    end Visit_Node;
 
 end Matreshka.DOM_CDATA_Sections;
