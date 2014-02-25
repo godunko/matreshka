@@ -113,36 +113,7 @@ package XSD_To_Ada.Utils is
       Name   : Wide_Wide_String;
       Offset : Positive := 3);
 
-   procedure Generate_Simple_Type
-     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term      : XML.Schema.Terms.XS_Term;
-      Type_Name    : League.Strings.Universal_String;
-      Min_Occurs   : in out Boolean;
-      Max_Occurs   : Boolean;
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer);
-
    procedure Put_Header (Self : in out XSD_To_Ada.Writers.Writer);
-
-   procedure Print_Type_Definition
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer;
-     Name         : League.Strings.Universal_String;
-     Anonym_Name  : League.Strings.Universal_String;
-     Element_Name : League.Strings.Universal_String;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Is_Max_Occur : Boolean := False;
-     Is_Min_Occur : Boolean := False);
-
-   procedure Print_Payloads
-     (Node_Vector : XSD2Ada.Analyzer.Items;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
-      Mapping     : XSD_To_Ada.Mappings.Mapping);
-
-   function Is_Type_In_Optional_Vector
-     (Type_Name : League.Strings.Universal_String)
-     return Boolean;
 
    function Is_Choice
      (Type_D : XML.Schema.Type_Definitions.XS_Type_Definition) return Boolean;

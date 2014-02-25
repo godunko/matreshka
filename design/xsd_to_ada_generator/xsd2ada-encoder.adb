@@ -745,17 +745,10 @@ package body XSD2Ada.Encoder is
 
          Type_D := Item.Type_Def;
 
---         Discriminant_Type.Clear;
-
---           if Item.Choice then
---              Discriminant_Type := League.Strings.From_UTF_8_String ("_Case");
---           end if;
-
          if Type_D.Get_Name.Is_Empty then
             Vector_Name.Clear;
             Vector_Name.Append (Item.Anonym_Name);
             Vector_Name.Append ("_Anonym");
---            Vector_Name.Append (Discriminant_Type);
          else
             Vector_Name := Type_D.Get_Name;
          end if;
@@ -771,7 +764,6 @@ package body XSD2Ada.Encoder is
                    (Mapping,
                     Item.Anonym_Name
                     & "_Anonym");
---                    & Discriminant_Type);
 
                Generate_Procedure_Encode_Header (Payload_Writer, Anonym_Name);
 
