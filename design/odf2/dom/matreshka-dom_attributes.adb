@@ -143,6 +143,17 @@ package body Matreshka.DOM_Attributes is
       return XML.DOM.Attribute_Node;
    end Get_Node_Type;
 
+   -----------------------
+   -- Get_Owner_Element --
+   -----------------------
+
+   overriding function Get_Owner_Element
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Elements.DOM_Element_Access is
+   begin
+      return XML.DOM.Elements.DOM_Element_Access (Self.Parent);
+   end Get_Owner_Element;
+
    ---------------------
    -- Get_Parent_Node --
    ---------------------

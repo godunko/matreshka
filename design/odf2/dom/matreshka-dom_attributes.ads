@@ -45,6 +45,7 @@ with League.Strings;
 
 with Matreshka.DOM_Nodes;
 with XML.DOM.Attributes;
+with XML.DOM.Elements;
 with XML.DOM.Nodes;
 with XML.DOM.Visitors;
 
@@ -81,6 +82,10 @@ package Matreshka.DOM_Attributes is
    overriding function Get_Node_Type
     (Self : not null access constant Abstract_Attribute_Node)
        return XML.DOM.Node_Type;
+
+   overriding function Get_Owner_Element
+    (Self : not null access constant Abstract_Attribute_Node)
+       return XML.DOM.Elements.DOM_Element_Access;
 
    overriding function Get_Parent_Node
     (Self : not null access constant Abstract_Attribute_Node)

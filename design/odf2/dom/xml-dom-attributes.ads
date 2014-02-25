@@ -44,6 +44,7 @@
 with League.Strings;
 
 with XML.DOM.Nodes;
+limited with XML.DOM.Elements;
 
 package XML.DOM.Attributes is
 
@@ -85,5 +86,11 @@ package XML.DOM.Attributes is
    --    DOMException
    --
    --      NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
+
+   not overriding function Get_Owner_Element
+    (Self : not null access constant DOM_Attribute)
+       return XML.DOM.Elements.DOM_Element_Access is abstract;
+   --  The Element node this attribute is attached to or null if this attribute
+   --  is not in use.
 
 end XML.DOM.Attributes;
