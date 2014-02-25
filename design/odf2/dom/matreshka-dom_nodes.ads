@@ -91,6 +91,12 @@ package Matreshka.DOM_Nodes is
      Control  : in out XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   procedure Check_Wrong_Document
+    (Self : not null access Node'Class;
+     Node : not null access XML.DOM.Nodes.DOM_Node'Class);
+   --  Checks whether both nodes belongs to the same document and raise
+   --  Wrong_Document_Error otherwise.
+
    procedure Raise_Index_Size_Error
     (Self : not null access Node'Class)
        with Inline    => True,

@@ -123,6 +123,21 @@ package body Matreshka.DOM_Nodes is
       return Node;
    end Append_Child;
 
+   --------------------------
+   -- Check_Wrong_Document --
+   --------------------------
+
+   procedure Check_Wrong_Document
+    (Self : not null access Node'Class;
+     Node : not null access XML.DOM.Nodes.DOM_Node'Class) is
+   begin
+      if Self.Document
+           /= Matreshka.DOM_Nodes.Node'Class (Node.all).Document
+      then
+         Self.Raise_Wrong_Document_Error;
+      end if;
+   end Check_Wrong_Document;
+
    ------------------
    -- Constructors --
    ------------------
