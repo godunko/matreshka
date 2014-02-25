@@ -1,0 +1,18 @@
+with "../../gnat/matreshka_league.gpr";
+with "../../gnat/matreshka_xml.gpr";
+
+project DOMConf is
+
+   for Main use ("domconf-driver.adb");
+   for Source_Dirs use ("dom/domconf");
+   for Object_Dir use ".objs";
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g");
+   end Compiler;
+
+   package Builder is
+      for Executable ("domconf-driver.adb") use "domconf";
+   end Builder;
+
+end DOMConf;

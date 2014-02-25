@@ -1,0 +1,6 @@
+with "../../gnat/matreshka_xml.gpr";
+
+project Main is
+   for Object_Dir use ".objs";
+   for Source_Dirs use ("dom");
+end Main;
