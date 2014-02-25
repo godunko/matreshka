@@ -53,7 +53,11 @@ package Matreshka.DOM_Elements is
    pragma Preelaborate;
 
    type Element_Node is new Matreshka.DOM_Nodes.Node
-     and XML.DOM.Elements.DOM_Element with null record;
+     and XML.DOM.Elements.DOM_Element with
+   record
+      First_Attribute : Matreshka.DOM_Nodes.Node_Access;
+      Last_Attribute  : Matreshka.DOM_Nodes.Node_Access;
+   end record;
 
    overriding procedure Enter_Node
     (Self    : not null access Element_Node;
