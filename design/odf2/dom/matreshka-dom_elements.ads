@@ -91,4 +91,12 @@ package Matreshka.DOM_Elements is
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   package Constructors is
+
+      procedure Initialize
+       (Self     : not null access Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access);
+
+   end Constructors;
+
 end Matreshka.DOM_Elements;

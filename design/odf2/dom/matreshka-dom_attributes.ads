@@ -148,4 +148,16 @@ package Matreshka.DOM_Attributes is
     (Self      : not null access Attribute_L2_Node;
      New_Value : League.Strings.Universal_String) renames Set_Value;
 
+   package Constructors is
+
+      procedure Initialize
+       (Self     : not null access Attribute_L1_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access);
+
+      procedure Initialize
+       (Self     : not null access Attribute_L2_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access);
+
+   end Constructors;
+
 end Matreshka.DOM_Attributes;

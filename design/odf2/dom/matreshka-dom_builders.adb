@@ -43,12 +43,11 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
+with Matreshka.DOM_Documents;
+with Matreshka.DOM_Nodes;
 with XML.DOM.Attributes;
 with XML.DOM.Elements;
-with XML.DOM.Nodes;
 with XML.DOM.Texts;
-
---  with ODF.DOM.Documents;
 
 package body Matreshka.DOM_Builders is
 
@@ -141,10 +140,14 @@ package body Matreshka.DOM_Builders is
 
    overriding procedure Start_Document
     (Self    : in out DOM_Builder;
-     Success : in out Boolean) is
+     Success : in out Boolean)
+   is
+      Document : constant Matreshka.DOM_Nodes.Document_Access
+        := new Matreshka.DOM_Documents.Document_Node;
+
    begin
---      Self.Document := new ODF.DOM.Documents.ODF_Document;
-      Self.Current  := XML.DOM.Nodes.DOM_Node_Access (Self.Document);
+      Self.Document := XML.DOM.Documents.DOM_Document_Access (Document);
+      Self.Current  := XML.DOM.Nodes.DOM_Node_Access (Document);
    end Start_Document;
 
    -------------------

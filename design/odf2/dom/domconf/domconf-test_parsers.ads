@@ -41,21 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
-with XML.SAX.Constants;
-with XML.SAX.Input_Sources.Streams.Files;
-with XML.SAX.Simple_Readers;
+with League.Strings;
+with XML.SAX.Content_Handlers;
 
-with DOMConf.Test_Parsers;
+package DOMConf.Test_Parsers is
 
-procedure DOMConf.Driver is
-   Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-   Parser : aliased DOMConf.Test_Parsers.Test_Parser;
-   Reader : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+   type Test_Parser is
+     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
 
-begin
-   Input.Open_By_File_Name (League.Application.Arguments.Element (1));
-   Reader.Set_Feature (XML.SAX.Constants.Load_External_DTD_Feature, False);
-   Reader.Set_Content_Handler (Parser'Unchecked_Access);
-   Reader.Parse (Input'Unchecked_Access);
-end DOMConf.Driver;
+private
+
+   type Test_Parser is
+     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with null record;
+
+   overriding function Error_String
+    (Self : Test_Parser) return League.Strings.Universal_String;
+
+end DOMConf.Test_Parsers;

@@ -44,6 +44,25 @@
 
 package body Matreshka.DOM_Elements is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self     : not null access Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access) is
+      begin
+         Matreshka.DOM_Nodes.Constructors.Initialize (Self, Document);
+      end Initialize;
+
+   end Constructors;
+
    ----------------
    -- Enter_Node --
    ----------------

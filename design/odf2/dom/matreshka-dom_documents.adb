@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Attributes;
+with Matreshka.DOM_Elements;
 
 package body Matreshka.DOM_Documents is
 
@@ -52,10 +54,17 @@ package body Matreshka.DOM_Documents is
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
-       return not null XML.DOM.Attributes.DOM_Attribute_Access is
+       return not null XML.DOM.Attributes.DOM_Attribute_Access
+   is
+      Node : constant not null Matreshka.DOM_Nodes.Node_Access
+        := new Matreshka.DOM_Attributes.Attribute_L2_Node;
+
    begin
-      raise Program_Error;
-      return null;
+      Matreshka.DOM_Attributes.Constructors.Initialize
+       (Matreshka.DOM_Attributes.Attribute_L2_Node'Class (Node.all)'Access,
+        Self);
+
+      return XML.DOM.Attributes.DOM_Attribute_Access (Node);
    end Create_Attribute_NS;
 
    -----------------------
@@ -66,10 +75,16 @@ package body Matreshka.DOM_Documents is
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String)
-       return not null XML.DOM.Elements.DOM_Element_Access is
+       return not null XML.DOM.Elements.DOM_Element_Access
+   is
+      Node : constant not null Matreshka.DOM_Nodes.Node_Access
+        := new Matreshka.DOM_Elements.Element_Node;
+
    begin
-      raise Program_Error;
-      return null;
+      Matreshka.DOM_Elements.Constructors.Initialize
+       (Matreshka.DOM_Elements.Element_Node'Class (Node.all)'Access, Self);
+
+      return XML.DOM.Elements.DOM_Element_Access (Node);
    end Create_Element_NS;
 
    ----------------------
