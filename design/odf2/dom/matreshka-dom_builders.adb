@@ -146,6 +146,7 @@ package body Matreshka.DOM_Builders is
         := new Matreshka.DOM_Documents.Document_Node;
 
    begin
+      Matreshka.DOM_Documents.Constructors.Initialize (Document);
       Self.Document := XML.DOM.Documents.DOM_Document_Access (Document);
       Self.Current  := XML.DOM.Nodes.DOM_Node_Access (Document);
    end Start_Document;

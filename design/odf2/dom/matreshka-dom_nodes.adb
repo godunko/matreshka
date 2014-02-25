@@ -41,9 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Text_Codecs;
+
 with Matreshka.DOM_Documents;
 
 package body Matreshka.DOM_Nodes is
+
+   procedure Raise_DOM_Exception
+    (Self      : not null access Node'Class;
+     Diagnosis : XML.DOM.Error_Code)
+       with No_Return => True;
 
    ------------------
    -- Append_Child --
@@ -210,6 +217,191 @@ package body Matreshka.DOM_Nodes is
    begin
       return XML.DOM.Nodes.DOM_Node_Access (Self.Previous);
    end Get_Previous_Sibling;
+
+   -------------------------
+   -- Raise_DOM_Exception --
+   -------------------------
+
+   procedure Raise_DOM_Exception
+    (Self      : not null access Node'Class;
+     Diagnosis : XML.DOM.Error_Code) is
+   begin
+      Self.Document.Diagnosis := Diagnosis;
+
+      raise XML.DOM.DOM_Exception
+        with League.Text_Codecs.To_Exception_Message
+              (Self.Document.Error_String);
+   end Raise_DOM_Exception;
+
+   --------------------------------
+   -- Raise_DOMString_Size_Error --
+   --------------------------------
+
+   procedure Raise_DOMString_Size_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.DOMString_Size_Error);
+   end Raise_DOMString_Size_Error;
+
+   -----------------------------------
+   -- Raise_Hierarchy_Request_Error --
+   -----------------------------------
+
+   procedure Raise_Hierarchy_Request_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Hierarchy_Request_Error);
+   end Raise_Hierarchy_Request_Error;
+
+   ----------------------------
+   -- Raise_Index_Size_Error --
+   ----------------------------
+
+   procedure Raise_Index_Size_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Index_Size_Error);
+   end Raise_Index_Size_Error;
+
+   ---------------------------------
+   -- Raise_Inuse_Attribute_Error --
+   ---------------------------------
+
+   procedure Raise_Inuse_Attribute_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Inuse_Attribute_Error);
+   end Raise_Inuse_Attribute_Error;
+
+   --------------------------------
+   -- Raise_Invalid_Access_Error --
+   --------------------------------
+
+   procedure Raise_Invalid_Access_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Invalid_Access_Error);
+   end Raise_Invalid_Access_Error;
+
+   -----------------------------------
+   -- Raise_Invalid_Character_Error --
+   -----------------------------------
+
+   procedure Raise_Invalid_Character_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Invalid_Character_Error);
+   end Raise_Invalid_Character_Error;
+
+   --------------------------------------
+   -- Raise_Invalid_Modification_Error --
+   --------------------------------------
+
+   procedure Raise_Invalid_Modification_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Invalid_Modification_Error);
+   end Raise_Invalid_Modification_Error;
+
+   -------------------------------
+   -- Raise_Invalid_State_Error --
+   -------------------------------
+
+   procedure Raise_Invalid_State_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Invalid_State_Error);
+   end Raise_Invalid_State_Error;
+
+   ---------------------------
+   -- Raise_Namespace_Error --
+   ---------------------------
+
+   procedure Raise_Namespace_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Namespace_Error);
+   end Raise_Namespace_Error;
+
+   ---------------------------------
+   -- Raise_No_Data_Allowed_Error --
+   ---------------------------------
+
+   procedure Raise_No_Data_Allowed_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.No_Data_Allowed_Error);
+   end Raise_No_Data_Allowed_Error;
+
+   -----------------------------------------
+   -- Raise_No_Modification_Allowed_Error --
+   -----------------------------------------
+
+   procedure Raise_No_Modification_Allowed_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.No_Modification_Allowed_Error);
+   end Raise_No_Modification_Allowed_Error;
+
+   ---------------------------
+   -- Raise_Not_Found_Error --
+   ---------------------------
+
+   procedure Raise_Not_Found_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Not_Found_Error);
+   end Raise_Not_Found_Error;
+
+   -------------------------------
+   -- Raise_Not_Supported_Error --
+   -------------------------------
+
+   procedure Raise_Not_Supported_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Not_Supported_Error);
+   end Raise_Not_Supported_Error;
+
+   ------------------------
+   -- Raise_Syntax_Error --
+   ------------------------
+
+   procedure Raise_Syntax_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Syntax_Error);
+   end Raise_Syntax_Error;
+
+   -------------------------------
+   -- Raise_Type_Mismatch_Error --
+   -------------------------------
+
+   procedure Raise_Type_Mismatch_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Type_Mismatch_Error);
+   end Raise_Type_Mismatch_Error;
+
+   ----------------------------
+   -- Raise_Validation_Error --
+   ----------------------------
+
+   procedure Raise_Validation_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Validation_Error);
+   end Raise_Validation_Error;
+
+   --------------------------------
+   -- Raise_Wrong_Document_Error --
+   --------------------------------
+
+   procedure Raise_Wrong_Document_Error
+    (Self : not null access Node'Class) is
+   begin
+      Self.Raise_DOM_Exception (XML.DOM.Wrong_Document_Error);
+   end Raise_Wrong_Document_Error;
 
    --------------------
    -- Set_Node_Value --

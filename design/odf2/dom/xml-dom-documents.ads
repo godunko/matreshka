@@ -179,4 +179,14 @@ package XML.DOM.Documents is
    --    Text
    --      The new Text object.
 
+   not overriding function Error_Code
+    (Self : not null access constant DOM_Document)
+       return XML.DOM.Error_Code is abstract;
+   --  Returns DOM error code for last raised DOM_Exception.
+
+   not overriding function Error_String
+    (Self : not null access constant DOM_Document)
+       return League.Strings.Universal_String is abstract;
+   --  Returns error string for last raised DOM_Exception.
+
 end XML.DOM.Documents;

@@ -59,6 +59,7 @@ package Matreshka.DOM_Documents is
    record
       First_Detached : Matreshka.DOM_Nodes.Node_Access;
       Last_Detached  : Matreshka.DOM_Nodes.Node_Access;
+      Diagnosis      : XML.DOM.Error_Code := XML.DOM.No_Error;
    end record;
 
    overriding function Create_Attribute_NS
@@ -84,6 +85,13 @@ package Matreshka.DOM_Documents is
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
+   overriding function Error_Code
+    (Self : not null access constant Document_Node) return XML.DOM.Error_Code;
+
+   overriding function Error_String
+    (Self : not null access constant Document_Node)
+       return League.Strings.Universal_String;
+
    overriding function Get_Node_Name
     (Self : not null access constant Document_Node)
        return League.Strings.Universal_String;
@@ -104,5 +112,11 @@ package Matreshka.DOM_Documents is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   package Constructors is
+
+      procedure Initialize (Self : not null access Document_Node'Class);
+
+   end Constructors;
 
 end Matreshka.DOM_Documents;

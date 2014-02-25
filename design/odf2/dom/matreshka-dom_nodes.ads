@@ -55,7 +55,8 @@ package Matreshka.DOM_Nodes is
    type Node is tagged;
 
    type Node_Access is access all Node'Class;
-   type Document_Access is access all Matreshka.DOM_Documents.Document_Node'Class;
+   type Document_Access is
+     access all Matreshka.DOM_Documents.Document_Node'Class;
 
    type Node is abstract limited new XML.DOM.Nodes.DOM_Node with record
       Document : Document_Access;
@@ -89,6 +90,91 @@ package Matreshka.DOM_Nodes is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control) is abstract;
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   procedure Raise_Index_Size_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_DOMString_Size_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Hierarchy_Request_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Wrong_Document_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Invalid_Character_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_No_Data_Allowed_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_No_Modification_Allowed_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Not_Found_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Not_Supported_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Inuse_Attribute_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Invalid_State_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Syntax_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Invalid_Modification_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Namespace_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Invalid_Access_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Validation_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
+
+   procedure Raise_Type_Mismatch_Error
+    (Self : not null access Node'Class)
+       with Inline    => True,
+            No_Return => True;
 
    overriding function Append_Child
     (Self : not null access Node;

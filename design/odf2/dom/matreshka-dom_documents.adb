@@ -46,6 +46,23 @@ with Matreshka.DOM_Elements;
 
 package body Matreshka.DOM_Documents is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize (Self : not null access Document_Node'Class) is
+      begin
+         Matreshka.DOM_Nodes.Constructors.Initialize (Self, Self);
+      end Initialize;
+
+   end Constructors;
+
    -------------------------
    -- Create_Attribute_NS --
    -------------------------
@@ -112,6 +129,28 @@ package body Matreshka.DOM_Documents is
       Visitor.Enter_Document
        (XML.DOM.Documents.DOM_Document_Access (Self), Control);
    end Enter_Node;
+
+   ----------------
+   -- Error_Code --
+   ----------------
+
+   overriding function Error_Code
+    (Self : not null access constant Document_Node)
+       return XML.DOM.Error_Code is
+   begin
+      return Self.Diagnosis;
+   end Error_Code;
+
+   ------------------
+   -- Error_String --
+   ------------------
+
+   overriding function Error_String
+    (Self : not null access constant Document_Node)
+       return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Error_String;
 
    -------------------
    -- Get_Node_Name --
