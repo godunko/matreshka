@@ -369,6 +369,11 @@ package body XSD_To_Ada.Payloads is
                & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
                & LF
                & "       with null record;" & LF);
+
+            XSD_To_Ada.Utils.Gen_Access_Type
+              (Writer_types,
+               XSD_To_Ada.Utils.Add_Separator (Type_Name));
+
             return;
          else
             Base_Type := League.Strings.To_Universal_String
@@ -376,7 +381,7 @@ package body XSD_To_Ada.Payloads is
                  (XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
                   & " : Payloads."
                   & XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
-                  & ";", 5) & LF);
+                  & ";" & LF, 5));
          end if;
       end if;
 
@@ -432,7 +437,7 @@ package body XSD_To_Ada.Payloads is
                           (Name.To_Wide_Wide_String
                            & " : Payloads." & Name.To_Wide_Wide_String & ";", 5));
                   else
-                     Writer.P (Base_Type);
+                     Writer.N (Base_Type);
 
                      Print_Model
                        (Model_Group  => Model_Group,

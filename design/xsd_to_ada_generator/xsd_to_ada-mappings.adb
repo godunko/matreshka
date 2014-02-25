@@ -52,14 +52,24 @@ package body XSD_To_Ada.Mappings is
    -----------------------------
 
    function Ada_Type_Qualified_Name
-    (Self          : Mapping'Class;
-     XSD_Type_Name : League.Strings.Universal_String)
-     return League.Strings.Universal_String is
+     (Self             : Mapping'Class;
+      XSD_Type_Name    : League.Strings.Universal_String;
+      Min_Occurs       : Boolean := False;
+      Max_Occurs       : Boolean := False)
+      return League.Strings.Universal_String is
    begin
       if Self.Mapping.Contains (XSD_Type_Name) then
          return Self.Mapping.Element (XSD_Type_Name).Ada_Name;
       else
-         return "Payloads." & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
+         if Max_Occurs then
+            return "Payloads."
+              & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name) & "_Vector";
+         elsif Min_Occurs then
+            return "Payloads.Optional_"
+              & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
+         else
+            return "Payloads." & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
+         end if;
       end if;
    end Ada_Type_Qualified_Name;
 

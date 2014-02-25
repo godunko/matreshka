@@ -66,6 +66,8 @@ package XSD2Ada.Analyzer is
    function Choice (Self : Item) return Boolean;
    function Anonym_Name (Self : Item) return League.Strings.Universal_String;
    function Element_Name (Self : Item) return League.Strings.Universal_String;
+   function Simple_Type_Name
+     (Self : Item) return League.Strings.Universal_String;
    function Short_Ada_Type_Name
      (Self : Item) return League.Strings.Universal_String;
    --  Short name of Ada type described by the element.
@@ -110,6 +112,7 @@ private
       Min, Max         : Boolean := False;
       Anonym_Name      : League.Strings.Universal_String;
       Element_Name     : League.Strings.Universal_String;
+      Simple_Type_Name : League.Strings.Universal_String;
 
       Short_Ada_Type_Name   : League.Strings.Universal_String;
    end record;

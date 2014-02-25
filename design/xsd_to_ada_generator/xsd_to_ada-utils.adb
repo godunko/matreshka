@@ -61,6 +61,8 @@ with XML.Schema.Simple_Type_Definitions;
 with Generator.Units.Ada_Units;
 with XSD2Ada.Encoder;
 
+with XSD_To_Ada.Payloads;
+
 package body XSD_To_Ada.Utils is
 
    use XML.Schema.Complex_Type_Definitions;
@@ -104,10 +106,6 @@ package body XSD_To_Ada.Utils is
 
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String;
-
-   procedure Gen_Access_Type
-    (Self : in out XSD_To_Ada.Writers.Writer;
-     Name : League.Strings.Universal_String);
 
    -------------------
    -- Add_Separator --
@@ -247,7 +245,8 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
-      Print_Payloads (Node_Vector, Payload_Writer, Mapping);
+      --  Print_Payloads (Node_Vector, Payload_Writer, Mapping);
+      XSD_To_Ada.Payloads.Print_Payloads (Node_Vector, Payload_Writer, Mapping);
 
       Ada.Wide_Wide_Text_IO.Create (File_Type, Out_File, "Vector");
 

@@ -50,8 +50,10 @@ package XSD_To_Ada.Mappings is
    type Mapping is tagged private;
 
    function Ada_Type_Qualified_Name
-     (Self          : Mapping'Class;
-      XSD_Type_Name : League.Strings.Universal_String)
+     (Self             : Mapping'Class;
+      XSD_Type_Name    : League.Strings.Universal_String;
+      Min_Occurs       : Boolean := False;
+      Max_Occurs       : Boolean := False)
       return League.Strings.Universal_String;
 
    function Is_Type_In_Map

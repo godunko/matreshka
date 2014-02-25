@@ -77,6 +77,10 @@ package XSD_To_Ada.Utils is
     (Text : League.Strings.Universal_String)
        return League.Strings.Universal_String;
 
+   procedure Gen_Access_Type
+    (Self : in out XSD_To_Ada.Writers.Writer;
+     Name : League.Strings.Universal_String);
+
    function Split_Line
      (Str : Wide_Wide_String := "";
       Tab : Natural := 0)
