@@ -72,10 +72,27 @@ package body Matreshka.DOM_Attributes is
       ----------------
 
       procedure Initialize
-       (Self     : not null access Attribute_L2_Node'Class;
-        Document : not null Matreshka.DOM_Nodes.Document_Access) is
+       (Self           : not null access Attribute_L2_Node'Class;
+        Document       : not null Matreshka.DOM_Nodes.Document_Access;
+        Namespace_URI  : League.Strings.Universal_String;
+        Qualified_Name : League.Strings.Universal_String)
+      is
+         Delimiter : constant Natural := Qualified_Name.Index (':');
+
       begin
          Matreshka.DOM_Nodes.Constructors.Initialize (Self, Document);
+
+         Self.Namespace_URI := Namespace_URI;
+
+         if Delimiter = 0 then
+            Self.Prefix := League.Strings.Empty_Universal_String;
+            Self.Local_Name := Qualified_Name;
+
+         else
+            Self.Prefix := Qualified_Name.Slice (1, Delimiter - 1);
+            Self.Local_Name :=
+              Qualified_Name.Slice (Delimiter + 1, Qualified_Name.Length);
+         end if;
       end Initialize;
 
    end Constructors;
@@ -96,6 +113,17 @@ package body Matreshka.DOM_Attributes is
    begin
       raise Program_Error;
    end Enter_Node;
+
+   --------------------
+   -- Get_Local_Name --
+   --------------------
+
+   overriding function Get_Local_Name
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Local_Name;
+   end Get_Local_Name;
 
    --------------
    -- Get_Name --
@@ -120,6 +148,17 @@ package body Matreshka.DOM_Attributes is
       raise Program_Error;
       return League.Strings.Empty_Universal_String;
    end Get_Name;
+
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   overriding function Get_Namespace_URI
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Namespace_URI;
+   end Get_Namespace_URI;
 
    ----------------------
    -- Get_Next_Sibling --

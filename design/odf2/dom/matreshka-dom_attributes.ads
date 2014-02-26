@@ -127,9 +127,21 @@ package Matreshka.DOM_Attributes is
     (Self : not null access constant Attribute_L1_Node)
        return League.Strings.Universal_String renames Get_Name;
 
-   type Attribute_L2_Node is new Abstract_Attribute_L2_Node with null record;
+   type Attribute_L2_Node is new Abstract_Attribute_L2_Node with record
+      Namespace_URI : League.Strings.Universal_String;
+      Prefix        : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   overriding function Get_Local_Name
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String;
 
    overriding function Get_Name
+    (Self : not null access constant Attribute_L2_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Namespace_URI
     (Self : not null access constant Attribute_L2_Node)
        return League.Strings.Universal_String;
 
@@ -144,8 +156,10 @@ package Matreshka.DOM_Attributes is
         Document : not null Matreshka.DOM_Nodes.Document_Access);
 
       procedure Initialize
-       (Self     : not null access Attribute_L2_Node'Class;
-        Document : not null Matreshka.DOM_Nodes.Document_Access);
+       (Self           : not null access Attribute_L2_Node'Class;
+        Document       : not null Matreshka.DOM_Nodes.Document_Access;
+        Namespace_URI  : League.Strings.Universal_String;
+        Qualified_Name : League.Strings.Universal_String);
 
    end Constructors;
 

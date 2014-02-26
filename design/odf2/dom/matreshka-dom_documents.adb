@@ -80,7 +80,9 @@ package body Matreshka.DOM_Documents is
    begin
       Matreshka.DOM_Attributes.Constructors.Initialize
        (Matreshka.DOM_Attributes.Attribute_L2_Node'Class (Node.all)'Access,
-        Self);
+        Self,
+        Namespace_URI,
+        Qualified_Name);
 
       return XML.DOM.Attributes.DOM_Attribute_Access (Node);
    end Create_Attribute_NS;
