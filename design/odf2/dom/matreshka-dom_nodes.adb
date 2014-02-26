@@ -118,7 +118,13 @@ package body Matreshka.DOM_Nodes is
          --  Append element to the list of detached nodes of the document.
 
          Self.Document := Document;
-         Matreshka.DOM_Lists.Insert_Into_Detached (S);
+
+         if Self /= Document then
+            --  All nodes except document node are added into the list of
+            --  detached nodes of owner document.
+
+            Matreshka.DOM_Lists.Insert_Into_Detached (S);
+         end if;
       end Initialize;
 
    end Constructors;
