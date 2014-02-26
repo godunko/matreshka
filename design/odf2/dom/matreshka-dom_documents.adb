@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Attributes;
 with Matreshka.DOM_Elements;
+with Matreshka.DOM_Texts;
 
 package body Matreshka.DOM_Documents is
 
@@ -111,10 +112,16 @@ package body Matreshka.DOM_Documents is
    overriding function Create_Text_Node
     (Self : not null access Document_Node;
      Data : League.Strings.Universal_String)
-       return not null XML.DOM.Texts.DOM_Text_Access is
+       return not null XML.DOM.Texts.DOM_Text_Access
+   is
+      Node : constant not null Matreshka.DOM_Nodes.Node_Access
+        := new Matreshka.DOM_Texts.Text_Node;
+
    begin
-      raise Program_Error;
-      return null;
+      Matreshka.DOM_Texts.Constructors.Initialize
+       (Matreshka.DOM_Texts.Text_Node'Class (Node.all)'Access, Self, Data);
+
+      return XML.DOM.Texts.DOM_Text_Access (Node);
    end Create_Text_Node;
 
    ----------------
