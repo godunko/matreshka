@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,35 +41,118 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Documents;
 
-package body XML.DOM.Nodes is
+package body Matreshka.DOM_Lists is
 
-   ------------------
-   -- Append_Child --
-   ------------------
+   use type Matreshka.DOM_Nodes.Node_Access;
 
-   procedure Append_Child
-    (Self      : not null access DOM_Node'Class;
-     New_Child : not null DOM_Node_Access)
+   --------------------------
+   -- Insert_Into_Children --
+   --------------------------
+
+   procedure Insert_Into_Children
+    (Parent : not null Matreshka.DOM_Nodes.Node_Access;
+     Node   : not null Matreshka.DOM_Nodes.Node_Access) is
+   begin
+      Node.Parent := Parent;
+
+      if Parent.First = null then
+         Node.Previous := null;
+         Node.Next := null;
+         Parent.First := Node;
+         Parent.Last := Node;
+
+      else
+         Node.Previous := Parent.Last;
+         Node.Next := null;
+         Parent.Last.Next := Node;
+         Parent.Last := Node;
+      end if;
+   end Insert_Into_Children;
+
+   --------------------------
+   -- Insert_Into_Detached --
+   --------------------------
+
+   procedure Insert_Into_Detached
+    (Node : not null Matreshka.DOM_Nodes.Node_Access)
    is
-      Aux : DOM_Node_Access;
+      Document : constant Matreshka.DOM_Nodes.Document_Access := Node.Document;
 
    begin
-      Aux := Self.Append_Child (New_Child);
-   end Append_Child;
+      if Document.First_Detached = null then
+         Node.Previous := null;
+         Node.Next := null;
+         Document.First_Detached := Node;
+         Document.Last_Detached := Node;
 
-   ------------------
-   -- Remove_Child --
-   ------------------
+      else
+         Node.Previous := Document.Last_Detached;
+         Node.Next := null;
+         Document.Last_Detached.Next := Node;
+         Document.Last_Detached := Node;
+      end if;
+   end Insert_Into_Detached;
 
-   procedure Remove_Child
-    (Self      : not null access DOM_Node'Class;
-     Old_Child : not null DOM_Node_Access)
+   --------------------------
+   -- Remove_From_Children --
+   --------------------------
+
+   procedure Remove_From_Children
+    (Node : not null Matreshka.DOM_Nodes.Node_Access)
    is
-      Aux : DOM_Node_Access;
+      Parent : constant Matreshka.DOM_Nodes.Node_Access := Node.Parent;
 
    begin
-      Aux := Self.Remove_Child (Old_Child);
-   end Remove_Child;
+      if Parent /= null then
+         if Parent.First = Node then
+            Parent.First := Node.Next;
+         end if;
 
-end XML.DOM.Nodes;
+         if Parent.Last = Node then
+            Parent.Last := Node.Previous;
+         end if;
+
+         if Node.Previous /= null then
+            Node.Previous.Next := Node.Next;
+         end if;
+
+         if Node.Next /= null then
+            Node.Next.Previous := Node.Previous;
+         end if;
+
+         Node.Parent   := null;
+         Node.Previous := null;
+         Node.Next     := null;
+      end if;
+   end Remove_From_Children;
+
+   --------------------------
+   -- Remove_From_Detached --
+   --------------------------
+
+   procedure Remove_From_Detached
+    (Node : not null Matreshka.DOM_Nodes.Node_Access)
+   is
+      Document : constant Matreshka.DOM_Nodes.Document_Access := Node.Document;
+
+   begin
+      if Document.First_Detached = Node then
+         Document.First_Detached := Node.Next;
+      end if;
+
+      if Document.Last_Detached = Node then
+         Document.Last_Detached := Node.Previous;
+      end if;
+
+      if Node.Previous /= null then
+         Node.Previous.Next := Node.Next;
+      end if;
+
+      if Node.Next /= null then
+         Node.Next.Previous := Node.Previous;
+      end if;
+   end Remove_From_Detached;
+
+end Matreshka.DOM_Lists;

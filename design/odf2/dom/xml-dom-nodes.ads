@@ -142,9 +142,42 @@ package XML.DOM.Nodes is
    --  with a DOM Level 1 method, such as Document.createElement(), this is
    --  always null.
 
+   not overriding function Remove_Child
+    (Self      : not null access DOM_Node;
+     Old_Child : not null DOM_Node_Access) return not null DOM_Node_Access
+       is abstract;
+   --  Removes the child node indicated by oldChild from the list of children,
+   --  and returns it.
+   --
+   --  Parameters
+   --
+   --    oldChild of type Node
+   --      The node being removed.
+   --
+   --  Return Value
+   --
+   --    Node
+   --      The node removed.
+   --
+   --  Exceptions
+   --
+   --    DOMException
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+   --
+   --      NOT_FOUND_ERR: Raised if oldChild is not a child of this node.
+   --
+   --      NOT_SUPPORTED_ERR: if this node is of type Document, this exception
+   --      might be raised if the DOM implementation doesn't support the
+   --      removal of the DocumentType child or the Element child.
+
+   procedure Remove_Child
+    (Self      : not null access DOM_Node'Class;
+     Old_Child : not null DOM_Node_Access);
+
    not overriding function Append_Child
-    (Self : not null access DOM_Node;
-     Node : not null DOM_Node_Access) return not null DOM_Node_Access
+    (Self      : not null access DOM_Node;
+     New_Child : not null DOM_Node_Access) return not null DOM_Node_Access
        is abstract;
    --  Adds the node newChild to the end of the list of children of this node.
    --  If the newChild is already in the tree, it is first removed.
@@ -184,7 +217,7 @@ package XML.DOM.Nodes is
    --      child.
 
    procedure Append_Child
-    (Self : not null access DOM_Node'Class;
-     Node : not null DOM_Node_Access);
+    (Self      : not null access DOM_Node'Class;
+     New_Child : not null DOM_Node_Access);
 
 end XML.DOM.Nodes;

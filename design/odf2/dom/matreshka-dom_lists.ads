@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,35 +41,33 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package provides subprogram to insert/remove nodes from lists:
+--   - list of children nodes of some node
+--   - list of detached nodes of document node
+--   - list of attribute nodes of element node
+------------------------------------------------------------------------------
+with Matreshka.DOM_Nodes;
 
-package body XML.DOM.Nodes is
+package Matreshka.DOM_Lists is
 
-   ------------------
-   -- Append_Child --
-   ------------------
+   pragma Preelaborate;
 
-   procedure Append_Child
-    (Self      : not null access DOM_Node'Class;
-     New_Child : not null DOM_Node_Access)
-   is
-      Aux : DOM_Node_Access;
+   procedure Insert_Into_Children
+    (Parent : not null Matreshka.DOM_Nodes.Node_Access;
+     Node   : not null Matreshka.DOM_Nodes.Node_Access);
+   --  Inserts node into the list of children nodes of given parent node.
 
-   begin
-      Aux := Self.Append_Child (New_Child);
-   end Append_Child;
+   procedure Remove_From_Children
+    (Node : not null Matreshka.DOM_Nodes.Node_Access);
+   --  Removes node from the list of children nodes of its parent node. Do
+   --  nothing if there is no parent node.
 
-   ------------------
-   -- Remove_Child --
-   ------------------
+   procedure Insert_Into_Detached
+    (Node : not null Matreshka.DOM_Nodes.Node_Access);
+   --  Inserts node into the list of detached nodes of its document.
 
-   procedure Remove_Child
-    (Self      : not null access DOM_Node'Class;
-     Old_Child : not null DOM_Node_Access)
-   is
-      Aux : DOM_Node_Access;
+   procedure Remove_From_Detached
+    (Node : not null Matreshka.DOM_Nodes.Node_Access);
+   --  Removes node from the list of detached nodes of its document.
 
-   begin
-      Aux := Self.Remove_Child (Old_Child);
-   end Remove_Child;
-
-end XML.DOM.Nodes;
+end Matreshka.DOM_Lists;

@@ -44,6 +44,7 @@
 with League.Text_Codecs;
 
 with Matreshka.DOM_Documents;
+with Matreshka.DOM_Lists;
 
 package body Matreshka.DOM_Nodes is
 
@@ -57,70 +58,29 @@ package body Matreshka.DOM_Nodes is
    ------------------
 
    overriding function Append_Child
-    (Self : not null access Node;
-     Node : not null XML.DOM.Nodes.DOM_Node_Access)
+    (Self      : not null access Node;
+     New_Child : not null XML.DOM.Nodes.DOM_Node_Access)
        return not null XML.DOM.Nodes.DOM_Node_Access
    is
-      N : constant Node_Access := Node_Access (Node);
+      N : constant Node_Access := Node_Access (New_Child);
 
    begin
       --  Remove node from its curent position in the tree.
 
       if N.Parent /= null then
-         if N.Parent.First = N then
-            N.Parent.First := N.Next;
-         end if;
-
-         if N.Parent.Last = N then
-            N.Parent.Last := N.Previous;
-         end if;
-
-         if N.Previous /= null then
-            N.Previous.Next := N.Next;
-         end if;
-
-         if N.Next /= null then
-            N.Next.Previous := N.Previous;
-         end if;
+         Matreshka.DOM_Lists.Remove_From_Children (N);
 
       --  Remove node from the list of detached nodes.
 
       else
-         if N.Document.First_Detached = N then
-            N.Document.First_Detached := N.Next;
-         end if;
-
-         if N.Document.Last_Detached = N then
-            N.Document.Last_Detached := N.Previous;
-         end if;
-
-         if N.Previous /= null then
-            N.Previous.Next := N.Next;
-         end if;
-
-         if N.Next /= null then
-            N.Next.Previous := N.Previous;
-         end if;
+         Matreshka.DOM_Lists.Remove_From_Detached (N);
       end if;
 
-      --  Append node to the requested position.
+      --  And append node to the requested position.
 
-      N.Parent := Node_Access (Self);
+      Matreshka.DOM_Lists.Insert_Into_Children (Self, N);
 
-      if Self.First = null then
-         Self.First := N;
-         Self.Last := N;
-         N.Previous := null;
-         N.Next := null;
-
-      else
-         N.Previous := Self.Last;
-         N.Next := null;
-         Self.Last.Next := N;
-         Self.Last := N;
-      end if;
-
-      return Node;
+      return New_Child;
    end Append_Child;
 
    --------------------------
@@ -158,19 +118,7 @@ package body Matreshka.DOM_Nodes is
          --  Append element to the list of detached nodes of the document.
 
          Self.Document := Document;
-
-         if Document.First_Detached = null then
-            Document.First_Detached := S;
-            Document.Last_Detached := S;
-            Self.Previous := null;
-            Self.Next := null;
-
-         else
-            S.Previous := Document.Last_Detached;
-            S.Next := null;
-            Document.Last_Detached.Next := S;
-            Document.Last_Detached := S;
-         end if;
+         Matreshka.DOM_Lists.Insert_Into_Detached (S);
       end Initialize;
 
    end Constructors;
@@ -445,6 +393,32 @@ package body Matreshka.DOM_Nodes is
    begin
       Self.Raise_DOM_Exception (XML.DOM.Wrong_Document_Error);
    end Raise_Wrong_Document_Error;
+
+   ------------------
+   -- Remove_Child --
+   ------------------
+
+   overriding function Remove_Child
+    (Self      : not null access Node;
+     Old_Child : not null XML.DOM.Nodes.DOM_Node_Access)
+       return not null XML.DOM.Nodes.DOM_Node_Access
+   is
+      N : constant Matreshka.DOM_Nodes.Node_Access
+        := Matreshka.DOM_Nodes.Node_Access (Old_Child);
+
+   begin
+      if N.Parent /= Self then
+         Self.Raise_Not_Found_Error;
+      end if;
+
+      --  Remove node from its curent position in the tree and insert into the
+      --  list of detached nodes.
+
+      Matreshka.DOM_Lists.Remove_From_Children (N);
+      Matreshka.DOM_Lists.Insert_Into_Detached (N);
+
+      return Old_Child;
+   end Remove_Child;
 
    --------------------
    -- Set_Node_Value --

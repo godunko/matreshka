@@ -183,8 +183,8 @@ package Matreshka.DOM_Nodes is
             No_Return => True;
 
    overriding function Append_Child
-    (Self : not null access Node;
-     Node : not null XML.DOM.Nodes.DOM_Node_Access)
+    (Self      : not null access Node;
+     New_Child : not null XML.DOM.Nodes.DOM_Node_Access)
        return not null XML.DOM.Nodes.DOM_Node_Access;
    --  Generic implementation of appending child node. Specialized nodes must
    --  override it to add required checks.
@@ -216,6 +216,11 @@ package Matreshka.DOM_Nodes is
    overriding function Get_Previous_Sibling
     (Self : not null access constant Node)
        return XML.DOM.Nodes.DOM_Node_Access;
+
+   overriding function Remove_Child
+    (Self      : not null access Node;
+     Old_Child : not null XML.DOM.Nodes.DOM_Node_Access)
+       return not null XML.DOM.Nodes.DOM_Node_Access;
 
    overriding procedure Set_Node_Value
     (Self      : not null access Node;
