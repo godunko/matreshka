@@ -41,8 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Documents;
+with Matreshka.DOM_Lists;
+with XML.DOM.Entity_References;
+with XML.DOM.Texts;
 
 package body Matreshka.DOM_Attributes is
+
+   use type Matreshka.DOM_Nodes.Node_Access;
 
    ------------------
    -- Constructors --
@@ -187,22 +193,24 @@ package body Matreshka.DOM_Attributes is
    ---------------
 
    overriding function Get_Value
-    (Self : not null access constant Attribute_L1_Node)
-       return League.Strings.Universal_String is
-   begin
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
-   end Get_Value;
+    (Self : not null access constant Abstract_Attribute_Node)
+       return League.Strings.Universal_String
+   is
+      N : Matreshka.DOM_Nodes.Node_Access := Self.First;
 
-   ---------------
-   -- Get_Value --
-   ---------------
-
-   overriding function Get_Value
-    (Self : not null access constant Attribute_L2_Node)
-       return League.Strings.Universal_String is
    begin
-      raise Program_Error;
+      --  Lookup for the first DOM::Text child node by unwinding all
+      --  DOM::EntityReference nodes. Returns its whole text if it is found.
+
+      while N /= null loop
+         if N.all in XML.DOM.Texts.DOM_Text'Class then
+            return XML.DOM.Texts.DOM_Text_Access (N).Get_Whole_Text;
+
+         else
+            N := N.First;
+         end if;
+      end loop;
+
       return League.Strings.Empty_Universal_String;
    end Get_Value;
 
@@ -228,21 +236,25 @@ package body Matreshka.DOM_Attributes is
    ---------------
 
    overriding procedure Set_Value
-    (Self      : not null access Attribute_L1_Node;
-     New_Value : League.Strings.Universal_String) is
-   begin
-      raise Program_Error;
-   end Set_Value;
+    (Self      : not null access Abstract_Attribute_Node;
+     New_Value : League.Strings.Universal_String)
+   is
+      Node : Matreshka.DOM_Nodes.Node_Access;
+      Text : XML.DOM.Texts.DOM_Text_Access;
 
-   ---------------
-   -- Set_Value --
-   ---------------
-
-   overriding procedure Set_Value
-    (Self      : not null access Attribute_L2_Node;
-     New_Value : League.Strings.Universal_String) is
    begin
-      raise Program_Error;
+      --  Remove all existing child nodes.
+
+      while Self.First /= null loop
+         Node := Self.First;
+         Matreshka.DOM_Lists.Remove_From_Children (Node);
+         Matreshka.DOM_Lists.Insert_Into_Detached (Node);
+      end loop;
+
+      --  Create new text node and set its value.
+
+      Text := Self.Document.Create_Text_Node (New_Value);
+      Self.Append_Child (XML.DOM.Nodes.DOM_Node_Access (Text));
    end Set_Value;
 
    ----------------

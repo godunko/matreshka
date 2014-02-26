@@ -95,6 +95,22 @@ package Matreshka.DOM_Attributes is
     (Self : not null access constant Abstract_Attribute_Node)
        return XML.DOM.Nodes.DOM_Node_Access;
 
+   overriding function Get_Value
+    (Self : not null access constant Abstract_Attribute_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Value
+    (Self : not null access constant Abstract_Attribute_Node)
+       return League.Strings.Universal_String renames Get_Value;
+
+   overriding procedure Set_Value
+    (Self      : not null access Abstract_Attribute_Node;
+     New_Value : League.Strings.Universal_String);
+
+   overriding procedure Set_Node_Value
+    (Self      : not null access Abstract_Attribute_Node;
+     New_Value : League.Strings.Universal_String) renames Set_Value;
+
    type Abstract_Attribute_L1_Node is
      abstract new Abstract_Attribute_Node with null record;
 
@@ -111,22 +127,6 @@ package Matreshka.DOM_Attributes is
     (Self : not null access constant Attribute_L1_Node)
        return League.Strings.Universal_String renames Get_Name;
 
-   overriding function Get_Value
-    (Self : not null access constant Attribute_L1_Node)
-       return League.Strings.Universal_String;
-
-   overriding function Get_Node_Value
-    (Self : not null access constant Attribute_L1_Node)
-       return League.Strings.Universal_String renames Get_Value;
-
-   overriding procedure Set_Value
-    (Self      : not null access Attribute_L1_Node;
-     New_Value : League.Strings.Universal_String);
-
-   overriding procedure Set_Node_Value
-    (Self      : not null access Attribute_L1_Node;
-     New_Value : League.Strings.Universal_String) renames Set_Value;
-
    type Attribute_L2_Node is new Abstract_Attribute_L2_Node with null record;
 
    overriding function Get_Name
@@ -136,22 +136,6 @@ package Matreshka.DOM_Attributes is
    overriding function Get_Node_Name
     (Self : not null access constant Attribute_L2_Node)
        return League.Strings.Universal_String renames Get_Name;
-
-   overriding function Get_Value
-    (Self : not null access constant Attribute_L2_Node)
-       return League.Strings.Universal_String;
-
-   overriding function Get_Node_Value
-    (Self : not null access constant Attribute_L2_Node)
-       return League.Strings.Universal_String renames Get_Value;
-
-   overriding procedure Set_Value
-    (Self      : not null access Attribute_L2_Node;
-     New_Value : League.Strings.Universal_String);
-
-   overriding procedure Set_Node_Value
-    (Self      : not null access Attribute_L2_Node;
-     New_Value : League.Strings.Universal_String) renames Set_Value;
 
    package Constructors is
 
