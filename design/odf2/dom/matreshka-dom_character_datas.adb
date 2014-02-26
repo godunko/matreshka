@@ -44,6 +44,27 @@
 
 package body Matreshka.DOM_Character_Datas is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self     : not null access Character_Data_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Data     : League.Strings.Universal_String) is
+      begin
+         Matreshka.DOM_Nodes.Constructors.Initialize (Self, Document);
+         Self.Data := Data;
+      end Initialize;
+
+   end Constructors;
+
    --------------
    -- Get_Data --
    --------------
@@ -52,8 +73,7 @@ package body Matreshka.DOM_Character_Datas is
     (Self : not null access constant Character_Data_Node)
        return League.Strings.Universal_String is
    begin
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
+      return Self.Data;
    end Get_Data;
 
    --------------
@@ -64,7 +84,7 @@ package body Matreshka.DOM_Character_Datas is
     (Self      : not null access Character_Data_Node;
      New_Value : League.Strings.Universal_String) is
    begin
-      raise Program_Error;
+      Self.Data := New_Value;
    end Set_Data;
 
 end Matreshka.DOM_Character_Datas;

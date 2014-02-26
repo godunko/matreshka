@@ -44,6 +44,27 @@
 
 package body Matreshka.DOM_Texts is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self     : not null access Text_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Data     : League.Strings.Universal_String) is
+      begin
+         Matreshka.DOM_Character_Datas.Constructors.Initialize
+          (Self, Document, Data);
+      end Initialize;
+
+   end Constructors;
+
    ----------------
    -- Enter_Node --
    ----------------

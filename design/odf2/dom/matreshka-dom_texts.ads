@@ -44,6 +44,7 @@
 with League.Strings;
 
 with Matreshka.DOM_Character_Datas;
+with Matreshka.DOM_Nodes;
 with XML.DOM.Texts;
 with XML.DOM.Visitors;
 
@@ -80,5 +81,14 @@ package Matreshka.DOM_Texts is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   package Constructors is
+
+      procedure Initialize
+       (Self     : not null access Text_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Data     : League.Strings.Universal_String);
+
+   end Constructors;
 
 end Matreshka.DOM_Texts;
