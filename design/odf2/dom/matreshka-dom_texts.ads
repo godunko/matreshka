@@ -69,6 +69,10 @@ package Matreshka.DOM_Texts is
     (Self : not null access constant Text_Node)
        return XML.DOM.Node_Type;
 
+   overriding function Get_Whole_Text
+    (Self : not null access constant Text_Node)
+       return League.Strings.Universal_String;
+
    overriding procedure Leave_Node
     (Self    : not null access Text_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;

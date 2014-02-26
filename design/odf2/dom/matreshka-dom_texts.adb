@@ -106,6 +106,19 @@ package body Matreshka.DOM_Texts is
       return XML.DOM.Text_Node;
    end Get_Node_Type;
 
+   --------------------
+   -- Get_Whole_Text --
+   --------------------
+
+   overriding function Get_Whole_Text
+    (Self : not null access constant Text_Node)
+       return League.Strings.Universal_String is
+   begin
+      --  XXX This subprogram is not fully implemented yet.
+
+      return Self.Data;
+   end Get_Whole_Text;
+
    ----------------
    -- Leave_Node --
    ----------------

@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with XML.DOM.Character_Datas;
 
 package XML.DOM.Texts is
@@ -52,5 +54,11 @@ package XML.DOM.Texts is
 
    type DOM_Text_Access is access all DOM_Text'Class
      with Storage_Size => 0;
+
+   not overriding function Get_Whole_Text
+    (Self : not null access constant DOM_Text)
+       return League.Strings.Universal_String is abstract;
+   --  Returns all text of Text nodes logically-adjacent text nodes to this
+   --  node, concatenated in document order.
 
 end XML.DOM.Texts;
