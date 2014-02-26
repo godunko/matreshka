@@ -89,9 +89,8 @@ package body Matreshka.DOM_Attributes is
             Self.Local_Name := Qualified_Name;
 
          else
-            Self.Prefix := Qualified_Name.Slice (1, Delimiter - 1);
-            Self.Local_Name :=
-              Qualified_Name.Slice (Delimiter + 1, Qualified_Name.Length);
+            Self.Prefix := Qualified_Name.Head (Delimiter - 1);
+            Self.Local_Name := Qualified_Name.Tail_From (Delimiter + 1);
          end if;
       end Initialize;
 
