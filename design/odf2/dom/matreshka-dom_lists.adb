@@ -42,10 +42,35 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Documents;
+with Matreshka.DOM_Elements;
 
 package body Matreshka.DOM_Lists is
 
    use type Matreshka.DOM_Nodes.Node_Access;
+
+   ----------------------------
+   -- Insert_Into_Attributes --
+   ----------------------------
+
+   procedure Insert_Into_Attributes
+    (Element   : not null Matreshka.DOM_Nodes.Element_Access;
+     Attribute : not null Matreshka.DOM_Nodes.Node_Access) is
+   begin
+      Attribute.Parent := Matreshka.DOM_Nodes.Node_Access (Element);
+
+      if Element.First_Attribute = null then
+         Attribute.Previous := null;
+         Attribute.Next := null;
+         Element.First_Attribute := Attribute;
+         Element.Last_Attribute := Attribute;
+
+      else
+         Attribute.Previous := Element.Last_Attribute;
+         Attribute.Next := null;
+         Element.Last_Attribute.Next := Attribute;
+         Element.Last_Attribute := Attribute;
+      end if;
+   end Insert_Into_Attributes;
 
    --------------------------
    -- Insert_Into_Children --
@@ -94,6 +119,38 @@ package body Matreshka.DOM_Lists is
          Document.Last_Detached := Node;
       end if;
    end Insert_Into_Detached;
+
+   ----------------------------
+   -- Remove_From_Attributes --
+   ----------------------------
+
+   procedure Remove_From_Attributes
+    (Attribute : not null Matreshka.DOM_Nodes.Node_Access)
+   is
+      Element : constant Matreshka.DOM_Nodes.Element_Access
+        := Matreshka.DOM_Nodes.Element_Access (Attribute.Parent);
+
+   begin
+      if Element.First_Attribute = Attribute then
+         Element.First_Attribute := Attribute.Next;
+      end if;
+
+      if Element.Last_Attribute = Attribute then
+         Element.Last_Attribute := Attribute.Previous;
+      end if;
+
+      if Attribute.Previous /= null then
+         Attribute.Previous.Next := Attribute.Next;
+      end if;
+
+      if Attribute.Next /= null then
+         Attribute.Next.Previous := Attribute.Previous;
+      end if;
+
+      Attribute.Parent := null;
+      Attribute.Previous := null;
+      Attribute.Next := null;
+   end Remove_From_Attributes;
 
    --------------------------
    -- Remove_From_Children --

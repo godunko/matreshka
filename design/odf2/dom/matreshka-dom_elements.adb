@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.DOM_Attributes;
 with Matreshka.DOM_Documents;
+with Matreshka.DOM_Lists;
 
 package body Matreshka.DOM_Elements is
 
@@ -159,42 +160,14 @@ package body Matreshka.DOM_Elements is
               and Old_Attribute.Get_Namespace_URI
                     = New_Attribute.Get_Namespace_URI
             then
-               --  Detach old attribute from the list of element's attributes.
+               --  Detach old attribute from the list of element's attributes
+               --  and attach it to the list of detached nodes of document.
 
-               if Self.First_Attribute = Old_Attribute then
-                  Self.First_Attribute := Old_Attribute.Next;
-               end if;
-
-               if Self.Last_Attribute = Old_Attribute then
-                  Self.Last_Attribute := Old_Attribute.Previous;
-               end if;
-
-               if Old_Attribute.Next /= null then
-                  Old_Attribute.Next.Previous := Old_Attribute.Previous;
-               end if;
-
-               if Old_Attribute.Previous /= null then
-                  Old_Attribute.Previous.Next := Old_Attribute.Next;
-               end if;
-
-               Old_Attribute.Parent := null;
-               Old_Attribute.Previous := null;
-               Old_Attribute.Next := null;
-
-               --  And attach it to the list of detached nodes of document.
-               --
-               --  Note: at least one node (new attribute node) is in
-               --  document's list of detached nodes, so some optimizations are
-               --  used here.
-
-               Old_Attribute.Previous := Self.Document.Last_Detached;
-               Self.Document.Last_Detached.Next := Old_Attribute;
-               Self.Document.Last_Detached := Old_Attribute;
+               Matreshka.DOM_Lists.Remove_From_Attributes (Old_Attribute);
+               Matreshka.DOM_Lists.Insert_Into_Detached (Old_Attribute);
 
                exit;
             end if;
-
-            null;
          end if;
 
          Old_Attribute := Old_Attribute.Next;
@@ -202,20 +175,8 @@ package body Matreshka.DOM_Elements is
 
       --  Append new attribute node to the list of element's attributes.
 
-      if Self.First_Attribute = null then
-         New_Attribute.Parent := Matreshka.DOM_Nodes.Node_Access (Self);
-         New_Attribute.Previous := null;
-         New_Attribute.Next := null;
-         Self.First_Attribute := New_Attribute;
-         Self.Last_Attribute := New_Attribute;
-
-      else
-         New_Attribute.Parent := Matreshka.DOM_Nodes.Node_Access (Self);
-         New_Attribute.Previous := Self.Last_Attribute;
-         New_Attribute.Next := null;
-         Self.Last_Attribute.Next := New_Attribute;
-         Self.Last_Attribute := New_Attribute;
-      end if;
+      Matreshka.DOM_Lists.Remove_From_Detached (New_Attribute);
+      Matreshka.DOM_Lists.Insert_Into_Attributes (Self, New_Attribute);
 
       return XML.DOM.Attributes.DOM_Attribute_Access (Old_Attribute);
    end Set_Attribute_Node_NS;

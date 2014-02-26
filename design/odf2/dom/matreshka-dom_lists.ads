@@ -62,6 +62,16 @@ package Matreshka.DOM_Lists is
    --  Removes node from the list of children nodes of its parent node. Do
    --  nothing if there is no parent node.
 
+   procedure Insert_Into_Attributes
+    (Element   : not null Matreshka.DOM_Nodes.Element_Access;
+     Attribute : not null Matreshka.DOM_Nodes.Node_Access);
+   --  Inserts node into the list of attribute nodes of given element node.
+
+   procedure Remove_From_Attributes
+    (Attribute : not null Matreshka.DOM_Nodes.Node_Access);
+   --  Removes attribute node from the list of attribute nodes of owner element
+   --  node.
+
    procedure Insert_Into_Detached
     (Node : not null Matreshka.DOM_Nodes.Node_Access);
    --  Inserts node into the list of detached nodes of its document.

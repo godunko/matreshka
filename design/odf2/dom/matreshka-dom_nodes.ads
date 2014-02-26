@@ -44,6 +44,7 @@
 with League.Strings;
 
 limited with Matreshka.DOM_Documents;
+limited with Matreshka.DOM_Elements;
 with XML.DOM.Documents;
 with XML.DOM.Nodes;
 with XML.DOM.Visitors;
@@ -57,6 +58,7 @@ package Matreshka.DOM_Nodes is
    type Node_Access is access all Node'Class;
    type Document_Access is
      access all Matreshka.DOM_Documents.Document_Node'Class;
+   type Element_Access is access all Matreshka.DOM_Elements.Element_Node'Class;
 
    type Node is abstract limited new XML.DOM.Nodes.DOM_Node with record
       Document : Document_Access;
