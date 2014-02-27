@@ -278,4 +278,82 @@ package XML.DOM.Visitors is
      Node    : not null XML.DOM.Texts.DOM_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
+   ----------------------
+   -- Default Iterator --
+   ----------------------
+
+   type Default_Iterator is limited new Abstract_Iterator with private;
+
+private
+
+   type Default_Iterator is limited new Abstract_Iterator with null record;
+
+   overriding procedure Visit_CDATA_Section
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.CDATA_Sections.DOM_CDATA_Section_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Comment
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Comments.DOM_Comment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Document
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Documents.DOM_Document_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Document_Fragment
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    :
+       not null XML.DOM.Document_Fragments.DOM_Document_Fragment_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Document_Type
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Document_Types.DOM_Document_Type_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Element
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Elements.DOM_Element_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Entity
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Entities.DOM_Entity_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Entity_Reference
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Entity_References.DOM_Entity_Reference_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Notation
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Notations.DOM_Notation_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Processing_Instruction
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null
+       XML.DOM.Processing_Instructions.DOM_Processing_Instruction_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Visit_Text
+    (Self    : in out Default_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null XML.DOM.Texts.DOM_Text_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
 end XML.DOM.Visitors;
