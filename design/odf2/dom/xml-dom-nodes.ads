@@ -96,8 +96,17 @@ package XML.DOM.Nodes is
    --  node has just been created and not yet added to the tree, or if it has
    --  been removed from the tree, this is null.
 
---   function Get_First_Child
---    (Self : not null access constant DOM_Node'Class) return DOM_Node_Access;
+   not overriding function Get_First_Child
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The first child of this node. If there is no such node, this returns
+   --  null.
+
+   not overriding function Get_Last_Child
+    (Self : not null access constant DOM_Node) return DOM_Node_Access
+       is abstract;
+   --  The last child of this node. If there is no such node, this returns
+   --  null.
 
    not overriding function Get_Previous_Sibling
     (Self : not null access constant DOM_Node) return DOM_Node_Access

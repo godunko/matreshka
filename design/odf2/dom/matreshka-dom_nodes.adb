@@ -129,6 +129,28 @@ package body Matreshka.DOM_Nodes is
 
    end Constructors;
 
+   ---------------------
+   -- Get_First_Child --
+   ---------------------
+
+   overriding function Get_First_Child
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access is
+   begin
+      return XML.DOM.Nodes.DOM_Node_Access (Self.First);
+   end Get_First_Child;
+
+   --------------------
+   -- Get_Last_Child --
+   --------------------
+
+   overriding function Get_Last_Child
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access is
+   begin
+      return XML.DOM.Nodes.DOM_Node_Access (Self.Last);
+   end Get_Last_Child;
+
    --------------------
    -- Get_Local_Name --
    --------------------

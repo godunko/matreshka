@@ -191,6 +191,14 @@ package Matreshka.DOM_Nodes is
    --  Generic implementation of appending child node. Specialized nodes must
    --  override it to add required checks.
 
+   overriding function Get_First_Child
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access;
+
+   overriding function Get_Last_Child
+    (Self : not null access constant Node)
+       return XML.DOM.Nodes.DOM_Node_Access;
+
    overriding function Get_Local_Name
     (Self : not null access constant Node)
        return League.Strings.Universal_String;
