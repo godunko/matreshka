@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -61,11 +61,52 @@ package body XML.DOM.Visitors is
    begin
       N.Enter_Node (Visitor, Control);
 
-      N.Visit_Node (Self, Visitor, Control);
+      if Control = Continue then
+         N.Visit_Node (Self, Visitor, Control);
+      end if;
 
-      if Control /= Terminate_Immediately then
+      if Control in Continue | Abandon_Children | Abandon_Sibling then
+         if Control = Abandon_Children then
+            Control := Continue;
+         end if;
+
          N.Leave_Node (Visitor, Control);
       end if;
+
+      if Control = Abandon_Children then
+         Control := Continue;
+      end if;
    end Visit;
+
+   --------------------
+   -- Visit_Children --
+   --------------------
+
+   procedure Visit_Children
+    (Self    : in out Abstract_Iterator'Class;
+     Visitor : in out Abstract_Visitor'Class;
+     Node    : not null access XML.DOM.Nodes.DOM_Node'Class;
+     Control : in out Traverse_Control)
+   is
+      use type XML.DOM.Nodes.DOM_Node_Access;
+
+      Child : XML.DOM.Nodes.DOM_Node_Access := Node.Get_First_Child;
+
+   begin
+      while Child /= null loop
+         Self.Visit (Visitor, Child, Control);
+
+         if Control = Abandon_Sibling then
+            Control := Continue;
+
+            exit;
+
+         elsif Control = Terminate_Immediately then
+            exit;
+         end if;
+
+         Child := Child.Get_Next_Sibling;
+      end loop;
+   end Visit_Children;
 
 end XML.DOM.Visitors;

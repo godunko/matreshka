@@ -203,6 +203,13 @@ package XML.DOM.Visitors is
    --
    --   - Leave_<Class> operation on visitor.
 
+   procedure Visit_Children
+    (Self    : in out Abstract_Iterator'Class;
+     Visitor : in out Abstract_Visitor'Class;
+     Node    : not null access XML.DOM.Nodes.DOM_Node'Class;
+     Control : in out Traverse_Control);
+   --  Visits children of the given node.
+
    not overriding procedure Visit_CDATA_Section
     (Self    : in out Abstract_Iterator;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
