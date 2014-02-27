@@ -57,6 +57,9 @@ package Matreshka.DOM_Elements is
    record
       First_Attribute : Matreshka.DOM_Nodes.Node_Access;
       Last_Attribute  : Matreshka.DOM_Nodes.Node_Access;
+      Namespace_URI   : League.Strings.Universal_String;
+      Prefix          : League.Strings.Universal_String;
+      Local_Name      : League.Strings.Universal_String;
    end record;
 
    overriding procedure Enter_Node
@@ -65,6 +68,18 @@ package Matreshka.DOM_Elements is
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
+   overriding function Get_Local_Name
+    (Self : not null access constant Element_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Namespace_URI
+    (Self : not null access constant Element_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Element_Node)
+       return XML.DOM.Node_Type;
+
    overriding function Get_Tag_Name
     (Self : not null access constant Element_Node)
        return League.Strings.Universal_String;
@@ -72,10 +87,6 @@ package Matreshka.DOM_Elements is
    overriding function Get_Node_Name
     (Self : not null access constant Element_Node)
        return League.Strings.Universal_String renames Get_Tag_Name;
-
-   overriding function Get_Node_Type
-    (Self : not null access constant Element_Node)
-       return XML.DOM.Node_Type;
 
    overriding procedure Leave_Node
     (Self    : not null access Element_Node;
@@ -98,8 +109,10 @@ package Matreshka.DOM_Elements is
    package Constructors is
 
       procedure Initialize
-       (Self     : not null access Element_Node'Class;
-        Document : not null Matreshka.DOM_Nodes.Document_Access);
+       (Self           : not null access Element_Node'Class;
+        Document       : not null Matreshka.DOM_Nodes.Document_Access;
+        Namespace_URI  : League.Strings.Universal_String;
+        Qualified_Name : League.Strings.Universal_String);
 
    end Constructors;
 

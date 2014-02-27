@@ -102,7 +102,10 @@ package body Matreshka.DOM_Documents is
 
    begin
       Matreshka.DOM_Elements.Constructors.Initialize
-       (Matreshka.DOM_Elements.Element_Node'Class (Node.all)'Access, Self);
+       (Matreshka.DOM_Elements.Element_Node'Class (Node.all)'Access,
+        Self,
+        Namespace_URI,
+        Qualified_Name);
 
       return XML.DOM.Elements.DOM_Element_Access (Node);
    end Create_Element_NS;
