@@ -7,7 +7,7 @@ project ODF is
    for Source_Dirs use ("odf");
 
    package Compiler is
-      for Default_Switches ("Ada") use ("-g");
+      for Default_Switches ("Ada") use ("-g", "-gnat12");
    end Compiler;
 
 end ODF;
