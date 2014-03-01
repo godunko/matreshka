@@ -69,9 +69,6 @@ package Matreshka.ODF_String_Constants is
    Form_URI         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("urn:oasis:names:tc:opendocument:xmlns:form:1.0");
-   GRDDL_URI        : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String
-         ("http://www.w3.org/2003/g/data-view#");
    Meta_URI         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("urn:oasis:names:tc:opendocument:xmlns:meta:1.0");
@@ -102,16 +99,26 @@ package Matreshka.ODF_String_Constants is
    Text_URI         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("urn:oasis:names:tc:opendocument:xmlns:text:1.0");
-   XForms_URI       : constant League.Strings.Universal_String
+
+   DC_URI     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://purl.org/dc/elements/1.1/");
+   GRDDL_URI  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/2003/g/data-view#");
+   Math_URI   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+         ("http://www.w3.org/1998/Math/MathML");
+   XForms_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/2002/xforms");
-   XHTML_URI        : constant League.Strings.Universal_String
+   XHTML_URI  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/1999/xhtml");
-   XLink_URI        : constant League.Strings.Universal_String
+   XLink_URI  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("http://www.w3.org/1999/xlink");
-   XML_URI          : constant League.Strings.Universal_String
+   XML_URI    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("");
 
      --  urn:oasis:names:tc:opendocument:xmlns:manifest:1.0
@@ -120,8 +127,6 @@ package Matreshka.ODF_String_Constants is
      --
      --  http://docs.oasis-open.org/ns/office/1.2/meta/pkg#
      --  http://docs.oasis-open.org/ns/office/1.2/meta/odf#
-     --  http://purl.org/dc/elements/1.1/
-     --  http://www.w3.org/1998/Math/MathML
      --  http://www.w3.org/2000/09/xmldsig#
      --
      --
