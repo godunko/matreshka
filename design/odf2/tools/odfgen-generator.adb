@@ -48,9 +48,15 @@ with League.String_Vectors;
 
 package body ODFGen.Generator is
 
+   use type League.Strings.Universal_String;
+
    procedure Generate_Element_API
     (API_Template : League.String_Vectors.Universal_String_Vector;
      Element      : Element_Information);
+
+   procedure Generate_Element_Impl_Spec
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Element  : Element_Information);
 
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
@@ -60,12 +66,15 @@ package body ODFGen.Generator is
    --------------
 
    procedure Generate is
-      Element_API_Template : League.String_Vectors.Universal_String_Vector
+      Element_API_Template       : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/element_api.ads.tmpl");
+      Element_Impl_Spec_Template : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/element_impl.ads.tmpl");
 
    begin
       for Element of Elements loop
          Generate_Element_API (Element_API_Template, Element);
+         Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
       end loop;
    end Generate;
 
@@ -77,8 +86,6 @@ package body ODFGen.Generator is
     (API_Template : League.String_Vectors.Universal_String_Vector;
      Element      : Element_Information)
    is
-      use type League.Strings.Universal_String;
-
       Parameter_Rexexp : constant League.Regexps.Regexp_Pattern
         := League.Regexps.Compile
             (League.Strings.To_Universal_String ("\@([A-Za-z0-9_]+)\@"));
@@ -121,6 +128,56 @@ package body ODFGen.Generator is
       end loop;
    end Generate_Element_API;
 
+   --------------------------------
+   -- Generate_Element_Impl_Spec --
+   --------------------------------
+
+   procedure Generate_Element_Impl_Spec
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Element  : Element_Information)
+   is
+      Parameter_Rexexp : constant League.Regexps.Regexp_Pattern
+        := League.Regexps.Compile
+            (League.Strings.To_Universal_String ("\@([A-Za-z0-9_]+)\@"));
+      Match            : League.Regexps.Regexp_Match;
+      Line             : League.Strings.Universal_String;
+
+   begin
+      for J in 1 .. Template.Length loop
+         Line := Template (J);
+
+         loop
+            Match := Parameter_Rexexp.Find_Match (Line);
+
+            exit when not Match.Is_Matched;
+
+            if Match.Capture (1)
+                 = League.Strings.To_Universal_String ("GROUP")
+            then
+               Line :=
+                 Line.Slice (1, Match.First_Index - 1)
+                   & Element.Group_Ada_Name
+                   & Line.Slice (Match.Last_Index + 1, Line.Length);
+
+            elsif Match.Capture (1)
+                 = League.Strings.To_Universal_String ("ELEMENT")
+            then
+               Line :=
+                 Line.Slice (1, Match.First_Index - 1)
+                   & Element.Element_Ada_Name
+                   & Line.Slice (Match.Last_Index + 1, Line.Length);
+
+            else
+               Ada.Wide_Wide_Text_IO.Put_Line (Line.To_Wide_Wide_String);
+
+               raise Program_Error;
+            end if;
+         end loop;
+
+         Ada.Wide_Wide_Text_IO.Put_Line (Line.To_Wide_Wide_String);
+      end loop;
+   end Generate_Element_Impl_Spec;
+
    -------------------
    -- Load_Template --
    -------------------
@@ -137,7 +194,7 @@ package body ODFGen.Generator is
       Ada.Wide_Wide_Text_IO.Open
        (File,
         Ada.Wide_Wide_Text_IO.In_File,
-        "tools/templates/element_api.ads.tmpl");
+        File_Name);
 
       while not Ada.Wide_Wide_Text_IO.End_Of_File (File) loop
          Ada.Wide_Wide_Text_IO.Get_Line (File, Buffer, Last);
