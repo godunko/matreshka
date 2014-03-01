@@ -52,21 +52,57 @@ package Matreshka.DOM_Elements is
 
    pragma Preelaborate;
 
-   type Element_Node is new Matreshka.DOM_Nodes.Node
-     and XML.DOM.Elements.DOM_Element with
+   type Abstract_Element_Node is
+     abstract new Matreshka.DOM_Nodes.Node
+       and XML.DOM.Elements.DOM_Element with
    record
       First_Attribute : Matreshka.DOM_Nodes.Node_Access;
       Last_Attribute  : Matreshka.DOM_Nodes.Node_Access;
-      Namespace_URI   : League.Strings.Universal_String;
-      Prefix          : League.Strings.Universal_String;
-      Local_Name      : League.Strings.Universal_String;
    end record;
 
    overriding procedure Enter_Node
-    (Self    : not null access Element_Node;
+    (Self    : not null access Abstract_Element_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Get_Node_Type
+    (Self : not null access constant Abstract_Element_Node)
+       return XML.DOM.Node_Type;
+
+   overriding function Get_Tag_Name
+    (Self : not null access constant Abstract_Element_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Abstract_Element_Node)
+       return League.Strings.Universal_String renames Get_Tag_Name;
+
+   overriding procedure Leave_Node
+    (Self    : not null access Abstract_Element_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   overriding function Set_Attribute_Node_NS
+    (Self     : not null access Abstract_Element_Node;
+     New_Attr : not null XML.DOM.Attributes.DOM_Attribute_Access)
+       return XML.DOM.Attributes.DOM_Attribute_Access;
+
+   overriding procedure Visit_Node
+    (Self     : not null access Abstract_Element_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+   --  Dispatch call to corresponding subprogram of iterator interface.
+
+   type Element_Node is new Abstract_Element_Node
+     and XML.DOM.Elements.DOM_Element with
+   record
+      Namespace_URI : League.Strings.Universal_String;
+      Prefix        : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
 
    overriding function Get_Local_Name
     (Self : not null access constant Element_Node)
@@ -76,37 +112,11 @@ package Matreshka.DOM_Elements is
     (Self : not null access constant Element_Node)
        return League.Strings.Universal_String;
 
-   overriding function Get_Node_Type
-    (Self : not null access constant Element_Node)
-       return XML.DOM.Node_Type;
-
-   overriding function Get_Tag_Name
-    (Self : not null access constant Element_Node)
-       return League.Strings.Universal_String;
-
-   overriding function Get_Node_Name
-    (Self : not null access constant Element_Node)
-       return League.Strings.Universal_String renames Get_Tag_Name;
-
-   overriding procedure Leave_Node
-    (Self    : not null access Element_Node;
-     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding function Set_Attribute_Node_NS
-    (Self     : not null access Element_Node;
-     New_Attr : not null XML.DOM.Attributes.DOM_Attribute_Access)
-       return XML.DOM.Attributes.DOM_Attribute_Access;
-
-   overriding procedure Visit_Node
-    (Self     : not null access Element_Node;
-     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
-     Control  : in out XML.DOM.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
    package Constructors is
+
+      procedure Initialize
+       (Self     : not null access Abstract_Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access);
 
       procedure Initialize
        (Self           : not null access Element_Node'Class;

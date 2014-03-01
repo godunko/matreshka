@@ -58,6 +58,17 @@ package body Matreshka.DOM_Elements is
       ----------------
 
       procedure Initialize
+       (Self     : not null access Abstract_Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access) is
+      begin
+         Matreshka.DOM_Nodes.Constructors.Initialize (Self, Document);
+      end Initialize;
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
        (Self           : not null access Element_Node'Class;
         Document       : not null Matreshka.DOM_Nodes.Document_Access;
         Namespace_URI  : League.Strings.Universal_String;
@@ -87,7 +98,7 @@ package body Matreshka.DOM_Elements is
    ----------------
 
    overriding procedure Enter_Node
-    (Self    : not null access Element_Node;
+    (Self    : not null access Abstract_Element_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
@@ -122,7 +133,7 @@ package body Matreshka.DOM_Elements is
    -------------------
 
    overriding function Get_Node_Type
-    (Self : not null access constant Element_Node)
+    (Self : not null access constant Abstract_Element_Node)
        return XML.DOM.Node_Type
    is
       pragma Unreferenced (Self);
@@ -136,7 +147,7 @@ package body Matreshka.DOM_Elements is
    ------------------
 
    overriding function Get_Tag_Name
-    (Self : not null access constant Element_Node)
+    (Self : not null access constant Abstract_Element_Node)
        return League.Strings.Universal_String
    is
       pragma Unreferenced (Self);
@@ -151,7 +162,7 @@ package body Matreshka.DOM_Elements is
    ----------------
 
    overriding procedure Leave_Node
-    (Self    : not null access Element_Node;
+    (Self    : not null access Abstract_Element_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control) is
    begin
@@ -164,7 +175,7 @@ package body Matreshka.DOM_Elements is
    ---------------------------
 
    overriding function Set_Attribute_Node_NS
-    (Self     : not null access Element_Node;
+    (Self     : not null access Abstract_Element_Node;
      New_Attr : not null XML.DOM.Attributes.DOM_Attribute_Access)
        return XML.DOM.Attributes.DOM_Attribute_Access
    is
@@ -224,7 +235,7 @@ package body Matreshka.DOM_Elements is
    ----------------
 
    overriding procedure Visit_Node
-    (Self     : not null access Element_Node;
+    (Self     : not null access Abstract_Element_Node;
      Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control) is
