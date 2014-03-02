@@ -84,6 +84,14 @@ package body ODFGen.Generator is
      Footer  : League.String_Vectors.Universal_String_Vector)
        renames Generate_Visitor;
 
+   procedure Generate_Document_API
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Context : League.String_Vectors.Universal_String_Vector;
+     Decls   : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+       renames Generate_Visitor;
+
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
 
@@ -171,6 +179,21 @@ package body ODFGen.Generator is
         := Load_Template ("tools/templates/iterator-item.ads.tmpl");
       Iterator_Footer_Template  : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/iterator-footer.ads.tmpl");
+      Document_API_Header_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_api-header.ads.tmpl");
+      Document_API_Context_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_api-context.ads.tmpl");
+      Document_API_Decls_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_api-decls.ads.tmpl");
+      Document_API_Item_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_api-item.ads.tmpl");
+      Document_API_Footer_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_api-footer.ads.tmpl");
       Element_API_Template      : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/element_api.ads.tmpl");
       Element_Impl_Spec_Template :
@@ -193,6 +216,12 @@ package body ODFGen.Generator is
         Iterator_Decls_Template,
         Iterator_Item_Template,
         Iterator_Footer_Template);
+      Generate_Document_API
+       (Document_API_Header_Template,
+        Document_API_Context_Template,
+        Document_API_Decls_Template,
+        Document_API_Item_Template,
+        Document_API_Footer_Template);
       Generate_String_Constants
        (Strings_Header_Template,
         Strings_Item_Template,
