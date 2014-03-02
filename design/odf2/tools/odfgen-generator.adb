@@ -76,6 +76,14 @@ package body ODFGen.Generator is
      Item    : League.String_Vectors.Universal_String_Vector;
      Footer  : League.String_Vectors.Universal_String_Vector);
 
+   procedure Generate_Iterator
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Context : League.String_Vectors.Universal_String_Vector;
+     Decls   : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+       renames Generate_Visitor;
+
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
 
@@ -153,6 +161,16 @@ package body ODFGen.Generator is
         := Load_Template ("tools/templates/visitor-item.ads.tmpl");
       Visitor_Footer_Template   : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/visitor-footer.ads.tmpl");
+      Iterator_Header_Template  : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/iterator-header.ads.tmpl");
+      Iterator_Context_Template : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/iterator-context.ads.tmpl");
+      Iterator_Decls_Template   : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/iterator-decls.ads.tmpl");
+      Iterator_Item_Template    : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/iterator-item.ads.tmpl");
+      Iterator_Footer_Template  : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/iterator-footer.ads.tmpl");
       Element_API_Template      : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/element_api.ads.tmpl");
       Element_Impl_Spec_Template :
@@ -169,6 +187,12 @@ package body ODFGen.Generator is
         Visitor_Decls_Template,
         Visitor_Item_Template,
         Visitor_Footer_Template);
+      Generate_Iterator
+       (Iterator_Header_Template,
+        Iterator_Context_Template,
+        Iterator_Decls_Template,
+        Iterator_Item_Template,
+        Iterator_Footer_Template);
       Generate_String_Constants
        (Strings_Header_Template,
         Strings_Item_Template,
