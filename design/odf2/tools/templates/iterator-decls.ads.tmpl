@@ -1,0 +1,8 @@
+with ODF.DOM.Visitors;
+
+package ODF.DOM.Iterators is
+
+   pragma Preelaborate;
+
+   type Abstract_ODF_Iterator is limited interface
+     and XML.DOM.Visitors.Abstract_Iterator;
