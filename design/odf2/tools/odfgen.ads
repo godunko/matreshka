@@ -41,13 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Ordered_Maps;
 with Ada.Containers.Ordered_Sets;
 
 with League.Strings;
 
 package ODFGen is
-
-   pragma Preelaborate;
 
    type Element_Information is record
       Group            : League.Strings.Universal_String;
@@ -63,6 +62,14 @@ package ODFGen is
    package Element_Sets is
      new Ada.Containers.Ordered_Sets (Element_Information, Less);
 
+   package Universal_String_Maps is
+     new Ada.Containers.Ordered_Maps
+          (League.Strings.Universal_String,
+           League.Strings.Universal_String,
+           League.Strings."<",
+           League.Strings."=");
+
    Elements : Element_Sets.Set;
+   Strings  : Universal_String_Maps.Map;
 
 end ODFGen;

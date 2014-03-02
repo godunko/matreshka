@@ -41,100 +41,51 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Hashed_Maps;
 with Ada.Wide_Wide_Text_IO;
 
 with League.RegExps;
 with League.String_Vectors;
+with League.Strings.Hash;
 
 package body ODFGen.Generator is
 
    use type League.Strings.Universal_String;
 
    procedure Generate_Element_API
-    (API_Template : League.String_Vectors.Universal_String_Vector;
-     Element      : Element_Information);
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Element  : Element_Information);
 
    procedure Generate_Element_Impl_Spec
     (Template : League.String_Vectors.Universal_String_Vector;
      Element  : Element_Information);
 
+   procedure Generate_String_Constants
+    (Header   : League.String_Vectors.Universal_String_Vector;
+     Template : League.String_Vectors.Universal_String_Vector;
+     Footer   : League.String_Vectors.Universal_String_Vector);
+
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
 
-   --------------
-   -- Generate --
-   --------------
+   package Universal_String_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           League.Strings.Universal_String,
+           League.Strings.Hash,
+           League.Strings."=");
 
-   procedure Generate is
-      Element_API_Template       : League.String_Vectors.Universal_String_Vector
-        := Load_Template ("tools/templates/element_api.ads.tmpl");
-      Element_Impl_Spec_Template : League.String_Vectors.Universal_String_Vector
-        := Load_Template ("tools/templates/element_impl.ads.tmpl");
+   procedure Apply
+    (Template   : League.String_Vectors.Universal_String_Vector;
+     Parameters : Universal_String_Maps.Map);
 
-   begin
-      for Element of Elements loop
-         Generate_Element_API (Element_API_Template, Element);
-         Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
-      end loop;
-   end Generate;
+   -----------
+   -- Apply --
+   -----------
 
-   --------------------------
-   -- Generate_Element_API --
-   --------------------------
-
-   procedure Generate_Element_API
-    (API_Template : League.String_Vectors.Universal_String_Vector;
-     Element      : Element_Information)
-   is
-      Parameter_Rexexp : constant League.Regexps.Regexp_Pattern
-        := League.Regexps.Compile
-            (League.Strings.To_Universal_String ("\@([A-Za-z0-9_]+)\@"));
-      Match            : League.Regexps.Regexp_Match;
-      Line             : League.Strings.Universal_String;
-
-   begin
-      for J in 1 .. API_Template.Length loop
-         Line := API_Template (J);
-
-         loop
-            Match := Parameter_Rexexp.Find_Match (Line);
-
-            exit when not Match.Is_Matched;
-
-            if Match.Capture (1)
-                 = League.Strings.To_Universal_String ("GROUP")
-            then
-               Line :=
-                 Line.Slice (1, Match.First_Index - 1)
-                   & Element.Group_Ada_Name
-                   & Line.Slice (Match.Last_Index + 1, Line.Length);
-
-            elsif Match.Capture (1)
-                 = League.Strings.To_Universal_String ("ELEMENT")
-            then
-               Line :=
-                 Line.Slice (1, Match.First_Index - 1)
-                   & Element.Element_Ada_Name
-                   & Line.Slice (Match.Last_Index + 1, Line.Length);
-
-            else
-               Ada.Wide_Wide_Text_IO.Put_Line (Line.To_Wide_Wide_String);
-
-               raise Program_Error;
-            end if;
-         end loop;
-
-         Ada.Wide_Wide_Text_IO.Put_Line (Line.To_Wide_Wide_String);
-      end loop;
-   end Generate_Element_API;
-
-   --------------------------------
-   -- Generate_Element_Impl_Spec --
-   --------------------------------
-
-   procedure Generate_Element_Impl_Spec
-    (Template : League.String_Vectors.Universal_String_Vector;
-     Element  : Element_Information)
+   procedure Apply
+    (Template   : League.String_Vectors.Universal_String_Vector;
+     Parameters : Universal_String_Maps.Map)
    is
       Parameter_Rexexp : constant League.Regexps.Regexp_Pattern
         := League.Regexps.Compile
@@ -151,24 +102,16 @@ package body ODFGen.Generator is
 
             exit when not Match.Is_Matched;
 
-            if Match.Capture (1)
-                 = League.Strings.To_Universal_String ("GROUP")
-            then
+            if Parameters.Contains (Match.Capture (1)) then
                Line :=
                  Line.Slice (1, Match.First_Index - 1)
-                   & Element.Group_Ada_Name
-                   & Line.Slice (Match.Last_Index + 1, Line.Length);
-
-            elsif Match.Capture (1)
-                 = League.Strings.To_Universal_String ("ELEMENT")
-            then
-               Line :=
-                 Line.Slice (1, Match.First_Index - 1)
-                   & Element.Element_Ada_Name
+                   & Parameters (Match.Capture (1))
                    & Line.Slice (Match.Last_Index + 1, Line.Length);
 
             else
-               Ada.Wide_Wide_Text_IO.Put_Line (Line.To_Wide_Wide_String);
+               Ada.Wide_Wide_Text_IO.Put_Line
+                (Ada.Wide_Wide_Text_IO.Standard_Error,
+                 Line.To_Wide_Wide_String);
 
                raise Program_Error;
             end if;
@@ -176,7 +119,106 @@ package body ODFGen.Generator is
 
          Ada.Wide_Wide_Text_IO.Put_Line (Line.To_Wide_Wide_String);
       end loop;
+   end Apply;
+
+   --------------
+   -- Generate --
+   --------------
+
+   procedure Generate is
+      Strings_Header_Template    : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/strings-header.ads.tmpl");
+      Strings_Item_Template      : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/strings-item.ads.tmpl");
+      Strings_Footer_Template    : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/strings-footer.ads.tmpl");
+      Element_API_Template       : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/element_api.ads.tmpl");
+      Element_Impl_Spec_Template : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/element_impl.ads.tmpl");
+
+   begin
+      Generate_String_Constants
+       (Strings_Header_Template,
+        Strings_Item_Template,
+        Strings_Footer_Template);
+
+      for Element of Elements loop
+         Generate_Element_API (Element_API_Template, Element);
+         Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
+      end loop;
+   end Generate;
+
+   --------------------------
+   -- Generate_Element_API --
+   --------------------------
+
+   procedure Generate_Element_API
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Element  : Element_Information)
+   is
+      Parameters : Universal_String_Maps.Map;
+
+   begin
+      Parameters.Insert
+       (League.Strings.To_Universal_String ("GROUP"),
+        Element.Group_Ada_Name);
+      Parameters.Insert
+       (League.Strings.To_Universal_String ("ELEMENT"),
+        Element.Element_Ada_Name);
+      Apply (Template, Parameters);
+   end Generate_Element_API;
+
+   --------------------------------
+   -- Generate_Element_Impl_Spec --
+   --------------------------------
+
+   procedure Generate_Element_Impl_Spec
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Element  : Element_Information)
+   is
+      Parameters : Universal_String_Maps.Map;
+
+   begin
+      Parameters.Insert
+       (League.Strings.To_Universal_String ("GROUP"),
+        Element.Group_Ada_Name);
+      Parameters.Insert
+       (League.Strings.To_Universal_String ("ELEMENT"),
+        Element.Element_Ada_Name);
+      Apply (Template, Parameters);
    end Generate_Element_Impl_Spec;
+
+   -------------------------------
+   -- Generate_String_Constants --
+   -------------------------------
+
+   procedure Generate_String_Constants
+    (Header   : League.String_Vectors.Universal_String_Vector;
+     Template : League.String_Vectors.Universal_String_Vector;
+     Footer   : League.String_Vectors.Universal_String_Vector)
+   is
+      Parameters : Universal_String_Maps.Map;
+      Current    : ODFGen.Universal_String_Maps.Cursor
+        := Strings.First;
+
+   begin
+      Apply (Header, Universal_String_Maps.Empty_Map);
+
+      while ODFGen.Universal_String_Maps.Has_Element (Current) loop
+         Parameters.Clear;
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("NAME"),
+           ODFGen.Universal_String_Maps.Key (Current));
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("IMAGE"),
+           ODFGen.Universal_String_Maps.Element (Current));
+         Apply (Template, Parameters);
+         ODFGen.Universal_String_Maps.Next (Current);
+      end loop;
+
+      Apply (Footer, Universal_String_Maps.Empty_Map);
+   end Generate_String_Constants;
 
    -------------------
    -- Load_Template --

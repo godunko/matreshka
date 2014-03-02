@@ -71,8 +71,12 @@ package body ODFGen.Parsers is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
+      use type League.Strings.Universal_String;
+
       Delimiter : Natural;
       Value     : League.Strings.Universal_String;
+      Module    : League.Strings.Universal_String;
+      Name      : League.Strings.Universal_String;
 
    begin
       if Qualified_Name.To_Wide_Wide_String = "ODF" then
@@ -82,11 +86,11 @@ package body ODFGen.Parsers is
          Value :=
            Attributes.Value (League.Strings.To_Universal_String ("name"));
          Delimiter := Value.Index (':');
+         Module := Value.Head (Delimiter - 1);
+         Name := Value.Tail_From (Delimiter + 1);
          Elements.Insert
-          ((Value.Head (Delimiter - 1),
-            Value.Tail_From (Delimiter + 1),
-            To_Ada (Value.Head (Delimiter - 1)),
-            To_Ada (Value.Tail_From (Delimiter + 1))));
+          ((Module, Name, To_Ada (Module), To_Ada (Name)));
+         Strings.Include (To_Ada (Name) & "_Element", Name);
 
       elsif Qualified_Name.To_Wide_Wide_String = "attribute" then
          null;
