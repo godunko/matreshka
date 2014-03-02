@@ -42,8 +42,31 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.ODF_String_Constants;
+with ODF.DOM.Visitors;
 
 package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
+
+   ----------------
+   -- Enter_Node --
+   ----------------
+
+   overriding procedure Enter_Node
+    (Self    : not null access @GROUP@_@ELEMENT@_Element_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
+         ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
+          (Visitor).Enter_@GROUP@_@ELEMENT@
+            (ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+              (Self),
+             Control);
+
+      else
+         Matreshka.DOM_Elements.Abstract_Element_Node
+          (Self.all).Enter_Node (Visitor, Control);
+      end if;
+   end Enter_Node;
 
    --------------------
    -- Get_Local_Name --
@@ -58,5 +81,27 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
    begin
       return Matreshka.ODF_String_Constants.@ELEMENT@_Element;
    end Get_Local_Name;
+
+   ----------------
+   -- Leave_Node --
+   ----------------
+
+   overriding procedure Leave_Node
+    (Self    : not null access @GROUP@_@ELEMENT@_Element_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
+         ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
+          (Visitor).Leave_@GROUP@_@ELEMENT@
+            (ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+              (Self),
+             Control);
+
+      else
+         Matreshka.DOM_Elements.Abstract_Element_Node
+          (Self.all).Leave_Node (Visitor, Control);
+      end if;
+   end Leave_Node;
 
 end Matreshka.ODF_@GROUP@.@ELEMENT@_Elements;

@@ -50,4 +50,7 @@ package ODF.DOM.@GROUP@_@ELEMENT@_Elements is
    type ODF_@GROUP@_@ELEMENT@_Element is limited interface
      and XML.DOM.Elements.DOM_Element;
 
+   type ODF_@GROUP@_@ELEMENT@_Element_Access is
+     access all ODF_@GROUP@_@ELEMENT@_Element'Class;
+
 end ODF.DOM.@GROUP@_@ELEMENT@_Elements;

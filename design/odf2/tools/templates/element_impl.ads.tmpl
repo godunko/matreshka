@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with XML.DOM.Visitors;
+
 with ODF.DOM.@GROUP@_@ELEMENT@_Elements;
 
 package Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
@@ -53,5 +55,15 @@ package Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
    overriding function Get_Local_Name
     (Self : not null access constant @GROUP@_@ELEMENT@_Element_Node)
        return League.Strings.Universal_String;
+
+   overriding procedure Enter_Node
+    (Self    : not null access @GROUP@_@ELEMENT@_Element_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   overriding procedure Leave_Node
+    (Self    : not null access @GROUP@_@ELEMENT@_Element_Node;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control : in out XML.DOM.Visitors.Traverse_Control);
 
 end Matreshka.ODF_@GROUP@.@ELEMENT@_Elements;
