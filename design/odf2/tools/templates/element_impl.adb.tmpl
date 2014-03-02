@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.ODF_String_Constants;
+with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
 
 package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
@@ -103,5 +104,29 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
           (Self.all).Leave_Node (Visitor, Control);
       end if;
    end Leave_Node;
+
+   ----------------
+   -- Visit_Node --
+   ----------------
+
+   overriding procedure Visit_Node
+    (Self     : not null access @GROUP@_@ELEMENT@_Element_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      if Iterator in ODF.DOM.Iterators.Abstract_ODF_Iterator'Class then
+         ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
+          (Iterator).Visit_@GROUP@_@ELEMENT@
+            (Visitor,
+             ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+              (Self),
+             Control);
+
+      else
+         Matreshka.DOM_Elements.Abstract_Element_Node
+          (Self.all).Visit_Node (Iterator, Visitor, Control);
+      end if;
+   end Visit_Node;
 
 end Matreshka.ODF_@GROUP@.@ELEMENT@_Elements;

@@ -66,4 +66,10 @@ package Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control : in out XML.DOM.Visitors.Traverse_Control);
 
+   overriding procedure Visit_Node
+    (Self     : not null access @GROUP@_@ELEMENT@_Element_Node;
+     Iterator : in out XML.DOM.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Control  : in out XML.DOM.Visitors.Traverse_Control);
+
 end Matreshka.ODF_@GROUP@.@ELEMENT@_Elements;
