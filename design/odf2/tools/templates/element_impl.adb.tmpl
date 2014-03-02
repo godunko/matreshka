@@ -41,17 +41,22 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.DOM.@GROUP@_@ELEMENT@_Elements;
+with Matreshka.ODF_String_Constants;
 
-package Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
+package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
 
-   type @GROUP@_@ELEMENT@_Element_Node is
-     new Matreshka.ODF_@GROUP@.Abstract_@GROUP@_Element_Node
-       and ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element
-         with null record;
+   --------------------
+   -- Get_Local_Name --
+   --------------------
 
    overriding function Get_Local_Name
     (Self : not null access constant @GROUP@_@ELEMENT@_Element_Node)
-       return League.Strings.Universal_String;
+       return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return Matreshka.ODF_String_Constants.@ELEMENT@_Element;
+   end Get_Local_Name;
 
 end Matreshka.ODF_@GROUP@.@ELEMENT@_Elements;
