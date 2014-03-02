@@ -60,10 +60,21 @@ package body ODFGen.Generator is
     (Template : League.String_Vectors.Universal_String_Vector;
      Element  : Element_Information);
 
+   procedure Generate_Element_Impl_Body
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Element  : Element_Information);
+
    procedure Generate_String_Constants
     (Header   : League.String_Vectors.Universal_String_Vector;
      Template : League.String_Vectors.Universal_String_Vector;
      Footer   : League.String_Vectors.Universal_String_Vector);
+
+   procedure Generate_Visitor
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Context : League.String_Vectors.Universal_String_Vector;
+     Decls   : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector);
 
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
@@ -126,18 +137,38 @@ package body ODFGen.Generator is
    --------------
 
    procedure Generate is
-      Strings_Header_Template    : League.String_Vectors.Universal_String_Vector
+      Strings_Header_Template   : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/strings-header.ads.tmpl");
-      Strings_Item_Template      : League.String_Vectors.Universal_String_Vector
+      Strings_Item_Template     : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/strings-item.ads.tmpl");
-      Strings_Footer_Template    : League.String_Vectors.Universal_String_Vector
+      Strings_Footer_Template   : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/strings-footer.ads.tmpl");
-      Element_API_Template       : League.String_Vectors.Universal_String_Vector
+      Visitor_Header_Template   : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/visitor-header.ads.tmpl");
+      Visitor_Context_Template  : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/visitor-context.ads.tmpl");
+      Visitor_Decls_Template    : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/visitor-decls.ads.tmpl");
+      Visitor_Item_Template     : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/visitor-item.ads.tmpl");
+      Visitor_Footer_Template   : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/visitor-footer.ads.tmpl");
+      Element_API_Template      : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/element_api.ads.tmpl");
-      Element_Impl_Spec_Template : League.String_Vectors.Universal_String_Vector
-        := Load_Template ("tools/templates/element_impl.ads.tmpl");
+      Element_Impl_Spec_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/element_impl.ads.tmpl");
+      Element_Impl_Body_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/element_impl.adb.tmpl");
 
    begin
+      Generate_Visitor
+       (Visitor_Header_Template,
+        Visitor_Context_Template,
+        Visitor_Decls_Template,
+        Visitor_Item_Template,
+        Visitor_Footer_Template);
       Generate_String_Constants
        (Strings_Header_Template,
         Strings_Item_Template,
@@ -146,6 +177,7 @@ package body ODFGen.Generator is
       for Element of Elements loop
          Generate_Element_API (Element_API_Template, Element);
          Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
+         Generate_Element_Impl_Body (Element_Impl_Body_Template, Element);
       end loop;
    end Generate;
 
@@ -168,6 +200,26 @@ package body ODFGen.Generator is
         Element.Element_Ada_Name);
       Apply (Template, Parameters);
    end Generate_Element_API;
+
+   --------------------------------
+   -- Generate_Element_Impl_Body --
+   --------------------------------
+
+   procedure Generate_Element_Impl_Body
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Element  : Element_Information)
+   is
+      Parameters : Universal_String_Maps.Map;
+
+   begin
+      Parameters.Insert
+       (League.Strings.To_Universal_String ("GROUP"),
+        Element.Group_Ada_Name);
+      Parameters.Insert
+       (League.Strings.To_Universal_String ("ELEMENT"),
+        Element.Element_Ada_Name);
+      Apply (Template, Parameters);
+   end Generate_Element_Impl_Body;
 
    --------------------------------
    -- Generate_Element_Impl_Spec --
@@ -219,6 +271,49 @@ package body ODFGen.Generator is
 
       Apply (Footer, Universal_String_Maps.Empty_Map);
    end Generate_String_Constants;
+
+   ----------------------
+   -- Generate_Visitor --
+   ----------------------
+
+   procedure Generate_Visitor
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Context : League.String_Vectors.Universal_String_Vector;
+     Decls   : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+   is
+      Parameters : Universal_String_Maps.Map;
+
+   begin
+      Apply (Header, Universal_String_Maps.Empty_Map);
+
+      for Element of Elements loop
+         Parameters.Clear;
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("GROUP"),
+           Element.Group_Ada_Name);
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("ELEMENT"),
+           Element.Element_Ada_Name);
+         Apply (Context, Parameters);
+      end loop;
+
+      Apply (Decls, Universal_String_Maps.Empty_Map);
+
+      for Element of Elements loop
+         Parameters.Clear;
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("GROUP"),
+           Element.Group_Ada_Name);
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("ELEMENT"),
+           Element.Element_Ada_Name);
+         Apply (Item, Parameters);
+      end loop;
+
+      Apply (Footer, Universal_String_Maps.Empty_Map);
+   end Generate_Visitor;
 
    -------------------
    -- Load_Template --
