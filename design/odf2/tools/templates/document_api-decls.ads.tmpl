@@ -1,0 +1,9 @@
+
+package ODF.DOM.Documents is
+
+   pragma Preelaborate;
+
+   type ODF_Document is limited interface
+     and XML.DOM.Documents.DOM_Document;
+
+   type ODF_Document_Access is access all ODF_Document'Class;
