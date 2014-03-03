@@ -1,0 +1,7 @@
+
+package Matreshka.ODF_Documents is
+
+   type Document_Node is
+     new Matreshka.DOM_Documents.Document_Node
+       and ODF.DOM.Documents.ODF_Document with null record;
+
