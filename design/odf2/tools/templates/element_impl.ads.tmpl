@@ -72,4 +72,12 @@ package Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
 
+   package Constructors is
+
+      procedure Initialize
+       (Self     : not null access @GROUP@_@ELEMENT@_Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access);
+
+   end Constructors;
+
 end Matreshka.ODF_@GROUP@.@ELEMENT@_Elements;

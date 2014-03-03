@@ -47,6 +47,25 @@ with ODF.DOM.Visitors;
 
 package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self     : not null access @GROUP@_@ELEMENT@_Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access) is
+      begin
+         Matreshka.ODF_@GROUP@.Constructors.Initialize (Self, Document);
+      end Initialize;
+
+   end Constructors;
+
    ----------------
    -- Enter_Node --
    ----------------
