@@ -1,0 +1,22 @@
+
+   --------------------------------------
+   -- Create_@GROUP@_@ELEMENT@_Element --
+   --------------------------------------
+
+   overriding function Create_@GROUP@_@ELEMENT@_Element
+    (Self : not null access Document_Node)
+       return not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+   is
+      Node : constant not null Matreshka.DOM_Nodes.Node_Access
+        := new Matreshka.ODF_@GROUP@.@ELEMENT@_Elements.@GROUP@_@ELEMENT@_Element_Node;
+
+   begin
+      Matreshka.ODF_@GROUP@.@ELEMENT@_Elements.Constructors.Initialize
+       (Matreshka.ODF_@GROUP@.@ELEMENT@_Elements.@GROUP@_@ELEMENT@_Element_Node'Class
+         (Node.all)'Access,
+        Self);
+
+      return
+        ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+         (Node);
+   end Create_@GROUP@_@ELEMENT@_Element;
