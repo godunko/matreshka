@@ -62,6 +62,15 @@ package Matreshka.DOM_Documents is
       Diagnosis      : XML.DOM.Error_Code := XML.DOM.No_Error;
    end record;
 
+   not overriding function Create_Element
+    (Self          : not null access Document_Node;
+     Namespace_URI : League.Strings.Universal_String;
+     Prefix        : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return not null XML.DOM.Elements.DOM_Element_Access;
+   --  Creates element node. This subprogram is expected to be modified by
+   --  derived documents.
+
    overriding function Create_Attribute_NS
     (Self           : not null access Document_Node;
      Namespace_URI  : League.Strings.Universal_String;

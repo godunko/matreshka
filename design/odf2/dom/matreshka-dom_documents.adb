@@ -93,6 +93,31 @@ package body Matreshka.DOM_Documents is
       return XML.DOM.Attributes.DOM_Attribute_Access (Node);
    end Create_Attribute_NS;
 
+   --------------------
+   -- Create_Element --
+   --------------------
+
+   not overriding function Create_Element
+    (Self          : not null access Document_Node;
+     Namespace_URI : League.Strings.Universal_String;
+     Prefix        : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return not null XML.DOM.Elements.DOM_Element_Access
+   is
+      Node : constant not null Matreshka.DOM_Nodes.Node_Access
+        := new Matreshka.DOM_Elements.Element_Node;
+
+   begin
+      Matreshka.DOM_Elements.Constructors.Initialize
+       (Matreshka.DOM_Elements.Element_Node'Class (Node.all)'Access,
+        Self,
+        Namespace_URI,
+        Prefix,
+        Local_Name);
+
+      return XML.DOM.Elements.DOM_Element_Access (Node);
+   end Create_Element;
+
    -----------------------
    -- Create_Element_NS --
    -----------------------
@@ -103,21 +128,15 @@ package body Matreshka.DOM_Documents is
      Qualified_Name : League.Strings.Universal_String)
        return not null XML.DOM.Elements.DOM_Element_Access
    is
-      Node       : constant not null Matreshka.DOM_Nodes.Node_Access
-        := new Matreshka.DOM_Elements.Element_Node;
       Prefix     : League.Strings.Universal_String;
       Local_Name : League.Strings.Universal_String;
 
    begin
       Split_Qualified_Name (Qualified_Name, Prefix, Local_Name);
-      Matreshka.DOM_Elements.Constructors.Initialize
-       (Matreshka.DOM_Elements.Element_Node'Class (Node.all)'Access,
-        Self,
-        Namespace_URI,
-        Prefix,
-        Local_Name);
 
-      return XML.DOM.Elements.DOM_Element_Access (Node);
+      return
+        Document_Node'Class (Self.all).Create_Element
+         (Namespace_URI, Prefix, Local_Name);
    end Create_Element_NS;
 
    ----------------------
