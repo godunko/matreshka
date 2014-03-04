@@ -64,25 +64,25 @@ package body Matreshka.DOM_Elements is
          Matreshka.DOM_Nodes.Constructors.Initialize (Self, Document);
       end Initialize;
 
-      ----------------
-      -- Initialize --
-      ----------------
-
-      procedure Initialize
-       (Self          : not null access Element_Node'Class;
-        Document      : not null Matreshka.DOM_Nodes.Document_Access;
-        Namespace_URI : League.Strings.Universal_String;
-        Prefix        : League.Strings.Universal_String;
-        Local_Name    : League.Strings.Universal_String) is
-      begin
-         Matreshka.DOM_Nodes.Constructors.Initialize (Self, Document);
-
-         Self.Namespace_URI := Namespace_URI;
-         Self.Prefix        := Prefix;
-         Self.Local_Name    := Local_Name;
-      end Initialize;
-
    end Constructors;
+
+   ------------
+   -- Create --
+   ------------
+
+   overriding function Create
+    (Parameters : not null access Element_L2_Parameters)
+       return Element_Node is
+   begin
+      return Self : Element_Node do
+         Matreshka.DOM_Nodes.Constructors.Initialize
+          (Self'Access, Parameters.Document);
+
+         Self.Namespace_URI := Parameters.Namespace_URI;
+         Self.Prefix        := Parameters.Prefix;
+         Self.Local_Name    := Parameters.Local_Name;
+      end return;
+   end Create;
 
    ----------------
    -- Enter_Node --

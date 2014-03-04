@@ -60,6 +60,18 @@ package Matreshka.DOM_Elements is
       Last_Attribute  : Matreshka.DOM_Nodes.Node_Access;
    end record;
 
+   type Element_L2_Parameters is record
+      Document      : not null Matreshka.DOM_Nodes.Document_Access;
+      Namespace_URI : League.Strings.Universal_String;
+      Prefix        : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   not overriding function Create
+    (Parameters : not null access Element_L2_Parameters)
+       return Abstract_Element_Node is abstract;
+   --  Dispatching constructor.
+
    overriding procedure Enter_Node
     (Self    : not null access Abstract_Element_Node;
      Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
@@ -104,6 +116,10 @@ package Matreshka.DOM_Elements is
       Local_Name    : League.Strings.Universal_String;
    end record;
 
+   overriding function Create
+    (Parameters : not null access Element_L2_Parameters)
+       return Element_Node;
+
    overriding function Get_Local_Name
     (Self : not null access constant Element_Node)
        return League.Strings.Universal_String;
@@ -117,13 +133,6 @@ package Matreshka.DOM_Elements is
       procedure Initialize
        (Self     : not null access Abstract_Element_Node'Class;
         Document : not null Matreshka.DOM_Nodes.Document_Access);
-
-      procedure Initialize
-       (Self          : not null access Element_Node'Class;
-        Document      : not null Matreshka.DOM_Nodes.Document_Access;
-        Namespace_URI : League.Strings.Universal_String;
-        Prefix        : League.Strings.Universal_String;
-        Local_Name    : League.Strings.Universal_String);
 
    end Constructors;
 

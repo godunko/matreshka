@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Tags.Generic_Dispatching_Constructor;
+
 with Matreshka.DOM_Attributes;
 with Matreshka.DOM_Elements;
 with Matreshka.DOM_Texts;
@@ -104,17 +106,24 @@ package body Matreshka.DOM_Documents is
      Local_Name    : League.Strings.Universal_String)
        return not null XML.DOM.Elements.DOM_Element_Access
    is
-      Node : constant not null Matreshka.DOM_Nodes.Node_Access
-        := new Matreshka.DOM_Elements.Element_Node;
+      function Constructor is
+        new Ada.Tags.Generic_Dispatching_Constructor
+             (Matreshka.DOM_Elements.Abstract_Element_Node,
+              Matreshka.DOM_Elements.Element_L2_Parameters,
+              Matreshka.DOM_Elements.Create);
 
+      Parameters : aliased Matreshka.DOM_Elements.Element_L2_Parameters
+        := (Self,
+            Namespace_URI,
+            Prefix,
+            Local_Name);
+
+      Node       : constant not null Matreshka.DOM_Nodes.Node_Access
+        := new Matreshka.DOM_Elements.Abstract_Element_Node'Class'
+                (Constructor
+                  (Matreshka.DOM_Elements.Element_Node'Tag,
+                   Parameters'Access));
    begin
-      Matreshka.DOM_Elements.Constructors.Initialize
-       (Matreshka.DOM_Elements.Element_Node'Class (Node.all)'Access,
-        Self,
-        Namespace_URI,
-        Prefix,
-        Local_Name);
-
       return XML.DOM.Elements.DOM_Element_Access (Node);
    end Create_Element;
 
