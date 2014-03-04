@@ -119,10 +119,11 @@ package Matreshka.DOM_Elements is
         Document : not null Matreshka.DOM_Nodes.Document_Access);
 
       procedure Initialize
-       (Self           : not null access Element_Node'Class;
-        Document       : not null Matreshka.DOM_Nodes.Document_Access;
-        Namespace_URI  : League.Strings.Universal_String;
-        Qualified_Name : League.Strings.Universal_String);
+       (Self          : not null access Element_Node'Class;
+        Document      : not null Matreshka.DOM_Nodes.Document_Access;
+        Namespace_URI : League.Strings.Universal_String;
+        Prefix        : League.Strings.Universal_String;
+        Local_Name    : League.Strings.Universal_String);
 
    end Constructors;
 

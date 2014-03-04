@@ -47,6 +47,12 @@ with Matreshka.DOM_Texts;
 
 package body Matreshka.DOM_Documents is
 
+   procedure Split_Qualified_Name
+    (Qualified_Name : League.Strings.Universal_String;
+     Prefix         : out League.Strings.Universal_String;
+     Local_Name     : out League.Strings.Universal_String);
+   --  Splits qualified name into prefix and local name parts.
+
    ------------------
    -- Constructors --
    ------------------
@@ -97,15 +103,19 @@ package body Matreshka.DOM_Documents is
      Qualified_Name : League.Strings.Universal_String)
        return not null XML.DOM.Elements.DOM_Element_Access
    is
-      Node : constant not null Matreshka.DOM_Nodes.Node_Access
+      Node       : constant not null Matreshka.DOM_Nodes.Node_Access
         := new Matreshka.DOM_Elements.Element_Node;
+      Prefix     : League.Strings.Universal_String;
+      Local_Name : League.Strings.Universal_String;
 
    begin
+      Split_Qualified_Name (Qualified_Name, Prefix, Local_Name);
       Matreshka.DOM_Elements.Constructors.Initialize
        (Matreshka.DOM_Elements.Element_Node'Class (Node.all)'Access,
         Self,
         Namespace_URI,
-        Qualified_Name);
+        Prefix,
+        Local_Name);
 
       return XML.DOM.Elements.DOM_Element_Access (Node);
    end Create_Element_NS;
@@ -218,6 +228,28 @@ package body Matreshka.DOM_Documents is
       Visitor.Leave_Document
        (XML.DOM.Documents.DOM_Document_Access (Self), Control);
    end Leave_Node;
+
+   --------------------------
+   -- Split_Qualified_Name --
+   --------------------------
+
+   procedure Split_Qualified_Name
+    (Qualified_Name : League.Strings.Universal_String;
+     Prefix         : out League.Strings.Universal_String;
+     Local_Name     : out League.Strings.Universal_String)
+   is
+      Delimiter : constant Natural := Qualified_Name.Index (':');
+
+   begin
+      if Delimiter = 0 then
+         Prefix := League.Strings.Empty_Universal_String;
+         Local_Name := Qualified_Name;
+
+      else
+         Prefix := Qualified_Name.Head (Delimiter - 1);
+         Local_Name := Qualified_Name.Tail_From (Delimiter + 1);
+      end if;
+   end Split_Qualified_Name;
 
    ----------------
    -- Visit_Node --
