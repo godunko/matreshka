@@ -76,7 +76,7 @@ package body Matreshka.DOM_Elements is
    begin
       return Self : Element_Node do
          Matreshka.DOM_Nodes.Constructors.Initialize
-          (Self'Access, Parameters.Document);
+          (Self'Unchecked_Access, Parameters.Document);
 
          Self.Namespace_URI := Parameters.Namespace_URI;
          Self.Prefix        := Parameters.Prefix;
