@@ -45,6 +45,8 @@ with League.Characters.Latin;
 
 package body ODFGen.Parsers is
 
+   use type League.Strings.Universal_String;
+
    function To_Ada
     (Name : League.Strings.Universal_String)
        return League.Strings.Universal_String;
@@ -71,8 +73,6 @@ package body ODFGen.Parsers is
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean)
    is
-      use type League.Strings.Universal_String;
-
       Delimiter : Natural;
       Value     : League.Strings.Universal_String;
       Module    : League.Strings.Universal_String;
@@ -99,6 +99,23 @@ package body ODFGen.Parsers is
          raise Program_Error;
       end if;
    end Start_Element;
+
+   --------------------------
+   -- Start_Prefix_Mapping --
+   --------------------------
+
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out Parser;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean) is
+   begin
+      Namespaces.Insert
+       ((Prefix          => Prefix,
+         Namespace_URI   => Namespace_URI,
+         Prefix_Ada_Name => To_Ada (Prefix) & "_Prefix",
+         URI_Ada_Name    => To_Ada (Prefix) & "_URI"));
+   end Start_Prefix_Mapping;
 
    ------------
    -- To_Ada --

@@ -368,6 +368,28 @@ package body ODFGen.Generator is
    begin
       Apply (Header, Universal_String_Maps.Empty_Map);
 
+      for Namespace of Namespaces loop
+         Parameters.Clear;
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("NAME"),
+           Namespace.URI_Ada_Name);
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("IMAGE"),
+           Namespace.Namespace_URI);
+         Apply (Template, Parameters);
+      end loop;
+
+      for Namespace of Namespaces loop
+         Parameters.Clear;
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("NAME"),
+           Namespace.Prefix_Ada_Name);
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("IMAGE"),
+           Namespace.Prefix);
+         Apply (Template, Parameters);
+      end loop;
+
       while ODFGen.Universal_String_Maps.Has_Element (Current) loop
          Parameters.Clear;
          Parameters.Insert

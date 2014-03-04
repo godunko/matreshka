@@ -66,4 +66,10 @@ private
      Attributes     : XML.SAX.Attributes.SAX_Attributes;
      Success        : in out Boolean);
 
+   overriding procedure Start_Prefix_Mapping
+    (Self          : in out Parser;
+     Prefix        : League.Strings.Universal_String;
+     Namespace_URI : League.Strings.Universal_String;
+     Success       : in out Boolean);
+
 end ODFGen.Parsers;

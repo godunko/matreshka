@@ -44,18 +44,28 @@
 
 package body ODFGen is
 
+   use type League.Strings.Universal_String;
+
    ----------
    -- Less --
    ----------
 
    function Less
     (Left  : Element_Information;
-     Right : Element_Information) return Boolean
-   is
-      use type League.Strings.Universal_String;
-
+     Right : Element_Information) return Boolean is
    begin
       return Left.Group < Right.Group or Left.Element < Right.Element;
+   end Less;
+
+   ----------
+   -- Less --
+   ----------
+
+   function Less
+    (Left  : Namespace_Information;
+     Right : Namespace_Information) return Boolean is
+   begin
+      return Left.Prefix < Right.Prefix;
    end Less;
 
 end ODFGen;

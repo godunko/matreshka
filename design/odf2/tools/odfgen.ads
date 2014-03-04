@@ -62,6 +62,20 @@ package ODFGen is
    package Element_Sets is
      new Ada.Containers.Ordered_Sets (Element_Information, Less);
 
+   type Namespace_Information is record
+      Prefix            : League.Strings.Universal_String;
+      Namespace_URI     : League.Strings.Universal_String;
+      Prefix_Ada_Name   : League.Strings.Universal_String;
+      URI_Ada_Name      : League.Strings.Universal_String;
+   end record;
+
+   function Less
+    (Left  : Namespace_Information;
+     Right : Namespace_Information) return Boolean;
+
+   package Namespace_Sets is
+     new Ada.Containers.Ordered_Sets (Namespace_Information, Less);
+
    package Universal_String_Maps is
      new Ada.Containers.Ordered_Maps
           (League.Strings.Universal_String,
@@ -69,7 +83,8 @@ package ODFGen is
            League.Strings."<",
            League.Strings."=");
 
-   Elements : Element_Sets.Set;
-   Strings  : Universal_String_Maps.Map;
+   Namespaces : Namespace_Sets.Set;
+   Elements   : Element_Sets.Set;
+   Strings    : Universal_String_Maps.Map;
 
 end ODFGen;
