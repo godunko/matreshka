@@ -6,7 +6,7 @@ project DOM is
    for Source_Dirs use ("dom");
 
    package Compiler is
-      for Default_Switches ("Ada") use ("-g", "-gnat12");
+      for Default_Switches ("Ada") use ("-g", "-gnat12", "-gnatymo");
    end Compiler;
 
 end DOM;
