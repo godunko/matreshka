@@ -41,7 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Hashed_Maps;
 with Ada.Tags.Generic_Dispatching_Constructor;
+
+with League.Strings.Hash;
 
 with Matreshka.DOM_Attributes;
 with Matreshka.DOM_Elements;
@@ -54,6 +57,20 @@ package body Matreshka.DOM_Documents is
      Prefix         : out League.Strings.Universal_String;
      Local_Name     : out League.Strings.Universal_String);
    --  Splits qualified name into prefix and local name parts.
+
+   type Qualified_Name is record
+      Namespace_URI : League.Strings.Universal_String;
+      Local_Name    : League.Strings.Universal_String;
+   end record;
+
+   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type;
+   --  Hash function to be used with standard containers.
+
+   package Element_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Qualified_Name, Ada.Tags.Tag, Hash, "=", Ada.Tags."=");
+
+   Element_Registry : Element_Maps.Map;
 
    ------------------
    -- Constructors --
@@ -99,13 +116,14 @@ package body Matreshka.DOM_Documents is
    -- Create_Element --
    --------------------
 
-   not overriding function Create_Element
-    (Self          : not null access Document_Node;
+   function Create_Element
+    (Self          : not null access Document_Node'Class;
      Namespace_URI : League.Strings.Universal_String;
      Prefix        : League.Strings.Universal_String;
      Local_Name    : League.Strings.Universal_String)
        return not null XML.DOM.Elements.DOM_Element_Access
    is
+
       function Constructor is
         new Ada.Tags.Generic_Dispatching_Constructor
              (Matreshka.DOM_Elements.Abstract_Element_Node,
@@ -113,17 +131,30 @@ package body Matreshka.DOM_Documents is
               Matreshka.DOM_Elements.Create);
 
       Parameters : aliased Matreshka.DOM_Elements.Element_L2_Parameters
-        := (Self,
-            Namespace_URI,
-            Prefix,
-            Local_Name);
+        := (Document      => Self,
+            Namespace_URI => Namespace_URI,
+            Prefix        => Prefix,
+            Local_Name    => Local_Name);
+      Position   : Element_Maps.Cursor;
+      Tag        : Ada.Tags.Tag;
+      Node       : Matreshka.DOM_Nodes.Node_Access;
 
-      Node       : constant not null Matreshka.DOM_Nodes.Node_Access
-        := new Matreshka.DOM_Elements.Abstract_Element_Node'Class'
-                (Constructor
-                  (Matreshka.DOM_Elements.Element_Node'Tag,
-                   Parameters'Access));
    begin
+      Position :=
+        Element_Registry.Find
+         ((Parameters.Namespace_URI, Parameters.Local_Name));
+
+      if Element_Maps.Has_Element (Position) then
+         Tag := Element_Maps.Element (Position);
+
+      else
+         Tag := Matreshka.DOM_Elements.Element_Node'Tag;
+      end if;
+
+      Node :=
+        new Matreshka.DOM_Elements.Abstract_Element_Node'Class'
+             (Constructor (Tag, Parameters'Access));
+
       return XML.DOM.Elements.DOM_Element_Access (Node);
    end Create_Element;
 
@@ -141,11 +172,10 @@ package body Matreshka.DOM_Documents is
       Local_Name : League.Strings.Universal_String;
 
    begin
-      Split_Qualified_Name (Qualified_Name, Prefix, Local_Name);
+      Split_Qualified_Name
+       (Qualified_Name, Prefix, Local_Name);
 
-      return
-        Document_Node'Class (Self.all).Create_Element
-         (Namespace_URI, Prefix, Local_Name);
+      return Self.Create_Element (Namespace_URI, Prefix, Local_Name);
    end Create_Element_NS;
 
    ----------------------
@@ -244,6 +274,19 @@ package body Matreshka.DOM_Documents is
       return null;
    end Get_Owner_Document;
 
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type is
+      use type Ada.Containers.Hash_Type;
+
+   begin
+      return
+        League.Strings.Hash (Item.Namespace_URI)
+          + League.Strings.Hash (Item.Local_Name);
+   end Hash;
+
    ----------------
    -- Leave_Node --
    ----------------
@@ -256,6 +299,18 @@ package body Matreshka.DOM_Documents is
       Visitor.Leave_Document
        (XML.DOM.Documents.DOM_Document_Access (Self), Control);
    end Leave_Node;
+
+   ----------------------
+   -- Register_Element --
+   ----------------------
+
+   procedure Register_Element
+    (Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String;
+     Tag           : Ada.Tags.Tag) is
+   begin
+      Element_Registry.Insert ((Namespace_URI, Local_Name), Tag);
+   end Register_Element;
 
    --------------------------
    -- Split_Qualified_Name --

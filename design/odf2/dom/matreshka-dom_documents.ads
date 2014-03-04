@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Tags;
+
 with League.Strings;
 
 with Matreshka.DOM_Nodes;
@@ -62,14 +64,13 @@ package Matreshka.DOM_Documents is
       Diagnosis      : XML.DOM.Error_Code := XML.DOM.No_Error;
    end record;
 
-   not overriding function Create_Element
-    (Self          : not null access Document_Node;
+   function Create_Element
+    (Self          : not null access Document_Node'Class;
      Namespace_URI : League.Strings.Universal_String;
      Prefix        : League.Strings.Universal_String;
      Local_Name    : League.Strings.Universal_String)
        return not null XML.DOM.Elements.DOM_Element_Access;
-   --  Creates element node. This subprogram is expected to be modified by
-   --  derived documents.
+   --  Internal implementation.
 
    overriding function Create_Attribute_NS
     (Self           : not null access Document_Node;
@@ -125,6 +126,12 @@ package Matreshka.DOM_Documents is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   procedure Register_Element
+    (Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String;
+     Tag           : Ada.Tags.Tag);
+   --  Register implementation of namespace URI:local name element node.
 
    package Constructors is
 
