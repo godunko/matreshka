@@ -59,7 +59,7 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
    begin
       return Self : @GROUP@_@ELEMENT@_Element_Node do
          Matreshka.ODF_@GROUP@.Constructors.Initialize
-          (Self'Access,
+          (Self'Unchecked_Access,
            Parameters.Document,
            Matreshka.ODF_String_Constants.@GROUP@_Prefix);
       end return;
