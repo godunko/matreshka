@@ -8,8 +8,9 @@
        return not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access is
    begin
       return
-        Self.Create_Element
-         (Matreshka.ODF_String_Constants.@GROUP@_URI,
-          Matreshka.ODF_String_Constants.@GROUP@_Prefix,
-          Matreshka.ODF_String_Constants.@ELEMENT@_Element);
+        ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+         (Self.Create_Element
+           (Matreshka.ODF_String_Constants.@GROUP@_URI,
+            Matreshka.ODF_String_Constants.@GROUP@_Prefix,
+            Matreshka.ODF_String_Constants.@ELEMENT@_Element));
    end Create_@GROUP@_@ELEMENT@_Element;
