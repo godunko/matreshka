@@ -5,19 +5,11 @@
 
    overriding function Create_@GROUP@_@ELEMENT@_Element
     (Self : not null access Document_Node)
-       return not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
-   is
-      Node : constant not null Matreshka.DOM_Nodes.Node_Access
-        := new Matreshka.ODF_@GROUP@.@ELEMENT@_Elements.@GROUP@_@ELEMENT@_Element_Node;
-
+       return not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access is
    begin
-      Matreshka.ODF_@GROUP@.@ELEMENT@_Elements.Constructors.Initialize
-       (Matreshka.ODF_@GROUP@.@ELEMENT@_Elements.@GROUP@_@ELEMENT@_Element_Node'Class
-         (Node.all)'Access,
-        Self,
-        Matreshka.ODF_String_Constants.@GROUP@_URI);
-
       return
-        ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
-         (Node);
+        Self.Create_Element
+         (Matreshka.ODF_String_Constants.@GROUP@_URI,
+          Matreshka.ODF_String_Constants.@GROUP@_Prefix,
+          Matreshka.ODF_String_Constants.@ELEMENT@_Element);
    end Create_@GROUP@_@ELEMENT@_Element;
