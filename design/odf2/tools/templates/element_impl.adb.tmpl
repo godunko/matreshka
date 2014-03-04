@@ -59,9 +59,11 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
 
       procedure Initialize
        (Self     : not null access @GROUP@_@ELEMENT@_Element_Node'Class;
-        Document : not null Matreshka.DOM_Nodes.Document_Access) is
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String) is
       begin
-         Matreshka.ODF_@GROUP@.Constructors.Initialize (Self, Document);
+         Matreshka.ODF_@GROUP@.Constructors.Initialize
+          (Self, Document, Prefix);
       end Initialize;
 
    end Constructors;
