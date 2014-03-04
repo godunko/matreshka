@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.DOM_Documents;
+
 with Matreshka.ODF_String_Constants;
 with ODF.DOM.Iterators;
 with ODF.DOM.Visitors;
@@ -67,6 +69,22 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
       end Initialize;
 
    end Constructors;
+
+   ------------
+   -- Create --
+   ------------
+
+   overriding function Create
+    (Parameters : not null access Matreshka.DOM_Elements.Element_L2_Parameters)
+       return @GROUP@_@ELEMENT@_Element_Node is
+   begin
+      return Self : @GROUP@_@ELEMENT@_Element_Node do
+         Matreshka.ODF_@GROUP@.Constructors.Initialize
+          (Self'Access,
+           Parameters.Document,
+           Matreshka.ODF_String_Constants.@GROUP@_Prefix);
+      end return;
+   end Create;
 
    ----------------
    -- Enter_Node --
@@ -150,4 +168,9 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
       end if;
    end Visit_Node;
 
+begin
+   Matreshka.DOM_Documents.Register_Element
+    (Matreshka.ODF_String_Constants.@GROUP@_URI,
+     Matreshka.ODF_String_Constants.@ELEMENT@_Element,
+     @GROUP@_@ELEMENT@_Element_Node'Tag);
 end Matreshka.ODF_@GROUP@.@ELEMENT@_Elements;

@@ -52,6 +52,10 @@ package Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
        and ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element
          with null record;
 
+   overriding function Create
+    (Parameters : not null access Matreshka.DOM_Elements.Element_L2_Parameters)
+       return @GROUP@_@ELEMENT@_Element_Node;
+
    overriding function Get_Local_Name
     (Self : not null access constant @GROUP@_@ELEMENT@_Element_Node)
        return League.Strings.Universal_String;
