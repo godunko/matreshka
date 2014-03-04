@@ -92,6 +92,22 @@ package body ODFGen.Generator is
      Footer  : League.String_Vectors.Universal_String_Vector)
        renames Generate_Visitor;
 
+   procedure Generate_Document_Impl_Spec
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Context : League.String_Vectors.Universal_String_Vector;
+     Decls   : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+       renames Generate_Visitor;
+
+   procedure Generate_Document_Impl_Body
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Context : League.String_Vectors.Universal_String_Vector;
+     Decls   : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+       renames Generate_Visitor;
+
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
 
@@ -194,6 +210,36 @@ package body ODFGen.Generator is
       Document_API_Footer_Template :
         League.String_Vectors.Universal_String_Vector
           := Load_Template ("tools/templates/document_api-footer.ads.tmpl");
+      Document_Impl_Spec_Header_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-header.ads.tmpl");
+      Document_Impl_Spec_Context_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-context.ads.tmpl");
+      Document_Impl_Spec_Decls_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-decls.ads.tmpl");
+      Document_Impl_Spec_Element_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-element.ads.tmpl");
+      Document_Impl_Spec_Footer_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-footer.ads.tmpl");
+      Document_Impl_Body_Header_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-header.adb.tmpl");
+      Document_Impl_Body_Context_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-context.adb.tmpl");
+      Document_Impl_Body_Decls_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-decls.adb.tmpl");
+      Document_Impl_Body_Element_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-element.adb.tmpl");
+      Document_Impl_Body_Footer_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/document_impl-footer.adb.tmpl");
       Element_API_Template      : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/element_api.ads.tmpl");
       Element_Impl_Spec_Template :
@@ -222,6 +268,18 @@ package body ODFGen.Generator is
         Document_API_Decls_Template,
         Document_API_Item_Template,
         Document_API_Footer_Template);
+      Generate_Document_Impl_Spec
+       (Document_Impl_Spec_Header_Template,
+        Document_Impl_Spec_Context_Template,
+        Document_Impl_Spec_Decls_Template,
+        Document_Impl_Spec_Element_Template,
+        Document_Impl_Spec_Footer_Template);
+      Generate_Document_Impl_Body
+       (Document_Impl_Body_Header_Template,
+        Document_Impl_Body_Context_Template,
+        Document_Impl_Body_Decls_Template,
+        Document_Impl_Body_Element_Template,
+        Document_Impl_Body_Footer_Template);
       Generate_String_Constants
        (Strings_Header_Template,
         Strings_Item_Template,
