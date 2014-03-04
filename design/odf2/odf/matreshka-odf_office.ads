@@ -59,8 +59,10 @@ package Matreshka.ODF_Office is
        return League.Strings.Universal_String;
 
    type Abstract_Office_Element_Node is
-     abstract new Matreshka.DOM_Elements.Element_Node
-       with null record;
+     abstract new Matreshka.DOM_Elements.Abstract_Element_Node with
+   record
+      Prefix : League.Strings.Universal_String;
+   end record;
 
    overriding function Get_Namespace_URI
     (Self : not null access constant Abstract_Office_Element_Node)
