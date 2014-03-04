@@ -45,6 +45,27 @@ with Matreshka.ODF_String_Constants;
 
 package body Matreshka.ODF_Draw is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self     : not null access Abstract_Draw_Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String) is
+      begin
+         Matreshka.DOM_Elements.Constructors.Initialize (Self, Document);
+         Self.Prefix := Prefix;
+      end Initialize;
+
+   end Constructors;
+
    -----------------------
    -- Get_Namespace_URI --
    -----------------------

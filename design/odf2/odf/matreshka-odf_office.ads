@@ -44,12 +44,15 @@
 with League.Strings;
 with Matreshka.DOM_Attributes;
 with Matreshka.DOM_Elements;
+with Matreshka.DOM_Nodes;
 
 package Matreshka.ODF_Office is
 
    type Abstract_Office_Attribute_Node is
-     abstract new Matreshka.DOM_Attributes.Abstract_Attribute_L2_Node
-       with null record;
+     abstract new Matreshka.DOM_Attributes.Abstract_Attribute_L2_Node with
+   record
+      Prefix : League.Strings.Universal_String;
+   end record;
 
    overriding function Get_Namespace_URI
     (Self : not null access constant Abstract_Office_Attribute_Node)
@@ -62,5 +65,15 @@ package Matreshka.ODF_Office is
    overriding function Get_Namespace_URI
     (Self : not null access constant Abstract_Office_Element_Node)
        return League.Strings.Universal_String;
+
+   package Constructors is
+
+      procedure Initialize
+       (Self     : not null access Abstract_Office_Element_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String)
+          with Inline => True;
+
+   end Constructors;
 
 end Matreshka.ODF_Office;
