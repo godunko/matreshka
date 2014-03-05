@@ -114,9 +114,7 @@ package body XSD_To_Ada.Payloads is
                Is_Min_Occur => Current.Min,
                Is_Max_Occur => Current.Max);
 
-         elsif Current.Object.Is_Model_Group
-           and then Current.Short_Ada_Type_Name.Element (1) /= '_'  --  FIX
-         then
+         elsif Current.Object.Is_Model_Group then
             Type_Name := XSD_To_Ada.Utils.Add_Separator
               (Current.Short_Ada_Type_Name);
 
@@ -139,11 +137,11 @@ package body XSD_To_Ada.Payloads is
                Writer       => Payload_Writer,
                Writer_types => Payload_Type_Writer,
                Name         => Current.Short_Ada_Type_Name,
-               Map          => Mapping,
+               Mapping      => Mapping,
                Choice       => Current.Choice);
 
             if Current.Choice then
-               Payload_Writer.P ("      end case;" & LF);
+               Payload_Writer.P ("      end case;");
             end if;
 
             Payload_Writer.P ("   end record;" & LF);
@@ -168,7 +166,7 @@ package body XSD_To_Ada.Payloads is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings.Mapping;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
       Choice       : Boolean := False)
    is
       use type XML.Schema.Model_Groups.Compositor_Kinds;
@@ -187,9 +185,6 @@ package body XSD_To_Ada.Payloads is
          Name         : League.Strings.Universal_String;
          Map          : XSD_To_Ada.Mappings.Mapping)
       is
-         XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-         XS_Particle    : XML.Schema.Particles.XS_Particle;
-
          Decl           :
          XML.Schema.Element_Declarations.XS_Element_Declaration;
          Type_Dif       : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -237,13 +232,13 @@ package body XSD_To_Ada.Payloads is
               (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name) & "_Case");
 
             Writers.P (Writer,
-                       "      when "
+                       "         when "
                        & XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name)
                        & "_Case =>" & LF
                        & XSD_To_Ada.Utils.Split_Line
                          (XSD_To_Ada.Utils.Add_Separator
                             (Decl.Get_Name).To_Wide_Wide_String
-                          & " : " & Type_Name.To_Wide_Wide_String & ";", 8));
+                          & " : " & Type_Name.To_Wide_Wide_String & ";", 11));
          else
             if Type_Dif.Is_Simple_Type_Definition
               and then Min_Occurs
@@ -301,7 +296,7 @@ package body XSD_To_Ada.Payloads is
                Writer,
                Writer_types,
                Name,
-               Map);
+               Mapping);
          else
             Writers.P
               (Writer,
@@ -342,7 +337,8 @@ package body XSD_To_Ada.Payloads is
       XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
       Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
 
-      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
+        := Type_D.To_Complex_Type_Definition;
 
       Type_Name : League.Strings.Universal_String;
 
@@ -351,29 +347,24 @@ package body XSD_To_Ada.Payloads is
    begin
       XS_Base := Type_D.Get_Base_Type;
 
+      if Element_Name.Is_Empty then
+         Type_Name := XSD_To_Ada.Utils.Add_Separator (Name);
+      else
+         Type_Name := XSD_To_Ada.Utils.Add_Separator (Element_Name);
+      end if;
+
       if XS_Base.Get_Type_Category in
         XML.Schema.Complex_Type
         and XS_Base /= Type_D
       then
-
-         if Element_Name.Is_Empty then
-            Type_Name := Name;
-         else
-            Type_Name := Element_Name;
-         end if;
-
          if XS_Base.Get_Name.To_Wide_Wide_String = "anyType" then
             Writer_types.P
-              ("   type " & XSD_To_Ada.Utils.Add_Separator (Type_Name)
-               & " is" & LF
+              ("   type " & Type_Name & " is" & LF
                & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
                & LF
                & "       with null record;" & LF);
 
-            XSD_To_Ada.Utils.Gen_Access_Type
-              (Writer_types,
-               XSD_To_Ada.Utils.Add_Separator (Type_Name));
-
+            XSD_To_Ada.Utils.Gen_Access_Type (Writer_types, Type_Name);
             return;
          else
             Base_Type := League.Strings.To_Universal_String
@@ -388,93 +379,77 @@ package body XSD_To_Ada.Payloads is
       case Type_D.Get_Type_Category is
          when XML.Schema.Complex_Type =>
 
+            if CTD.Get_Content_Type in Element_Only | Mixed then
+               XS_Particle := CTD.Get_Particle;
+               XS_Term := XS_Particle.Get_Term;
+
+               if XS_Term.Is_Model_Group then
+                  Model_Group := XS_Term.To_Model_Group;
+               end if;
+            else
+               raise Constraint_Error
+                 with "CTD.Get_Content_Type in Element_Only | Mixed";
+            end if;
+
             if not Is_Min_Occur
               and then not Is_Max_Occur
               and then Element_Name.Is_Empty  --  FIX!!!! HAS ELEMENT
             then
-               CTD := Type_D.To_Complex_Type_Definition;
+               if Choice then
+                  Writer.P
+                    ("   type " & Type_Name & LF
+                     & "     (Kind : " & Type_Name
+                     & "_Kind" & LF
+                     & "       := " & Type_Name
+                     & "_Kind'First) is record" & LF
+                     & "       case Kind is");
 
-               if CTD.Get_Content_Type in Element_Only | Mixed then
-                  XS_Particle := CTD.Get_Particle;
-                  XS_Term := XS_Particle.Get_Term;
+               elsif (XSD_To_Ada.Utils.Has_Element_Session (Type_D)
+                      or Type_Name.Ends_With ("Response"))
+               then
+                  Writer_types.P
+                    ("   type "
+                     & Type_Name
+                     & " is" & LF
+                     & "     new Web_Services.SOAP.Payloads."
+                     & "Abstract_SOAP_Payload"
+                     & LF
+                     & "   with record");
 
-                  if XS_Term.Is_Model_Group then
-                     Model_Group := XS_Term.To_Model_Group;
-                  end if;
+               else
+                  Writer_types.P ("   type " & Type_Name & " is record");
+               end if;
 
-                  Type_Name := Name;
+               if not Element_Name.Is_Empty
+                 and then XSD_To_Ada.Utils.Add_Separator (Element_Name) /= Name
+               then
+                  Writer_types.P
+                    (XSD_To_Ada.Utils.Split_Line
+                       (Name.To_Wide_Wide_String
+                        & " : Payloads." & Name.To_Wide_Wide_String & ";", 5));
+               else
+                  Writer.N (Base_Type);
 
-                  if (XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-                    or Type_Name.Ends_With ("Response"))
-                    and not Choice
-                  then
-                     Writer_types.P
-                       ("   type "
-                        & Type_Name
-                        & " is" & LF
-                        & "     new Web_Services.SOAP.Payloads."
-                        & "Abstract_SOAP_Payload"
-                        & LF
-                        & "   with record");
+                  Print_Model
+                    (Model_Group  => Model_Group,
+                     Writer       => Writer,
+                     Writer_types => Writer_types,
+                     Name         => Name,
+                     Mapping      => Mapping,
+                     Choice       => Choice);
+               end if;
 
-                  elsif Choice then
-                     Writer.P
-                       ("   type " & Type_Name & LF
-                        & "     (Kind : " & Type_Name
-                        & "_Kind" & LF
-                        & "       := " & Type_Name
-                        & "_Kind'First) is record" & LF
-                        & "       case Kind is");
-                  else
-                     Writer_types.P ("   type " & Type_Name & " is record");
-                  end if;
+               if Choice then
+                  Writer.P ("      end case;");
+               end if;
 
-                  if not Element_Name.Is_Empty
-                    and then XSD_To_Ada.Utils.Add_Separator (Element_Name) /= Name
-                  then
-                      Writer_types.P
-                       (XSD_To_Ada.Utils.Split_Line
-                          (Name.To_Wide_Wide_String
-                           & " : Payloads." & Name.To_Wide_Wide_String & ";", 5));
-                  else
-                     Writer.N (Base_Type);
+               Writer.P ("   end record;" & LF);
 
-                     Print_Model
-                       (Model_Group  => Model_Group,
-                        Writer       => Writer,
-                        Writer_types => Writer_types,
-                        Name         => Name,
-                        Map          => Mapping,
-                        Choice       => Choice);
-                  end if;
-
-                  if Choice then
-                     Writer.P ("      end case;" & LF);
-                  end if;
-
-                  Writer.P ("   end record;" & LF);
-
-                  if Type_Name.Ends_With ("Response") then
-                     XSD_To_Ada.Utils.Gen_Access_Type
-                       (Writer,
-                        XSD_To_Ada.Utils.Add_Separator
-                          (Type_Name));
-                  end if;
+               if Type_Name.Ends_With ("Response") then
+                  XSD_To_Ada.Utils.Gen_Access_Type (Writer, (Type_Name));
                end if;
 
             elsif not Element_Name.Is_Empty then
-               Type_Name := XSD_To_Ada.Utils.Add_Separator (Element_Name);
-
-               CTD := Type_D.To_Complex_Type_Definition;
-
-               if CTD.Get_Content_Type in Element_Only | Mixed then
-                  XS_Term := CTD.Get_Particle.Get_Term;
-
-                  if XS_Term.Is_Model_Group then
-                     Model_Group := XS_Term.To_Model_Group;
-                  end if;
-               end if;
-
                if Name.Is_Empty then
                   if Choice then
                      Writer.P
@@ -504,11 +479,11 @@ package body XSD_To_Ada.Payloads is
                      Writer       => Writer,
                      Writer_types => Writer_types,
                      Name         => Type_Name,
-                     Map          => Mapping,
+                     Mapping      => Mapping,
                      Choice       => Choice);
 
                   if Choice then
-                     Writer.P ("     end case;" & LF);
+                     Writer.P ("     end case;");
                   end if;
 
                   Writer.P ("   end record;" & LF);
@@ -535,18 +510,18 @@ package body XSD_To_Ada.Payloads is
                         & ";", 5) & LF
                      & "   end record;" & LF);
 
-                  XSD_To_Ada.Utils.Gen_Access_Type
-                    (Writer,
-                     XSD_To_Ada.Utils.Add_Separator
-                       (Type_Name));
-               else
+                  XSD_To_Ada.Utils.Gen_Access_Type (Writer, Type_Name);
+
+               elsif Element_Name.To_Wide_Wide_String /=
+                 Name.To_Wide_Wide_String
+               then
                   Writer_types.P
                     ("   type " & Type_Name & " is record" & LF
                      & "     " & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name)
                      & " : Payloads."
                      & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name) & ";"
                      & LF
-                     & "   end record;" & LF);
+                     & "   end record;  --  dvsdfvdrf" & LF);
                end if;
 
             elsif Is_Min_Occur then

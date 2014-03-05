@@ -62,7 +62,7 @@ package XSD_To_Ada.Payloads is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Map          : XSD_To_Ada.Mappings.Mapping;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
       Choice       : Boolean := False);
 
    procedure Print_Payloads
