@@ -51,6 +51,7 @@ package ODF.DOM.Form_Value_Range_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Form_Value_Range_Element_Access is
-     access all ODF_Form_Value_Range_Element'Class;
+     access all ODF_Form_Value_Range_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Form_Value_Range_Elements;

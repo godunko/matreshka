@@ -51,6 +51,7 @@ package ODF.DOM.Form_Text_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Form_Text_Element_Access is
-     access all ODF_Form_Text_Element'Class;
+     access all ODF_Form_Text_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Form_Text_Elements;

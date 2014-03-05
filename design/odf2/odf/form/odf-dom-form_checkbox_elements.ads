@@ -51,6 +51,7 @@ package ODF.DOM.Form_Checkbox_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Form_Checkbox_Element_Access is
-     access all ODF_Form_Checkbox_Element'Class;
+     access all ODF_Form_Checkbox_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Form_Checkbox_Elements;
