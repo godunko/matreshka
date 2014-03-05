@@ -51,6 +51,7 @@ package ODF.DOM.Number_Am_Pm_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Number_Am_Pm_Element_Access is
-     access all ODF_Number_Am_Pm_Element'Class;
+     access all ODF_Number_Am_Pm_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Number_Am_Pm_Elements;

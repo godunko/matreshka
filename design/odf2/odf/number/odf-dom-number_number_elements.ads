@@ -51,6 +51,7 @@ package ODF.DOM.Number_Number_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Number_Number_Element_Access is
-     access all ODF_Number_Number_Element'Class;
+     access all ODF_Number_Number_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Number_Number_Elements;

@@ -51,6 +51,7 @@ package ODF.DOM.Number_Day_Of_Week_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Number_Day_Of_Week_Element_Access is
-     access all ODF_Number_Day_Of_Week_Element'Class;
+     access all ODF_Number_Day_Of_Week_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Number_Day_Of_Week_Elements;
