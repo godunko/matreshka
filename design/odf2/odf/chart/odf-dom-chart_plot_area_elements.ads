@@ -51,6 +51,7 @@ package ODF.DOM.Chart_Plot_Area_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Chart_Plot_Area_Element_Access is
-     access all ODF_Chart_Plot_Area_Element'Class;
+     access all ODF_Chart_Plot_Area_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Chart_Plot_Area_Elements;

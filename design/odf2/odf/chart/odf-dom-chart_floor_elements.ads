@@ -51,6 +51,7 @@ package ODF.DOM.Chart_Floor_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Chart_Floor_Element_Access is
-     access all ODF_Chart_Floor_Element'Class;
+     access all ODF_Chart_Floor_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Chart_Floor_Elements;
