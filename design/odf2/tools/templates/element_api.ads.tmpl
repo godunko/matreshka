@@ -51,6 +51,7 @@ package ODF.DOM.@GROUP@_@ELEMENT@_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_@GROUP@_@ELEMENT@_Element_Access is
-     access all ODF_@GROUP@_@ELEMENT@_Element'Class;
+     access all ODF_@GROUP@_@ELEMENT@_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.@GROUP@_@ELEMENT@_Elements;
