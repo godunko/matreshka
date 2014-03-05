@@ -51,6 +51,7 @@ package ODF.DOM.Table_Detective_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Table_Detective_Element_Access is
-     access all ODF_Table_Detective_Element'Class;
+     access all ODF_Table_Detective_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Table_Detective_Elements;

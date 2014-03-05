@@ -51,6 +51,7 @@ package ODF.DOM.Table_Movement_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Table_Movement_Element_Access is
-     access all ODF_Table_Movement_Element'Class;
+     access all ODF_Table_Movement_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Table_Movement_Elements;
