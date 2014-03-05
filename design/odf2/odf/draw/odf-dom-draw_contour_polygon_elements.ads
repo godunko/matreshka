@@ -51,6 +51,7 @@ package ODF.DOM.Draw_Contour_Polygon_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Draw_Contour_Polygon_Element_Access is
-     access all ODF_Draw_Contour_Polygon_Element'Class;
+     access all ODF_Draw_Contour_Polygon_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Draw_Contour_Polygon_Elements;

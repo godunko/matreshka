@@ -51,6 +51,7 @@ package ODF.DOM.Draw_Circle_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Draw_Circle_Element_Access is
-     access all ODF_Draw_Circle_Element'Class;
+     access all ODF_Draw_Circle_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Draw_Circle_Elements;
