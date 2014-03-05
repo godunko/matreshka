@@ -51,6 +51,7 @@ package ODF.DOM.Svg_Stop_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Svg_Stop_Element_Access is
-     access all ODF_Svg_Stop_Element'Class;
+     access all ODF_Svg_Stop_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Svg_Stop_Elements;

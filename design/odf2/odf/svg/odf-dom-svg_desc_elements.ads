@@ -51,6 +51,7 @@ package ODF.DOM.Svg_Desc_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Svg_Desc_Element_Access is
-     access all ODF_Svg_Desc_Element'Class;
+     access all ODF_Svg_Desc_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Svg_Desc_Elements;
