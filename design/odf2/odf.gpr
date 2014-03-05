@@ -4,7 +4,26 @@ with "dom.gpr";
 project ODF is
 
    for Object_Dir use ".objs";
-   for Source_Dirs use ("odf");
+   for Source_Dirs use
+    ("odf",
+     "odf/anim",
+     "odf/chart",
+     "odf/config",
+     "odf/db",
+     "odf/dc",
+     "odf/dr3d",
+     "odf/draw",
+     "odf/form",
+     "odf/math",
+     "odf/meta",
+     "odf/number",
+     "odf/office",
+     "odf/presentation",
+     "odf/script",
+     "odf/style",
+     "odf/svg",
+     "odf/table",
+     "odf/text");
 
    package Compiler is
       for Default_Switches ("Ada") use ("-g", "-gnat12");
