@@ -41,19 +41,30 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.ODF_String_Constants;
+with League.Strings;
+with Matreshka.DOM_Attributes;
+with Matreshka.DOM_Nodes;
 
-package body Matreshka.ODF_Attributes.GRDDL is
+package Matreshka.ODF_XHTML is
 
-   -----------------------
-   -- Get_Namespace_URI --
-   -----------------------
+   type Abstract_XHTML_Attribute_Node is
+     abstract new Matreshka.DOM_Attributes.Abstract_Attribute_L2_Node with
+   record
+      Prefix : League.Strings.Universal_String;
+   end record;
 
    overriding function Get_Namespace_URI
-    (Self : not null access constant Abstract_GRDDL_Attribute_Node)
-       return League.Strings.Universal_String is
-   begin
-      return Matreshka.ODF_String_Constants.GRDDL_URI;
-   end Get_Namespace_URI;
+    (Self : not null access constant Abstract_XHTML_Attribute_Node)
+       return League.Strings.Universal_String;
 
-end Matreshka.ODF_Attributes.GRDDL;
+   package Constructors is
+
+      procedure Initialize
+       (Self     : not null access Abstract_XHTML_Attribute_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String)
+          with Inline => True;
+
+   end Constructors;
+
+end Matreshka.ODF_XHTML;

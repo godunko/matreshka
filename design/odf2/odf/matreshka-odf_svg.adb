@@ -56,6 +56,19 @@ package body Matreshka.ODF_SVG is
       ----------------
 
       procedure Initialize
+       (Self     : not null access Abstract_SVG_Attribute_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String) is
+      begin
+         Matreshka.DOM_Attributes.Constructors.Initialize (Self, Document);
+         Self.Prefix := Prefix;
+      end Initialize;
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
        (Self     : not null access Abstract_SVG_Element_Node'Class;
         Document : not null Matreshka.DOM_Nodes.Document_Access;
         Prefix   : League.Strings.Universal_String) is

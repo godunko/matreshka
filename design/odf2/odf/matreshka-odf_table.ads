@@ -71,6 +71,12 @@ package Matreshka.ODF_Table is
    package Constructors is
 
       procedure Initialize
+       (Self     : not null access Abstract_Table_Attribute_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String)
+          with Inline => True;
+
+      procedure Initialize
        (Self     : not null access Abstract_Table_Element_Node'Class;
         Document : not null Matreshka.DOM_Nodes.Document_Access;
         Prefix   : League.Strings.Universal_String)

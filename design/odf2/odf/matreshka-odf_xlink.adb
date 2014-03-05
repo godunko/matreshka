@@ -41,17 +41,40 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with Matreshka.DOM_Attributes;
+with Matreshka.ODF_String_Constants;
 
-package Matreshka.ODF_Attributes.XHTML is
+package body Matreshka.ODF_XLink is
 
-   type Abstract_XHTML_Attribute_Node is
-     abstract new Matreshka.DOM_Attributes.Abstract_Attribute_L2_Node
-       with null record;
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self     : not null access Abstract_XLink_Attribute_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String) is
+      begin
+         Matreshka.DOM_Attributes.Constructors.Initialize (Self, Document);
+         Self.Prefix := Prefix;
+      end Initialize;
+
+   end Constructors;
+
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
 
    overriding function Get_Namespace_URI
-    (Self : not null access constant Abstract_XHTML_Attribute_Node)
-       return League.Strings.Universal_String;
+    (Self : not null access constant Abstract_XLink_Attribute_Node)
+       return League.Strings.Universal_String is
+   begin
+      return Matreshka.ODF_String_Constants.FO_URI;
+   end Get_Namespace_URI;
 
-end Matreshka.ODF_Attributes.XHTML;
+end Matreshka.ODF_XLink;

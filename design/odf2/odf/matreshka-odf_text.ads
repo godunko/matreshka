@@ -71,6 +71,12 @@ package Matreshka.ODF_Text is
    package Constructors is
 
       procedure Initialize
+       (Self     : not null access Abstract_Text_Attribute_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String)
+          with Inline => True;
+
+      procedure Initialize
        (Self     : not null access Abstract_Text_Element_Node'Class;
         Document : not null Matreshka.DOM_Nodes.Document_Access;
         Prefix   : League.Strings.Universal_String)

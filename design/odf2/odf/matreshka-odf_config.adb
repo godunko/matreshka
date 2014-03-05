@@ -56,6 +56,19 @@ package body Matreshka.ODF_Config is
       ----------------
 
       procedure Initialize
+       (Self     : not null access Abstract_Config_Attribute_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String) is
+      begin
+         Matreshka.DOM_Attributes.Constructors.Initialize (Self, Document);
+         Self.Prefix := Prefix;
+      end Initialize;
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
        (Self     : not null access Abstract_Config_Element_Node'Class;
         Document : not null Matreshka.DOM_Nodes.Document_Access;
         Prefix   : League.Strings.Universal_String) is
@@ -65,6 +78,17 @@ package body Matreshka.ODF_Config is
       end Initialize;
 
    end Constructors;
+
+   -----------------------
+   -- Get_Namespace_URI --
+   -----------------------
+
+   overriding function Get_Namespace_URI
+    (Self : not null access constant Abstract_Config_Attribute_Node)
+       return League.Strings.Universal_String is
+   begin
+      return Matreshka.ODF_String_Constants.Config_URI;
+   end Get_Namespace_URI;
 
    -----------------------
    -- Get_Namespace_URI --

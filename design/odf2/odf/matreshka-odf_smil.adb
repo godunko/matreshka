@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with Matreshka.ODF_String_Constants;
 
-package body Matreshka.ODF_Number is
+package body Matreshka.ODF_SMIL is
 
    ------------------
    -- Constructors --
@@ -56,24 +56,11 @@ package body Matreshka.ODF_Number is
       ----------------
 
       procedure Initialize
-       (Self     : not null access Abstract_Number_Attribute_Node'Class;
+       (Self     : not null access Abstract_SMIL_Attribute_Node'Class;
         Document : not null Matreshka.DOM_Nodes.Document_Access;
         Prefix   : League.Strings.Universal_String) is
       begin
          Matreshka.DOM_Attributes.Constructors.Initialize (Self, Document);
-         Self.Prefix := Prefix;
-      end Initialize;
-
-      ----------------
-      -- Initialize --
-      ----------------
-
-      procedure Initialize
-       (Self     : not null access Abstract_Number_Element_Node'Class;
-        Document : not null Matreshka.DOM_Nodes.Document_Access;
-        Prefix   : League.Strings.Universal_String) is
-      begin
-         Matreshka.DOM_Elements.Constructors.Initialize (Self, Document);
          Self.Prefix := Prefix;
       end Initialize;
 
@@ -84,21 +71,10 @@ package body Matreshka.ODF_Number is
    -----------------------
 
    overriding function Get_Namespace_URI
-    (Self : not null access constant Abstract_Number_Attribute_Node)
+    (Self : not null access constant Abstract_SMIL_Attribute_Node)
        return League.Strings.Universal_String is
    begin
-      return Matreshka.ODF_String_Constants.Number_URI;
+      return Matreshka.ODF_String_Constants.SMIL_URI;
    end Get_Namespace_URI;
 
-   -----------------------
-   -- Get_Namespace_URI --
-   -----------------------
-
-   overriding function Get_Namespace_URI
-    (Self : not null access constant Abstract_Number_Element_Node)
-       return League.Strings.Universal_String is
-   begin
-      return Matreshka.ODF_String_Constants.Number_URI;
-   end Get_Namespace_URI;
-
-end Matreshka.ODF_Number;
+end Matreshka.ODF_SMIL;

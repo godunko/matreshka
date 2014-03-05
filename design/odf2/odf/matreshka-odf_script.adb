@@ -56,6 +56,19 @@ package body Matreshka.ODF_Script is
       ----------------
 
       procedure Initialize
+       (Self     : not null access Abstract_Script_Attribute_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access;
+        Prefix   : League.Strings.Universal_String) is
+      begin
+         Matreshka.DOM_Attributes.Constructors.Initialize (Self, Document);
+         Self.Prefix := Prefix;
+      end Initialize;
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
        (Self     : not null access Abstract_Script_Element_Node'Class;
         Document : not null Matreshka.DOM_Nodes.Document_Access;
         Prefix   : League.Strings.Universal_String) is
