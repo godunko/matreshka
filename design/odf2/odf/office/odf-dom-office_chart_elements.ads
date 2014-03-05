@@ -51,6 +51,7 @@ package ODF.DOM.Office_Chart_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Office_Chart_Element_Access is
-     access all ODF_Office_Chart_Element'Class;
+     access all ODF_Office_Chart_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Office_Chart_Elements;
