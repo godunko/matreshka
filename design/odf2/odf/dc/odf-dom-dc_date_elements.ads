@@ -51,6 +51,7 @@ package ODF.DOM.Dc_Date_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Dc_Date_Element_Access is
-     access all ODF_Dc_Date_Element'Class;
+     access all ODF_Dc_Date_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Dc_Date_Elements;
