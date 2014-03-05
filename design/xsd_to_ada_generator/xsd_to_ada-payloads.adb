@@ -340,9 +340,9 @@ package body XSD_To_Ada.Payloads is
       CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
         := Type_D.To_Complex_Type_Definition;
 
-      Type_Name : League.Strings.Universal_String;
-
-      Base_Type : League.Strings.Universal_String;
+      Type_Name   : League.Strings.Universal_String;
+      Type_D_Name : League.Strings.Universal_String := Type_D.Get_Name;
+      Base_Type   : League.Strings.Universal_String;
 
    begin
       XS_Base := Type_D.Get_Base_Type;
@@ -387,70 +387,14 @@ package body XSD_To_Ada.Payloads is
                   Model_Group := XS_Term.To_Model_Group;
                end if;
             else
-               raise Constraint_Error
-                 with "CTD.Get_Content_Type in Element_Only | Mixed";
+               raise Constraint_Error;
             end if;
 
             if not Is_Min_Occur
               and then not Is_Max_Occur
-              and then Element_Name.Is_Empty  --  FIX!!!! HAS ELEMENT
             then
-               if Choice then
-                  Writer.P
-                    ("   type " & Type_Name & LF
-                     & "     (Kind : " & Type_Name
-                     & "_Kind" & LF
-                     & "       := " & Type_Name
-                     & "_Kind'First) is record" & LF
-                     & "       case Kind is");
-
-               elsif (XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-                      or Type_Name.Ends_With ("Response"))
-               then
-                  Writer_types.P
-                    ("   type "
-                     & Type_Name
-                     & " is" & LF
-                     & "     new Web_Services.SOAP.Payloads."
-                     & "Abstract_SOAP_Payload"
-                     & LF
-                     & "   with record");
-
-               else
-                  Writer_types.P ("   type " & Type_Name & " is record");
-               end if;
-
                if not Element_Name.Is_Empty
-                 and then XSD_To_Ada.Utils.Add_Separator (Element_Name) /= Name
                then
-                  Writer_types.P
-                    (XSD_To_Ada.Utils.Split_Line
-                       (Name.To_Wide_Wide_String
-                        & " : Payloads." & Name.To_Wide_Wide_String & ";", 5));
-               else
-                  Writer.N (Base_Type);
-
-                  Print_Model
-                    (Model_Group  => Model_Group,
-                     Writer       => Writer,
-                     Writer_types => Writer_types,
-                     Name         => Name,
-                     Mapping      => Mapping,
-                     Choice       => Choice);
-               end if;
-
-               if Choice then
-                  Writer.P ("      end case;");
-               end if;
-
-               Writer.P ("   end record;" & LF);
-
-               if Type_Name.Ends_With ("Response") then
-                  XSD_To_Ada.Utils.Gen_Access_Type (Writer, (Type_Name));
-               end if;
-
-            elsif not Element_Name.Is_Empty then
-               if Name.Is_Empty then
                   if Choice then
                      Writer.P
                        ("   type " & Type_Name & LF
@@ -460,8 +404,93 @@ package body XSD_To_Ada.Payloads is
                         & "_Kind'First) is record" & LF
                         & "       case Kind is");
 
+                     Print_Model
+                       (Model_Group  => Model_Group,
+                        Writer       => Writer,
+                        Writer_types => Writer_types,
+                        Name         => Element_Name,
+                        Mapping      => Mapping,
+                        Choice       => Choice);
+
+                     if Choice then
+                        Writer.P ("      end case;");
+                     end if;
+
+                     Writer.P ("   end record;" & LF);
+
                   elsif XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
+                     if Name.Is_Empty then
+                        Writer.P
+                          ("   type "
+                           & Type_Name
+                           & " is" & LF
+                           & "     new Web_Services.SOAP.Payloads."
+                           & "Abstract_SOAP_Payload"
+                           & LF
+                           & "   with record");
+
+                        Writer.N (Base_Type);
+
+                        Print_Model
+                          (Model_Group  => Model_Group,
+                           Writer       => Writer,
+                           Writer_types => Writer_types,
+                           Name         => Type_Name,
+                           Mapping      => Mapping,
+                           Choice       => Choice);
+
+                        Writer.P ("   end record;" & LF);
+
+                     else
+                        Writer_types.P
+                          ("   type " & Type_Name & " is" & LF
+                           & "     new Payloads." & Name & LF
+                           & "       with null record;" & LF);
+                     end if;
+
+                  elsif Type_Name.Ends_With ("Response") then
+                     Writer_types.P
+                       ("   type "
+                        & Type_Name
+                        & " is" & LF
+                        & "     new Web_Services.SOAP.Payloads."
+                        & "Abstract_SOAP_Payload"
+                        & LF
+                        & "   with record" & LF
+                        & XSD_To_Ada.Utils.Split_Line
+                          (XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name)
+                           & " : Payloads."
+                           & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name)
+                           & ";", 5) & LF
+                        & "   end record;" & LF);
+
+                     XSD_To_Ada.Utils.Gen_Access_Type (Writer, Type_Name);
+
+                  elsif Element_Name.To_Wide_Wide_String /=
+                    Name.To_Wide_Wide_String
+                  then
+                     Writer_types.P
+                       ("   type " & Type_Name & " is record" & LF
+                        & "     " & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name)
+                        & " : Payloads."
+                        & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name) & ";"
+                        & LF
+                        & "   end record;" & LF);
+                  end if;
+               else
+                  if Choice then
                      Writer.P
+                       ("   type " & Type_Name & LF
+                        & "     (Kind : " & Type_Name
+                        & "_Kind" & LF
+                        & "       := " & Type_Name
+                        & "_Kind'First) is record" & LF
+                        & "       case Kind is");
+
+                  elsif (XSD_To_Ada.Utils.Has_Element_Session (Type_D)
+                         or Type_Name.Ends_With ("Response"))
+                  then
+                     Writer_types.P
                        ("   type "
                         & Type_Name
                         & " is" & LF
@@ -469,59 +498,39 @@ package body XSD_To_Ada.Payloads is
                         & "Abstract_SOAP_Payload"
                         & LF
                         & "   with record");
+
                   else
                      Writer_types.P ("   type " & Type_Name & " is record");
                   end if;
+
+                  if not Element_Name.Is_Empty
+                    and then XSD_To_Ada.Utils.Add_Separator (Element_Name) /= Name
+                  then
+                     Writer_types.P
+                       (XSD_To_Ada.Utils.Split_Line
+                          (Name.To_Wide_Wide_String
+                           & " : Payloads." & Name.To_Wide_Wide_String & ";", 5));
+                  else
                      Writer.N (Base_Type);
 
-                  Print_Model
-                    (Model_Group  => Model_Group,
-                     Writer       => Writer,
-                     Writer_types => Writer_types,
-                     Name         => Type_Name,
-                     Mapping      => Mapping,
-                     Choice       => Choice);
+                     Print_Model
+                       (Model_Group  => Model_Group,
+                        Writer       => Writer,
+                        Writer_types => Writer_types,
+                        Name         => Name,
+                        Mapping      => Mapping,
+                        Choice       => Choice);
+                  end if;
 
                   if Choice then
-                     Writer.P ("     end case;");
+                     Writer.P ("      end case;");
                   end if;
 
                   Writer.P ("   end record;" & LF);
 
-               elsif XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
-                  Writer_types.P
-                    ("   type " & Type_Name & " is" & LF
-                     & "     new Payloads." & Name & LF
-                     & "       with null record;" & LF);
-
-               elsif Type_Name.Ends_With ("Response") then
-                  Writer_types.P
-                    ("   type "
-                     & Type_Name
-                     & " is" & LF
-                     & "     new Web_Services.SOAP.Payloads."
-                     & "Abstract_SOAP_Payload"
-                     & LF
-                     & "   with record" & LF
-                     & XSD_To_Ada.Utils.Split_Line
-                       (XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name)
-                        & " : Payloads."
-                        & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name)
-                        & ";", 5) & LF
-                     & "   end record;" & LF);
-
-                  XSD_To_Ada.Utils.Gen_Access_Type (Writer, Type_Name);
-
-               elsif Element_Name.To_Wide_Wide_String /=
-                 Name.To_Wide_Wide_String
-               then
-                  Writer_types.P
-                    ("   type " & Type_Name & " is record" & LF
-                     & "     " & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name)
-                     & " : Payloads."
-                     & XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name) & ";"
-                     & LF
-                     & "   end record;  --  dvsdfvdrf" & LF);
+                  if Type_Name.Ends_With ("Response") then
+                     XSD_To_Ada.Utils.Gen_Access_Type (Writer, (Type_Name));
+                  end if;
                end if;
 
             elsif Is_Min_Occur then
