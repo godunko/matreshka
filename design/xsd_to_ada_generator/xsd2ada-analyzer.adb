@@ -92,7 +92,7 @@ package body XSD2Ada.Analyzer is
       := League.Strings.Empty_Universal_String;
       Anonym_Name      : League.Strings.Universal_String
       := League.Strings.Empty_Universal_String;
-      Simple_Type_Name : League.Strings.Universal_String
+      Short_Ada_Type_Name : League.Strings.Universal_String
       := League.Strings.Empty_Universal_String);
 
    --------------
@@ -126,7 +126,6 @@ package body XSD2Ada.Analyzer is
       Difinition_Node.Min := False;
       Difinition_Node.Max := False;
       Difinition_Node.Element_Name.Clear;
-      Difinition_Node.Simple_Type_Name.Clear;
 
       if not Value.Anonym_Name.Is_Empty then
          Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
@@ -134,7 +133,7 @@ package body XSD2Ada.Analyzer is
       else
          if Value.Object.Is_Simple_Type_Definition then
             Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
-              (Value.Simple_Type_Name);
+              (Value.Short_Ada_Type_Name);
          else
             Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
               (Value.Object.Get_Name);
@@ -257,7 +256,7 @@ package body XSD2Ada.Analyzer is
         := League.Strings.Empty_Universal_String;
       Anonym_Name  : League.Strings.Universal_String
       := League.Strings.Empty_Universal_String;
-      Simple_Type_Name : League.Strings.Universal_String
+      Short_Ada_Type_Name : League.Strings.Universal_String
       := League.Strings.Empty_Universal_String)
    is
       use type XML.Schema.Particles.Unbounded_Natural;
@@ -269,7 +268,7 @@ package body XSD2Ada.Analyzer is
       Item.Element_Name := Element_Name;
       Item.Anonym_Name := Anonym_Name;
 
-      Item.Simple_Type_Name := Simple_Type_Name;
+      Item.Short_Ada_Type_Name := Short_Ada_Type_Name;
 
       Item.Max := Max_Occurs /= (False, 1);
       Item.Min := Min_Occurs = 0;
@@ -315,16 +314,6 @@ package body XSD2Ada.Analyzer is
    begin
       return Self.Element_Name;
    end Element_Name;
-
-   ----------------------
-   -- Simple_Type_Name --
-   ----------------------
-
-   function Simple_Type_Name
-     (Self : Item) return League.Strings.Universal_String is
-   begin
-      return Self.Simple_Type_Name;
-   end Simple_Type_Name;
 
    ---------------------------
    -- Full_Ada_Package_Name --
@@ -465,7 +454,7 @@ package body XSD2Ada.Analyzer is
             Min_Occurs       => Min_Occurs,
             Max_Occurs       => Max_Occurs,
             Anonym_Name      => Anonym_Name,
-            Simple_Type_Name => Decl.Get_Name);
+            Short_Ada_Type_Name => Decl.Get_Name);
       end if;
    end Traverse_Term;
 
