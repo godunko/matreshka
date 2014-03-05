@@ -64,6 +64,14 @@ package Matreshka.DOM_Documents is
       Diagnosis      : XML.DOM.Error_Code := XML.DOM.No_Error;
    end record;
 
+   function Create_Attribute
+    (Self          : not null access Document_Node'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Prefix        : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return not null XML.DOM.Attributes.DOM_Attribute_Access;
+   --  Internal implementation.
+
    function Create_Element
     (Self          : not null access Document_Node'Class;
      Namespace_URI : League.Strings.Universal_String;
@@ -126,6 +134,12 @@ package Matreshka.DOM_Documents is
      Visitor  : in out XML.DOM.Visitors.Abstract_Visitor'Class;
      Control  : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   procedure Register_Attribute
+    (Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String;
+     Tag           : Ada.Tags.Tag);
+   --  Register implementation of namespace URI:local name attribute node.
 
    procedure Register_Element
     (Namespace_URI : League.Strings.Universal_String;

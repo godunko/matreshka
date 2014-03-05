@@ -72,20 +72,31 @@ package body Matreshka.DOM_Attributes is
       ----------------
 
       procedure Initialize
-       (Self           : not null access Attribute_L2_Node'Class;
-        Document       : not null Matreshka.DOM_Nodes.Document_Access;
-        Namespace_URI : League.Strings.Universal_String;
-        Prefix        : League.Strings.Universal_String;
-        Local_Name    : League.Strings.Universal_String) is
+       (Self     : not null access Abstract_Attribute_L2_Node'Class;
+        Document : not null Matreshka.DOM_Nodes.Document_Access) is
       begin
          Matreshka.DOM_Nodes.Constructors.Initialize (Self, Document);
-
-         Self.Namespace_URI := Namespace_URI;
-         Self.Prefix        := Prefix;
-         Self.Local_Name    := Local_Name;
       end Initialize;
 
    end Constructors;
+
+   ------------
+   -- Create --
+   ------------
+
+   overriding function Create
+    (Parameters : not null access Attribute_L2_Parameters)
+       return Attribute_L2_Node is
+   begin
+      return Self : Attribute_L2_Node do
+         Matreshka.DOM_Attributes.Constructors.Initialize
+          (Self'Unchecked_Access, Parameters.Document);
+
+         Self.Namespace_URI := Parameters.Namespace_URI;
+         Self.Prefix        := Parameters.Prefix;
+         Self.Local_Name    := Parameters.Local_Name;
+      end return;
+   end Create;
 
    ----------------
    -- Enter_Node --

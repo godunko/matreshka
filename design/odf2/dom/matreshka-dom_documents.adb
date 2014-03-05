@@ -66,11 +66,12 @@ package body Matreshka.DOM_Documents is
    function Hash (Item : Qualified_Name) return Ada.Containers.Hash_Type;
    --  Hash function to be used with standard containers.
 
-   package Element_Maps is
+   package Qualified_Name_Maps is
      new Ada.Containers.Hashed_Maps
           (Qualified_Name, Ada.Tags.Tag, Hash, "=", Ada.Tags."=");
 
-   Element_Registry : Element_Maps.Map;
+   Attribute_Registry : Qualified_Name_Maps.Map;
+   Element_Registry   : Qualified_Name_Maps.Map;
 
    ------------------
    -- Constructors --
@@ -88,6 +89,52 @@ package body Matreshka.DOM_Documents is
       end Initialize;
 
    end Constructors;
+
+   ----------------------
+   -- Create_Attribute --
+   ----------------------
+
+   function Create_Attribute
+    (Self          : not null access Document_Node'Class;
+     Namespace_URI : League.Strings.Universal_String;
+     Prefix        : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return not null XML.DOM.Attributes.DOM_Attribute_Access
+   is
+
+      function Constructor is
+        new Ada.Tags.Generic_Dispatching_Constructor
+             (Matreshka.DOM_Attributes.Abstract_Attribute_L2_Node,
+              Matreshka.DOM_Attributes.Attribute_L2_Parameters,
+              Matreshka.DOM_Attributes.Create);
+
+      Parameters : aliased Matreshka.DOM_Attributes.Attribute_L2_Parameters
+        := (Document      => Self,
+            Namespace_URI => Namespace_URI,
+            Prefix        => Prefix,
+            Local_Name    => Local_Name);
+      Position   : Qualified_Name_Maps.Cursor;
+      Tag        : Ada.Tags.Tag;
+      Node       : Matreshka.DOM_Nodes.Node_Access;
+
+   begin
+      Position :=
+        Attribute_Registry.Find
+         ((Parameters.Namespace_URI, Parameters.Local_Name));
+
+      if Qualified_Name_Maps.Has_Element (Position) then
+         Tag := Qualified_Name_Maps.Element (Position);
+
+      else
+         Tag := Matreshka.DOM_Attributes.Attribute_L2_Node'Tag;
+      end if;
+
+      Node :=
+        new Matreshka.DOM_Attributes.Abstract_Attribute_L2_Node'Class'
+             (Constructor (Tag, Parameters'Access));
+
+      return XML.DOM.Attributes.DOM_Attribute_Access (Node);
+   end Create_Attribute;
 
    -------------------------
    -- Create_Attribute_NS --
@@ -107,14 +154,7 @@ package body Matreshka.DOM_Documents is
    begin
       Split_Qualified_Name (Qualified_Name, Prefix, Local_Name);
 
-      Matreshka.DOM_Attributes.Constructors.Initialize
-       (Matreshka.DOM_Attributes.Attribute_L2_Node'Class (Node.all)'Access,
-        Self,
-        Namespace_URI,
-        Prefix,
-        Local_Name);
-
-      return XML.DOM.Attributes.DOM_Attribute_Access (Node);
+      return Self.Create_Attribute (Namespace_URI, Prefix, Local_Name);
    end Create_Attribute_NS;
 
    --------------------
@@ -140,7 +180,7 @@ package body Matreshka.DOM_Documents is
             Namespace_URI => Namespace_URI,
             Prefix        => Prefix,
             Local_Name    => Local_Name);
-      Position   : Element_Maps.Cursor;
+      Position   : Qualified_Name_Maps.Cursor;
       Tag        : Ada.Tags.Tag;
       Node       : Matreshka.DOM_Nodes.Node_Access;
 
@@ -149,8 +189,8 @@ package body Matreshka.DOM_Documents is
         Element_Registry.Find
          ((Parameters.Namespace_URI, Parameters.Local_Name));
 
-      if Element_Maps.Has_Element (Position) then
-         Tag := Element_Maps.Element (Position);
+      if Qualified_Name_Maps.Has_Element (Position) then
+         Tag := Qualified_Name_Maps.Element (Position);
 
       else
          Tag := Matreshka.DOM_Elements.Element_Node'Tag;
@@ -303,6 +343,18 @@ package body Matreshka.DOM_Documents is
       Visitor.Leave_Document
        (XML.DOM.Documents.DOM_Document_Access (Self), Control);
    end Leave_Node;
+
+   ------------------------
+   -- Register_Attribute --
+   ------------------------
+
+   procedure Register_Attribute
+    (Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String;
+     Tag           : Ada.Tags.Tag) is
+   begin
+      Attribute_Registry.Insert ((Namespace_URI, Local_Name), Tag);
+   end Register_Attribute;
 
    ----------------------
    -- Register_Element --
