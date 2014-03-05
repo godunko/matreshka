@@ -51,6 +51,7 @@ package ODF.DOM.Dr3d_Sphere_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Dr3d_Sphere_Element_Access is
-     access all ODF_Dr3d_Sphere_Element'Class;
+     access all ODF_Dr3d_Sphere_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Dr3d_Sphere_Elements;
