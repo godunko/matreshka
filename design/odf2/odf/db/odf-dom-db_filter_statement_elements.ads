@@ -51,6 +51,7 @@ package ODF.DOM.Db_Filter_Statement_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Db_Filter_Statement_Element_Access is
-     access all ODF_Db_Filter_Statement_Element'Class;
+     access all ODF_Db_Filter_Statement_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Db_Filter_Statement_Elements;
