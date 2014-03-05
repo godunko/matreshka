@@ -1,0 +1,17 @@
+with "../../gnat/matreshka_xml.gpr";
+
+project Tools is
+
+   for Source_Dirs use ("tools");
+   for Object_Dir use ".objs";
+   for Main use ("odfgen-driver.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g");
+   end Compiler;
+
+   package Builder is
+      for Executable ("odfgen-driver.adb") use "odfgen";
+   end Builder;
+
+end Tools;

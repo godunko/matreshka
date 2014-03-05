@@ -10,7 +10,7 @@ gen:
 	gprbuild -p -j0 -P tools.gpr
 	rm -rf .new
 	mkdir .new
-	.objs/odfgen odf.xml > .new/sources.ada
+	.objs/odfgen tools/odf.xml > .new/sources.ada
 	gnatchop -w .new/sources.ada .new
 	# 'amin' module
 	ls .new/matreshka-odf_anim-*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/anim/{}
