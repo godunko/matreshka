@@ -51,6 +51,7 @@ package ODF.DOM.Style_Paragraph_Properties_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Style_Paragraph_Properties_Element_Access is
-     access all ODF_Style_Paragraph_Properties_Element'Class;
+     access all ODF_Style_Paragraph_Properties_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Style_Paragraph_Properties_Elements;
