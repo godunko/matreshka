@@ -51,6 +51,7 @@ package ODF.DOM.Meta_Generator_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Meta_Generator_Element_Access is
-     access all ODF_Meta_Generator_Element'Class;
+     access all ODF_Meta_Generator_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Meta_Generator_Elements;
