@@ -172,8 +172,7 @@ package body Matreshka.DOM_Documents is
       Local_Name : League.Strings.Universal_String;
 
    begin
-      Split_Qualified_Name
-       (Qualified_Name, Prefix, Local_Name);
+      Split_Qualified_Name (Qualified_Name, Prefix, Local_Name);
 
       return Self.Create_Element (Namespace_URI, Prefix, Local_Name);
    end Create_Element_NS;
