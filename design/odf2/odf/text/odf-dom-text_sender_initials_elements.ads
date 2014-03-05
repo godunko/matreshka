@@ -51,6 +51,7 @@ package ODF.DOM.Text_Sender_Initials_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Text_Sender_Initials_Element_Access is
-     access all ODF_Text_Sender_Initials_Element'Class;
+     access all ODF_Text_Sender_Initials_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Text_Sender_Initials_Elements;

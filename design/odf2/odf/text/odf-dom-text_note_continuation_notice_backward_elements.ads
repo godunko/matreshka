@@ -51,6 +51,7 @@ package ODF.DOM.Text_Note_Continuation_Notice_Backward_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Text_Note_Continuation_Notice_Backward_Element_Access is
-     access all ODF_Text_Note_Continuation_Notice_Backward_Element'Class;
+     access all ODF_Text_Note_Continuation_Notice_Backward_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Text_Note_Continuation_Notice_Backward_Elements;
