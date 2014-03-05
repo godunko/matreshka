@@ -24,7 +24,8 @@
     xmlns:math='http://www.w3.org/1998/Math/MathML'
     xmlns:xforms='http://www.w3.org/2002/xforms'
     xmlns:xhtml='http://www.w3.org/1999/xhtml'
-    xmlns:xlink='http://www.w3.org/1999/xlink'>
+    xmlns:xlink='http://www.w3.org/1999/xlink'
+    xmlns:xml='http://www.w3.org/XML/1998/namespace'>
   <element name='office:document'/>
   <element name='office:document-content'/>
   <element name='office:document-styles'/>
@@ -1716,7 +1717,6 @@
   <attribute name='fo:break-before'/>
   <attribute name='fo:clip'/>
   <attribute name='fo:color'/>
-  <attribute name='fo:country'/>
   <attribute name='fo:font-family'/>
   <attribute name='fo:font-size'/>
   <attribute name='fo:font-style'/>
@@ -1739,8 +1739,6 @@
   <attribute name='fo:margin-right'/>
   <attribute name='fo:margin-top'/>
   <attribute name='fo:max-height'/>
-  <attribute name='fo:max-width'/>
-  <attribute name='fo:min-height'/>
   <attribute name='fo:min-width'/>
   <attribute name='fo:orphans'/>
   <attribute name='fo:page-height'/>
@@ -1770,10 +1768,6 @@
   <attribute name='presentation:transition-style'/>
   <attribute name='presentation:transition-type'/>
   <attribute name='presentation:visibility'/>
-  <attribute name='smil:direction'/>
-  <attribute name='smil:fadeColor'/>
-  <attribute name='smil:subtype'/>
-  <attribute name='smil:type'/>
   <attribute name='style:auto-text-indent'/>
   <attribute name='style:background-transparency'/>
   <attribute name='style:border-line-width'/>
@@ -1852,7 +1846,6 @@
   <attribute name='style:num-format'/>
   <attribute name='style:num-letter-sync'/>
   <attribute name='style:num-prefix'/>
-  <attribute name='style:num-suffix'/>
   <attribute name='style:number-wrapped-paragraphs'/>
   <attribute name='style:overflow-behavior'/>
   <attribute name='style:page-number'/>
@@ -1867,10 +1860,7 @@
   <attribute name='style:register-truth-ref-style-name'/>
   <attribute name='style:rel-column-width'/>
   <attribute name='style:rel-height'/>
-  <attribute name='style:rel-width'/>
-  <attribute name='style:repeat'/>
   <attribute name='style:repeat-content'/>
-  <attribute name='style:rfc-language-tag'/>
   <attribute name='style:rfc-language-tag-asian'/>
   <attribute name='style:rfc-language-tag-complex'/>
   <attribute name='style:rotation-align'/>
@@ -1921,10 +1911,8 @@
   <attribute name='style:use-optimal-column-width'/>
   <attribute name='style:use-optimal-row-height'/>
   <attribute name='style:use-window-font-color'/>
-  <attribute name='style:vertical-align'/>
   <attribute name='style:vertical-pos'/>
   <attribute name='style:vertical-rel'/>
-  <attribute name='style:width'/>
   <attribute name='style:wrap'/>
   <attribute name='style:wrap-contour'/>
   <attribute name='style:wrap-contour-mode'/>
@@ -1936,14 +1924,9 @@
   <attribute name='svg:stroke-color'/>
   <attribute name='svg:stroke-opacity'/>
   <attribute name='svg:stroke-width'/>
-  <attribute name='svg:x'/>
-  <attribute name='svg:y'/>
   <attribute name='svg:width'/>
   <attribute name='table:align'/>
   <attribute name='table:border-model'/>
-  <attribute name='table:display'/>
-  <attribute name='text:anchor-page-number'/>
-  <attribute name='text:anchor-type'/>
   <attribute name='text:animation'/>
   <attribute name='text:animation-delay'/>
   <attribute name='text:animation-direction'/>
@@ -1952,13 +1935,11 @@
   <attribute name='text:animation-steps'/>
   <attribute name='text:animation-stop-inside'/>
   <attribute name='text:condition'/>
-  <attribute name='text:display'/>
   <attribute name='text:dont-balance-text-columns'/>
   <attribute name='text:line-break'/>
   <attribute name='text:line-number'/>
   <attribute name='text:list-level-position-and-space-mode'/>
   <attribute name='text:min-label-distance'/>
   <attribute name='text:min-label-width'/>
-  <attribute name='text:number-lines'/>
   <attribute name='text:space-before'/>
 </ODF>

@@ -62,6 +62,10 @@ package ODFGen is
    package Element_Sets is
      new Ada.Containers.Ordered_Sets (Element_Information, Less);
 
+   subtype Attribute_Information is Element_Information;
+
+   package Attribute_Sets renames Element_Sets;
+
    type Namespace_Information is record
       Prefix            : League.Strings.Universal_String;
       Namespace_URI     : League.Strings.Universal_String;
@@ -86,5 +90,6 @@ package ODFGen is
    Namespaces : Namespace_Sets.Set;
    Elements   : Element_Sets.Set;
    Strings    : Universal_String_Maps.Map;
+   Attributes : Element_Sets.Set;
 
 end ODFGen;

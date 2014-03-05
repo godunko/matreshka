@@ -93,7 +93,14 @@ package body ODFGen.Parsers is
          Strings.Include (To_Ada (Name) & "_Element", Name);
 
       elsif Qualified_Name.To_Wide_Wide_String = "attribute" then
-         null;
+         Value :=
+           Attributes.Value (League.Strings.To_Universal_String ("name"));
+         Delimiter := Value.Index (':');
+         Module := Value.Head (Delimiter - 1);
+         Name := Value.Tail_From (Delimiter + 1);
+         ODFGen.Attributes.Insert
+          ((Module, Name, To_Ada (Module), To_Ada (Name)));
+         Strings.Include (To_Ada (Name) & "_Attribute", Name);
 
       else
          raise Program_Error;

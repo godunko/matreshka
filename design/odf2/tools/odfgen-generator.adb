@@ -64,6 +64,18 @@ package body ODFGen.Generator is
     (Template : League.String_Vectors.Universal_String_Vector;
      Element  : Element_Information);
 
+   procedure Generate_Attribute_API
+    (Template  : League.String_Vectors.Universal_String_Vector;
+     Attribute : Attribute_Information) renames Generate_Element_API;
+
+   procedure Generate_Attribute_Impl_Spec
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Attribute  : Attribute_Information) renames Generate_Element_Impl_Spec;
+
+   procedure Generate_Attribute_Impl_Body
+    (Template : League.String_Vectors.Universal_String_Vector;
+     Attribute  : Attribute_Information) renames Generate_Element_Impl_Body;
+
    procedure Generate_String_Constants
     (Header   : League.String_Vectors.Universal_String_Vector;
      Template : League.String_Vectors.Universal_String_Vector;
@@ -240,6 +252,14 @@ package body ODFGen.Generator is
       Document_Impl_Body_Footer_Template :
         League.String_Vectors.Universal_String_Vector
           := Load_Template ("tools/templates/document_impl-footer.adb.tmpl");
+      Attribute_API_Template    : League.String_Vectors.Universal_String_Vector
+        := Load_Template ("tools/templates/attribute_api.ads.tmpl");
+      Attribute_Impl_Spec_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/attribute_impl.ads.tmpl");
+      Attribute_Impl_Body_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/attribute_impl.adb.tmpl");
       Element_API_Template      : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/element_api.ads.tmpl");
       Element_Impl_Spec_Template :
@@ -284,6 +304,12 @@ package body ODFGen.Generator is
        (Strings_Header_Template,
         Strings_Item_Template,
         Strings_Footer_Template);
+
+      for Attribute of Attributes loop
+         Generate_Attribute_API (Attribute_API_Template, Attribute);
+         Generate_Attribute_Impl_Spec (Attribute_Impl_Spec_Template, Attribute);
+         Generate_Attribute_Impl_Body (Attribute_Impl_Body_Template, Attribute);
+      end loop;
 
       for Element of Elements loop
          Generate_Element_API (Element_API_Template, Element);
