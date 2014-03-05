@@ -51,6 +51,7 @@ package ODF.DOM.Anim_Audio_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Anim_Audio_Element_Access is
-     access all ODF_Anim_Audio_Element'Class;
+     access all ODF_Anim_Audio_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Anim_Audio_Elements;
