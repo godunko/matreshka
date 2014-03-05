@@ -51,6 +51,7 @@ package ODF.DOM.Math_Math_Elements is
      and XML.DOM.Elements.DOM_Element;
 
    type ODF_Math_Math_Element_Access is
-     access all ODF_Math_Math_Element'Class;
+     access all ODF_Math_Math_Element'Class
+       with Storage_Size => 0;
 
 end ODF.DOM.Math_Math_Elements;
