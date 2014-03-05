@@ -99,15 +99,20 @@ package body Matreshka.DOM_Documents is
      Qualified_Name : League.Strings.Universal_String)
        return not null XML.DOM.Attributes.DOM_Attribute_Access
    is
-      Node : constant not null Matreshka.DOM_Nodes.Node_Access
+      Prefix     : League.Strings.Universal_String;
+      Local_Name : League.Strings.Universal_String;
+      Node       : constant not null Matreshka.DOM_Nodes.Node_Access
         := new Matreshka.DOM_Attributes.Attribute_L2_Node;
 
    begin
+      Split_Qualified_Name (Qualified_Name, Prefix, Local_Name);
+
       Matreshka.DOM_Attributes.Constructors.Initialize
        (Matreshka.DOM_Attributes.Attribute_L2_Node'Class (Node.all)'Access,
         Self,
         Namespace_URI,
-        Qualified_Name);
+        Prefix,
+        Local_Name);
 
       return XML.DOM.Attributes.DOM_Attribute_Access (Node);
    end Create_Attribute_NS;
