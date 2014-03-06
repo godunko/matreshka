@@ -77,7 +77,7 @@ package body Matreshka.ODF_Dr3d.Light_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Dr3d_Light
-            (ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light_Element_Access
+            (ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Dr3d.Light_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Dr3d_Light
-            (ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light_Element_Access
+            (ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Dr3d.Light_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Dr3d_Light
             (Visitor,
-             ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light_Element_Access
+             ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light_Access
               (Self),
              Control);
 

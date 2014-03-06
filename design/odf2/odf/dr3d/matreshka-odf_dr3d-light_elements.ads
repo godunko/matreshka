@@ -49,7 +49,7 @@ package Matreshka.ODF_Dr3d.Light_Elements is
 
    type Dr3d_Light_Element_Node is
      new Matreshka.ODF_Dr3d.Abstract_Dr3d_Element_Node
-       and ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light_Element
+       and ODF.DOM.Dr3d_Light_Elements.ODF_Dr3d_Light
          with null record;
 
    overriding function Create

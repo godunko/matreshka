@@ -49,7 +49,7 @@ package Matreshka.ODF_Dr3d.Extrude_Elements is
 
    type Dr3d_Extrude_Element_Node is
      new Matreshka.ODF_Dr3d.Abstract_Dr3d_Element_Node
-       and ODF.DOM.Dr3d_Extrude_Elements.ODF_Dr3d_Extrude_Element
+       and ODF.DOM.Dr3d_Extrude_Elements.ODF_Dr3d_Extrude
          with null record;
 
    overriding function Create

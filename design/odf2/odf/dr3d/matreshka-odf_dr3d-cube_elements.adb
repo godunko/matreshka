@@ -77,7 +77,7 @@ package body Matreshka.ODF_Dr3d.Cube_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Dr3d_Cube
-            (ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube_Element_Access
+            (ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Dr3d.Cube_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Dr3d_Cube
-            (ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube_Element_Access
+            (ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Dr3d.Cube_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Dr3d_Cube
             (Visitor,
-             ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube_Element_Access
+             ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube_Access
               (Self),
              Control);
 

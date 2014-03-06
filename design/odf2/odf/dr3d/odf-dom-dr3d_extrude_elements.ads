@@ -47,11 +47,11 @@ package ODF.DOM.Dr3d_Extrude_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Dr3d_Extrude_Element is limited interface
+   type ODF_Dr3d_Extrude is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Dr3d_Extrude_Element_Access is
-     access all ODF_Dr3d_Extrude_Element'Class
+   type ODF_Dr3d_Extrude_Access is
+     access all ODF_Dr3d_Extrude'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Dr3d_Extrude_Elements;

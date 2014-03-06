@@ -47,11 +47,11 @@ package ODF.DOM.Dr3d_Light_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Dr3d_Light_Element is limited interface
+   type ODF_Dr3d_Light is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Dr3d_Light_Element_Access is
-     access all ODF_Dr3d_Light_Element'Class
+   type ODF_Dr3d_Light_Access is
+     access all ODF_Dr3d_Light'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Dr3d_Light_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Dr3d.Scene_Elements is
 
    type Dr3d_Scene_Element_Node is
      new Matreshka.ODF_Dr3d.Abstract_Dr3d_Element_Node
-       and ODF.DOM.Dr3d_Scene_Elements.ODF_Dr3d_Scene_Element
+       and ODF.DOM.Dr3d_Scene_Elements.ODF_Dr3d_Scene
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Dr3d.Rotate_Elements is
 
    type Dr3d_Rotate_Element_Node is
      new Matreshka.ODF_Dr3d.Abstract_Dr3d_Element_Node
-       and ODF.DOM.Dr3d_Rotate_Elements.ODF_Dr3d_Rotate_Element
+       and ODF.DOM.Dr3d_Rotate_Elements.ODF_Dr3d_Rotate
          with null record;
 
    overriding function Create

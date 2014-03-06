@@ -47,11 +47,11 @@ package ODF.DOM.Dr3d_Scene_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Dr3d_Scene_Element is limited interface
+   type ODF_Dr3d_Scene is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Dr3d_Scene_Element_Access is
-     access all ODF_Dr3d_Scene_Element'Class
+   type ODF_Dr3d_Scene_Access is
+     access all ODF_Dr3d_Scene'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Dr3d_Scene_Elements;

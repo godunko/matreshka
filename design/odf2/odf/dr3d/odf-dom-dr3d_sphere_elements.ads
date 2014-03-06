@@ -47,11 +47,11 @@ package ODF.DOM.Dr3d_Sphere_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Dr3d_Sphere_Element is limited interface
+   type ODF_Dr3d_Sphere is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Dr3d_Sphere_Element_Access is
-     access all ODF_Dr3d_Sphere_Element'Class
+   type ODF_Dr3d_Sphere_Access is
+     access all ODF_Dr3d_Sphere'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Dr3d_Sphere_Elements;

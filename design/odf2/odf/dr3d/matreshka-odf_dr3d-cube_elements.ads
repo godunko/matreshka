@@ -49,7 +49,7 @@ package Matreshka.ODF_Dr3d.Cube_Elements is
 
    type Dr3d_Cube_Element_Node is
      new Matreshka.ODF_Dr3d.Abstract_Dr3d_Element_Node
-       and ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube_Element
+       and ODF.DOM.Dr3d_Cube_Elements.ODF_Dr3d_Cube
          with null record;
 
    overriding function Create
