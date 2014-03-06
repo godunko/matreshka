@@ -49,7 +49,7 @@ package Matreshka.ODF_Dc.Description_Elements is
 
    type Dc_Description_Element_Node is
      new Matreshka.ODF_Dc.Abstract_Dc_Element_Node
-       and ODF.DOM.Dc_Description_Elements.ODF_Dc_Description_Element
+       and ODF.DOM.Dc_Description_Elements.ODF_Dc_Description
          with null record;
 
    overriding function Create

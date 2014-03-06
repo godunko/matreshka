@@ -49,7 +49,7 @@ package Matreshka.ODF_Dc.Subject_Elements is
 
    type Dc_Subject_Element_Node is
      new Matreshka.ODF_Dc.Abstract_Dc_Element_Node
-       and ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject_Element
+       and ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject
          with null record;
 
    overriding function Create

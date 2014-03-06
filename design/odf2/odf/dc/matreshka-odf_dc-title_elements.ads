@@ -49,7 +49,7 @@ package Matreshka.ODF_Dc.Title_Elements is
 
    type Dc_Title_Element_Node is
      new Matreshka.ODF_Dc.Abstract_Dc_Element_Node
-       and ODF.DOM.Dc_Title_Elements.ODF_Dc_Title_Element
+       and ODF.DOM.Dc_Title_Elements.ODF_Dc_Title
          with null record;
 
    overriding function Create

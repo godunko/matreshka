@@ -47,11 +47,11 @@ package ODF.DOM.Dc_Language_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Dc_Language_Element is limited interface
+   type ODF_Dc_Language is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Dc_Language_Element_Access is
-     access all ODF_Dc_Language_Element'Class
+   type ODF_Dc_Language_Access is
+     access all ODF_Dc_Language'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Dc_Language_Elements;

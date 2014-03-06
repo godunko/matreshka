@@ -49,7 +49,7 @@ package Matreshka.ODF_Dc.Date_Elements is
 
    type Dc_Date_Element_Node is
      new Matreshka.ODF_Dc.Abstract_Dc_Element_Node
-       and ODF.DOM.Dc_Date_Elements.ODF_Dc_Date_Element
+       and ODF.DOM.Dc_Date_Elements.ODF_Dc_Date
          with null record;
 
    overriding function Create

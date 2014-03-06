@@ -47,11 +47,11 @@ package ODF.DOM.Dc_Subject_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Dc_Subject_Element is limited interface
+   type ODF_Dc_Subject is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Dc_Subject_Element_Access is
-     access all ODF_Dc_Subject_Element'Class
+   type ODF_Dc_Subject_Access is
+     access all ODF_Dc_Subject'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Dc_Subject_Elements;

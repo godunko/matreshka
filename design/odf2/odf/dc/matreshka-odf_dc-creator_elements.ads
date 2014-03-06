@@ -49,7 +49,7 @@ package Matreshka.ODF_Dc.Creator_Elements is
 
    type Dc_Creator_Element_Node is
      new Matreshka.ODF_Dc.Abstract_Dc_Element_Node
-       and ODF.DOM.Dc_Creator_Elements.ODF_Dc_Creator_Element
+       and ODF.DOM.Dc_Creator_Elements.ODF_Dc_Creator
          with null record;
 
    overriding function Create

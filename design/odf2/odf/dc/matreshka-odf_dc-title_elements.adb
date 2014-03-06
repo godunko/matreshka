@@ -77,7 +77,7 @@ package body Matreshka.ODF_Dc.Title_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Dc_Title
-            (ODF.DOM.Dc_Title_Elements.ODF_Dc_Title_Element_Access
+            (ODF.DOM.Dc_Title_Elements.ODF_Dc_Title_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Dc.Title_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Dc_Title
-            (ODF.DOM.Dc_Title_Elements.ODF_Dc_Title_Element_Access
+            (ODF.DOM.Dc_Title_Elements.ODF_Dc_Title_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Dc.Title_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Dc_Title
             (Visitor,
-             ODF.DOM.Dc_Title_Elements.ODF_Dc_Title_Element_Access
+             ODF.DOM.Dc_Title_Elements.ODF_Dc_Title_Access
               (Self),
              Control);
 

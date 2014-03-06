@@ -49,7 +49,7 @@ package Matreshka.ODF_Dc.Language_Elements is
 
    type Dc_Language_Element_Node is
      new Matreshka.ODF_Dc.Abstract_Dc_Element_Node
-       and ODF.DOM.Dc_Language_Elements.ODF_Dc_Language_Element
+       and ODF.DOM.Dc_Language_Elements.ODF_Dc_Language
          with null record;
 
    overriding function Create

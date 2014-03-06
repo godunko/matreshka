@@ -77,7 +77,7 @@ package body Matreshka.ODF_Dc.Subject_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Dc_Subject
-            (ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject_Element_Access
+            (ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Dc.Subject_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Dc_Subject
-            (ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject_Element_Access
+            (ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Dc.Subject_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Dc_Subject
             (Visitor,
-             ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject_Element_Access
+             ODF.DOM.Dc_Subject_Elements.ODF_Dc_Subject_Access
               (Self),
              Control);
 

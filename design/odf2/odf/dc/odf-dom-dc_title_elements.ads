@@ -47,11 +47,11 @@ package ODF.DOM.Dc_Title_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Dc_Title_Element is limited interface
+   type ODF_Dc_Title is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Dc_Title_Element_Access is
-     access all ODF_Dc_Title_Element'Class
+   type ODF_Dc_Title_Access is
+     access all ODF_Dc_Title'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Dc_Title_Elements;
