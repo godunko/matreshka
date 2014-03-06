@@ -49,7 +49,7 @@ package Matreshka.ODF_Svg.Font_Face_Src_Elements is
 
    type Svg_Font_Face_Src_Element_Node is
      new Matreshka.ODF_Svg.Abstract_Svg_Element_Node
-       and ODF.DOM.Svg_Font_Face_Src_Elements.ODF_Svg_Font_Face_Src_Element
+       and ODF.DOM.Svg_Font_Face_Src_Elements.ODF_Svg_Font_Face_Src
          with null record;
 
    overriding function Create

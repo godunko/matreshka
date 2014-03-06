@@ -77,7 +77,7 @@ package body Matreshka.ODF_Svg.Desc_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Svg_Desc
-            (ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc_Element_Access
+            (ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Svg.Desc_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Svg_Desc
-            (ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc_Element_Access
+            (ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Svg.Desc_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Svg_Desc
             (Visitor,
-             ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc_Element_Access
+             ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc_Access
               (Self),
              Control);
 

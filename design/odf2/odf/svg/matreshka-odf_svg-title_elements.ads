@@ -49,7 +49,7 @@ package Matreshka.ODF_Svg.Title_Elements is
 
    type Svg_Title_Element_Node is
      new Matreshka.ODF_Svg.Abstract_Svg_Element_Node
-       and ODF.DOM.Svg_Title_Elements.ODF_Svg_Title_Element
+       and ODF.DOM.Svg_Title_Elements.ODF_Svg_Title
          with null record;
 
    overriding function Create

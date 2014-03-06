@@ -47,11 +47,11 @@ package ODF.DOM.Svg_Desc_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Svg_Desc_Element is limited interface
+   type ODF_Svg_Desc is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Svg_Desc_Element_Access is
-     access all ODF_Svg_Desc_Element'Class
+   type ODF_Svg_Desc_Access is
+     access all ODF_Svg_Desc'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Svg_Desc_Elements;

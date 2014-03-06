@@ -47,11 +47,11 @@ package ODF.DOM.Svg_RadialGradient_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Svg_RadialGradient_Element is limited interface
+   type ODF_Svg_RadialGradient is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Svg_RadialGradient_Element_Access is
-     access all ODF_Svg_RadialGradient_Element'Class
+   type ODF_Svg_RadialGradient_Access is
+     access all ODF_Svg_RadialGradient'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Svg_RadialGradient_Elements;

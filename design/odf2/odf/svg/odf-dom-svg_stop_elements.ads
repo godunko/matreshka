@@ -47,11 +47,11 @@ package ODF.DOM.Svg_Stop_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Svg_Stop_Element is limited interface
+   type ODF_Svg_Stop is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Svg_Stop_Element_Access is
-     access all ODF_Svg_Stop_Element'Class
+   type ODF_Svg_Stop_Access is
+     access all ODF_Svg_Stop'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Svg_Stop_Elements;

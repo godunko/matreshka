@@ -77,7 +77,7 @@ package body Matreshka.ODF_Svg.Title_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Svg_Title
-            (ODF.DOM.Svg_Title_Elements.ODF_Svg_Title_Element_Access
+            (ODF.DOM.Svg_Title_Elements.ODF_Svg_Title_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Svg.Title_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Svg_Title
-            (ODF.DOM.Svg_Title_Elements.ODF_Svg_Title_Element_Access
+            (ODF.DOM.Svg_Title_Elements.ODF_Svg_Title_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Svg.Title_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Svg_Title
             (Visitor,
-             ODF.DOM.Svg_Title_Elements.ODF_Svg_Title_Element_Access
+             ODF.DOM.Svg_Title_Elements.ODF_Svg_Title_Access
               (Self),
              Control);
 

@@ -49,7 +49,7 @@ package Matreshka.ODF_Svg.Desc_Elements is
 
    type Svg_Desc_Element_Node is
      new Matreshka.ODF_Svg.Abstract_Svg_Element_Node
-       and ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc_Element
+       and ODF.DOM.Svg_Desc_Elements.ODF_Svg_Desc
          with null record;
 
    overriding function Create

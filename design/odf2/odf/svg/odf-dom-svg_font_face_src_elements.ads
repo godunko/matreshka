@@ -47,11 +47,11 @@ package ODF.DOM.Svg_Font_Face_Src_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Svg_Font_Face_Src_Element is limited interface
+   type ODF_Svg_Font_Face_Src is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Svg_Font_Face_Src_Element_Access is
-     access all ODF_Svg_Font_Face_Src_Element'Class
+   type ODF_Svg_Font_Face_Src_Access is
+     access all ODF_Svg_Font_Face_Src'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Svg_Font_Face_Src_Elements;
