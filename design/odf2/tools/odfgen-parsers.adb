@@ -61,6 +61,30 @@ package body ODFGen.Parsers is
       return League.Strings.Empty_Universal_String;
    end Error_String;
 
+   --------------------
+   -- Start_Document --
+   --------------------
+
+   overriding procedure Start_Document
+    (Self    : in out Parser;
+     Success : in out Boolean)
+   is
+      Namespace_URI : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String
+            ("http://www.w3.org/XML/1998/namespace");
+      Prefix        : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("xml");
+
+   begin
+      --  XML namespace is not reported by SAX reader, but used in ODF.
+
+      Namespaces.Insert
+       ((Prefix          => Prefix,
+         Namespace_URI   => Namespace_URI,
+         Prefix_Ada_Name => To_Ada (Prefix) & "_Prefix",
+         URI_Ada_Name    => To_Ada (Prefix) & "_URI"));
+   end Start_Document;
+
    -------------------
    -- Start_Element --
    -------------------

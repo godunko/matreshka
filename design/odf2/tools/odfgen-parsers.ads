@@ -58,6 +58,10 @@ private
    overriding function Error_String
     (Self : Parser) return League.Strings.Universal_String;
 
+   overriding procedure Start_Document
+    (Self    : in out Parser;
+     Success : in out Boolean);
+
    overriding procedure Start_Element
     (Self           : in out Parser;
      Namespace_URI  : League.Strings.Universal_String;
