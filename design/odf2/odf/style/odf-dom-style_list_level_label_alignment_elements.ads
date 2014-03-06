@@ -47,11 +47,11 @@ package ODF.DOM.Style_List_Level_Label_Alignment_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_List_Level_Label_Alignment_Element is limited interface
+   type ODF_Style_List_Level_Label_Alignment is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_List_Level_Label_Alignment_Element_Access is
-     access all ODF_Style_List_Level_Label_Alignment_Element'Class
+   type ODF_Style_List_Level_Label_Alignment_Access is
+     access all ODF_Style_List_Level_Label_Alignment'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_List_Level_Label_Alignment_Elements;

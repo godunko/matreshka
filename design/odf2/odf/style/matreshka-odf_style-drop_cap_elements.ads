@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Drop_Cap_Elements is
 
    type Style_Drop_Cap_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Drop_Cap_Elements.ODF_Style_Drop_Cap_Element
+       and ODF.DOM.Style_Drop_Cap_Elements.ODF_Style_Drop_Cap
          with null record;
 
    overriding function Create

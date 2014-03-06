@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Font_Face_Elements is
 
    type Style_Font_Face_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Font_Face_Elements.ODF_Style_Font_Face_Element
+       and ODF.DOM.Style_Font_Face_Elements.ODF_Style_Font_Face
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Style_Background_Image_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Background_Image_Element is limited interface
+   type ODF_Style_Background_Image is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Background_Image_Element_Access is
-     access all ODF_Style_Background_Image_Element'Class
+   type ODF_Style_Background_Image_Access is
+     access all ODF_Style_Background_Image'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Background_Image_Elements;

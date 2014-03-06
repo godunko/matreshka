@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Style_Elements is
 
    type Style_Style_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Style_Elements.ODF_Style_Style_Element
+       and ODF.DOM.Style_Style_Elements.ODF_Style_Style
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Style_Region_Right_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Region_Right_Element is limited interface
+   type ODF_Style_Region_Right is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Region_Right_Element_Access is
-     access all ODF_Style_Region_Right_Element'Class
+   type ODF_Style_Region_Right_Access is
+     access all ODF_Style_Region_Right'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Region_Right_Elements;

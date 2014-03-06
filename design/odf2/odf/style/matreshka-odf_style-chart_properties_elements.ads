@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Chart_Properties_Elements is
 
    type Style_Chart_Properties_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Chart_Properties_Elements.ODF_Style_Chart_Properties_Element
+       and ODF.DOM.Style_Chart_Properties_Elements.ODF_Style_Chart_Properties
          with null record;
 
    overriding function Create

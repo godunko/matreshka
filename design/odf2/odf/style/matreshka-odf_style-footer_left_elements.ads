@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Footer_Left_Elements is
 
    type Style_Footer_Left_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left_Element
+       and ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left
          with null record;
 
    overriding function Create

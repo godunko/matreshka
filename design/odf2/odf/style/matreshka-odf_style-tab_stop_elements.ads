@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Tab_Stop_Elements is
 
    type Style_Tab_Stop_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop_Element
+       and ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop
          with null record;
 
    overriding function Create

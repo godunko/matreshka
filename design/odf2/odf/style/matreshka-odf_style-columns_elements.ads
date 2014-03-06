@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Columns_Elements is
 
    type Style_Columns_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Columns_Elements.ODF_Style_Columns_Element
+       and ODF.DOM.Style_Columns_Elements.ODF_Style_Columns
          with null record;
 
    overriding function Create

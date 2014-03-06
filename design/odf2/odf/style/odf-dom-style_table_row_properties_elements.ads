@@ -47,11 +47,11 @@ package ODF.DOM.Style_Table_Row_Properties_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Table_Row_Properties_Element is limited interface
+   type ODF_Style_Table_Row_Properties is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Table_Row_Properties_Element_Access is
-     access all ODF_Style_Table_Row_Properties_Element'Class
+   type ODF_Style_Table_Row_Properties_Access is
+     access all ODF_Style_Table_Row_Properties'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Table_Row_Properties_Elements;

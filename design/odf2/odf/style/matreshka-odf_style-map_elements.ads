@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Map_Elements is
 
    type Style_Map_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Map_Elements.ODF_Style_Map_Element
+       and ODF.DOM.Style_Map_Elements.ODF_Style_Map
          with null record;
 
    overriding function Create

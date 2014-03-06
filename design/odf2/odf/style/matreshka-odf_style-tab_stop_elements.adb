@@ -77,7 +77,7 @@ package body Matreshka.ODF_Style.Tab_Stop_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Style_Tab_Stop
-            (ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop_Element_Access
+            (ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Style.Tab_Stop_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Style_Tab_Stop
-            (ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop_Element_Access
+            (ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Style.Tab_Stop_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Style_Tab_Stop
             (Visitor,
-             ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop_Element_Access
+             ODF.DOM.Style_Tab_Stop_Elements.ODF_Style_Tab_Stop_Access
               (Self),
              Control);
 

@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Handout_Master_Elements is
 
    type Style_Handout_Master_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Handout_Master_Elements.ODF_Style_Handout_Master_Element
+       and ODF.DOM.Style_Handout_Master_Elements.ODF_Style_Handout_Master
          with null record;
 
    overriding function Create

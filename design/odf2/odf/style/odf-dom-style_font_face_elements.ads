@@ -47,11 +47,11 @@ package ODF.DOM.Style_Font_Face_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Font_Face_Element is limited interface
+   type ODF_Style_Font_Face is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Font_Face_Element_Access is
-     access all ODF_Style_Font_Face_Element'Class
+   type ODF_Style_Font_Face_Access is
+     access all ODF_Style_Font_Face'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Font_Face_Elements;

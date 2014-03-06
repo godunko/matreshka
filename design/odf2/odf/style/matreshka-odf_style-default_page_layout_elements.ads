@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Default_Page_Layout_Elements is
 
    type Style_Default_Page_Layout_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Default_Page_Layout_Elements.ODF_Style_Default_Page_Layout_Element
+       and ODF.DOM.Style_Default_Page_Layout_Elements.ODF_Style_Default_Page_Layout
          with null record;
 
    overriding function Create

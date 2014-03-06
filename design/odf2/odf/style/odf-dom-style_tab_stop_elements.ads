@@ -47,11 +47,11 @@ package ODF.DOM.Style_Tab_Stop_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Tab_Stop_Element is limited interface
+   type ODF_Style_Tab_Stop is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Tab_Stop_Element_Access is
-     access all ODF_Style_Tab_Stop_Element'Class
+   type ODF_Style_Tab_Stop_Access is
+     access all ODF_Style_Tab_Stop'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Tab_Stop_Elements;

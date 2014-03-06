@@ -77,7 +77,7 @@ package body Matreshka.ODF_Style.Footer_Left_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Style_Footer_Left
-            (ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left_Element_Access
+            (ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Style.Footer_Left_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Style_Footer_Left
-            (ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left_Element_Access
+            (ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Style.Footer_Left_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Style_Footer_Left
             (Visitor,
-             ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left_Element_Access
+             ODF.DOM.Style_Footer_Left_Elements.ODF_Style_Footer_Left_Access
               (Self),
              Control);
 

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Style.Region_Right_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Style_Region_Right
-            (ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right_Element_Access
+            (ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Style.Region_Right_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Style_Region_Right
-            (ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right_Element_Access
+            (ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Style.Region_Right_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Style_Region_Right
             (Visitor,
-             ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right_Element_Access
+             ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right_Access
               (Self),
              Control);
 

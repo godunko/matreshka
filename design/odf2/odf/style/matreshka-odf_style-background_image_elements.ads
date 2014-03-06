@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Background_Image_Elements is
 
    type Style_Background_Image_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Background_Image_Elements.ODF_Style_Background_Image_Element
+       and ODF.DOM.Style_Background_Image_Elements.ODF_Style_Background_Image
          with null record;
 
    overriding function Create

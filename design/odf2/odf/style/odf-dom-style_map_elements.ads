@@ -47,11 +47,11 @@ package ODF.DOM.Style_Map_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Map_Element is limited interface
+   type ODF_Style_Map is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Map_Element_Access is
-     access all ODF_Style_Map_Element'Class
+   type ODF_Style_Map_Access is
+     access all ODF_Style_Map'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Map_Elements;

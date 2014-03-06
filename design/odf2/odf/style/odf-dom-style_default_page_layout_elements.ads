@@ -47,11 +47,11 @@ package ODF.DOM.Style_Default_Page_Layout_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Default_Page_Layout_Element is limited interface
+   type ODF_Style_Default_Page_Layout is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Default_Page_Layout_Element_Access is
-     access all ODF_Style_Default_Page_Layout_Element'Class
+   type ODF_Style_Default_Page_Layout_Access is
+     access all ODF_Style_Default_Page_Layout'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Default_Page_Layout_Elements;

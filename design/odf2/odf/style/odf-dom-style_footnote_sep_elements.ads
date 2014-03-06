@@ -47,11 +47,11 @@ package ODF.DOM.Style_Footnote_Sep_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Style_Footnote_Sep_Element is limited interface
+   type ODF_Style_Footnote_Sep is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Style_Footnote_Sep_Element_Access is
-     access all ODF_Style_Footnote_Sep_Element'Class
+   type ODF_Style_Footnote_Sep_Access is
+     access all ODF_Style_Footnote_Sep'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Style_Footnote_Sep_Elements;

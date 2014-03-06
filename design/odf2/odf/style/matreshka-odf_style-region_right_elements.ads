@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Region_Right_Elements is
 
    type Style_Region_Right_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right_Element
+       and ODF.DOM.Style_Region_Right_Elements.ODF_Style_Region_Right
          with null record;
 
    overriding function Create

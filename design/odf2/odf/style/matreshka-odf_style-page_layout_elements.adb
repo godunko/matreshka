@@ -77,7 +77,7 @@ package body Matreshka.ODF_Style.Page_Layout_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Style_Page_Layout
-            (ODF.DOM.Style_Page_Layout_Elements.ODF_Style_Page_Layout_Element_Access
+            (ODF.DOM.Style_Page_Layout_Elements.ODF_Style_Page_Layout_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Style.Page_Layout_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Style_Page_Layout
-            (ODF.DOM.Style_Page_Layout_Elements.ODF_Style_Page_Layout_Element_Access
+            (ODF.DOM.Style_Page_Layout_Elements.ODF_Style_Page_Layout_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Style.Page_Layout_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Style_Page_Layout
             (Visitor,
-             ODF.DOM.Style_Page_Layout_Elements.ODF_Style_Page_Layout_Element_Access
+             ODF.DOM.Style_Page_Layout_Elements.ODF_Style_Page_Layout_Access
               (Self),
              Control);
 

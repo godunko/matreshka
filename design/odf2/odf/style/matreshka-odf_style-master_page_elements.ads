@@ -49,7 +49,7 @@ package Matreshka.ODF_Style.Master_Page_Elements is
 
    type Style_Master_Page_Element_Node is
      new Matreshka.ODF_Style.Abstract_Style_Element_Node
-       and ODF.DOM.Style_Master_Page_Elements.ODF_Style_Master_Page_Element
+       and ODF.DOM.Style_Master_Page_Elements.ODF_Style_Master_Page
          with null record;
 
    overriding function Create
