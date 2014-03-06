@@ -1,10 +1,10 @@
 
    not overriding procedure Enter_@GROUP@_@ELEMENT@
     (Self    : in out Abstract_ODF_Visitor;
-     Element : ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access;
+     Element : not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
    not overriding procedure Leave_@GROUP@_@ELEMENT@
     (Self    : in out Abstract_ODF_Visitor;
-     Element : ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access;
+     Element : not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control) is null;
