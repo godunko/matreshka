@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Axis_Elements is
 
    type Chart_Axis_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis_Element
+       and ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis
          with null record;
 
    overriding function Create

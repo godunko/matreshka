@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Legend_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Legend_Element is limited interface
+   type ODF_Chart_Legend is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Legend_Element_Access is
-     access all ODF_Chart_Legend_Element'Class
+   type ODF_Chart_Legend_Access is
+     access all ODF_Chart_Legend'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Legend_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Subtitle_Elements is
 
    type Chart_Subtitle_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Subtitle_Elements.ODF_Chart_Subtitle_Element
+       and ODF.DOM.Chart_Subtitle_Elements.ODF_Chart_Subtitle
          with null record;
 
    overriding function Create

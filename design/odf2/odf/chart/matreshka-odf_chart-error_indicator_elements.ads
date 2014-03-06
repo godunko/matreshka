@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Error_Indicator_Elements is
 
    type Chart_Error_Indicator_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Error_Indicator_Elements.ODF_Chart_Error_Indicator_Element
+       and ODF.DOM.Chart_Error_Indicator_Elements.ODF_Chart_Error_Indicator
          with null record;
 
    overriding function Create

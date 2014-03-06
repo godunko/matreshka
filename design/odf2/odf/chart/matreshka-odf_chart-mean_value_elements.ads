@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Mean_Value_Elements is
 
    type Chart_Mean_Value_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Mean_Value_Elements.ODF_Chart_Mean_Value_Element
+       and ODF.DOM.Chart_Mean_Value_Elements.ODF_Chart_Mean_Value
          with null record;
 
    overriding function Create

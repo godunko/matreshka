@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Stock_Range_Line_Elements is
 
    type Chart_Stock_Range_Line_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Stock_Range_Line_Elements.ODF_Chart_Stock_Range_Line_Element
+       and ODF.DOM.Chart_Stock_Range_Line_Elements.ODF_Chart_Stock_Range_Line
          with null record;
 
    overriding function Create

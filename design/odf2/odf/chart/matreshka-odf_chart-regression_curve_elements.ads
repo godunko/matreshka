@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Regression_Curve_Elements is
 
    type Chart_Regression_Curve_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Regression_Curve_Elements.ODF_Chart_Regression_Curve_Element
+       and ODF.DOM.Chart_Regression_Curve_Elements.ODF_Chart_Regression_Curve
          with null record;
 
    overriding function Create

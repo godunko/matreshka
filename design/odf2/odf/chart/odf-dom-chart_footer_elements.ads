@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Footer_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Footer_Element is limited interface
+   type ODF_Chart_Footer is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Footer_Element_Access is
-     access all ODF_Chart_Footer_Element'Class
+   type ODF_Chart_Footer_Access is
+     access all ODF_Chart_Footer'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Footer_Elements;

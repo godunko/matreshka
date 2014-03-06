@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Plot_Area_Elements is
 
    type Chart_Plot_Area_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Plot_Area_Elements.ODF_Chart_Plot_Area_Element
+       and ODF.DOM.Chart_Plot_Area_Elements.ODF_Chart_Plot_Area
          with null record;
 
    overriding function Create

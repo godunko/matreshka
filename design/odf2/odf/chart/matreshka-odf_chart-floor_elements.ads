@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Floor_Elements is
 
    type Chart_Floor_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Floor_Elements.ODF_Chart_Floor_Element
+       and ODF.DOM.Chart_Floor_Elements.ODF_Chart_Floor
          with null record;
 
    overriding function Create

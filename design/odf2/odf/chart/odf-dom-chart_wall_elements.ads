@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Wall_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Wall_Element is limited interface
+   type ODF_Chart_Wall is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Wall_Element_Access is
-     access all ODF_Chart_Wall_Element'Class
+   type ODF_Chart_Wall_Access is
+     access all ODF_Chart_Wall'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Wall_Elements;

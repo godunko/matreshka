@@ -77,7 +77,7 @@ package body Matreshka.ODF_Chart.Axis_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Chart_Axis
-            (ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis_Element_Access
+            (ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Chart.Axis_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Chart_Axis
-            (ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis_Element_Access
+            (ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Chart.Axis_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Chart_Axis
             (Visitor,
-             ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis_Element_Access
+             ODF.DOM.Chart_Axis_Elements.ODF_Chart_Axis_Access
               (Self),
              Control);
 

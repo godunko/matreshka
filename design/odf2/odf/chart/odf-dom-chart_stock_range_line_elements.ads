@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Stock_Range_Line_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Stock_Range_Line_Element is limited interface
+   type ODF_Chart_Stock_Range_Line is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Stock_Range_Line_Element_Access is
-     access all ODF_Chart_Stock_Range_Line_Element'Class
+   type ODF_Chart_Stock_Range_Line_Access is
+     access all ODF_Chart_Stock_Range_Line'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Stock_Range_Line_Elements;

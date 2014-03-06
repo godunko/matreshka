@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Subtitle_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Subtitle_Element is limited interface
+   type ODF_Chart_Subtitle is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Subtitle_Element_Access is
-     access all ODF_Chart_Subtitle_Element'Class
+   type ODF_Chart_Subtitle_Access is
+     access all ODF_Chart_Subtitle'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Subtitle_Elements;

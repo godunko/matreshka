@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Categories_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Categories_Element is limited interface
+   type ODF_Chart_Categories is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Categories_Element_Access is
-     access all ODF_Chart_Categories_Element'Class
+   type ODF_Chart_Categories_Access is
+     access all ODF_Chart_Categories'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Categories_Elements;

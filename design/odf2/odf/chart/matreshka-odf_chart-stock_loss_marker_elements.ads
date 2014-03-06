@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Stock_Loss_Marker_Elements is
 
    type Chart_Stock_Loss_Marker_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Stock_Loss_Marker_Elements.ODF_Chart_Stock_Loss_Marker_Element
+       and ODF.DOM.Chart_Stock_Loss_Marker_Elements.ODF_Chart_Stock_Loss_Marker
          with null record;
 
    overriding function Create

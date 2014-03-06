@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Symbol_Image_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Symbol_Image_Element is limited interface
+   type ODF_Chart_Symbol_Image is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Symbol_Image_Element_Access is
-     access all ODF_Chart_Symbol_Image_Element'Class
+   type ODF_Chart_Symbol_Image_Access is
+     access all ODF_Chart_Symbol_Image'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Symbol_Image_Elements;

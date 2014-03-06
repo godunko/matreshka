@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Chart_Elements is
 
    type Chart_Chart_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Chart_Elements.ODF_Chart_Chart_Element
+       and ODF.DOM.Chart_Chart_Elements.ODF_Chart_Chart
          with null record;
 
    overriding function Create

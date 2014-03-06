@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Stock_Gain_Marker_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Stock_Gain_Marker_Element is limited interface
+   type ODF_Chart_Stock_Gain_Marker is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Stock_Gain_Marker_Element_Access is
-     access all ODF_Chart_Stock_Gain_Marker_Element'Class
+   type ODF_Chart_Stock_Gain_Marker_Access is
+     access all ODF_Chart_Stock_Gain_Marker'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Stock_Gain_Marker_Elements;

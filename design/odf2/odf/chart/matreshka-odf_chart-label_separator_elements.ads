@@ -49,7 +49,7 @@ package Matreshka.ODF_Chart.Label_Separator_Elements is
 
    type Chart_Label_Separator_Element_Node is
      new Matreshka.ODF_Chart.Abstract_Chart_Element_Node
-       and ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator_Element
+       and ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator
          with null record;
 
    overriding function Create

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Chart.Label_Separator_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Chart_Label_Separator
-            (ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator_Element_Access
+            (ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Chart.Label_Separator_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Chart_Label_Separator
-            (ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator_Element_Access
+            (ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Chart.Label_Separator_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Chart_Label_Separator
             (Visitor,
-             ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator_Element_Access
+             ODF.DOM.Chart_Label_Separator_Elements.ODF_Chart_Label_Separator_Access
               (Self),
              Control);
 

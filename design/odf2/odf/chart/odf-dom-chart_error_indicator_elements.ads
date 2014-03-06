@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Error_Indicator_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Error_Indicator_Element is limited interface
+   type ODF_Chart_Error_Indicator is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Error_Indicator_Element_Access is
-     access all ODF_Chart_Error_Indicator_Element'Class
+   type ODF_Chart_Error_Indicator_Access is
+     access all ODF_Chart_Error_Indicator'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Error_Indicator_Elements;

@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Floor_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Floor_Element is limited interface
+   type ODF_Chart_Floor is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Floor_Element_Access is
-     access all ODF_Chart_Floor_Element'Class
+   type ODF_Chart_Floor_Access is
+     access all ODF_Chart_Floor'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Floor_Elements;

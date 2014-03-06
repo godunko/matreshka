@@ -47,11 +47,11 @@ package ODF.DOM.Chart_Axis_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Chart_Axis_Element is limited interface
+   type ODF_Chart_Axis is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Chart_Axis_Element_Access is
-     access all ODF_Chart_Axis_Element'Class
+   type ODF_Chart_Axis_Access is
+     access all ODF_Chart_Axis'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Chart_Axis_Elements;
