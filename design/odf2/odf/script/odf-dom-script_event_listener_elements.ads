@@ -47,11 +47,11 @@ package ODF.DOM.Script_Event_Listener_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Script_Event_Listener_Element is limited interface
+   type ODF_Script_Event_Listener is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Script_Event_Listener_Element_Access is
-     access all ODF_Script_Event_Listener_Element'Class
+   type ODF_Script_Event_Listener_Access is
+     access all ODF_Script_Event_Listener'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Script_Event_Listener_Elements;

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Script.Event_Listener_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Script_Event_Listener
-            (ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener_Element_Access
+            (ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Script.Event_Listener_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Script_Event_Listener
-            (ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener_Element_Access
+            (ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Script.Event_Listener_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Script_Event_Listener
             (Visitor,
-             ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener_Element_Access
+             ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener_Access
               (Self),
              Control);
 

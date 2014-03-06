@@ -49,7 +49,7 @@ package Matreshka.ODF_Script.Event_Listener_Elements is
 
    type Script_Event_Listener_Element_Node is
      new Matreshka.ODF_Script.Abstract_Script_Element_Node
-       and ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener_Element
+       and ODF.DOM.Script_Event_Listener_Elements.ODF_Script_Event_Listener
          with null record;
 
    overriding function Create
