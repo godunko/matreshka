@@ -47,11 +47,11 @@ package ODF.DOM.Text_Time_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Time_Element is limited interface
+   type ODF_Text_Time is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Time_Element_Access is
-     access all ODF_Text_Time_Element'Class
+   type ODF_Text_Time_Access is
+     access all ODF_Text_Time'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Time_Elements;

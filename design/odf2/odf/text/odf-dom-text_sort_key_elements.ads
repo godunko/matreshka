@@ -47,11 +47,11 @@ package ODF.DOM.Text_Sort_Key_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Sort_Key_Element is limited interface
+   type ODF_Text_Sort_Key is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Sort_Key_Element_Access is
-     access all ODF_Text_Sort_Key_Element'Class
+   type ODF_Text_Sort_Key_Access is
+     access all ODF_Text_Sort_Key'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Sort_Key_Elements;

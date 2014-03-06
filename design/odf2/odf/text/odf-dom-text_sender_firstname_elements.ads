@@ -47,11 +47,11 @@ package ODF.DOM.Text_Sender_Firstname_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Sender_Firstname_Element is limited interface
+   type ODF_Text_Sender_Firstname is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Sender_Firstname_Element_Access is
-     access all ODF_Text_Sender_Firstname_Element'Class
+   type ODF_Text_Sender_Firstname_Access is
+     access all ODF_Text_Sender_Firstname'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Sender_Firstname_Elements;

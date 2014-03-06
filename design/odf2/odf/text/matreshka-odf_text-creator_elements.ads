@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Creator_Elements is
 
    type Text_Creator_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Creator_Elements.ODF_Text_Creator_Element
+       and ODF.DOM.Text_Creator_Elements.ODF_Text_Creator
          with null record;
 
    overriding function Create

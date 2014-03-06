@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Illustration_Index_Elements is
 
    type Text_Illustration_Index_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Illustration_Index_Elements.ODF_Text_Illustration_Index_Element
+       and ODF.DOM.Text_Illustration_Index_Elements.ODF_Text_Illustration_Index
          with null record;
 
    overriding function Create

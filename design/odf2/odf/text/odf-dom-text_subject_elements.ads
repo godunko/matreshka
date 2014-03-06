@@ -47,11 +47,11 @@ package ODF.DOM.Text_Subject_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Subject_Element is limited interface
+   type ODF_Text_Subject is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Subject_Element_Access is
-     access all ODF_Text_Subject_Element'Class
+   type ODF_Text_Subject_Access is
+     access all ODF_Text_Subject'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Subject_Elements;

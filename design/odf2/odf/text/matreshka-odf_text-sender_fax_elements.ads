@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Sender_Fax_Elements is
 
    type Text_Sender_Fax_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Sender_Fax_Elements.ODF_Text_Sender_Fax_Element
+       and ODF.DOM.Text_Sender_Fax_Elements.ODF_Text_Sender_Fax
          with null record;
 
    overriding function Create

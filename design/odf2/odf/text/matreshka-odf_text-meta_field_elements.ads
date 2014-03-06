@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Meta_Field_Elements is
 
    type Text_Meta_Field_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Meta_Field_Elements.ODF_Text_Meta_Field_Element
+       and ODF.DOM.Text_Meta_Field_Elements.ODF_Text_Meta_Field
          with null record;
 
    overriding function Create

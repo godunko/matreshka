@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Creation_Date_Elements is
 
    type Text_Creation_Date_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Creation_Date_Elements.ODF_Text_Creation_Date_Element
+       and ODF.DOM.Text_Creation_Date_Elements.ODF_Text_Creation_Date
          with null record;
 
    overriding function Create

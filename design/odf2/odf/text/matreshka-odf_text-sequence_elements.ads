@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Sequence_Elements is
 
    type Text_Sequence_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Sequence_Elements.ODF_Text_Sequence_Element
+       and ODF.DOM.Text_Sequence_Elements.ODF_Text_Sequence
          with null record;
 
    overriding function Create

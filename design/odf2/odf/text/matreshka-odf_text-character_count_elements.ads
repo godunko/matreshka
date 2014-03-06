@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Character_Count_Elements is
 
    type Text_Character_Count_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Character_Count_Elements.ODF_Text_Character_Count_Element
+       and ODF.DOM.Text_Character_Count_Elements.ODF_Text_Character_Count
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Meta_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Meta_Element is limited interface
+   type ODF_Text_Meta is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Meta_Element_Access is
-     access all ODF_Text_Meta_Element'Class
+   type ODF_Text_Meta_Access is
+     access all ODF_Text_Meta'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Meta_Elements;

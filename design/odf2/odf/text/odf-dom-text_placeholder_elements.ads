@@ -47,11 +47,11 @@ package ODF.DOM.Text_Placeholder_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Placeholder_Element is limited interface
+   type ODF_Text_Placeholder is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Placeholder_Element_Access is
-     access all ODF_Text_Placeholder_Element'Class
+   type ODF_Text_Placeholder_Access is
+     access all ODF_Text_Placeholder'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Placeholder_Elements;

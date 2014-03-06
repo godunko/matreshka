@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Paragraph_Count_Elements is
 
    type Text_Paragraph_Count_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Paragraph_Count_Elements.ODF_Text_Paragraph_Count_Element
+       and ODF.DOM.Text_Paragraph_Count_Elements.ODF_Text_Paragraph_Count
          with null record;
 
    overriding function Create

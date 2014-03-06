@@ -47,11 +47,11 @@ package ODF.DOM.Text_Variable_Input_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Variable_Input_Element is limited interface
+   type ODF_Text_Variable_Input is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Variable_Input_Element_Access is
-     access all ODF_Text_Variable_Input_Element'Class
+   type ODF_Text_Variable_Input_Access is
+     access all ODF_Text_Variable_Input'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Variable_Input_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Hidden_Paragraph_Elements is
 
    type Text_Hidden_Paragraph_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Hidden_Paragraph_Elements.ODF_Text_Hidden_Paragraph_Element
+       and ODF.DOM.Text_Hidden_Paragraph_Elements.ODF_Text_Hidden_Paragraph
          with null record;
 
    overriding function Create

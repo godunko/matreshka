@@ -77,7 +77,7 @@ package body Matreshka.ODF_Text.Variable_Decl_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Text_Variable_Decl
-            (ODF.DOM.Text_Variable_Decl_Elements.ODF_Text_Variable_Decl_Element_Access
+            (ODF.DOM.Text_Variable_Decl_Elements.ODF_Text_Variable_Decl_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Text.Variable_Decl_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Text_Variable_Decl
-            (ODF.DOM.Text_Variable_Decl_Elements.ODF_Text_Variable_Decl_Element_Access
+            (ODF.DOM.Text_Variable_Decl_Elements.ODF_Text_Variable_Decl_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Text.Variable_Decl_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Text_Variable_Decl
             (Visitor,
-             ODF.DOM.Text_Variable_Decl_Elements.ODF_Text_Variable_Decl_Element_Access
+             ODF.DOM.Text_Variable_Decl_Elements.ODF_Text_Variable_Decl_Access
               (Self),
              Control);
 

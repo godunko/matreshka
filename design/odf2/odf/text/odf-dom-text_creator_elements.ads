@@ -47,11 +47,11 @@ package ODF.DOM.Text_Creator_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Creator_Element is limited interface
+   type ODF_Text_Creator is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Creator_Element_Access is
-     access all ODF_Text_Creator_Element'Class
+   type ODF_Text_Creator_Access is
+     access all ODF_Text_Creator'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Creator_Elements;

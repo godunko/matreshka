@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Format_Change_Elements is
 
    type Text_Format_Change_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Format_Change_Elements.ODF_Text_Format_Change_Element
+       and ODF.DOM.Text_Format_Change_Elements.ODF_Text_Format_Change
          with null record;
 
    overriding function Create

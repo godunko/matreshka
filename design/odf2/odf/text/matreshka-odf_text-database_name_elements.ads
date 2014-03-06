@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Database_Name_Elements is
 
    type Text_Database_Name_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Database_Name_Elements.ODF_Text_Database_Name_Element
+       and ODF.DOM.Text_Database_Name_Elements.ODF_Text_Database_Name
          with null record;
 
    overriding function Create

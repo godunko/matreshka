@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Sender_Phone_Work_Elements is
 
    type Text_Sender_Phone_Work_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Sender_Phone_Work_Elements.ODF_Text_Sender_Phone_Work_Element
+       and ODF.DOM.Text_Sender_Phone_Work_Elements.ODF_Text_Sender_Phone_Work
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Editing_Cycles_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Editing_Cycles_Element is limited interface
+   type ODF_Text_Editing_Cycles is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Editing_Cycles_Element_Access is
-     access all ODF_Text_Editing_Cycles_Element'Class
+   type ODF_Text_Editing_Cycles_Access is
+     access all ODF_Text_Editing_Cycles'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Editing_Cycles_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Sort_Key_Elements is
 
    type Text_Sort_Key_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Sort_Key_Elements.ODF_Text_Sort_Key_Element
+       and ODF.DOM.Text_Sort_Key_Elements.ODF_Text_Sort_Key
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Description_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Description_Element is limited interface
+   type ODF_Text_Description is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Description_Element_Access is
-     access all ODF_Text_Description_Element'Class
+   type ODF_Text_Description_Access is
+     access all ODF_Text_Description'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Description_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Page_Variable_Set_Elements is
 
    type Text_Page_Variable_Set_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Page_Variable_Set_Elements.ODF_Text_Page_Variable_Set_Element
+       and ODF.DOM.Text_Page_Variable_Set_Elements.ODF_Text_Page_Variable_Set
          with null record;
 
    overriding function Create

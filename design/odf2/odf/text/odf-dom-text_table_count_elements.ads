@@ -47,11 +47,11 @@ package ODF.DOM.Text_Table_Count_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Table_Count_Element is limited interface
+   type ODF_Text_Table_Count is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Table_Count_Element_Access is
-     access all ODF_Text_Table_Count_Element'Class
+   type ODF_Text_Table_Count_Access is
+     access all ODF_Text_Table_Count'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Table_Count_Elements;

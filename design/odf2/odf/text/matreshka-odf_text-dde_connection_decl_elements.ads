@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Dde_Connection_Decl_Elements is
 
    type Text_Dde_Connection_Decl_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Dde_Connection_Decl_Elements.ODF_Text_Dde_Connection_Decl_Element
+       and ODF.DOM.Text_Dde_Connection_Decl_Elements.ODF_Text_Dde_Connection_Decl
          with null record;
 
    overriding function Create

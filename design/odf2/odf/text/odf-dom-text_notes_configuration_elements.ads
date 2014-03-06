@@ -47,11 +47,11 @@ package ODF.DOM.Text_Notes_Configuration_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Notes_Configuration_Element is limited interface
+   type ODF_Text_Notes_Configuration is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Notes_Configuration_Element_Access is
-     access all ODF_Text_Notes_Configuration_Element'Class
+   type ODF_Text_Notes_Configuration_Access is
+     access all ODF_Text_Notes_Configuration'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Notes_Configuration_Elements;

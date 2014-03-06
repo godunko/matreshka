@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Soft_Page_Break_Elements is
 
    type Text_Soft_Page_Break_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Soft_Page_Break_Elements.ODF_Text_Soft_Page_Break_Element
+       and ODF.DOM.Text_Soft_Page_Break_Elements.ODF_Text_Soft_Page_Break
          with null record;
 
    overriding function Create

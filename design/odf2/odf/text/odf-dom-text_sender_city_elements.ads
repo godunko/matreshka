@@ -47,11 +47,11 @@ package ODF.DOM.Text_Sender_City_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Sender_City_Element is limited interface
+   type ODF_Text_Sender_City is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Sender_City_Element_Access is
-     access all ODF_Text_Sender_City_Element'Class
+   type ODF_Text_Sender_City_Access is
+     access all ODF_Text_Sender_City'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Sender_City_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Ruby_Base_Elements is
 
    type Text_Ruby_Base_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Ruby_Base_Elements.ODF_Text_Ruby_Base_Element
+       and ODF.DOM.Text_Ruby_Base_Elements.ODF_Text_Ruby_Base
          with null record;
 
    overriding function Create

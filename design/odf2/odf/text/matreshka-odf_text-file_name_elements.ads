@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.File_Name_Elements is
 
    type Text_File_Name_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_File_Name_Elements.ODF_Text_File_Name_Element
+       and ODF.DOM.Text_File_Name_Elements.ODF_Text_File_Name
          with null record;
 
    overriding function Create

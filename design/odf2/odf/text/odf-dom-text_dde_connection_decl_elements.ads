@@ -47,11 +47,11 @@ package ODF.DOM.Text_Dde_Connection_Decl_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Dde_Connection_Decl_Element is limited interface
+   type ODF_Text_Dde_Connection_Decl is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Dde_Connection_Decl_Element_Access is
-     access all ODF_Text_Dde_Connection_Decl_Element'Class
+   type ODF_Text_Dde_Connection_Decl_Access is
+     access all ODF_Text_Dde_Connection_Decl'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Dde_Connection_Decl_Elements;

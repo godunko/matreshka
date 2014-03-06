@@ -47,11 +47,11 @@ package ODF.DOM.Text_Chapter_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Chapter_Element is limited interface
+   type ODF_Text_Chapter is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Chapter_Element_Access is
-     access all ODF_Text_Chapter_Element'Class
+   type ODF_Text_Chapter_Access is
+     access all ODF_Text_Chapter'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Chapter_Elements;

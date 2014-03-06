@@ -47,11 +47,11 @@ package ODF.DOM.Text_Database_Next_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Database_Next_Element is limited interface
+   type ODF_Text_Database_Next is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Database_Next_Element_Access is
-     access all ODF_Text_Database_Next_Element'Class
+   type ODF_Text_Database_Next_Access is
+     access all ODF_Text_Database_Next'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Database_Next_Elements;

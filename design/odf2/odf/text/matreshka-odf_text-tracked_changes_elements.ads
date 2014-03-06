@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Tracked_Changes_Elements is
 
    type Text_Tracked_Changes_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Tracked_Changes_Elements.ODF_Text_Tracked_Changes_Element
+       and ODF.DOM.Text_Tracked_Changes_Elements.ODF_Text_Tracked_Changes
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Page_Continuation_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Page_Continuation_Element is limited interface
+   type ODF_Text_Page_Continuation is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Page_Continuation_Element_Access is
-     access all ODF_Text_Page_Continuation_Element'Class
+   type ODF_Text_Page_Continuation_Access is
+     access all ODF_Text_Page_Continuation'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Page_Continuation_Elements;

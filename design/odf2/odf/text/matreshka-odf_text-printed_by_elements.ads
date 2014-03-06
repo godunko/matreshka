@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Printed_By_Elements is
 
    type Text_Printed_By_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Printed_By_Elements.ODF_Text_Printed_By_Element
+       and ODF.DOM.Text_Printed_By_Elements.ODF_Text_Printed_By
          with null record;
 
    overriding function Create

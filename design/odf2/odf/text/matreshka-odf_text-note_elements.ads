@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Note_Elements is
 
    type Text_Note_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Note_Elements.ODF_Text_Note_Element
+       and ODF.DOM.Text_Note_Elements.ODF_Text_Note
          with null record;
 
    overriding function Create

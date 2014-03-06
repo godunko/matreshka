@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Insertion_Elements is
 
    type Text_Insertion_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Insertion_Elements.ODF_Text_Insertion_Element
+       and ODF.DOM.Text_Insertion_Elements.ODF_Text_Insertion
          with null record;
 
    overriding function Create

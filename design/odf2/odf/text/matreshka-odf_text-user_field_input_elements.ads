@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.User_Field_Input_Elements is
 
    type Text_User_Field_Input_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_User_Field_Input_Elements.ODF_Text_User_Field_Input_Element
+       and ODF.DOM.Text_User_Field_Input_Elements.ODF_Text_User_Field_Input
          with null record;
 
    overriding function Create

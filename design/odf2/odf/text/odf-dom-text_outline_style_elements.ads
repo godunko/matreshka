@@ -47,11 +47,11 @@ package ODF.DOM.Text_Outline_Style_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Outline_Style_Element is limited interface
+   type ODF_Text_Outline_Style is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Outline_Style_Element_Access is
-     access all ODF_Text_Outline_Style_Element'Class
+   type ODF_Text_Outline_Style_Access is
+     access all ODF_Text_Outline_Style'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Outline_Style_Elements;

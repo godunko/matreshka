@@ -47,11 +47,11 @@ package ODF.DOM.Text_Alphabetical_Index_Auto_Mark_File_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Alphabetical_Index_Auto_Mark_File_Element is limited interface
+   type ODF_Text_Alphabetical_Index_Auto_Mark_File is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Alphabetical_Index_Auto_Mark_File_Element_Access is
-     access all ODF_Text_Alphabetical_Index_Auto_Mark_File_Element'Class
+   type ODF_Text_Alphabetical_Index_Auto_Mark_File_Access is
+     access all ODF_Text_Alphabetical_Index_Auto_Mark_File'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Alphabetical_Index_Auto_Mark_File_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Sender_Postal_Code_Elements is
 
    type Text_Sender_Postal_Code_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Sender_Postal_Code_Elements.ODF_Text_Sender_Postal_Code_Element
+       and ODF.DOM.Text_Sender_Postal_Code_Elements.ODF_Text_Sender_Postal_Code
          with null record;
 
    overriding function Create

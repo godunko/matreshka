@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Table_Count_Elements is
 
    type Text_Table_Count_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Table_Count_Elements.ODF_Text_Table_Count_Element
+       and ODF.DOM.Text_Table_Count_Elements.ODF_Text_Table_Count
          with null record;
 
    overriding function Create

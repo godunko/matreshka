@@ -47,11 +47,11 @@ package ODF.DOM.Text_User_Index_Mark_Start_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_User_Index_Mark_Start_Element is limited interface
+   type ODF_Text_User_Index_Mark_Start is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_User_Index_Mark_Start_Element_Access is
-     access all ODF_Text_User_Index_Mark_Start_Element'Class
+   type ODF_Text_User_Index_Mark_Start_Access is
+     access all ODF_Text_User_Index_Mark_Start'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_User_Index_Mark_Start_Elements;

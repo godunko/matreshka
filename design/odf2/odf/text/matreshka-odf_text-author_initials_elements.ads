@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Author_Initials_Elements is
 
    type Text_Author_Initials_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Author_Initials_Elements.ODF_Text_Author_Initials_Element
+       and ODF.DOM.Text_Author_Initials_Elements.ODF_Text_Author_Initials
          with null record;
 
    overriding function Create

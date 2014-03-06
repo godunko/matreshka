@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Database_Display_Elements is
 
    type Text_Database_Display_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Database_Display_Elements.ODF_Text_Database_Display_Element
+       and ODF.DOM.Text_Database_Display_Elements.ODF_Text_Database_Display
          with null record;
 
    overriding function Create

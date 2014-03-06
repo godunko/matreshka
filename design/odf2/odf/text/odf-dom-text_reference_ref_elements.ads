@@ -47,11 +47,11 @@ package ODF.DOM.Text_Reference_Ref_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Reference_Ref_Element is limited interface
+   type ODF_Text_Reference_Ref is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Reference_Ref_Element_Access is
-     access all ODF_Text_Reference_Ref_Element'Class
+   type ODF_Text_Reference_Ref_Access is
+     access all ODF_Text_Reference_Ref'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Reference_Ref_Elements;

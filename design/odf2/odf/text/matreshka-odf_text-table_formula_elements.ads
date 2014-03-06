@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Table_Formula_Elements is
 
    type Text_Table_Formula_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula_Element
+       and ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula
          with null record;
 
    overriding function Create

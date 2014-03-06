@@ -47,11 +47,11 @@ package ODF.DOM.Text_List_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_List_Element is limited interface
+   type ODF_Text_List is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_List_Element_Access is
-     access all ODF_Text_List_Element'Class
+   type ODF_Text_List_Access is
+     access all ODF_Text_List'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_List_Elements;

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Changed_Region_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Changed_Region_Element is limited interface
+   type ODF_Text_Changed_Region is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Changed_Region_Element_Access is
-     access all ODF_Text_Changed_Region_Element'Class
+   type ODF_Text_Changed_Region_Access is
+     access all ODF_Text_Changed_Region'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Changed_Region_Elements;

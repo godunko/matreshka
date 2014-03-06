@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Changed_Region_Elements is
 
    type Text_Changed_Region_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Changed_Region_Elements.ODF_Text_Changed_Region_Element
+       and ODF.DOM.Text_Changed_Region_Elements.ODF_Text_Changed_Region
          with null record;
 
    overriding function Create

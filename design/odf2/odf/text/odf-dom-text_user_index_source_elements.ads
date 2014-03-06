@@ -47,11 +47,11 @@ package ODF.DOM.Text_User_Index_Source_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_User_Index_Source_Element is limited interface
+   type ODF_Text_User_Index_Source is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_User_Index_Source_Element_Access is
-     access all ODF_Text_User_Index_Source_Element'Class
+   type ODF_Text_User_Index_Source_Access is
+     access all ODF_Text_User_Index_Source'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_User_Index_Source_Elements;

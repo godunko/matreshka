@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Index_Entry_Bibliography_Elements is
 
    type Text_Index_Entry_Bibliography_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Index_Entry_Bibliography_Elements.ODF_Text_Index_Entry_Bibliography_Element
+       and ODF.DOM.Text_Index_Entry_Bibliography_Elements.ODF_Text_Index_Entry_Bibliography
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Hidden_Paragraph_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Hidden_Paragraph_Element is limited interface
+   type ODF_Text_Hidden_Paragraph is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Hidden_Paragraph_Element_Access is
-     access all ODF_Text_Hidden_Paragraph_Element'Class
+   type ODF_Text_Hidden_Paragraph_Access is
+     access all ODF_Text_Hidden_Paragraph'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Hidden_Paragraph_Elements;

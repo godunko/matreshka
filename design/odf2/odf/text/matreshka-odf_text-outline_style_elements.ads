@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Outline_Style_Elements is
 
    type Text_Outline_Style_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Outline_Style_Elements.ODF_Text_Outline_Style_Element
+       and ODF.DOM.Text_Outline_Style_Elements.ODF_Text_Outline_Style
          with null record;
 
    overriding function Create

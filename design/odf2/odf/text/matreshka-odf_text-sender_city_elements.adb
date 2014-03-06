@@ -77,7 +77,7 @@ package body Matreshka.ODF_Text.Sender_City_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Text_Sender_City
-            (ODF.DOM.Text_Sender_City_Elements.ODF_Text_Sender_City_Element_Access
+            (ODF.DOM.Text_Sender_City_Elements.ODF_Text_Sender_City_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Text.Sender_City_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Text_Sender_City
-            (ODF.DOM.Text_Sender_City_Elements.ODF_Text_Sender_City_Element_Access
+            (ODF.DOM.Text_Sender_City_Elements.ODF_Text_Sender_City_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Text.Sender_City_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Text_Sender_City
             (Visitor,
-             ODF.DOM.Text_Sender_City_Elements.ODF_Text_Sender_City_Element_Access
+             ODF.DOM.Text_Sender_City_Elements.ODF_Text_Sender_City_Access
               (Self),
              Control);
 

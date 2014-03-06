@@ -47,11 +47,11 @@ package ODF.DOM.Text_Table_Formula_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Table_Formula_Element is limited interface
+   type ODF_Text_Table_Formula is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Table_Formula_Element_Access is
-     access all ODF_Text_Table_Formula_Element'Class
+   type ODF_Text_Table_Formula_Access is
+     access all ODF_Text_Table_Formula'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Table_Formula_Elements;

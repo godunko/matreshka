@@ -47,11 +47,11 @@ package ODF.DOM.Text_Author_Initials_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Author_Initials_Element is limited interface
+   type ODF_Text_Author_Initials is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Author_Initials_Element_Access is
-     access all ODF_Text_Author_Initials_Element'Class
+   type ODF_Text_Author_Initials_Access is
+     access all ODF_Text_Author_Initials'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Author_Initials_Elements;

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Database_Display_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Database_Display_Element is limited interface
+   type ODF_Text_Database_Display is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Database_Display_Element_Access is
-     access all ODF_Text_Database_Display_Element'Class
+   type ODF_Text_Database_Display_Access is
+     access all ODF_Text_Database_Display'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Database_Display_Elements;

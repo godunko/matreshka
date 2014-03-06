@@ -47,11 +47,11 @@ package ODF.DOM.Text_Sender_Postal_Code_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Sender_Postal_Code_Element is limited interface
+   type ODF_Text_Sender_Postal_Code is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Sender_Postal_Code_Element_Access is
-     access all ODF_Text_Sender_Postal_Code_Element'Class
+   type ODF_Text_Sender_Postal_Code_Access is
+     access all ODF_Text_Sender_Postal_Code'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Sender_Postal_Code_Elements;

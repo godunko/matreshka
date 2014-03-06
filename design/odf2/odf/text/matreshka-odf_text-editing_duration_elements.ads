@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Editing_Duration_Elements is
 
    type Text_Editing_Duration_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Editing_Duration_Elements.ODF_Text_Editing_Duration_Element
+       and ODF.DOM.Text_Editing_Duration_Elements.ODF_Text_Editing_Duration
          with null record;
 
    overriding function Create

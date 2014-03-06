@@ -77,7 +77,7 @@ package body Matreshka.ODF_Text.Table_Formula_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Text_Table_Formula
-            (ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula_Element_Access
+            (ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Text.Table_Formula_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Text_Table_Formula
-            (ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula_Element_Access
+            (ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Text.Table_Formula_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Text_Table_Formula
             (Visitor,
-             ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula_Element_Access
+             ODF.DOM.Text_Table_Formula_Elements.ODF_Text_Table_Formula_Access
               (Self),
              Control);
 

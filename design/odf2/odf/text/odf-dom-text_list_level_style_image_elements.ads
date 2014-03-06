@@ -47,11 +47,11 @@ package ODF.DOM.Text_List_Level_Style_Image_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_List_Level_Style_Image_Element is limited interface
+   type ODF_Text_List_Level_Style_Image is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_List_Level_Style_Image_Element_Access is
-     access all ODF_Text_List_Level_Style_Image_Element'Class
+   type ODF_Text_List_Level_Style_Image_Access is
+     access all ODF_Text_List_Level_Style_Image'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_List_Level_Style_Image_Elements;

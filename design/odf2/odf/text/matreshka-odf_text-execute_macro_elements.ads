@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Execute_Macro_Elements is
 
    type Text_Execute_Macro_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Execute_Macro_Elements.ODF_Text_Execute_Macro_Element
+       and ODF.DOM.Text_Execute_Macro_Elements.ODF_Text_Execute_Macro
          with null record;
 
    overriding function Create

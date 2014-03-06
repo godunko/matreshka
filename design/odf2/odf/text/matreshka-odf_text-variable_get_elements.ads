@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Variable_Get_Elements is
 
    type Text_Variable_Get_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Variable_Get_Elements.ODF_Text_Variable_Get_Element
+       and ODF.DOM.Text_Variable_Get_Elements.ODF_Text_Variable_Get
          with null record;
 
    overriding function Create

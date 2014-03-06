@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.List_Item_Elements is
 
    type Text_List_Item_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_List_Item_Elements.ODF_Text_List_Item_Element
+       and ODF.DOM.Text_List_Item_Elements.ODF_Text_List_Item
          with null record;
 
    overriding function Create

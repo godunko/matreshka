@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Deletion_Elements is
 
    type Text_Deletion_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Deletion_Elements.ODF_Text_Deletion_Element
+       and ODF.DOM.Text_Deletion_Elements.ODF_Text_Deletion
          with null record;
 
    overriding function Create

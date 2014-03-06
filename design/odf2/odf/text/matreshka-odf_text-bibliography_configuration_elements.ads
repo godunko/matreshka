@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Bibliography_Configuration_Elements is
 
    type Text_Bibliography_Configuration_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Bibliography_Configuration_Elements.ODF_Text_Bibliography_Configuration_Element
+       and ODF.DOM.Text_Bibliography_Configuration_Elements.ODF_Text_Bibliography_Configuration
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Text_Linenumbering_Separator_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Linenumbering_Separator_Element is limited interface
+   type ODF_Text_Linenumbering_Separator is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Linenumbering_Separator_Element_Access is
-     access all ODF_Text_Linenumbering_Separator_Element'Class
+   type ODF_Text_Linenumbering_Separator_Access is
+     access all ODF_Text_Linenumbering_Separator'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Linenumbering_Separator_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Print_Time_Elements is
 
    type Text_Print_Time_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Print_Time_Elements.ODF_Text_Print_Time_Element
+       and ODF.DOM.Text_Print_Time_Elements.ODF_Text_Print_Time
          with null record;
 
    overriding function Create

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Text.Table_Of_Content_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Text_Table_Of_Content
-            (ODF.DOM.Text_Table_Of_Content_Elements.ODF_Text_Table_Of_Content_Element_Access
+            (ODF.DOM.Text_Table_Of_Content_Elements.ODF_Text_Table_Of_Content_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Text.Table_Of_Content_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Text_Table_Of_Content
-            (ODF.DOM.Text_Table_Of_Content_Elements.ODF_Text_Table_Of_Content_Element_Access
+            (ODF.DOM.Text_Table_Of_Content_Elements.ODF_Text_Table_Of_Content_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Text.Table_Of_Content_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Text_Table_Of_Content
             (Visitor,
-             ODF.DOM.Text_Table_Of_Content_Elements.ODF_Text_Table_Of_Content_Element_Access
+             ODF.DOM.Text_Table_Of_Content_Elements.ODF_Text_Table_Of_Content_Access
               (Self),
              Control);
 

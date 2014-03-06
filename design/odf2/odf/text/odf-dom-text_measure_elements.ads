@@ -47,11 +47,11 @@ package ODF.DOM.Text_Measure_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Measure_Element is limited interface
+   type ODF_Text_Measure is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Measure_Element_Access is
-     access all ODF_Text_Measure_Element'Class
+   type ODF_Text_Measure_Access is
+     access all ODF_Text_Measure'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Measure_Elements;

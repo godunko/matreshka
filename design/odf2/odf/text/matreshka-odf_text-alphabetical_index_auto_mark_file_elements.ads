@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Alphabetical_Index_Auto_Mark_File_Elements is
 
    type Text_Alphabetical_Index_Auto_Mark_File_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Alphabetical_Index_Auto_Mark_File_Elements.ODF_Text_Alphabetical_Index_Auto_Mark_File_Element
+       and ODF.DOM.Text_Alphabetical_Index_Auto_Mark_File_Elements.ODF_Text_Alphabetical_Index_Auto_Mark_File
          with null record;
 
    overriding function Create

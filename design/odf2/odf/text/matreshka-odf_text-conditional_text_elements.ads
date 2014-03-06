@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Conditional_Text_Elements is
 
    type Text_Conditional_Text_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Conditional_Text_Elements.ODF_Text_Conditional_Text_Element
+       and ODF.DOM.Text_Conditional_Text_Elements.ODF_Text_Conditional_Text
          with null record;
 
    overriding function Create

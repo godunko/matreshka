@@ -49,7 +49,7 @@ package Matreshka.ODF_Text.Initial_Creator_Elements is
 
    type Text_Initial_Creator_Element_Node is
      new Matreshka.ODF_Text.Abstract_Text_Element_Node
-       and ODF.DOM.Text_Initial_Creator_Elements.ODF_Text_Initial_Creator_Element
+       and ODF.DOM.Text_Initial_Creator_Elements.ODF_Text_Initial_Creator
          with null record;
 
    overriding function Create

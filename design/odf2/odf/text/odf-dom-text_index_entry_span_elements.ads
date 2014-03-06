@@ -47,11 +47,11 @@ package ODF.DOM.Text_Index_Entry_Span_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Text_Index_Entry_Span_Element is limited interface
+   type ODF_Text_Index_Entry_Span is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Text_Index_Entry_Span_Element_Access is
-     access all ODF_Text_Index_Entry_Span_Element'Class
+   type ODF_Text_Index_Entry_Span_Access is
+     access all ODF_Text_Index_Entry_Span'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Text_Index_Entry_Span_Elements;
