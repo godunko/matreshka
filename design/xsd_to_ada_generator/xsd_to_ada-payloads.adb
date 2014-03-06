@@ -341,7 +341,8 @@ package body XSD_To_Ada.Payloads is
         := Type_D.To_Complex_Type_Definition;
 
       Type_Name   : League.Strings.Universal_String;
-      Type_D_Name : League.Strings.Universal_String := Type_D.Get_Name;
+      Type_D_Name : League.Strings.Universal_String :=
+        XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name);
       Base_Type   : League.Strings.Universal_String;
 
    begin
@@ -419,7 +420,7 @@ package body XSD_To_Ada.Payloads is
                      Writer.P ("   end record;" & LF);
 
                   elsif XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
-                     if Name.Is_Empty then
+                     if Type_D_Name.Is_Empty then
                         Writer.P
                           ("   type "
                            & Type_Name
@@ -444,7 +445,7 @@ package body XSD_To_Ada.Payloads is
                      else
                         Writer_types.P
                           ("   type " & Type_Name & " is" & LF
-                           & "     new Payloads." & Name & LF
+                           & "     new Payloads." & Type_D_Name & LF
                            & "       with null record;" & LF);
                      end if;
 

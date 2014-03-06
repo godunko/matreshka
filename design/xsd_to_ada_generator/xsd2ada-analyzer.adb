@@ -141,7 +141,6 @@ package body XSD2Ada.Analyzer is
       end if;
 
       if not Contains (Difinition_Node) then
-
          if not Value.Object.Get_Name.Is_Empty
            or not Value.Anonym_Name.Is_Empty
          then
@@ -174,6 +173,9 @@ package body XSD2Ada.Analyzer is
           Value.Element_Name
       then
          Difinition_Node.Element_Name.Append
+           (Value.Element_Name);
+
+         Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
            (Value.Element_Name);
 
          if not Contains (Difinition_Node) then
@@ -217,10 +219,11 @@ package body XSD2Ada.Analyzer is
       Node_Vector : in out XSD2Ada.Analyzer.Items) is
    begin
       XSD2Ada.Analyzer.Create_Node_Vector
-        (Element.Get_Type_Definition,
-         Node_Vector,
-         1, (False, 1),
-         Element.Get_Name);
+        (Object       => Element.Get_Type_Definition,
+         Node_Vector  => Node_Vector,
+         Min_Occurs   => 1,
+         Max_Occurs   => (False, 1),
+         Element_Name => Element.Get_Name);
    end Create_Element_Node;
 
    -------------------------
@@ -391,11 +394,11 @@ package body XSD2Ada.Analyzer is
          XS_Particle := XS_List.Item (J).To_Particle;
 
          Traverse_Term
-           (XS_Particle.Get_Term,
-            Node_Vector,
-            Anonym_Prefix,
-            XS_Particle.Get_Max_Occurs,
-            XS_Particle.Get_Min_Occurs);
+           (XS_Term       => XS_Particle.Get_Term,
+            Node_Vector   => Node_Vector,
+            Anonym_Prefix => Anonym_Prefix,
+            Max_Occurs    => XS_Particle.Get_Max_Occurs,
+            Min_Occurs    => XS_Particle.Get_Min_Occurs);
       end loop;
    end Traverse_Model_Group;
 
@@ -427,9 +430,9 @@ package body XSD2Ada.Analyzer is
                Max_Occurs   => Max_Occurs,
                Anonym_Name  => Anonym_Prefix & "Case");
          else
-            Traverse_Model_Group (XS_Term.To_Model_Group,
-                                  Node_Vector,
-                                  Anonym_Prefix);
+            Traverse_Model_Group (XS_Model_Group => XS_Term.To_Model_Group,
+                                  Node_Vector    => Node_Vector,
+                                  Anonym_Prefix  => Anonym_Prefix);
          end if;
 
       elsif XS_Term.Is_Element_Declaration then
@@ -445,15 +448,14 @@ package body XSD2Ada.Analyzer is
 
             Anonym_Name.Append
               (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name));
-
          end if;
 
          Create_Node_Vector
-           (Object           => Type_D,
-            Node_Vector      => Node_Vector,
-            Min_Occurs       => Min_Occurs,
-            Max_Occurs       => Max_Occurs,
-            Anonym_Name      => Anonym_Name,
+           (Object              => Type_D,
+            Node_Vector         => Node_Vector,
+            Min_Occurs          => Min_Occurs,
+            Max_Occurs          => Max_Occurs,
+            Anonym_Name         => Anonym_Name,
             Short_Ada_Type_Name => Decl.Get_Name);
       end if;
    end Traverse_Term;
@@ -481,12 +483,12 @@ package body XSD2Ada.Analyzer is
       if XS_Base.Get_Type_Category in
         XML.Schema.Complex_Type and XS_Base /= Type_D
       then
-
          if XS_Base.Get_Name.To_UTF_8_String /= "anyType" then
             XSD2Ada.Analyzer.Create_Node_Vector
-              (XS_Base,
-               Node_Vector,
-               1, (False, 1));
+              (Object      => XS_Base,
+               Node_Vector => Node_Vector,
+               Min_Occurs  => 1,
+               Max_Occurs  => (False, 1));
          end if;
       end if;
 
@@ -498,9 +500,9 @@ package body XSD2Ada.Analyzer is
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 
-               Traverse_Model_Group (XS_Term.To_Model_Group,
-                                     Node_Vector,
-                                     Anonym_Prefix);
+               Traverse_Model_Group (XS_Model_Group => XS_Term.To_Model_Group,
+                                     Node_Vector    => Node_Vector,
+                                     Anonym_Prefix  => Anonym_Prefix);
             end if;
 
          when XML.Schema.Simple_Type =>
