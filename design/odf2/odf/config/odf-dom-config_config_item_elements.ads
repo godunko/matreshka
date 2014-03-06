@@ -47,11 +47,11 @@ package ODF.DOM.Config_Config_Item_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Config_Config_Item_Element is limited interface
+   type ODF_Config_Config_Item is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Config_Config_Item_Element_Access is
-     access all ODF_Config_Config_Item_Element'Class
+   type ODF_Config_Config_Item_Access is
+     access all ODF_Config_Config_Item'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Config_Config_Item_Elements;

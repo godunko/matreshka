@@ -49,7 +49,7 @@ package Matreshka.ODF_Config.Config_Item_Set_Elements is
 
    type Config_Config_Item_Set_Element_Node is
      new Matreshka.ODF_Config.Abstract_Config_Element_Node
-       and ODF.DOM.Config_Config_Item_Set_Elements.ODF_Config_Config_Item_Set_Element
+       and ODF.DOM.Config_Config_Item_Set_Elements.ODF_Config_Config_Item_Set
          with null record;
 
    overriding function Create

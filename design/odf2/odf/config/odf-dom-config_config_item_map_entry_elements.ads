@@ -47,11 +47,11 @@ package ODF.DOM.Config_Config_Item_Map_Entry_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Config_Config_Item_Map_Entry_Element is limited interface
+   type ODF_Config_Config_Item_Map_Entry is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Config_Config_Item_Map_Entry_Element_Access is
-     access all ODF_Config_Config_Item_Map_Entry_Element'Class
+   type ODF_Config_Config_Item_Map_Entry_Access is
+     access all ODF_Config_Config_Item_Map_Entry'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Config_Config_Item_Map_Entry_Elements;

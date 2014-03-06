@@ -49,7 +49,7 @@ package Matreshka.ODF_Config.Config_Item_Map_Named_Elements is
 
    type Config_Config_Item_Map_Named_Element_Node is
      new Matreshka.ODF_Config.Abstract_Config_Element_Node
-       and ODF.DOM.Config_Config_Item_Map_Named_Elements.ODF_Config_Config_Item_Map_Named_Element
+       and ODF.DOM.Config_Config_Item_Map_Named_Elements.ODF_Config_Config_Item_Map_Named
          with null record;
 
    overriding function Create

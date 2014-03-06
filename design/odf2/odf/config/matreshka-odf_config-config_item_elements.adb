@@ -77,7 +77,7 @@ package body Matreshka.ODF_Config.Config_Item_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Config_Config_Item
-            (ODF.DOM.Config_Config_Item_Elements.ODF_Config_Config_Item_Element_Access
+            (ODF.DOM.Config_Config_Item_Elements.ODF_Config_Config_Item_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Config.Config_Item_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Config_Config_Item
-            (ODF.DOM.Config_Config_Item_Elements.ODF_Config_Config_Item_Element_Access
+            (ODF.DOM.Config_Config_Item_Elements.ODF_Config_Config_Item_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Config.Config_Item_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Config_Config_Item
             (Visitor,
-             ODF.DOM.Config_Config_Item_Elements.ODF_Config_Config_Item_Element_Access
+             ODF.DOM.Config_Config_Item_Elements.ODF_Config_Config_Item_Access
               (Self),
              Control);
 
