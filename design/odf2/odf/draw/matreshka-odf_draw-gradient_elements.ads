@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Gradient_Elements is
 
    type Draw_Gradient_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Gradient_Elements.ODF_Draw_Gradient_Element
+       and ODF.DOM.Draw_Gradient_Elements.ODF_Draw_Gradient
          with null record;
 
    overriding function Create

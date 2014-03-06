@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Caption_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Caption_Element is limited interface
+   type ODF_Draw_Caption is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Caption_Element_Access is
-     access all ODF_Draw_Caption_Element'Class
+   type ODF_Draw_Caption_Access is
+     access all ODF_Draw_Caption'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Caption_Elements;

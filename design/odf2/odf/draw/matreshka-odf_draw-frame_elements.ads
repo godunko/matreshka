@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Frame_Elements is
 
    type Draw_Frame_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame_Element
+       and ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame
          with null record;
 
    overriding function Create

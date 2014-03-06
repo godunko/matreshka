@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Param_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Param_Element is limited interface
+   type ODF_Draw_Param is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Param_Element_Access is
-     access all ODF_Draw_Param_Element'Class
+   type ODF_Draw_Param_Access is
+     access all ODF_Draw_Param'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Param_Elements;

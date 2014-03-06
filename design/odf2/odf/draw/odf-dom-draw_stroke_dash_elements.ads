@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Stroke_Dash_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Stroke_Dash_Element is limited interface
+   type ODF_Draw_Stroke_Dash is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Stroke_Dash_Element_Access is
-     access all ODF_Draw_Stroke_Dash_Element'Class
+   type ODF_Draw_Stroke_Dash_Access is
+     access all ODF_Draw_Stroke_Dash'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Stroke_Dash_Elements;

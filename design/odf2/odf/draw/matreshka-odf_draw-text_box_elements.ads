@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Text_Box_Elements is
 
    type Draw_Text_Box_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Text_Box_Elements.ODF_Draw_Text_Box_Element
+       and ODF.DOM.Draw_Text_Box_Elements.ODF_Draw_Text_Box
          with null record;
 
    overriding function Create

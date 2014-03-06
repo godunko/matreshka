@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Page_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Page_Element is limited interface
+   type ODF_Draw_Page is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Page_Element_Access is
-     access all ODF_Draw_Page_Element'Class
+   type ODF_Draw_Page_Access is
+     access all ODF_Draw_Page'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Page_Elements;

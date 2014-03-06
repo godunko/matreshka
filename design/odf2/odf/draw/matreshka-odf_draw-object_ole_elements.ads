@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Object_Ole_Elements is
 
    type Draw_Object_Ole_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Object_Ole_Elements.ODF_Draw_Object_Ole_Element
+       and ODF.DOM.Draw_Object_Ole_Elements.ODF_Draw_Object_Ole
          with null record;
 
    overriding function Create

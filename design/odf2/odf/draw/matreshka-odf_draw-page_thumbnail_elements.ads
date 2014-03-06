@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Page_Thumbnail_Elements is
 
    type Draw_Page_Thumbnail_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Page_Thumbnail_Elements.ODF_Draw_Page_Thumbnail_Element
+       and ODF.DOM.Draw_Page_Thumbnail_Elements.ODF_Draw_Page_Thumbnail
          with null record;
 
    overriding function Create

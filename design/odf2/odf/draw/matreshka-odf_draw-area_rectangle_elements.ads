@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Area_Rectangle_Elements is
 
    type Draw_Area_Rectangle_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle_Element
+       and ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle
          with null record;
 
    overriding function Create

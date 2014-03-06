@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Handle_Elements is
 
    type Draw_Handle_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Handle_Elements.ODF_Draw_Handle_Element
+       and ODF.DOM.Draw_Handle_Elements.ODF_Draw_Handle
          with null record;
 
    overriding function Create

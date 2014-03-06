@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Floating_Frame_Elements is
 
    type Draw_Floating_Frame_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Floating_Frame_Elements.ODF_Draw_Floating_Frame_Element
+       and ODF.DOM.Draw_Floating_Frame_Elements.ODF_Draw_Floating_Frame
          with null record;
 
    overriding function Create

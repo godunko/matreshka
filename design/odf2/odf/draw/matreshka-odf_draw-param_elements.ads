@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Param_Elements is
 
    type Draw_Param_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Param_Elements.ODF_Draw_Param_Element
+       and ODF.DOM.Draw_Param_Elements.ODF_Draw_Param
          with null record;
 
    overriding function Create

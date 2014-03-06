@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Rect_Elements is
 
    type Draw_Rect_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Rect_Elements.ODF_Draw_Rect_Element
+       and ODF.DOM.Draw_Rect_Elements.ODF_Draw_Rect
          with null record;
 
    overriding function Create

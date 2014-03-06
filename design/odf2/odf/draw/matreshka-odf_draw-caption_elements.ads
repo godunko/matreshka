@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Caption_Elements is
 
    type Draw_Caption_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Caption_Elements.ODF_Draw_Caption_Element
+       and ODF.DOM.Draw_Caption_Elements.ODF_Draw_Caption
          with null record;
 
    overriding function Create

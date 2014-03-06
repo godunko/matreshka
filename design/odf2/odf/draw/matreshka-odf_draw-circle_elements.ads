@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Circle_Elements is
 
    type Draw_Circle_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Circle_Elements.ODF_Draw_Circle_Element
+       and ODF.DOM.Draw_Circle_Elements.ODF_Draw_Circle
          with null record;
 
    overriding function Create

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Draw.Frame_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Draw_Frame
-            (ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame_Element_Access
+            (ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Draw.Frame_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Draw_Frame
-            (ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame_Element_Access
+            (ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Draw.Frame_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Draw_Frame
             (Visitor,
-             ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame_Element_Access
+             ODF.DOM.Draw_Frame_Elements.ODF_Draw_Frame_Access
               (Self),
              Control);
 

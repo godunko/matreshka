@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Glue_Point_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Glue_Point_Element is limited interface
+   type ODF_Draw_Glue_Point is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Glue_Point_Element_Access is
-     access all ODF_Draw_Glue_Point_Element'Class
+   type ODF_Draw_Glue_Point_Access is
+     access all ODF_Draw_Glue_Point'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Glue_Point_Elements;

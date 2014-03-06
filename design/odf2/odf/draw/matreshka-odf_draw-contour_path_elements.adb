@@ -77,7 +77,7 @@ package body Matreshka.ODF_Draw.Contour_Path_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Draw_Contour_Path
-            (ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path_Element_Access
+            (ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Draw.Contour_Path_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Draw_Contour_Path
-            (ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path_Element_Access
+            (ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Draw.Contour_Path_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Draw_Contour_Path
             (Visitor,
-             ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path_Element_Access
+             ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path_Access
               (Self),
              Control);
 

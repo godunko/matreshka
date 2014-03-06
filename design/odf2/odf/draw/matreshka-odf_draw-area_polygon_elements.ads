@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Area_Polygon_Elements is
 
    type Draw_Area_Polygon_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Area_Polygon_Elements.ODF_Draw_Area_Polygon_Element
+       and ODF.DOM.Draw_Area_Polygon_Elements.ODF_Draw_Area_Polygon
          with null record;
 
    overriding function Create

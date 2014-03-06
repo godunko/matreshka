@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Custom_Shape_Elements is
 
    type Draw_Custom_Shape_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Custom_Shape_Elements.ODF_Draw_Custom_Shape_Element
+       and ODF.DOM.Draw_Custom_Shape_Elements.ODF_Draw_Custom_Shape
          with null record;
 
    overriding function Create

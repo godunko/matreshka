@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Handle_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Handle_Element is limited interface
+   type ODF_Draw_Handle is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Handle_Element_Access is
-     access all ODF_Draw_Handle_Element'Class
+   type ODF_Draw_Handle_Access is
+     access all ODF_Draw_Handle'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Handle_Elements;

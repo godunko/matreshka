@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Image_Map_Elements is
 
    type Draw_Image_Map_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Image_Map_Elements.ODF_Draw_Image_Map_Element
+       and ODF.DOM.Draw_Image_Map_Elements.ODF_Draw_Image_Map
          with null record;
 
    overriding function Create

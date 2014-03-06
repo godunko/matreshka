@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Hatch_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Hatch_Element is limited interface
+   type ODF_Draw_Hatch is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Hatch_Element_Access is
-     access all ODF_Draw_Hatch_Element'Class
+   type ODF_Draw_Hatch_Access is
+     access all ODF_Draw_Hatch'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Hatch_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Connector_Elements is
 
    type Draw_Connector_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Connector_Elements.ODF_Draw_Connector_Element
+       and ODF.DOM.Draw_Connector_Elements.ODF_Draw_Connector
          with null record;
 
    overriding function Create

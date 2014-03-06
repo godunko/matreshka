@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Measure_Elements is
 
    type Draw_Measure_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Measure_Elements.ODF_Draw_Measure_Element
+       and ODF.DOM.Draw_Measure_Elements.ODF_Draw_Measure
          with null record;
 
    overriding function Create

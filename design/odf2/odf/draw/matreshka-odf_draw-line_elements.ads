@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Line_Elements is
 
    type Draw_Line_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Line_Elements.ODF_Draw_Line_Element
+       and ODF.DOM.Draw_Line_Elements.ODF_Draw_Line
          with null record;
 
    overriding function Create

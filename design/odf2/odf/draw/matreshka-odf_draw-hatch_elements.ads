@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Hatch_Elements is
 
    type Draw_Hatch_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Hatch_Elements.ODF_Draw_Hatch_Element
+       and ODF.DOM.Draw_Hatch_Elements.ODF_Draw_Hatch
          with null record;
 
    overriding function Create

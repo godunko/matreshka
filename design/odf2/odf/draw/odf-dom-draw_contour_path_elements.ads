@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Contour_Path_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Contour_Path_Element is limited interface
+   type ODF_Draw_Contour_Path is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Contour_Path_Element_Access is
-     access all ODF_Draw_Contour_Path_Element'Class
+   type ODF_Draw_Contour_Path_Access is
+     access all ODF_Draw_Contour_Path'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Contour_Path_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Plugin_Elements is
 
    type Draw_Plugin_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Plugin_Elements.ODF_Draw_Plugin_Element
+       and ODF.DOM.Draw_Plugin_Elements.ODF_Draw_Plugin
          with null record;
 
    overriding function Create

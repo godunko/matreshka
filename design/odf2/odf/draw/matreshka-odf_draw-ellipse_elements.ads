@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Ellipse_Elements is
 
    type Draw_Ellipse_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Ellipse_Elements.ODF_Draw_Ellipse_Element
+       and ODF.DOM.Draw_Ellipse_Elements.ODF_Draw_Ellipse
          with null record;
 
    overriding function Create

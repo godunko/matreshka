@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Applet_Elements is
 
    type Draw_Applet_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Applet_Elements.ODF_Draw_Applet_Element
+       and ODF.DOM.Draw_Applet_Elements.ODF_Draw_Applet
          with null record;
 
    overriding function Create

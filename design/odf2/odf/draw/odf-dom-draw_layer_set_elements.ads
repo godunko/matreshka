@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Layer_Set_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Layer_Set_Element is limited interface
+   type ODF_Draw_Layer_Set is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Layer_Set_Element_Access is
-     access all ODF_Draw_Layer_Set_Element'Class
+   type ODF_Draw_Layer_Set_Access is
+     access all ODF_Draw_Layer_Set'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Layer_Set_Elements;

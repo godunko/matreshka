@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Contour_Path_Elements is
 
    type Draw_Contour_Path_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path_Element
+       and ODF.DOM.Draw_Contour_Path_Elements.ODF_Draw_Contour_Path
          with null record;
 
    overriding function Create

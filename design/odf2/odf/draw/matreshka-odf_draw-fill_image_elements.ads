@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Fill_Image_Elements is
 
    type Draw_Fill_Image_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Fill_Image_Elements.ODF_Draw_Fill_Image_Element
+       and ODF.DOM.Draw_Fill_Image_Elements.ODF_Draw_Fill_Image
          with null record;
 
    overriding function Create

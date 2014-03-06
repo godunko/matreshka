@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Enhanced_Geometry_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Enhanced_Geometry_Element is limited interface
+   type ODF_Draw_Enhanced_Geometry is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Enhanced_Geometry_Element_Access is
-     access all ODF_Draw_Enhanced_Geometry_Element'Class
+   type ODF_Draw_Enhanced_Geometry_Access is
+     access all ODF_Draw_Enhanced_Geometry'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Enhanced_Geometry_Elements;

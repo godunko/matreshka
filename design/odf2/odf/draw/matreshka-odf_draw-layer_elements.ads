@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Layer_Elements is
 
    type Draw_Layer_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Layer_Elements.ODF_Draw_Layer_Element
+       and ODF.DOM.Draw_Layer_Elements.ODF_Draw_Layer
          with null record;
 
    overriding function Create

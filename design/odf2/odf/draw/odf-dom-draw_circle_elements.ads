@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Circle_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Circle_Element is limited interface
+   type ODF_Draw_Circle is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Circle_Element_Access is
-     access all ODF_Draw_Circle_Element'Class
+   type ODF_Draw_Circle_Access is
+     access all ODF_Draw_Circle'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Circle_Elements;

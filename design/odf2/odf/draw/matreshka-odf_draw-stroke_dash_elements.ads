@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Stroke_Dash_Elements is
 
    type Draw_Stroke_Dash_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Stroke_Dash_Elements.ODF_Draw_Stroke_Dash_Element
+       and ODF.DOM.Draw_Stroke_Dash_Elements.ODF_Draw_Stroke_Dash
          with null record;
 
    overriding function Create

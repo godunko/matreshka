@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Applet_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Applet_Element is limited interface
+   type ODF_Draw_Applet is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Applet_Element_Access is
-     access all ODF_Draw_Applet_Element'Class
+   type ODF_Draw_Applet_Access is
+     access all ODF_Draw_Applet'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Applet_Elements;

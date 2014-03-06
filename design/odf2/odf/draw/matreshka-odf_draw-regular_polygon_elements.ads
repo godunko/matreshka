@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Regular_Polygon_Elements is
 
    type Draw_Regular_Polygon_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Regular_Polygon_Elements.ODF_Draw_Regular_Polygon_Element
+       and ODF.DOM.Draw_Regular_Polygon_Elements.ODF_Draw_Regular_Polygon
          with null record;
 
    overriding function Create

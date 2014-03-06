@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Glue_Point_Elements is
 
    type Draw_Glue_Point_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Glue_Point_Elements.ODF_Draw_Glue_Point_Element
+       and ODF.DOM.Draw_Glue_Point_Elements.ODF_Draw_Glue_Point
          with null record;
 
    overriding function Create

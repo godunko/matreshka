@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Marker_Elements is
 
    type Draw_Marker_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Marker_Elements.ODF_Draw_Marker_Element
+       and ODF.DOM.Draw_Marker_Elements.ODF_Draw_Marker
          with null record;
 
    overriding function Create

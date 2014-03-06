@@ -77,7 +77,7 @@ package body Matreshka.ODF_Draw.Area_Rectangle_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Draw_Area_Rectangle
-            (ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle_Element_Access
+            (ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Draw.Area_Rectangle_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Draw_Area_Rectangle
-            (ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle_Element_Access
+            (ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Draw.Area_Rectangle_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Draw_Area_Rectangle
             (Visitor,
-             ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle_Element_Access
+             ODF.DOM.Draw_Area_Rectangle_Elements.ODF_Draw_Area_Rectangle_Access
               (Self),
              Control);
 

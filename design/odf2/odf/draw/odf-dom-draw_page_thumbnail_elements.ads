@@ -47,11 +47,11 @@ package ODF.DOM.Draw_Page_Thumbnail_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Draw_Page_Thumbnail_Element is limited interface
+   type ODF_Draw_Page_Thumbnail is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Draw_Page_Thumbnail_Element_Access is
-     access all ODF_Draw_Page_Thumbnail_Element'Class
+   type ODF_Draw_Page_Thumbnail_Access is
+     access all ODF_Draw_Page_Thumbnail'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Draw_Page_Thumbnail_Elements;

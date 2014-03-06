@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Equation_Elements is
 
    type Draw_Equation_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Equation_Elements.ODF_Draw_Equation_Element
+       and ODF.DOM.Draw_Equation_Elements.ODF_Draw_Equation
          with null record;
 
    overriding function Create

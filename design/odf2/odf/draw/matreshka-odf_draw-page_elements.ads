@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Page_Elements is
 
    type Draw_Page_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Page_Elements.ODF_Draw_Page_Element
+       and ODF.DOM.Draw_Page_Elements.ODF_Draw_Page
          with null record;
 
    overriding function Create

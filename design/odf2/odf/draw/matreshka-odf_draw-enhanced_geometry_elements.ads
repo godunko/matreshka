@@ -49,7 +49,7 @@ package Matreshka.ODF_Draw.Enhanced_Geometry_Elements is
 
    type Draw_Enhanced_Geometry_Element_Node is
      new Matreshka.ODF_Draw.Abstract_Draw_Element_Node
-       and ODF.DOM.Draw_Enhanced_Geometry_Elements.ODF_Draw_Enhanced_Geometry_Element
+       and ODF.DOM.Draw_Enhanced_Geometry_Elements.ODF_Draw_Enhanced_Geometry
          with null record;
 
    overriding function Create
