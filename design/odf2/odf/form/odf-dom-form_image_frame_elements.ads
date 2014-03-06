@@ -47,11 +47,11 @@ package ODF.DOM.Form_Image_Frame_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_Image_Frame_Element is limited interface
+   type ODF_Form_Image_Frame is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_Image_Frame_Element_Access is
-     access all ODF_Form_Image_Frame_Element'Class
+   type ODF_Form_Image_Frame_Access is
+     access all ODF_Form_Image_Frame'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_Image_Frame_Elements;

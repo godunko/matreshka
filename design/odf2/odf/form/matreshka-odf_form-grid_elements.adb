@@ -77,7 +77,7 @@ package body Matreshka.ODF_Form.Grid_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Form_Grid
-            (ODF.DOM.Form_Grid_Elements.ODF_Form_Grid_Element_Access
+            (ODF.DOM.Form_Grid_Elements.ODF_Form_Grid_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Form.Grid_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Form_Grid
-            (ODF.DOM.Form_Grid_Elements.ODF_Form_Grid_Element_Access
+            (ODF.DOM.Form_Grid_Elements.ODF_Form_Grid_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Form.Grid_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Form_Grid
             (Visitor,
-             ODF.DOM.Form_Grid_Elements.ODF_Form_Grid_Element_Access
+             ODF.DOM.Form_Grid_Elements.ODF_Form_Grid_Access
               (Self),
              Control);
 

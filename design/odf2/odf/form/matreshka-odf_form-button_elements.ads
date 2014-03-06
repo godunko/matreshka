@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Button_Elements is
 
    type Form_Button_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Button_Elements.ODF_Form_Button_Element
+       and ODF.DOM.Form_Button_Elements.ODF_Form_Button
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Hidden_Elements is
 
    type Form_Hidden_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Hidden_Elements.ODF_Form_Hidden_Element
+       and ODF.DOM.Form_Hidden_Elements.ODF_Form_Hidden
          with null record;
 
    overriding function Create

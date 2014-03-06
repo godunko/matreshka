@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Date_Elements is
 
    type Form_Date_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Date_Elements.ODF_Form_Date_Element
+       and ODF.DOM.Form_Date_Elements.ODF_Form_Date
          with null record;
 
    overriding function Create

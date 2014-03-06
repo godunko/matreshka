@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.List_Property_Elements is
 
    type Form_List_Property_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_List_Property_Elements.ODF_Form_List_Property_Element
+       and ODF.DOM.Form_List_Property_Elements.ODF_Form_List_Property
          with null record;
 
    overriding function Create

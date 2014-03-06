@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Grid_Elements is
 
    type Form_Grid_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Grid_Elements.ODF_Form_Grid_Element
+       and ODF.DOM.Form_Grid_Elements.ODF_Form_Grid
          with null record;
 
    overriding function Create

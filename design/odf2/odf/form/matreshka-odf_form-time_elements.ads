@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Time_Elements is
 
    type Form_Time_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Time_Elements.ODF_Form_Time_Element
+       and ODF.DOM.Form_Time_Elements.ODF_Form_Time
          with null record;
 
    overriding function Create

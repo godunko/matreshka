@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Generic_Control_Elements is
 
    type Form_Generic_Control_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control_Element
+       and ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control
          with null record;
 
    overriding function Create

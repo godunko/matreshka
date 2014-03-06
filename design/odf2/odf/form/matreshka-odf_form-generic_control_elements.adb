@@ -77,7 +77,7 @@ package body Matreshka.ODF_Form.Generic_Control_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Form_Generic_Control
-            (ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control_Element_Access
+            (ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Form.Generic_Control_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Form_Generic_Control
-            (ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control_Element_Access
+            (ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Form.Generic_Control_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Form_Generic_Control
             (Visitor,
-             ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control_Element_Access
+             ODF.DOM.Form_Generic_Control_Elements.ODF_Form_Generic_Control_Access
               (Self),
              Control);
 

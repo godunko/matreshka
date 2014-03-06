@@ -47,11 +47,11 @@ package ODF.DOM.Form_List_Value_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_List_Value_Element is limited interface
+   type ODF_Form_List_Value is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_List_Value_Element_Access is
-     access all ODF_Form_List_Value_Element'Class
+   type ODF_Form_List_Value_Access is
+     access all ODF_Form_List_Value'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_List_Value_Elements;

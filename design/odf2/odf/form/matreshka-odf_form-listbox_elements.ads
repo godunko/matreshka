@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Listbox_Elements is
 
    type Form_Listbox_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Listbox_Elements.ODF_Form_Listbox_Element
+       and ODF.DOM.Form_Listbox_Elements.ODF_Form_Listbox
          with null record;
 
    overriding function Create

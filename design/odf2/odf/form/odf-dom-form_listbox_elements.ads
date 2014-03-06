@@ -47,11 +47,11 @@ package ODF.DOM.Form_Listbox_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_Listbox_Element is limited interface
+   type ODF_Form_Listbox is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_Listbox_Element_Access is
-     access all ODF_Form_Listbox_Element'Class
+   type ODF_Form_Listbox_Access is
+     access all ODF_Form_Listbox'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_Listbox_Elements;

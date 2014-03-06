@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Connection_Resource_Elements is
 
    type Form_Connection_Resource_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Connection_Resource_Elements.ODF_Form_Connection_Resource_Element
+       and ODF.DOM.Form_Connection_Resource_Elements.ODF_Form_Connection_Resource
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Form_Hidden_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_Hidden_Element is limited interface
+   type ODF_Form_Hidden is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_Hidden_Element_Access is
-     access all ODF_Form_Hidden_Element'Class
+   type ODF_Form_Hidden_Access is
+     access all ODF_Form_Hidden'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_Hidden_Elements;

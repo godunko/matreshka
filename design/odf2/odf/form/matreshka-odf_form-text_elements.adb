@@ -77,7 +77,7 @@ package body Matreshka.ODF_Form.Text_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Form_Text
-            (ODF.DOM.Form_Text_Elements.ODF_Form_Text_Element_Access
+            (ODF.DOM.Form_Text_Elements.ODF_Form_Text_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Form.Text_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Form_Text
-            (ODF.DOM.Form_Text_Elements.ODF_Form_Text_Element_Access
+            (ODF.DOM.Form_Text_Elements.ODF_Form_Text_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Form.Text_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Form_Text
             (Visitor,
-             ODF.DOM.Form_Text_Elements.ODF_Form_Text_Element_Access
+             ODF.DOM.Form_Text_Elements.ODF_Form_Text_Access
               (Self),
              Control);
 

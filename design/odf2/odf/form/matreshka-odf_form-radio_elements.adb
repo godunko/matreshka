@@ -77,7 +77,7 @@ package body Matreshka.ODF_Form.Radio_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Form_Radio
-            (ODF.DOM.Form_Radio_Elements.ODF_Form_Radio_Element_Access
+            (ODF.DOM.Form_Radio_Elements.ODF_Form_Radio_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Form.Radio_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Form_Radio
-            (ODF.DOM.Form_Radio_Elements.ODF_Form_Radio_Element_Access
+            (ODF.DOM.Form_Radio_Elements.ODF_Form_Radio_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Form.Radio_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Form_Radio
             (Visitor,
-             ODF.DOM.Form_Radio_Elements.ODF_Form_Radio_Element_Access
+             ODF.DOM.Form_Radio_Elements.ODF_Form_Radio_Access
               (Self),
              Control);
 

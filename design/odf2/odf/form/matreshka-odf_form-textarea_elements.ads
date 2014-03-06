@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Textarea_Elements is
 
    type Form_Textarea_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Textarea_Elements.ODF_Form_Textarea_Element
+       and ODF.DOM.Form_Textarea_Elements.ODF_Form_Textarea
          with null record;
 
    overriding function Create

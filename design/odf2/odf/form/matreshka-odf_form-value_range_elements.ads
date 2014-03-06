@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Value_Range_Elements is
 
    type Form_Value_Range_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Value_Range_Elements.ODF_Form_Value_Range_Element
+       and ODF.DOM.Form_Value_Range_Elements.ODF_Form_Value_Range
          with null record;
 
    overriding function Create

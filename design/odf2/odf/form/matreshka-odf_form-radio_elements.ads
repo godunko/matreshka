@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Radio_Elements is
 
    type Form_Radio_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Radio_Elements.ODF_Form_Radio_Element
+       and ODF.DOM.Form_Radio_Elements.ODF_Form_Radio
          with null record;
 
    overriding function Create

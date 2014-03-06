@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Combobox_Elements is
 
    type Form_Combobox_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Combobox_Elements.ODF_Form_Combobox_Element
+       and ODF.DOM.Form_Combobox_Elements.ODF_Form_Combobox
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Form_Grid_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_Grid_Element is limited interface
+   type ODF_Form_Grid is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_Grid_Element_Access is
-     access all ODF_Form_Grid_Element'Class
+   type ODF_Form_Grid_Access is
+     access all ODF_Form_Grid'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_Grid_Elements;

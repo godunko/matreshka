@@ -47,11 +47,11 @@ package ODF.DOM.Form_Connection_Resource_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_Connection_Resource_Element is limited interface
+   type ODF_Form_Connection_Resource is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_Connection_Resource_Element_Access is
-     access all ODF_Form_Connection_Resource_Element'Class
+   type ODF_Form_Connection_Resource_Access is
+     access all ODF_Form_Connection_Resource'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_Connection_Resource_Elements;

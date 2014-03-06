@@ -77,7 +77,7 @@ package body Matreshka.ODF_Form.Button_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Form_Button
-            (ODF.DOM.Form_Button_Elements.ODF_Form_Button_Element_Access
+            (ODF.DOM.Form_Button_Elements.ODF_Form_Button_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Form.Button_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Form_Button
-            (ODF.DOM.Form_Button_Elements.ODF_Form_Button_Element_Access
+            (ODF.DOM.Form_Button_Elements.ODF_Form_Button_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Form.Button_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Form_Button
             (Visitor,
-             ODF.DOM.Form_Button_Elements.ODF_Form_Button_Element_Access
+             ODF.DOM.Form_Button_Elements.ODF_Form_Button_Access
               (Self),
              Control);
 

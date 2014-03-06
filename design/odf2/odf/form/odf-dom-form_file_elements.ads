@@ -47,11 +47,11 @@ package ODF.DOM.Form_File_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_File_Element is limited interface
+   type ODF_Form_File is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_File_Element_Access is
-     access all ODF_Form_File_Element'Class
+   type ODF_Form_File_Access is
+     access all ODF_Form_File'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_File_Elements;

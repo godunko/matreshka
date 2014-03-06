@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Formatted_Text_Elements is
 
    type Form_Formatted_Text_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Formatted_Text_Elements.ODF_Form_Formatted_Text_Element
+       and ODF.DOM.Form_Formatted_Text_Elements.ODF_Form_Formatted_Text
          with null record;
 
    overriding function Create

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Form.Date_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Form_Date
-            (ODF.DOM.Form_Date_Elements.ODF_Form_Date_Element_Access
+            (ODF.DOM.Form_Date_Elements.ODF_Form_Date_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Form.Date_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Form_Date
-            (ODF.DOM.Form_Date_Elements.ODF_Form_Date_Element_Access
+            (ODF.DOM.Form_Date_Elements.ODF_Form_Date_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Form.Date_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Form_Date
             (Visitor,
-             ODF.DOM.Form_Date_Elements.ODF_Form_Date_Element_Access
+             ODF.DOM.Form_Date_Elements.ODF_Form_Date_Access
               (Self),
              Control);
 

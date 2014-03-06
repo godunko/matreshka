@@ -47,11 +47,11 @@ package ODF.DOM.Form_Generic_Control_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Form_Generic_Control_Element is limited interface
+   type ODF_Form_Generic_Control is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Form_Generic_Control_Element_Access is
-     access all ODF_Form_Generic_Control_Element'Class
+   type ODF_Form_Generic_Control_Access is
+     access all ODF_Form_Generic_Control'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Form_Generic_Control_Elements;

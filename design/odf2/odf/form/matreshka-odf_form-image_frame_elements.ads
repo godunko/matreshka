@@ -49,7 +49,7 @@ package Matreshka.ODF_Form.Image_Frame_Elements is
 
    type Form_Image_Frame_Element_Node is
      new Matreshka.ODF_Form.Abstract_Form_Element_Node
-       and ODF.DOM.Form_Image_Frame_Elements.ODF_Form_Image_Frame_Element
+       and ODF.DOM.Form_Image_Frame_Elements.ODF_Form_Image_Frame
          with null record;
 
    overriding function Create
