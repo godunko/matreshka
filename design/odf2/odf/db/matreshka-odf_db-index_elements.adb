@@ -77,7 +77,7 @@ package body Matreshka.ODF_Db.Index_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Db_Index
-            (ODF.DOM.Db_Index_Elements.ODF_Db_Index_Element_Access
+            (ODF.DOM.Db_Index_Elements.ODF_Db_Index_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Db.Index_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Db_Index
-            (ODF.DOM.Db_Index_Elements.ODF_Db_Index_Element_Access
+            (ODF.DOM.Db_Index_Elements.ODF_Db_Index_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Db.Index_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Db_Index
             (Visitor,
-             ODF.DOM.Db_Index_Elements.ODF_Db_Index_Element_Access
+             ODF.DOM.Db_Index_Elements.ODF_Db_Index_Access
               (Self),
              Control);
 

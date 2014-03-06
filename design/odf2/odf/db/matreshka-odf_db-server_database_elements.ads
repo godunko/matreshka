@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Server_Database_Elements is
 
    type Db_Server_Database_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database_Element
+       and ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database
          with null record;
 
    overriding function Create

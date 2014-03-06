@@ -47,11 +47,11 @@ package ODF.DOM.Db_Auto_Increment_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Auto_Increment_Element is limited interface
+   type ODF_Db_Auto_Increment is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Auto_Increment_Element_Access is
-     access all ODF_Db_Auto_Increment_Element'Class
+   type ODF_Db_Auto_Increment_Access is
+     access all ODF_Db_Auto_Increment'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Auto_Increment_Elements;

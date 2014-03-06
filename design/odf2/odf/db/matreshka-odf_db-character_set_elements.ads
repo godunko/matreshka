@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Character_Set_Elements is
 
    type Db_Character_Set_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set_Element
+       and ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set
          with null record;
 
    overriding function Create

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Db.Login_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Db_Login
-            (ODF.DOM.Db_Login_Elements.ODF_Db_Login_Element_Access
+            (ODF.DOM.Db_Login_Elements.ODF_Db_Login_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Db.Login_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Db_Login
-            (ODF.DOM.Db_Login_Elements.ODF_Db_Login_Element_Access
+            (ODF.DOM.Db_Login_Elements.ODF_Db_Login_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Db.Login_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Db_Login
             (Visitor,
-             ODF.DOM.Db_Login_Elements.ODF_Db_Login_Element_Access
+             ODF.DOM.Db_Login_Elements.ODF_Db_Login_Access
               (Self),
              Control);
 

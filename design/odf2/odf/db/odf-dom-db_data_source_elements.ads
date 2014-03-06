@@ -47,11 +47,11 @@ package ODF.DOM.Db_Data_Source_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Data_Source_Element is limited interface
+   type ODF_Db_Data_Source is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Data_Source_Element_Access is
-     access all ODF_Db_Data_Source_Element'Class
+   type ODF_Db_Data_Source_Access is
+     access all ODF_Db_Data_Source'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Data_Source_Elements;

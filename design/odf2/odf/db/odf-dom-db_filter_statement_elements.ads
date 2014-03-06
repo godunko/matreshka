@@ -47,11 +47,11 @@ package ODF.DOM.Db_Filter_Statement_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Filter_Statement_Element is limited interface
+   type ODF_Db_Filter_Statement is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Filter_Statement_Element_Access is
-     access all ODF_Db_Filter_Statement_Element'Class
+   type ODF_Db_Filter_Statement_Access is
+     access all ODF_Db_Filter_Statement'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Filter_Statement_Elements;

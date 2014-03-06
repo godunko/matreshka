@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Index_Column_Elements is
 
    type Db_Index_Column_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Index_Column_Elements.ODF_Db_Index_Column_Element
+       and ODF.DOM.Db_Index_Column_Elements.ODF_Db_Index_Column
          with null record;
 
    overriding function Create

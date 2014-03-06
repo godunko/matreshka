@@ -47,11 +47,11 @@ package ODF.DOM.Db_Delimiter_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Delimiter_Element is limited interface
+   type ODF_Db_Delimiter is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Delimiter_Element_Access is
-     access all ODF_Db_Delimiter_Element'Class
+   type ODF_Db_Delimiter_Access is
+     access all ODF_Db_Delimiter'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Delimiter_Elements;

@@ -47,11 +47,11 @@ package ODF.DOM.Db_Reports_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Reports_Element is limited interface
+   type ODF_Db_Reports is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Reports_Element_Access is
-     access all ODF_Db_Reports_Element'Class
+   type ODF_Db_Reports_Access is
+     access all ODF_Db_Reports'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Reports_Elements;

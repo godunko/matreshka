@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Indices_Elements is
 
    type Db_Indices_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Indices_Elements.ODF_Db_Indices_Element
+       and ODF.DOM.Db_Indices_Elements.ODF_Db_Indices
          with null record;
 
    overriding function Create

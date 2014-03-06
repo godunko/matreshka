@@ -47,11 +47,11 @@ package ODF.DOM.Db_Index_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Index_Element is limited interface
+   type ODF_Db_Index is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Index_Element_Access is
-     access all ODF_Db_Index_Element'Class
+   type ODF_Db_Index_Access is
+     access all ODF_Db_Index'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Index_Elements;

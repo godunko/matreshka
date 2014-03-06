@@ -47,11 +47,11 @@ package ODF.DOM.Db_Connection_Data_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Connection_Data_Element is limited interface
+   type ODF_Db_Connection_Data is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Connection_Data_Element_Access is
-     access all ODF_Db_Connection_Data_Element'Class
+   type ODF_Db_Connection_Data_Access is
+     access all ODF_Db_Connection_Data'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Connection_Data_Elements;

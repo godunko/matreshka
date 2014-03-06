@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Table_Filter_Pattern_Elements is
 
    type Db_Table_Filter_Pattern_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Table_Filter_Pattern_Elements.ODF_Db_Table_Filter_Pattern_Element
+       and ODF.DOM.Db_Table_Filter_Pattern_Elements.ODF_Db_Table_Filter_Pattern
          with null record;
 
    overriding function Create

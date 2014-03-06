@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Auto_Increment_Elements is
 
    type Db_Auto_Increment_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Auto_Increment_Elements.ODF_Db_Auto_Increment_Element
+       and ODF.DOM.Db_Auto_Increment_Elements.ODF_Db_Auto_Increment
          with null record;
 
    overriding function Create

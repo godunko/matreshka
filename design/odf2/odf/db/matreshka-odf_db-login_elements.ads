@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Login_Elements is
 
    type Db_Login_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Login_Elements.ODF_Db_Login_Element
+       and ODF.DOM.Db_Login_Elements.ODF_Db_Login
          with null record;
 
    overriding function Create

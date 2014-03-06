@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Driver_Settings_Elements is
 
    type Db_Driver_Settings_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Driver_Settings_Elements.ODF_Db_Driver_Settings_Element
+       and ODF.DOM.Db_Driver_Settings_Elements.ODF_Db_Driver_Settings
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Db_Table_Type_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Table_Type_Element is limited interface
+   type ODF_Db_Table_Type is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Table_Type_Element_Access is
-     access all ODF_Db_Table_Type_Element'Class
+   type ODF_Db_Table_Type_Access is
+     access all ODF_Db_Table_Type'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Table_Type_Elements;

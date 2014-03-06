@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Data_Source_Setting_Value_Elements is
 
    type Db_Data_Source_Setting_Value_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Data_Source_Setting_Value_Elements.ODF_Db_Data_Source_Setting_Value_Element
+       and ODF.DOM.Db_Data_Source_Setting_Value_Elements.ODF_Db_Data_Source_Setting_Value
          with null record;
 
    overriding function Create

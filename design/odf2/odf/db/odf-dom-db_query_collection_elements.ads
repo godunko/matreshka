@@ -47,11 +47,11 @@ package ODF.DOM.Db_Query_Collection_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Query_Collection_Element is limited interface
+   type ODF_Db_Query_Collection is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Query_Collection_Element_Access is
-     access all ODF_Db_Query_Collection_Element'Class
+   type ODF_Db_Query_Collection_Access is
+     access all ODF_Db_Query_Collection'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Query_Collection_Elements;

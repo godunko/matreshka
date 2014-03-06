@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Connection_Resource_Elements is
 
    type Db_Connection_Resource_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Connection_Resource_Elements.ODF_Db_Connection_Resource_Element
+       and ODF.DOM.Db_Connection_Resource_Elements.ODF_Db_Connection_Resource
          with null record;
 
    overriding function Create

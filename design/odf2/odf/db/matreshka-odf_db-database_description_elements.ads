@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Database_Description_Elements is
 
    type Db_Database_Description_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Database_Description_Elements.ODF_Db_Database_Description_Element
+       and ODF.DOM.Db_Database_Description_Elements.ODF_Db_Database_Description
          with null record;
 
    overriding function Create

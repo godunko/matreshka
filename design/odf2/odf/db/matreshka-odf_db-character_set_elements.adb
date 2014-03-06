@@ -77,7 +77,7 @@ package body Matreshka.ODF_Db.Character_Set_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Db_Character_Set
-            (ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set_Element_Access
+            (ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Db.Character_Set_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Db_Character_Set
-            (ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set_Element_Access
+            (ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Db.Character_Set_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Db_Character_Set
             (Visitor,
-             ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set_Element_Access
+             ODF.DOM.Db_Character_Set_Elements.ODF_Db_Character_Set_Access
               (Self),
              Control);
 

@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Filter_Statement_Elements is
 
    type Db_Filter_Statement_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Filter_Statement_Elements.ODF_Db_Filter_Statement_Element
+       and ODF.DOM.Db_Filter_Statement_Elements.ODF_Db_Filter_Statement
          with null record;
 
    overriding function Create

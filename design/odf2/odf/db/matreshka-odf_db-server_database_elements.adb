@@ -77,7 +77,7 @@ package body Matreshka.ODF_Db.Server_Database_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Db_Server_Database
-            (ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database_Element_Access
+            (ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Db.Server_Database_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Db_Server_Database
-            (ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database_Element_Access
+            (ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Db.Server_Database_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Db_Server_Database
             (Visitor,
-             ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database_Element_Access
+             ODF.DOM.Db_Server_Database_Elements.ODF_Db_Server_Database_Access
               (Self),
              Control);
 

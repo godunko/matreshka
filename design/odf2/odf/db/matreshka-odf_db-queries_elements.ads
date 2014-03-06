@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Queries_Elements is
 
    type Db_Queries_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Queries_Elements.ODF_Db_Queries_Element
+       and ODF.DOM.Db_Queries_Elements.ODF_Db_Queries
          with null record;
 
    overriding function Create

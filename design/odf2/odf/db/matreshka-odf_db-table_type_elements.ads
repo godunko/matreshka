@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Table_Type_Elements is
 
    type Db_Table_Type_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Table_Type_Elements.ODF_Db_Table_Type_Element
+       and ODF.DOM.Db_Table_Type_Elements.ODF_Db_Table_Type
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Delimiter_Elements is
 
    type Db_Delimiter_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Delimiter_Elements.ODF_Db_Delimiter_Element
+       and ODF.DOM.Db_Delimiter_Elements.ODF_Db_Delimiter
          with null record;
 
    overriding function Create

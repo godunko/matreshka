@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.File_Based_Database_Elements is
 
    type Db_File_Based_Database_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_File_Based_Database_Elements.ODF_Db_File_Based_Database_Element
+       and ODF.DOM.Db_File_Based_Database_Elements.ODF_Db_File_Based_Database
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Key_Columns_Elements is
 
    type Db_Key_Columns_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Key_Columns_Elements.ODF_Db_Key_Columns_Element
+       and ODF.DOM.Db_Key_Columns_Elements.ODF_Db_Key_Columns
          with null record;
 
    overriding function Create

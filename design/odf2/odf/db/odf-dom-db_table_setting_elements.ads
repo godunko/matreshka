@@ -47,11 +47,11 @@ package ODF.DOM.Db_Table_Setting_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Table_Setting_Element is limited interface
+   type ODF_Db_Table_Setting is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Table_Setting_Element_Access is
-     access all ODF_Db_Table_Setting_Element'Class
+   type ODF_Db_Table_Setting_Access is
+     access all ODF_Db_Table_Setting'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Table_Setting_Elements;

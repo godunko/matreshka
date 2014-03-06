@@ -77,7 +77,7 @@ package body Matreshka.ODF_Db.Table_Representations_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Db_Table_Representations
-            (ODF.DOM.Db_Table_Representations_Elements.ODF_Db_Table_Representations_Element_Access
+            (ODF.DOM.Db_Table_Representations_Elements.ODF_Db_Table_Representations_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Db.Table_Representations_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Db_Table_Representations
-            (ODF.DOM.Db_Table_Representations_Elements.ODF_Db_Table_Representations_Element_Access
+            (ODF.DOM.Db_Table_Representations_Elements.ODF_Db_Table_Representations_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Db.Table_Representations_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Db_Table_Representations
             (Visitor,
-             ODF.DOM.Db_Table_Representations_Elements.ODF_Db_Table_Representations_Element_Access
+             ODF.DOM.Db_Table_Representations_Elements.ODF_Db_Table_Representations_Access
               (Self),
              Control);
 

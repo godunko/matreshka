@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Keys_Elements is
 
    type Db_Keys_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Keys_Elements.ODF_Db_Keys_Element
+       and ODF.DOM.Db_Keys_Elements.ODF_Db_Keys
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Db_Server_Database_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Server_Database_Element is limited interface
+   type ODF_Db_Server_Database is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Server_Database_Element_Access is
-     access all ODF_Db_Server_Database_Element'Class
+   type ODF_Db_Server_Database_Access is
+     access all ODF_Db_Server_Database'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Server_Database_Elements;

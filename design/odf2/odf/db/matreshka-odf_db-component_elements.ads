@@ -49,7 +49,7 @@ package Matreshka.ODF_Db.Component_Elements is
 
    type Db_Component_Element_Node is
      new Matreshka.ODF_Db.Abstract_Db_Element_Node
-       and ODF.DOM.Db_Component_Elements.ODF_Db_Component_Element
+       and ODF.DOM.Db_Component_Elements.ODF_Db_Component
          with null record;
 
    overriding function Create

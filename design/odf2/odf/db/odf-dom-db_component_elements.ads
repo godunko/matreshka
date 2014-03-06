@@ -47,11 +47,11 @@ package ODF.DOM.Db_Component_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Component_Element is limited interface
+   type ODF_Db_Component is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Component_Element_Access is
-     access all ODF_Db_Component_Element'Class
+   type ODF_Db_Component_Access is
+     access all ODF_Db_Component'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Component_Elements;

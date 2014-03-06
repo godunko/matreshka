@@ -47,11 +47,11 @@ package ODF.DOM.Db_Column_Definitions_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Db_Column_Definitions_Element is limited interface
+   type ODF_Db_Column_Definitions is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Db_Column_Definitions_Element_Access is
-     access all ODF_Db_Column_Definitions_Element'Class
+   type ODF_Db_Column_Definitions_Access is
+     access all ODF_Db_Column_Definitions'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Db_Column_Definitions_Elements;
