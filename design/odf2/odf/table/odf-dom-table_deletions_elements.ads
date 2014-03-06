@@ -47,11 +47,11 @@ package ODF.DOM.Table_Deletions_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Deletions_Element is limited interface
+   type ODF_Table_Deletions is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Deletions_Element_Access is
-     access all ODF_Table_Deletions_Element'Class
+   type ODF_Table_Deletions_Access is
+     access all ODF_Table_Deletions'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Deletions_Elements;

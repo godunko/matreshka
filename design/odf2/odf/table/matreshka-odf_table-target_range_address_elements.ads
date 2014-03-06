@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Target_Range_Address_Elements is
 
    type Table_Target_Range_Address_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Target_Range_Address_Elements.ODF_Table_Target_Range_Address_Element
+       and ODF.DOM.Table_Target_Range_Address_Elements.ODF_Table_Target_Range_Address
          with null record;
 
    overriding function Create

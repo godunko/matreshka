@@ -47,11 +47,11 @@ package ODF.DOM.Table_Dependencies_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Dependencies_Element is limited interface
+   type ODF_Table_Dependencies is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Dependencies_Element_Access is
-     access all ODF_Table_Dependencies_Element'Class
+   type ODF_Table_Dependencies_Access is
+     access all ODF_Table_Dependencies'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Dependencies_Elements;

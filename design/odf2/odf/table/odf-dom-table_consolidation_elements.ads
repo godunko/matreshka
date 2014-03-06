@@ -47,11 +47,11 @@ package ODF.DOM.Table_Consolidation_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Consolidation_Element is limited interface
+   type ODF_Table_Consolidation is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Consolidation_Element_Access is
-     access all ODF_Table_Consolidation_Element'Class
+   type ODF_Table_Consolidation_Access is
+     access all ODF_Table_Consolidation'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Consolidation_Elements;

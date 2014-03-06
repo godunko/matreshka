@@ -47,11 +47,11 @@ package ODF.DOM.Table_Table_Column_Group_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Table_Column_Group_Element is limited interface
+   type ODF_Table_Table_Column_Group is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Table_Column_Group_Element_Access is
-     access all ODF_Table_Table_Column_Group_Element'Class
+   type ODF_Table_Table_Column_Group_Access is
+     access all ODF_Table_Table_Column_Group'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Table_Column_Group_Elements;

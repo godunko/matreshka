@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Source_Cell_Range_Elements is
 
    type Table_Source_Cell_Range_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range_Element
+       and ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range
          with null record;
 
    overriding function Create

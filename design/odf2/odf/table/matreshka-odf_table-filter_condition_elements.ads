@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Filter_Condition_Elements is
 
    type Table_Filter_Condition_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Filter_Condition_Elements.ODF_Table_Filter_Condition_Element
+       and ODF.DOM.Table_Filter_Condition_Elements.ODF_Table_Filter_Condition
          with null record;
 
    overriding function Create

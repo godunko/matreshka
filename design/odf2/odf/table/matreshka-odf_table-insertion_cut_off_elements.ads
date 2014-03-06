@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Insertion_Cut_Off_Elements is
 
    type Table_Insertion_Cut_Off_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Insertion_Cut_Off_Elements.ODF_Table_Insertion_Cut_Off_Element
+       and ODF.DOM.Table_Insertion_Cut_Off_Elements.ODF_Table_Insertion_Cut_Off
          with null record;
 
    overriding function Create

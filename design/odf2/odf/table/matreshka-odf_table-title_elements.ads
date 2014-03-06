@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Title_Elements is
 
    type Table_Title_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Title_Elements.ODF_Table_Title_Element
+       and ODF.DOM.Table_Title_Elements.ODF_Table_Title
          with null record;
 
    overriding function Create

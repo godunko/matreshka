@@ -47,11 +47,11 @@ package ODF.DOM.Table_Movement_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Movement_Element is limited interface
+   type ODF_Table_Movement is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Movement_Element_Access is
-     access all ODF_Table_Movement_Element'Class
+   type ODF_Table_Movement_Access is
+     access all ODF_Table_Movement'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Movement_Elements;

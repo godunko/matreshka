@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Table_Header_Rows_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Table_Header_Rows
-            (ODF.DOM.Table_Table_Header_Rows_Elements.ODF_Table_Table_Header_Rows_Element_Access
+            (ODF.DOM.Table_Table_Header_Rows_Elements.ODF_Table_Table_Header_Rows_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Table_Header_Rows_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Table_Header_Rows
-            (ODF.DOM.Table_Table_Header_Rows_Elements.ODF_Table_Table_Header_Rows_Element_Access
+            (ODF.DOM.Table_Table_Header_Rows_Elements.ODF_Table_Table_Header_Rows_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Table_Header_Rows_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Table_Header_Rows
             (Visitor,
-             ODF.DOM.Table_Table_Header_Rows_Elements.ODF_Table_Table_Header_Rows_Element_Access
+             ODF.DOM.Table_Table_Header_Rows_Elements.ODF_Table_Table_Header_Rows_Access
               (Self),
              Control);
 

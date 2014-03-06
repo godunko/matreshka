@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Subtotal_Field_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Subtotal_Field
-            (ODF.DOM.Table_Subtotal_Field_Elements.ODF_Table_Subtotal_Field_Element_Access
+            (ODF.DOM.Table_Subtotal_Field_Elements.ODF_Table_Subtotal_Field_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Subtotal_Field_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Subtotal_Field
-            (ODF.DOM.Table_Subtotal_Field_Elements.ODF_Table_Subtotal_Field_Element_Access
+            (ODF.DOM.Table_Subtotal_Field_Elements.ODF_Table_Subtotal_Field_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Subtotal_Field_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Subtotal_Field
             (Visitor,
-             ODF.DOM.Table_Subtotal_Field_Elements.ODF_Table_Subtotal_Field_Element_Access
+             ODF.DOM.Table_Subtotal_Field_Elements.ODF_Table_Subtotal_Field_Access
               (Self),
              Control);
 

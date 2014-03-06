@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Filter_And_Elements is
 
    type Table_Filter_And_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Filter_And_Elements.ODF_Table_Filter_And_Element
+       and ODF.DOM.Table_Filter_And_Elements.ODF_Table_Filter_And
          with null record;
 
    overriding function Create

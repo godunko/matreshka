@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Dependencies_Elements is
 
    type Table_Dependencies_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Dependencies_Elements.ODF_Table_Dependencies_Element
+       and ODF.DOM.Table_Dependencies_Elements.ODF_Table_Dependencies
          with null record;
 
    overriding function Create

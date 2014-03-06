@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Background_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Background
-            (ODF.DOM.Table_Background_Elements.ODF_Table_Background_Element_Access
+            (ODF.DOM.Table_Background_Elements.ODF_Table_Background_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Background_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Background
-            (ODF.DOM.Table_Background_Elements.ODF_Table_Background_Element_Access
+            (ODF.DOM.Table_Background_Elements.ODF_Table_Background_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Background_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Background
             (Visitor,
-             ODF.DOM.Table_Background_Elements.ODF_Table_Background_Element_Access
+             ODF.DOM.Table_Background_Elements.ODF_Table_Background_Access
               (Self),
              Control);
 

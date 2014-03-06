@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Previous_Elements is
 
    type Table_Previous_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Previous_Elements.ODF_Table_Previous_Element
+       and ODF.DOM.Table_Previous_Elements.ODF_Table_Previous
          with null record;
 
    overriding function Create

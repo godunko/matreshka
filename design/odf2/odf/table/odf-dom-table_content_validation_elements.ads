@@ -47,11 +47,11 @@ package ODF.DOM.Table_Content_Validation_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Content_Validation_Element is limited interface
+   type ODF_Table_Content_Validation is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Content_Validation_Element_Access is
-     access all ODF_Table_Content_Validation_Element'Class
+   type ODF_Table_Content_Validation_Access is
+     access all ODF_Table_Content_Validation'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Content_Validation_Elements;

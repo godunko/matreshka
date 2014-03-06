@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Shapes_Elements is
 
    type Table_Shapes_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Shapes_Elements.ODF_Table_Shapes_Element
+       and ODF.DOM.Table_Shapes_Elements.ODF_Table_Shapes
          with null record;
 
    overriding function Create

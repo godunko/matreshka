@@ -47,11 +47,11 @@ package ODF.DOM.Table_Cell_Content_Change_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Cell_Content_Change_Element is limited interface
+   type ODF_Table_Cell_Content_Change is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Cell_Content_Change_Element_Access is
-     access all ODF_Table_Cell_Content_Change_Element'Class
+   type ODF_Table_Cell_Content_Change_Access is
+     access all ODF_Table_Cell_Content_Change'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Cell_Content_Change_Elements;

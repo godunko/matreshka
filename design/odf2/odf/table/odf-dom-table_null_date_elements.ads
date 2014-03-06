@@ -47,11 +47,11 @@ package ODF.DOM.Table_Null_Date_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Null_Date_Element is limited interface
+   type ODF_Table_Null_Date is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Null_Date_Element_Access is
-     access all ODF_Table_Null_Date_Element'Class
+   type ODF_Table_Null_Date_Access is
+     access all ODF_Table_Null_Date'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Null_Date_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Tracked_Changes_Elements is
 
    type Table_Tracked_Changes_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes_Element
+       and ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Deletions_Elements is
 
    type Table_Deletions_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Deletions_Elements.ODF_Table_Deletions_Element
+       and ODF.DOM.Table_Deletions_Elements.ODF_Table_Deletions
          with null record;
 
    overriding function Create

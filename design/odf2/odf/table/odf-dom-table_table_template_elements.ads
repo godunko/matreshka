@@ -47,11 +47,11 @@ package ODF.DOM.Table_Table_Template_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Table_Template_Element is limited interface
+   type ODF_Table_Table_Template is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Table_Template_Element_Access is
-     access all ODF_Table_Table_Template_Element'Class
+   type ODF_Table_Table_Template_Access is
+     access all ODF_Table_Table_Template'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Table_Template_Elements;

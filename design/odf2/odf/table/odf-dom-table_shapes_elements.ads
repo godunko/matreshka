@@ -47,11 +47,11 @@ package ODF.DOM.Table_Shapes_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Shapes_Element is limited interface
+   type ODF_Table_Shapes is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Shapes_Element_Access is
-     access all ODF_Table_Shapes_Element'Class
+   type ODF_Table_Shapes_Access is
+     access all ODF_Table_Shapes'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Shapes_Elements;

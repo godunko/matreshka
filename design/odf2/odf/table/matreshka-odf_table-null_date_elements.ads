@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Null_Date_Elements is
 
    type Table_Null_Date_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Null_Date_Elements.ODF_Table_Null_Date_Element
+       and ODF.DOM.Table_Null_Date_Elements.ODF_Table_Null_Date
          with null record;
 
    overriding function Create

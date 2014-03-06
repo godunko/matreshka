@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Source_Cell_Range_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Source_Cell_Range
-            (ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range_Element_Access
+            (ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Source_Cell_Range_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Source_Cell_Range
-            (ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range_Element_Access
+            (ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Source_Cell_Range_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Source_Cell_Range
             (Visitor,
-             ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range_Element_Access
+             ODF.DOM.Table_Source_Cell_Range_Elements.ODF_Table_Source_Cell_Range_Access
               (Self),
              Control);
 

@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Table_Header_Columns_Elements is
 
    type Table_Table_Header_Columns_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Table_Header_Columns_Elements.ODF_Table_Table_Header_Columns_Element
+       and ODF.DOM.Table_Table_Header_Columns_Elements.ODF_Table_Table_Header_Columns
          with null record;
 
    overriding function Create

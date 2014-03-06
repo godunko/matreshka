@@ -47,11 +47,11 @@ package ODF.DOM.Table_Even_Columns_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Even_Columns_Element is limited interface
+   type ODF_Table_Even_Columns is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Even_Columns_Element_Access is
-     access all ODF_Table_Even_Columns_Element'Class
+   type ODF_Table_Even_Columns_Access is
+     access all ODF_Table_Even_Columns'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Even_Columns_Elements;

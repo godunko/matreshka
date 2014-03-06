@@ -47,11 +47,11 @@ package ODF.DOM.Table_Database_Source_Sql_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Database_Source_Sql_Element is limited interface
+   type ODF_Table_Database_Source_Sql is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Database_Source_Sql_Element_Access is
-     access all ODF_Table_Database_Source_Sql_Element'Class
+   type ODF_Table_Database_Source_Sql_Access is
+     access all ODF_Table_Database_Source_Sql'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Database_Source_Sql_Elements;

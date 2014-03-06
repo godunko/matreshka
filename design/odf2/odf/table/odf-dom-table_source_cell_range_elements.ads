@@ -47,11 +47,11 @@ package ODF.DOM.Table_Source_Cell_Range_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Source_Cell_Range_Element is limited interface
+   type ODF_Table_Source_Cell_Range is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Source_Cell_Range_Element_Access is
-     access all ODF_Table_Source_Cell_Range_Element'Class
+   type ODF_Table_Source_Cell_Range_Access is
+     access all ODF_Table_Source_Cell_Range'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Source_Cell_Range_Elements;

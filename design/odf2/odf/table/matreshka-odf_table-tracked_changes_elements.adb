@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Tracked_Changes_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Tracked_Changes
-            (ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes_Element_Access
+            (ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Tracked_Changes_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Tracked_Changes
-            (ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes_Element_Access
+            (ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Tracked_Changes_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Tracked_Changes
             (Visitor,
-             ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes_Element_Access
+             ODF.DOM.Table_Tracked_Changes_Elements.ODF_Table_Tracked_Changes_Access
               (Self),
              Control);
 

@@ -47,11 +47,11 @@ package ODF.DOM.Table_Insertion_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Insertion_Element is limited interface
+   type ODF_Table_Insertion is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Insertion_Element_Access is
-     access all ODF_Table_Insertion_Element'Class
+   type ODF_Table_Insertion_Access is
+     access all ODF_Table_Insertion'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Insertion_Elements;

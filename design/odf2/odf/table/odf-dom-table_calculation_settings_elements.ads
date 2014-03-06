@@ -47,11 +47,11 @@ package ODF.DOM.Table_Calculation_Settings_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Calculation_Settings_Element is limited interface
+   type ODF_Table_Calculation_Settings is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Calculation_Settings_Element_Access is
-     access all ODF_Table_Calculation_Settings_Element'Class
+   type ODF_Table_Calculation_Settings_Access is
+     access all ODF_Table_Calculation_Settings'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Calculation_Settings_Elements;

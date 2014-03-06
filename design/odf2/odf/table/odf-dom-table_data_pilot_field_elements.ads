@@ -47,11 +47,11 @@ package ODF.DOM.Table_Data_Pilot_Field_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Data_Pilot_Field_Element is limited interface
+   type ODF_Table_Data_Pilot_Field is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Data_Pilot_Field_Element_Access is
-     access all ODF_Table_Data_Pilot_Field_Element'Class
+   type ODF_Table_Data_Pilot_Field_Access is
+     access all ODF_Table_Data_Pilot_Field'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Data_Pilot_Field_Elements;

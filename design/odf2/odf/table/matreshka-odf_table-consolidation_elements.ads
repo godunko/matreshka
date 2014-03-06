@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Consolidation_Elements is
 
    type Table_Consolidation_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Consolidation_Elements.ODF_Table_Consolidation_Element
+       and ODF.DOM.Table_Consolidation_Elements.ODF_Table_Consolidation
          with null record;
 
    overriding function Create

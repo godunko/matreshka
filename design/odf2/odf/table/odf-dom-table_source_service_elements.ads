@@ -47,11 +47,11 @@ package ODF.DOM.Table_Source_Service_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Source_Service_Element is limited interface
+   type ODF_Table_Source_Service is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Source_Service_Element_Access is
-     access all ODF_Table_Source_Service_Element'Class
+   type ODF_Table_Source_Service_Access is
+     access all ODF_Table_Source_Service'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Source_Service_Elements;

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Cut_Offs_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Cut_Offs
-            (ODF.DOM.Table_Cut_Offs_Elements.ODF_Table_Cut_Offs_Element_Access
+            (ODF.DOM.Table_Cut_Offs_Elements.ODF_Table_Cut_Offs_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Cut_Offs_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Cut_Offs
-            (ODF.DOM.Table_Cut_Offs_Elements.ODF_Table_Cut_Offs_Element_Access
+            (ODF.DOM.Table_Cut_Offs_Elements.ODF_Table_Cut_Offs_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Cut_Offs_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Cut_Offs
             (Visitor,
-             ODF.DOM.Table_Cut_Offs_Elements.ODF_Table_Cut_Offs_Element_Access
+             ODF.DOM.Table_Cut_Offs_Elements.ODF_Table_Cut_Offs_Access
               (Self),
              Control);
 

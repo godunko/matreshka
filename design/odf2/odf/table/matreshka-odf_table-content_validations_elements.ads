@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Content_Validations_Elements is
 
    type Table_Content_Validations_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Content_Validations_Elements.ODF_Table_Content_Validations_Element
+       and ODF.DOM.Table_Content_Validations_Elements.ODF_Table_Content_Validations
          with null record;
 
    overriding function Create

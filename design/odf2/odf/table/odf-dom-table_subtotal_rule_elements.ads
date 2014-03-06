@@ -47,11 +47,11 @@ package ODF.DOM.Table_Subtotal_Rule_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Subtotal_Rule_Element is limited interface
+   type ODF_Table_Subtotal_Rule is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Subtotal_Rule_Element_Access is
-     access all ODF_Table_Subtotal_Rule_Element'Class
+   type ODF_Table_Subtotal_Rule_Access is
+     access all ODF_Table_Subtotal_Rule'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Subtotal_Rule_Elements;

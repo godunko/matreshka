@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Error_Message_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Error_Message
-            (ODF.DOM.Table_Error_Message_Elements.ODF_Table_Error_Message_Element_Access
+            (ODF.DOM.Table_Error_Message_Elements.ODF_Table_Error_Message_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Error_Message_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Error_Message
-            (ODF.DOM.Table_Error_Message_Elements.ODF_Table_Error_Message_Element_Access
+            (ODF.DOM.Table_Error_Message_Elements.ODF_Table_Error_Message_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Error_Message_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Error_Message
             (Visitor,
-             ODF.DOM.Table_Error_Message_Elements.ODF_Table_Error_Message_Element_Access
+             ODF.DOM.Table_Error_Message_Elements.ODF_Table_Error_Message_Access
               (Self),
              Control);
 

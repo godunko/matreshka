@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Sort_Groups_Elements is
 
    type Table_Sort_Groups_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Sort_Groups_Elements.ODF_Table_Sort_Groups_Element
+       and ODF.DOM.Table_Sort_Groups_Elements.ODF_Table_Sort_Groups
          with null record;
 
    overriding function Create

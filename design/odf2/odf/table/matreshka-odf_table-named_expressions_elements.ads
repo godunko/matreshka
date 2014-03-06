@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Named_Expressions_Elements is
 
    type Table_Named_Expressions_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Named_Expressions_Elements.ODF_Table_Named_Expressions_Element
+       and ODF.DOM.Table_Named_Expressions_Elements.ODF_Table_Named_Expressions
          with null record;
 
    overriding function Create

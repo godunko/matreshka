@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Scenario_Elements is
 
    type Table_Scenario_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Scenario_Elements.ODF_Table_Scenario_Element
+       and ODF.DOM.Table_Scenario_Elements.ODF_Table_Scenario
          with null record;
 
    overriding function Create

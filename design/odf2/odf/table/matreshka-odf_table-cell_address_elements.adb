@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Cell_Address_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Cell_Address
-            (ODF.DOM.Table_Cell_Address_Elements.ODF_Table_Cell_Address_Element_Access
+            (ODF.DOM.Table_Cell_Address_Elements.ODF_Table_Cell_Address_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Cell_Address_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Cell_Address
-            (ODF.DOM.Table_Cell_Address_Elements.ODF_Table_Cell_Address_Element_Access
+            (ODF.DOM.Table_Cell_Address_Elements.ODF_Table_Cell_Address_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Cell_Address_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Cell_Address
             (Visitor,
-             ODF.DOM.Table_Cell_Address_Elements.ODF_Table_Cell_Address_Element_Access
+             ODF.DOM.Table_Cell_Address_Elements.ODF_Table_Cell_Address_Access
               (Self),
              Control);
 

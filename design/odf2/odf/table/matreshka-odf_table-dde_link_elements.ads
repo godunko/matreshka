@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Dde_Link_Elements is
 
    type Table_Dde_Link_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Dde_Link_Elements.ODF_Table_Dde_Link_Element
+       and ODF.DOM.Table_Dde_Link_Elements.ODF_Table_Dde_Link
          with null record;
 
    overriding function Create

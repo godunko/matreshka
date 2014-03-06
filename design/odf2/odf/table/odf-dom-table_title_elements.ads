@@ -47,11 +47,11 @@ package ODF.DOM.Table_Title_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Title_Element is limited interface
+   type ODF_Table_Title is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Title_Element_Access is
-     access all ODF_Table_Title_Element'Class
+   type ODF_Table_Title_Access is
+     access all ODF_Table_Title'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Title_Elements;

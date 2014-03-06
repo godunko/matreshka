@@ -47,11 +47,11 @@ package ODF.DOM.Table_Scenario_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Scenario_Element is limited interface
+   type ODF_Table_Scenario is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Scenario_Element_Access is
-     access all ODF_Table_Scenario_Element'Class
+   type ODF_Table_Scenario_Access is
+     access all ODF_Table_Scenario'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Scenario_Elements;

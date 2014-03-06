@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Error_Macro_Elements is
 
    type Table_Error_Macro_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Error_Macro_Elements.ODF_Table_Error_Macro_Element
+       and ODF.DOM.Table_Error_Macro_Elements.ODF_Table_Error_Macro
          with null record;
 
    overriding function Create

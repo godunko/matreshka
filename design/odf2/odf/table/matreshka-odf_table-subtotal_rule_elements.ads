@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Subtotal_Rule_Elements is
 
    type Table_Subtotal_Rule_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Subtotal_Rule_Elements.ODF_Table_Subtotal_Rule_Element
+       and ODF.DOM.Table_Subtotal_Rule_Elements.ODF_Table_Subtotal_Rule
          with null record;
 
    overriding function Create

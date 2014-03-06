@@ -47,11 +47,11 @@ package ODF.DOM.Table_Background_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Background_Element is limited interface
+   type ODF_Table_Background is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Background_Element_Access is
-     access all ODF_Table_Background_Element'Class
+   type ODF_Table_Background_Access is
+     access all ODF_Table_Background'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Background_Elements;

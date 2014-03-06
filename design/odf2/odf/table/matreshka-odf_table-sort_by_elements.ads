@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Sort_By_Elements is
 
    type Table_Sort_By_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Sort_By_Elements.ODF_Table_Sort_By_Element
+       and ODF.DOM.Table_Sort_By_Elements.ODF_Table_Sort_By
          with null record;
 
    overriding function Create

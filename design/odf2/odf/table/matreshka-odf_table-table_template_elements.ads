@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Table_Template_Elements is
 
    type Table_Table_Template_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Table_Template_Elements.ODF_Table_Table_Template_Element
+       and ODF.DOM.Table_Table_Template_Elements.ODF_Table_Table_Template
          with null record;
 
    overriding function Create

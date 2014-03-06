@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Iteration_Elements is
 
    type Table_Iteration_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Iteration_Elements.ODF_Table_Iteration_Element
+       and ODF.DOM.Table_Iteration_Elements.ODF_Table_Iteration
          with null record;
 
    overriding function Create

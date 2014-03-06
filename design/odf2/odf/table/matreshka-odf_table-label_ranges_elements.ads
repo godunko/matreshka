@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Label_Ranges_Elements is
 
    type Table_Label_Ranges_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Label_Ranges_Elements.ODF_Table_Label_Ranges_Element
+       and ODF.DOM.Table_Label_Ranges_Elements.ODF_Table_Label_Ranges
          with null record;
 
    overriding function Create

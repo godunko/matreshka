@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Detective_Elements is
 
    type Table_Detective_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Detective_Elements.ODF_Table_Detective_Element
+       and ODF.DOM.Table_Detective_Elements.ODF_Table_Detective
          with null record;
 
    overriding function Create

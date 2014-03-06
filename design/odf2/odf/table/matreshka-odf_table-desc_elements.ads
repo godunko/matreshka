@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Desc_Elements is
 
    type Table_Desc_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Desc_Elements.ODF_Table_Desc_Element
+       and ODF.DOM.Table_Desc_Elements.ODF_Table_Desc
          with null record;
 
    overriding function Create

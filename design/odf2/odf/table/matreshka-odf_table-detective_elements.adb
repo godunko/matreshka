@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.Detective_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_Detective
-            (ODF.DOM.Table_Detective_Elements.ODF_Table_Detective_Element_Access
+            (ODF.DOM.Table_Detective_Elements.ODF_Table_Detective_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.Detective_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_Detective
-            (ODF.DOM.Table_Detective_Elements.ODF_Table_Detective_Element_Access
+            (ODF.DOM.Table_Detective_Elements.ODF_Table_Detective_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.Detective_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_Detective
             (Visitor,
-             ODF.DOM.Table_Detective_Elements.ODF_Table_Detective_Element_Access
+             ODF.DOM.Table_Detective_Elements.ODF_Table_Detective_Access
               (Self),
              Control);
 

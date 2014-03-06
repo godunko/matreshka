@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Last_Row_Elements is
 
    type Table_Last_Row_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Last_Row_Elements.ODF_Table_Last_Row_Element
+       and ODF.DOM.Table_Last_Row_Elements.ODF_Table_Last_Row
          with null record;
 
    overriding function Create

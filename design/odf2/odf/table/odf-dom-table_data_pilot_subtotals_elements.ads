@@ -47,11 +47,11 @@ package ODF.DOM.Table_Data_Pilot_Subtotals_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Data_Pilot_Subtotals_Element is limited interface
+   type ODF_Table_Data_Pilot_Subtotals is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Data_Pilot_Subtotals_Element_Access is
-     access all ODF_Table_Data_Pilot_Subtotals_Element'Class
+   type ODF_Table_Data_Pilot_Subtotals_Access is
+     access all ODF_Table_Data_Pilot_Subtotals'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Data_Pilot_Subtotals_Elements;

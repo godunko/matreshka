@@ -77,7 +77,7 @@ package body Matreshka.ODF_Table.First_Column_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Table_First_Column
-            (ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column_Element_Access
+            (ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Table.First_Column_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Table_First_Column
-            (ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column_Element_Access
+            (ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Table.First_Column_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Table_First_Column
             (Visitor,
-             ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column_Element_Access
+             ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column_Access
               (Self),
              Control);
 

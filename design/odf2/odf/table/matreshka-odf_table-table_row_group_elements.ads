@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Table_Row_Group_Elements is
 
    type Table_Table_Row_Group_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Table_Row_Group_Elements.ODF_Table_Table_Row_Group_Element
+       and ODF.DOM.Table_Table_Row_Group_Elements.ODF_Table_Table_Row_Group
          with null record;
 
    overriding function Create

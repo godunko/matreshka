@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Insertion_Elements is
 
    type Table_Insertion_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Insertion_Elements.ODF_Table_Insertion_Element
+       and ODF.DOM.Table_Insertion_Elements.ODF_Table_Insertion
          with null record;
 
    overriding function Create

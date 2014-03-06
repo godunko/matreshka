@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.First_Column_Elements is
 
    type Table_First_Column_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column_Element
+       and ODF.DOM.Table_First_Column_Elements.ODF_Table_First_Column
          with null record;
 
    overriding function Create

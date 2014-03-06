@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Database_Source_Sql_Elements is
 
    type Table_Database_Source_Sql_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Database_Source_Sql_Elements.ODF_Table_Database_Source_Sql_Element
+       and ODF.DOM.Table_Database_Source_Sql_Elements.ODF_Table_Database_Source_Sql
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Odd_Rows_Elements is
 
    type Table_Odd_Rows_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Odd_Rows_Elements.ODF_Table_Odd_Rows_Element
+       and ODF.DOM.Table_Odd_Rows_Elements.ODF_Table_Odd_Rows
          with null record;
 
    overriding function Create

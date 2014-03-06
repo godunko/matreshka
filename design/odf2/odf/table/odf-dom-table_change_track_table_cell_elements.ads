@@ -47,11 +47,11 @@ package ODF.DOM.Table_Change_Track_Table_Cell_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Table_Change_Track_Table_Cell_Element is limited interface
+   type ODF_Table_Change_Track_Table_Cell is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Table_Change_Track_Table_Cell_Element_Access is
-     access all ODF_Table_Change_Track_Table_Cell_Element'Class
+   type ODF_Table_Change_Track_Table_Cell_Access is
+     access all ODF_Table_Change_Track_Table_Cell'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Table_Change_Track_Table_Cell_Elements;

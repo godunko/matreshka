@@ -49,7 +49,7 @@ package Matreshka.ODF_Table.Cell_Content_Change_Elements is
 
    type Table_Cell_Content_Change_Element_Node is
      new Matreshka.ODF_Table.Abstract_Table_Element_Node
-       and ODF.DOM.Table_Cell_Content_Change_Elements.ODF_Table_Cell_Content_Change_Element
+       and ODF.DOM.Table_Cell_Content_Change_Elements.ODF_Table_Cell_Content_Change
          with null record;
 
    overriding function Create
