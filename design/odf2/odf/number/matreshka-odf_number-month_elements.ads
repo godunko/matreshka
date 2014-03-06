@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Month_Elements is
 
    type Number_Month_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Month_Elements.ODF_Number_Month_Element
+       and ODF.DOM.Number_Month_Elements.ODF_Number_Month
          with null record;
 
    overriding function Create

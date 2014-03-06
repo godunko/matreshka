@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Quarter_Elements is
 
    type Number_Quarter_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Quarter_Elements.ODF_Number_Quarter_Element
+       and ODF.DOM.Number_Quarter_Elements.ODF_Number_Quarter
          with null record;
 
    overriding function Create

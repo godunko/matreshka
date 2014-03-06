@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Seconds_Elements is
 
    type Number_Seconds_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Seconds_Elements.ODF_Number_Seconds_Element
+       and ODF.DOM.Number_Seconds_Elements.ODF_Number_Seconds
          with null record;
 
    overriding function Create

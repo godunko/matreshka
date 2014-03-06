@@ -47,11 +47,11 @@ package ODF.DOM.Number_Month_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Month_Element is limited interface
+   type ODF_Number_Month is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Month_Element_Access is
-     access all ODF_Number_Month_Element'Class
+   type ODF_Number_Month_Access is
+     access all ODF_Number_Month'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Month_Elements;

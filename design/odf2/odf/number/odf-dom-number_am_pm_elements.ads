@@ -47,11 +47,11 @@ package ODF.DOM.Number_Am_Pm_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Am_Pm_Element is limited interface
+   type ODF_Number_Am_Pm is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Am_Pm_Element_Access is
-     access all ODF_Number_Am_Pm_Element'Class
+   type ODF_Number_Am_Pm_Access is
+     access all ODF_Number_Am_Pm'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Am_Pm_Elements;

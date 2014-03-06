@@ -77,7 +77,7 @@ package body Matreshka.ODF_Number.Am_Pm_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Number_Am_Pm
-            (ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm_Element_Access
+            (ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Number.Am_Pm_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Number_Am_Pm
-            (ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm_Element_Access
+            (ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Number.Am_Pm_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Number_Am_Pm
             (Visitor,
-             ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm_Element_Access
+             ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm_Access
               (Self),
              Control);
 

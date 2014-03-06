@@ -47,11 +47,11 @@ package ODF.DOM.Number_Year_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Year_Element is limited interface
+   type ODF_Number_Year is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Year_Element_Access is
-     access all ODF_Number_Year_Element'Class
+   type ODF_Number_Year_Access is
+     access all ODF_Number_Year'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Year_Elements;

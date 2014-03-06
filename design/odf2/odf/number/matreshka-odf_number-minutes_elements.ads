@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Minutes_Elements is
 
    type Number_Minutes_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Minutes_Elements.ODF_Number_Minutes_Element
+       and ODF.DOM.Number_Minutes_Elements.ODF_Number_Minutes
          with null record;
 
    overriding function Create

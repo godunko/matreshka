@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Year_Elements is
 
    type Number_Year_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Year_Elements.ODF_Number_Year_Element
+       and ODF.DOM.Number_Year_Elements.ODF_Number_Year
          with null record;
 
    overriding function Create

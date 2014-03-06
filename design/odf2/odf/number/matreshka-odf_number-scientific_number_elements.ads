@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Scientific_Number_Elements is
 
    type Number_Scientific_Number_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Scientific_Number_Elements.ODF_Number_Scientific_Number_Element
+       and ODF.DOM.Number_Scientific_Number_Elements.ODF_Number_Scientific_Number
          with null record;
 
    overriding function Create

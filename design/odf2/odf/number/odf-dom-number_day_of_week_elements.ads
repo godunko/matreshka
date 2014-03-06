@@ -47,11 +47,11 @@ package ODF.DOM.Number_Day_Of_Week_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Day_Of_Week_Element is limited interface
+   type ODF_Number_Day_Of_Week is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Day_Of_Week_Element_Access is
-     access all ODF_Number_Day_Of_Week_Element'Class
+   type ODF_Number_Day_Of_Week_Access is
+     access all ODF_Number_Day_Of_Week'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Day_Of_Week_Elements;

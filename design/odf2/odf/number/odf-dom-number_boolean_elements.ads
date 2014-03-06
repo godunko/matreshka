@@ -47,11 +47,11 @@ package ODF.DOM.Number_Boolean_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Boolean_Element is limited interface
+   type ODF_Number_Boolean is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Boolean_Element_Access is
-     access all ODF_Number_Boolean_Element'Class
+   type ODF_Number_Boolean_Access is
+     access all ODF_Number_Boolean'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Boolean_Elements;

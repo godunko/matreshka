@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Currency_Style_Elements is
 
    type Number_Currency_Style_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Currency_Style_Elements.ODF_Number_Currency_Style_Element
+       and ODF.DOM.Number_Currency_Style_Elements.ODF_Number_Currency_Style
          with null record;
 
    overriding function Create

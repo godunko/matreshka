@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Number_Elements is
 
    type Number_Number_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Number_Elements.ODF_Number_Number_Element
+       and ODF.DOM.Number_Number_Elements.ODF_Number_Number
          with null record;
 
    overriding function Create

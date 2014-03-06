@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Text_Content_Elements is
 
    type Number_Text_Content_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Text_Content_Elements.ODF_Number_Text_Content_Element
+       and ODF.DOM.Number_Text_Content_Elements.ODF_Number_Text_Content
          with null record;
 
    overriding function Create

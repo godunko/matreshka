@@ -47,11 +47,11 @@ package ODF.DOM.Number_Quarter_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Quarter_Element is limited interface
+   type ODF_Number_Quarter is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Quarter_Element_Access is
-     access all ODF_Number_Quarter_Element'Class
+   type ODF_Number_Quarter_Access is
+     access all ODF_Number_Quarter'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Quarter_Elements;

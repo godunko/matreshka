@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Boolean_Style_Elements is
 
    type Number_Boolean_Style_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Boolean_Style_Elements.ODF_Number_Boolean_Style_Element
+       and ODF.DOM.Number_Boolean_Style_Elements.ODF_Number_Boolean_Style
          with null record;
 
    overriding function Create

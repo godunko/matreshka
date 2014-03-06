@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Percentage_Style_Elements is
 
    type Number_Percentage_Style_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Percentage_Style_Elements.ODF_Number_Percentage_Style_Element
+       and ODF.DOM.Number_Percentage_Style_Elements.ODF_Number_Percentage_Style
          with null record;
 
    overriding function Create

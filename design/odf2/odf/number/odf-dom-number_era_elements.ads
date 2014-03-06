@@ -47,11 +47,11 @@ package ODF.DOM.Number_Era_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Era_Element is limited interface
+   type ODF_Number_Era is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Era_Element_Access is
-     access all ODF_Number_Era_Element'Class
+   type ODF_Number_Era_Access is
+     access all ODF_Number_Era'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Era_Elements;

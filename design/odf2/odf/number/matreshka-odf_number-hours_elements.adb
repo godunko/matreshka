@@ -77,7 +77,7 @@ package body Matreshka.ODF_Number.Hours_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Number_Hours
-            (ODF.DOM.Number_Hours_Elements.ODF_Number_Hours_Element_Access
+            (ODF.DOM.Number_Hours_Elements.ODF_Number_Hours_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Number.Hours_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Number_Hours
-            (ODF.DOM.Number_Hours_Elements.ODF_Number_Hours_Element_Access
+            (ODF.DOM.Number_Hours_Elements.ODF_Number_Hours_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Number.Hours_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Number_Hours
             (Visitor,
-             ODF.DOM.Number_Hours_Elements.ODF_Number_Hours_Element_Access
+             ODF.DOM.Number_Hours_Elements.ODF_Number_Hours_Access
               (Self),
              Control);
 

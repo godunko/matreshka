@@ -47,11 +47,11 @@ package ODF.DOM.Number_Currency_Symbol_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Currency_Symbol_Element is limited interface
+   type ODF_Number_Currency_Symbol is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Currency_Symbol_Element_Access is
-     access all ODF_Number_Currency_Symbol_Element'Class
+   type ODF_Number_Currency_Symbol_Access is
+     access all ODF_Number_Currency_Symbol'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Currency_Symbol_Elements;

@@ -47,11 +47,11 @@ package ODF.DOM.Number_Hours_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Hours_Element is limited interface
+   type ODF_Number_Hours is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Hours_Element_Access is
-     access all ODF_Number_Hours_Element'Class
+   type ODF_Number_Hours_Access is
+     access all ODF_Number_Hours'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Hours_Elements;

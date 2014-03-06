@@ -77,7 +77,7 @@ package body Matreshka.ODF_Number.Currency_Symbol_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Number_Currency_Symbol
-            (ODF.DOM.Number_Currency_Symbol_Elements.ODF_Number_Currency_Symbol_Element_Access
+            (ODF.DOM.Number_Currency_Symbol_Elements.ODF_Number_Currency_Symbol_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Number.Currency_Symbol_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Number_Currency_Symbol
-            (ODF.DOM.Number_Currency_Symbol_Elements.ODF_Number_Currency_Symbol_Element_Access
+            (ODF.DOM.Number_Currency_Symbol_Elements.ODF_Number_Currency_Symbol_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Number.Currency_Symbol_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Number_Currency_Symbol
             (Visitor,
-             ODF.DOM.Number_Currency_Symbol_Elements.ODF_Number_Currency_Symbol_Element_Access
+             ODF.DOM.Number_Currency_Symbol_Elements.ODF_Number_Currency_Symbol_Access
               (Self),
              Control);
 

@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Am_Pm_Elements is
 
    type Number_Am_Pm_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm_Element
+       and ODF.DOM.Number_Am_Pm_Elements.ODF_Number_Am_Pm
          with null record;
 
    overriding function Create

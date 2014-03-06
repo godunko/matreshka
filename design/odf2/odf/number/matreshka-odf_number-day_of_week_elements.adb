@@ -77,7 +77,7 @@ package body Matreshka.ODF_Number.Day_Of_Week_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Number_Day_Of_Week
-            (ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week_Element_Access
+            (ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Number.Day_Of_Week_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Number_Day_Of_Week
-            (ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week_Element_Access
+            (ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Number.Day_Of_Week_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Number_Day_Of_Week
             (Visitor,
-             ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week_Element_Access
+             ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week_Access
               (Self),
              Control);
 

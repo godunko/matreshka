@@ -47,11 +47,11 @@ package ODF.DOM.Number_Seconds_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Seconds_Element is limited interface
+   type ODF_Number_Seconds is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Seconds_Element_Access is
-     access all ODF_Number_Seconds_Element'Class
+   type ODF_Number_Seconds_Access is
+     access all ODF_Number_Seconds'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Seconds_Elements;

@@ -47,11 +47,11 @@ package ODF.DOM.Number_Scientific_Number_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Number_Scientific_Number_Element is limited interface
+   type ODF_Number_Scientific_Number is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Number_Scientific_Number_Element_Access is
-     access all ODF_Number_Scientific_Number_Element'Class
+   type ODF_Number_Scientific_Number_Access is
+     access all ODF_Number_Scientific_Number'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Number_Scientific_Number_Elements;

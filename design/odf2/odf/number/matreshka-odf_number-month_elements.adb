@@ -77,7 +77,7 @@ package body Matreshka.ODF_Number.Month_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Number_Month
-            (ODF.DOM.Number_Month_Elements.ODF_Number_Month_Element_Access
+            (ODF.DOM.Number_Month_Elements.ODF_Number_Month_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Number.Month_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Number_Month
-            (ODF.DOM.Number_Month_Elements.ODF_Number_Month_Element_Access
+            (ODF.DOM.Number_Month_Elements.ODF_Number_Month_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Number.Month_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Number_Month
             (Visitor,
-             ODF.DOM.Number_Month_Elements.ODF_Number_Month_Element_Access
+             ODF.DOM.Number_Month_Elements.ODF_Number_Month_Access
               (Self),
              Control);
 

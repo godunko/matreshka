@@ -49,7 +49,7 @@ package Matreshka.ODF_Number.Day_Of_Week_Elements is
 
    type Number_Day_Of_Week_Element_Node is
      new Matreshka.ODF_Number.Abstract_Number_Element_Node
-       and ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week_Element
+       and ODF.DOM.Number_Day_Of_Week_Elements.ODF_Number_Day_Of_Week
          with null record;
 
    overriding function Create
