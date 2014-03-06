@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Initial_Creator_Elements is
 
    type Meta_Initial_Creator_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator_Element
+       and ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator
          with null record;
 
    overriding function Create

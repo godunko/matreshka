@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Generator_Elements is
 
    type Meta_Generator_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator_Element
+       and ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator
          with null record;
 
    overriding function Create

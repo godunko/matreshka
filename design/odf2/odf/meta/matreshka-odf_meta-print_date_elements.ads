@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Print_Date_Elements is
 
    type Meta_Print_Date_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date_Element
+       and ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date
          with null record;
 
    overriding function Create

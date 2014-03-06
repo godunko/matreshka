@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Editing_Cycles_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Editing_Cycles_Element is limited interface
+   type ODF_Meta_Editing_Cycles is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Editing_Cycles_Element_Access is
-     access all ODF_Meta_Editing_Cycles_Element'Class
+   type ODF_Meta_Editing_Cycles_Access is
+     access all ODF_Meta_Editing_Cycles'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Editing_Cycles_Elements;

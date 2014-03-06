@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Date_String_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Date_String_Element is limited interface
+   type ODF_Meta_Date_String is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Date_String_Element_Access is
-     access all ODF_Meta_Date_String_Element'Class
+   type ODF_Meta_Date_String_Access is
+     access all ODF_Meta_Date_String'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Date_String_Elements;

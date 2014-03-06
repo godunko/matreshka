@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Generator_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Generator_Element is limited interface
+   type ODF_Meta_Generator is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Generator_Element_Access is
-     access all ODF_Meta_Generator_Element'Class
+   type ODF_Meta_Generator_Access is
+     access all ODF_Meta_Generator'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Generator_Elements;

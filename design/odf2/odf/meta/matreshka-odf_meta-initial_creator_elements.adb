@@ -77,7 +77,7 @@ package body Matreshka.ODF_Meta.Initial_Creator_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Meta_Initial_Creator
-            (ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator_Element_Access
+            (ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Meta.Initial_Creator_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Meta_Initial_Creator
-            (ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator_Element_Access
+            (ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Meta.Initial_Creator_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Meta_Initial_Creator
             (Visitor,
-             ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator_Element_Access
+             ODF.DOM.Meta_Initial_Creator_Elements.ODF_Meta_Initial_Creator_Access
               (Self),
              Control);
 

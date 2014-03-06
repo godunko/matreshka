@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Creation_Date_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Creation_Date_Element is limited interface
+   type ODF_Meta_Creation_Date is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Creation_Date_Element_Access is
-     access all ODF_Meta_Creation_Date_Element'Class
+   type ODF_Meta_Creation_Date_Access is
+     access all ODF_Meta_Creation_Date'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Creation_Date_Elements;

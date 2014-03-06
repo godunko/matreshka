@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Template_Elements is
 
    type Meta_Template_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Template_Elements.ODF_Meta_Template_Element
+       and ODF.DOM.Meta_Template_Elements.ODF_Meta_Template
          with null record;
 
    overriding function Create

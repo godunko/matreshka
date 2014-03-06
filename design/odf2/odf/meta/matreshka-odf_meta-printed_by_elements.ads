@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Printed_By_Elements is
 
    type Meta_Printed_By_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Printed_By_Elements.ODF_Meta_Printed_By_Element
+       and ODF.DOM.Meta_Printed_By_Elements.ODF_Meta_Printed_By
          with null record;
 
    overriding function Create

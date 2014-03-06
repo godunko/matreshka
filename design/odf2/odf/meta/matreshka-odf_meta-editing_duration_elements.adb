@@ -77,7 +77,7 @@ package body Matreshka.ODF_Meta.Editing_Duration_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Meta_Editing_Duration
-            (ODF.DOM.Meta_Editing_Duration_Elements.ODF_Meta_Editing_Duration_Element_Access
+            (ODF.DOM.Meta_Editing_Duration_Elements.ODF_Meta_Editing_Duration_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Meta.Editing_Duration_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Meta_Editing_Duration
-            (ODF.DOM.Meta_Editing_Duration_Elements.ODF_Meta_Editing_Duration_Element_Access
+            (ODF.DOM.Meta_Editing_Duration_Elements.ODF_Meta_Editing_Duration_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Meta.Editing_Duration_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Meta_Editing_Duration
             (Visitor,
-             ODF.DOM.Meta_Editing_Duration_Elements.ODF_Meta_Editing_Duration_Element_Access
+             ODF.DOM.Meta_Editing_Duration_Elements.ODF_Meta_Editing_Duration_Access
               (Self),
              Control);
 

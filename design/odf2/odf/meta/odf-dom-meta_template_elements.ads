@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Template_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Template_Element is limited interface
+   type ODF_Meta_Template is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Template_Element_Access is
-     access all ODF_Meta_Template_Element'Class
+   type ODF_Meta_Template_Access is
+     access all ODF_Meta_Template'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Template_Elements;

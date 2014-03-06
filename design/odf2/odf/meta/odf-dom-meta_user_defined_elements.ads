@@ -47,11 +47,11 @@ package ODF.DOM.Meta_User_Defined_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_User_Defined_Element is limited interface
+   type ODF_Meta_User_Defined is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_User_Defined_Element_Access is
-     access all ODF_Meta_User_Defined_Element'Class
+   type ODF_Meta_User_Defined_Access is
+     access all ODF_Meta_User_Defined'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_User_Defined_Elements;

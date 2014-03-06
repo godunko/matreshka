@@ -77,7 +77,7 @@ package body Matreshka.ODF_Meta.Generator_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Meta_Generator
-            (ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator_Element_Access
+            (ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Meta.Generator_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Meta_Generator
-            (ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator_Element_Access
+            (ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Meta.Generator_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Meta_Generator
             (Visitor,
-             ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator_Element_Access
+             ODF.DOM.Meta_Generator_Elements.ODF_Meta_Generator_Access
               (Self),
              Control);
 

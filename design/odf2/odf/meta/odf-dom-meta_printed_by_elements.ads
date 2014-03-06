@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Printed_By_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Printed_By_Element is limited interface
+   type ODF_Meta_Printed_By is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Printed_By_Element_Access is
-     access all ODF_Meta_Printed_By_Element'Class
+   type ODF_Meta_Printed_By_Access is
+     access all ODF_Meta_Printed_By'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Printed_By_Elements;

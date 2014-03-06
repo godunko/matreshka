@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Auto_Reload_Elements is
 
    type Meta_Auto_Reload_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Auto_Reload_Elements.ODF_Meta_Auto_Reload_Element
+       and ODF.DOM.Meta_Auto_Reload_Elements.ODF_Meta_Auto_Reload
          with null record;
 
    overriding function Create

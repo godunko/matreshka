@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Date_String_Elements is
 
    type Meta_Date_String_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Date_String_Elements.ODF_Meta_Date_String_Element
+       and ODF.DOM.Meta_Date_String_Elements.ODF_Meta_Date_String
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Editing_Cycles_Elements is
 
    type Meta_Editing_Cycles_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Editing_Cycles_Elements.ODF_Meta_Editing_Cycles_Element
+       and ODF.DOM.Meta_Editing_Cycles_Elements.ODF_Meta_Editing_Cycles
          with null record;
 
    overriding function Create

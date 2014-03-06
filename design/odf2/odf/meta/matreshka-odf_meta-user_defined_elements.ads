@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.User_Defined_Elements is
 
    type Meta_User_Defined_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_User_Defined_Elements.ODF_Meta_User_Defined_Element
+       and ODF.DOM.Meta_User_Defined_Elements.ODF_Meta_User_Defined
          with null record;
 
    overriding function Create

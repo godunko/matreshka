@@ -77,7 +77,7 @@ package body Matreshka.ODF_Meta.Document_Statistic_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Meta_Document_Statistic
-            (ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic_Element_Access
+            (ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Meta.Document_Statistic_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Meta_Document_Statistic
-            (ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic_Element_Access
+            (ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Meta.Document_Statistic_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Meta_Document_Statistic
             (Visitor,
-             ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic_Element_Access
+             ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic_Access
               (Self),
              Control);
 

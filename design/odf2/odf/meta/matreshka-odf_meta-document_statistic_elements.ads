@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Document_Statistic_Elements is
 
    type Meta_Document_Statistic_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic_Element
+       and ODF.DOM.Meta_Document_Statistic_Elements.ODF_Meta_Document_Statistic
          with null record;
 
    overriding function Create

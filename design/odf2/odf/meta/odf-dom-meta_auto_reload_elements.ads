@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Auto_Reload_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Auto_Reload_Element is limited interface
+   type ODF_Meta_Auto_Reload is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Auto_Reload_Element_Access is
-     access all ODF_Meta_Auto_Reload_Element'Class
+   type ODF_Meta_Auto_Reload_Access is
+     access all ODF_Meta_Auto_Reload'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Auto_Reload_Elements;

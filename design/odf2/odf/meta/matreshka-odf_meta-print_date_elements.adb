@@ -77,7 +77,7 @@ package body Matreshka.ODF_Meta.Print_Date_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Meta_Print_Date
-            (ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date_Element_Access
+            (ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Meta.Print_Date_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Meta_Print_Date
-            (ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date_Element_Access
+            (ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Meta.Print_Date_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Meta_Print_Date
             (Visitor,
-             ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date_Element_Access
+             ODF.DOM.Meta_Print_Date_Elements.ODF_Meta_Print_Date_Access
               (Self),
              Control);
 

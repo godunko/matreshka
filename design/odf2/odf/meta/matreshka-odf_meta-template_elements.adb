@@ -77,7 +77,7 @@ package body Matreshka.ODF_Meta.Template_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Meta_Template
-            (ODF.DOM.Meta_Template_Elements.ODF_Meta_Template_Element_Access
+            (ODF.DOM.Meta_Template_Elements.ODF_Meta_Template_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Meta.Template_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Meta_Template
-            (ODF.DOM.Meta_Template_Elements.ODF_Meta_Template_Element_Access
+            (ODF.DOM.Meta_Template_Elements.ODF_Meta_Template_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Meta.Template_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Meta_Template
             (Visitor,
-             ODF.DOM.Meta_Template_Elements.ODF_Meta_Template_Element_Access
+             ODF.DOM.Meta_Template_Elements.ODF_Meta_Template_Access
               (Self),
              Control);
 

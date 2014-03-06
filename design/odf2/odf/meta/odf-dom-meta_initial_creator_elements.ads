@@ -47,11 +47,11 @@ package ODF.DOM.Meta_Initial_Creator_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Meta_Initial_Creator_Element is limited interface
+   type ODF_Meta_Initial_Creator is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Meta_Initial_Creator_Element_Access is
-     access all ODF_Meta_Initial_Creator_Element'Class
+   type ODF_Meta_Initial_Creator_Access is
+     access all ODF_Meta_Initial_Creator'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Meta_Initial_Creator_Elements;

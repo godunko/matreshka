@@ -49,7 +49,7 @@ package Matreshka.ODF_Meta.Keyword_Elements is
 
    type Meta_Keyword_Element_Node is
      new Matreshka.ODF_Meta.Abstract_Meta_Element_Node
-       and ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword_Element
+       and ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword
          with null record;
 
    overriding function Create

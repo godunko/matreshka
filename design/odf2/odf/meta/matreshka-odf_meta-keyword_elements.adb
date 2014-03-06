@@ -77,7 +77,7 @@ package body Matreshka.ODF_Meta.Keyword_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Meta_Keyword
-            (ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword_Element_Access
+            (ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Meta.Keyword_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Meta_Keyword
-            (ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword_Element_Access
+            (ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Meta.Keyword_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Meta_Keyword
             (Visitor,
-             ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword_Element_Access
+             ODF.DOM.Meta_Keyword_Elements.ODF_Meta_Keyword_Access
               (Self),
              Control);
 
