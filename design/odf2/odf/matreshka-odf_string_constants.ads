@@ -100,6 +100,8 @@ package Matreshka.ODF_String_Constants is
      := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
    Xlink_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/1999/xlink");
+   Xml_URI : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/XML/1998/namespace");
    Anim_Prefix : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("anim");
    Chart_Prefix : constant League.Strings.Universal_String
@@ -148,6 +150,8 @@ package Matreshka.ODF_String_Constants is
      := League.Strings.To_Universal_String ("xhtml");
    Xlink_Prefix : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("xlink");
+   Xml_Prefix : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("xml");
    A_Element : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("a");
    About_Attribute : constant League.Strings.Universal_String
