@@ -134,6 +134,17 @@ package body Matreshka.DOM_Builders is
       Self.Current := null;
    end Push;
 
+   ------------------
+   -- Set_Document --
+   ------------------
+
+   procedure Set_Document
+    (Self     : in out DOM_Builder'Class;
+     Document : not null XML.DOM.Documents.DOM_Document_Access) is
+   begin
+      Self.Document := Document;
+   end Set_Document;
+
    --------------------
    -- Start_Document --
    --------------------
@@ -142,12 +153,19 @@ package body Matreshka.DOM_Builders is
     (Self    : in out DOM_Builder;
      Success : in out Boolean)
    is
-      Document : constant Matreshka.DOM_Nodes.Document_Access
-        := new Matreshka.DOM_Documents.Document_Node;
+      use type XML.DOM.Documents.DOM_Document_Access;
+
+      Document : Matreshka.DOM_Nodes.Document_Access;
 
    begin
-      Matreshka.DOM_Documents.Constructors.Initialize (Document);
-      Self.Document := XML.DOM.Documents.DOM_Document_Access (Document);
+      if Self.Document = null then
+         --  Create new document when it was not specified by application.
+
+         Document := new Matreshka.DOM_Documents.Document_Node;
+         Matreshka.DOM_Documents.Constructors.Initialize (Document);
+         Self.Document := XML.DOM.Documents.DOM_Document_Access (Document);
+      end if;
+
       Self.Current  := XML.DOM.Nodes.DOM_Node_Access (Document);
    end Start_Document;
 

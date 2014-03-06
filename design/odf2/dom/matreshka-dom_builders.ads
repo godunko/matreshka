@@ -59,6 +59,10 @@ package Matreshka.DOM_Builders is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler
        and XML.SAX.Lexical_Handlers.SAX_Lexical_Handler with private;
 
+   procedure Set_Document
+    (Self     : in out DOM_Builder'Class;
+     Document : not null XML.DOM.Documents.DOM_Document_Access);
+
    function Get_Document
     (Self : DOM_Builder'Class) return XML.DOM.Documents.DOM_Document_Access;
    --  Returns constructed document.
