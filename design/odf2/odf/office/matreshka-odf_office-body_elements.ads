@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Body_Elements is
 
    type Office_Body_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Body_Elements.ODF_Office_Body_Element
+       and ODF.DOM.Office_Body_Elements.ODF_Office_Body
          with null record;
 
    overriding function Create

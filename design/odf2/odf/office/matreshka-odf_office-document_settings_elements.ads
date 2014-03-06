@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Document_Settings_Elements is
 
    type Office_Document_Settings_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Document_Settings_Elements.ODF_Office_Document_Settings_Element
+       and ODF.DOM.Office_Document_Settings_Elements.ODF_Office_Document_Settings
          with null record;
 
    overriding function Create

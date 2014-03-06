@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Drawing_Elements is
 
    type Office_Drawing_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Drawing_Elements.ODF_Office_Drawing_Element
+       and ODF.DOM.Office_Drawing_Elements.ODF_Office_Drawing
          with null record;
 
    overriding function Create

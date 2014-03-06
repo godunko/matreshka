@@ -47,11 +47,11 @@ package ODF.DOM.Office_Document_Content_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Office_Document_Content_Element is limited interface
+   type ODF_Office_Document_Content is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Office_Document_Content_Element_Access is
-     access all ODF_Office_Document_Content_Element'Class
+   type ODF_Office_Document_Content_Access is
+     access all ODF_Office_Document_Content'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Office_Document_Content_Elements;

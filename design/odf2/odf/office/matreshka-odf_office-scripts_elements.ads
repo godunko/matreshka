@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Scripts_Elements is
 
    type Office_Scripts_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Scripts_Elements.ODF_Office_Scripts_Element
+       and ODF.DOM.Office_Scripts_Elements.ODF_Office_Scripts
          with null record;
 
    overriding function Create

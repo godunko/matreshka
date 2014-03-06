@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Dde_Source_Elements is
 
    type Office_Dde_Source_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Dde_Source_Elements.ODF_Office_Dde_Source_Element
+       and ODF.DOM.Office_Dde_Source_Elements.ODF_Office_Dde_Source
          with null record;
 
    overriding function Create

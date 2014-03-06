@@ -47,11 +47,11 @@ package ODF.DOM.Office_Font_Face_Decls_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Office_Font_Face_Decls_Element is limited interface
+   type ODF_Office_Font_Face_Decls is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Office_Font_Face_Decls_Element_Access is
-     access all ODF_Office_Font_Face_Decls_Element'Class
+   type ODF_Office_Font_Face_Decls_Access is
+     access all ODF_Office_Font_Face_Decls'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Office_Font_Face_Decls_Elements;

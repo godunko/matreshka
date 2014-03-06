@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Document_Content_Elements is
 
    type Office_Document_Content_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Element
+       and ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content
          with null record;
 
    overriding function Create

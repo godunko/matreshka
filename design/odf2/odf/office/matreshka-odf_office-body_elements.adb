@@ -77,7 +77,7 @@ package body Matreshka.ODF_Office.Body_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Office_Body
-            (ODF.DOM.Office_Body_Elements.ODF_Office_Body_Element_Access
+            (ODF.DOM.Office_Body_Elements.ODF_Office_Body_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Office.Body_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Office_Body
-            (ODF.DOM.Office_Body_Elements.ODF_Office_Body_Element_Access
+            (ODF.DOM.Office_Body_Elements.ODF_Office_Body_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Office.Body_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Office_Body
             (Visitor,
-             ODF.DOM.Office_Body_Elements.ODF_Office_Body_Element_Access
+             ODF.DOM.Office_Body_Elements.ODF_Office_Body_Access
               (Self),
              Control);
 

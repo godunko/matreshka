@@ -47,11 +47,11 @@ package ODF.DOM.Office_Dde_Source_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Office_Dde_Source_Element is limited interface
+   type ODF_Office_Dde_Source is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Office_Dde_Source_Element_Access is
-     access all ODF_Office_Dde_Source_Element'Class
+   type ODF_Office_Dde_Source_Access is
+     access all ODF_Office_Dde_Source'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Office_Dde_Source_Elements;

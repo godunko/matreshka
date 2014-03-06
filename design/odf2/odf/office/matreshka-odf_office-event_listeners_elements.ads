@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Event_Listeners_Elements is
 
    type Office_Event_Listeners_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Event_Listeners_Elements.ODF_Office_Event_Listeners_Element
+       and ODF.DOM.Office_Event_Listeners_Elements.ODF_Office_Event_Listeners
          with null record;
 
    overriding function Create

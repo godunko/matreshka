@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Spreadsheet_Elements is
 
    type Office_Spreadsheet_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Spreadsheet_Elements.ODF_Office_Spreadsheet_Element
+       and ODF.DOM.Office_Spreadsheet_Elements.ODF_Office_Spreadsheet
          with null record;
 
    overriding function Create

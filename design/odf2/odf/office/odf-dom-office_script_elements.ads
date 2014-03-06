@@ -47,11 +47,11 @@ package ODF.DOM.Office_Script_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Office_Script_Element is limited interface
+   type ODF_Office_Script is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Office_Script_Element_Access is
-     access all ODF_Office_Script_Element'Class
+   type ODF_Office_Script_Access is
+     access all ODF_Office_Script'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Office_Script_Elements;

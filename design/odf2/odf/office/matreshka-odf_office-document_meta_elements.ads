@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Document_Meta_Elements is
 
    type Office_Document_Meta_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Document_Meta_Elements.ODF_Office_Document_Meta_Element
+       and ODF.DOM.Office_Document_Meta_Elements.ODF_Office_Document_Meta
          with null record;
 
    overriding function Create

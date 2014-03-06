@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Database_Elements is
 
    type Office_Database_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Database_Elements.ODF_Office_Database_Element
+       and ODF.DOM.Office_Database_Elements.ODF_Office_Database
          with null record;
 
    overriding function Create

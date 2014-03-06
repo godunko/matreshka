@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Font_Face_Decls_Elements is
 
    type Office_Font_Face_Decls_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Font_Face_Decls_Elements.ODF_Office_Font_Face_Decls_Element
+       and ODF.DOM.Office_Font_Face_Decls_Elements.ODF_Office_Font_Face_Decls
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Presentation_Elements is
 
    type Office_Presentation_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Presentation_Elements.ODF_Office_Presentation_Element
+       and ODF.DOM.Office_Presentation_Elements.ODF_Office_Presentation
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Office_Document_Meta_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Office_Document_Meta_Element is limited interface
+   type ODF_Office_Document_Meta is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Office_Document_Meta_Element_Access is
-     access all ODF_Office_Document_Meta_Element'Class
+   type ODF_Office_Document_Meta_Access is
+     access all ODF_Office_Document_Meta'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Office_Document_Meta_Elements;

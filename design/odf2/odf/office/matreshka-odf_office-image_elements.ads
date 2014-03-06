@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Image_Elements is
 
    type Office_Image_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Image_Elements.ODF_Office_Image_Element
+       and ODF.DOM.Office_Image_Elements.ODF_Office_Image
          with null record;
 
    overriding function Create

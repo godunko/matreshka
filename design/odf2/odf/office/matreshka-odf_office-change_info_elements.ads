@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Change_Info_Elements is
 
    type Office_Change_Info_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Change_Info_Elements.ODF_Office_Change_Info_Element
+       and ODF.DOM.Office_Change_Info_Elements.ODF_Office_Change_Info
          with null record;
 
    overriding function Create

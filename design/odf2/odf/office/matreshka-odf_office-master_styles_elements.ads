@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Master_Styles_Elements is
 
    type Office_Master_Styles_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Master_Styles_Elements.ODF_Office_Master_Styles_Element
+       and ODF.DOM.Office_Master_Styles_Elements.ODF_Office_Master_Styles
          with null record;
 
    overriding function Create

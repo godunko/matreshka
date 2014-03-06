@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Text_Elements is
 
    type Office_Text_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Text_Elements.ODF_Office_Text_Element
+       and ODF.DOM.Office_Text_Elements.ODF_Office_Text
          with null record;
 
    overriding function Create

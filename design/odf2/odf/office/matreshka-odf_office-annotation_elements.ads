@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Annotation_Elements is
 
    type Office_Annotation_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Annotation_Elements.ODF_Office_Annotation_Element
+       and ODF.DOM.Office_Annotation_Elements.ODF_Office_Annotation
          with null record;
 
    overriding function Create

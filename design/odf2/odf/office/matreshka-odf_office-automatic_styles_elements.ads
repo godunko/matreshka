@@ -49,7 +49,7 @@ package Matreshka.ODF_Office.Automatic_Styles_Elements is
 
    type Office_Automatic_Styles_Element_Node is
      new Matreshka.ODF_Office.Abstract_Office_Element_Node
-       and ODF.DOM.Office_Automatic_Styles_Elements.ODF_Office_Automatic_Styles_Element
+       and ODF.DOM.Office_Automatic_Styles_Elements.ODF_Office_Automatic_Styles
          with null record;
 
    overriding function Create

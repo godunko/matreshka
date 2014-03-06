@@ -47,11 +47,11 @@ package ODF.DOM.Office_Database_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Office_Database_Element is limited interface
+   type ODF_Office_Database is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Office_Database_Element_Access is
-     access all ODF_Office_Database_Element'Class
+   type ODF_Office_Database_Access is
+     access all ODF_Office_Database'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Office_Database_Elements;
