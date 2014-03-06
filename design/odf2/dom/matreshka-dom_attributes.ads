@@ -117,6 +117,14 @@ package Matreshka.DOM_Attributes is
    type Abstract_Attribute_L2_Node is
      abstract new Abstract_Attribute_Node with null record;
 
+   overriding function Get_Name
+    (Self : not null access constant Abstract_Attribute_L2_Node)
+       return League.Strings.Universal_String;
+
+   overriding function Get_Node_Name
+    (Self : not null access constant Abstract_Attribute_L2_Node)
+       return League.Strings.Universal_String renames Get_Name;
+
    type Attribute_L2_Parameters is record
       Document      : not null Matreshka.DOM_Nodes.Document_Access;
       Namespace_URI : League.Strings.Universal_String;
@@ -153,17 +161,9 @@ package Matreshka.DOM_Attributes is
     (Self : not null access constant Attribute_L2_Node)
        return League.Strings.Universal_String;
 
-   overriding function Get_Name
-    (Self : not null access constant Attribute_L2_Node)
-       return League.Strings.Universal_String;
-
    overriding function Get_Namespace_URI
     (Self : not null access constant Attribute_L2_Node)
        return League.Strings.Universal_String;
-
-   overriding function Get_Node_Name
-    (Self : not null access constant Attribute_L2_Node)
-       return League.Strings.Universal_String renames Get_Name;
 
    package Constructors is
 

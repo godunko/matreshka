@@ -143,9 +143,10 @@ package body Matreshka.DOM_Attributes is
    --------------
 
    overriding function Get_Name
-    (Self : not null access constant Attribute_L2_Node)
+    (Self : not null access constant Abstract_Attribute_L2_Node)
        return League.Strings.Universal_String is
    begin
+--      return Self.Get_Prefix & ':' & Self.Get_Local_Name;
       raise Program_Error;
       return League.Strings.Empty_Universal_String;
    end Get_Name;
