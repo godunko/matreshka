@@ -47,11 +47,11 @@ package ODF.DOM.Math_Math_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Math_Math_Element is limited interface
+   type ODF_Math_Math is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Math_Math_Element_Access is
-     access all ODF_Math_Math_Element'Class
+   type ODF_Math_Math_Access is
+     access all ODF_Math_Math'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Math_Math_Elements;

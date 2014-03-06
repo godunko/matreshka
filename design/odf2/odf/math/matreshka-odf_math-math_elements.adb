@@ -77,7 +77,7 @@ package body Matreshka.ODF_Math.Math_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Math_Math
-            (ODF.DOM.Math_Math_Elements.ODF_Math_Math_Element_Access
+            (ODF.DOM.Math_Math_Elements.ODF_Math_Math_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Math.Math_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Math_Math
-            (ODF.DOM.Math_Math_Elements.ODF_Math_Math_Element_Access
+            (ODF.DOM.Math_Math_Elements.ODF_Math_Math_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Math.Math_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Math_Math
             (Visitor,
-             ODF.DOM.Math_Math_Elements.ODF_Math_Math_Element_Access
+             ODF.DOM.Math_Math_Elements.ODF_Math_Math_Access
               (Self),
              Control);
 

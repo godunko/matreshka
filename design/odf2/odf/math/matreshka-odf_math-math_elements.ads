@@ -49,7 +49,7 @@ package Matreshka.ODF_Math.Math_Elements is
 
    type Math_Math_Element_Node is
      new Matreshka.ODF_Math.Abstract_Math_Element_Node
-       and ODF.DOM.Math_Math_Elements.ODF_Math_Math_Element
+       and ODF.DOM.Math_Math_Elements.ODF_Math_Math
          with null record;
 
    overriding function Create
