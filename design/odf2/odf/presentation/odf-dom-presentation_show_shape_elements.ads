@@ -47,11 +47,11 @@ package ODF.DOM.Presentation_Show_Shape_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Presentation_Show_Shape_Element is limited interface
+   type ODF_Presentation_Show_Shape is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Presentation_Show_Shape_Element_Access is
-     access all ODF_Presentation_Show_Shape_Element'Class
+   type ODF_Presentation_Show_Shape_Access is
+     access all ODF_Presentation_Show_Shape'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Presentation_Show_Shape_Elements;

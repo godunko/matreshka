@@ -47,11 +47,11 @@ package ODF.DOM.Presentation_Notes_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Presentation_Notes_Element is limited interface
+   type ODF_Presentation_Notes is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Presentation_Notes_Element_Access is
-     access all ODF_Presentation_Notes_Element'Class
+   type ODF_Presentation_Notes_Access is
+     access all ODF_Presentation_Notes'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Presentation_Notes_Elements;

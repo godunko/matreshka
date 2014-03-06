@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Event_Listener_Elements is
 
    type Presentation_Event_Listener_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Event_Listener_Elements.ODF_Presentation_Event_Listener_Element
+       and ODF.DOM.Presentation_Event_Listener_Elements.ODF_Presentation_Event_Listener
          with null record;
 
    overriding function Create

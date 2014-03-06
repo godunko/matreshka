@@ -47,11 +47,11 @@ package ODF.DOM.Presentation_Show_Text_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Presentation_Show_Text_Element is limited interface
+   type ODF_Presentation_Show_Text is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Presentation_Show_Text_Element_Access is
-     access all ODF_Presentation_Show_Text_Element'Class
+   type ODF_Presentation_Show_Text_Access is
+     access all ODF_Presentation_Show_Text'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Presentation_Show_Text_Elements;

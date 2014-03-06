@@ -47,11 +47,11 @@ package ODF.DOM.Presentation_Play_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Presentation_Play_Element is limited interface
+   type ODF_Presentation_Play is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Presentation_Play_Element_Access is
-     access all ODF_Presentation_Play_Element'Class
+   type ODF_Presentation_Play_Access is
+     access all ODF_Presentation_Play'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Presentation_Play_Elements;

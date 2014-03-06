@@ -47,11 +47,11 @@ package ODF.DOM.Presentation_Dim_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Presentation_Dim_Element is limited interface
+   type ODF_Presentation_Dim is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Presentation_Dim_Element_Access is
-     access all ODF_Presentation_Dim_Element'Class
+   type ODF_Presentation_Dim_Access is
+     access all ODF_Presentation_Dim'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Presentation_Dim_Elements;

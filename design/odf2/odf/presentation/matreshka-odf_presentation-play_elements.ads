@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Play_Elements is
 
    type Presentation_Play_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Play_Elements.ODF_Presentation_Play_Element
+       and ODF.DOM.Presentation_Play_Elements.ODF_Presentation_Play
          with null record;
 
    overriding function Create

@@ -77,7 +77,7 @@ package body Matreshka.ODF_Presentation.Dim_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Presentation_Dim
-            (ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim_Element_Access
+            (ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Presentation.Dim_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Presentation_Dim
-            (ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim_Element_Access
+            (ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Presentation.Dim_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Presentation_Dim
             (Visitor,
-             ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim_Element_Access
+             ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim_Access
               (Self),
              Control);
 

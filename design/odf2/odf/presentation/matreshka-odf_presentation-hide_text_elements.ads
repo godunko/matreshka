@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Hide_Text_Elements is
 
    type Presentation_Hide_Text_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Hide_Text_Elements.ODF_Presentation_Hide_Text_Element
+       and ODF.DOM.Presentation_Hide_Text_Elements.ODF_Presentation_Hide_Text
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Dim_Elements is
 
    type Presentation_Dim_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim_Element
+       and ODF.DOM.Presentation_Dim_Elements.ODF_Presentation_Dim
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Settings_Elements is
 
    type Presentation_Settings_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings_Element
+       and ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings
          with null record;
 
    overriding function Create

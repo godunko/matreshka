@@ -77,7 +77,7 @@ package body Matreshka.ODF_Presentation.Settings_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Presentation_Settings
-            (ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings_Element_Access
+            (ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Presentation.Settings_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Presentation_Settings
-            (ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings_Element_Access
+            (ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Presentation.Settings_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Presentation_Settings
             (Visitor,
-             ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings_Element_Access
+             ODF.DOM.Presentation_Settings_Elements.ODF_Presentation_Settings_Access
               (Self),
              Control);
 

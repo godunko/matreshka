@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Notes_Elements is
 
    type Presentation_Notes_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Notes_Elements.ODF_Presentation_Notes_Element
+       and ODF.DOM.Presentation_Notes_Elements.ODF_Presentation_Notes
          with null record;
 
    overriding function Create

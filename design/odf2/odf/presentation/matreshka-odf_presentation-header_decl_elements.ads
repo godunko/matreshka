@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Header_Decl_Elements is
 
    type Presentation_Header_Decl_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Header_Decl_Elements.ODF_Presentation_Header_Decl_Element
+       and ODF.DOM.Presentation_Header_Decl_Elements.ODF_Presentation_Header_Decl
          with null record;
 
    overriding function Create

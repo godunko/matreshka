@@ -77,7 +77,7 @@ package body Matreshka.ODF_Presentation.Animation_Group_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Presentation_Animation_Group
-            (ODF.DOM.Presentation_Animation_Group_Elements.ODF_Presentation_Animation_Group_Element_Access
+            (ODF.DOM.Presentation_Animation_Group_Elements.ODF_Presentation_Animation_Group_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Presentation.Animation_Group_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Presentation_Animation_Group
-            (ODF.DOM.Presentation_Animation_Group_Elements.ODF_Presentation_Animation_Group_Element_Access
+            (ODF.DOM.Presentation_Animation_Group_Elements.ODF_Presentation_Animation_Group_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Presentation.Animation_Group_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Presentation_Animation_Group
             (Visitor,
-             ODF.DOM.Presentation_Animation_Group_Elements.ODF_Presentation_Animation_Group_Element_Access
+             ODF.DOM.Presentation_Animation_Group_Elements.ODF_Presentation_Animation_Group_Access
               (Self),
              Control);
 

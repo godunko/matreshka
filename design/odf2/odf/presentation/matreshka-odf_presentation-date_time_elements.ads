@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Date_Time_Elements is
 
    type Presentation_Date_Time_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Date_Time_Elements.ODF_Presentation_Date_Time_Element
+       and ODF.DOM.Presentation_Date_Time_Elements.ODF_Presentation_Date_Time
          with null record;
 
    overriding function Create

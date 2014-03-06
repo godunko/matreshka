@@ -47,11 +47,11 @@ package ODF.DOM.Presentation_Placeholder_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Presentation_Placeholder_Element is limited interface
+   type ODF_Presentation_Placeholder is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Presentation_Placeholder_Element_Access is
-     access all ODF_Presentation_Placeholder_Element'Class
+   type ODF_Presentation_Placeholder_Access is
+     access all ODF_Presentation_Placeholder'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Presentation_Placeholder_Elements;

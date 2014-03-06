@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Placeholder_Elements is
 
    type Presentation_Placeholder_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Placeholder_Elements.ODF_Presentation_Placeholder_Element
+       and ODF.DOM.Presentation_Placeholder_Elements.ODF_Presentation_Placeholder
          with null record;
 
    overriding function Create

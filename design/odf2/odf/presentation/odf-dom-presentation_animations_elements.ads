@@ -47,11 +47,11 @@ package ODF.DOM.Presentation_Animations_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Presentation_Animations_Element is limited interface
+   type ODF_Presentation_Animations is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Presentation_Animations_Element_Access is
-     access all ODF_Presentation_Animations_Element'Class
+   type ODF_Presentation_Animations_Access is
+     access all ODF_Presentation_Animations'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Presentation_Animations_Elements;

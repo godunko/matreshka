@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Show_Shape_Elements is
 
    type Presentation_Show_Shape_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Show_Shape_Elements.ODF_Presentation_Show_Shape_Element
+       and ODF.DOM.Presentation_Show_Shape_Elements.ODF_Presentation_Show_Shape
          with null record;
 
    overriding function Create

@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Animations_Elements is
 
    type Presentation_Animations_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Animations_Elements.ODF_Presentation_Animations_Element
+       and ODF.DOM.Presentation_Animations_Elements.ODF_Presentation_Animations
          with null record;
 
    overriding function Create

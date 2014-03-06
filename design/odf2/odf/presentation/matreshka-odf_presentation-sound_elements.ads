@@ -49,7 +49,7 @@ package Matreshka.ODF_Presentation.Sound_Elements is
 
    type Presentation_Sound_Element_Node is
      new Matreshka.ODF_Presentation.Abstract_Presentation_Element_Node
-       and ODF.DOM.Presentation_Sound_Elements.ODF_Presentation_Sound_Element
+       and ODF.DOM.Presentation_Sound_Elements.ODF_Presentation_Sound
          with null record;
 
    overriding function Create
