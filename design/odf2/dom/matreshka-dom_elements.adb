@@ -47,6 +47,9 @@ with Matreshka.DOM_Lists;
 
 package body Matreshka.DOM_Elements is
 
+   use type League.Strings.Universal_String;
+   use type Matreshka.DOM_Nodes.Node_Access;
+
    ------------------
    -- Constructors --
    ------------------
@@ -96,6 +99,30 @@ package body Matreshka.DOM_Elements is
       Visitor.Enter_Element
        (XML.DOM.Elements.DOM_Element_Access (Self), Control);
    end Enter_Node;
+
+   ---------------------------
+   -- Get_Attribute_Node_NS --
+   ---------------------------
+
+   overriding function Get_Attribute_Node_NS
+    (Self          : not null access Abstract_Element_Node;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return XML.DOM.Attributes.DOM_Attribute_Access
+   is
+      Current : Matreshka.DOM_Nodes.Node_Access := Self.First_Attribute;
+
+   begin
+      while Current /= null loop
+         exit when
+           Current.Get_Namespace_URI = Namespace_URI
+             and then Current.Get_Local_Name = Local_Name;
+
+         Current := Current.Next;
+      end loop;
+
+      return XML.DOM.Attributes.DOM_Attribute_Access (Current);
+   end Get_Attribute_Node_NS;
 
    --------------------
    -- Get_Local_Name --
@@ -172,8 +199,6 @@ package body Matreshka.DOM_Elements is
    is
       use XML.DOM.Elements;
 --      use type XML.DOM.Elements.DOM_Element_Access;
-      use type Matreshka.DOM_Nodes.Node_Access;
-      use type League.Strings.Universal_String;
 
       New_Attribute : constant Matreshka.DOM_Nodes.Node_Access
         := Matreshka.DOM_Nodes.Node_Access (New_Attr);

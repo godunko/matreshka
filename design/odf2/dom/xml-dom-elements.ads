@@ -70,6 +70,38 @@ package XML.DOM.Elements is
    --  HTML DOM returns the tagName of an HTML element in the canonical
    --  uppercase form, regardless of the case in the source HTML document.
 
+   not overriding function Get_Attribute_Node_NS
+    (Self          : not null access DOM_Element;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return XML.DOM.Attributes.DOM_Attribute_Access is abstract;
+   --  Retrieves an Attr node by local name and namespace URI.
+   --
+   --  Per [XML Namespaces], applications must use the value null as the
+   --  namespaceURI parameter for methods if they wish to have no namespace.
+   --
+   --  Parameters
+   --
+   --    namespaceURI of type DOMString
+   --      The namespace URI of the attribute to retrieve.
+   --
+   --    localName of type DOMString
+   --      The local name of the attribute to retrieve.
+   --
+   --  Return Value
+   --
+   --    Attr
+   --      The Attr node with the specified attribute local name and namespace
+   --      URI or null if there is no such attribute.
+   --
+   --  Exceptions
+   --
+   --    DOMException
+   --
+   --      NOT_SUPPORTED_ERR: May be raised if the implementation does not
+   --      support the feature "XML" and the language exposed through the
+   --      Document does not support XML Namespaces (such as [HTML 4.01]).
+
    not overriding function Set_Attribute_Node_NS
     (Self     : not null access DOM_Element;
      New_Attr : not null XML.DOM.Attributes.DOM_Attribute_Access)

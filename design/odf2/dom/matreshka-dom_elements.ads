@@ -78,6 +78,12 @@ package Matreshka.DOM_Elements is
      Control : in out XML.DOM.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
+   overriding function Get_Attribute_Node_NS
+    (Self          : not null access Abstract_Element_Node;
+     Namespace_URI : League.Strings.Universal_String;
+     Local_Name    : League.Strings.Universal_String)
+       return XML.DOM.Attributes.DOM_Attribute_Access;
+
    overriding function Get_Node_Type
     (Self : not null access constant Abstract_Element_Node)
        return XML.DOM.Node_Type;
