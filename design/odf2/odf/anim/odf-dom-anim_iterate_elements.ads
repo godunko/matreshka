@@ -47,11 +47,11 @@ package ODF.DOM.Anim_Iterate_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Anim_Iterate_Element is limited interface
+   type ODF_Anim_Iterate is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Anim_Iterate_Element_Access is
-     access all ODF_Anim_Iterate_Element'Class
+   type ODF_Anim_Iterate_Access is
+     access all ODF_Anim_Iterate'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Anim_Iterate_Elements;

@@ -49,7 +49,7 @@ package Matreshka.ODF_Anim.AnimateColor_Elements is
 
    type Anim_AnimateColor_Element_Node is
      new Matreshka.ODF_Anim.Abstract_Anim_Element_Node
-       and ODF.DOM.Anim_AnimateColor_Elements.ODF_Anim_AnimateColor_Element
+       and ODF.DOM.Anim_AnimateColor_Elements.ODF_Anim_AnimateColor
          with null record;
 
    overriding function Create

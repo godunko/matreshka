@@ -49,7 +49,7 @@ package Matreshka.ODF_Anim.Command_Elements is
 
    type Anim_Command_Element_Node is
      new Matreshka.ODF_Anim.Abstract_Anim_Element_Node
-       and ODF.DOM.Anim_Command_Elements.ODF_Anim_Command_Element
+       and ODF.DOM.Anim_Command_Elements.ODF_Anim_Command
          with null record;
 
    overriding function Create

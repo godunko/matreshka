@@ -77,7 +77,7 @@ package body Matreshka.ODF_Anim.Iterate_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Anim_Iterate
-            (ODF.DOM.Anim_Iterate_Elements.ODF_Anim_Iterate_Element_Access
+            (ODF.DOM.Anim_Iterate_Elements.ODF_Anim_Iterate_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Anim.Iterate_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Anim_Iterate
-            (ODF.DOM.Anim_Iterate_Elements.ODF_Anim_Iterate_Element_Access
+            (ODF.DOM.Anim_Iterate_Elements.ODF_Anim_Iterate_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Anim.Iterate_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Anim_Iterate
             (Visitor,
-             ODF.DOM.Anim_Iterate_Elements.ODF_Anim_Iterate_Element_Access
+             ODF.DOM.Anim_Iterate_Elements.ODF_Anim_Iterate_Access
               (Self),
              Control);
 

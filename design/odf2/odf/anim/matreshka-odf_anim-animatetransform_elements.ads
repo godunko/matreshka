@@ -49,7 +49,7 @@ package Matreshka.ODF_Anim.AnimateTransform_Elements is
 
    type Anim_AnimateTransform_Element_Node is
      new Matreshka.ODF_Anim.Abstract_Anim_Element_Node
-       and ODF.DOM.Anim_AnimateTransform_Elements.ODF_Anim_AnimateTransform_Element
+       and ODF.DOM.Anim_AnimateTransform_Elements.ODF_Anim_AnimateTransform
          with null record;
 
    overriding function Create

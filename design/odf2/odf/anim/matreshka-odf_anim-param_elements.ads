@@ -49,7 +49,7 @@ package Matreshka.ODF_Anim.Param_Elements is
 
    type Anim_Param_Element_Node is
      new Matreshka.ODF_Anim.Abstract_Anim_Element_Node
-       and ODF.DOM.Anim_Param_Elements.ODF_Anim_Param_Element
+       and ODF.DOM.Anim_Param_Elements.ODF_Anim_Param
          with null record;
 
    overriding function Create

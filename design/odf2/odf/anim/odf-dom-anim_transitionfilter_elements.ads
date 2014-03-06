@@ -47,11 +47,11 @@ package ODF.DOM.Anim_TransitionFilter_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Anim_TransitionFilter_Element is limited interface
+   type ODF_Anim_TransitionFilter is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Anim_TransitionFilter_Element_Access is
-     access all ODF_Anim_TransitionFilter_Element'Class
+   type ODF_Anim_TransitionFilter_Access is
+     access all ODF_Anim_TransitionFilter'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Anim_TransitionFilter_Elements;

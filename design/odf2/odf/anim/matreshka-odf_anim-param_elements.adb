@@ -77,7 +77,7 @@ package body Matreshka.ODF_Anim.Param_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Anim_Param
-            (ODF.DOM.Anim_Param_Elements.ODF_Anim_Param_Element_Access
+            (ODF.DOM.Anim_Param_Elements.ODF_Anim_Param_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Anim.Param_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Anim_Param
-            (ODF.DOM.Anim_Param_Elements.ODF_Anim_Param_Element_Access
+            (ODF.DOM.Anim_Param_Elements.ODF_Anim_Param_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Anim.Param_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Anim_Param
             (Visitor,
-             ODF.DOM.Anim_Param_Elements.ODF_Anim_Param_Element_Access
+             ODF.DOM.Anim_Param_Elements.ODF_Anim_Param_Access
               (Self),
              Control);
 

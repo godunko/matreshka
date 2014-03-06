@@ -49,7 +49,7 @@ package Matreshka.ODF_Anim.Seq_Elements is
 
    type Anim_Seq_Element_Node is
      new Matreshka.ODF_Anim.Abstract_Anim_Element_Node
-       and ODF.DOM.Anim_Seq_Elements.ODF_Anim_Seq_Element
+       and ODF.DOM.Anim_Seq_Elements.ODF_Anim_Seq
          with null record;
 
    overriding function Create

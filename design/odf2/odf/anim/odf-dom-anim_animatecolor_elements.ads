@@ -47,11 +47,11 @@ package ODF.DOM.Anim_AnimateColor_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Anim_AnimateColor_Element is limited interface
+   type ODF_Anim_AnimateColor is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Anim_AnimateColor_Element_Access is
-     access all ODF_Anim_AnimateColor_Element'Class
+   type ODF_Anim_AnimateColor_Access is
+     access all ODF_Anim_AnimateColor'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Anim_AnimateColor_Elements;

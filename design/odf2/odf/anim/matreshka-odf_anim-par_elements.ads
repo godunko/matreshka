@@ -49,7 +49,7 @@ package Matreshka.ODF_Anim.Par_Elements is
 
    type Anim_Par_Element_Node is
      new Matreshka.ODF_Anim.Abstract_Anim_Element_Node
-       and ODF.DOM.Anim_Par_Elements.ODF_Anim_Par_Element
+       and ODF.DOM.Anim_Par_Elements.ODF_Anim_Par
          with null record;
 
    overriding function Create

@@ -47,11 +47,11 @@ package ODF.DOM.Anim_Par_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Anim_Par_Element is limited interface
+   type ODF_Anim_Par is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Anim_Par_Element_Access is
-     access all ODF_Anim_Par_Element'Class
+   type ODF_Anim_Par_Access is
+     access all ODF_Anim_Par'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Anim_Par_Elements;

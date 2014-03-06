@@ -49,7 +49,7 @@ package Matreshka.ODF_Anim.Set_Elements is
 
    type Anim_Set_Element_Node is
      new Matreshka.ODF_Anim.Abstract_Anim_Element_Node
-       and ODF.DOM.Anim_Set_Elements.ODF_Anim_Set_Element
+       and ODF.DOM.Anim_Set_Elements.ODF_Anim_Set
          with null record;
 
    overriding function Create

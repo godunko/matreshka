@@ -47,11 +47,11 @@ package ODF.DOM.Anim_Seq_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Anim_Seq_Element is limited interface
+   type ODF_Anim_Seq is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Anim_Seq_Element_Access is
-     access all ODF_Anim_Seq_Element'Class
+   type ODF_Anim_Seq_Access is
+     access all ODF_Anim_Seq'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Anim_Seq_Elements;
