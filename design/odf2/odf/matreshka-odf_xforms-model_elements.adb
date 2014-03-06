@@ -77,7 +77,7 @@ package body Matreshka.ODF_Xforms.Model_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_Xforms_Model
-            (ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model_Element_Access
+            (ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_Xforms.Model_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_Xforms_Model
-            (ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model_Element_Access
+            (ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_Xforms.Model_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_Xforms_Model
             (Visitor,
-             ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model_Element_Access
+             ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model_Access
               (Self),
              Control);
 

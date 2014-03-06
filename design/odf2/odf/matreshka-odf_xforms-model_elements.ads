@@ -49,7 +49,7 @@ package Matreshka.ODF_Xforms.Model_Elements is
 
    type Xforms_Model_Element_Node is
      new Matreshka.ODF_Xforms.Abstract_Xforms_Element_Node
-       and ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model_Element
+       and ODF.DOM.Xforms_Model_Elements.ODF_Xforms_Model
          with null record;
 
    overriding function Create

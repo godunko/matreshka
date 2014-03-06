@@ -47,11 +47,11 @@ package ODF.DOM.Xforms_Model_Elements is
 
    pragma Preelaborate;
 
-   type ODF_Xforms_Model_Element is limited interface
+   type ODF_Xforms_Model is limited interface
      and XML.DOM.Elements.DOM_Element;
 
-   type ODF_Xforms_Model_Element_Access is
-     access all ODF_Xforms_Model_Element'Class
+   type ODF_Xforms_Model_Access is
+     access all ODF_Xforms_Model'Class
        with Storage_Size => 0;
 
 end ODF.DOM.Xforms_Model_Elements;
