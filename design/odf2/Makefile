@@ -33,6 +33,9 @@ gen:
 	# 'draw' module
 	ls .new/matreshka-odf_draw-*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/draw/{}
 	ls .new/odf-dom-draw_*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/draw/{}
+	# 'fo' module
+	ls .new/matreshka-odf_fo-*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/fo/{}
+	ls .new/odf-dom-fo_*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/fo/{}
 	# 'form' module
 	ls .new/matreshka-odf_form-*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/form/{}
 	ls .new/odf-dom-form_*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/form/{}
@@ -54,6 +57,9 @@ gen:
 	# 'script' module
 	ls .new/matreshka-odf_script-*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/script/{}
 	ls .new/odf-dom-script_*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/script/{}
+	# 'smil' module
+	ls .new/matreshka-odf_smil-*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/smil/{}
+	ls .new/odf-dom-smil_*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/smil/{}
 	# 'style' module
 	ls .new/matreshka-odf_style-*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/style/{}
 	ls .new/odf-dom-style_*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/style/{}
