@@ -57,23 +57,22 @@ package XSD2Ada.Analyzer is
    type Item is tagged private;
    type Item_Access is access all Item'Class;
 
-   function Object
-     (Self : Item) return XML.Schema.Objects.XS_Object;
+   function Object (Self : Item) return XML.Schema.Objects.XS_Object;
    function Type_Def
-     (Self : Item) return XML.Schema.Type_Definitions.XS_Type_Definition;
+    (Self : Item) return XML.Schema.Type_Definitions.XS_Type_Definition;
    function Min (Self : Item) return Boolean;
    function Max (Self : Item) return Boolean;
    function Choice (Self : Item) return Boolean;
    function Anonym_Name (Self : Item) return League.Strings.Universal_String;
    function Element_Name (Self : Item) return League.Strings.Universal_String;
    function Short_Ada_Type_Name
-     (Self : Item) return League.Strings.Universal_String;
+    (Self : Item) return League.Strings.Universal_String;
    --  Short name of Ada type described by the element.
    function Full_Ada_Type_Name
-     (Self : Item) return League.Strings.Universal_String;
+    (Self : Item) return League.Strings.Universal_String;
    --  Full name of Ada type described by the element.
    function Full_Ada_Package_Name
-     (Self : Item) return League.Strings.Universal_String;
+    (Self : Item) return League.Strings.Universal_String;
    --  Full name of Ada compilation unit enclosing Ada type declaration.
 
    package Item_Vectors is
@@ -86,20 +85,20 @@ package XSD2Ada.Analyzer is
    ---------------------
 
    procedure Create_Element_Nodes
-     (Model       : XML.Schema.Models.XS_Model;
-      Node_Vector : in out Items);
+    (Model       : XML.Schema.Models.XS_Model;
+     Node_Vector : in out Items);
    --  Add new node to Node_Vector for each Element declaration in Model
    --  Also add types from dependencies
 
    procedure Create_Element_Node
-     (Element     : XML.Schema.Element_Declarations.XS_Element_Declaration;
-      Node_Vector : in out XSD2Ada.Analyzer.Items);
+    (Element     : XML.Schema.Element_Declarations.XS_Element_Declaration;
+     Node_Vector : in out XSD2Ada.Analyzer.Items);
    --  Add new node to Node_Vector for given Element declaration
    --  Also add types from dependencies
 
    procedure Create_Type_Node
-     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Node_Vector : in out XSD2Ada.Analyzer.Items);
+    (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Node_Vector : in out XSD2Ada.Analyzer.Items);
    --  Add new node to Node_Vector for given type definition
    --  Also add types from dependencies
 
@@ -112,4 +111,5 @@ private
       Element_Name        : League.Strings.Universal_String;
       Short_Ada_Type_Name : League.Strings.Universal_String;
    end record;
+
 end XSD2Ada.Analyzer;
