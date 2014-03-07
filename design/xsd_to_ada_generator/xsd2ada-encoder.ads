@@ -96,7 +96,6 @@ package XSD2Ada.Encoder is
      Indent       : Wide_Wide_String;
      Writer       : in out XSD_To_Ada.Writers.Writer;
      Writer_types : in out XSD_To_Ada.Writers.Writer;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
      Element_Name : League.Strings.Universal_String;

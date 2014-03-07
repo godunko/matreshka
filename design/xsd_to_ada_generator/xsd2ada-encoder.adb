@@ -467,7 +467,6 @@ package body XSD2Ada.Encoder is
      Indent       : Wide_Wide_String;
      Writer       : in out XSD_To_Ada.Writers.Writer;
      Writer_types : in out XSD_To_Ada.Writers.Writer;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
      Name         : League.Strings.Universal_String;
      Anonym_Name  : League.Strings.Universal_String;
      Element_Name : League.Strings.Universal_String;
@@ -482,7 +481,6 @@ package body XSD2Ada.Encoder is
          Indent       : Wide_Wide_String := "";
          Writer       : in out XSD_To_Ada.Writers.Writer;
          Writer_types : in out XSD_To_Ada.Writers.Writer;
-         Map          : XSD_To_Ada.Mappings.Mapping;
          Name         : League.Strings.Universal_String;
          Base_Name    : League.Strings.Universal_String);
 
@@ -508,7 +506,6 @@ package body XSD2Ada.Encoder is
          Indent       : Wide_Wide_String := "";
          Writer       : in out XSD_To_Ada.Writers.Writer;
          Writer_types : in out XSD_To_Ada.Writers.Writer;
-         Map          : XSD_To_Ada.Mappings.Mapping;
          Name         : League.Strings.Universal_String;
          Base_Name    : League.Strings.Universal_String)
       is
@@ -569,7 +566,7 @@ package body XSD2Ada.Encoder is
 
                Print_Term
                  (XS_Particle.Get_Term,
-                  Indent & "   ", Writer, Writer_types, Map, Name, Base_Name);
+                  Indent & "   ", Writer, Writer_types, Name, Base_Name);
             end loop;
 
             if Choice then
@@ -633,7 +630,6 @@ package body XSD2Ada.Encoder is
                Indent & "   ",
                Writer,
                Writer_types,
-               Mapping,
                Add_Separator (XS_Base.Get_Name),
                Add_Separator (XS_Base.Get_Name) & ".");
 
@@ -661,7 +657,6 @@ package body XSD2Ada.Encoder is
                      Indent & "   ",
                      Writer,
                      Writer_types,
-                     Mapping,
                      Add_Separator (Name),
                      League.Strings.Empty_Universal_String);
 
@@ -679,7 +674,6 @@ package body XSD2Ada.Encoder is
                         Indent & "   ",
                         Writer,
                         Writer_types,
-                        Mapping,
                         Add_Separator (Anonym_Name),
                         League.Strings.Empty_Universal_String);
 
@@ -696,7 +690,6 @@ package body XSD2Ada.Encoder is
                         Indent & "   ",
                         Writer,
                         Writer_types,
-                        Mapping,
                         Add_Separator (Element_Name),
                         League.Strings.Empty_Universal_String);
                   end if;
@@ -775,7 +768,6 @@ package body XSD2Ada.Encoder is
                   Indent & "   ",
                   Payload_Writer,
                   Payload_Type_Writer,
-                  Mapping,
                   Type_D.Get_Name,
                   Item.Anonym_Name,
                   Item.Element_Name);
@@ -798,7 +790,6 @@ package body XSD2Ada.Encoder is
                      Indent & "   ",
                      Payload_Writer,
                      Payload_Type_Writer,
-                     Mapping,
                      Type_D.Get_Name,
                      Item.Anonym_Name,
                      Item.Element_Name);
@@ -832,7 +823,6 @@ package body XSD2Ada.Encoder is
                      Indent & "   ",
                      Payload_Writer,
                      Payload_Type_Writer,
-                     Mapping,
                      Type_D.Get_Name,
                      Item.Anonym_Name,
                      Item.Element_Name);
@@ -861,7 +851,6 @@ package body XSD2Ada.Encoder is
                         Indent & "   ",
                         Payload_Writer,
                         Payload_Type_Writer,
-                        Mapping,
                         Type_D.Get_Name,
                         Item.Anonym_Name,
                         Item.Element_Name);
@@ -884,7 +873,6 @@ package body XSD2Ada.Encoder is
                      Indent & "   ",
                      Payload_Writer,
                      Payload_Type_Writer,
-                     Mapping,
                      Type_D.Get_Name,
                      Item.Anonym_Name,
                      Item.Element_Name);
