@@ -56,11 +56,6 @@ package XSD_To_Ada.Mappings is
       Max_Occurs       : Boolean := False)
       return League.Strings.Universal_String;
 
-   function Is_Type_In_Map
-    (Self          : Mapping'Class;
-     XSD_Type_Name : League.Strings.Universal_String) return Boolean;
-   --  XXX Must be removed or renamed.
-
 private
 
    type Ada_Mapping is record

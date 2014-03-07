@@ -73,15 +73,4 @@ package body XSD_To_Ada.Mappings is
       end if;
    end Ada_Type_Qualified_Name;
 
-   --------------------
-   -- Is_Type_In_Map --
-   --------------------
-
-   function Is_Type_In_Map
-    (Self          : Mapping'Class;
-     XSD_Type_Name : League.Strings.Universal_String) return Boolean is
-   begin
-      return Self.Mapping.Contains (XSD_Type_Name);
-   end Is_Type_In_Map;
-
 end XSD_To_Ada.Mappings;

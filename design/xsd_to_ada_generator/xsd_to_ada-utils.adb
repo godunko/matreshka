@@ -221,8 +221,7 @@ package body XSD_To_Ada.Utils is
          XS_Object := Simple_Types.Item (J);
          Type_D    := XS_Object.To_Type_Definition;
 
-         XSD2Ada.Analyzer.Create_Type_Node
-           (Type_D, Node_Vector);
+         XSD2Ada.Analyzer.Create_Type_Node (Type_D, Node_Vector);
       end loop;
 
       XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
@@ -460,67 +459,6 @@ package body XSD_To_Ada.Utils is
          end;
       end loop;
    end Create_Simple_Type;
-
-   ---------------------------
-   -- Create_Vector_Package --
-   ---------------------------
-
-   procedure Create_Vector_Package
-    (Type_D_Name  : League.Strings.Universal_String;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer)
-   is
-      Added_Vector_Type : Boolean := False;
-   begin
-      Added_Vector_Type := True;
-
-      for J in 1 .. Is_Vector_Type.Length loop
-         if Type_D_Name.To_UTF_8_String
-           = Is_Vector_Type.Element (J).To_UTF_8_String
-         then
-            Added_Vector_Type := False;
-
-            if not Mapping.Is_Type_In_Map (Type_D_Name) then
-               Writers.N (Writer, "s");
-            end if;
-
-            exit;
-         else
-            Added_Vector_Type := True;
-         end if;
-      end loop;
-
-      if Added_Vector_Type then
-          Writers.P
-           (Writer_types,
-            "   package "
-              & Add_Separator (Type_D_Name) & "_Vectors is" & LF
-              & Split_Line
-                 ("     new Ada.Containers.Vectors "
-                    & "(Positive, "
-                    & Add_Separator (Type_D_Name).To_Wide_Wide_String
-                    & ");",
-                  7)
-              & LF & LF
-              & Split_Line
-                 ("   subtype "
-                    & Add_Separator (Type_D_Name).To_Wide_Wide_String
-                    & "s is "
-                    & Add_Separator (Type_D_Name).To_Wide_Wide_String
-                    & "_Vectors.Vector;",
-                  5)
-              & LF);
-
-         Is_Vector_Type.Append (Type_D_Name);
-
-         if not Mapping.Is_Type_In_Map (Type_D_Name) then
-            Writers.N (Writer, "s");
-         end if;
-      end if;
-
-      Writers.P (Writer, ";");
-   end Create_Vector_Package;
 
    ---------------------
    -- Gen_Access_Type --

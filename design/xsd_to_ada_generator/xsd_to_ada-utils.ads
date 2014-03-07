@@ -99,12 +99,6 @@ package XSD_To_Ada.Utils is
     (Model   : XML.Schema.Models.XS_Model;
      Mapping : XSD_To_Ada.Mappings.Mapping);
 
-   procedure Create_Vector_Package
-    (Type_D_Name  : League.Strings.Universal_String;
-     Mapping      : XSD_To_Ada.Mappings.Mapping;
-     Writer       : in out Writers.Writer;
-     Writer_types : in out Writers.Writer);
-
    procedure Gen_Line
      (Self : in out XSD_To_Ada.Writers.Writer; Str : Wide_Wide_String := "");
 
