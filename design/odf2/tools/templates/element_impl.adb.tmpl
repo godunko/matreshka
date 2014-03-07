@@ -77,7 +77,7 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Enter_@GROUP@_@ELEMENT@
-            (ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+            (ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Access
               (Self),
              Control);
 
@@ -113,7 +113,7 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
       if Visitor in ODF.DOM.Visitors.Abstract_ODF_Visitor'Class then
          ODF.DOM.Visitors.Abstract_ODF_Visitor'Class
           (Visitor).Leave_@GROUP@_@ELEMENT@
-            (ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+            (ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Access
               (Self),
              Control);
 
@@ -137,7 +137,7 @@ package body Matreshka.ODF_@GROUP@.@ELEMENT@_Elements is
          ODF.DOM.Iterators.Abstract_ODF_Iterator'Class
           (Iterator).Visit_@GROUP@_@ELEMENT@
             (Visitor,
-             ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Element_Access
+             ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Access
               (Self),
              Control);
 
