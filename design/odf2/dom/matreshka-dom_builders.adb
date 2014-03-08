@@ -41,8 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
-
 with Matreshka.DOM_Documents;
 with Matreshka.DOM_Nodes;
 with XML.DOM.Attributes;
@@ -191,13 +189,6 @@ package body Matreshka.DOM_Builders is
          raise Program_Error;
 
       else
-         Put_Line
-          ('{'
-             & Namespace_URI.To_Wide_Wide_String
-             & '}'
-             & Local_Name.To_Wide_Wide_String
-             & ' '
-             & Qualified_Name.To_Wide_Wide_String);
          Element :=
            Self.Document.Create_Element_NS (Namespace_URI, Qualified_Name);
          Self.Current := XML.DOM.Nodes.DOM_Node_Access (Element);
