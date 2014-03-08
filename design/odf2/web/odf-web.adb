@@ -129,9 +129,8 @@ package body ODF.Web is
         := XML.DOM.Visitors.Continue;
 
    begin
-      Iterator.Visit (Builder, Styles.Get_First_Child, Control);
-      Iterator.Visit (Builder, Content.Get_First_Child, Control);
-      --  XXX It is better to use 'element' instead of 'firstChild'.
+      Iterator.Visit (Builder, XML.DOM.Nodes.DOM_Node_Access (Styles), Control);
+      Iterator.Visit (Builder, XML.DOM.Nodes.DOM_Node_Access (Content), Control);
 
       return
         League.JSON.Documents.To_JSON_Document
