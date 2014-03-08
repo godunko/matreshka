@@ -166,7 +166,7 @@ package body Matreshka.DOM_Builders is
          Self.Document := XML.DOM.Documents.DOM_Document_Access (Document);
       end if;
 
-      Self.Current  := XML.DOM.Nodes.DOM_Node_Access (Document);
+      Self.Current  := XML.DOM.Nodes.DOM_Node_Access (Self.Document);
    end Start_Document;
 
    -------------------
