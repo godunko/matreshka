@@ -1,0 +1,15 @@
+with "aws.gpr";
+with "odf.gpr";
+
+project Web is
+
+   for Object_Dir use ".objs";
+   for Source_Dirs use ("web");
+
+   package Compiler is
+
+      for Default_Switches ("Ada") use ("-g", "-gnat12", "-gnatW8");
+
+   end Compiler;
+
+end Web;
