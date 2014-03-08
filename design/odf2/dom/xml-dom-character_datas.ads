@@ -80,4 +80,36 @@ package XML.DOM.Character_Datas is
    --      DOMSTRING_SIZE_ERR: Raised when it would return more characters than
    --      fit in a DOMString variable on the implementation platform.
 
+   not overriding procedure Replace_Data
+    (Self   : not null access DOM_Character_Data;
+     Offset : Positive;
+     Count  : Natural;
+     Arg    : League.Strings.Universal_String) is abstract;
+   --  Replace the characters starting at the specified 16-bit unit offset with
+   --  the specified string.
+   --
+   --  Parameters
+   --
+   --    offset of type unsigned long
+   --      The offset from which to start replacing.
+   --
+   --    count of type unsigned long
+   --      The number of 16-bit units to replace. If the sum of offset and
+   --      count exceeds length, then all 16-bit units to the end of the data
+   --      are replaced; (i.e., the effect is the same as a remove method call
+   --      with the same range, followed by an append method invocation).
+   --
+   --    arg of type DOMString
+   --      The DOMString with which the range must be replaced.
+   --
+   --  Exceptions
+   --
+   --    DOMException
+   --
+   --      INDEX_SIZE_ERR: Raised if the specified offset is negative or
+   --      greater than the number of 16-bit units in data, or if the specified
+   --      count is negative.
+   --
+   --      NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+
 end XML.DOM.Character_Datas;

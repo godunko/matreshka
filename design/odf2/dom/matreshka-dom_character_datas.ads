@@ -64,6 +64,12 @@ package Matreshka.DOM_Character_Datas is
     (Self : not null access constant Character_Data_Node)
        return League.Strings.Universal_String renames Get_Data;
 
+   overriding procedure Replace_Data
+    (Self   : not null access Character_Data_Node;
+     Offset : Positive;
+     Count  : Natural;
+     Arg    : League.Strings.Universal_String);
+
    overriding procedure Set_Data
     (Self      : not null access Character_Data_Node;
      New_Value : League.Strings.Universal_String);

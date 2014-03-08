@@ -76,6 +76,41 @@ package body Matreshka.DOM_Character_Datas is
       return Self.Data;
    end Get_Data;
 
+   ------------------
+   -- Replace_Data --
+   ------------------
+
+   overriding procedure Replace_Data
+    (Self   : not null access Character_Data_Node;
+     Offset : Positive;
+     Count  : Natural;
+     Arg    : League.Strings.Universal_String) is
+   begin
+      if Offset <= Self.Data.Length then
+         --  Position of first character of the replaced slice is inside
+         --  string. Position of last character of replaced slice can't be
+         --  greater than length of the string.
+
+         Self.Data.Replace
+          (Offset,
+           Natural'Min (Offset + Count - 1, Self.Data.Length),
+           Arg);
+
+      elsif Offset = Self.Data.Length + 1 then
+         --  Position of first character points to first position after
+         --  position of last character of the string. Specified new data need
+         --  to be appended to the string.
+
+         Self.Data.Append (Arg);
+
+      else
+         --  Position of the first character points outside of current data,
+         --  DOM_INDEX_SIZE_ERR need to be raised.
+
+         Self.Raise_Index_Size_Error;
+      end if;
+   end Replace_Data;
+
    --------------
    -- Set_Data --
    --------------
