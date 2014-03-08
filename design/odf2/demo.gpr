@@ -1,0 +1,16 @@
+with "aws.gpr";
+
+with "dom.gpr";
+with "odf.gpr";
+with "web.gpr";
+
+project Demo is
+
+   for Object_Dir use ".objs";
+   for Main use ("main.adb", "demo.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g");
+   end Compiler;
+
+end Demo;

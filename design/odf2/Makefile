@@ -4,7 +4,6 @@ all:
 	gprbuild -p -j0 -P domconf.gpr
 	gprbuild -p -j0 -P odf.gpr -k
 	gprbuild -p -j0 -P web.gpr
-	gprbuild -p -j0 -P demo.gpr
 	.objs/domconf ../dom/testsuite/DOM-Test-Suite/tests/level2/core/createDocument01.xml
 
 gen:
@@ -77,3 +76,6 @@ gen:
 	ls .new/*.ad[sb] | xargs -L1 basename | xargs -I{} ../../tools/move-if-changed .new/{} odf/{}
 	rm -rf .new
 
+demo:
+	gprbuild -p -j0 -P demo.gpr
+	.objs/demo ../odf/tmp
