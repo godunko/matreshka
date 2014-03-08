@@ -120,6 +120,17 @@ package body ODFGen.Generator is
      Footer  : League.String_Vectors.Universal_String_Vector)
        renames Generate_Visitor;
 
+   procedure Generate_Containment_Iterator_Spec
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector);
+
+   procedure Generate_Containment_Iterator_Body
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+       renames Generate_Containment_Iterator_Spec;
+
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
 
@@ -207,6 +218,24 @@ package body ODFGen.Generator is
         := Load_Template ("tools/templates/iterator-item.ads.tmpl");
       Iterator_Footer_Template  : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/iterator-footer.ads.tmpl");
+      Containment_Spec_Header_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/containment-header.ads.tmpl");
+      Containment_Spec_Item_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/containment-item.ads.tmpl");
+      Containment_Spec_Footer_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/containment-footer.ads.tmpl");
+      Containment_Body_Header_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/containment-header.adb.tmpl");
+      Containment_Body_Item_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/containment-item.adb.tmpl");
+      Containment_Body_Footer_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/containment-footer.adb.tmpl");
       Document_API_Header_Template :
         League.String_Vectors.Universal_String_Vector
           := Load_Template ("tools/templates/document_api-header.ads.tmpl");
@@ -282,41 +311,77 @@ package body ODFGen.Generator is
         Iterator_Decls_Template,
         Iterator_Item_Template,
         Iterator_Footer_Template);
-      Generate_Document_API
-       (Document_API_Header_Template,
-        Document_API_Context_Template,
-        Document_API_Decls_Template,
-        Document_API_Item_Template,
-        Document_API_Footer_Template);
-      Generate_Document_Impl_Spec
-       (Document_Impl_Spec_Header_Template,
-        Document_Impl_Spec_Context_Template,
-        Document_Impl_Spec_Decls_Template,
-        Document_Impl_Spec_Element_Template,
-        Document_Impl_Spec_Footer_Template);
-      Generate_Document_Impl_Body
-       (Document_Impl_Body_Header_Template,
-        Document_Impl_Body_Context_Template,
-        Document_Impl_Body_Decls_Template,
-        Document_Impl_Body_Element_Template,
-        Document_Impl_Body_Footer_Template);
-      Generate_String_Constants
-       (Strings_Header_Template,
-        Strings_Item_Template,
-        Strings_Footer_Template);
+      Generate_Containment_Iterator_Spec
+       (Containment_Spec_Header_Template,
+        Containment_Spec_Item_Template,
+        Containment_Spec_Footer_Template);
+      Generate_Containment_Iterator_Body
+       (Containment_Body_Header_Template,
+        Containment_Body_Item_Template,
+        Containment_Body_Footer_Template);
+--      Generate_Document_API
+--       (Document_API_Header_Template,
+--        Document_API_Context_Template,
+--        Document_API_Decls_Template,
+--        Document_API_Item_Template,
+--        Document_API_Footer_Template);
+--      Generate_Document_Impl_Spec
+--       (Document_Impl_Spec_Header_Template,
+--        Document_Impl_Spec_Context_Template,
+--        Document_Impl_Spec_Decls_Template,
+--        Document_Impl_Spec_Element_Template,
+--        Document_Impl_Spec_Footer_Template);
+--      Generate_Document_Impl_Body
+--       (Document_Impl_Body_Header_Template,
+--        Document_Impl_Body_Context_Template,
+--        Document_Impl_Body_Decls_Template,
+--        Document_Impl_Body_Element_Template,
+--        Document_Impl_Body_Footer_Template);
+--      Generate_String_Constants
+--       (Strings_Header_Template,
+--        Strings_Item_Template,
+--        Strings_Footer_Template);
+--
+--      for Attribute of Attributes loop
+--         Generate_Attribute_API (Attribute_API_Template, Attribute);
+--         Generate_Attribute_Impl_Spec (Attribute_Impl_Spec_Template, Attribute);
+--         Generate_Attribute_Impl_Body (Attribute_Impl_Body_Template, Attribute);
+--      end loop;
+--
+--      for Element of Elements loop
+--         Generate_Element_API (Element_API_Template, Element);
+--         Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
+--         Generate_Element_Impl_Body (Element_Impl_Body_Template, Element);
+--      end loop;
+   end Generate;
 
-      for Attribute of Attributes loop
-         Generate_Attribute_API (Attribute_API_Template, Attribute);
-         Generate_Attribute_Impl_Spec (Attribute_Impl_Spec_Template, Attribute);
-         Generate_Attribute_Impl_Body (Attribute_Impl_Body_Template, Attribute);
-      end loop;
+   ----------------------------------------
+   -- Generate_Containment_Iterator_Spec --
+   ----------------------------------------
+
+   procedure Generate_Containment_Iterator_Spec
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+   is
+      Parameters : Universal_String_Maps.Map;
+
+   begin
+      Apply (Header, Universal_String_Maps.Empty_Map);
 
       for Element of Elements loop
-         Generate_Element_API (Element_API_Template, Element);
-         Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
-         Generate_Element_Impl_Body (Element_Impl_Body_Template, Element);
+         Parameters.Clear;
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("GROUP"),
+           Element.Group_Ada_Name);
+         Parameters.Insert
+          (League.Strings.To_Universal_String ("ELEMENT"),
+           Element.Element_Ada_Name);
+         Apply (Item, Parameters);
       end loop;
-   end Generate;
+
+      Apply (Footer, Universal_String_Maps.Empty_Map);
+   end Generate_Containment_Iterator_Spec;
 
    --------------------------
    -- Generate_Element_API --
