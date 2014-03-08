@@ -1,0 +1,13 @@
+
+   -----------------------------
+   -- Visit_@GROUP@_@ELEMENT@ --
+   -----------------------------
+
+   overriding procedure Visit_@GROUP@_@ELEMENT@
+    (Self    : in out ODF_Containment_Iterator;
+     Visitor : in out XML.DOM.Visitors.Abstract_Visitor'Class;
+     Node    : not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is
+   begin
+      Self.Visit_Children (Visitor, Node, Control);
+   end Visit_@GROUP@_@ELEMENT@;
