@@ -41,26 +41,70 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.DOM.Documents;
-with ODF.DOM.Office_Document_Content_Elements;
-with ODF.DOM.Office_Document_Styles_Elements;
+with XML.DOM.Nodes;
+with Matreshka.DOM_Documents;
 
-package ODF.DOM.Packages is
+package body Matreshka.ODF_Packages is
 
-   type ODF_Package is limited interface
-     and ODF.DOM.Documents.ODF_Document;
+   use type XML.DOM.Nodes.DOM_Node_Access;
 
-   type ODF_Package_Access is access all ODF_Package'Class
-     with Storage_Size => 0;
+   ------------------
+   -- Constructors --
+   ------------------
 
-   not overriding function Get_Styles
-    (Self : not null access constant ODF_Package)
+   package body Constructors is
+
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize (Self : not null access Package_Node'Class) is
+      begin
+         --  XXX Constructors nested package must be added for ODF_Documents.
+--         Matreshka.ODF_Documents.Constructors.Initialize (Self);
+         Matreshka.DOM_Documents.Constructors.Initialize (Self);
+      end Initialize;
+
+   end Constructors;
+
+   ----------------
+   -- Get_Styles --
+   ----------------
+
+   overriding function Get_Styles
+    (Self : not null access constant Package_Node)
        return ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access
-         is abstract;
+   is
+      Current : XML.DOM.Nodes.DOM_Node_Access := Self.Get_First_Child;
 
-   not overriding function Get_Content
-    (Self : not null access constant ODF_Package)
+   begin
+      while Current /= null loop
+         exit when Current.all in ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles'Class;
+
+         Current := Current.Get_Next_Sibling;
+      end loop;
+
+      return ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access (Current);
+   end Get_Styles;
+
+   -----------------
+   -- Get_Content --
+   -----------------
+
+   overriding function Get_Content
+    (Self : not null access constant Package_Node)
        return ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access
-         is abstract;
+   is
+      Current : XML.DOM.Nodes.DOM_Node_Access := Self.Get_First_Child;
 
-end ODF.DOM.Packages;
+   begin
+      while Current /= null loop
+         exit when Current.all in ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content'Class;
+
+         Current := Current.Get_Next_Sibling;
+      end loop;
+
+      return ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access (Current);
+   end Get_Content;
+
+end Matreshka.ODF_Packages;

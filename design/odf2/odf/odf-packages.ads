@@ -41,26 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.DOM.Documents;
-with ODF.DOM.Office_Document_Content_Elements;
-with ODF.DOM.Office_Document_Styles_Elements;
+with League.Strings;
 
-package ODF.DOM.Packages is
+with ODF.DOM.Packages;
 
-   type ODF_Package is limited interface
-     and ODF.DOM.Documents.ODF_Document;
+package ODF.Packages is
 
-   type ODF_Package_Access is access all ODF_Package'Class
-     with Storage_Size => 0;
+   function Load
+    (File_Name : League.Strings.Universal_String)
+       return ODF.DOM.Packages.ODF_Package_Access;
 
-   not overriding function Get_Styles
-    (Self : not null access constant ODF_Package)
-       return ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access
-         is abstract;
-
-   not overriding function Get_Content
-    (Self : not null access constant ODF_Package)
-       return ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access
-         is abstract;
-
-end ODF.DOM.Packages;
+end ODF.Packages;

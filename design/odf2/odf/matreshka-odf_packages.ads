@@ -41,26 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.DOM.Documents;
+with Matreshka.ODF_Documents;
 with ODF.DOM.Office_Document_Content_Elements;
 with ODF.DOM.Office_Document_Styles_Elements;
+with ODF.DOM.Packages;
 
-package ODF.DOM.Packages is
+package Matreshka.ODF_Packages is
 
-   type ODF_Package is limited interface
-     and ODF.DOM.Documents.ODF_Document;
+   type Package_Node is
+     new Matreshka.ODF_Documents.Document_Node
+       and ODF.DOM.Packages.ODF_Package with null record;
 
-   type ODF_Package_Access is access all ODF_Package'Class
-     with Storage_Size => 0;
+   overriding function Get_Styles
+    (Self : not null access constant Package_Node)
+       return ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access;
 
-   not overriding function Get_Styles
-    (Self : not null access constant ODF_Package)
-       return ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access
-         is abstract;
+   overriding function Get_Content
+    (Self : not null access constant Package_Node)
+       return ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access;
 
-   not overriding function Get_Content
-    (Self : not null access constant ODF_Package)
-       return ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access
-         is abstract;
+   package Constructors is
 
-end ODF.DOM.Packages;
+      procedure Initialize (Self : not null access Package_Node'Class);
+
+   end Constructors;
+
+end Matreshka.ODF_Packages;

@@ -41,26 +41,60 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with ODF.DOM.Documents;
-with ODF.DOM.Office_Document_Content_Elements;
-with ODF.DOM.Office_Document_Styles_Elements;
+with Matreshka.DOM_Builders;
+with Matreshka.DOM_Nodes;
+with XML.DOM.Documents;
+with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Simple_Readers;
 
-package ODF.DOM.Packages is
+with Matreshka.ODF_Packages;
 
-   type ODF_Package is limited interface
-     and ODF.DOM.Documents.ODF_Document;
+package body ODF.Packages is
 
-   type ODF_Package_Access is access all ODF_Package'Class
-     with Storage_Size => 0;
+   procedure Load_XML_File
+    (The_Package : not null ODF.DOM.Packages.ODF_Package_Access;
+     File_Name   : League.Strings.Universal_String);
 
-   not overriding function Get_Styles
-    (Self : not null access constant ODF_Package)
-       return ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access
-         is abstract;
+   ----------
+   -- Load --
+   ----------
 
-   not overriding function Get_Content
-    (Self : not null access constant ODF_Package)
-       return ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access
-         is abstract;
+   function Load
+    (File_Name : League.Strings.Universal_String)
+       return ODF.DOM.Packages.ODF_Package_Access
+   is
+      use type League.Strings.Universal_String;
 
-end ODF.DOM.Packages;
+      Result : constant Matreshka.DOM_Nodes.Node_Access
+        := new Matreshka.ODF_Packages.Package_Node;
+
+   begin
+      Matreshka.ODF_Packages.Constructors.Initialize
+       (Matreshka.ODF_Packages.Package_Node (Result.all)'Unchecked_Access);
+
+      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), File_Name & "/styles.xml");
+      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), File_Name & "/content.xml");
+
+      return ODF.DOM.Packages.ODF_Package_Access (Result);
+   end Load;
+
+   -------------------
+   -- Load_XML_File --
+   -------------------
+
+   procedure Load_XML_File
+    (The_Package : not null ODF.DOM.Packages.ODF_Package_Access;
+     File_Name   : League.Strings.Universal_String)
+   is
+      Input   : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Builder : aliased Matreshka.DOM_Builders.DOM_Builder;
+      Reader  : XML.SAX.Simple_Readers.SAX_Simple_Reader;
+
+   begin
+      Builder.Set_Document (XML.DOM.Documents.DOM_Document_Access (The_Package));
+      Reader.Set_Content_Handler (Builder'Unchecked_Access);
+      Input.Open_By_File_Name (File_Name);
+      Reader.Parse (Input'Unchecked_Access);
+   end Load_XML_File;
+
+end ODF.Packages;
