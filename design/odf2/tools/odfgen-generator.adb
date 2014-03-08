@@ -69,12 +69,12 @@ package body ODFGen.Generator is
      Attribute : Attribute_Information) renames Generate_Element_API;
 
    procedure Generate_Attribute_Impl_Spec
-    (Template : League.String_Vectors.Universal_String_Vector;
-     Attribute  : Attribute_Information) renames Generate_Element_Impl_Spec;
+    (Template  : League.String_Vectors.Universal_String_Vector;
+     Attribute : Attribute_Information) renames Generate_Element_Impl_Spec;
 
    procedure Generate_Attribute_Impl_Body
-    (Template : League.String_Vectors.Universal_String_Vector;
-     Attribute  : Attribute_Information) renames Generate_Element_Impl_Body;
+    (Template  : League.String_Vectors.Universal_String_Vector;
+     Attribute : Attribute_Information) renames Generate_Element_Impl_Body;
 
    procedure Generate_String_Constants
     (Header   : League.String_Vectors.Universal_String_Vector;
