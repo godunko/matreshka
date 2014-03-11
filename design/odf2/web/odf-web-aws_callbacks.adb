@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013-2014, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,44 +41,41 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
+with League.JSON.Documents;
+with League.Stream_Element_Vectors;
 
-with ODF.DOM.Office_Document_Content_Elements;
-with ODF.DOM.Office_Document_Styles_Elements;
-with XML.DOM.Nodes.Hash;
+with ODF.Web.Applier;
 
-package ODF.Web is
+package body ODF.Web.AWS_Callbacks is
 
-   function To_JSON
-    (Styles  : not null ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access;
-     Content : not null ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access)
-       return String;
+   Json_Mime_Type : constant String := "application/json";
+   Text_Mime_Type : constant String := "text/text";
 
-   type ODF_File is record
-      Styles  : ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access;
-      Content : ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access;
-   end record;
+   ---------------------
+   -- Change_Callback --
+   ---------------------
 
-   function Hash (Item : Positive) return Ada.Containers.Hash_Type;
+   function Change_Callback
+    (Request : AWS.Status.Data) return AWS.Response.Data is
+   begin
+      ODF.Web.Applier.Apply
+       (League.JSON.Documents.From_JSON
+         (League.Stream_Element_Vectors.To_Stream_Element_Vector
+           (AWS.Status.Binary_Data (Request))).To_Object);
 
-   package Identifier_Node_Maps is
-     new Ada.Containers.Hashed_Maps
-          (Positive,
-           XML.DOM.Nodes.DOM_Node_Access,
-           Hash,
-           "=",
-           XML.DOM.Nodes."=");
+      return AWS.Response.Build (Text_Mime_Type, "OK");
+   end Change_Callback;
 
-   package Node_Identifier_Maps is
-     new Ada.Containers.Hashed_Maps
-          (XML.DOM.Nodes.DOM_Node_Access,
-           Positive,
-           XML.DOM.Nodes.Hash,
-           XML.DOM.Nodes."=");
+   ------------------
+   -- Get_Callback --
+   ------------------
 
-   Document      : ODF_File;
-   To_Node       : Identifier_Node_Maps.Map;
-   To_Identifier : Node_Identifier_Maps.Map;
-   Unused_Id     : Positive := 1;
+   function Get_Callback
+    (Request : AWS.Status.Data) return AWS.Response.Data is
+   begin
+      return
+        AWS.Response.Build
+         (JSON_Mime_Type, To_JSON (Document.Styles, Document.Content));
+   end Get_Callback;
 
-end ODF.Web;
+end ODF.Web.AWS_Callbacks;

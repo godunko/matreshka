@@ -41,51 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Strings.Hash;
-with System.Address_Image;
-
-with AWS.Translator;
-
 with League.JSON.Documents;
-with League.Stream_Element_Vectors;
 with XML.DOM.Visitors;
 
 with ODF.DOM.Iterators.Containment;
 
-with ODF.Web.Applier;
 with ODF.Web.Builder;
 
 package body ODF.Web is
-
-   Json_Mime_Type : constant String := "application/json";
-   Text_Mime_Type : constant String := "text/text";
-
-   ---------------------
-   -- Change_Callback --
-   ---------------------
-
-   function Change_Callback
-    (Request : AWS.Status.Data) return AWS.Response.Data is
-   begin
-      ODF.Web.Applier.Apply
-       (League.JSON.Documents.From_JSON
-         (League.Stream_Element_Vectors.To_Stream_Element_Vector
-           (AWS.Status.Binary_Data (Request))).To_Object);
-
-      return AWS.Response.Build (Text_Mime_Type, "OK");
-   end Change_Callback;
-
-   ------------------
-   -- Get_Callback --
-   ------------------
-
-   function Get_Callback
-    (Request : AWS.Status.Data) return AWS.Response.Data is
-   begin
-      return
-        AWS.Response.Build
-         (JSON_Mime_Type, To_JSON (Document.Styles, Document.Content));
-   end Get_Callback;
 
    ----------
    -- Hash --
@@ -95,24 +58,6 @@ package body ODF.Web is
    begin
       return Ada.Containers.Hash_Type (Item);
    end Hash;
-
---   ----------
---   -- Hash --
---   ----------
---
---   function Hash
---    (Item : XML.DOM.Nodes.DOM_Node) return Ada.Containers.Hash_Type
---   is
-----      use type XML.DOM.Nodes.DOM_Node_Access;
---
---   begin
---      if Item = null then
---         return 0;
---
---      else
---         return Ada.Strings.Hash (System.Address_Image (Item.all'Address));
---      end if;
---   end Hash;
 
    -------------
    -- To_JSON --
@@ -135,8 +80,6 @@ package body ODF.Web is
       return
         League.JSON.Documents.To_JSON_Document
          (Builder.Get_Document).To_JSON.To_UTF_8_String;
---      return GNATCOLL.JSON.Write (Builder.Get_Document);
---      return GNATCOLL.JSON.Write (Builder.Get_Document);
    end To_JSON;
 
 end ODF.Web;

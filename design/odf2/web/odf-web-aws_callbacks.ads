@@ -41,44 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
+--with Ada.Containers.Hashed_Maps;
+--
+with AWS.Response;
+with AWS.Status;
+--
+--with ODF.DOM.Documents;
+--with ODF.DOM.Office_Document_Content_Elements;
+--with ODF.DOM.Office_Document_Styles_Elements;
+--with XML.DOM.Nodes.Hash;
 
-with ODF.DOM.Office_Document_Content_Elements;
-with ODF.DOM.Office_Document_Styles_Elements;
-with XML.DOM.Nodes.Hash;
+package ODF.Web.AWS_Callbacks is
 
-package ODF.Web is
+   function Get_Callback (Request : AWS.Status.Data) return AWS.Response.Data;
 
-   function To_JSON
-    (Styles  : not null ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access;
-     Content : not null ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access)
-       return String;
+   function Change_Callback
+    (Request : AWS.Status.Data) return AWS.Response.Data;
 
-   type ODF_File is record
-      Styles  : ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access;
-      Content : ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access;
-   end record;
-
-   function Hash (Item : Positive) return Ada.Containers.Hash_Type;
-
-   package Identifier_Node_Maps is
-     new Ada.Containers.Hashed_Maps
-          (Positive,
-           XML.DOM.Nodes.DOM_Node_Access,
-           Hash,
-           "=",
-           XML.DOM.Nodes."=");
-
-   package Node_Identifier_Maps is
-     new Ada.Containers.Hashed_Maps
-          (XML.DOM.Nodes.DOM_Node_Access,
-           Positive,
-           XML.DOM.Nodes.Hash,
-           XML.DOM.Nodes."=");
-
-   Document      : ODF_File;
-   To_Node       : Identifier_Node_Maps.Map;
-   To_Identifier : Node_Identifier_Maps.Map;
-   Unused_Id     : Positive := 1;
-
-end ODF.Web;
+end ODF.Web.AWS_Callbacks;
