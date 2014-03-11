@@ -10,7 +10,7 @@ with League.Application;
 with ODF.DOM.Packages;
 with ODF.Packages;
 
-with ODF.Web;
+with ODF.Web.AWS_Callbacks;
 
 procedure Demo is
    The_Package : ODF.DOM.Packages.ODF_Package_Access;
@@ -36,8 +36,8 @@ begin
       AWS.Config.Set.WWW_Root (Config, "web");
       AWS.Config.Set.Reuse_Address (Config, True);
 
-      Dispatcher.Register ("/getODF", ODF.Web.Get_Callback'Access);
-      Dispatcher.Register ("/changeODF", ODF.Web.Change_Callback'Access);
+      Dispatcher.Register ("/getODF", ODF.Web.AWS_Callbacks.Get_Callback'Access);
+      Dispatcher.Register ("/changeODF", ODF.Web.AWS_Callbacks.Change_Callback'Access);
       Dispatcher.Register_Regexp
        ("/.*", AWS.Services.Page_Server.Callback'Access);
 
