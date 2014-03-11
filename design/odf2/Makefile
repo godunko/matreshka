@@ -78,4 +78,4 @@ gen:
 
 demo:
 	gprbuild -p -j0 -P demo.gpr
-	.objs/demo ../odf/tmp
+	.objs/demo ./tmp
