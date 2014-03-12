@@ -1,0 +1,16 @@
+
+   -----------------------------
+   -- Enter_@GROUP@_@ELEMENT@ --
+   -----------------------------
+
+   overriding procedure Enter_@GROUP@_@ELEMENT@
+    (Self    : in out Skip_Children_Visitor;
+     Node    : not null ODF.DOM.@GROUP@_@ELEMENT@_Elements.ODF_@GROUP@_@ELEMENT@_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control)
+   is
+      pragma Unreferenced (Self);
+      pragma Unreferenced (Node);
+
+   begin
+      Control := XML.DOM.Visitors.Abandon_Children;
+   end Enter_@GROUP@_@ELEMENT@;
