@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with GNAT.Expect;
+
 with Matreshka.DOM_Builders;
 with Matreshka.DOM_Nodes;
 with XML.DOM.Documents;
@@ -67,13 +69,36 @@ package body ODF.Packages is
 
       Result : constant Matreshka.DOM_Nodes.Node_Access
         := new Matreshka.ODF_Packages.Package_Node;
+      Temp   : constant League.Strings.Universal_String
+        := League.Strings.To_Universal_String ("tmp/document");
 
    begin
       Matreshka.ODF_Packages.Constructors.Initialize
        (Matreshka.ODF_Packages.Package_Node (Result.all)'Unchecked_Access);
 
-      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), File_Name & "/styles.xml");
-      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), File_Name & "/content.xml");
+      --  Unpack ZIP archive.
+
+      declare
+         Status : aliased Integer;
+         Output : constant String
+           := GNAT.Expect.Get_Command_Output
+               ("unzip",
+                (1 => new String'("-o"),
+                 2 => new String'(File_Name.To_UTF_8_String),
+                 3 => new String'("-d"),
+                 4 => new String'(Temp.To_UTF_8_String)),
+                "",
+                Status'Access,
+                True);
+
+      begin
+         if Status /= 0 then
+            raise Program_Error;
+         end if;
+      end;
+
+      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), Temp & "/styles.xml");
+      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), Temp & "/content.xml");
 
       return ODF.DOM.Packages.ODF_Package_Access (Result);
    end Load;
