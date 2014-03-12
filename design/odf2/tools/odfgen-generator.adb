@@ -131,6 +131,18 @@ package body ODFGen.Generator is
      Footer  : League.String_Vectors.Universal_String_Vector)
        renames Generate_Containment_Iterator_Spec;
 
+   procedure Generate_Skip_Children_Visitor_Spec
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+       renames Generate_Containment_Iterator_Spec;
+
+   procedure Generate_Skip_Children_Visitor_Body
+    (Header  : League.String_Vectors.Universal_String_Vector;
+     Item    : League.String_Vectors.Universal_String_Vector;
+     Footer  : League.String_Vectors.Universal_String_Vector)
+       renames Generate_Containment_Iterator_Spec;
+
    function Load_Template
     (File_Name : String) return League.String_Vectors.Universal_String_Vector;
 
@@ -218,6 +230,24 @@ package body ODFGen.Generator is
         := Load_Template ("tools/templates/iterator-item.ads.tmpl");
       Iterator_Footer_Template  : League.String_Vectors.Universal_String_Vector
         := Load_Template ("tools/templates/iterator-footer.ads.tmpl");
+      Skip_Children_Spec_Header_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/skip_children-header.ads.tmpl");
+      Skip_Children_Spec_Item_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/skip_children-item.ads.tmpl");
+      Skip_Children_Spec_Footer_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/skip_children-footer.ads.tmpl");
+      Skip_Children_Body_Header_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/skip_children-header.adb.tmpl");
+      Skip_Children_Body_Item_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/skip_children-item.adb.tmpl");
+      Skip_Children_Body_Footer_Template :
+        League.String_Vectors.Universal_String_Vector
+          := Load_Template ("tools/templates/skip_children-footer.adb.tmpl");
       Containment_Spec_Header_Template :
         League.String_Vectors.Universal_String_Vector
           := Load_Template ("tools/templates/containment-header.ads.tmpl");
@@ -305,6 +335,14 @@ package body ODFGen.Generator is
         Visitor_Decls_Template,
         Visitor_Item_Template,
         Visitor_Footer_Template);
+      Generate_Skip_Children_Visitor_Spec
+       (Skip_Children_Spec_Header_Template,
+        Skip_Children_Spec_Item_Template,
+        Skip_Children_Spec_Footer_Template);
+      Generate_Skip_Children_Visitor_Spec
+       (Skip_Children_Body_Header_Template,
+        Skip_Children_Body_Item_Template,
+        Skip_Children_Body_Footer_Template);
       Generate_Iterator
        (Iterator_Header_Template,
         Iterator_Context_Template,
@@ -319,40 +357,40 @@ package body ODFGen.Generator is
        (Containment_Body_Header_Template,
         Containment_Body_Item_Template,
         Containment_Body_Footer_Template);
---      Generate_Document_API
---       (Document_API_Header_Template,
---        Document_API_Context_Template,
---        Document_API_Decls_Template,
---        Document_API_Item_Template,
---        Document_API_Footer_Template);
---      Generate_Document_Impl_Spec
---       (Document_Impl_Spec_Header_Template,
---        Document_Impl_Spec_Context_Template,
---        Document_Impl_Spec_Decls_Template,
---        Document_Impl_Spec_Element_Template,
---        Document_Impl_Spec_Footer_Template);
---      Generate_Document_Impl_Body
---       (Document_Impl_Body_Header_Template,
---        Document_Impl_Body_Context_Template,
---        Document_Impl_Body_Decls_Template,
---        Document_Impl_Body_Element_Template,
---        Document_Impl_Body_Footer_Template);
---      Generate_String_Constants
---       (Strings_Header_Template,
---        Strings_Item_Template,
---        Strings_Footer_Template);
---
---      for Attribute of Attributes loop
---         Generate_Attribute_API (Attribute_API_Template, Attribute);
---         Generate_Attribute_Impl_Spec (Attribute_Impl_Spec_Template, Attribute);
---         Generate_Attribute_Impl_Body (Attribute_Impl_Body_Template, Attribute);
---      end loop;
---
---      for Element of Elements loop
---         Generate_Element_API (Element_API_Template, Element);
---         Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
---         Generate_Element_Impl_Body (Element_Impl_Body_Template, Element);
---      end loop;
+      Generate_Document_API
+       (Document_API_Header_Template,
+        Document_API_Context_Template,
+        Document_API_Decls_Template,
+        Document_API_Item_Template,
+        Document_API_Footer_Template);
+      Generate_Document_Impl_Spec
+       (Document_Impl_Spec_Header_Template,
+        Document_Impl_Spec_Context_Template,
+        Document_Impl_Spec_Decls_Template,
+        Document_Impl_Spec_Element_Template,
+        Document_Impl_Spec_Footer_Template);
+      Generate_Document_Impl_Body
+       (Document_Impl_Body_Header_Template,
+        Document_Impl_Body_Context_Template,
+        Document_Impl_Body_Decls_Template,
+        Document_Impl_Body_Element_Template,
+        Document_Impl_Body_Footer_Template);
+      Generate_String_Constants
+       (Strings_Header_Template,
+        Strings_Item_Template,
+        Strings_Footer_Template);
+
+      for Attribute of Attributes loop
+         Generate_Attribute_API (Attribute_API_Template, Attribute);
+         Generate_Attribute_Impl_Spec (Attribute_Impl_Spec_Template, Attribute);
+         Generate_Attribute_Impl_Body (Attribute_Impl_Body_Template, Attribute);
+      end loop;
+
+      for Element of Elements loop
+         Generate_Element_API (Element_API_Template, Element);
+         Generate_Element_Impl_Spec (Element_Impl_Spec_Template, Element);
+         Generate_Element_Impl_Body (Element_Impl_Body_Template, Element);
+      end loop;
    end Generate;
 
    ----------------------------------------
