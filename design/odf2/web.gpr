@@ -3,7 +3,7 @@ with "odf.gpr";
 project Web is
 
    for Object_Dir use ".objs";
-   for Source_Dirs use ("web");
+   for Source_Dirs use ("adadocs/source/editor");
 
    package Compiler is
 
