@@ -55,6 +55,10 @@ private with XML.DOM.Texts;
 private with XML.DOM.Visitors;
 
 private with ODF.DOM.Office_Automatic_Styles_Elements;
+private with ODF.DOM.Office_Body_Elements;
+private with ODF.DOM.Office_Document_Content_Elements;
+private with ODF.DOM.Office_Document_Styles_Elements;
+private with ODF.DOM.Office_Styles_Elements;
 private with ODF.DOM.Office_Text_Elements;
 private with ODF.DOM.Style_Default_Style_Elements;
 private with ODF.DOM.Style_Paragraph_Properties_Elements;
@@ -69,7 +73,7 @@ private with ODF.DOM.Table_Table_Row_Elements;
 private with ODF.DOM.Text_H_Elements;
 private with ODF.DOM.Text_P_Elements;
 private with ODF.DOM.Text_Span_Elements;
-with ODF.DOM.Visitors;
+with ODF.DOM.Visitors.Generic_Skip_Children;
 
 private package ODF.Web.Builder is
 
@@ -97,8 +101,13 @@ private
 
    package State_Vectors is
      new Ada.Containers.Vectors (Positive, State_Record);
-   
-   type JSON_Builder is limited new ODF.DOM.Visitors.Abstract_ODF_Visitor with record
+
+   type Base is tagged limited null record;
+
+   package Skip_Children_Visitors is
+     new ODF.DOM.Visitors.Generic_Skip_Children (Base);
+
+   type JSON_Builder is new Skip_Children_Visitors.Skip_Children_Visitor with record
       Inside_Automatic : Boolean := False;
       Current          : State_Record;
       Previous         : State_Record;
@@ -273,5 +282,28 @@ private
     (Self    : in out JSON_Builder;
      Element : not null XML.DOM.Texts.DOM_Text_Access;
      Control : in out XML.DOM.Visitors.Traverse_Control);
+
+   -- This subprograms are overriddent to allow to process its children,
+   -- otherwise they are skipped.
+
+   overriding procedure Enter_Office_Body
+    (Self    : in out JSON_Builder;
+     Node    : not null ODF.DOM.Office_Body_Elements.ODF_Office_Body_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   overriding procedure Enter_Office_Document_Content
+    (Self    : in out JSON_Builder;
+     Node    : not null ODF.DOM.Office_Document_Content_Elements.ODF_Office_Document_Content_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   overriding procedure Enter_Office_Document_Styles
+    (Self    : in out JSON_Builder;
+     Node    : not null ODF.DOM.Office_Document_Styles_Elements.ODF_Office_Document_Styles_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
+
+   overriding procedure Enter_Office_Styles
+    (Self    : in out JSON_Builder;
+     Node    : not null ODF.DOM.Office_Styles_Elements.ODF_Office_Styles_Access;
+     Control : in out XML.DOM.Visitors.Traverse_Control) is null;
 
 end ODF.Web.Builder;
