@@ -1,4 +1,3 @@
-with "aws.gpr";
 with "odf.gpr";
 
 project Web is
