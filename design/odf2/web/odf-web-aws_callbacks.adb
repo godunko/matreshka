@@ -41,8 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Streams;
+with Ada.Text_IO;
+
+with AWS.Attachments;
+with AWS.Messages;
+with AWS.Response.Set;
+with AWS.Server;
+
 with League.JSON.Documents;
 with League.Stream_Element_Vectors;
+with League.Strings;
+
+with ODF.DOM.Packages;
+with ODF.Packages;
 
 with ODF.Web.Applier;
 
@@ -77,5 +89,42 @@ package body ODF.Web.AWS_Callbacks is
         AWS.Response.Build
          (JSON_Mime_Type, To_JSON (Document.Styles, Document.Content));
    end Get_Callback;
+
+   ---------------------
+   -- Upload_Callback --
+   ---------------------
+
+   function Upload_Callback
+    (Request : AWS.Status.Data) return AWS.Response.Data
+   is
+      Attachments : AWS.Attachments.List := AWS.Status.Attachments (Request);
+      The_Package : ODF.DOM.Packages.ODF_Package_Access;
+
+   begin
+      Ada.Text_IO.Put_Line ("Content type   : " & AWS.Status.Content_Type (Request));
+      Ada.Text_IO.Put_Line ("Content length :" & Integer'Image (AWS.Status.Content_Length (Request)));
+      Ada.Text_IO.Put_Line ("Is Uploaded    : " & Boolean'Image (AWS.Status.Is_Body_Uploaded (Request)));
+      Ada.Text_IO.Put_Line ("Size of data   :" & Ada.Streams.Stream_Element_Offset'Image (AWS.Status.Binary_Size (Request)));
+      Ada.Text_IO.Put_Line ("Attachments    :" & Integer'Image (AWS.Status.Attachments (Request).Count));
+
+      for J in 1 .. Attachments.Count loop
+         Ada.Text_IO.Put_Line ("  " & AWS.Attachments.Local_Filename (Attachments.Get (J)));
+      end loop;
+
+      if Attachments.Count = 1 then
+         The_Package :=
+           ODF.Packages.Load (League.Strings.From_UTF_8_String (AWS.Attachments.Local_Filename (Attachments.Get (1))));
+
+         Ada.Text_IO.Put_Line (ODF.Web.To_JSON (The_Package.Get_Styles, The_Package.Get_Content));
+         --  Debug output.
+
+         ODF.Web.Document.Styles := The_Package.Get_Styles;
+         ODF.Web.Document.Content := The_Package.Get_Content;
+      end if;
+
+      return Response : AWS.Response.Data := AWS.Response.URL ("index.html") do
+         AWS.Response.Set.Status_Code (Response, AWS.Messages.S303);
+      end return;
+   end Upload_Callback;
 
 end ODF.Web.AWS_Callbacks;

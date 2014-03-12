@@ -7,6 +7,9 @@
   </head>
   <body>
     <p>This is demo of Matreshka's ODF Text Editor. Its developments is in progress now. You can use arrow keys, Home, End keys to navigate in text document, Backspace and Delete keys to remove characters, any letters, numbers, punctuation keys to insert characters into the document.</p>
+    <form action='uploadODF' method='post' enctype='multipart/form-data'>
+      <p>You can upload own ODF file by selecting it <input type='file' name='document'></input> and clicking on <input type='submit'></input></p>
+    </form>
     <iframe id='textView' src='OdfTextEdit.html'/>
   </body>
 </html>

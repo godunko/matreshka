@@ -41,17 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---with Ada.Containers.Hashed_Maps;
---
 with AWS.Response;
 with AWS.Status;
---
---with ODF.DOM.Documents;
---with ODF.DOM.Office_Document_Content_Elements;
---with ODF.DOM.Office_Document_Styles_Elements;
---with XML.DOM.Nodes.Hash;
 
 package ODF.Web.AWS_Callbacks is
+
+   function Upload_Callback (Request : AWS.Status.Data) return AWS.Response.Data;
 
    function Get_Callback (Request : AWS.Status.Data) return AWS.Response.Data;
 
