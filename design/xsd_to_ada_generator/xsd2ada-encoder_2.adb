@@ -39,7 +39,7 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
+--  $Revision: 4692 $ $Date: 2014-03-07 18:45:24 +0200 (Пт., 07 марта 2014) $
 ------------------------------------------------------------------------------
 with Ada.Characters.Wide_Wide_Latin_1;
 with Ada.Wide_Wide_Text_IO;
@@ -52,7 +52,7 @@ with XML.Schema.Particles;
 
 with XSD_To_Ada.Utils; use XSD_To_Ada.Utils;
 
-package body XSD2Ada.Encoder is
+package body XSD2Ada.Encoder_2 is
 
    use XML.Schema.Type_Definitions.Complex_Type_Definitions;
    use XSD_To_Ada.Writers;
@@ -83,6 +83,7 @@ package body XSD2Ada.Encoder is
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
       Max_Occurs  : Boolean)
    is
@@ -96,7 +97,13 @@ package body XSD2Ada.Encoder is
 
       Vector_Element_Marker       : League.Strings.Universal_String;
       Optional_Value_Marker       : League.Strings.Universal_String;
+      Top_Name : League.Strings.Universal_String;
    begin
+
+      if not Element_Name.Is_Empty then
+         Top_Name := XSD_To_Ada.Utils.Add_Separator (Element_Name) & ".";
+      end if;
+
       if Min_Occurs
         and then not Max_Occurs
       then
@@ -114,6 +121,7 @@ package body XSD2Ada.Encoder is
       if Optional then
          Writer.P
            (Add_Indent (Spaces_Count + New_Spaces) & "if Data."
+            & Top_Name
             & Base_Name
             & Add_Separator (XS_Term.Get_Name)
             & ".Is_Set then");
@@ -125,6 +133,7 @@ package body XSD2Ada.Encoder is
          Writer.P
            (Add_Indent (Spaces_Count + New_Spaces)
             & "for Index in 1 .. Natural (Data."
+            & Top_Name
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
             & ".Length) loop");
@@ -135,6 +144,7 @@ package body XSD2Ada.Encoder is
       Writer.P
         (Split_Line
            ("Encode (Data."
+            & Top_Name
             & Choice_Name.To_Wide_Wide_String
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -153,7 +163,6 @@ package body XSD2Ada.Encoder is
 
       if Optional then
          New_Spaces := New_Spaces - 3;
-
          Writer.P (Add_Indent (Spaces_Count + New_Spaces) & "end if;");
       end if;
 
@@ -266,7 +275,6 @@ package body XSD2Ada.Encoder is
    begin
       Payload_Writer.P
         ("with Payloads;" & LF
-         & "with ICTS.Forex;" & LF
          & "with Web_Services.SOAP.Payloads.Encoders.Registry;"
          & LF & LF
          & "pragma Style_Checks (""N"");"
@@ -330,13 +338,20 @@ package body XSD2Ada.Encoder is
       Writer      : in out XSD_To_Ada.Writers.Writer;
       Choice_Name : League.Strings.Universal_String;
       Base_Name   : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
       Max_Occurs  : Boolean)
    is
       use League.Strings;
 
-      Optional_Value_Marker       : League.Strings.Universal_String;
+      Optional_Value_Marker : League.Strings.Universal_String;
+      Top_Name : League.Strings.Universal_String;
    begin
+
+      if not Element_Name.Is_Empty then
+         Top_Name := XSD_To_Ada.Utils.Add_Separator (Element_Name) & ".";
+      end if;
+
       if Min_Occurs
         and then not Max_Occurs
       then
@@ -345,6 +360,7 @@ package body XSD2Ada.Encoder is
 
          Writer.P
            ("      if Data."
+            & Top_Name
             & Choice_Name.To_Wide_Wide_String
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -354,6 +370,7 @@ package body XSD2Ada.Encoder is
       if Max_Occurs then
          Writer.P
            ("      for Index in 1 .. Natural (Data."
+            & Top_Name
             & Choice_Name.To_Wide_Wide_String
             & Base_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -370,6 +387,7 @@ package body XSD2Ada.Encoder is
             Writer.P
               (Split_Line
                  ("Writer.Characters (League.Strings.From_UTF_8_String (Data."
+                  & Top_Name
                   & Choice_Name.To_Wide_Wide_String
                   & Base_Name.To_Wide_Wide_String
                   & Add_Separator (XS_Term.Get_Name)
@@ -381,6 +399,7 @@ package body XSD2Ada.Encoder is
             Writer.P
               (Split_Line
                  ("Writer.Characters (Data."
+                  & Top_Name
                   & Choice_Name.To_Wide_Wide_String
                   & Base_Name.To_Wide_Wide_String
                   & Add_Separator (XS_Term.Get_Name)
@@ -396,10 +415,11 @@ package body XSD2Ada.Encoder is
            ("      Writer.Characters" & LF
             & XSD_To_Ada.Utils.Split_Line
               ("(League.Strings.From_UTF_8_String (To_String (Data."
-               & Base_Name.To_Wide_Wide_String
-               & Choice_Name.To_Wide_Wide_String
+               & Element_Name
+               & Base_Name
+               & Choice_Name
                & Add_Separator (XS_Term.Get_Name)
-               & Optional_Value_Marker.To_Wide_Wide_String
+               & Optional_Value_Marker
                & ")));", 8)
             & LF & "  --  "
             & Type_D.Get_Base_Type.Get_Name);
@@ -411,6 +431,7 @@ package body XSD2Ada.Encoder is
            ("      Writer.Characters" & LF
             & XSD_To_Ada.Utils.Split_Line
               ("(League.Strings.From_UTF_8_String (Data."
+               & Top_Name
                & Base_Name.To_Wide_Wide_String
                & Choice_Name.To_Wide_Wide_String
                & Add_Separator (XS_Term.Get_Name)
@@ -424,6 +445,7 @@ package body XSD2Ada.Encoder is
 
          Writer.P
            ("      Writer.Characters (Image (Data."
+            & Top_Name
             & Base_Name.To_Wide_Wide_String
             & Choice_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -434,6 +456,7 @@ package body XSD2Ada.Encoder is
       else
          Writer.P
            ("      Writer.Characters (Data."
+            & Top_Name
             & Base_Name.To_Wide_Wide_String
             & Choice_Name.To_Wide_Wide_String
             & Add_Separator (XS_Term.Get_Name)
@@ -458,126 +481,41 @@ package body XSD2Ada.Encoder is
       Writer.P;
    end Generate_Simple_Type;
 
-   ---------------------------
-   -- Print_Type_Definition --
-   ---------------------------
+   -----------------
+   -- Print_Model --
+   -----------------
 
-   procedure Print_Type_Definition
-    (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
-     Writer       : in out XSD_To_Ada.Writers.Writer;
-     Writer_types : in out XSD_To_Ada.Writers.Writer;
-     Name         : League.Strings.Universal_String;
-     Anonym_Name  : League.Strings.Universal_String;
-     Element_Name : League.Strings.Universal_String;
-     Is_Min_Occur : Boolean := False)
+   procedure Print_Model
+     (Model_Group  : XML.Schema.Model_Groups.XS_Model_Group;
+      Writer       : in out XSD_To_Ada.Writers.Writer;
+      Writer_types : in out XSD_To_Ada.Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Choice       : Boolean := False)
    is
-      use type XML.Schema.Type_Definitions.XS_Type_Definition;
       use type XML.Schema.Model_Groups.Compositor_Kinds;
-      use League.Strings;
 
-      procedure Print_Term
-        (XS_Term      : XML.Schema.Terms.XS_Term;
-         Indent       : Wide_Wide_String := "";
-         Writer       : in out XSD_To_Ada.Writers.Writer;
-         Writer_types : in out XSD_To_Ada.Writers.Writer;
-         Name         : League.Strings.Universal_String;
-         Base_Name    : League.Strings.Universal_String);
-
+      XS_List        : XML.Schema.Object_Lists.XS_Object_List;
       XS_Particle    : XML.Schema.Particles.XS_Particle;
-      XS_Term        : XML.Schema.Terms.XS_Term;
-      XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
 
-      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
-
-      Choice     : Boolean := False;
-      Min_Occurs : Boolean := False;
+      Case_Type : League.Strings.Universal_String;
       Max_Occurs : Boolean := False;
+      Min_Occurs : Boolean := False;
 
-      Choice_Name : League.Strings.Universal_String;
-      Parent_Name : League.Strings.Universal_String;
-
-      ----------------
-      -- Print_Term --
-      ----------------
-
-      procedure Print_Term
+      procedure Print_Element
         (XS_Term      : XML.Schema.Terms.XS_Term;
-         Indent       : Wide_Wide_String := "";
          Writer       : in out XSD_To_Ada.Writers.Writer;
          Writer_types : in out XSD_To_Ada.Writers.Writer;
          Name         : League.Strings.Universal_String;
-         Base_Name    : League.Strings.Universal_String)
+         Map          : XSD_To_Ada.Mappings.Mapping)
       is
-         XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
-         XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-         XS_Particle    : XML.Schema.Particles.XS_Particle;
-         Decl           :
-           XML.Schema.Element_Declarations.XS_Element_Declaration;
-         Type_D         : XML.Schema.Type_Definitions.XS_Type_Definition;
-
-         Optional_Marker : League.Strings.Universal_String;
-
+         Decl : XML.Schema.Element_Declarations.XS_Element_Declaration
+           := XS_Term.To_Element_Declaration;
+         Type_D  : XML.Schema.Type_Definitions.XS_Type_Definition :=
+           Decl.Get_Type_Definition;
       begin
-         if Is_Min_Occur then
-            Optional_Marker := League.Strings.To_Universal_String ("Value.");
-         end if;
-
-         if XS_Term.Is_Model_Group then
-
-            XS_Model_Group := XS_Term.To_Model_Group;
-            XS_List := XS_Model_Group.Get_Particles;
-
-            if XS_Model_Group.Get_Compositor =
-              XML.Schema.Model_Groups.Compositor_Choice
-            then
-               Choice := True;
-
-               Choice_Name := Add_Separator (Base_Name) & Parent_Name;
-
-               Writer.P
-                 (Split_Line
-                    ("case Data."
-                     & Add_Separator (Base_Name)
-                     & Add_Separator (Base_Name)
-                     & Parent_Name
-                     & "Kind is", 5));
-            end if;
-
-            for J in 1 .. XS_List.Get_Length loop
-               Ada.Wide_Wide_Text_IO.Put
-                (Ada.Wide_Wide_Text_IO.Standard_Error, Indent);
-
-               XS_Particle := XS_List.Item (J).To_Particle;
-
-               Min_Occurs := False;
-               Max_Occurs := False;
-
-               if XS_Particle.Get_Max_Occurs.Unbounded
-                 or (not XS_Particle.Get_Max_Occurs.Unbounded
-                     and then XS_Particle.Get_Max_Occurs.Value > 1)
-               then
-                  Max_Occurs := True;
-               end if;
-
-               if XS_Particle.Get_Min_Occurs = 0 then
-                  Min_Occurs := True;
-               end if;
-
-               Print_Term
-                 (XS_Particle.Get_Term,
-                  Indent & "   ", Writer, Writer_types, Name, Base_Name);
-            end loop;
-
-            if Choice then
-               Writer.P ("     end case;" & LF);
-               Choice := False;
-               Choice_Name.Clear;
-            end if;
-
-         elsif XS_Term.Is_Element_Declaration then
-            Decl := XS_Term.To_Element_Declaration;
-            Type_D := Decl.Get_Type_Definition;
+         if XS_Term.Is_Element_Declaration then
 
             if Choice then
                Writer.P
@@ -591,8 +529,9 @@ package body XSD2Ada.Encoder is
                   Generate_Complex_Type
                     (XS_Term => XS_Term,
                      Writer => Writer,
-                     Choice_Name => Choice_Name,
-                     Base_Name => Base_Name,
+                     Choice_Name => League.Strings.Empty_Universal_String,
+                     Base_Name => League.Strings.Empty_Universal_String,
+                     Element_Name => Element_Name,
                      Min_Occurs => Min_Occurs,
                      Max_Occurs => Max_Occurs);
 
@@ -601,8 +540,9 @@ package body XSD2Ada.Encoder is
                     (Type_D => Type_D,
                      XS_Term => XS_Term,
                      Writer => Writer,
-                     Choice_Name => Choice_Name,
-                     Base_Name => Base_Name,
+                     Choice_Name => League.Strings.Empty_Universal_String,
+                     Base_Name => League.Strings.Empty_Universal_String,
+                     Element_Name => Element_Name,
                      Min_Occurs => Min_Occurs,
                      Max_Occurs => Max_Occurs);
 
@@ -611,101 +551,205 @@ package body XSD2Ada.Encoder is
                     (Ada.Wide_Wide_Text_IO.Standard_Error, "NONE!!!");
             end case;
          end if;
-      end Print_Term;
+      end Print_Element;
 
+   begin
+      XS_List := Model_Group.Get_Particles;
+
+      if Choice
+        and then not Name.Is_Empty
+      then
+         Writer.P
+           ("      case Data.Kind is" & LF);
+      end if;
+
+      for J in 1 .. XS_List.Get_Length loop
+
+         Max_Occurs := False;
+         Min_Occurs := False;
+
+         XS_Particle := XS_List.Item (J).To_Particle;
+
+         if XS_Particle.Get_Max_Occurs.Unbounded then
+            Max_Occurs := True;
+         else
+            if XS_Particle.Get_Max_Occurs.Value > 1 then
+               Max_Occurs := True;
+            end if;
+         end if;
+
+         if XS_Particle.Get_Min_Occurs = 0 then
+            Min_Occurs := True;
+         end if;
+
+         if XS_Particle.Get_Term.Is_Element_Declaration then
+            Print_Element
+              (XS_Particle.Get_Term,
+               Writer,
+               Writer_types,
+               Name,
+               Mapping);
+
+         elsif XS_Particle.Get_Term.Is_Model_Group then
+            declare
+               Choice_Anonym :  constant Boolean :=
+                 XS_Particle.Get_Term.To_Model_Group.Get_Compositor =
+                   XML.Schema.Model_Groups.Compositor_Choice;
+            begin
+               if Choice_Anonym then
+                   Writer.P ("      case Data." & Name & ".Kind is");
+               end if;
+
+               Print_Model
+                 (Model_Group  => XS_Particle.Get_Term.To_Model_Group,
+                  Writer       => Writer,
+                  Writer_types => Writer_types,
+                  Name         => League.Strings.Empty_Universal_String,
+                  Element_Name => Name & ".",
+                  Mapping      => Mapping,
+                  Choice       => Choice_Anonym);
+
+               if Choice_Anonym then
+                  Writer.P ("      end case;");
+               end if;
+            end;
+         end if;
+      end loop;
+
+      if Choice
+        and then not Name.Is_Empty
+      then
+         Writer.P ("      end case;");
+      end if;
+   end Print_Model;
+
+   procedure Print_Type_Definition_2
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Writer       : in out XSD_To_Ada.Writers.Writer;
+      Writer_types : in out XSD_To_Ada.Writers.Writer;
+      Spec_Writer  : in out XSD_To_Ada.Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Tag_Vector   : in out League.String_Vectors.Universal_String_Vector;
+      Choice       : Boolean := False;
+      Is_Min_Occur : Boolean := False;
+      Is_Max_Occur : Boolean := False)
+   is
+      use type XML.Schema.Type_Definitions.XS_Type_Definition;
+
+      XS_Particle    : XML.Schema.Particles.XS_Particle;
+      XS_Term        : XML.Schema.Terms.XS_Term;
+      XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition;
+      Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+
+      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
+        := Type_D.To_Complex_Type_Definition;
+
+      Top_Name : League.Strings.Universal_String;
    begin
       XS_Base := Type_D.Get_Base_Type;
 
-      if XS_Base.Get_Type_Category in XML.Schema.Complex_Type
+      if not Element_Name.Is_Empty then
+         Top_Name := XSD_To_Ada.Utils.Add_Separator (Type_D.Get_Name);
+      end if;
+
+      if XS_Base.Get_Type_Category in
+        XML.Schema.Complex_Type
         and XS_Base /= Type_D
       then
-         CTD := XS_Base.To_Complex_Type_Definition;
+         if XS_Base.Get_Name.To_Wide_Wide_String = "anyType" then
+            Generate_Overriding_Procedure_Encode_Header
+                    (Writer,
+                     Spec_Writer,
+                     Name,
+                     Tag_Vector,
+                     True);
 
-         if CTD.Get_Content_Type in Element_Only | Mixed then
-            XS_Particle := CTD.Get_Particle;
-            XS_Term := XS_Particle.Get_Term;
-
-            Print_Term
-              (XS_Term,
-               Indent & "   ",
-               Writer,
-               Writer_types,
-               Add_Separator (XS_Base.Get_Name),
-               Add_Separator (XS_Base.Get_Name) & ".");
-
+            Writer.N (Write_End_Element (Name));
+            Writer.P ("   end Encode;" & LF);
+            return;
          end if;
       end if;
 
       case Type_D.Get_Type_Category is
          when XML.Schema.Complex_Type =>
-            CTD := Type_D.To_Complex_Type_Definition;
 
             if CTD.Get_Content_Type in Element_Only | Mixed then
                XS_Particle := CTD.Get_Particle;
                XS_Term := XS_Particle.Get_Term;
 
-               if Name.To_UTF_8_String /= "" then
-
-                  if XS_Term.To_Model_Group.Get_Compositor =
-                    XML.Schema.Model_Groups.Compositor_Sequence
-                  then
-                     Parent_Name := Add_Separator (Name & ".");
-                  end if;
-
-                  Print_Term
-                    (XS_Term,
-                     Indent & "   ",
-                     Writer,
-                     Writer_types,
-                     Add_Separator (Name),
-                     League.Strings.Empty_Universal_String);
-
-               else
-                  if not Anonym_Name.Is_Empty then
-
-                     if XS_Term.To_Model_Group.Get_Compositor =
-                       XML.Schema.Model_Groups.Compositor_Sequence
-                     then
-                        Parent_Name := Add_Separator (Anonym_Name & ".");
-                     end if;
-
-                     Print_Term
-                       (XS_Term,
-                        Indent & "   ",
-                        Writer,
-                        Writer_types,
-                        Add_Separator (Anonym_Name),
-                        League.Strings.Empty_Universal_String);
-
-                  elsif not Element_Name.Is_Empty then
-
-                     if XS_Term.To_Model_Group.Get_Compositor
-                       = XML.Schema.Model_Groups.Compositor_Sequence
-                     then
-                        Parent_Name := Add_Separator (Element_Name & ".");
-                     end if;
-
-                     Print_Term
-                       (XS_Term,
-                        Indent & "   ",
-                        Writer,
-                        Writer_types,
-                        Add_Separator (Element_Name),
-                        League.Strings.Empty_Universal_String);
-                  end if;
+               if XS_Term.Is_Model_Group then
+                  Model_Group := XS_Term.To_Model_Group;
                end if;
+            else
+               raise Constraint_Error;
             end if;
 
-         when XML.Schema.Simple_Type =>
-            Ada.Wide_Wide_Text_IO.Put
-             (Ada.Wide_Wide_Text_IO.Standard_Error,
-              Indent & "Simple_Type : " & Type_D.Get_Name.To_Wide_Wide_String);
+            if not Is_Min_Occur
+              and then not Is_Max_Occur
+            then
+               if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
+                 = "anyType"
+               then
+                  Generate_Overriding_Procedure_Encode_Header
+                    (Writer,
+                     Spec_Writer,
+                     Name,
+                     Tag_Vector,
+                     True);
 
+                  Writer.N (Write_End_Element (Name));
+
+               elsif Name.Ends_With ("Response")
+                 or XSD_To_Ada.Utils.Has_Element_Session (Type_D)
+               then
+
+                  Generate_Overriding_Procedure_Encode_Header
+                    (Writer,
+                     Spec_Writer,
+                     Name,
+                     Tag_Vector);
+
+                  Print_Model
+                    (Model_Group  => Model_Group,
+                     Writer       => Writer,
+                     Writer_types => Writer_types,
+                     Name         => Name,
+                     Element_Name => Top_Name,
+                     Mapping      => Mapping,
+                     Choice       => Choice);
+
+                  Writer.N (Write_End_Element (Name));
+               else
+                  Generate_Procedure_Encode_Header
+                    (Writer,
+                     XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
+                       (Mapping, Name));
+
+                  Writer.P ("      Writer.Start_Element (IATS_URI, Name);");
+
+                  Print_Model
+                    (Model_Group  => Model_Group,
+                     Writer       => Writer,
+                     Writer_types => Writer_types,
+                     Name         => Name,
+                     Element_Name => Top_Name,
+                     Mapping      => Mapping,
+                     Choice       => Choice);
+
+                  Writer.P ("      Writer.End_Element (IATS_URI, Name);");
+               end if;
+
+               Writer.P ("   end Encode;" & LF);
+            end if;
+         when XML.Schema.Simple_Type =>
+               null;
          when XML.Schema.None =>
-            Ada.Wide_Wide_Text_IO.Put_Line
-             (Ada.Wide_Wide_Text_IO.Standard_Error, Indent & "NONE!!!");
+            raise Constraint_Error;
       end case;
-   end Print_Type_Definition;
+
+   end Print_Type_Definition_2;
 
    ----------------------
    -- Print_Type_Title --
@@ -725,165 +769,27 @@ package body XSD2Ada.Encoder is
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
       Type_D : XML.Schema.Type_Definitions.XS_Type_Definition;
-
-      Vector_Name       : League.Strings.Universal_String;
-      Anonym_Name       : League.Strings.Universal_String;
-
    begin
-      for Item of Node_Vector loop
-         if not Item.Object.Is_Type_Definition then
-            goto Continue;
-         end if;
+      for Current of Node_Vector loop
+         if Current.Object.Is_Type_Definition then
 
-         if not Item.Max
-           and then not Item.Min
-         then
-            if not Item.Anonym_Name.Is_Empty then
-               Anonym_Name :=
-                 XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                   (Mapping,
-                    Item.Anonym_Name);
+            Type_D := Current.Object.To_Type_Definition;
 
-               Generate_Procedure_Encode_Header (Payload_Writer, Anonym_Name);
+            Print_Type_Definition_2
+              (Type_D       => Type_D,
+               Writer       => Payload_Writer,
+               Writer_types => Payload_Type_Writer,
+               Spec_Writer  => Spec_Writer,
+               Name         => Current.Short_Ada_Type_Name,
+               Element_Name => Current.Element_Name,
+               Mapping      => Mapping,
+               Tag_Vector   => Tag_Vector,
+               Choice       => Current.Choice,
+               Is_Min_Occur => Current.Min,
+               Is_Max_Occur => Current.Max);
 
-               Payload_Writer.P
-                 ("      Writer.Start_Element (IATS_URI, Name);");
-
-               Print_Type_Definition
-                 (Type_D,
-                  Indent & "   ",
-                  Payload_Writer,
-                  Payload_Type_Writer,
-                  Type_D.Get_Name,
-                  Item.Anonym_Name,
-                  Item.Element_Name);
-
-               Payload_Writer.P ("      Writer.End_Element (IATS_URI, Name);");
-
-               Payload_Writer.P ("   end Encode;" & LF);
-
-            elsif not Type_D.Get_Name.Ends_With ("Response") then
-               if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
-
-                  Generate_Overriding_Procedure_Encode_Header
-                    (Payload_Writer,
-                     Spec_Writer,
-                     Type_D.Get_Name,
-                     Tag_Vector);
-
-                  Print_Type_Definition
-                    (Type_D,
-                     Indent & "   ",
-                     Payload_Writer,
-                     Payload_Type_Writer,
-                     Type_D.Get_Name,
-                     Item.Anonym_Name,
-                     Item.Element_Name);
-
-                  Payload_Writer.N
-                    (Write_End_Element (Type_D.Get_Name));
-
-               elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String =
-                 "anyType"
-               then
-                  Generate_Overriding_Procedure_Encode_Header
-                    (Payload_Writer,
-                     Spec_Writer,
-                     Type_D.Get_Name,
-                     Tag_Vector,
-                     True);
-
-                  Payload_Writer.N (Write_End_Element (Type_D.Get_Name));
-
-               else
-                  Generate_Procedure_Encode_Header
-                    (Payload_Writer,
-                     XSD_To_Ada.Mappings.Ada_Type_Qualified_Name
-                       (Mapping, Type_D.Get_Name));
-
-                  Payload_Writer.P
-                    ("      Writer.Start_Element (IATS_URI, Name);");
-
-                  Print_Type_Definition
-                    (Type_D,
-                     Indent & "   ",
-                     Payload_Writer,
-                     Payload_Type_Writer,
-                     Type_D.Get_Name,
-                     Item.Anonym_Name,
-                     Item.Element_Name);
-
-                  Payload_Writer.P
-                    ("      Writer.End_Element (IATS_URI, Name);");
-
-               end if;
-
-               Payload_Writer.P ("   end Encode;" & LF);
-            end if;
-
-         elsif not Item.Element_Name.Is_Empty then
-            if Item.Type_Def.Get_Name.Is_Empty then
-               if not Item.Element_Name.Ends_With ("Response")
-                 and then XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-               then
-                     Generate_Overriding_Procedure_Encode_Header
-                       (Payload_Writer,
-                        Spec_Writer,
-                        Item.Element_Name,
-                        Tag_Vector);
-
-                     Print_Type_Definition
-                       (Type_D,
-                        Indent & "   ",
-                        Payload_Writer,
-                        Payload_Type_Writer,
-                        Type_D.Get_Name,
-                        Item.Anonym_Name,
-                        Item.Element_Name);
-
-                     Payload_Writer.N (Write_End_Element (Item.Element_Name));
-
-                     Payload_Writer.P ("   end Encode;" & LF);
-               end if;
-
-            elsif not Item.Element_Name.Ends_With ("Response") then
-               if XSD_To_Ada.Utils.Has_Element_Session (Type_D) then
-                  Generate_Overriding_Procedure_Encode_Header
-                    (Payload_Writer,
-                     Spec_Writer,
-                     Item.Element_Name,
-                     Tag_Vector);
-
-                  Print_Type_Definition
-                    (Type_D,
-                     Indent & "   ",
-                     Payload_Writer,
-                     Payload_Type_Writer,
-                     Type_D.Get_Name,
-                     Item.Anonym_Name,
-                     Item.Element_Name);
-
-                  Payload_Writer.N (Write_End_Element (Item.Element_Name));
-
-                  Payload_Writer.P ("   end Encode;" & LF);
-               elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
-                 = "anyType"
-               then
-                  Generate_Overriding_Procedure_Encode_Header
-                    (Payload_Writer,
-                     Spec_Writer,
-                     Item.Element_Name,
-                     Tag_Vector,
-                     True);
-
-                  Payload_Writer.N (Write_End_Element (Item.Element_Name));
-
-                  Payload_Writer.P ("   end Encode;" & LF);
-               else
-                  Writer.P
-                    ("   --  type " & Add_Separator (Item.Element_Name));
-               end if;
-            end if;
+         elsif Current.Object.Is_Model_Group then
+            null;
          end if;
 
          Writer.N (Payload_Type_Writer.Text);
@@ -891,12 +797,9 @@ package body XSD2Ada.Encoder is
 
          Payload_Type_Writer.Text.Clear;
          Payload_Writer.Text.Clear;
-
-         <<Continue>>
       end loop;
 
       Encoder_Names_Writer.P (Element_Name.Text);
-
    end Print_Type_Title;
 
    -----------------------
@@ -935,4 +838,4 @@ package body XSD2Ada.Encoder is
         & Add_Separator (Name) & "_Name);" & LF;
    end Write_Start_Element;
 
-end XSD2Ada.Encoder;
+end XSD2Ada.Encoder_2;

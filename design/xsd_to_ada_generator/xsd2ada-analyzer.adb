@@ -127,25 +127,31 @@ package body XSD2Ada.Analyzer is
       Difinition_Node.Max := False;
       Difinition_Node.Element_Name.Clear;
 
-      if not Value.Anonym_Name.Is_Empty then
+      if Value.Object.Is_Simple_Type_Definition then
          Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
-           (Value.Anonym_Name) & "_Anonym";
+           (Value.Short_Ada_Type_Name);
       else
-         if Value.Object.Is_Simple_Type_Definition then
+         if Value.Object.Get_Name.Is_Empty then
             Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
               (Value.Short_Ada_Type_Name);
          else
-            Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
-              (Value.Object.Get_Name);
+            if Value.Element_Name.Is_Empty then
+               Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
+                 (Value.Object.Get_Name);
+            else
+               Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
+                 (Value.Short_Ada_Type_Name);
+               if Value.Element_Name.To_Wide_Wide_String /=
+                 Value.Object.Get_Name.To_Wide_Wide_String
+               then
+                  Difinition_Node.Element_Name := Value.Element_Name;
+               end if;
+            end if;
          end if;
       end if;
 
       if not Contains (Difinition_Node) then
-         if not Value.Object.Get_Name.Is_Empty
-           or not Value.Anonym_Name.Is_Empty
-         then
-            Vector.Append (new Item'(Difinition_Node));
-         end if;
+         Vector.Append (new Item'(Difinition_Node));
       end if;
 
       if Value.Max then
@@ -166,23 +172,6 @@ package body XSD2Ada.Analyzer is
          end if;
 
          Difinition_Node.Min := False;
-      end if;
-
-      if not Value.Element_Name.Is_Empty
-        and then Value.Type_Def.Get_Name /=
-          Value.Element_Name
-      then
-         Difinition_Node.Element_Name.Append
-           (Value.Element_Name);
-
-         Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
-           (Value.Element_Name);
-
-         if not Contains (Difinition_Node) then
-            Vector.Append (new Item'(Difinition_Node));
-         end if;
-
-         Difinition_Node.Element_Name.Clear;
       end if;
    end Add_Node;
 
@@ -223,7 +212,8 @@ package body XSD2Ada.Analyzer is
          Node_Vector  => Node_Vector,
          Min_Occurs   => 1,
          Max_Occurs   => (False, 1),
-         Element_Name => Element.Get_Name);
+         Element_Name => Element.Get_Name,
+         Short_Ada_Type_Name => Element.Get_Name);
    end Create_Element_Node;
 
    -------------------------
@@ -305,7 +295,8 @@ package body XSD2Ada.Analyzer is
         (Object       => Type_D,
          Node_Vector  => Node_Vector,
          Min_Occurs   => 1,
-         Max_Occurs   => (False, 1));
+         Max_Occurs   => (False, 1),
+         Short_Ada_Type_Name => Type_D.Get_Name);
    end Create_Type_Node;
 
    ------------------
@@ -428,7 +419,8 @@ package body XSD2Ada.Analyzer is
                Node_Vector  => Node_Vector,
                Min_Occurs   => Min_Occurs,
                Max_Occurs   => Max_Occurs,
-               Anonym_Name  => Anonym_Prefix & "Case");
+               Anonym_Name  => Anonym_Prefix & "Case",
+               Short_Ada_Type_Name => Anonym_Prefix & "Case_Anonym");
          else
             Traverse_Model_Group (XS_Model_Group => XS_Term.To_Model_Group,
                                   Node_Vector    => Node_Vector,
@@ -448,7 +440,19 @@ package body XSD2Ada.Analyzer is
 
             Anonym_Name.Append
               (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name));
-         end if;
+
+            if not Anonym_Prefix.Is_Empty then
+               Anonym_Name.Append ("_Anonym");
+            end if;
+
+            Create_Node_Vector
+              (Object              => Type_D,
+               Node_Vector         => Node_Vector,
+               Min_Occurs          => Min_Occurs,
+               Max_Occurs          => Max_Occurs,
+               Anonym_Name         => Anonym_Name,
+               Short_Ada_Type_Name => Anonym_Name);
+         else
 
          Create_Node_Vector
            (Object              => Type_D,
@@ -457,6 +461,7 @@ package body XSD2Ada.Analyzer is
             Max_Occurs          => Max_Occurs,
             Anonym_Name         => Anonym_Name,
             Short_Ada_Type_Name => Decl.Get_Name);
+         end if;
       end if;
    end Traverse_Term;
 
@@ -488,7 +493,8 @@ package body XSD2Ada.Analyzer is
               (Object      => XS_Base,
                Node_Vector => Node_Vector,
                Min_Occurs  => 1,
-               Max_Occurs  => (False, 1));
+               Max_Occurs  => (False, 1),
+               Short_Ada_Type_Name => Type_D.Get_Name);
          end if;
       end if;
 

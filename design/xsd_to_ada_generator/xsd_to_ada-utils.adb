@@ -60,6 +60,7 @@ with XML.Schema.Simple_Type_Definitions;
 
 with Generator.Units.Ada_Units;
 with XSD2Ada.Encoder;
+with XSD2Ada.Encoder_2;
 
 with XSD_To_Ada.Payloads;
 
@@ -199,7 +200,6 @@ package body XSD_To_Ada.Utils is
       Tag_Vector : League.String_Vectors.Universal_String_Vector;
 
       File_Type : Ada.Wide_Wide_Text_IO.File_Type;
-
    begin
       Put_Header (Payload_Spec);
       Create_Package_Name (Payload_Spec);
@@ -244,7 +244,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       Put_Header (Encoder_Full_Writer);
-      XSD2Ada.Encoder.Generate_Package_Header (Encoder_Full_Writer);
+      XSD2Ada.Encoder_2.Generate_Package_Header (Encoder_Full_Writer);
 
       Writers.P
         (Encoder_Spec_Writer,
@@ -256,7 +256,7 @@ package body XSD_To_Ada.Utils is
          & "Universal_String;"
          & LF);
 
-      XSD2Ada.Encoder.Print_Type_Title
+      XSD2Ada.Encoder_2.Print_Type_Title
         (Node_Vector,
          "",
          Encoder_Writer,
