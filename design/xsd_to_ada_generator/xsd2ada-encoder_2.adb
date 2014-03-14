@@ -820,18 +820,26 @@ package body XSD2Ada.Encoder_2 is
 
    function Write_Start_Element
      (Name : League.Strings.Universal_String)
-     return League.Strings.Universal_String is
+      return League.Strings.Universal_String
+   is
+      N : League.String_Vectors.Universal_String_Vector :=
+        League.Strings.Split (Name, '_');
+      Name_Without_Separators : League.Strings.Universal_String;
    begin
+
+      for Index in 1 .. N.Length loop
+         Name_Without_Separators.Append (N.Element (Index));
+      end loop;
+
       if Elements_Name.Index (Name) = 0 then
          Elements_Name.Append (Name);
 
          Element_Name.P
            (XSD_To_Ada.Utils.Split_Line
               (Add_Separator (Name)
-               & "_Name : constant League.Strings.Universal_String :=", 3)
-            & LF
+               & "_Name : constant League.Strings.Universal_String :=", 3) & LF
             & "     League.Strings.To_Universal_String ("""
-            & Name & """);" & LF);
+            & Name_Without_Separators & """);" & LF);
       end if;
 
       return "      Writer.Start_Element (IATS_URI, "
