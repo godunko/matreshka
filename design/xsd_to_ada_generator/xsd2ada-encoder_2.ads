@@ -65,8 +65,6 @@ package XSD2Ada.Encoder_2 is
    procedure Generate_Complex_Type
      (XS_Term     : XML.Schema.Terms.XS_Term;
       Writer      : in out XSD_To_Ada.Writers.Writer;
-      Choice_Name : League.Strings.Universal_String;
-      Base_Name   : League.Strings.Universal_String;
       Element_Name : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
       Max_Occurs  : Boolean);
@@ -89,8 +87,6 @@ package XSD2Ada.Encoder_2 is
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term     : XML.Schema.Terms.XS_Term;
       Writer      : in out XSD_To_Ada.Writers.Writer;
-      Choice_Name : League.Strings.Universal_String;
-      Base_Name   : League.Strings.Universal_String;
       Element_Name : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
       Max_Occurs  : Boolean);
@@ -114,7 +110,6 @@ package XSD2Ada.Encoder_2 is
       Writer_types : in out XSD_To_Ada.Writers.Writer;
       Name         : League.Strings.Universal_String;
       Element_Name : League.Strings.Universal_String;
-      Mapping      : XSD_To_Ada.Mappings.Mapping;
       Choice       : Boolean := False);
 
    procedure Print_Type_Title

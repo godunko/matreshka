@@ -896,7 +896,6 @@ package body XSD2Ada.Encoder is
       end loop;
 
       Encoder_Names_Writer.P (Element_Name.Text);
-
    end Print_Type_Title;
 
    -----------------------
