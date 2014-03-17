@@ -657,7 +657,6 @@ package body XSD2Ada.Encoder is
                if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String
                  = "anyType"
                then
-                  null;
                   Generate_Overriding_Procedure_Encode_Header
                     (Writer,
                      Spec_Writer,
@@ -676,6 +675,23 @@ package body XSD2Ada.Encoder is
                      Spec_Writer,
                      Name,
                      Tag_Vector);
+
+                  if XS_Base.Get_Type_Category in XML.Schema.Complex_Type
+                    and XS_Base /= Type_D
+                  then
+                     if XS_Base.Get_Name.To_Wide_Wide_String /= "anyType" then
+                        Writer.P
+                          ("      Encode (Data." &
+                             XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
+                           & "," & LF &
+                             "              Writer," & LF &
+                             "              League.Strings.To_Universal_String"
+                           & LF & "                (""" &
+                             XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
+                           & """));" & LF);
+                     end if;
+
+                  end if;
 
                   Print_Model
                     (Model_Group  => Model_Group,
