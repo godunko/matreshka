@@ -63,7 +63,6 @@ package XSD2Ada.Analyzer is
    function Min (Self : Item) return Boolean;
    function Max (Self : Item) return Boolean;
    function Choice (Self : Item) return Boolean;
-   function Anonym_Name (Self : Item) return League.Strings.Universal_String;
    function Element_Name (Self : Item) return League.Strings.Universal_String;
    function Short_Ada_Type_Name
     (Self : Item) return League.Strings.Universal_String;
@@ -107,7 +106,6 @@ private
    type Item is tagged record
       Object              : XML.Schema.Objects.XS_Object;
       Min, Max            : Boolean := False;
-      Anonym_Name         : League.Strings.Universal_String;
       Element_Name        : League.Strings.Universal_String;
       Short_Ada_Type_Name : League.Strings.Universal_String;
    end record;

@@ -48,8 +48,9 @@ with XML.Schema.Terms;
 with XML.Schema.Type_Definitions;
 
 with XSD2Ada.Analyzer;
-with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
+
+with XML.Schema.Model_Groups;
 
 package XSD2Ada.Encoder is
 
@@ -63,8 +64,7 @@ package XSD2Ada.Encoder is
    procedure Generate_Complex_Type
      (XS_Term     : XML.Schema.Terms.XS_Term;
       Writer      : in out XSD_To_Ada.Writers.Writer;
-      Choice_Name : League.Strings.Universal_String;
-      Base_Name   : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
       Max_Occurs  : Boolean);
 
@@ -86,30 +86,37 @@ package XSD2Ada.Encoder is
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       XS_Term     : XML.Schema.Terms.XS_Term;
       Writer      : in out XSD_To_Ada.Writers.Writer;
-      Choice_Name : League.Strings.Universal_String;
-      Base_Name   : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
       Min_Occurs  : Boolean;
       Max_Occurs  : Boolean);
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Indent       : Wide_Wide_String;
-     Writer       : in out XSD_To_Ada.Writers.Writer;
-     Writer_types : in out XSD_To_Ada.Writers.Writer;
-     Name         : League.Strings.Universal_String;
-     Anonym_Name  : League.Strings.Universal_String;
-     Element_Name : League.Strings.Universal_String;
-      Is_Min_Occur : Boolean := False);
+      Writer       : in out XSD_To_Ada.Writers.Writer;
+      Writer_types : in out XSD_To_Ada.Writers.Writer;
+      Spec_Writer  : in out XSD_To_Ada.Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
+      Tag_Vector   : in out League.String_Vectors.Universal_String_Vector;
+      Choice       : Boolean := False;
+      Is_Min_Occur : Boolean := False;
+      Is_Max_Occur : Boolean := False);
+
+   procedure Print_Model
+     (Model_Group  : XML.Schema.Model_Groups.XS_Model_Group;
+      Writer       : in out XSD_To_Ada.Writers.Writer;
+      Writer_types : in out XSD_To_Ada.Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Element_Name : League.Strings.Universal_String;
+      Choice       : Boolean := False);
 
    procedure Print_Type_Title
     (Node_Vector          : XSD2Ada.Analyzer.Items;
-     Indent               : Wide_Wide_String;
      Writer               : in out XSD_To_Ada.Writers.Writer;
      Spec_Writer          : in out XSD_To_Ada.Writers.Writer;
      Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
      Tag_Vector           : in out
-       League.String_Vectors.Universal_String_Vector;
-     Mapping              : XSD_To_Ada.Mappings.Mapping);
+       League.String_Vectors.Universal_String_Vector);
 
    function Write_End_Element
      (Name : League.Strings.Universal_String)

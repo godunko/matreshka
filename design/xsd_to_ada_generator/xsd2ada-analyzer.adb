@@ -175,15 +175,6 @@ package body XSD2Ada.Analyzer is
       end if;
    end Add_Node;
 
-   -----------------
-   -- Anonym_Name --
-   -----------------
-
-   function Anonym_Name (Self : Item) return League.Strings.Universal_String is
-   begin
-      return Self.Anonym_Name;
-   end Anonym_Name;
-
    ------------
    -- Choice --
    ------------
@@ -259,7 +250,6 @@ package body XSD2Ada.Analyzer is
    begin
       Item.Object := XML.Schema.Objects.XS_Object (Object);
       Item.Element_Name := Element_Name;
-      Item.Anonym_Name := Anonym_Name;
 
       Item.Short_Ada_Type_Name := Short_Ada_Type_Name;
 
