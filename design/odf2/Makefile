@@ -78,4 +78,6 @@ gen:
 
 demo:
 	gprbuild -p -j0 -P demo.gpr
-	.objs/demo
+
+run: demo
+	.objs/vdocs-aws

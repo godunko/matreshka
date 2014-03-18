@@ -8,10 +8,14 @@ project Demo is
 
    for Object_Dir use ".objs";
    for Source_Dirs use ("adadocs/source/aws");
-   for Main use ("demo.adb");
+   for Main use ("aws_server-driver.adb");
 
    package Compiler is
       for Default_Switches ("Ada") use ("-g");
    end Compiler;
+
+   package Builder is
+      for Executable ("aws_server-driver.adb") use "vdocs-aws";
+   end Builder;
 
 end Demo;
