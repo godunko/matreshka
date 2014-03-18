@@ -62,11 +62,12 @@ package XSD2Ada.Encoder is
       return League.Strings.Universal_String;
 
    procedure Generate_Complex_Type
-     (XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
+     (XS_Term      : XML.Schema.Terms.XS_Term;
+      Writer       : in out XSD_To_Ada.Writers.Writer;
       Element_Name : League.Strings.Universal_String;
-      Min_Occurs  : Boolean;
-      Max_Occurs  : Boolean);
+      Base_Name    : League.Strings.Universal_String;
+        Min_Occurs : Boolean;
+      Max_Occurs   : Boolean);
 
    procedure Generate_Overriding_Procedure_Encode_Header
      (Writer          : in out XSD_To_Ada.Writers.Writer;
@@ -83,12 +84,13 @@ package XSD2Ada.Encoder is
       Procedures_Name : League.Strings.Universal_String);
 
    procedure Generate_Simple_Type
-     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term     : XML.Schema.Terms.XS_Term;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
+     (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
+      XS_Term      : XML.Schema.Terms.XS_Term;
+      Writer       : in out XSD_To_Ada.Writers.Writer;
       Element_Name : League.Strings.Universal_String;
-      Min_Occurs  : Boolean;
-      Max_Occurs  : Boolean);
+      Base_Name    : League.Strings.Universal_String;
+        Min_Occurs : Boolean;
+      Max_Occurs   : Boolean);
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -108,6 +110,8 @@ package XSD2Ada.Encoder is
       Writer_types : in out XSD_To_Ada.Writers.Writer;
       Name         : League.Strings.Universal_String;
       Element_Name : League.Strings.Universal_String;
+      Base_Name    : League.Strings.Universal_String
+      := League.Strings.Empty_Universal_String;
       Choice       : Boolean := False);
 
    procedure Print_Type_Title

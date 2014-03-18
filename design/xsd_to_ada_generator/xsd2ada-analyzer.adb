@@ -130,6 +130,10 @@ package body XSD2Ada.Analyzer is
       if Value.Object.Is_Simple_Type_Definition then
          Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
            (Value.Short_Ada_Type_Name);
+
+         Difinition_Node.Simple_Ada_Name :=
+           Analyzer_Mapping.Ada_Type_Qualified_Name
+             (Value.Object.To_Simple_Type_Definition.Get_Name);
       else
          if Value.Object.Get_Name.Is_Empty then
             Difinition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
@@ -157,6 +161,9 @@ package body XSD2Ada.Analyzer is
       if Value.Max then
          Difinition_Node.Max := True;
 
+         Difinition_Node.Short_Ada_Type_Name :=
+           Difinition_Node.Short_Ada_Type_Name & "_Vector";
+
          if not Contains (Difinition_Node) then
             Vector.Append (new Item'(Difinition_Node));
          end if;
@@ -166,6 +173,9 @@ package body XSD2Ada.Analyzer is
 
       if Value.Min then
          Difinition_Node.Min := True;
+
+         Difinition_Node.Short_Ada_Type_Name :=
+           "Optional_" & Difinition_Node.Short_Ada_Type_Name;
 
          if not Contains (Difinition_Node) then
             Vector.Append (new Item'(Difinition_Node));
@@ -279,8 +289,11 @@ package body XSD2Ada.Analyzer is
 
    procedure Create_Type_Node
      (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Node_Vector : in out XSD2Ada.Analyzer.Items) is
+      Node_Vector : in out XSD2Ada.Analyzer.Items;
+      Mapping     : XSD_To_Ada.Mappings.Mapping) is
    begin
+      Analyzer_Mapping := Mapping;
+
       Create_Node_Vector
         (Object       => Type_D,
          Node_Vector  => Node_Vector,
@@ -348,6 +361,16 @@ package body XSD2Ada.Analyzer is
       return Self.Object;
    end Object;
 
+   ---------------------
+   -- Simple_Ada_Name --
+   ---------------------
+
+   function Simple_Ada_Name
+     (Self : Item) return League.Strings.Universal_String is
+   begin
+      return Self.Simple_Ada_Name;
+   end Simple_Ada_Name;
+
    -------------------------
    -- Short_Ada_Type_Name --
    -------------------------
@@ -357,6 +380,25 @@ package body XSD2Ada.Analyzer is
    begin
       return Self.Short_Ada_Type_Name;
    end Short_Ada_Type_Name;
+
+   ---------------
+   -- Type_Name --
+   ---------------
+
+   function Type_Name
+     (Name : League.Strings.Universal_String)
+      return League.Strings.Universal_String is
+   begin
+      if Name.Slice (1, 9).To_Wide_Wide_String = "Optional_" then
+         return Name.Slice (10, Name.Length);
+
+      elsif Name.Ends_With ("_Vector") then
+         return Name.Slice (1, Name.Length - 7);
+
+      else
+         return Name;
+      end if;
+   end Type_Name;
 
    --------------------------
    -- Traverse_Model_Group --

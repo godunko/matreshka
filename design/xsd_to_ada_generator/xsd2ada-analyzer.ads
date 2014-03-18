@@ -52,6 +52,8 @@ with XML.Schema.Element_Declarations;
 with XML.Schema.Models;
 with XML.Schema.Objects;
 
+with XSD_To_Ada.Mappings;
+
 package XSD2Ada.Analyzer is
 
    type Item is tagged private;
@@ -64,8 +66,10 @@ package XSD2Ada.Analyzer is
    function Max (Self : Item) return Boolean;
    function Choice (Self : Item) return Boolean;
    function Element_Name (Self : Item) return League.Strings.Universal_String;
+   function Simple_Ada_Name
+     (Self : Item) return League.Strings.Universal_String;
    function Short_Ada_Type_Name
-    (Self : Item) return League.Strings.Universal_String;
+     (Self : Item) return League.Strings.Universal_String;
    --  Short name of Ada type described by the element.
    function Full_Ada_Type_Name
     (Self : Item) return League.Strings.Universal_String;
@@ -73,6 +77,9 @@ package XSD2Ada.Analyzer is
    function Full_Ada_Package_Name
     (Self : Item) return League.Strings.Universal_String;
    --  Full name of Ada compilation unit enclosing Ada type declaration.
+
+   function Type_Name (Name : League.Strings.Universal_String)
+     return League.Strings.Universal_String;
 
    package Item_Vectors is
      new Ada.Containers.Vectors (Positive, Item_Access);
@@ -97,9 +104,12 @@ package XSD2Ada.Analyzer is
 
    procedure Create_Type_Node
     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Node_Vector : in out XSD2Ada.Analyzer.Items);
+     Node_Vector : in out XSD2Ada.Analyzer.Items;
+     Mapping     : XSD_To_Ada.Mappings.Mapping);
    --  Add new node to Node_Vector for given type definition
    --  Also add types from dependencies
+
+   Analyzer_Mapping : XSD_To_Ada.Mappings.Mapping;
 
 private
 
@@ -107,6 +117,7 @@ private
       Object              : XML.Schema.Objects.XS_Object;
       Min, Max            : Boolean := False;
       Element_Name        : League.Strings.Universal_String;
+      Simple_Ada_Name     : League.Strings.Universal_String;
       Short_Ada_Type_Name : League.Strings.Universal_String;
    end record;
 

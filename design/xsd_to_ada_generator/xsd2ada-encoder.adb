@@ -82,6 +82,7 @@ package body XSD2Ada.Encoder is
      (XS_Term      : XML.Schema.Terms.XS_Term;
       Writer       : in out XSD_To_Ada.Writers.Writer;
       Element_Name : League.Strings.Universal_String;
+      Base_Name    : League.Strings.Universal_String;
       Min_Occurs   : Boolean;
       Max_Occurs   : Boolean)
    is
@@ -330,6 +331,7 @@ package body XSD2Ada.Encoder is
       XS_Term      : XML.Schema.Terms.XS_Term;
       Writer       : in out XSD_To_Ada.Writers.Writer;
       Element_Name : League.Strings.Universal_String;
+      Base_Name    : League.Strings.Universal_String;
       Min_Occurs   : Boolean;
       Max_Occurs   : Boolean)
    is
@@ -337,7 +339,12 @@ package body XSD2Ada.Encoder is
 
       Optional_Value_Marker : League.Strings.Universal_String;
       Top_Name : League.Strings.Universal_String;
+      Base_Type_Name : League.Strings.Universal_String;
    begin
+
+      if not Base_Name.Is_Empty then
+         Base_Type_Name := Base_Name & ".";
+      end if;
 
       if not Element_Name.Is_Empty then
          Top_Name := XSD_To_Ada.Utils.Add_Separator (Element_Name) & ".";
@@ -398,6 +405,7 @@ package body XSD2Ada.Encoder is
             & XSD_To_Ada.Utils.Split_Line
               ("(League.Strings.From_UTF_8_String (To_String (Data."
                & Element_Name
+               & Base_Type_Name
                & Add_Separator (XS_Term.Get_Name)
                & Optional_Value_Marker
                & ")));", 8)
@@ -465,6 +473,8 @@ package body XSD2Ada.Encoder is
       Writer_types : in out XSD_To_Ada.Writers.Writer;
       Name         : League.Strings.Universal_String;
       Element_Name : League.Strings.Universal_String;
+      Base_Name    : League.Strings.Universal_String
+      := League.Strings.Empty_Universal_String;
       Choice       : Boolean := False)
    is
       use type XML.Schema.Model_Groups.Compositor_Kinds;
@@ -500,6 +510,7 @@ package body XSD2Ada.Encoder is
                     (XS_Term      => XS_Term,
                      Writer       => Writer,
                      Element_Name => Element_Name,
+                     Base_Name    => Base_Name,
                      Min_Occurs   => Min_Occurs,
                      Max_Occurs   => Max_Occurs);
 
@@ -509,6 +520,7 @@ package body XSD2Ada.Encoder is
                      XS_Term      => XS_Term,
                      Writer       => Writer,
                      Element_Name => Element_Name,
+                     Base_Name    => Base_Name,
                      Min_Occurs   => Min_Occurs,
                      Max_Occurs   => Max_Occurs);
 
@@ -560,8 +572,16 @@ package body XSD2Ada.Encoder is
                  XS_Particle.Get_Term.To_Model_Group.Get_Compositor =
                    XML.Schema.Model_Groups.Compositor_Choice;
             begin
-               if Model_Groups_Choice then
-                   Writer.P ("      case Data." & Name & ".Kind is");
+               if Base_Name.Is_Empty then
+                  if Model_Groups_Choice then
+                     Writer.P
+                       ("      case Data." & Name &".Kind is");
+                  end if;
+               else
+                  if Model_Groups_Choice then
+                     Writer.P
+                       ("      case Data." & Name & "." & Base_Name &".Kind is");
+                  end if;
                end if;
 
                Print_Model
@@ -570,6 +590,7 @@ package body XSD2Ada.Encoder is
                   Writer_types => Writer_types,
                   Name         => League.Strings.Empty_Universal_String,
                   Element_Name => Name & ".",
+                  Base_Name    => Base_Name,
                   Choice       => Model_Groups_Choice);
 
                if Model_Groups_Choice then
@@ -679,18 +700,17 @@ package body XSD2Ada.Encoder is
                   if XS_Base.Get_Type_Category in XML.Schema.Complex_Type
                     and XS_Base /= Type_D
                   then
-                     if XS_Base.Get_Name.To_Wide_Wide_String /= "anyType" then
-                        Writer.P
-                          ("      Encode (Data." &
-                             XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
-                           & "," & LF &
-                             "              Writer," & LF &
-                             "              League.Strings.To_Universal_String"
-                           & LF & "                (""" &
-                             XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name)
-                           & """));" & LF);
-                     end if;
-
+                     Print_Model
+                       (Model_Group  =>
+                          XS_Base.To_Complex_Type_Definition.Get_Particle.Get_Term.To_Model_Group,
+                        Writer       => Writer,
+                        Writer_types => Writer_types,
+                        Name         =>
+                          XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name),
+                        Element_Name => XS_Base.Get_Name,
+                        Base_Name =>
+                          XSD_To_Ada.Utils.Add_Separator (XS_Base.Get_Name),
+                        Choice    => Choice);
                   end if;
 
                   Print_Model

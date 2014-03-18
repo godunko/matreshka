@@ -169,7 +169,6 @@ package body XSD_To_Ada.Utils is
     (Model   : XML.Schema.Models.XS_Model;
      Mapping : XSD_To_Ada.Mappings.Mapping)
    is
-      XS_Object : XML.Schema.Objects.XS_Object;
       Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
 
       Complex_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
@@ -205,26 +204,22 @@ package body XSD_To_Ada.Utils is
       Create_Enumeration_Simple_Type (Model, Payload_Spec);
 
       for J in 1 .. Complex_Types.Length loop
-         XS_Object := Complex_Types.Item (J);
-
-         for J in 1 .. Anonyn_Vector'Last loop
-            Anonyn_Vector (J).Print_State := False;
-            Anonyn_Vector (J).Term_State := False;
-         end loop;
-
          XSD2Ada.Analyzer.Create_Type_Node
-           (XS_Object.To_Type_Definition, Node_Vector);
+           (Complex_Types.Item (J).To_Type_Definition,
+            Node_Vector,
+            Mapping);
       end loop;
 
       for J in 1 .. Simple_Types.Length loop
-         XS_Object := Simple_Types.Item (J);
-         Type_D    := XS_Object.To_Type_Definition;
-
-         XSD2Ada.Analyzer.Create_Type_Node (Type_D, Node_Vector);
+         XSD2Ada.Analyzer.Create_Type_Node
+           (Simple_Types.Item (J).To_Type_Definition,
+            Node_Vector,
+            Mapping);
       end loop;
 
       XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
-      XSD_To_Ada.Payloads.Print_Payloads (Node_Vector, Payload_Writer, Mapping);
+      XSD_To_Ada.Payloads.Print_Payloads
+        (Node_Vector, Payload_Writer, Mapping);
 
       Node_Vector.Clear;
 
