@@ -1,9 +1,14 @@
+with "../../gnat/matreshka_sql.gpr";
+with "../../gnat/matreshka_sql_sqlite3.gpr";
+
 with "odf.gpr";
 
 project Web is
 
    for Object_Dir use ".objs";
-   for Source_Dirs use ("adadocs/source/editor");
+   for Source_Dirs use
+    ("adadocs/source/editor",
+     "adadocs/source/storage");
 
    package Compiler is
 
