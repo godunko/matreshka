@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Text_IO;
+
 with GNAT.Expect;
 
 with Matreshka.DOM_Builders;
@@ -93,6 +95,8 @@ package body ODF.Packages is
 
       begin
          if Status /= 0 then
+            Ada.Text_IO.Put_Line (Ada.Text_IO.Standard_Error, Output);
+
             raise Program_Error;
          end if;
       end;
