@@ -42,20 +42,16 @@
 --  $Revision: 4448 $ $Date: 2014-02-05 20:47:13 +0200 (Ср., 05 февр. 2014) $
 ------------------------------------------------------------------------------
 with League.Strings;
-with League.String_Vectors;
 
-with XML.Schema.Models;
-with XML.Schema.Type_Definitions;
-with XML.Schema.Terms;
-with XML.Schema.Objects;
 with XML.Schema.Model_Groups;
 
 with XSD2Ada.Analyzer;
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
-with Ada.Containers.Vectors;
 
 package XSD_To_Ada.Payloads is
+
+   Payloads_Node_Vector : XSD2Ada.Analyzer.Items;
 
    procedure Print_Model
      (Model_Group  : XML.Schema.Model_Groups.XS_Model_Group;

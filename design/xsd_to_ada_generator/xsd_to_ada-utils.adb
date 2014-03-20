@@ -62,6 +62,8 @@ with Generator.Units.Ada_Units;
 with XSD2Ada.Encoder;
 
 with XSD_To_Ada.Payloads;
+with XML.Schema.Terms;
+with XSD2Ada.Analyzer;
 
 package body XSD_To_Ada.Utils is
 
@@ -197,7 +199,7 @@ package body XSD_To_Ada.Utils is
 
       Tag_Vector : League.String_Vectors.Universal_String_Vector;
 
-      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
+--      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
    begin
       Put_Header (Payload_Spec);
       Create_Package_Name (Payload_Spec);
@@ -229,7 +231,7 @@ package body XSD_To_Ada.Utils is
              (J).To_Element_Declaration.Get_Type_Definition;
 
          if Has_Element_Session (Type_D)
-           or Type_D.Get_Name.To_UTF_8_String = "OpenSession"
+             or Type_D.Get_Name.To_UTF_8_String = "OpenSession"
          then
             XSD2Ada.Analyzer.Create_Element_Node
               (Element_Declarations.Item (J).To_Element_Declaration,

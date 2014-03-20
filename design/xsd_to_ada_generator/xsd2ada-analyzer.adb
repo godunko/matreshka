@@ -51,6 +51,8 @@ with XML.Schema.Particles;
 
 with XSD_To_Ada.Utils;
 
+pragma Style_Checks ("N");
+
 package body XSD2Ada.Analyzer is
 
    use type League.Strings.Universal_String;
@@ -59,41 +61,6 @@ package body XSD2Ada.Analyzer is
    procedure Add_Node
     (Vector : in out Items;
      Value  : Item);
-
-   procedure Traverse_Type_Definition
-    (Type_D        : XML.Schema.Type_Definitions.XS_Type_Definition;
-     Node_Vector   : in out Items;
-     Anonym_Prefix : League.Strings.Universal_String);
-   --  Recursive find all types in dependency for Type_D and add them to
-   --  Node_Vector. Use Anonym_Prefix to name anonymous items
-
-   procedure Traverse_Model_Group
-     (XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
-      Node_Vector    : in out Items;
-      Anonym_Prefix  : League.Strings.Universal_String);
-   --  Recursive find all types in dependency for XS_Model_Group and add them
-   --  to Node_Vector. Use Anonym_Prefix to name anonymous items
-
-   procedure Traverse_Term
-     (XS_Term       : XML.Schema.Terms.XS_Term;
-      Node_Vector   : in out Items;
-      Anonym_Prefix : League.Strings.Universal_String;
-      Max_Occurs    : XML.Schema.Particles.Unbounded_Natural;
-      Min_Occurs    : Natural);
-   --  Recursive find all types in dependency for XS_Term and add them
-   --  to Node_Vector. Use Anonym_Prefix to name anonymous items
-
-   procedure Create_Node_Vector
-     (Object           : XML.Schema.Objects.XS_Object'Class;
-      Node_Vector      : in out XSD2Ada.Analyzer.Items;
-      Min_Occurs       : Natural;
-      Max_Occurs       : XML.Schema.Particles.Unbounded_Natural;
-      Element_Name     : League.Strings.Universal_String
-      := League.Strings.Empty_Universal_String;
-      Anonym_Name      : League.Strings.Universal_String
-      := League.Strings.Empty_Universal_String;
-      Short_Ada_Type_Name : League.Strings.Universal_String
-      := League.Strings.Empty_Universal_String);
 
    --------------
    -- Add_Node --
@@ -130,15 +97,24 @@ package body XSD2Ada.Analyzer is
       Definition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
         (Value.Short_Ada_Type_Name);
 
-      Definition_Node.Simple_Ada_Name :=
-        Analyzer_Mapping.Ada_Type_Qualified_Name
-          (Value.Object.To_Simple_Type_Definition.Get_Name);
-
       if Value.Element_Name.To_Wide_Wide_String /=
         Value.Object.Get_Name.To_Wide_Wide_String
           and then not Value.Object.Get_Name.Is_Empty
       then
          Definition_Node.Element_Name := Value.Element_Name;
+      end if;
+
+      if Definition_Node.Object.Is_Simple_Type_Definition then
+         Definition_Node.Simple_Ada_Name :=
+           Analyzer_Mapping.Ada_Type_Qualified_Name
+             (Value.Object.To_Simple_Type_Definition.Get_Name,
+              Min_Occurs => Value.Min,
+              Max_Occurs => Value.Max);
+
+      elsif Definition_Node.Object.Is_Complex_Type_Definition then
+         Definition_Node.Simple_Ada_Name :=
+           Analyzer_Mapping.Ada_Type_Qualified_Name
+             (Value.Short_Ada_Type_Name);
       end if;
 
       if not Contains (Definition_Node) then
@@ -188,6 +164,76 @@ package body XSD2Ada.Analyzer is
    end Choice;
 
    -------------------------
+   -- Short_Ada_Type_Name --
+   -------------------------
+
+   function Short_Ada_Type_Name
+     (Self : Item) return League.Strings.Universal_String is
+   begin
+      return Self.Short_Ada_Type_Name;
+   end Short_Ada_Type_Name;
+
+   procedure Traverse_Type_Definition
+    (Type_D        : XML.Schema.Type_Definitions.XS_Type_Definition;
+     Node_Vector   : in out Items;
+     Anonym_Prefix : League.Strings.Universal_String);
+   --  Recursive find all types in dependency for Type_D and add them to
+   --  Node_Vector. Use Anonym_Prefix to name anonymous items
+
+   procedure Traverse_Model_Group
+     (XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+      Node_Vector    : in out Items;
+      Anonym_Prefix  : League.Strings.Universal_String);
+   --  Recursive find all types in dependency for XS_Model_Group and add them
+   --  to Node_Vector. Use Anonym_Prefix to name anonymous items
+
+   procedure Traverse_Term
+     (XS_Term       : XML.Schema.Terms.XS_Term;
+      Node_Vector   : in out Items;
+      Anonym_Prefix : League.Strings.Universal_String;
+      Max_Occurs    : XML.Schema.Particles.Unbounded_Natural;
+      Min_Occurs    : Natural);
+   --  Recursive find all types in dependency for XS_Term and add them
+   --  to Node_Vector. Use Anonym_Prefix to name anonymous items
+
+   procedure Create_Node_Vector
+     (Object           : XML.Schema.Objects.XS_Object'Class;
+      Node_Vector      : in out XSD2Ada.Analyzer.Items;
+      Min_Occurs       : Natural;
+      Max_Occurs       : XML.Schema.Particles.Unbounded_Natural;
+      Element_Name     : League.Strings.Universal_String
+      := League.Strings.Empty_Universal_String;
+      Anonym_Name      : League.Strings.Universal_String
+      := League.Strings.Empty_Universal_String;
+      Short_Ada_Type_Name : League.Strings.Universal_String
+      := League.Strings.Empty_Universal_String);
+
+   --------------------------
+   -- Traverse_Model_Group --
+   --------------------------
+
+   procedure Traverse_Model_Group
+     (XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+      Node_Vector    : in out Items;
+      Anonym_Prefix  : League.Strings.Universal_String)
+   is
+      XS_Particle : XML.Schema.Particles.XS_Particle;
+      XS_List     : constant XML.Schema.Object_Lists.XS_Object_List :=
+        XS_Model_Group.Get_Particles;
+   begin
+      for J in 1 .. XS_List.Get_Length loop
+         XS_Particle := XS_List.Item (J).To_Particle;
+
+         Traverse_Term
+           (XS_Term       => XS_Particle.Get_Term,
+            Node_Vector   => Node_Vector,
+            Anonym_Prefix => Anonym_Prefix,
+            Max_Occurs    => XS_Particle.Get_Max_Occurs,
+            Min_Occurs    => XS_Particle.Get_Min_Occurs);
+      end loop;
+   end Traverse_Model_Group;
+
+   -------------------------
    -- Create_Element_Node --
    -------------------------
 
@@ -234,7 +280,7 @@ package body XSD2Ada.Analyzer is
       Min_Occurs   : Natural;
       Max_Occurs   : XML.Schema.Particles.Unbounded_Natural;
       Element_Name : League.Strings.Universal_String
-        := League.Strings.Empty_Universal_String;
+      := League.Strings.Empty_Universal_String;
       Anonym_Name  : League.Strings.Universal_String
       := League.Strings.Empty_Universal_String;
       Short_Ada_Type_Name : League.Strings.Universal_String
@@ -359,60 +405,6 @@ package body XSD2Ada.Analyzer is
       return Self.Simple_Ada_Name;
    end Simple_Ada_Name;
 
-   -------------------------
-   -- Short_Ada_Type_Name --
-   -------------------------
-
-   function Short_Ada_Type_Name
-     (Self : Item) return League.Strings.Universal_String is
-   begin
-      return Self.Short_Ada_Type_Name;
-   end Short_Ada_Type_Name;
-
-   ---------------
-   -- Type_Name --
-   ---------------
-
-   function Type_Name
-     (Name : League.Strings.Universal_String)
-      return League.Strings.Universal_String is
-   begin
-      if Name.Slice (1, 9).To_Wide_Wide_String = "Optional_" then
-         return Name.Slice (10, Name.Length);
-
-      elsif Name.Ends_With ("_Vector") then
-         return Name.Slice (1, Name.Length - 7);
-
-      else
-         return Name;
-      end if;
-   end Type_Name;
-
-   --------------------------
-   -- Traverse_Model_Group --
-   --------------------------
-
-   procedure Traverse_Model_Group
-     (XS_Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
-      Node_Vector    : in out Items;
-      Anonym_Prefix  : League.Strings.Universal_String)
-   is
-      XS_Particle : XML.Schema.Particles.XS_Particle;
-      XS_List     : constant XML.Schema.Object_Lists.XS_Object_List :=
-        XS_Model_Group.Get_Particles;
-   begin
-      for J in 1 .. XS_List.Get_Length loop
-         XS_Particle := XS_List.Item (J).To_Particle;
-
-         Traverse_Term
-           (XS_Term       => XS_Particle.Get_Term,
-            Node_Vector   => Node_Vector,
-            Anonym_Prefix => Anonym_Prefix,
-            Max_Occurs    => XS_Particle.Get_Max_Occurs,
-            Min_Occurs    => XS_Particle.Get_Min_Occurs);
-      end loop;
-   end Traverse_Model_Group;
-
    ----------------
    -- Print_Term --
    ----------------
@@ -425,6 +417,8 @@ package body XSD2Ada.Analyzer is
       Min_Occurs    : Natural)
    is
       use type XML.Schema.Model_Groups.Compositor_Kinds;
+      use type XML.Schema.Objects.XS_Object;
+
       Decl        : XML.Schema.Element_Declarations.XS_Element_Declaration;
       Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
       Anonym_Name : League.Strings.Universal_String;
@@ -473,24 +467,13 @@ package body XSD2Ada.Analyzer is
                Anonym_Name         => Anonym_Name,
                Short_Ada_Type_Name => Anonym_Name);
          else
-            if Type_D.Is_Complex_Type_Definition then
-               Create_Node_Vector
-                 (Object              => Type_D,
-                  Node_Vector         => Node_Vector,
-                  Min_Occurs          => Min_Occurs,
-                  Max_Occurs          => Max_Occurs,
-                  Anonym_Name         => Anonym_Name,
-                  Short_Ada_Type_Name => Type_D.Get_Name);
-
-            elsif Type_D.Is_Simple_Type_Definition then
-              Create_Node_Vector
-                 (Object              => Type_D,
-                  Node_Vector         => Node_Vector,
-                  Min_Occurs          => Min_Occurs,
-                  Max_Occurs          => Max_Occurs,
-                  Anonym_Name         => Anonym_Name,
-                  Short_Ada_Type_Name => Decl.Get_Name);
-            end if;
+            Create_Node_Vector
+              (Object              => Type_D,
+               Node_Vector         => Node_Vector,
+               Min_Occurs          => Min_Occurs,
+               Max_Occurs          => Max_Occurs,
+               Anonym_Name         => Anonym_Name,
+               Short_Ada_Type_Name => Type_D.Get_Name);
          end if;
       end if;
    end Traverse_Term;
@@ -558,5 +541,24 @@ package body XSD2Ada.Analyzer is
    begin
       return Self.Object.To_Type_Definition;
    end Type_Def;
+
+   ---------------
+   -- Type_Name --
+   ---------------
+
+   function Type_Name
+     (Name : League.Strings.Universal_String)
+      return League.Strings.Universal_String is
+   begin
+      if Name.Slice (1, 9).To_Wide_Wide_String = "Optional_" then
+         return Name.Slice (10, Name.Length);
+
+      elsif Name.Ends_With ("_Vector") then
+         return Name.Slice (1, Name.Length - 7);
+
+      else
+         return Name;
+      end if;
+   end Type_Name;
 
 end XSD2Ada.Analyzer;

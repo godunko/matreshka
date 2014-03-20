@@ -68,7 +68,8 @@ package body XSD_To_Ada.Mappings is
             return "Payloads.Optional_"
               & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
          else
-            return "Payloads." & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
+            return "Payloads."
+              & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
          end if;
       end if;
    end Ada_Type_Qualified_Name;

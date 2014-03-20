@@ -46,7 +46,6 @@ with Ada.Wide_Wide_Text_IO;
 
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
-with XML.Schema.Model_Groups;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
@@ -86,6 +85,7 @@ package body XSD2Ada.Encoder is
       Min_Occurs   : Boolean;
       Max_Occurs   : Boolean)
    is
+      pragma Unreferenced (Base_Name);
       use League.Strings;
 
       Spaces_Count : constant Natural := 6;
@@ -489,11 +489,18 @@ package body XSD2Ada.Encoder is
         (XS_Term      : XML.Schema.Terms.XS_Term;
          Writer       : in out XSD_To_Ada.Writers.Writer;
          Writer_types : in out XSD_To_Ada.Writers.Writer;
+         Name         : League.Strings.Universal_String);
+
+      procedure Print_Element
+        (XS_Term      : XML.Schema.Terms.XS_Term;
+         Writer       : in out XSD_To_Ada.Writers.Writer;
+         Writer_types : in out XSD_To_Ada.Writers.Writer;
          Name         : League.Strings.Universal_String)
       is
-         Decl : XML.Schema.Element_Declarations.XS_Element_Declaration
+         pragma Unreferenced (Writer_types, Name);
+         Decl : constant XML.Schema.Element_Declarations.XS_Element_Declaration
            := XS_Term.To_Element_Declaration;
-         Type_D  : XML.Schema.Type_Definitions.XS_Type_Definition :=
+         Type_D  : constant XML.Schema.Type_Definitions.XS_Type_Definition :=
            Decl.Get_Type_Definition;
       begin
          if XS_Term.Is_Element_Declaration then
@@ -580,7 +587,8 @@ package body XSD2Ada.Encoder is
                else
                   if Model_Groups_Choice then
                      Writer.P
-                       ("      case Data." & Name & "." & Base_Name &".Kind is");
+                       ("      case Data."
+                        & Name & "." & Base_Name &".Kind is");
                   end if;
                end if;
 
@@ -627,12 +635,13 @@ package body XSD2Ada.Encoder is
 
       XS_Particle : XML.Schema.Particles.XS_Particle;
       XS_Term     : XML.Schema.Terms.XS_Term;
-      XS_Base     : XML.Schema.Type_Definitions.XS_Type_Definition
+      XS_Base     : constant XML.Schema.Type_Definitions.XS_Type_Definition
         := Type_D.Get_Base_Type;
       Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
 
-      CTD : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
-        := Type_D.To_Complex_Type_Definition;
+      CTD : constant
+        XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
+          := Type_D.To_Complex_Type_Definition;
 
       Top_Name : League.Strings.Universal_String;
    begin
@@ -702,7 +711,8 @@ package body XSD2Ada.Encoder is
                   then
                      Print_Model
                        (Model_Group  =>
-                          XS_Base.To_Complex_Type_Definition.Get_Particle.Get_Term.To_Model_Group,
+                          XS_Base.To_Complex_Type_Definition
+                        .Get_Particle.Get_Term.To_Model_Group,
                         Writer       => Writer,
                         Writer_types => Writer_types,
                         Name         =>
@@ -813,7 +823,7 @@ package body XSD2Ada.Encoder is
      (Name : League.Strings.Universal_String)
       return League.Strings.Universal_String
    is
-      N : League.String_Vectors.Universal_String_Vector :=
+      N : constant League.String_Vectors.Universal_String_Vector :=
         League.Strings.Split (Name, '_');
       Name_Without_Separators : League.Strings.Universal_String;
    begin

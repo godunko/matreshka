@@ -46,9 +46,7 @@ with League.String_Vectors;
 
 with XML.Schema.Models;
 with XML.Schema.Type_Definitions;
-with XML.Schema.Terms;
 
-with XSD2Ada.Analyzer;
 with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
 

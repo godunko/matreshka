@@ -47,11 +47,14 @@ with League.Characters;
 
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Element_Declarations;
-with XML.Schema.Model_Groups;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
 with XSD_To_Ada.Utils;
+--  with XML.Schema.Objects.Type_Definitions;
+--  with XML.Schema.Objects;
+with XML.Schema.Type_Definitions;
+with XML.Schema.Terms;
 
 package body XSD_To_Ada.Payloads is
 
@@ -60,6 +63,167 @@ package body XSD_To_Ada.Payloads is
    use all type League.Strings.Universal_String;
 
    LF : constant Wide_Wide_Character := Ada.Characters.Wide_Wide_Latin_1.LF;
+
+   -----------------
+   -- Print_Model --
+   -----------------
+
+   procedure Print_Model
+     (Model_Group  : XML.Schema.Model_Groups.XS_Model_Group;
+      Writer       : in out Writers.Writer;
+      Writer_types : in out Writers.Writer;
+      Name         : League.Strings.Universal_String;
+      Mapping      : XSD_To_Ada.Mappings.Mapping;
+      Choice       : Boolean := False)
+   is
+      use type XML.Schema.Model_Groups.Compositor_Kinds;
+
+      XS_List     : constant XML.Schema.Object_Lists.XS_Object_List
+        := Model_Group.Get_Particles;
+      XS_Particle : XML.Schema.Particles.XS_Particle;
+
+      Case_Type  : League.Strings.Universal_String;
+      Max_Occurs : Boolean := False;
+      Min_Occurs : Boolean := False;
+
+      procedure Print_Element
+        (XS_Term      : XML.Schema.Terms.XS_Term;
+         Writer       : in out Writers.Writer;
+         Writer_types : in out Writers.Writer;
+         Name         : League.Strings.Universal_String;
+         Map          : XSD_To_Ada.Mappings.Mapping);
+
+      procedure Print_Element
+        (XS_Term      : XML.Schema.Terms.XS_Term;
+         Writer       : in out Writers.Writer;
+         Writer_types : in out Writers.Writer;
+         Name         : League.Strings.Universal_String;
+         Map          : XSD_To_Ada.Mappings.Mapping)
+      is
+         pragma Unreferenced (Writer_types);
+         Decl      : constant
+           XML.Schema.Element_Declarations.XS_Element_Declaration
+             := XS_Term.To_Element_Declaration;
+         Type_Def  : constant XML.Schema.Type_Definitions.XS_Type_Definition
+           := Decl.Get_Type_Definition;
+         Type_Name : League.Strings.Universal_String;
+      begin
+
+         if Type_Def.Get_Name.Is_Empty then
+            if Name.To_Wide_Wide_String = "Transaction" then  -- FIX!!!
+               Type_Name.Append
+                 ("Payloads." &
+                    XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name));
+            else
+               Type_Name.Append
+                 (Name & "_"
+                  & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
+                  & "_Anonym");
+            end if;
+
+            if Min_Occurs
+              and then not Max_Occurs
+            then
+               Type_Name := "Payloads.Optional_"
+                 & XSD_To_Ada.Utils.Add_Separator (Type_Name);
+
+            elsif Max_Occurs then
+               Type_Name := "Payloads."
+                 & XSD_To_Ada.Utils.Add_Separator (Type_Name)
+                 & "_Vector";
+            end if;
+
+         else
+            Type_Name := Map.Ada_Type_Qualified_Name
+              (Type_Def.Get_Name,
+               Min_Occurs,
+               Max_Occurs);
+         end if;
+
+         if Choice then
+            Case_Type.Append
+              (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name) & "_Case");
+
+            Writers.P (Writer,
+                       "         when "
+                       & XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name)
+                       & "_Case =>" & LF
+                       & XSD_To_Ada.Utils.Split_Line
+                         (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name)
+                          & " : " & Type_Name & ";", 11));
+         else
+            if Type_Def.Is_Simple_Type_Definition
+              and then Min_Occurs
+            then
+               Type_Name := "Payloads.Optional_"
+                 & XSD_To_Ada.Utils.Add_Separator (Type_Def.Get_Name);
+
+            elsif Type_Def.Is_Simple_Type_Definition
+              and then Max_Occurs
+            then
+               Type_Name := "Payloads."
+                 & XSD_To_Ada.Utils.Add_Separator (Type_Def.Get_Name)
+                 & "_Vector.Vector";
+            end if;
+
+            Writers.P (Writer,
+                       XSD_To_Ada.Utils.Split_Line
+                         (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name)
+                          & " : " & Type_Name & ";", 6));
+         end if;
+      end Print_Element;
+
+   begin
+      if Choice then
+         Case_Type.Append
+           ("   type "
+            & Name
+            & "_Kind is" & LF & "     (");
+      end if;
+
+      for J in 1 .. XS_List.Get_Length loop
+
+         Min_Occurs := False;
+         Max_Occurs := False;
+
+         XS_Particle := XS_List.Item (J).To_Particle;
+
+         if XS_Particle.Get_Max_Occurs.Unbounded then
+            Max_Occurs := True;
+         else
+            if XS_Particle.Get_Max_Occurs.Value > 1 then
+               Max_Occurs := True;
+            end if;
+         end if;
+
+         if XS_Particle.Get_Min_Occurs = 0 then
+            Min_Occurs := True;
+         end if;
+
+         if XS_Particle.Get_Term.Is_Element_Declaration then
+            Print_Element
+              (XS_Particle.Get_Term,
+               Writer,
+               Writer_types,
+               Name,
+               Mapping);
+         else
+            Writers.P
+              (Writer,
+               "      " & Name & LF
+               & "        : " & Name & "_Case_Anonym;");
+         end if;
+
+         if J /= XS_List.Get_Length and Choice then
+            Case_Type.Append ("," & LF & "      ");
+         end if;
+      end loop;
+
+      if Choice then
+         Case_Type.Append (");" & LF);
+         Writer_types.P (Case_Type);
+      end if;
+   end Print_Model;
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -88,15 +252,14 @@ package body XSD_To_Ada.Payloads is
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
 
-      Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Base     : XML.Schema.Type_Definitions.XS_Type_Definition;
-      XS_Term     : XML.Schema.Terms.XS_Term;
-      CTD     : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition;
       Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
 
       Type_Name : League.Strings.Universal_String;
 
    begin
+
+      Payloads_Node_Vector := Node_Vector;
+
       for Current of Node_Vector loop
 
          if Current.Object.Is_Type_Definition then
@@ -156,160 +319,6 @@ package body XSD_To_Ada.Payloads is
       end loop;
    end Print_Payloads;
 
-   -----------------
-   -- Print_Model --
-   -----------------
-
-   procedure Print_Model
-     (Model_Group  : XML.Schema.Model_Groups.XS_Model_Group;
-      Writer       : in out Writers.Writer;
-      Writer_types : in out Writers.Writer;
-      Name         : League.Strings.Universal_String;
-      Mapping      : XSD_To_Ada.Mappings.Mapping;
-      Choice       : Boolean := False)
-   is
-      use type XML.Schema.Model_Groups.Compositor_Kinds;
-
-      XS_List        : XML.Schema.Object_Lists.XS_Object_List;
-      XS_Particle    : XML.Schema.Particles.XS_Particle;
-
-      Case_Type : League.Strings.Universal_String;
-      Max_Occurs : Boolean := False;
-      Min_Occurs : Boolean := False;
-
-      procedure Print_Element
-        (XS_Term      : XML.Schema.Terms.XS_Term;
-         Writer       : in out Writers.Writer;
-         Writer_types : in out Writers.Writer;
-         Name         : League.Strings.Universal_String;
-         Map          : XSD_To_Ada.Mappings.Mapping)
-      is
-         Decl      : XML.Schema.Element_Declarations.XS_Element_Declaration
-           := XS_Term.To_Element_Declaration;
-         Type_Def  : XML.Schema.Type_Definitions.XS_Type_Definition
-           := Decl.Get_Type_Definition;
-         Type_Name : League.Strings.Universal_String;
-      begin
-
-         if Type_Def.Get_Name.Is_Empty then
-
-            if Name.To_Wide_Wide_String = "Transaction" then  -- FIX!!!
-               Type_Name.Append
-                 ("Payloads." &
-                    XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name));
-            else
-               Type_Name.Append
-                 (Name & "_"
-                  & XSD_To_Ada.Utils.Add_Separator (XS_Term.Get_Name)
-                  & "_Anonym");
-            end if;
-
-            if Min_Occurs
-              and then not Max_Occurs
-            then
-               Type_Name := "Payloads.Optional_"
-                 & XSD_To_Ada.Utils.Add_Separator (Type_Name);
-
-            elsif Max_Occurs then
-               Type_Name := "Payloads."
-                 & XSD_To_Ada.Utils.Add_Separator (Type_Name)
-                 & "_Vector";
-            end if;
-
-         else
-            Type_Name := Map.Ada_Type_Qualified_Name
-              (Type_Def.Get_Name,
-               Min_Occurs,
-               Max_Occurs);
-         end if;
-
-         if Choice then
-            Case_Type.Append
-              (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name) & "_Case");
-
-            Writers.P (Writer,
-                       "         when "
-                       & XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name)
-                       & "_Case =>" & LF
-                       & XSD_To_Ada.Utils.Split_Line
-                         (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name)
-                          & " : " & Type_Name & ";", 11));
-         else
-            if Type_Def.Is_Simple_Type_Definition
-              and then Min_Occurs
-            then
-               Type_Name := "Payloads.Optional_"
-                 & XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name);
-
-            elsif Type_Def.Is_Simple_Type_Definition
-              and then Max_Occurs
-            then
-               Type_Name := "Payloads."
-                 & XSD_To_Ada.Utils.Add_Separator (Type_Def.Get_Name)
-                 & "_Vector.Vector";
-            end if;
-
-            Writers.P (Writer,
-                       XSD_To_Ada.Utils.Split_Line
-                         (XSD_To_Ada.Utils.Add_Separator (Decl.Get_Name)
-                          & " : " & Type_Name & ";", 6));
-         end if;
-      end Print_Element;
-
-   begin
-      XS_List := Model_Group.Get_Particles;
-
-      if Choice then
-         Case_Type.Append
-           ("   type "
-            & Name
-            & "_Kind is" & LF & "     (");
-      end if;
-
-      for J in 1 .. XS_List.Get_Length loop
-
-         Max_Occurs := False;
-         Min_Occurs := False;
-
-         XS_Particle := XS_List.Item (J).To_Particle;
-
-         if XS_Particle.Get_Max_Occurs.Unbounded then
-            Max_Occurs := True;
-         else
-            if XS_Particle.Get_Max_Occurs.Value > 1 then
-               Max_Occurs := True;
-            end if;
-         end if;
-
-         if XS_Particle.Get_Min_Occurs = 0 then
-            Min_Occurs := True;
-         end if;
-
-         if XS_Particle.Get_Term.Is_Element_Declaration then
-            Print_Element
-              (XS_Particle.Get_Term,
-               Writer,
-               Writer_types,
-               Name,
-               Mapping);
-         else
-            Writers.P
-              (Writer,
-               "      " & Name & LF
-               &"        : " & Name & "_Case_Anonym;");
-         end if;
-
-         if J /= XS_List.Get_Length and Choice then
-            Case_Type.Append ("," & LF & "      ");
-         end if;
-      end loop;
-
-      if Choice then
-         Case_Type.Append (");" & LF);
-         Writer_types.P (Case_Type);
-      end if;
-   end Print_Model;
-
    ---------------------------
    -- Print_Type_Definition --
    ---------------------------
@@ -330,12 +339,13 @@ package body XSD_To_Ada.Payloads is
 
       XS_Particle    : XML.Schema.Particles.XS_Particle;
       XS_Term        : XML.Schema.Terms.XS_Term;
-      XS_Base        : XML.Schema.Type_Definitions.XS_Type_Definition
+      XS_Base        : constant XML.Schema.Type_Definitions.XS_Type_Definition
         := Type_D.Get_Base_Type;
       Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
 
-      CTD  : XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
-        := Type_D.To_Complex_Type_Definition;
+      CTD  : constant
+        XML.Schema.Complex_Type_Definitions.XS_Complex_Type_Definition
+          := Type_D.To_Complex_Type_Definition;
 
       Base_Type : League.Strings.Universal_String;
 
@@ -389,8 +399,8 @@ package body XSD_To_Ada.Payloads is
                      & "_Kind'First) is record" & LF
                      & "       case Kind is");
 
-               elsif (XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-                      or Name.Ends_With ("Response"))
+               elsif XSD_To_Ada.Utils.Has_Element_Session (Type_D)
+                      or Name.Ends_With ("Response")
                then
                   Writer_types.P
                     ("   type "
