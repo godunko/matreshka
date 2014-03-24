@@ -400,7 +400,9 @@ package body XSD_To_Ada.Payloads is
                      & "       case Kind is");
 
                elsif XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-                      or Name.Ends_With ("Response")
+                 or Name.Ends_With ("Response")
+                 or Name.To_Wide_Wide_String = "Open_Session"
+                 or Name.To_Wide_Wide_String = "Open_Session2"
                then
                   Writer_types.P
                     ("   type "
@@ -440,7 +442,10 @@ package body XSD_To_Ada.Payloads is
 
                Writer.P ("   end record;" & LF);
 
-               if Name.Ends_With ("Response") then
+               if Name.Ends_With ("Response")
+                 or Name.To_Wide_Wide_String = "Open_Session"
+                 or Name.To_Wide_Wide_String = "Open_Session2"
+               then
                   XSD_To_Ada.Utils.Gen_Access_Type (Writer, (Name));
                end if;
 

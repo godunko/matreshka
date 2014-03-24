@@ -698,6 +698,8 @@ package body XSD2Ada.Encoder is
 
                elsif Name.Ends_With ("Response")
                  or XSD_To_Ada.Utils.Has_Element_Session (Type_D)
+                 or Name.To_Wide_Wide_String = "Open_Session"
+                 or Name.To_Wide_Wide_String = "Open_Session2"
                then
 
                   Generate_Overriding_Procedure_Encode_Header

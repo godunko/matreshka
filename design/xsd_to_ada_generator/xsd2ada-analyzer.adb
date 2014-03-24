@@ -264,9 +264,13 @@ package body XSD2Ada.Analyzer is
              Namespace   => XSD_To_Ada.Utils.Namespace);
    begin
       for J in 1 .. Element_Declarations.Length loop
-         Create_Element_Node
-           (Element_Declarations.Item (J).To_Element_Declaration,
-            Node_Vector);
+         if Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String
+           /= "Transaction"
+           then
+            Create_Element_Node
+              (Element_Declarations.Item (J).To_Element_Declaration,
+               Node_Vector);
+         end if;
       end loop;
    end Create_Element_Nodes;
 
