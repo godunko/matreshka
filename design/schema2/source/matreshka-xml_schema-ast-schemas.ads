@@ -62,7 +62,6 @@ package Matreshka.XML_Schema.AST.Schemas is
    type Final_Flags is array (Final_Kinds) of Boolean;
 
    type Include_Information is record
-      Base_URI : League.Strings.Universal_String;
       Location : League.Strings.Universal_String;
       Schema   : Schema_Access;
    end record;

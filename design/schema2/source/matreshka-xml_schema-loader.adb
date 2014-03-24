@@ -41,9 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Vectors;
-
-with League.Strings;
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
 
@@ -51,14 +48,6 @@ with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.Document_Parsers;
 
 package body Matreshka.XML_Schema.Loader is
-
-   type Schema_Document_Information is record
-      Location : League.Strings.Universal_String;
-      Schema   : Matreshka.XML_Schema.AST.Schema_Access;
-   end record;
-
-   package Schema_Document_Vectors is
-     new Ada.Containers.Vectors (Positive, Schema_Document_Information);
 
    ---------------------------
    -- Load_XML_Schema_Model --
@@ -70,18 +59,40 @@ package body Matreshka.XML_Schema.Loader is
        not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class)
          return not null Matreshka.XML_Schema.AST.Model_Access
    is
-      Model  : constant Matreshka.XML_Schema.AST.Model_Access
+      use type Matreshka.XML_Schema.AST.Schema_Access;
+
+      Model    : constant Matreshka.XML_Schema.AST.Model_Access
         := new Matreshka.XML_Schema.AST.Models.Model_Node;
-      Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Reader : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-      Parser :
+      Input    : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Reader   : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Parser   :
         aliased Matreshka.XML_Schema.Document_Parsers.Document_Parser (Model);
+      Location : League.Strings.Universal_String;
 
    begin
       Reader.Set_Content_Handler (Parser'Unchecked_Access);
       Reader.Set_Error_Handler (Error_Handler);
       Input.Open_By_File_Name (File_Name);
       Reader.Parse (Input'Unchecked_Access);
+      Input.Close;
+
+      loop
+         Location.Clear;
+
+         for Item of Model.Schema_Documents loop
+            if Item.Schema = null then
+               Location := Item.Location;
+
+               exit;
+            end if;
+         end loop;
+
+         exit when Location.Is_Empty;
+
+         Input.Open_By_URI (Location);
+         Reader.Parse (Input'Unchecked_Access);
+         Input.Close;
+      end loop;
 
       return Model;
    end Load_XML_Schema_Model;

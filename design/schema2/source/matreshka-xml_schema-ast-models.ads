@@ -43,16 +43,28 @@
 ------------------------------------------------------------------------------
 --  Model represents set of processed schema documents.
 ------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
+
+with League.Strings;
+
 with XML.Schema.Models;
 
 package Matreshka.XML_Schema.AST.Models is
 
    pragma Preelaborate;
 
+   type Schema_Document_Information is record
+      Location : League.Strings.Universal_String;
+      Schema   : Matreshka.XML_Schema.AST.Schema_Access;
+   end record;
+
+   package Schema_Document_Vectors is
+     new Ada.Containers.Vectors (Positive, Schema_Document_Information);
+
    type Model_Node is new Abstract_Node
      and XML.Schema.Models.XS_Model with
    record
-      null;
+      Schema_Documents : Schema_Document_Vectors.Vector;
    end record;
 
 end Matreshka.XML_Schema.AST.Models;

@@ -41,8 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.IRIs;
 with League.String_Vectors;
 
+with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Schemas;
 
 package body Matreshka.XML_Schema.Document_Parsers is
@@ -133,6 +135,17 @@ package body Matreshka.XML_Schema.Document_Parsers is
      Text    : Wide_Wide_String;
      Success : in out Boolean);
    --  Reports fatal error. Sets Success to False.
+
+   procedure Register_Schema_Document
+    (Model    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Location : League.Strings.Universal_String;
+     Schema   : not null Matreshka.XML_Schema.AST.Schema_Access);
+   --  Register schema document in the set of processed schema documents.
+
+   procedure Register_Schema_Document
+    (Model    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Location : League.Strings.Universal_String);
+   --  Register schema document in the set of processed schema documents.
 
    -----------------
    -- End_Element --
@@ -231,6 +244,43 @@ package body Matreshka.XML_Schema.Document_Parsers is
       Self.Current := (State => Schema);
    end Push_Schema;
 
+   ------------------------------
+   -- Register_Schema_Document --
+   ------------------------------
+
+   procedure Register_Schema_Document
+    (Model    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Location : League.Strings.Universal_String) is
+   begin
+      for Item of Model.Schema_Documents loop
+         if Item.Location = Location then
+            return;
+         end if;
+      end loop;
+
+      Model.Schema_Documents.Append ((Location, null));
+   end Register_Schema_Document;
+
+   ------------------------------
+   -- Register_Schema_Document --
+   ------------------------------
+
+   procedure Register_Schema_Document
+    (Model    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Location : League.Strings.Universal_String;
+     Schema   : not null Matreshka.XML_Schema.AST.Schema_Access) is
+   begin
+      for Item of Model.Schema_Documents loop
+         if Item.Location = Location then
+            Item.Schema := Schema;
+
+            return;
+         end if;
+      end loop;
+
+      Model.Schema_Documents.Append ((Location, Schema));
+   end Register_Schema_Document;
+
    --------------------------
    -- Set_Document_Locator --
    --------------------------
@@ -249,13 +299,18 @@ package body Matreshka.XML_Schema.Document_Parsers is
    procedure Start_Include_Element
     (Self       : in out Document_Parser'Class;
      Attributes : XML.SAX.Attributes.SAX_Attributes;
-     Success    : in out Boolean) is
+     Success    : in out Boolean)
+   is
+      Location : constant League.Strings.Universal_String
+        := Self.Locator.Base_URI.Resolve
+            (League.IRIs.From_Universal_String
+              (Attributes.Value
+                (Schema_Location_Attribute))).To_Universal_String;
+
    begin
       Self.Push_Include;
-      Self.Schema.Includes.Append
-       ((Self.Locator.Base_URI.To_Universal_String,
-         Attributes.Value (Schema_Location_Attribute),
-         null));
+      Self.Schema.Includes.Append ((Location, null));
+      Register_Schema_Document (Self.Model, Location);
    end Start_Include_Element;
 
    -------------------
@@ -358,6 +413,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
    begin
       Self.Push_Schema;
       Self.Schema := new Matreshka.XML_Schema.AST.Schemas.Schema_Node;
+      Register_Schema_Document (Self.Model, Self.Locator.System_Id, Self.Schema);
 
       --  Process 'attributeFormDefault' attribute.
 
