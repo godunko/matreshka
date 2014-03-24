@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Simple_Readers;
+with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
+with Ada.Directories;
 
 package body XSD_To_Ada.Mappings.XML is
 
@@ -86,7 +88,7 @@ package body XSD_To_Ada.Mappings.XML is
 
    function Read_Mapping
     (File_Name : League.Strings.Universal_String)
-       return XSD_To_Ada.Mappings.XML.Mapping_XML
+     return XSD_To_Ada.Mappings.XML.Mapping_XML
    is
       Source  : aliased
         Standard.XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
@@ -100,6 +102,27 @@ package body XSD_To_Ada.Mappings.XML is
 
       return Handler;
    end Read_Mapping;
+
+   ------------------------
+   -- Read_Payload_Types --
+   ------------------------
+
+   procedure Read_Payload_Types (File_Path : String)
+   is
+      Input_File : Ada.Wide_Wide_Text_IO.File_Type;
+   begin
+      if Ada.Directories.Exists (File_Path) then
+         Ada.Wide_Wide_Text_IO.Open
+           (Input_File, In_File, File_Path);
+
+         while not End_Of_File (Input_File) loop
+            Payload_Types.Append
+              (League.Strings.To_Universal_String (Get_Line (Input_File)));
+         end loop;
+      else
+         raise Constraint_Error with "File " & File_Path & "dosen't exist";
+      end if;
+   end Read_Payload_Types;
 
    -------------------
    -- Start_Element --

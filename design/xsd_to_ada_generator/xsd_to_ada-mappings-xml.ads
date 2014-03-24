@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
+with League.String_Vectors;
 
 private with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
@@ -51,9 +52,13 @@ package XSD_To_Ada.Mappings.XML is
    type Mapping_XML is new XSD_To_Ada.Mappings.Mapping
      and Standard.XML.SAX.Content_Handlers.SAX_Content_Handler with private;
 
+   Payload_Types : League.String_Vectors.Universal_String_Vector;
+
    function Read_Mapping
     (File_Name : League.Strings.Universal_String)
        return XSD_To_Ada.Mappings.XML.Mapping_XML;
+
+   procedure Read_Payload_Types (File_Path : String);
 
 private
 
