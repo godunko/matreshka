@@ -41,107 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides schema document parser. It receives SAX events from
---  XML reader and constructs AST of schema document.
+--  This package provides subprogram to load XML Schemas.
 ------------------------------------------------------------------------------
-private with Ada.Containers.Vectors;
-
-private with League.Strings;
-private with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
-private with XML.SAX.Locators;
+with League.Strings;
+with XML.SAX.Error_Handlers;
 
 with Matreshka.XML_Schema.AST;
 
-package Matreshka.XML_Schema.Document_Parsers is
+package Matreshka.XML_Schema.Loader is
 
-   type Document_Parser
-         (Model : not null Matreshka.XML_Schema.AST.Model_Access) is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with private;
+   function Load_XML_Schema_Model
+    (File_Name     : League.Strings.Universal_String;
+     Error_Handler :
+       not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class)
+         return not null Matreshka.XML_Schema.AST.Model_Access;
 
-   function Get_Schema
-    (Self : Document_Parser'Class)
-       return Matreshka.XML_Schema.AST.Schema_Access;
-
-private
-
-   type State_Kinds is
-    (Initial,
-     Schema,
-     Ignore,
-     Include);
-
-   type State_Information (State : State_Kinds := Initial) is record
-      case State is
-         when Initial =>
-            null;
-
-         when Ignore =>
-            Depth : Natural := 1;
-
-         when Include =>
-            null;
-
-         when Schema =>
-            null;
-      end case;
-   end record;
-
-   package State_Vectors is
-     new Ada.Containers.Vectors (Positive, State_Information);
-
-   type Document_Parser
-         (Model : not null Matreshka.XML_Schema.AST.Model_Access) is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with
-   record
-      Locator   : XML.SAX.Locators.SAX_Locator;
-      Diagnosis : League.Strings.Universal_String;
-      Schema    : Matreshka.XML_Schema.AST.Schema_Access;
-      Current   : State_Information;
-      Stack     : State_Vectors.Vector;
-   end record;
-
-   overriding procedure Characters
-    (Self    : in out Document_Parser;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean) is null;
-
-   overriding procedure End_Element
-    (Self           : in out Document_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
-
-   overriding procedure End_Prefix_Mapping
-    (Self    : in out Document_Parser;
-     Prefix  : League.Strings.Universal_String;
-     Success : in out Boolean) is null;
-
-   overriding function Error_String
-    (Self : Document_Parser) return League.Strings.Universal_String;
-
-   overriding procedure Ignorable_Whitespace
-    (Self    : in out Document_Parser;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean) renames Characters;
-
-   overriding procedure Set_Document_Locator
-    (Self    : in out Document_Parser;
-     Locator : XML.SAX.Locators.SAX_Locator);
-
-   overriding procedure Start_Element
-    (Self           : in out Document_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
-
-   overriding procedure Start_Prefix_Mapping
-    (Self          : in out Document_Parser;
-     Prefix        : League.Strings.Universal_String;
-     Namespace_URI : League.Strings.Universal_String;
-     Success       : in out Boolean) is null;
-
-end Matreshka.XML_Schema.Document_Parsers;
+end Matreshka.XML_Schema.Loader;

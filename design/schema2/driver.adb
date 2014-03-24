@@ -3,11 +3,10 @@ with Ada.Wide_Wide_Text_IO;
 with League.Application;
 with League.Strings;
 with XML.SAX.Error_Handlers;
-with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Parse_Exceptions;
-with XML.SAX.Simple_Readers;
 
-with Matreshka.XML_Schema.Document_Parsers;
+with Matreshka.XML_Schema.AST;
+with Matreshka.XML_Schema.Loader;
 
 procedure Driver is
 
@@ -115,14 +114,11 @@ procedure Driver is
           & Occurrence.Message.To_Wide_Wide_String);
    end Warning;
 
-   Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-   Reader : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
-   Parser : aliased Matreshka.XML_Schema.Document_Parsers.Document_Parser;
    ErrorH : aliased Error_Handler;
+   Model  : Matreshka.XML_Schema.AST.Model_Access;
 
 begin
-   Reader.Set_Content_Handler (Parser'Unchecked_Access);
-   Reader.Set_Error_Handler (ErrorH'Unchecked_Access);
-   Input.Open_By_File_Name (League.Application.Arguments.Element (1));
-   Reader.Parse (Input'Unchecked_Access);
+   Model :=
+     Matreshka.XML_Schema.Loader.Load_XML_Schema_Model
+      (League.Application.Arguments.Element (1), ErrorH'Unchecked_Access);
 end Driver;

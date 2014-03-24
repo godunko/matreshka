@@ -41,11 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Model represents set of processed schema documents.
+------------------------------------------------------------------------------
 
 package Matreshka.XML_Schema.AST.Models is
 
    pragma Preelaborate;
 
-   type Model_Node is new Abstract_Node with null record;
+   type Model_Node is new Abstract_Node with record
+      null;
+   end record;
 
 end Matreshka.XML_Schema.AST.Models;
