@@ -41,18 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Model represents set of processed schema documents.
-------------------------------------------------------------------------------
-with XML.Schema.Models;
 
-package Matreshka.XML_Schema.AST.Models is
+package XML.Schema.Models is
 
    pragma Preelaborate;
 
-   type Model_Node is new Abstract_Node
-     and XML.Schema.Models.XS_Model with
-   record
-      null;
-   end record;
+   type XS_Model is limited interface;
 
-end Matreshka.XML_Schema.AST.Models;
+end XML.Schema.Models;
