@@ -41,57 +41,71 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with Matreshka.XML_Schema.Visitors;
 
-limited with Matreshka.XML_Schema.AST.Models;
-limited with Matreshka.XML_Schema.AST.Namespaces;
-limited with Matreshka.XML_Schema.AST.Schemas;
-limited with Matreshka.XML_Schema.AST.Simple;
-limited with Matreshka.XML_Schema.Visitors;
+package body Matreshka.XML_Schema.AST.Simple is
 
-package Matreshka.XML_Schema.AST is
+   ------------------
+   -- Constructors --
+   ------------------
 
-   pragma Preelaborate;
+   package body Constructors is
 
-   type Model_Access is
-     access all Matreshka.XML_Schema.AST.Models.Model_Node'Class;
-   type Namespace_Access is
-     access all Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'Class;
-   type Schema_Access is
-     access all Matreshka.XML_Schema.AST.Schemas.Schema_Node'Class;
-   type Simple_Type_Access is
-     access all Matreshka.XML_Schema.AST.Simple.Simple_Type_Node'Class;
+      ------------
+      -- Create --
+      ------------
 
-   -------------------
-   -- Abstract_Node --
-   -------------------
+      function Create
+       (Locator : XML.SAX.Locators.SAX_Locator'Class)
+          return not null Matreshka.XML_Schema.AST.Simple_Type_Access is
+      begin
+         return
+           new Simple_Type_Node'
+                (System_Id => Locator.System_Id,
+                 Line      => Locator.Line,
+                 Column    => Locator.Column);
+      end Create;
 
-   type Abstract_Node is abstract tagged record
-      System_Id : League.Strings.Universal_String;
-      Line      : Natural := 0;
-      Column    : Natural := 0;
-   end record;
+   end Constructors;
 
-   not overriding procedure Enter_Node
-    (Self    : not null access Abstract_Node;
+   ----------------
+   -- Enter_Node --
+   ----------------
+
+   overriding procedure Enter_Node
+    (Self    : not null access Simple_Type_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
-       is abstract;
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Simple_Type
+       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
+   end Enter_Node;
 
-   not overriding procedure Leave_Node
-    (Self    : not null access Abstract_Node;
+   ----------------
+   -- Leave_Node --
+   ----------------
+
+   overriding procedure Leave_Node
+    (Self    : not null access Simple_Type_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
-       is abstract;
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Simple_Type
+       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
+   end Leave_Node;
 
-   not overriding procedure Visit_Node
-    (Self     : not null access Abstract_Node;
+   ----------------
+   -- Visit_Node --
+   ----------------
+
+   overriding procedure Visit_Node
+    (Self     : not null access Simple_Type_Node;
      Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
      Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
-       is abstract;
-   --  Dispatch call to corresponding subprogram of iterator interface.
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Simple_Type
+       (Visitor, Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
+   end Visit_Node;
 
-end Matreshka.XML_Schema.AST;
+end Matreshka.XML_Schema.AST.Simple;

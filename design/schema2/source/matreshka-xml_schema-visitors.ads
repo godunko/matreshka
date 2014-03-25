@@ -89,6 +89,16 @@ package Matreshka.XML_Schema.Visitors is
      Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
+   not overriding procedure Enter_Simple_Type
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Simple_Type
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
    -----------------------
    -- Abstract_Iterator --
    -----------------------
@@ -111,6 +121,12 @@ package Matreshka.XML_Schema.Visitors is
     (Self    : in out Abstract_Iterator;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Simple_Type
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Node    : not null Matreshka.XML_Schema.AST.Simple_Type_Access;
      Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
 end Matreshka.XML_Schema.Visitors;

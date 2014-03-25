@@ -41,57 +41,43 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+--  This package provides node for simple type definition.
+------------------------------------------------------------------------------
+with XML.SAX.Locators;
 
-limited with Matreshka.XML_Schema.AST.Models;
-limited with Matreshka.XML_Schema.AST.Namespaces;
-limited with Matreshka.XML_Schema.AST.Schemas;
-limited with Matreshka.XML_Schema.AST.Simple;
-limited with Matreshka.XML_Schema.Visitors;
-
-package Matreshka.XML_Schema.AST is
+package Matreshka.XML_Schema.AST.Simple is
 
    pragma Preelaborate;
 
-   type Model_Access is
-     access all Matreshka.XML_Schema.AST.Models.Model_Node'Class;
-   type Namespace_Access is
-     access all Matreshka.XML_Schema.AST.Namespaces.Namespace_Node'Class;
-   type Schema_Access is
-     access all Matreshka.XML_Schema.AST.Schemas.Schema_Node'Class;
-   type Simple_Type_Access is
-     access all Matreshka.XML_Schema.AST.Simple.Simple_Type_Node'Class;
-
-   -------------------
-   -- Abstract_Node --
-   -------------------
-
-   type Abstract_Node is abstract tagged record
-      System_Id : League.Strings.Universal_String;
-      Line      : Natural := 0;
-      Column    : Natural := 0;
+   type Simple_Type_Node is new Abstract_Node with record
+      null;
    end record;
 
-   not overriding procedure Enter_Node
-    (Self    : not null access Abstract_Node;
+   overriding procedure Enter_Node
+    (Self    : not null access Simple_Type_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
-       is abstract;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   not overriding procedure Leave_Node
-    (Self    : not null access Abstract_Node;
+   overriding procedure Leave_Node
+    (Self    : not null access Simple_Type_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
-       is abstract;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of visitor interface.
 
-   not overriding procedure Visit_Node
-    (Self     : not null access Abstract_Node;
+   overriding procedure Visit_Node
+    (Self     : not null access Simple_Type_Node;
      Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
      Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
-       is abstract;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
-end Matreshka.XML_Schema.AST;
+   package Constructors is
+
+      function Create
+       (Locator : XML.SAX.Locators.SAX_Locator'Class)
+          return not null Matreshka.XML_Schema.AST.Simple_Type_Access;
+
+   end Constructors;
+
+end Matreshka.XML_Schema.AST.Simple;
