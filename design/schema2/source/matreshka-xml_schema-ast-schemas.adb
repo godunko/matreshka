@@ -41,61 +41,48 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Schema_Node represents single schema document.
-------------------------------------------------------------------------------
-with Ada.Containers.Vectors;
+with Matreshka.XML_Schema.Visitors;
 
-with League.Strings;
+package body Matreshka.XML_Schema.AST.Schemas is
 
-package Matreshka.XML_Schema.AST.Schemas is
-
-   pragma Preelaborate;
-
-   type Form_Kinds is (Qualified, Unqualified);
-
-   type Block_Kinds is (Extension, Restriction, Substitution);
-
-   type Block_Flags is array (Block_Kinds) of Boolean;
-
-   type Final_Kinds is (Extension, Restriction, List, Union);
-
-   type Final_Flags is array (Final_Kinds) of Boolean;
-
-   type Include_Information is record
-      Location : League.Strings.Universal_String;
-      Schema   : Schema_Access;
-   end record;
-
-   package Include_Vectors is
-     new Ada.Containers.Vectors (Positive, Include_Information);
-
-   type Schema_Node is new Abstract_Node with record
-      Includes                 : Include_Vectors.Vector;
-      Attribute_Form_Default   : Form_Kinds := Unqualified;
-      Element_Form_Default     : Form_Kinds := Unqualified;
-      Block_Default            : Block_Flags := (others => False);
-      Final_Default            : Final_Flags := (others => False);
-      Target_Namespace         : League.Strings.Universal_String;
-      Target_Namespace_Defined : Boolean := False;
-   end record;
+   ----------------
+   -- Enter_Node --
+   ----------------
 
    overriding procedure Enter_Node
     (Self    : not null access Schema_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Enter_Schema
+       (Matreshka.XML_Schema.AST.Schema_Access (Self), Control);
+   end Enter_Node;
+
+   ----------------
+   -- Leave_Node --
+   ----------------
 
    overriding procedure Leave_Node
     (Self    : not null access Schema_Node;
      Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Visitor.Leave_Schema
+       (Matreshka.XML_Schema.AST.Schema_Access (Self), Control);
+   end Leave_Node;
+
+   ----------------
+   -- Visit_Node --
+   ----------------
 
    overriding procedure Visit_Node
     (Self     : not null access Schema_Node;
      Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
      Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
+   begin
+      Iterator.Visit_Schema
+       (Visitor, Matreshka.XML_Schema.AST.Schema_Access (Self), Control);
+   end Visit_Node;
 
 end Matreshka.XML_Schema.AST.Schemas;

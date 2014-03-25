@@ -44,6 +44,7 @@
 limited with Matreshka.XML_Schema.AST.Models;
 limited with Matreshka.XML_Schema.AST.Namespaces;
 limited with Matreshka.XML_Schema.AST.Schemas;
+limited with Matreshka.XML_Schema.Visitors;
 
 package Matreshka.XML_Schema.AST is
 
@@ -57,5 +58,27 @@ package Matreshka.XML_Schema.AST is
      access all Matreshka.XML_Schema.AST.Schemas.Schema_Node'Class;
 
    type Abstract_Node is abstract tagged null record;
+
+   not overriding procedure Enter_Node
+    (Self    : not null access Abstract_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
+       is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   not overriding procedure Leave_Node
+    (Self    : not null access Abstract_Node;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
+       is abstract;
+   --  Dispatch call to corresponding subprogram of visitor interface.
+
+   not overriding procedure Visit_Node
+    (Self     : not null access Abstract_Node;
+     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
+     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control)
+       is abstract;
+   --  Dispatch call to corresponding subprogram of iterator interface.
 
 end Matreshka.XML_Schema.AST;

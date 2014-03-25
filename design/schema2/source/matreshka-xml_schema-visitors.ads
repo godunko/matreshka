@@ -41,13 +41,76 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST;
 
 package Matreshka.XML_Schema.Visitors is
 
    pragma Preelaborate;
 
+   type Traverse_Control is
+    (Continue,
+     Abandon_Children,
+     Abandon_Sibling,
+     Terminate_Immediately);
+
+   ----------------------
+   -- Abstract_Visitor --
+   ----------------------
+
    type Abstract_Visitor is limited interface;
 
+   not overriding procedure Enter_Model
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Model
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Namespace
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Namespace
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Enter_Schema
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Leave_Schema
+    (Self    : in out Abstract_Visitor;
+     Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   -----------------------
+   -- Abstract_Iterator --
+   -----------------------
+
    type Abstract_Iterator is limited interface;
+
+   not overriding procedure Visit_Model
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Node    : not null Matreshka.XML_Schema.AST.Model_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Namespace
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Node    : not null Matreshka.XML_Schema.AST.Namespace_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
+
+   not overriding procedure Visit_Schema
+    (Self    : in out Abstract_Iterator;
+     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
+     Node    : not null Matreshka.XML_Schema.AST.Schema_Access;
+     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is null;
 
 end Matreshka.XML_Schema.Visitors;
