@@ -62,6 +62,10 @@ package Matreshka.XML_Schema.AST is
    type Simple_Type_Access is
      access all Matreshka.XML_Schema.AST.Simple.Simple_Type_Node'Class;
 
+   type Final_Kinds is (Extension, Restriction, List, Union);
+
+   type Final_Flags is array (Final_Kinds) of Boolean;
+
    -------------------
    -- Abstract_Node --
    -------------------

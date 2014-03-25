@@ -50,7 +50,10 @@ package Matreshka.XML_Schema.AST.Simple is
    pragma Preelaborate;
 
    type Simple_Type_Node is new Abstract_Node with record
-      null;
+      Final : Final_Flags := (others => False);
+      --  {final}  A subset of {restriction, list, union}.
+      Name  : League.Strings.Universal_String;
+      --  {name}   Optional. An NCName as defined by [Namespaces in XML].
    end record;
 
    overriding procedure Enter_Node

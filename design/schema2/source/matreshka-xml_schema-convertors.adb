@@ -41,73 +41,87 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.Visitors;
+with League.String_Vectors;
 
-package body Matreshka.XML_Schema.AST.Simple is
+package body Matreshka.XML_Schema.Convertors is
 
-   ------------------
-   -- Constructors --
-   ------------------
+   use type League.Strings.Universal_String;
 
-   package body Constructors is
+   All_Image         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("#all");
+   Extension_Image   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("extension");
+   List_Image        : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("list");
+   Restriction_Image : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("restriction");
+   Union_Image       : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("union");
 
-      ------------
-      -- Create --
-      ------------
+   --------------------
+   -- To_Final_Flags --
+   --------------------
 
-      function Create
-       (Locator : XML.SAX.Locators.SAX_Locator'Class)
-          return not null Matreshka.XML_Schema.AST.Simple_Type_Access is
-      begin
-         return
-           new Simple_Type_Node'
-                (System_Id => Locator.System_Id,
-                 Line      => Locator.Line,
-                 Column    => Locator.Column,
-                 Final     => (others => False),
-                 Name      => League.Strings.Empty_Universal_String);
-      end Create;
+   function To_Final_Flags
+    (Image   : League.Strings.Universal_String;
+     Allowed : Matreshka.XML_Schema.AST.Final_Flags)
+       return Matreshka.XML_Schema.AST.Final_Flags
+   is
+      use all type Matreshka.XML_Schema.AST.Final_Kinds;
 
-   end Constructors;
+      Result : Matreshka.XML_Schema.AST.Final_Flags := (others => False);
+      Items  : League.String_Vectors.Universal_String_Vector;
+      Item   : League.Strings.Universal_String;
 
-   ----------------
-   -- Enter_Node --
-   ----------------
-
-   overriding procedure Enter_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
    begin
-      Visitor.Enter_Simple_Type
-       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Enter_Node;
+      if Image = All_Image then
+         Result := (others => True);
 
-   ----------------
-   -- Leave_Node --
-   ----------------
+      else
+         Items := Image.Split (' ');
 
-   overriding procedure Leave_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Simple_Type
-       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Leave_Node;
+         for J in 1 .. Items.Length loop
+            Item := Items.Element (J);
 
-   ----------------
-   -- Visit_Node --
-   ----------------
+            if Item = Extension_Image then
+               if Allowed (Extension) then
+                  Result (Extension) := True;
 
-   overriding procedure Visit_Node
-    (Self     : not null access Simple_Type_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Simple_Type
-       (Visitor, Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Visit_Node;
+               else
+                  raise Constraint_Error;
+               end if;
 
-end Matreshka.XML_Schema.AST.Simple;
+            elsif Item = Restriction_Image then
+               if Allowed (Restriction) then
+                  Result (Restriction) := True;
+
+               else
+                  raise Constraint_Error;
+               end if;
+
+            elsif Item = List_Image then
+               if Allowed (List) then
+                  Result (List) := True;
+
+               else
+                  raise Constraint_Error;
+               end if;
+
+            elsif Item = Union_Image then
+               if Allowed (Union) then
+                  Result (Union) := True;
+
+               else
+                  raise Constraint_Error;
+               end if;
+
+            else
+               raise Constraint_Error;
+            end if;
+         end loop;
+      end if;
+
+      return Result;
+   end To_Final_Flags;
+
+end Matreshka.XML_Schema.Convertors;

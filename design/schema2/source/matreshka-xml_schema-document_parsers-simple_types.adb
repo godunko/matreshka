@@ -41,73 +41,47 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.Visitors;
 
-package body Matreshka.XML_Schema.AST.Simple is
+separate (Matreshka.XML_Schema.Document_Parsers)
+package body Simple_Types is
 
-   ------------------
-   -- Constructors --
-   ------------------
+   -------------------------------
+   -- Start_Simple_Type_Element --
+   -------------------------------
 
-   package body Constructors is
+   procedure Start_Simple_Type_Element
+    (Self       : in out Document_Parser'Class;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean)
+   is
+      use all type Matreshka.XML_Schema.AST.Final_Kinds;
 
-      ------------
-      -- Create --
-      ------------
+      Image : League.Strings.Universal_String;
+      Items : League.String_Vectors.Universal_String_Vector;
 
-      function Create
-       (Locator : XML.SAX.Locators.SAX_Locator'Class)
-          return not null Matreshka.XML_Schema.AST.Simple_Type_Access is
-      begin
-         return
-           new Simple_Type_Node'
-                (System_Id => Locator.System_Id,
-                 Line      => Locator.Line,
-                 Column    => Locator.Column,
-                 Final     => (others => False),
-                 Name      => League.Strings.Empty_Universal_String);
-      end Create;
-
-   end Constructors;
-
-   ----------------
-   -- Enter_Node --
-   ----------------
-
-   overriding procedure Enter_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
    begin
-      Visitor.Enter_Simple_Type
-       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Enter_Node;
+      Self.Push_Simple_Type;
+      Self.Current.Simple_Type_Definition :=
+        Matreshka.XML_Schema.AST.Simple.Constructors.Create (Self.Locator);
 
-   ----------------
-   -- Leave_Node --
-   ----------------
+      --  Process 'final' attribute.
 
-   overriding procedure Leave_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Simple_Type
-       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Leave_Node;
+      if Attributes.Is_Specified (Final_Attribute) then
+         Self.Current.Simple_Type_Definition.Final :=
+           Matreshka.XML_Schema.Convertors.To_Final_Flags
+            (Attributes.Value (Final_Attribute),
+             (Extension   => False,
+              Restriction => True,
+              List        => True,
+              Union       => True));
+      end if;
 
-   ----------------
-   -- Visit_Node --
-   ----------------
+      --  Process 'name' attribute.
 
-   overriding procedure Visit_Node
-    (Self     : not null access Simple_Type_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Simple_Type
-       (Visitor, Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Visit_Node;
+      if Attributes.Is_Specified (Name_Attribute) then
+         Self.Current.Simple_Type_Definition.Name :=
+           Attributes.Value (Name_Attribute);
+      end if;
+   end Start_Simple_Type_Element;
 
-end Matreshka.XML_Schema.AST.Simple;
+end Simple_Types;

@@ -57,10 +57,6 @@ package Matreshka.XML_Schema.AST.Schemas is
 
    type Block_Flags is array (Block_Kinds) of Boolean;
 
-   type Final_Kinds is (Extension, Restriction, List, Union);
-
-   type Final_Flags is array (Final_Kinds) of Boolean;
-
    type Include_Information is record
       Location : League.Strings.Universal_String;
       Schema   : Schema_Access;

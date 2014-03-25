@@ -48,6 +48,7 @@ with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Schemas;
 with Matreshka.XML_Schema.AST.Simple;
+with Matreshka.XML_Schema.Convertors;
 
 package body Matreshka.XML_Schema.Document_Parsers is
 
@@ -118,8 +119,12 @@ package body Matreshka.XML_Schema.Document_Parsers is
      := League.Strings.To_Universal_String ("blockDefault");
    Element_Form_Default_Attribute   : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("elementFormDefault");
+   Final_Attribute                  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("final");
    Final_Default_Attribute          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("finalDefault");
+   Name_Attribute                   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("name");
    Schema_Location_Attribute        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schemaLocation");
    Target_Namespace_Attribute       : constant League.Strings.Universal_String
@@ -129,16 +134,12 @@ package body Matreshka.XML_Schema.Document_Parsers is
      := League.Strings.To_Universal_String ("#all");
    Extension_Image    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("extension");
-   List_Image         : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("list");
    Qualified_Image    : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("qualified");
    Restriction_Image  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("restriction");
    Substitution_Image : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("substitution");
-   Union_Image        : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("union");
    Unqualified_Image  : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("unqualified");
 
@@ -163,12 +164,6 @@ package body Matreshka.XML_Schema.Document_Parsers is
      Success    : in out Boolean);
    --  Parses start of root 'schema' element.
 
-   procedure Start_Simple_Type_Element
-    (Self       : in out Document_Parser'Class;
-     Attributes : XML.SAX.Attributes.SAX_Attributes;
-     Success    : in out Boolean);
-   --  Parses start of 'simpleType' element.
-
    procedure Fatal_Error
     (Self    : in out Document_Parser'Class;
      Text    : Wide_Wide_String;
@@ -185,6 +180,16 @@ package body Matreshka.XML_Schema.Document_Parsers is
     (Model    : not null Matreshka.XML_Schema.AST.Model_Access;
      Location : League.Strings.Universal_String);
    --  Register schema document in the set of processed schema documents.
+
+   package Simple_Types is
+
+      procedure Start_Simple_Type_Element
+       (Self       : in out Document_Parser'Class;
+        Attributes : XML.SAX.Attributes.SAX_Attributes;
+        Success    : in out Boolean);
+      --  Parses start of 'simpleType' element.
+
+   end Simple_Types;
 
    -----------------
    -- End_Element --
@@ -290,7 +295,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
    procedure Push_Simple_Type (Self : in out Document_Parser'Class) is
    begin
       Self.Stack.Append (Self.Current);
-      Self.Current := (State => Simple_Type);
+      Self.Current := (State => Simple_Type, Simple_Type_Definition => null);
    end Push_Simple_Type;
 
    ------------------------------
@@ -350,6 +355,12 @@ package body Matreshka.XML_Schema.Document_Parsers is
    begin
       Self.Locator := Locator;
    end Set_Document_Locator;
+
+   ------------------
+   -- Simple_Types --
+   ------------------
+
+   package body Simple_Types is separate;
 
    ---------------------------
    -- Start_Include_Element --
@@ -441,7 +452,8 @@ package body Matreshka.XML_Schema.Document_Parsers is
                   raise Program_Error;
 
                elsif Local_Name = Simple_Type_Tag then
-                  Start_Simple_Type_Element (Self, Attributes, Success);
+                  Simple_Types.Start_Simple_Type_Element
+                   (Self, Attributes, Success);
 
                else
                   Self.Fatal_Error ("unexpected XML element", Success);
@@ -451,54 +463,54 @@ package body Matreshka.XML_Schema.Document_Parsers is
                if Local_Name = Annotation_Tag then
                   Self.Push_Ignore;
 
-               elsif Local_Name = Enumeration_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Fraction_Digits_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Length_Tag then
-                  raise Program_Error;
-
                elsif Local_Name = List_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Max_Exclusive_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Max_Inclusive_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Max_Length_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Min_Exclusive_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Min_Length_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Min_Inclusive_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Pattern_Tag then
                   raise Program_Error;
 
                elsif Local_Name = Restriction_Tag then
                   raise Program_Error;
 
-               elsif Local_Name = Simple_Type_Tag then
-                  raise Program_Error;
-
-               elsif Local_Name = Total_Digits_Tag then
-                  raise Program_Error;
-
                elsif Local_Name = Union_Tag then
                   raise Program_Error;
 
-               elsif Local_Name = White_Space_Tag then
-                  raise Program_Error;
-
+--               elsif Local_Name = Enumeration_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Fraction_Digits_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Length_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Max_Exclusive_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Max_Inclusive_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Max_Length_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Min_Exclusive_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Min_Length_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Min_Inclusive_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Pattern_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Simple_Type_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = Total_Digits_Tag then
+--                  raise Program_Error;
+--
+--               elsif Local_Name = White_Space_Tag then
+--                  raise Program_Error;
+--
                else
                   Self.Fatal_Error ("unexpected XML element", Success);
                end if;
@@ -518,8 +530,8 @@ package body Matreshka.XML_Schema.Document_Parsers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean)
    is
+      use all type Matreshka.XML_Schema.AST.Final_Kinds;
       use all type Matreshka.XML_Schema.AST.Schemas.Block_Kinds;
-      use all type Matreshka.XML_Schema.AST.Schemas.Final_Kinds;
       use all type Matreshka.XML_Schema.AST.Schemas.Form_Kinds;
 
       Image : League.Strings.Universal_String;
@@ -596,34 +608,9 @@ package body Matreshka.XML_Schema.Document_Parsers is
       --  Process 'finalDefault' attribute.
 
       if Attributes.Is_Specified (Final_Default_Attribute) then
-         Image := Attributes.Value (Final_Default_Attribute);
-
-         if Image = All_Image then
-            Self.Schema.Final_Default := (others => True);
-
-         else
-            Items := Image.Split (' ');
-
-            for J in 1 .. Items.Length loop
-               Image := Items.Element (J);
-
-               if Image = Extension_Image then
-                  Self.Schema.Final_Default (Extension) := True;
-
-               elsif Image = Restriction_Image then
-                  Self.Schema.Final_Default (Restriction) := True;
-
-               elsif Image = List_Image then
-                  Self.Schema.Final_Default (List) := True;
-
-               elsif Image = Union_Image then
-                  Self.Schema.Final_Default (Union) := True;
-
-               else
-                  raise Constraint_Error;
-               end if;
-            end loop;
-         end if;
+         Self.Schema.Final_Default :=
+           Matreshka.XML_Schema.Convertors.To_Final_Flags
+            (Attributes.Value (Final_Default_Attribute), (others => True));
       end if;
 
       --  Process 'targetNamespace' attribute.
@@ -663,17 +650,5 @@ package body Matreshka.XML_Schema.Document_Parsers is
          end if;
       end if;
    end Start_Schema_Element;
-
-   -------------------------------
-   -- Start_Simple_Type_Element --
-   -------------------------------
-
-   procedure Start_Simple_Type_Element
-    (Self       : in out Document_Parser'Class;
-     Attributes : XML.SAX.Attributes.SAX_Attributes;
-     Success    : in out Boolean) is
-   begin
-      Self.Push_Simple_Type;
-   end Start_Simple_Type_Element;
 
 end Matreshka.XML_Schema.Document_Parsers;

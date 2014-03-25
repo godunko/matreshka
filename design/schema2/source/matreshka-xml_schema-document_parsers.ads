@@ -87,7 +87,8 @@ private
             null;
 
          when Simple_Type =>
-            null;
+            Simple_Type_Definition :
+              Matreshka.XML_Schema.AST.Simple_Type_Access;
       end case;
    end record;
 

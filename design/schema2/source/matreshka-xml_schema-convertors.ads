@@ -41,73 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.Visitors;
+with League.Strings;
 
-package body Matreshka.XML_Schema.AST.Simple is
+with Matreshka.XML_Schema.AST;
 
-   ------------------
-   -- Constructors --
-   ------------------
+package Matreshka.XML_Schema.Convertors is
 
-   package body Constructors is
+   function To_Final_Flags
+    (Image   : League.Strings.Universal_String;
+     Allowed : Matreshka.XML_Schema.AST.Final_Flags)
+       return Matreshka.XML_Schema.AST.Final_Flags;
+   --  Converts textual representation of {final} property into internal value.
+   --  Source string can be empty, '#all' or list of 'extension',
+   --  'restriction', 'list', 'union'. Items in last list can be restricted by
+   --  setting corresponding flags in Allowed parameter to False.
 
-      ------------
-      -- Create --
-      ------------
-
-      function Create
-       (Locator : XML.SAX.Locators.SAX_Locator'Class)
-          return not null Matreshka.XML_Schema.AST.Simple_Type_Access is
-      begin
-         return
-           new Simple_Type_Node'
-                (System_Id => Locator.System_Id,
-                 Line      => Locator.Line,
-                 Column    => Locator.Column,
-                 Final     => (others => False),
-                 Name      => League.Strings.Empty_Universal_String);
-      end Create;
-
-   end Constructors;
-
-   ----------------
-   -- Enter_Node --
-   ----------------
-
-   overriding procedure Enter_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Enter_Simple_Type
-       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Enter_Node;
-
-   ----------------
-   -- Leave_Node --
-   ----------------
-
-   overriding procedure Leave_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Visitor.Leave_Simple_Type
-       (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Leave_Node;
-
-   ----------------
-   -- Visit_Node --
-   ----------------
-
-   overriding procedure Visit_Node
-    (Self     : not null access Simple_Type_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control) is
-   begin
-      Iterator.Visit_Simple_Type
-       (Visitor, Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
-   end Visit_Node;
-
-end Matreshka.XML_Schema.AST.Simple;
+end Matreshka.XML_Schema.Convertors;
