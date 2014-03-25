@@ -41,11 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 
 package XML.Schema.Namespace_Items is
 
    pragma Preelaborate;
 
    type XS_Namespace_Item is limited interface;
+
+   not overriding function Get_Schema_Namespace
+    (Self : not null access XS_Namespace_Item)
+       return League.Strings.Universal_String is abstract;
+   --  [schema namespace]: A namespace name or null if absent.
 
 end XML.Schema.Namespace_Items;

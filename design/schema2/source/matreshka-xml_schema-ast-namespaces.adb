@@ -83,6 +83,17 @@ package body Matreshka.XML_Schema.AST.Namespaces is
        (Matreshka.XML_Schema.AST.Namespace_Access (Self), Control);
    end Enter_Node;
 
+   --------------------------
+   -- Get_Schema_Namespace --
+   --------------------------
+
+   overriding function Get_Schema_Namespace
+    (Self : not null access Namespace_Node)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Schema_Namespace;
+   end Get_Schema_Namespace;
+
    ----------------
    -- Leave_Node --
    ----------------

@@ -74,6 +74,10 @@ package Matreshka.XML_Schema.AST.Namespaces is
      Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   overriding function Get_Schema_Namespace
+    (Self : not null access Namespace_Node)
+       return League.Strings.Universal_String;
+
    package Constructors is
 
       function Create
