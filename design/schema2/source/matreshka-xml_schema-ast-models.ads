@@ -53,13 +53,20 @@ package Matreshka.XML_Schema.AST.Models is
 
    pragma Preelaborate;
 
-   type Schema_Document_Information is record
-      Location : League.Strings.Universal_String;
-      Schema   : Matreshka.XML_Schema.AST.Schema_Access;
+   type Schema_Document_Info is record
+      Location    : League.Strings.Universal_String;
+      Schema      : Matreshka.XML_Schema.AST.Schema_Access;
+      Is_Loaded   : Boolean := False;
+      --  Schema document was attempted to be loaded.
+      Is_Resolved : Boolean := False;
+      --  Schema document was resolved successfully. It doesn't mean that it
+      --  was loaded successfully, so Schema member can be null.
    end record;
 
+   type Schema_Document_Info_Access is access Schema_Document_Info;
+
    package Schema_Document_Vectors is
-     new Ada.Containers.Vectors (Positive, Schema_Document_Information);
+     new Ada.Containers.Vectors (Positive, Schema_Document_Info_Access);
 
    type Model_Node is new Abstract_Node
      and XML.Schema.Models.XS_Model with

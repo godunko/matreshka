@@ -165,6 +165,18 @@ package body Matreshka.XML_Schema.Document_Parsers is
             Self.Pop;
          end if;
 
+      elsif Namespace_URI = XML_Schema_URI then
+         case Self.Current.State is
+            when Schema =>
+               Register_Schema_Document
+                (Self.Model, Self.Locator.System_Id, Self.Schema);
+
+            when others =>
+               null;
+         end case;
+
+         Self.Pop;
+
       else
          Self.Pop;
       end if;
@@ -258,7 +270,12 @@ package body Matreshka.XML_Schema.Document_Parsers is
          end if;
       end loop;
 
-      Model.Schema_Documents.Append ((Location, null));
+      Model.Schema_Documents.Append
+       (new Matreshka.XML_Schema.AST.Models.Schema_Document_Info'
+             (Location    => Location,
+              Schema      => null,
+              Is_Loaded   => False,
+              Is_Resolved => False));
    end Register_Schema_Document;
 
    ------------------------------
@@ -278,7 +295,12 @@ package body Matreshka.XML_Schema.Document_Parsers is
          end if;
       end loop;
 
-      Model.Schema_Documents.Append ((Location, Schema));
+      Model.Schema_Documents.Append
+       (new Matreshka.XML_Schema.AST.Models.Schema_Document_Info'
+             (Location    => Location,
+              Schema      => Schema,
+              Is_Loaded   => True,
+              Is_Resolved => True));
    end Register_Schema_Document;
 
    --------------------------
@@ -413,7 +435,6 @@ package body Matreshka.XML_Schema.Document_Parsers is
    begin
       Self.Push_Schema;
       Self.Schema := new Matreshka.XML_Schema.AST.Schemas.Schema_Node;
-      Register_Schema_Document (Self.Model, Self.Locator.System_Id, Self.Schema);
 
       --  Process 'attributeFormDefault' attribute.
 

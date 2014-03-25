@@ -41,7 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.IO_Exceptions;
+
 with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Parse_Exceptions.Internals;
 with XML.SAX.Simple_Readers;
 
 with Matreshka.XML_Schema.AST.Models;
@@ -60,6 +63,7 @@ package body Matreshka.XML_Schema.Loader is
          return not null Matreshka.XML_Schema.AST.Model_Access
    is
       use type Matreshka.XML_Schema.AST.Schema_Access;
+      use type Matreshka.XML_Schema.AST.Models.Schema_Document_Info_Access;
 
       Model    : constant Matreshka.XML_Schema.AST.Model_Access
         := new Matreshka.XML_Schema.AST.Models.Model_Node;
@@ -67,7 +71,8 @@ package body Matreshka.XML_Schema.Loader is
       Reader   : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
       Parser   :
         aliased Matreshka.XML_Schema.Document_Parsers.Document_Parser (Model);
-      Location : League.Strings.Universal_String;
+      Info     : Matreshka.XML_Schema.AST.Models.Schema_Document_Info_Access;
+      Success  : Boolean := True;
 
    begin
       Reader.Set_Content_Handler (Parser'Unchecked_Access);
@@ -77,21 +82,41 @@ package body Matreshka.XML_Schema.Loader is
       Input.Close;
 
       loop
-         Location.Clear;
+         Info := null;
 
          for Item of Model.Schema_Documents loop
-            if Item.Schema = null then
-               Location := Item.Location;
+            if not Item.Is_Loaded then
+               Info := Item;
+               Info.Is_Loaded := True;
+               Info.Is_Resolved := False;
 
                exit;
             end if;
          end loop;
 
-         exit when Location.Is_Empty;
+         exit when Info = null;
 
-         Input.Open_By_URI (Location);
-         Reader.Parse (Input'Unchecked_Access);
-         Input.Close;
+         begin
+            Input.Open_By_URI (Info.Location);
+            Info.Is_Resolved := True;
+
+         exception
+            when Ada.IO_Exceptions.Name_Error =>
+               Error_Handler.Warning
+                (XML.SAX.Parse_Exceptions.Internals.Create
+                  (League.Strings.Empty_Universal_String,
+                   Info.Location,
+                   0,
+                   0,
+                   League.Strings.To_Universal_String
+                    ("schema document is not resolved")),
+                 Success);
+         end;
+
+         if Info.Is_Resolved then
+            Reader.Parse (Input'Unchecked_Access);
+            Input.Close;
+         end if;
       end loop;
 
       return Model;
