@@ -47,8 +47,6 @@ with Ada.Containers.Vectors;
 
 with XML.SAX.Locators;
 
-with League.Strings;
-
 package Matreshka.XML_Schema.AST.Schemas is
 
    pragma Preelaborate;

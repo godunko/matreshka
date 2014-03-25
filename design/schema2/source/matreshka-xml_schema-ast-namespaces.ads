@@ -43,8 +43,6 @@
 ------------------------------------------------------------------------------
 with XML.Schema.Namespace_Items;
 
-with League.Strings;
-
 package Matreshka.XML_Schema.AST.Namespaces is
 
    pragma Preelaborate;

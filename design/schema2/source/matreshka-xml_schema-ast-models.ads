@@ -45,8 +45,6 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Vectors;
 
-with League.Strings;
-
 with XML.Schema.Models;
 
 package Matreshka.XML_Schema.AST.Models is
