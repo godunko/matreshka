@@ -41,13 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.Schema.Namespace_Items;
 
-package Matreshka.XML_Schema.AST.Namespaces is
+package XML.Schema.Namespace_Items is
 
    pragma Preelaborate;
 
-   type Namespace_Node is new Abstract_Node
-     and XML.Schema.Namespace_Items.XS_Namespace_Item with null record;
+   type XS_Namespace_Item is limited interface;
 
-end Matreshka.XML_Schema.AST.Namespaces;
+end XML.Schema.Namespace_Items;
