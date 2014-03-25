@@ -45,6 +45,8 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Vectors;
 
+with XML.SAX.Locators;
+
 with League.Strings;
 
 package Matreshka.XML_Schema.AST.Schemas is
@@ -97,5 +99,13 @@ package Matreshka.XML_Schema.AST.Schemas is
      Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
      Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
+
+   package Constructors is
+
+      function Create
+       (Locator : XML.SAX.Locators.SAX_Locator'Class)
+          return not null Matreshka.XML_Schema.AST.Schema_Access;
+
+   end Constructors;
 
 end Matreshka.XML_Schema.AST.Schemas;

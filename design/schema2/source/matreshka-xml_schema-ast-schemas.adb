@@ -45,6 +45,36 @@ with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.AST.Schemas is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Locator : XML.SAX.Locators.SAX_Locator'Class)
+          return not null Matreshka.XML_Schema.AST.Schema_Access is
+      begin
+         return
+           new Schema_Node'
+                (System_Id                => Locator.System_Id,
+                 Line                     => Locator.Line,
+                 Column                   => Locator.Column,
+                 Includes                 => <>,
+                 Attribute_Form_Default   => <>,
+                 Element_Form_Default     => <>,
+                 Block_Default            => <>,
+                 Final_Default            => <>,
+                 Target_Namespace         => <>,
+                 Target_Namespace_Defined => <>);
+      end Create;
+
+   end Constructors;
+
    ----------------
    -- Enter_Node --
    ----------------

@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
 limited with Matreshka.XML_Schema.AST.Models;
 limited with Matreshka.XML_Schema.AST.Namespaces;
 limited with Matreshka.XML_Schema.AST.Schemas;
@@ -57,7 +59,11 @@ package Matreshka.XML_Schema.AST is
    type Schema_Access is
      access all Matreshka.XML_Schema.AST.Schemas.Schema_Node'Class;
 
-   type Abstract_Node is abstract tagged null record;
+   type Abstract_Node is abstract tagged record
+      System_Id : League.Strings.Universal_String;
+      Line      : Natural := 0;
+      Column    : Natural := 0;
+   end record;
 
    not overriding procedure Enter_Node
     (Self    : not null access Abstract_Node;

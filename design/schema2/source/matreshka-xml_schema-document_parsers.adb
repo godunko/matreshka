@@ -424,7 +424,8 @@ package body Matreshka.XML_Schema.Document_Parsers is
 
    begin
       Self.Push_Schema;
-      Self.Schema := new Matreshka.XML_Schema.AST.Schemas.Schema_Node;
+      Self.Schema :=
+        Matreshka.XML_Schema.AST.Schemas.Constructors.Create (Self.Locator);
 
       --  Process 'attributeFormDefault' attribute.
 

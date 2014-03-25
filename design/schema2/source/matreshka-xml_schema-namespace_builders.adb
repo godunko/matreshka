@@ -132,9 +132,9 @@ package body Matreshka.XML_Schema.Namespace_Builders is
                Error_Handler.Fatal_Error
                 (XML.SAX.Parse_Exceptions.Internals.Create
                   (League.Strings.Empty_Universal_String,
-                   Location,
-                   0,
-                   0,
+                   Included_Schema.System_Id,
+                   Included_Schema.Line,
+                   Included_Schema.Column,
                    League.Strings.To_Universal_String
                     ("value of targetNamespace attribute but me identical to"
                        & " its value of including schema")));
@@ -147,9 +147,9 @@ package body Matreshka.XML_Schema.Namespace_Builders is
                Error_Handler.Fatal_Error
                 (XML.SAX.Parse_Exceptions.Internals.Create
                   (League.Strings.Empty_Universal_String,
-                   Location,
-                   0,
-                   0,
+                   Included_Schema.System_Id,
+                   Included_Schema.Line,
+                   Included_Schema.Column,
                    League.Strings.To_Universal_String
                     ("included schema can't have targetNamespace attribute")));
 
