@@ -83,6 +83,49 @@ package body Matreshka.XML_Schema.AST.Simple is
        (Matreshka.XML_Schema.AST.Simple_Type_Access (Self), Control);
    end Enter_Node;
 
+   ---------------
+   -- Get_Final --
+   ---------------
+
+   overriding function Get_Final
+    (Self : not null access constant Simple_Type_Node)
+       return XML.Schema.Derivation_Flags is
+   begin
+      return
+       (XML.Schema.Derivation_Extension    => False,
+        XML.Schema.Derivation_List         => Self.Final (List),
+        XML.Schema.Derivation_Restriction  => Self.Final (Restriction),
+        XML.Schema.Derivation_Substitution => False,
+        XML.Schema.Derivation_Union        => Self.Final (Union));
+   end Get_Final;
+
+   --------------
+   -- Is_Final --
+   --------------
+
+   overriding function Is_Final
+    (Self        : not null access constant Simple_Type_Node;
+     Restriction : XML.Schema.Derivation_Kinds)
+       return Boolean is
+   begin
+      case Restriction is
+         when XML.Schema.Derivation_Extension =>
+            return False;
+
+         when XML.Schema.Derivation_List =>
+            return Self.Final (List);
+
+         when XML.Schema.Derivation_Restriction =>
+            return Self.Final (AST.Restriction);
+
+         when XML.Schema.Derivation_Substitution =>
+            return False;
+
+         when XML.Schema.Derivation_Union =>
+            return Self.Final (Union);
+      end case;
+   end Is_Final;
+
    ----------------
    -- Leave_Node --
    ----------------

@@ -79,6 +79,14 @@ package Matreshka.XML_Schema.AST.Simple is
      Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
    --  Dispatch call to corresponding subprogram of iterator interface.
 
+   overriding function Get_Final
+    (Self : not null access constant Simple_Type_Node)
+       return XML.Schema.Derivation_Flags;
+
+   overriding function Is_Final
+    (Self        : not null access constant Simple_Type_Node;
+     Restriction : XML.Schema.Derivation_Kinds) return Boolean;
+
    package Constructors is
 
       function Create

@@ -46,4 +46,26 @@ package XML.Schema is
 
    pragma Pure;
 
+   --  This group defines derivation constants for an element declaration and a
+   --  type definition's final set.
+
+   type Derivation_Kinds is
+    (Derivation_Extension,
+     --  XSTypeDefinition final set or XSElementDeclaration disallowed
+     --  substitution group.
+     Derivation_Restriction,
+     --  XSTypeDefinition final set or XSElementDeclaration disallowed
+     --  substitution group.
+     Derivation_Substitution,
+     --  XSTypeDefinition final set.
+     Derivation_Union,
+     --  XSTypeDefinition final set.
+     Derivation_List);
+     --  XSTypeDefinition final set.
+
+   type Derivation_Flags is array (Derivation_Kinds) of Boolean;
+
+   Derivation_None : constant Derivation_Flags := (others => False);
+   --  No constraint is available.
+
 end XML.Schema;

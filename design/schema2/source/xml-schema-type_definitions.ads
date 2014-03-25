@@ -48,4 +48,32 @@ package XML.Schema.Type_Definitions is
 
    type XS_Type_Definition is limited interface;
 
+   not overriding function Get_Final
+    (Self : not null access constant XS_Type_Definition)
+       return XML.Schema.Derivation_Flags is abstract;
+   --  For complex types the returned value is a bit combination of the subset
+   --  of {DERIVATION_EXTENSION, DERIVATION_RESTRICTION} corresponding to final
+   --  set of this type or DERIVATION_NONE. For simple types the returned value
+   --  is a bit combination of the subset of { DERIVATION_RESTRICTION,
+   --  DERIVATION_EXTENSION, DERIVATION_UNION, DERIVATION_LIST} corresponding
+   --  to final set of this type or DERIVATION_NONE.
+
+   not overriding function Is_Final
+    (Self        : not null access constant XS_Type_Definition;
+     Restriction : XML.Schema.Derivation_Kinds)
+       return Boolean is abstract;
+   --  {final}. For a complex type definition it is a subset of {extension,
+   --  restriction}. For a simple type definition it is a subset of {extension,
+   --  list, restriction, union}.
+   --
+   --  Parameters
+   --
+   --    restriction of type unsigned short
+   --      Extension, restriction, list, union constants (defined in
+   --      XSConstants).
+   --
+   --  Return Value
+   --
+   --    True if restriction is in the final set, otherwise false.
+
 end XML.Schema.Type_Definitions;
