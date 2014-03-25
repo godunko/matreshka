@@ -41,50 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides node for simple type definition.
-------------------------------------------------------------------------------
-with XML.SAX.Locators;
+with XML.Schema.Type_Definitions;
 
-with XML.Schema.Simple_Type_Definitions;
-
-package Matreshka.XML_Schema.AST.Simple is
+package XML.Schema.Simple_Type_Definitions is
 
    pragma Preelaborate;
 
-   type Simple_Type_Node is new Abstract_Node
-     and XML.Schema.Simple_Type_Definitions.XS_Simple_Type_Definition with
-   record
-      Final : Final_Flags := (others => False);
-      --  {final}  A subset of {restriction, list, union}.
-      Name  : League.Strings.Universal_String;
-      --  {name}   Optional. An NCName as defined by [Namespaces in XML].
-   end record;
+   type XS_Simple_Type_Definition is limited interface
+     and XML.Schema.Type_Definitions.XS_Type_Definition;
 
-   overriding procedure Enter_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Leave_Node
-    (Self    : not null access Simple_Type_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Node
-    (Self     : not null access Simple_Type_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-   package Constructors is
-
-      function Create
-       (Locator : XML.SAX.Locators.SAX_Locator'Class)
-          return not null Matreshka.XML_Schema.AST.Simple_Type_Access;
-
-   end Constructors;
-
-end Matreshka.XML_Schema.AST.Simple;
+end XML.Schema.Simple_Type_Definitions;
