@@ -49,14 +49,41 @@ with XML.SAX.Simple_Readers;
 
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.Document_Parsers;
+with Matreshka.XML_Schema.Namespace_Builders;
 
 package body Matreshka.XML_Schema.Loader is
 
-   ---------------------------
-   -- Load_XML_Schema_Model --
-   ---------------------------
+   function Load_XML_Schema_Documents
+    (File_Name     : League.Strings.Universal_String;
+     Error_Handler :
+       not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class)
+         return not null Matreshka.XML_Schema.AST.Model_Access;
+   --  Loads set of XML Schema documents to build model.
 
-   function Load_XML_Schema_Model
+   procedure Build_Namespaces
+    (Model : not null Matreshka.XML_Schema.AST.Model_Access);
+   --  Builds namespaces from loaded XML Schema documents.
+
+   ----------------------
+   -- Build_Namespaces --
+   ----------------------
+
+   procedure Build_Namespaces
+    (Model : not null Matreshka.XML_Schema.AST.Model_Access)
+   is
+      Processor : Matreshka.XML_Schema.Namespace_Builders.Namespace_Builder;
+
+   begin
+      for Namespace of Model.Namespaces loop
+         Processor.Analyze (Namespace.Namespace, Namespace.Schema);
+      end loop;
+   end Build_Namespaces;
+
+   -------------------------------
+   -- Load_XML_Schema_Documents --
+   -------------------------------
+
+   function Load_XML_Schema_Documents
     (File_Name     : League.Strings.Universal_String;
      Error_Handler :
        not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class)
@@ -118,6 +145,25 @@ package body Matreshka.XML_Schema.Loader is
             Input.Close;
          end if;
       end loop;
+
+      return Model;
+   end Load_XML_Schema_Documents;
+
+   ---------------------------
+   -- Load_XML_Schema_Model --
+   ---------------------------
+
+   function Load_XML_Schema_Model
+    (File_Name     : League.Strings.Universal_String;
+     Error_Handler :
+       not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class)
+         return not null Matreshka.XML_Schema.AST.Model_Access
+   is
+      Model : constant Matreshka.XML_Schema.AST.Model_Access
+        := Load_XML_Schema_Documents (File_Name, Error_Handler);
+
+   begin
+      Build_Namespaces (Model);
 
       return Model;
    end Load_XML_Schema_Model;

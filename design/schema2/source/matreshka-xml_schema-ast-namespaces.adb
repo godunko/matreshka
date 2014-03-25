@@ -45,6 +45,29 @@ with Matreshka.XML_Schema.Visitors;
 
 package body Matreshka.XML_Schema.AST.Namespaces is
 
+   ------------------
+   -- Constructors --
+   ------------------
+
+   package body Constructors is
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Schema_Namespace : League.Strings.Universal_String)
+          return not null Matreshka.XML_Schema.AST.Namespace_Access is
+      begin
+         return Self : not null Matreshka.XML_Schema.AST.Namespace_Access
+           := new Namespace_Node
+         do
+            Self.Schema_Namespace := Schema_Namespace;
+         end return;
+      end Create;
+
+   end Constructors;
+
    ----------------
    -- Enter_Node --
    ----------------

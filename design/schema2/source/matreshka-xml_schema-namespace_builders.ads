@@ -44,6 +44,7 @@
 --  This package provides component to construct namespace by processing all
 --  included and redefined schema documents.
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST;
 with Matreshka.XML_Schema.Visitors;
 
 package Matreshka.XML_Schema.Namespace_Builders is
@@ -52,6 +53,12 @@ package Matreshka.XML_Schema.Namespace_Builders is
 
    type Namespace_Builder is
      new Matreshka.XML_Schema.Visitors.Abstract_Visitor with private;
+
+   procedure Analyze
+    (Self      : in out Namespace_Builder'Class;
+     Namespace : not null Matreshka.XML_Schema.AST.Namespace_Access;
+     Schema    : not null Matreshka.XML_Schema.AST.Schema_Access);
+   --  Builds Namespace from data from Schema.
 
 private
 

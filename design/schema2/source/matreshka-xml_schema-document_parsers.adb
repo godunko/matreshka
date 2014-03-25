@@ -45,6 +45,7 @@ with League.IRIs;
 with League.String_Vectors;
 
 with Matreshka.XML_Schema.AST.Models;
+with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Schemas;
 
 package body Matreshka.XML_Schema.Document_Parsers is
@@ -164,18 +165,6 @@ package body Matreshka.XML_Schema.Document_Parsers is
          if Self.Current.Depth = 0 then
             Self.Pop;
          end if;
-
-      elsif Namespace_URI = XML_Schema_URI then
-         case Self.Current.State is
-            when Schema =>
-               Register_Schema_Document
-                (Self.Model, Self.Locator.System_Id, Self.Schema);
-
-            when others =>
-               null;
-         end case;
-
-         Self.Pop;
 
       else
          Self.Pop;
@@ -431,6 +420,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
 
       Image : League.Strings.Universal_String;
       Items : League.String_Vectors.Universal_String_Vector;
+      Found : Boolean;
 
    begin
       Self.Push_Schema;
@@ -538,6 +528,36 @@ package body Matreshka.XML_Schema.Document_Parsers is
          Self.Schema.Target_Namespace :=
            Attributes.Value (Target_Namespace_Attribute);
       end if;
+
+      --  Register schema document as loaded document.
+
+      Register_Schema_Document
+       (Self.Model, Self.Locator.System_Id, Self.Schema);
+
+      --  Register new namespace if targetNamespace is defined and
+      --  there is no namespace node created for target namespace URI.
+
+      if Self.Schema.Target_Namespace_Defined then
+         Found := False;
+
+         for Namespace of Self.Model.Namespaces loop
+            if Namespace.Namespace.Schema_Namespace
+                 = Self.Schema.Target_Namespace
+            then
+               Found := True;
+
+               exit;
+            end if;
+         end loop;
+
+         if not Found then
+            Self.Model.Namespaces.Append
+             ((Matreshka.XML_Schema.AST.Namespaces.Constructors.Create
+                (Self.Schema.Target_Namespace),
+               Self.Schema));
+         end if;
+      end if;
+
    end Start_Schema_Element;
 
 end Matreshka.XML_Schema.Document_Parsers;

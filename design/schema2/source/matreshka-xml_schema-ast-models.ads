@@ -68,10 +68,19 @@ package Matreshka.XML_Schema.AST.Models is
    package Schema_Document_Vectors is
      new Ada.Containers.Vectors (Positive, Schema_Document_Info_Access);
 
+   type Namespace_Info is record
+      Namespace : Matreshka.XML_Schema.AST.Namespace_Access;
+      Schema    : Matreshka.XML_Schema.AST.Schema_Access;
+   end record;
+
+   package Namespace_Vectors is
+     new Ada.Containers.Vectors (Positive, Namespace_Info);
+
    type Model_Node is new Abstract_Node
      and XML.Schema.Models.XS_Model with
    record
       Schema_Documents : Schema_Document_Vectors.Vector;
+      Namespaces       : Namespace_Vectors.Vector;
    end record;
 
    overriding procedure Enter_Node

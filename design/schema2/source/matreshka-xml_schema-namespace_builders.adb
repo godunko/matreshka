@@ -41,44 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.Schema.Namespace_Items;
 
-with League.Strings;
+package body Matreshka.XML_Schema.Namespace_Builders is
 
-package Matreshka.XML_Schema.AST.Namespaces is
+   -------------
+   -- Analyze --
+   -------------
 
-   pragma Preelaborate;
+   procedure Analyze
+    (Self      : in out Namespace_Builder'Class;
+     Namespace : not null Matreshka.XML_Schema.AST.Namespace_Access;
+     Schema    : not null Matreshka.XML_Schema.AST.Schema_Access) is
+   begin
+      raise Program_Error;
+   end Analyze;
 
-   type Namespace_Node is new Abstract_Node
-     and XML.Schema.Namespace_Items.XS_Namespace_Item with record
-      Schema_Namespace : League.Strings.Universal_String;
-   end record;
-
-   overriding procedure Enter_Node
-    (Self    : not null access Namespace_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Leave_Node
-    (Self    : not null access Namespace_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Node
-    (Self     : not null access Namespace_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-   package Constructors is
-
-      function Create
-       (Schema_Namespace : League.Strings.Universal_String)
-          return not null Matreshka.XML_Schema.AST.Namespace_Access;
-
-   end Constructors;
-
-end Matreshka.XML_Schema.AST.Namespaces;
+end Matreshka.XML_Schema.Namespace_Builders;
