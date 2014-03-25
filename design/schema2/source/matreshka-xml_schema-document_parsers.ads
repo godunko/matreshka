@@ -69,7 +69,8 @@ private
     (Initial,
      Schema,
      Ignore,
-     Include);
+     Include,
+     Simple_Type);
 
    type State_Information (State : State_Kinds := Initial) is record
       case State is
@@ -83,6 +84,9 @@ private
             null;
 
          when Schema =>
+            null;
+
+         when Simple_Type =>
             null;
       end case;
    end record;

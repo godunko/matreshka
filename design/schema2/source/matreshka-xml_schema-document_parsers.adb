@@ -47,6 +47,7 @@ with League.String_Vectors;
 with Matreshka.XML_Schema.AST.Models;
 with Matreshka.XML_Schema.AST.Namespaces;
 with Matreshka.XML_Schema.AST.Schemas;
+with Matreshka.XML_Schema.AST.Simple;
 
 package body Matreshka.XML_Schema.Document_Parsers is
 
@@ -66,20 +67,50 @@ package body Matreshka.XML_Schema.Document_Parsers is
      := League.Strings.To_Universal_String ("complexType");
    Element_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("element");
+   Enumeration_Tag     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("enumeration");
+   Fraction_Digits_Tag : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("fractionDigits");
    Group_Tag           : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("group");
    Import_Tag          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("import");
    Include_Tag         : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("include");
+   Length_Tag          : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("length");
+   List_Tag            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("list");
+   Max_Exclusive_Tag   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("maxExclusive");
+   Max_Inclusive_Tag   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("maxInclusive");
+   Max_Length_Tag      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("maxLength");
+   Min_Exclusive_Tag   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("minExclusive");
+   Min_Inclusive_Tag   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("minInclusive");
+   Min_Length_Tag      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("minLength");
    Notation_Tag        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("notation");
+   Pattern_Tag         : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("pattern");
    Redefine_Tag        : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("redefine");
+   Restriction_Tag     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("restriction");
    Simple_Type_Tag     : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("simpleType");
    Schema_Tag          : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("schema");
+   Total_Digits_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("totalDigits");
+   Union_Tag           : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("union");
+   White_Space_Tag     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("whiteSpace");
 
    Attribute_Form_Default_Attribute : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("attributeFormDefault");
@@ -114,6 +145,7 @@ package body Matreshka.XML_Schema.Document_Parsers is
    procedure Push_Ignore (Self : in out Document_Parser'Class);
    procedure Push_Include (Self : in out Document_Parser'Class);
    procedure Push_Schema (Self : in out Document_Parser'Class);
+   procedure Push_Simple_Type (Self : in out Document_Parser'Class);
    --  Push state of parser.
 
    procedure Pop (Self : in out Document_Parser'Class);
@@ -130,6 +162,12 @@ package body Matreshka.XML_Schema.Document_Parsers is
      Attributes : XML.SAX.Attributes.SAX_Attributes;
      Success    : in out Boolean);
    --  Parses start of root 'schema' element.
+
+   procedure Start_Simple_Type_Element
+    (Self       : in out Document_Parser'Class;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean);
+   --  Parses start of 'simpleType' element.
 
    procedure Fatal_Error
     (Self    : in out Document_Parser'Class;
@@ -244,6 +282,16 @@ package body Matreshka.XML_Schema.Document_Parsers is
       Self.Stack.Append (Self.Current);
       Self.Current := (State => Schema);
    end Push_Schema;
+
+   ----------------------
+   -- Push_Simple_Type --
+   ----------------------
+
+   procedure Push_Simple_Type (Self : in out Document_Parser'Class) is
+   begin
+      Self.Stack.Append (Self.Current);
+      Self.Current := (State => Simple_Type);
+   end Push_Simple_Type;
 
    ------------------------------
    -- Register_Schema_Document --
@@ -393,6 +441,62 @@ package body Matreshka.XML_Schema.Document_Parsers is
                   raise Program_Error;
 
                elsif Local_Name = Simple_Type_Tag then
+                  Start_Simple_Type_Element (Self, Attributes, Success);
+
+               else
+                  Self.Fatal_Error ("unexpected XML element", Success);
+               end if;
+
+            when Simple_Type =>
+               if Local_Name = Annotation_Tag then
+                  Self.Push_Ignore;
+
+               elsif Local_Name = Enumeration_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Fraction_Digits_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Length_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = List_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Max_Exclusive_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Max_Inclusive_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Max_Length_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Min_Exclusive_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Min_Length_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Min_Inclusive_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Pattern_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Restriction_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Simple_Type_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Total_Digits_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = Union_Tag then
+                  raise Program_Error;
+
+               elsif Local_Name = White_Space_Tag then
                   raise Program_Error;
 
                else
@@ -559,5 +663,17 @@ package body Matreshka.XML_Schema.Document_Parsers is
          end if;
       end if;
    end Start_Schema_Element;
+
+   -------------------------------
+   -- Start_Simple_Type_Element --
+   -------------------------------
+
+   procedure Start_Simple_Type_Element
+    (Self       : in out Document_Parser'Class;
+     Attributes : XML.SAX.Attributes.SAX_Attributes;
+     Success    : in out Boolean) is
+   begin
+      Self.Push_Simple_Type;
+   end Start_Simple_Type_Element;
 
 end Matreshka.XML_Schema.Document_Parsers;
