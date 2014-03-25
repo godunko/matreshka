@@ -108,7 +108,54 @@ package body Matreshka.XML_Schema.Namespace_Builders is
                 League.Strings.To_Universal_String
                  ("resolved schema document doesn't provide valid schema")));
 
+            return;
+
          elsif Included_Schema /= null then
+            --  [XS] 4.2.1 Assembling a schema for a single target namespace
+            --  from multiple schema definition documents
+            --
+            --  "Schema Representation Constraint: Inclusion Constraints and
+            --  Semantics
+            --
+            --  2 One of the following must be true:
+            --  2.1 SII has a targetNamespace [attribute], and its ·actual
+            --    value· is identical to the ·actual value· of the
+            --    targetNamespace [attribute] of SII’ (which must have such an
+            --    [attribute]).
+            --  2.2 Neither SII nor SII’ have a targetNamespace [attribute].
+            --  2.3 SII has no targetNamespace [attribute] (but SII’ does)."
+
+            if Included_Schema.Target_Namespace_Defined
+              and Schema.Target_Namespace_Defined
+              and Included_Schema.Target_Namespace /= Schema.Target_Namespace
+            then
+               Error_Handler.Fatal_Error
+                (XML.SAX.Parse_Exceptions.Internals.Create
+                  (League.Strings.Empty_Universal_String,
+                   Location,
+                   0,
+                   0,
+                   League.Strings.To_Universal_String
+                    ("value of targetNamespace attribute but me identical to"
+                       & " its value of including schema")));
+
+               return;
+
+            elsif Included_Schema.Target_Namespace_Defined
+              and not Schema.Target_Namespace_Defined
+            then
+               Error_Handler.Fatal_Error
+                (XML.SAX.Parse_Exceptions.Internals.Create
+                  (League.Strings.Empty_Universal_String,
+                   Location,
+                   0,
+                   0,
+                   League.Strings.To_Universal_String
+                    ("included schema can't have targetNamespace attribute")));
+
+               return;
+            end if;
+
             Processor.Analyze (Namespace, Included_Schema, Error_Handler);
          end if;
       end loop;
