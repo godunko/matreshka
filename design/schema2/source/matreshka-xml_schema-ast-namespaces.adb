@@ -56,13 +56,15 @@ package body Matreshka.XML_Schema.AST.Namespaces is
       ------------
 
       function Create
-       (Schema_Namespace : League.Strings.Universal_String)
+       (Owning_Model     : not null Matreshka.XML_Schema.AST.Model_Access;
+        Schema_Namespace : League.Strings.Universal_String)
           return not null Matreshka.XML_Schema.AST.Namespace_Access is
       begin
          return Self : not null Matreshka.XML_Schema.AST.Namespace_Access
            := new Namespace_Node
          do
             Self.Schema_Namespace := Schema_Namespace;
+            Self.Owning_Model := Owning_Model;
          end return;
       end Create;
 

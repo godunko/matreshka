@@ -41,6 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+with XML.SAX.Parse_Exceptions.Internals;
+
+with Matreshka.XML_Schema.AST.Models;
+with Matreshka.XML_Schema.AST.Namespaces;
+with Matreshka.XML_Schema.AST.Schemas;
 
 package body Matreshka.XML_Schema.Namespace_Builders is
 
@@ -49,11 +55,63 @@ package body Matreshka.XML_Schema.Namespace_Builders is
    -------------
 
    procedure Analyze
-    (Self      : in out Namespace_Builder'Class;
-     Namespace : not null Matreshka.XML_Schema.AST.Namespace_Access;
-     Schema    : not null Matreshka.XML_Schema.AST.Schema_Access) is
+    (Self          : in out Namespace_Builder'Class;
+     Namespace     : not null Matreshka.XML_Schema.AST.Namespace_Access;
+     Schema        : not null Matreshka.XML_Schema.AST.Schema_Access;
+     Error_Handler :
+       not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class)
+   is
+      use type League.Strings.Universal_String;
+      use type Matreshka.XML_Schema.AST.Schema_Access;
+
+      Processor       : Namespace_Builder;
+      Included_Schema : Matreshka.XML_Schema.AST.Schema_Access;
+      Is_Resolved     : Boolean;
+      Location        : League.Strings.Universal_String;
+
    begin
-      raise Program_Error;
+      --  All components of the current schema document are processed before
+      --  processing of include and redefine components.
+
+      --  Merge content of included schema documents.
+
+      for Included of Schema.Includes loop
+         for Info of Namespace.Owning_Model.Schema_Documents loop
+            if Info.Location = Included.Location then
+               Included_Schema := Info.Schema;
+               Is_Resolved     := Info.Is_Resolved;
+               Location        := Info.Location;
+
+               exit;
+            end if;
+         end loop;
+
+         if Is_Resolved and Included_Schema = null then
+            --  [XS] 4.2.1 Assembling a schema for a single target namespace
+            --  from multiple schema definition documents
+            --
+            --  "It is not an error for the ·actual value· of the
+            --  schemaLocation [attribute] to fail to resolve it all, in which
+            --  case no corresponding inclusion is performed. It is an error
+            --  for it to resolve but the rest of clause 1 above to fail to be
+            --  satisfied."
+            --
+            --  Schema document was resolved but not parsed due to error.
+            --  Report fatal error.
+
+            Error_Handler.Fatal_Error
+             (XML.SAX.Parse_Exceptions.Internals.Create
+               (League.Strings.Empty_Universal_String,
+                Location,
+                0,
+                0,
+                League.Strings.To_Universal_String
+                 ("resolved schema document doesn't provide valid schema")));
+
+         elsif Included_Schema /= null then
+            Processor.Analyze (Namespace, Included_Schema, Error_Handler);
+         end if;
+      end loop;
    end Analyze;
 
 end Matreshka.XML_Schema.Namespace_Builders;

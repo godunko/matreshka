@@ -61,7 +61,9 @@ package body Matreshka.XML_Schema.Loader is
    --  Loads set of XML Schema documents to build model.
 
    procedure Build_Namespaces
-    (Model : not null Matreshka.XML_Schema.AST.Model_Access);
+    (Model         : not null Matreshka.XML_Schema.AST.Model_Access;
+     Error_Handler :
+       not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class);
    --  Builds namespaces from loaded XML Schema documents.
 
    ----------------------
@@ -69,13 +71,16 @@ package body Matreshka.XML_Schema.Loader is
    ----------------------
 
    procedure Build_Namespaces
-    (Model : not null Matreshka.XML_Schema.AST.Model_Access)
+    (Model         : not null Matreshka.XML_Schema.AST.Model_Access;
+     Error_Handler :
+       not null access XML.SAX.Error_Handlers.SAX_Error_Handler'Class)
    is
       Processor : Matreshka.XML_Schema.Namespace_Builders.Namespace_Builder;
 
    begin
       for Namespace of Model.Namespaces loop
-         Processor.Analyze (Namespace.Namespace, Namespace.Schema);
+         Processor.Analyze
+          (Namespace.Namespace, Namespace.Schema, Error_Handler);
       end loop;
    end Build_Namespaces;
 
@@ -163,7 +168,7 @@ package body Matreshka.XML_Schema.Loader is
         := Load_XML_Schema_Documents (File_Name, Error_Handler);
 
    begin
-      Build_Namespaces (Model);
+      Build_Namespaces (Model, Error_Handler);
 
       return Model;
    end Load_XML_Schema_Model;

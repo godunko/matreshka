@@ -553,11 +553,10 @@ package body Matreshka.XML_Schema.Document_Parsers is
          if not Found then
             Self.Model.Namespaces.Append
              ((Matreshka.XML_Schema.AST.Namespaces.Constructors.Create
-                (Self.Schema.Target_Namespace),
+                (Self.Model, Self.Schema.Target_Namespace),
                Self.Schema));
          end if;
       end if;
-
    end Start_Schema_Element;
 
 end Matreshka.XML_Schema.Document_Parsers;

@@ -52,6 +52,7 @@ package Matreshka.XML_Schema.AST.Namespaces is
    type Namespace_Node is new Abstract_Node
      and XML.Schema.Namespace_Items.XS_Namespace_Item with record
       Schema_Namespace : League.Strings.Universal_String;
+      Owning_Model     : Matreshka.XML_Schema.AST.Model_Access;
    end record;
 
    overriding procedure Enter_Node
@@ -76,7 +77,8 @@ package Matreshka.XML_Schema.AST.Namespaces is
    package Constructors is
 
       function Create
-       (Schema_Namespace : League.Strings.Universal_String)
+       (Owning_Model     : not null Matreshka.XML_Schema.AST.Model_Access;
+        Schema_Namespace : League.Strings.Universal_String)
           return not null Matreshka.XML_Schema.AST.Namespace_Access;
 
    end Constructors;
