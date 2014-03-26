@@ -94,8 +94,7 @@ package body XSD2Ada.Analyzer is
       Definition_Node.Max := False;
       Definition_Node.Element_Name.Clear;
 
-      Definition_Node.Short_Ada_Type_Name := XSD_To_Ada.Utils.Add_Separator
-        (Value.Short_Ada_Type_Name);
+      Definition_Node.Short_Ada_Type_Name := Value.Short_Ada_Type_Name;
 
       if Value.Element_Name.To_Wide_Wide_String /=
         Value.Object.Get_Name.To_Wide_Wide_String

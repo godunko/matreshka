@@ -50,6 +50,7 @@ with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
 with XSD_To_Ada.Utils; use XSD_To_Ada.Utils;
+with XSD_To_Ada.Mappings.XML;
 
 package body XSD2Ada.Encoder is
 
@@ -175,8 +176,7 @@ package body XSD2Ada.Encoder is
       Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
       Is_AnyType      : Boolean := False)
    is
-      Name : constant League.Strings.Universal_String :=
-        Add_Separator (Procedures_Name);
+      Name : constant League.Strings.Universal_String := Procedures_Name;
    begin
 
       Tag_Vector.Append (Procedures_Name);
@@ -657,11 +657,11 @@ package body XSD2Ada.Encoder is
             Generate_Overriding_Procedure_Encode_Header
                     (Writer,
                      Spec_Writer,
-                     Name,
+                     Add_Separator (Name),
                      Tag_Vector,
                      True);
 
-            Writer.N (Write_End_Element (Name));
+            Writer.N (Write_End_Element (Add_Separator (Name)));
             Writer.P ("   end Encode;" & LF);
             return;
          end if;
@@ -690,22 +690,19 @@ package body XSD2Ada.Encoder is
                   Generate_Overriding_Procedure_Encode_Header
                     (Writer,
                      Spec_Writer,
-                     Name,
+                     Add_Separator (Name),
                      Tag_Vector,
                      True);
 
-                  Writer.N (Write_End_Element (Name));
+                  Writer.N (Write_End_Element (Add_Separator (Name)));
 
-               elsif Name.Ends_With ("Response")
-                 or XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-                 or Name.To_Wide_Wide_String = "Open_Session"
-                 or Name.To_Wide_Wide_String = "Open_Session2"
+               elsif XSD_To_Ada.Mappings.XML.Payload_Types.Index (Name)
+                 /= 0
                then
-
                   Generate_Overriding_Procedure_Encode_Header
                     (Writer,
                      Spec_Writer,
-                     Name,
+                     Add_Separator (Name),
                      Tag_Vector);
 
                   if XS_Base.Get_Type_Category in XML.Schema.Complex_Type
@@ -729,14 +726,14 @@ package body XSD2Ada.Encoder is
                     (Model_Group  => Model_Group,
                      Writer       => Writer,
                      Writer_types => Writer_types,
-                     Name         => Name,
+                     Name         => Add_Separator (Name),
                      Element_Name => Top_Name,
                      Choice       => Choice);
 
-                  Writer.N (Write_End_Element (Name));
+                  Writer.N (Write_End_Element (Add_Separator (Name)));
                else
                   Generate_Procedure_Encode_Header
-                    (Writer, "Payloads." & Name);
+                    (Writer, "Payloads." & Add_Separator (Name));
 
                   Writer.P ("      Writer.Start_Element (IATS_URI, Name);");
 
@@ -744,7 +741,7 @@ package body XSD2Ada.Encoder is
                     (Model_Group  => Model_Group,
                      Writer       => Writer,
                      Writer_types => Writer_types,
-                     Name         => Name,
+                     Name         => Add_Separator (Name),
                      Element_Name => Top_Name,
                      Choice       => Choice);
 
