@@ -62,7 +62,7 @@ with Generator.Units.Ada_Units;
 with XSD2Ada.Encoder;
 
 with XSD_To_Ada.Payloads;
---  with XSD_To_Ada.Mappings.XML;
+with XSD_To_Ada.Mappings.XML;
 with XML.Schema.Terms;
 with XSD2Ada.Analyzer;
 
@@ -225,23 +225,11 @@ package body XSD_To_Ada.Utils is
 
       Node_Vector.Clear;
 
---        for J in 1 .. Element_Declarations.Length loop
---           if XSD_To_Ada.Mappings.XML.Payload_Types.Index
---             (Element_Declarations.Item (J).Get_Name) /= 0
---           then
---              XSD2Ada.Analyzer.Create_Element_Node
---                (Element_Declarations.Item (J).To_Element_Declaration,
---                 Node_Vector);
---           end if;
---        end loop;
-
       for J in 1 .. Element_Declarations.Length loop
-         if Has_Element_Session
-           (Element_Declarations.Item
-              (J).To_Element_Declaration.Get_Type_Definition)
-             or Element_Declarations.Item
-             (J).To_Element_Declaration.Get_Type_Definition
-             .Get_Name.To_UTF_8_String = "OpenSession"
+         if XSD_To_Ada.Mappings.XML.Payload_Types.Index
+           (Element_Declarations.Item (J).Get_Name) /= 0
+           and then not Element_Declarations.Item (J).Get_Name.Ends_With
+           ("Response")
          then
             XSD2Ada.Analyzer.Create_Element_Node
               (Element_Declarations.Item (J).To_Element_Declaration,
