@@ -56,7 +56,10 @@ procedure XSD_To_Ada_Generator is
 
    Model      : XML.Schema.Models.XS_Model;
 
-   Mapping_Path : League.Strings.Universal_String;
+   Mapping_Path             : constant League.Strings.Universal_String
+     := League.Application.Arguments.Element (2);
+   Payloads_Types_Path : constant League.Strings.Universal_String
+     := League.Application.Arguments.Element (3);
 begin
 
    Matreshka.XML_Schema.URI_Rewriter.Initialize;
@@ -64,11 +67,9 @@ begin
    Model :=
      XML.Schema.Utilities.Load (League.Application.Arguments.Element (1));
 
-   Mapping_Path := League.Application.Arguments.Element (2);
-
    if Model.Is_Null then
       raise Program_Error;
    end if;
 
-   XSD_To_Ada.Generator.Generate (Model, Mapping_Path);
+   XSD_To_Ada.Generator.Generate (Model, Mapping_Path, Payloads_Types_Path);
 end XSD_To_Ada_Generator;
