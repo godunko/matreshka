@@ -46,7 +46,6 @@ with League.Strings;
 with XML.Schema.Model_Groups;
 
 with XSD2Ada.Analyzer;
-with XSD_To_Ada.Mappings;
 with XSD_To_Ada.Writers;
 
 package XSD_To_Ada.Payloads is
@@ -58,12 +57,10 @@ package XSD_To_Ada.Payloads is
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
-      Mapping      : XSD_To_Ada.Mappings.Mapping;
       Choice       : Boolean := False);
 
    procedure Print_Payloads
      (Node_Vector : XSD2Ada.Analyzer.Items;
-      Writer      : in out XSD_To_Ada.Writers.Writer;
-      Mapping     : XSD_To_Ada.Mappings.Mapping);
+      Writer      : in out XSD_To_Ada.Writers.Writer);
 
 end XSD_To_Ada.Payloads;

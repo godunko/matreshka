@@ -62,6 +62,7 @@ with Generator.Units.Ada_Units;
 with XSD2Ada.Encoder;
 
 with XSD_To_Ada.Payloads;
+--  with XSD_To_Ada.Mappings.XML;
 with XML.Schema.Terms;
 with XSD2Ada.Analyzer;
 
@@ -201,6 +202,7 @@ package body XSD_To_Ada.Utils is
 
 --      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
    begin
+
       Put_Header (Payload_Spec);
       Create_Package_Name (Payload_Spec);
       Create_Enumeration_Simple_Type (Model, Payload_Spec);
@@ -221,9 +223,19 @@ package body XSD_To_Ada.Utils is
 
       XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
       XSD_To_Ada.Payloads.Print_Payloads
-        (Node_Vector, Payload_Writer, Mapping);
+        (Node_Vector, Payload_Writer);
 
       Node_Vector.Clear;
+
+--        for J in 1 .. Element_Declarations.Length loop
+--           if XSD_To_Ada.Mappings.XML.Payload_Types.Index
+--             (Element_Declarations.Item (J).Get_Name) /= 0
+--           then
+--              XSD2Ada.Analyzer.Create_Element_Node
+--                (Element_Declarations.Item (J).To_Element_Declaration,
+--                 Node_Vector);
+--           end if;
+--        end loop;
 
       for J in 1 .. Element_Declarations.Length loop
          Type_D :=
@@ -352,6 +364,7 @@ package body XSD_To_Ada.Utils is
       Unit.Set_Section (Generator.Units.Ada_Units.Unit_Declaration_Section);
       Unit.New_Line;
       Unit.Put_Line (+"package Payloads is");
+      Unit.Put_Line (+"pragma Style_Checks (""N"");");
 
       --  XXX Temporary stuff to generate compilable code for IATS project.
 

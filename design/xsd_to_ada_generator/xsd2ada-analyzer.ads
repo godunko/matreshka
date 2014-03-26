@@ -71,6 +71,9 @@ package XSD2Ada.Analyzer is
    function Short_Ada_Type_Name
      (Self : Item) return League.Strings.Universal_String;
    --  Short name of Ada type described by the element.
+   function Find
+     (Item : XSD2Ada.Analyzer.Item_Access)
+      return League.Strings.Universal_String;
    function Full_Ada_Type_Name
     (Self : Item) return League.Strings.Universal_String;
    --  Full name of Ada type described by the element.
