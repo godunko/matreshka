@@ -315,9 +315,6 @@ package body XSD_To_Ada.Payloads is
             if not Is_Min_Occur
               and then not Is_Max_Occur
             then
-
-               Writer_types.P ("--  " & Type_D.Get_Name);
-
                if Choice then
                   Writer.P
                     ("   type " & XSD_To_Ada.Utils.Add_Separator (Name) & LF
