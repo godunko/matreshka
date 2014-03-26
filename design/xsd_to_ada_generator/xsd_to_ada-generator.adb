@@ -51,12 +51,16 @@ package body XSD_To_Ada.Generator is
    --------------
 
    procedure Generate
-    (Model        : XML.Schema.Models.XS_Model;
-     Mapping_Path : League.Strings.Universal_String)
+     (Model               : XML.Schema.Models.XS_Model;
+      Mapping_Path        : League.Strings.Universal_String;
+      Payloads_Types_Path : League.Strings.Universal_String)
    is
       Mapping : constant XSD_To_Ada.Mappings.XML.Mapping_XML
         := XSD_To_Ada.Mappings.XML.Read_Mapping (Mapping_Path);
    begin
+      XSD_To_Ada.Mappings.XML.Read_Payload_Types
+        (Payloads_Types_Path.To_UTF_8_String);
+
       XSD_To_Ada.Utils.Create_Complex_Type
         (Model, XSD_To_Ada.Mappings.Mapping (Mapping));
    end Generate;

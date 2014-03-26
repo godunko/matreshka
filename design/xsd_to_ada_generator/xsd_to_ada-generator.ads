@@ -47,7 +47,8 @@ with XML.Schema.Models;
 package XSD_To_Ada.Generator is
 
    procedure Generate
-     (Model        : XML.Schema.Models.XS_Model;
-      Mapping_Path : League.Strings.Universal_String);
+     (Model               : XML.Schema.Models.XS_Model;
+      Mapping_Path        : League.Strings.Universal_String;
+      Payloads_Types_Path : League.Strings.Universal_String);
 
 end XSD_To_Ada.Generator;
