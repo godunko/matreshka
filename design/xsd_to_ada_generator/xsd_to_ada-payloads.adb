@@ -49,9 +49,10 @@ with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
-with XSD_To_Ada.Utils;
+with XSD_To_Ada.Utils; use XSD_To_Ada.Utils;
 with XML.Schema.Type_Definitions;
 with XML.Schema.Terms;
+with XSD_To_Ada.Mappings.XML;
 
 package body XSD_To_Ada.Payloads is
 
@@ -85,7 +86,7 @@ package body XSD_To_Ada.Payloads is
       if Choice then
          Case_Type.Append
            ("   type "
-            & Name
+            & Add_Separator (Name)
             & "_Kind is" & LF & "     (");
       end if;
 
@@ -245,6 +246,10 @@ package body XSD_To_Ada.Payloads is
    -- Print_Type_Definition --
    ---------------------------
 
+   ---------------------------
+   -- Print_Type_Definition --
+   ---------------------------
+
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
       Writer       : in out Writers.Writer;
@@ -310,21 +315,21 @@ package body XSD_To_Ada.Payloads is
             if not Is_Min_Occur
               and then not Is_Max_Occur
             then
+
+               Writer_types.P ("--  " & Type_D.Get_Name);
+
                if Choice then
                   Writer.P
-                    ("   type " & Name & LF
-                     & "     (Kind : " & Name & "_Kind" & LF
-                     & "       := " & Name & "_Kind'First) is record" & LF
+                    ("   type " & XSD_To_Ada.Utils.Add_Separator (Name) & LF
+                     & "     (Kind : " & Add_Separator (Name) & "_Kind" & LF
+                     & "       := " & Add_Separator (Name)
+                     & "_Kind'First) is record" & LF
                      & "       case Kind is");
 
-               elsif XSD_To_Ada.Utils.Has_Element_Session (Type_D)
-                 or Name.Ends_With ("Response")
-                 or Name.To_Wide_Wide_String = "Open_Session"
-                 or Name.To_Wide_Wide_String = "Open_Session2"
-               then
+               elsif XSD_To_Ada.Mappings.XML.Payload_Types.Index (Name)
+                 /= 0 then
                   Writer_types.P
-                    ("   type "
-                     & Name
+                    ("   type " & XSD_To_Ada.Utils.Add_Separator (Name)
                      & " is" & LF
                      & "     new Web_Services.SOAP.Payloads."
                      & "Abstract_SOAP_Payload"
@@ -332,7 +337,9 @@ package body XSD_To_Ada.Payloads is
                      & "   with record");
 
                else
-                  Writer_types.P ("   type " & Name & " is record");
+                  Writer_types.P
+                    ("   type " & XSD_To_Ada.Utils.Add_Separator (Name)
+                                  & " is record");
                end if;
 
                Writer.N (Base_Type);
@@ -349,7 +356,7 @@ package body XSD_To_Ada.Payloads is
                     (Model_Group  => Model_Group,
                      Writer       => Writer,
                      Writer_types => Writer_types,
-                     Name         => Name,
+                     Name         => XSD_To_Ada.Utils.Add_Separator (Name),
                      Choice       => Choice);
                end if;
 
@@ -359,41 +366,45 @@ package body XSD_To_Ada.Payloads is
 
                Writer.P ("   end record;" & LF);
 
-               if Name.Ends_With ("Response")
-                 or Name.To_Wide_Wide_String = "Open_Session"
-                 or Name.To_Wide_Wide_String = "Open_Session2"
-               then
-                  XSD_To_Ada.Utils.Gen_Access_Type (Writer, (Name));
+               if XSD_To_Ada.Mappings.XML.Payload_Types.Index (Name) /= 0 then
+                  XSD_To_Ada.Utils.Gen_Access_Type
+                    (Writer, XSD_To_Ada.Utils.Add_Separator (Name));
                end if;
 
             elsif Is_Min_Occur then
                Writers.P
                     (Writer_types,
                      (XSD_To_Ada.Utils.Split_Line
-                        ("type " & Name
+                        ("type " & XSD_To_Ada.Utils.Add_Separator (Name)
                          & " is record", 3)) & LF
                      & "     Is_Set : Boolean := False;" & LF
                      & "     Value  : "
-                     & XSD2Ada.Analyzer.Type_Name (Name) & ";" & LF
+                     & XSD_To_Ada.Utils.Add_Separator
+                       (XSD2Ada.Analyzer.Type_Name (Name)) & ";" & LF
                      & "   end record;" & LF);
 
             elsif Is_Max_Occur then
                   Writers.P
                     (Writer_types,
-                     "   package " & Name & "s is" & LF
+                     "   package " & XSD_To_Ada.Utils.Add_Separator (Name)
+                     & "s is" & LF
                      & "     new Ada.Containers.Vectors" & LF
-                     & "      (Positive, " & XSD2Ada.Analyzer.Type_Name (Name)
+                     & "      (Positive, "
+                     & XSD_To_Ada.Utils.Add_Separator
+                       (XSD2Ada.Analyzer.Type_Name (Name))
                      & ");" & LF & LF
                      & XSD_To_Ada.Utils.Split_Line
-                       ("subtype " & Name & " is "
-                        & Name & "s.Vector;", 3) & LF);
+                       ("subtype " & XSD_To_Ada.Utils.Add_Separator (Name)
+                        & " is " & XSD_To_Ada.Utils.Add_Separator (Name)
+                        & "s.Vector;", 3) & LF);
             end if;
 
          when XML.Schema.Simple_Type =>
             if Is_Min_Occur then
                Writers.P
                  (Writer_types,
-                  "   type " & Name & " is record" & LF
+                  "   type " & XSD_To_Ada.Utils.Add_Separator (Name)
+                  & " is record" & LF
                   & "     Is_Set : Boolean := False;" & LF
                   & "     Value  : "
                   & XSD2Ada.Analyzer.Get_Type_Name
