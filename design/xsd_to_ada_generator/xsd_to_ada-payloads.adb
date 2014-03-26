@@ -50,7 +50,6 @@ with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
 with XSD_To_Ada.Utils;
-with XML.Schema.Objects;
 with XML.Schema.Type_Definitions;
 with XML.Schema.Terms;
 
@@ -112,54 +111,34 @@ package body XSD_To_Ada.Payloads is
          end if;
 
          if XS_Particle.Get_Term.Is_Element_Declaration then
+            if Choice then
+               Case_Type.Append (XSD_To_Ada.Utils.Add_Separator
+                                 (XS_Particle.Get_Term.To_Element_Declaration
+                                    .Get_Name) & "_Case");
+               Writers.N (Writer,
+                          "         when "
+                          & XSD_To_Ada.Utils.Add_Separator
+                            (XS_Particle.Get_Term
+                             .To_Element_Declaration.Get_Name)
+                          & "_Case =>" & LF
+                          & "           "
+                          & XSD_To_Ada.Utils.Add_Separator
+                            (XS_Particle.Get_Term
+                             .To_Element_Declaration.Get_Name));
+            else
+               Writer.N
+                 ("      " & XSD_To_Ada.Utils.Add_Separator
+                    (XS_Particle.Get_Term.To_Element_Declaration.Get_Name));
+            end if;
 
-            declare
-               procedure Find (Object : XML.Schema.Objects.XS_Object'Class);
-               procedure Find (Object : XML.Schema.Objects.XS_Object'Class)
-               is
-                  Item : XSD2Ada.Analyzer.Item_Access;
-               begin
-                  for Index in 1 .. Natural (Payloads_Node_Vector.Length) loop
-                     Item := Payloads_Node_Vector.Element (Index);
-                     if Object."=" (Item.Object)
---                         and then
---                           XSD_To_Ada.Utils.Add_Separator
---                     (XS_Particle.Get_Term.To_Element_Declaration.Get_Name)
---                             = Item.Short_Ada_Type_Name
-                       and then Min_Occurs = Item.Min
-                       and then Max_Occurs = Item.Max
-                       and then Item.Element_Name.Is_Empty
-                     then
-                        if Choice then
-                           Case_Type.Append
-                             (XSD_To_Ada.Utils.Add_Separator
-                                (XS_Particle.Get_Term
-                                 .To_Element_Declaration.Get_Name) & "_Case");
-
-                           Writers.N (Writer,
-                                      "         when "
-                                      & XSD_To_Ada.Utils.Add_Separator
-                                        (XS_Particle.Get_Term
-                                         .To_Element_Declaration.Get_Name)
-                                      & "_Case =>" & LF
-                                      & "           "
-                                      & XSD_To_Ada.Utils.Add_Separator
-                                        (XS_Particle.Get_Term
-                                         .To_Element_Declaration.Get_Name));
-                        else
-                           Writer.N
-                             ("      " & XSD_To_Ada.Utils.Add_Separator
-                                (XS_Particle.Get_Term.To_Element_Declaration
-                                 .Get_Name));
-                        end if;
-                        Writer.P (" : " & XSD2Ada.Analyzer.Find (Item) & ";");
-                     end if;
-                  end loop;
-               end Find;
-            begin
-               Find (XS_Particle.Get_Term
-                     .To_Element_Declaration.Get_Type_Definition);
-            end;
+            Writer.P (" : "
+                      & XSD2Ada.Analyzer.Get_Type_Name
+                        (XSD2Ada.Analyzer.Find_Object
+                           (Node_Vector => Payloads_Node_Vector,
+                            Object      => XS_Particle.Get_Term
+                            .To_Element_Declaration.Get_Type_Definition,
+                            Min_Occurs  => Min_Occurs,
+                            Max_Occurs  => Max_Occurs)) & ";");
          else
             Writers.P
               (Writer,
@@ -184,7 +163,6 @@ package body XSD_To_Ada.Payloads is
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
       Element_Name : League.Strings.Universal_String;
-      Ada_Type_Name : League.Strings.Universal_String;
       Choice       : Boolean := False;
       Is_Min_Occur : Boolean := False;
       Is_Max_Occur : Boolean := False);
@@ -206,7 +184,6 @@ package body XSD_To_Ada.Payloads is
       Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
 
       Type_Name : League.Strings.Universal_String;
-
    begin
 
       Payloads_Node_Vector := Node_Vector;
@@ -214,14 +191,12 @@ package body XSD_To_Ada.Payloads is
       for Current of Node_Vector loop
 
          if Current.Object.Is_Type_Definition then
-
             Print_Type_Definition
               (Type_D       => Current.Object.To_Type_Definition,
                Writer       => Payload_Writer,
                Writer_types => Payload_Type_Writer,
                Name         => Current.Short_Ada_Type_Name,
                Element_Name => Current.Element_Name,
-               Ada_Type_Name => Current.Simple_Ada_Name,
                Choice       => Current.Choice,
                Is_Min_Occur => Current.Min,
                Is_Max_Occur => Current.Max);
@@ -234,11 +209,9 @@ package body XSD_To_Ada.Payloads is
 
             if Current.Choice then
                Payload_Writer.P
-                 ("   type "
-                  & Type_Name & LF
+                 ("   type " & Type_Name & LF
                   & "     (Kind : " & Type_Name & "_Kind" & LF
-                  & "       := " & Type_Name
-                  & "_Kind'First) is record" & LF
+                  & "       := " & Type_Name & "_Kind'First) is record" & LF
                   & "       case Kind is");
             else
                Payload_Writer.P ("   type " & Type_Name & " is record");
@@ -278,7 +251,6 @@ package body XSD_To_Ada.Payloads is
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
       Element_Name : League.Strings.Universal_String;
-      Ada_Type_Name : League.Strings.Universal_String;
       Choice       : Boolean := False;
       Is_Min_Occur : Boolean := False;
       Is_Max_Occur : Boolean := False)
@@ -423,7 +395,14 @@ package body XSD_To_Ada.Payloads is
                  (Writer_types,
                   "   type " & Name & " is record" & LF
                   & "     Is_Set : Boolean := False;" & LF
-                  & "     Value  : " & Ada_Type_Name & ";" & LF
+                  & "     Value  : "
+                  & XSD2Ada.Analyzer.Get_Type_Name
+                    (XSD2Ada.Analyzer.Find_Object
+                       (Node_Vector => Payloads_Node_Vector,
+                        Object      => Type_D,
+                        Min_Occurs  => False,
+                        Max_Occurs  => False))
+                  & ";" & LF
                   & "   end record;" & LF);
 
             elsif Is_Max_Occur then
@@ -434,7 +413,12 @@ package body XSD_To_Ada.Payloads is
                   & "_Vector is" & LF
                   &  "     new Ada.Containers.Vectors" & LF
                   & "       (Positive, "
-                  & Ada_Type_Name & "," & LF
+                  & XSD2Ada.Analyzer.Get_Type_Name
+                    (XSD2Ada.Analyzer.Find_Object
+                       (Node_Vector => Payloads_Node_Vector,
+                        Object      => Type_D,
+                        Min_Occurs  => False,
+                        Max_Occurs  => False)) & "," & LF
                   & "       ""="" => ICTS.Types.""="");" & LF);
             end if;
 

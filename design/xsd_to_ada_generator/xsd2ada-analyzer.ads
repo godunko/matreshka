@@ -59,6 +59,11 @@ package XSD2Ada.Analyzer is
    type Item is tagged private;
    type Item_Access is access all Item'Class;
 
+   package Item_Vectors is
+     new Ada.Containers.Vectors (Positive, Item_Access);
+
+   subtype Items is Item_Vectors.Vector;
+
    function Object (Self : Item) return XML.Schema.Objects.XS_Object;
    function Type_Def
     (Self : Item) return XML.Schema.Type_Definitions.XS_Type_Definition;
@@ -66,14 +71,20 @@ package XSD2Ada.Analyzer is
    function Max (Self : Item) return Boolean;
    function Choice (Self : Item) return Boolean;
    function Element_Name (Self : Item) return League.Strings.Universal_String;
-   function Simple_Ada_Name
-     (Self : Item) return League.Strings.Universal_String;
    function Short_Ada_Type_Name
      (Self : Item) return League.Strings.Universal_String;
    --  Short name of Ada type described by the element.
-   function Find
+   function Get_Type_Name
      (Item : XSD2Ada.Analyzer.Item_Access)
       return League.Strings.Universal_String;
+
+   function Find_Object
+     (Node_Vector : XSD2Ada.Analyzer.Items;
+      Object      : XML.Schema.Objects.XS_Object'Class;
+      Min_Occurs  : Boolean;
+      Max_Occurs  : Boolean)
+      return XSD2Ada.Analyzer.Item_Access;
+
    function Full_Ada_Type_Name
     (Self : Item) return League.Strings.Universal_String;
    --  Full name of Ada type described by the element.
@@ -83,11 +94,6 @@ package XSD2Ada.Analyzer is
 
    function Type_Name (Name : League.Strings.Universal_String)
      return League.Strings.Universal_String;
-
-   package Item_Vectors is
-     new Ada.Containers.Vectors (Positive, Item_Access);
-
-   subtype Items is Item_Vectors.Vector;
 
    ---------------------
    -- Old subprograms --
@@ -120,7 +126,6 @@ private
       Object              : XML.Schema.Objects.XS_Object;
       Min, Max            : Boolean := False;
       Element_Name        : League.Strings.Universal_String;
-      Simple_Ada_Name     : League.Strings.Universal_String;
       Short_Ada_Type_Name : League.Strings.Universal_String;
    end record;
 

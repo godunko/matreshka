@@ -104,19 +104,6 @@ package body XSD2Ada.Analyzer is
          Definition_Node.Element_Name := Value.Element_Name;
       end if;
 
-      if Definition_Node.Object.Is_Simple_Type_Definition then
-         Definition_Node.Simple_Ada_Name :=
-           Analyzer_Mapping.Ada_Type_Qualified_Name
-             (Value.Object.To_Simple_Type_Definition.Get_Name,
-              Min_Occurs => Value.Min,
-              Max_Occurs => Value.Max);
-
-      elsif Definition_Node.Object.Is_Complex_Type_Definition then
-         Definition_Node.Simple_Ada_Name :=
-           Analyzer_Mapping.Ada_Type_Qualified_Name
-             (Value.Short_Ada_Type_Name);
-      end if;
-
       if not Contains (Definition_Node) then
          Vector.Append (new Item'(Definition_Node));
       end if;
@@ -350,11 +337,37 @@ package body XSD2Ada.Analyzer is
       return Self.Element_Name;
    end Element_Name;
 
-   ----------
-   -- Find --
-   ----------
+   -----------------
+   -- Find_Object --
+   -----------------
 
-   function Find
+   function Find_Object
+     (Node_Vector : XSD2Ada.Analyzer.Items;
+      Object : XML.Schema.Objects.XS_Object'Class;
+      Min_Occurs : Boolean;
+      Max_Occurs : Boolean)
+      return XSD2Ada.Analyzer.Item_Access
+   is
+      Item : XSD2Ada.Analyzer.Item_Access;
+   begin
+      for Index in 1 .. Natural (Node_Vector.Length) loop
+         Item := Node_Vector.Element (Index);
+         if Object."=" (Item.Object)
+           and then Min_Occurs = Item.Min
+           and then Max_Occurs = Item.Max
+           and then Item.Element_Name.Is_Empty
+         then
+            return Item;
+         end if;
+      end loop;
+
+      return Item;
+   end Find_Object;
+   -------------------
+   -- Get_Type_Name --
+   -------------------
+
+   function Get_Type_Name
      (Item : XSD2Ada.Analyzer.Item_Access)
       return League.Strings.Universal_String is
    begin
@@ -387,7 +400,7 @@ package body XSD2Ada.Analyzer is
                  Max_Occurs => Item.Max);
          end if;
       end if;
-   end Find;
+   end Get_Type_Name;
 
    ---------------------------
    -- Full_Ada_Package_Name --
@@ -437,16 +450,6 @@ package body XSD2Ada.Analyzer is
    begin
       return Self.Object;
    end Object;
-
-   ---------------------
-   -- Simple_Ada_Name --
-   ---------------------
-
-   function Simple_Ada_Name
-     (Self : Item) return League.Strings.Universal_String is
-   begin
-      return Self.Simple_Ada_Name;
-   end Simple_Ada_Name;
 
    ----------------
    -- Print_Term --
