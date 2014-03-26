@@ -172,8 +172,6 @@ package body XSD_To_Ada.Utils is
     (Model   : XML.Schema.Models.XS_Model;
      Mapping : XSD_To_Ada.Mappings.Mapping)
    is
-      Type_D    : XML.Schema.Type_Definitions.XS_Type_Definition;
-
       Complex_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
         Model.Get_Components_By_Namespace
           (Object_Type => XML.Schema.Complex_Type,
@@ -238,12 +236,12 @@ package body XSD_To_Ada.Utils is
 --        end loop;
 
       for J in 1 .. Element_Declarations.Length loop
-         Type_D :=
-           Element_Declarations.Item
-             (J).To_Element_Declaration.Get_Type_Definition;
-
-         if Has_Element_Session (Type_D)
-             or Type_D.Get_Name.To_UTF_8_String = "OpenSession"
+         if Has_Element_Session
+           (Element_Declarations.Item
+              (J).To_Element_Declaration.Get_Type_Definition)
+             or Element_Declarations.Item
+             (J).To_Element_Declaration.Get_Type_Definition
+             .Get_Name.To_UTF_8_String = "OpenSession"
          then
             XSD2Ada.Analyzer.Create_Element_Node
               (Element_Declarations.Item (J).To_Element_Declaration,
@@ -724,7 +722,8 @@ package body XSD_To_Ada.Utils is
       begin
 
          for J in reverse 1 .. Temp_US.Length loop
-            if (Temp_US.Element (J) = ' '
+            if (J + 1 < Temp_US.Length
+                and then Temp_US.Element (J) = ' '
                 and then Temp_US.Element (J + 1) = ':'
                 and then J /= 1)
               or (Temp_US.Element (J) = '('
