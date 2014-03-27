@@ -370,34 +370,14 @@ package body XSD2Ada.Analyzer is
      (Item : XSD2Ada.Analyzer.Item_Access)
       return League.Strings.Universal_String is
    begin
-      if Item.Object.Is_Simple_Type_Definition then
-         if Item.Min then
-            return "Payloads.Optional_"
-              & XSD_To_Ada.Utils.Add_Separator
-              (Item.Object.Get_Name);
-         elsif Item.Max then
-            return
-              "Payloads." &
-              XSD_To_Ada.Utils.Add_Separator (Item.Object.Get_Name)
-              & "_Vector.Vector";
-         else
-            return
-              Analyzer_Mapping.Ada_Type_Qualified_Name
-                (XSD_Type_Name => Item.Object.Get_Name,
-                 Min_Occurs => Item.Min,
-                 Max_Occurs => Item.Min);
-         end if;
+      if Item.Object.Get_Name.Is_Empty then
+         return Item.Full_Ada_Type_Name;
       else
-         if Item.Object.Get_Name.Is_Empty then
-            return "Payloads." & Item.Short_Ada_Type_Name;
-
-         else
-            return
-              Analyzer_Mapping.Ada_Type_Qualified_Name
-                (XSD_Type_Name => Item.Object.Get_Name,
-                 Min_Occurs => Item.Min,
-                 Max_Occurs => Item.Max);
-         end if;
+         return
+           Analyzer_Mapping.Ada_Type_Qualified_Name
+             (XSD_Type_Name => Item.Object.Get_Name,
+              Min_Occurs    => Item.Min,
+              Max_Occurs    => Item.Max);
       end if;
    end Get_Type_Name;
 

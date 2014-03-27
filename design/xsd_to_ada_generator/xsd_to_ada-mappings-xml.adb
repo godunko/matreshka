@@ -55,6 +55,8 @@ package body XSD_To_Ada.Mappings.XML is
 
    Type_Attribute : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("type");
+   Multiplicity_Attribute : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("multiplicity");
 
    -----------------
    -- End_Element --
@@ -139,21 +141,38 @@ package body XSD_To_Ada.Mappings.XML is
       pragma Unreferenced (Namespace_URI);
       pragma Unreferenced (Local_Name);
       pragma Unreferenced (Success);
-      use type League.Strings.Universal_String;
+      use League.Strings;
+
+      Multiplicity : XSD_To_Ada.Mappings.Multiplicity_Kind;
 
    begin
       if Qualified_Name = Map_Tag then
-         Self.Current := Attributes.Value (Type_Attribute);
+         Self.Current.Name := Attributes.Value (Type_Attribute);
 
       elsif Qualified_Name = Ada_Tag then
+
+         if League.Strings.To_UTF_8_String
+              (Attributes.Value (Multiplicity_Attribute)) = "Vector"
+            then
+               Multiplicity := Vector;
+            elsif League.Strings.To_UTF_8_String
+              (Attributes.Value (Multiplicity_Attribute)) = "Optional"
+            then
+               Multiplicity := Optional;
+            else
+               Multiplicity := Single;
+         end if;
+
+         Self.Current.Multiplicity := Multiplicity;
+
          if Self.Mapping.Contains (Self.Current) then
             raise Constraint_Error
               with "Duplicate mapping for '"
-                     & Self.Current.To_UTF_8_String & ''';
-
+              & Self.Current.Name.To_UTF_8_String & '''
+              & "/" & Self.Current.Multiplicity'Img;
          else
             Self.Mapping.Insert
-             (Self.Current, (Ada_Name => Attributes.Value (Type_Attribute)));
+              (Self.Current, (Ada_Name => Attributes.Value (Type_Attribute)));
          end if;
       end if;
    end Start_Element;

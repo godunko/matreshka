@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Hashed_Maps;
 
-with League.Strings.Hash;
+with League.Strings;
 
 package XSD_To_Ada.Mappings is
 
@@ -58,16 +58,25 @@ package XSD_To_Ada.Mappings is
 
 private
 
+   type Multiplicity_Kind is (Single, Optional, Vector);
+
    type Ada_Mapping is record
       Ada_Name : League.Strings.Universal_String;
    end record;
 
+   type Key is record
+      Name         : League.Strings.Universal_String;
+      Multiplicity : Multiplicity_Kind := Single;
+   end record;
+
+   function Hash (Value : Key) return Ada.Containers.Hash_Type;
+
    package Mappings is
      new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
+          (Key,
            Ada_Mapping,
-           League.Strings.Hash,
-           League.Strings."=");
+           Hash,
+           "=");
 
    type Mapping is tagged record
       Mapping : Mappings.Map;

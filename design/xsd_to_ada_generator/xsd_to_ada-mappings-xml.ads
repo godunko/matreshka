@@ -64,7 +64,7 @@ private
 
    type Mapping_XML is new XSD_To_Ada.Mappings.Mapping
      and Standard.XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Current : League.Strings.Universal_String;
+      Current : XSD_To_Ada.Mappings.Key;
    end record;
 
    overriding procedure Start_Element

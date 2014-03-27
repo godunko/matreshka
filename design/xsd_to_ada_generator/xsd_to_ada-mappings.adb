@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings.Hash;
+
 with XSD_To_Ada.Utils;
 
 package body XSD_To_Ada.Mappings is
@@ -56,10 +58,19 @@ package body XSD_To_Ada.Mappings is
       XSD_Type_Name    : League.Strings.Universal_String;
       Min_Occurs       : Boolean := False;
       Max_Occurs       : Boolean := False)
-      return League.Strings.Universal_String is
+      return League.Strings.Universal_String
+   is
+      K : Key := (XSD_Type_Name, Single);
    begin
-      if Self.Mapping.Contains (XSD_Type_Name) then
-         return Self.Mapping.Element (XSD_Type_Name).Ada_Name;
+
+      if Max_Occurs then
+         K.Multiplicity := Vector;
+      elsif Min_Occurs then
+         K.Multiplicity := Optional;
+      end if;
+
+      if Self.Mapping.Contains (K) then
+         return Self.Mapping.Element (K).Ada_Name;
       else
          if Max_Occurs then
             return "Payloads."
@@ -73,5 +84,16 @@ package body XSD_To_Ada.Mappings is
          end if;
       end if;
    end Ada_Type_Qualified_Name;
+
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Value : Key) return Ada.Containers.Hash_Type is
+      use type Ada.Containers.Hash_Type;
+   begin
+      return League.Strings.Hash (Value.Name) +
+        Multiplicity_Kind'Pos (Value.Multiplicity);
+   end Hash;
 
 end XSD_To_Ada.Mappings;

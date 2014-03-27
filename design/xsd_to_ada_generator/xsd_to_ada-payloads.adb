@@ -43,8 +43,6 @@
 ------------------------------------------------------------------------------
 with Ada.Characters.Wide_Wide_Latin_1;
 
-with League.Characters;
-
 with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
@@ -85,17 +83,15 @@ package body XSD_To_Ada.Payloads is
    begin
       if Choice then
          Case_Type.Append
-           ("   type "
-            & Add_Separator (Name)
-            & "_Kind is" & LF & "     (");
+           ("   type " & Add_Separator (Name) & "_Kind is" & LF
+            & "     (");
       end if;
 
       for J in 1 .. XS_List.Get_Length loop
+         XS_Particle := XS_List.Item (J).To_Particle;
 
          Min_Occurs := False;
          Max_Occurs := False;
-
-         XS_Particle := XS_List.Item (J).To_Particle;
 
          if XS_Particle.Get_Max_Occurs.Unbounded then
             Max_Occurs := True;
@@ -141,10 +137,8 @@ package body XSD_To_Ada.Payloads is
                             Min_Occurs  => Min_Occurs,
                             Max_Occurs  => Max_Occurs)) & ";");
          else
-            Writers.P
-              (Writer,
-               "      " & Name & LF
-               & "        : " & Name & "_Case_Anonym;");
+            Writers.P (Writer, "      " & Name & LF
+                       & "        : " & Name & "_Case_Anonym;");
          end if;
 
          if J /= XS_List.Get_Length and Choice then
@@ -176,17 +170,12 @@ package body XSD_To_Ada.Payloads is
      (Node_Vector : XSD2Ada.Analyzer.Items;
       Writer      : in out XSD_To_Ada.Writers.Writer)
    is
-      use type League.Characters.Universal_Character;
-      use type XML.Schema.Type_Definitions.XS_Type_Definition;
-
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
       Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
-
-      Model_Group : XML.Schema.Model_Groups.XS_Model_Group;
+      Model_Group         : XML.Schema.Model_Groups.XS_Model_Group;
 
       Type_Name : League.Strings.Universal_String;
    begin
-
       Payloads_Node_Vector := Node_Vector;
 
       for Current of Node_Vector loop
@@ -246,10 +235,6 @@ package body XSD_To_Ada.Payloads is
    -- Print_Type_Definition --
    ---------------------------
 
-   ---------------------------
-   -- Print_Type_Definition --
-   ---------------------------
-
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
       Writer       : in out Writers.Writer;
@@ -281,12 +266,13 @@ package body XSD_To_Ada.Payloads is
       then
          if XS_Base.Get_Name.To_Wide_Wide_String = "anyType" then
             Writer_types.P
-              ("   type " & Name & " is" & LF
+              ("   type " & Add_Separator (Name) & " is" & LF
                & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
                & LF
                & "       with null record;" & LF);
 
-            XSD_To_Ada.Utils.Gen_Access_Type (Writer_types, Name);
+            XSD_To_Ada.Utils.Gen_Access_Type
+              (Writer_types, Add_Separator (Name));
             return;
          else
             Base_Type := League.Strings.To_Universal_String
