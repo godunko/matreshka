@@ -250,13 +250,9 @@ package body XSD2Ada.Analyzer is
              Namespace   => XSD_To_Ada.Utils.Namespace);
    begin
       for J in 1 .. Element_Declarations.Length loop
-         if Element_Declarations.Item (J).Get_Name.To_Wide_Wide_String
-           /= "Transaction"
-           then
-            Create_Element_Node
-              (Element_Declarations.Item (J).To_Element_Declaration,
-               Node_Vector);
-         end if;
+         Create_Element_Node
+           (Element_Declarations.Item (J).To_Element_Declaration,
+            Node_Vector);
       end loop;
    end Create_Element_Nodes;
 
@@ -281,7 +277,7 @@ package body XSD2Ada.Analyzer is
       Item : XSD2Ada.Analyzer.Item;
 
    begin
-      Item.Object := XML.Schema.Objects.XS_Object (Object);
+      Item.Object       := XML.Schema.Objects.XS_Object (Object);
       Item.Element_Name := Element_Name;
 
       Item.Short_Ada_Type_Name := Short_Ada_Type_Name;
@@ -290,11 +286,18 @@ package body XSD2Ada.Analyzer is
       Item.Min := Min_Occurs = 0;
 
       if Object.Is_Type_Definition then
+         if Object.Get_Name.Is_Empty then
+            Traverse_Type_Definition
+              (Type_D        => Object.To_Type_Definition,
+               Node_Vector   => Node_Vector,
+               Anonym_Prefix => Short_Ada_Type_Name);
+         else
          Traverse_Type_Definition
            (Type_D        => Object.To_Type_Definition,
             Node_Vector   => Node_Vector,
-            Anonym_Prefix => XSD_To_Ada.Utils.Add_Separator (Object.Get_Name));
-
+            Anonym_Prefix =>
+              XSD_To_Ada.Utils.Add_Separator (Object.Get_Name));
+         end if;
       elsif Object.Is_Model_Group then
          Traverse_Model_Group
            (Object.To_Model_Group,
@@ -372,7 +375,7 @@ package body XSD2Ada.Analyzer is
       return League.Strings.Universal_String is
    begin
       if Item.Object.Get_Name.Is_Empty then
-         return Item.Full_Ada_Type_Name;
+         return XSD_To_Ada.Utils.Add_Separator (Item.Full_Ada_Type_Name);
       else
          return
            Analyzer_Mapping.Ada_Type_Qualified_Name

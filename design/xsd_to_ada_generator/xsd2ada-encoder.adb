@@ -578,17 +578,26 @@ package body XSD2Ada.Encoder is
                Model_Groups_Choice :  constant Boolean :=
                  XS_Particle.Get_Term.To_Model_Group.Get_Compositor =
                    XML.Schema.Model_Groups.Compositor_Choice;
+
+               Full_Name      : League.Strings.Universal_String := Name;
+               Full_Base_Name : League.Strings.Universal_String
+                 := Base_Name;
+
             begin
-               if Base_Name.Is_Empty then
-                  if Model_Groups_Choice then
-                     Writer.P
-                       ("      case Data." & Name &".Kind is");
-                  end if;
-               else
+               if not Base_Name.Is_Empty then
+                  Full_Base_Name.Append ("_Anonym");
+
                   if Model_Groups_Choice then
                      Writer.P
                        ("      case Data."
-                        & Name & "." & Base_Name &".Kind is");
+                        & Name & "." & Full_Base_Name &".Kind is");
+                  end if;
+               else
+                  Full_Name.Append ("_Anonym");
+
+                  if Model_Groups_Choice then
+                     Writer.P
+                       ("      case Data." & Full_Name & ".Kind is");
                   end if;
                end if;
 
@@ -597,8 +606,8 @@ package body XSD2Ada.Encoder is
                   Writer       => Writer,
                   Writer_types => Writer_types,
                   Name         => League.Strings.Empty_Universal_String,
-                  Element_Name => Name & ".",
-                  Base_Name    => Base_Name,
+                  Element_Name => Full_Name & ".",
+                  Base_Name    => Full_Base_Name,
                   Choice       => Model_Groups_Choice);
 
                if Model_Groups_Choice then

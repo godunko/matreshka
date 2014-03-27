@@ -119,9 +119,8 @@ package body XSD_To_Ada.Payloads is
                              .To_Element_Declaration.Get_Name)
                           & "_Case =>" & LF
                           & "           "
-                          & XSD_To_Ada.Utils.Add_Separator
-                            (XS_Particle.Get_Term
-                             .To_Element_Declaration.Get_Name));
+                          & XSD_To_Ada.Utils.Add_Separator (XS_Particle
+                            .Get_Term.To_Element_Declaration.Get_Name));
             else
                Writer.N
                  ("      " & XSD_To_Ada.Utils.Add_Separator
@@ -136,9 +135,20 @@ package body XSD_To_Ada.Payloads is
                             .To_Element_Declaration.Get_Type_Definition,
                             Min_Occurs  => Min_Occurs,
                             Max_Occurs  => Max_Occurs)) & ";");
-         else
-            Writers.P (Writer, "      " & Name & LF
-                       & "        : " & Name & "_Case_Anonym;");
+
+         elsif XS_Particle.Get_Term.Is_Model_Group then
+            declare
+               Full_Anonym_Name : League.Strings.Universal_String
+                 := Name & "_Case_Anonym";
+            begin
+
+               if Max_Occurs then
+                  Full_Anonym_Name.Append ("_Vector");
+               end if;
+
+               Writers.P (Writer, "      " & Name & "_Anonym" & LF
+                          & "        : " & Full_Anonym_Name & ";");
+            end;
          end if;
 
          if J /= XS_List.Get_Length and Choice then
@@ -197,32 +207,54 @@ package body XSD_To_Ada.Payloads is
 
             Model_Group := Current.Object.To_Model_Group;
 
-            if Current.Choice then
-               Payload_Writer.P
-                 ("   type " & Type_Name & LF
-                  & "     (Kind : " & Type_Name & "_Kind" & LF
-                  & "       := " & Type_Name & "_Kind'First) is record" & LF
-                  & "       case Kind is");
+            if not Current.Max
+              and then not Current.Min
+            then
+               if Current.Choice then
+                  Payload_Writer.P
+                    ("   type "
+                     & Type_Name & LF
+                     & "     (Kind : " & Type_Name & "_Kind" & LF
+                     & "       := " & Type_Name
+                     & "_Kind'First) is record" & LF
+                     & "       case Kind is");
+               else
+                  Payload_Writer.P ("   type " & Type_Name & " is record");
+               end if;
+
+               Print_Model
+                 (Model_Group  => Model_Group,
+                  Writer       => Payload_Writer,
+                  Writer_types => Payload_Type_Writer,
+                  Name         => Current.Short_Ada_Type_Name,
+                  Choice       => Current.Choice);
+
+               if Current.Choice then
+                  Payload_Writer.P ("      end case;");
+               end if;
+
+               Payload_Writer.P ("   end record;" & LF);
+
+            elsif Current.Max then
+               Writers.P
+                 (Payload_Writer,
+                  "   package "
+                  & Add_Separator (Current.Short_Ada_Type_Name) & "s is" & LF
+                  & "     new Ada.Containers.Vectors" & LF
+                  & "      (Positive, "
+                  & Add_Separator
+                    (XSD2Ada.Analyzer.Type_Name (Current.Short_Ada_Type_Name))
+                  & ");" & LF & LF
+                  & XSD_To_Ada.Utils.Split_Line
+                    ("subtype "
+                     & Add_Separator (Current.Short_Ada_Type_Name) & " is "
+                     & Add_Separator (Current.Short_Ada_Type_Name)
+                     & "s.Vector;", 3) & LF);
+
             else
-               Payload_Writer.P ("   type " & Type_Name & " is record");
+               raise Constraint_Error;
             end if;
-
-            Print_Model
-              (Model_Group  => Model_Group,
-               Writer       => Payload_Writer,
-               Writer_types => Payload_Type_Writer,
-               Name         => Current.Short_Ada_Type_Name,
-               Choice       => Current.Choice);
-
-            if Current.Choice then
-               Payload_Writer.P ("      end case;");
-            end if;
-
-            Payload_Writer.P ("   end record;" & LF);
-         else
-            raise Constraint_Error;
          end if;
-
          Writer.N (Payload_Type_Writer.Text);
          Writer.N (Payload_Writer.Text);
 
@@ -258,9 +290,7 @@ package body XSD_To_Ada.Payloads is
           := Type_D.To_Complex_Type_Definition;
 
       Base_Type : League.Strings.Universal_String;
-
    begin
-
       if XS_Base.Get_Type_Category in XML.Schema.Complex_Type
         and XS_Base /= Type_D
       then

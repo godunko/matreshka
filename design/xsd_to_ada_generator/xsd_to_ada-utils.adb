@@ -98,7 +98,7 @@ package body XSD_To_Ada.Utils is
    function Add_Separator
      (Text : Wide_Wide_String) return Wide_Wide_String
    is
-      subtype Upper_Char_List  is Wide_Wide_Character range 'A' .. 'Z';
+      subtype Upper_Char_List is Wide_Wide_Character range 'A' .. 'Z';
       subtype Lower_Char_List is Wide_Wide_Character range 'a' .. 'z';
 
       US_Text    : League.Strings.Universal_String;
