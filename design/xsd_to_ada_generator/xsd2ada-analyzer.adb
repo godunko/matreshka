@@ -348,10 +348,11 @@ package body XSD2Ada.Analyzer is
       return XSD2Ada.Analyzer.Item_Access
    is
       Item : XSD2Ada.Analyzer.Item_Access;
+
    begin
       for Index in 1 .. Natural (Node_Vector.Length) loop
          Item := Node_Vector.Element (Index);
-         if Object."=" (Item.Object)
+         if Object.Is_Equal (Item.Object)
            and then Min_Occurs = Item.Min
            and then Max_Occurs = Item.Max
            and then Item.Element_Name.Is_Empty
