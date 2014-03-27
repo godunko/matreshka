@@ -73,15 +73,6 @@ package body XML.Schema.Objects is
       return Left.Node = Right.Node;
    end "=";
 
-   ---------
-   -- "=" --
-   ---------
-
-   function "=" (Left : XS_Object; Right : XS_Object'Class) return Boolean is
-   begin
-      return Left.Node = Right.Node;
-   end "=";
-
    --------------
    -- Get_Name --
    --------------
@@ -195,6 +186,16 @@ package body XML.Schema.Objects is
    begin
       return Self.Get_Type = Element_Declaration;
    end Is_Element_Declaration;
+
+   --------------
+   -- Is_Equal --
+   --------------
+
+   function Is_Equal
+    (Left : XS_Object; Right : XS_Object'Class) return Boolean is
+   begin
+      return Left.Node = Right.Node;
+   end Is_Equal;
 
    --------------
    -- Is_Facet --

@@ -133,7 +133,9 @@ package XML.Schema.Objects is
        return XML.Schema.Objects.Type_Definitions.XS_Type_Definition;
 
    function "=" (Left : XS_Object; Right : XS_Object) return Boolean;
-   function "=" (Left : XS_Object; Right : XS_Object'Class) return Boolean;
+
+   function Is_Equal
+    (Left : XS_Object; Right : XS_Object'Class) return Boolean;
 
    function Is_Null (Self : XS_Object'Class) return Boolean;
 
