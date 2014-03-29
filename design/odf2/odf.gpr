@@ -1,5 +1,4 @@
 with "../../gnat/matreshka_xml.gpr";
-with "dom.gpr";
 
 project ODF is
 
