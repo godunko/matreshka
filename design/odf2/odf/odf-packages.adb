@@ -48,7 +48,7 @@ with GNAT.Expect;
 with Matreshka.DOM_Builders;
 with Matreshka.DOM_Nodes;
 with XML.DOM.Documents;
-with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.File_Input_Sources;
 with XML.SAX.Simple_Readers;
 
 with Matreshka.ODF_Packages;
@@ -101,8 +101,10 @@ package body ODF.Packages is
          end if;
       end;
 
-      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), Temp & "/styles.xml");
-      Load_XML_File (ODF.DOM.Packages.ODF_Package_Access (Result), Temp & "/content.xml");
+      Load_XML_File
+       (ODF.DOM.Packages.ODF_Package_Access (Result), Temp & "/styles.xml");
+      Load_XML_File
+       (ODF.DOM.Packages.ODF_Package_Access (Result), Temp & "/content.xml");
 
       return ODF.DOM.Packages.ODF_Package_Access (Result);
    end Load;
@@ -115,9 +117,9 @@ package body ODF.Packages is
     (The_Package : not null ODF.DOM.Packages.ODF_Package_Access;
      File_Name   : League.Strings.Universal_String)
    is
-      Input   : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+      Input   : aliased XML.SAX.File_Input_Sources.File_Input_Source;
       Builder : aliased Matreshka.DOM_Builders.DOM_Builder;
-      Reader  : XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Reader  : XML.SAX.Simple_Readers.Simple_Reader;
 
    begin
       Builder.Set_Document (XML.DOM.Documents.DOM_Document_Access (The_Package));

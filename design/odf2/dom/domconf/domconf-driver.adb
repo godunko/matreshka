@@ -43,15 +43,15 @@
 ------------------------------------------------------------------------------
 with League.Application;
 with XML.SAX.Constants;
-with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.File_Input_Sources;
 with XML.SAX.Simple_Readers;
 
 with DOMConf.Test_Parsers;
 
 procedure DOMConf.Driver is
-   Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+   Input  : aliased XML.SAX.File_Input_Sources.File_Input_Source;
    Parser : aliased DOMConf.Test_Parsers.Test_Parser;
-   Reader : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+   Reader : aliased XML.SAX.Simple_Readers.Simple_Reader;
 
 begin
    Input.Open_By_File_Name (League.Application.Arguments.Element (1));
