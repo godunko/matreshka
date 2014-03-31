@@ -12,8 +12,8 @@ project FastCGI is
    end Compiler;
 
    package Builder is
-      for Executable ("demo-driver.adb") use "demo-fcgi.exe";
---      for Executable ("demo-driver.adb") use "demo.fcgi";
+--      for Executable ("demo-driver.adb") use "demo-fcgi.exe";
+      for Executable ("demo-driver.adb") use "demo.fcgi";
    end Builder;
 
 end FastCGI;
