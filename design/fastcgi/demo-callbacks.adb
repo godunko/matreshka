@@ -37,7 +37,7 @@ package body Demo.Callbacks is
             & "<title>Matreshka's FastCGI and Unicode Collation demo</title>"
             & "</head>"
             & "<body>"
-            & "<p>This simple FastCGI application sorts set of strings with Unicode Collation Algoriphm. You can enter own strings using text box and submit button.</p>"
+            & "<p>This simple FastCGI application sorts set of strings with Unicode Collation Algorithm. You can enter own strings using text box and submit button.</p>"
             & "<table>"
             & "<tbody>");
 
