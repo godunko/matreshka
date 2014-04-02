@@ -73,13 +73,13 @@ package body XSD_To_Ada.Mappings is
          return Self.Mapping.Element (K).Ada_Name;
       else
          if Max_Occurs then
-            return "Payloads."
+            return "IATS_Types."
               & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name) & "_Vector";
          elsif Min_Occurs then
-            return "Payloads.Optional_"
+            return "IATS_Types.Optional_"
               & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
          else
-            return "Payloads."
+            return "IATS_Types."
               & XSD_To_Ada.Utils.Add_Separator (XSD_Type_Name);
          end if;
       end if;

@@ -394,7 +394,7 @@ package body XSD2Ada.Analyzer is
    is
       pragma Unreferenced (Self);
    begin
-      return League.Strings.To_Universal_String ("Payloads");
+      return League.Strings.To_Universal_String ("IATS_Types");
    end Full_Ada_Package_Name;
 
    ------------------------

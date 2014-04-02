@@ -60,7 +60,8 @@ package XSD_To_Ada.Payloads is
       Choice       : Boolean := False);
 
    procedure Print_Payloads
-     (Node_Vector : XSD2Ada.Analyzer.Items;
-      Writer      : in out XSD_To_Ada.Writers.Writer);
+     (Node_Vector  : XSD2Ada.Analyzer.Items;
+      Writer       : in out XSD_To_Ada.Writers.Writer;
+      Types        : in out XSD_To_Ada.Writers.Writer);
 
 end XSD_To_Ada.Payloads;

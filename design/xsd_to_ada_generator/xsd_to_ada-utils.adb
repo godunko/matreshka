@@ -188,7 +188,12 @@ package body XSD_To_Ada.Utils is
            Namespace   => Namespace);
 
       Payload_Spec        : Generator.Units.Ada_Units.Ada_Unit;
+      Types_Writer        : XSD_To_Ada.Writers.Writer;
       Payload_Writer      : XSD_To_Ada.Writers.Writer;
+
+      Encoder_Types       : XSD_To_Ada.Writers.Writer;
+      Encoder_Spec_Types  : XSD_To_Ada.Writers.Writer;
+
       Encoder_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Full_Writer : XSD_To_Ada.Writers.Writer;
       Encoder_Spec_Writer : XSD_To_Ada.Writers.Writer;
@@ -200,6 +205,35 @@ package body XSD_To_Ada.Utils is
 
 --      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
    begin
+
+      Put_Header (Types_Writer);
+      Writers.P (Types_Writer, "with IATS_Types;");
+      Writers.P (Types_Writer, "with Web_Services.SOAP.Payloads;");
+      Writers.P (Types_Writer, "package Payloads is" & LF);
+
+      Put_Header (Encoder_Spec_Types);
+      Encoder_Spec_Types.P ("with IATS_Types;");
+      Encoder_Spec_Types.P ("with XML.SAX.Writers;");
+      Encoder_Spec_Types.P ("with League.Strings;" & LF);
+      Encoder_Spec_Types.P ("package Encoder_Types is" & LF);
+
+      Put_Header (Encoder_Types);
+      Encoder_Types.P ("package body Encoder_Types is" & LF);
+      Encoder_Types.P
+        ("   IATS_URI : constant League.Strings.Universal_String :=");
+      Encoder_Types.P ("     League.Strings.To_Universal_String "
+                            & "(""http://www.actforex.com/iats"");");
+      Encoder_Types.P ("   function Image (Item : Boolean) "
+                            & "return League.Strings.Universal_String is");
+      Encoder_Types.P ("     begin");
+      Encoder_Types.P ("       if Item then");
+      Encoder_Types.P
+        ("         return League.Strings.To_Universal_String (""true"");");
+      Encoder_Types.P ("           else");
+      Encoder_Types.P
+        ("         return League.Strings.To_Universal_String (""false"");");
+      Encoder_Types.P ("       end if;");
+      Encoder_Types.P ("   end Image;");
 
       Put_Header (Payload_Spec);
       Create_Package_Name (Payload_Spec);
@@ -221,7 +255,7 @@ package body XSD_To_Ada.Utils is
 
       XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
       XSD_To_Ada.Payloads.Print_Payloads
-        (Node_Vector, Payload_Writer);
+        (Node_Vector, Payload_Writer, Types_Writer);
 
       Node_Vector.Clear;
 
@@ -252,6 +286,8 @@ package body XSD_To_Ada.Utils is
 
       XSD2Ada.Encoder.Print_Type_Title
         (Node_Vector,
+         Encoder_Types,
+         Encoder_Spec_Types,
          Encoder_Writer,
          Encoder_Spec_Writer,
          Encoder_Names_Writer,
@@ -281,7 +317,7 @@ package body XSD_To_Ada.Utils is
       Encoder_Full_Writer.N ("end Encoder;");
       Encoder_Spec_Writer.N ("end Encoder;");
 
-      Writers.N (Payload_Writer, "end Payloads;");
+      Writers.N (Payload_Writer, "end IATS_Types;");
       Payload_Spec.Save;
 
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
@@ -289,6 +325,16 @@ package body XSD_To_Ada.Utils is
         (Encoder_Full_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
         (Encoder_Spec_Writer.Text.To_Wide_Wide_String);
+
+      Writers.N (Types_Writer, "end Payloads;");
+      Ada.Wide_Wide_Text_IO.Put_Line (Types_Writer.Text.To_Wide_Wide_String);
+
+      Encoder_Types.N ("end Encoder_Types;");
+      Encoder_Spec_Types.P ("end Encoder_Types;");
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Encoder_Spec_Types.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Encoder_Types.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
 
    ------------------------------------
@@ -307,7 +353,6 @@ package body XSD_To_Ada.Utils is
         Model.Get_Components_By_Namespace
           (Object_Type => XML.Schema.Simple_Type,
            Namespace   => Namespace);
-
    begin
       for J in 1 .. Simple_Types.Length loop
          XS_Object := Simple_Types.Item (J);
@@ -349,7 +394,7 @@ package body XSD_To_Ada.Utils is
    begin
       Unit.Set_Section (Generator.Units.Ada_Units.Unit_Declaration_Section);
       Unit.New_Line;
-      Unit.Put_Line (+"package Payloads is");
+      Unit.Put_Line (+"package IATS_Types is");
       Unit.Put_Line (+"pragma Style_Checks (""N"");");
 
       --  XXX Temporary stuff to generate compilable code for IATS project.
