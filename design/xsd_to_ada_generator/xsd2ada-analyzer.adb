@@ -375,7 +375,7 @@ package body XSD2Ada.Analyzer is
       return League.Strings.Universal_String is
    begin
       if Item.Object.Get_Name.Is_Empty then
-         return XSD_To_Ada.Utils.Add_Separator (Item.Full_Ada_Type_Name);
+         return Item.Full_Ada_Type_Name;
       else
          return
            Analyzer_Mapping.Ada_Type_Qualified_Name
@@ -404,7 +404,8 @@ package body XSD2Ada.Analyzer is
    function Full_Ada_Type_Name
      (Self : Item) return League.Strings.Universal_String is
    begin
-      return Self.Full_Ada_Package_Name & "." & Self.Short_Ada_Type_Name;
+      return Self.Full_Ada_Package_Name & "."
+        & XSD_To_Ada.Utils.Add_Separator (Self.Short_Ada_Type_Name);
    end Full_Ada_Type_Name;
 
    ---------
