@@ -41,42 +41,65 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
+with Ada.Unchecked_Deallocation;
 
-with AllKeys_Reader;
+package body Collations is
 
-package CLDR_Parsers is
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (AllKeys_Reader.Collation_Record,
+           AllKeys_Reader.Collation_Record_Access);
 
-   type CLDR_Parser is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Collect_Text : Boolean := False;
-      Text         : League.Strings.Universal_String;
-      Collations   : AllKeys_Reader.Collation_Information_Access;
-   end record;
+   ---------------------------
+   -- Suppress_Contractions --
+   ---------------------------
 
-   overriding procedure Characters
-    (Self    : in out CLDR_Parser;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean);
+   procedure Suppress_Contractions
+    (Data : in out AllKeys_Reader.Collation_Information;
+     Code : Matreshka.Internals.Unicode.Code_Point)
+   is
+      use type AllKeys_Reader.Collation_Record_Access;
 
-   overriding procedure End_Element
-    (Self           : in out CLDR_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
+      Current : AllKeys_Reader.Collation_Record_Access;
+      Next    : AllKeys_Reader.Collation_Record_Access;
 
-   overriding function Error_String
-    (Self : CLDR_Parser) return League.Strings.Universal_String;
+   begin
+      Current := Data.Collations (Code);
 
-   overriding procedure Start_Element
-    (Self           : in out CLDR_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
+      while Current /= null loop
+         Next := Current.Next;
 
-end CLDR_Parsers;
+         if Current.Contractors'Length = 1 then
+            --  Only one collation record can be provides for single code
+            --  point by construction. Left this collation record.
+
+            Data.Collations (Code) := Current;
+
+         else
+            --  Remove all other collation records.
+
+            if Data.Lower_Record = Current then
+               Data.Lower_Record := Current.Greater_Or_Equal;
+            end if;
+
+            if Data.Greater_Record = Current then
+               Data.Greater_Record := Current.Less_Or_Equal;
+            end if;
+
+            if Current.Less_Or_Equal /= null then
+               Current.Less_Or_Equal.Greater_Or_Equal :=
+                 Current.Greater_Or_Equal;
+            end if;
+
+            if Current.Greater_Or_Equal /= null then
+               Current.Greater_Or_Equal.Less_Or_Equal := Current.Less_Or_Equal;
+            end if;
+
+            Free (Current);
+         end if;
+
+         Current := Next;
+      end loop;
+   end Suppress_Contractions;
+
+end Collations;

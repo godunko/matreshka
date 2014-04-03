@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
+with Collations;
+
 package body CLDR_Parsers is
 
    use type League.Strings.Universal_String;
@@ -101,6 +103,12 @@ package body CLDR_Parsers is
          Self.Collect_Text := False;
 
       elsif Qualified_Name = Suppress_Contractions_Tag then
+         for J in 2 .. Self.Text.Length - 1 loop
+            Collations.Suppress_Contractions
+             (Self.Collations.all,
+              Wide_Wide_Character'Pos (Self.Text (J).To_Wide_Wide_Character));
+         end loop;
+
          Self.Collect_Text := False;
       end if;
    end End_Element;

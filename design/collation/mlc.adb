@@ -18,6 +18,7 @@ begin
    Input.Open_By_File_Name
     (League.Strings.To_Universal_String
       ("../../data/cldr/25/common/collation/uk.xml"));
+   Parser.Collations := Collations;
    Reader.Set_Content_Handler (Parser'Unchecked_Access);
    Reader.Parse (Input'Unchecked_Access);
    Input.Close;
