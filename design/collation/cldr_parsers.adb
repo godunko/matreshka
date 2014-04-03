@@ -104,6 +104,8 @@ package body CLDR_Parsers is
 
       elsif Qualified_Name = Suppress_Contractions_Tag then
          for J in 2 .. Self.Text.Length - 1 loop
+            --  XXX This field must be parsed as Unicode Set.
+
             Collations.Suppress_Contractions
              (Self.Collations.all,
               Wide_Wide_Character'Pos (Self.Text (J).To_Wide_Wide_Character));
