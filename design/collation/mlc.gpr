@@ -1,0 +1,12 @@
+with "../../gnat/matreshka_league.gpr";
+
+project MLC is
+
+   for Object_Dir use ".objs";
+   for Main use ("mlc.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g");
+   end Compiler;
+
+end MLC;
