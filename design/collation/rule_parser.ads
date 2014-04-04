@@ -43,26 +43,10 @@
 ------------------------------------------------------------------------------
 with AllKeys_Reader;
 
-with Matreshka.Internals.Unicode;
+package Rule_Parser is
 
-package Collations is
+   procedure Parse_Collation_Rules
+    (Data   : in out AllKeys_Reader.Collation_Information;
+     Buffer : Wide_Wide_String);
 
-   type Collation_Operator is
-    (Identically,
-     Primary,
-     Secondary,
-     Trinary);
-
-   procedure Suppress_Contractions
-    (Data : in out AllKeys_Reader.Collation_Information;
-     Code : Matreshka.Internals.Unicode.Code_Point);
-   --  Turns off any existing contractions that begin with given character, as
-   --  well as any prefixes for given character.
-
-   procedure Reorder
-    (Data          : in out AllKeys_Reader.Collation_Information;
-     Reset_Code    : Matreshka.Internals.Unicode.Code_Point;
-     Operator      : Collation_Operator;
-     Relation_Code : Matreshka.Internals.Unicode.Code_Point);
-
-end Collations;
+end Rule_Parser;

@@ -41,9 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
-
 with Collations;
+with Rule_Parser;
 
 package body CLDR_Parsers is
 
@@ -100,6 +99,8 @@ package body CLDR_Parsers is
      Success        : in out Boolean) is
    begin
       if Qualified_Name = Cr_Tag then
+         Rule_Parser.Parse_Collation_Rules
+          (Self.Collations.all, Self.Text.To_Wide_Wide_String);
          Self.Collect_Text := False;
 
       elsif Qualified_Name = Suppress_Contractions_Tag then
@@ -172,8 +173,6 @@ package body CLDR_Parsers is
          null;
 
       else
-         Put_Line (Qualified_Name.To_Wide_Wide_String);
-
          raise Program_Error;
       end if;
    end Start_Element;
