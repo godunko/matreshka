@@ -61,7 +61,7 @@ package XSD_To_Ada.Payloads is
 
    procedure Print_Payloads
      (Node_Vector  : XSD2Ada.Analyzer.Items;
-      Writer       : in out XSD_To_Ada.Writers.Writer;
+      Payloads     : in out XSD_To_Ada.Writers.Writer;
       Types        : in out XSD_To_Ada.Writers.Writer);
 
 end XSD_To_Ada.Payloads;

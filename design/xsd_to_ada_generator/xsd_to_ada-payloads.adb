@@ -164,7 +164,7 @@ package body XSD_To_Ada.Payloads is
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Types_Writer : in out Writers.Writer;
+      Payload      : in out Writers.Writer;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
@@ -179,14 +179,12 @@ package body XSD_To_Ada.Payloads is
 
    procedure Print_Payloads
      (Node_Vector  : XSD2Ada.Analyzer.Items;
-      Writer       : in out XSD_To_Ada.Writers.Writer;
+      Payloads     : in out XSD_To_Ada.Writers.Writer;
       Types        : in out XSD_To_Ada.Writers.Writer)
    is
-      Types_Writer        : XSD_To_Ada.Writers.Writer;
-      Types_Type_Writer   : XSD_To_Ada.Writers.Writer;
-      Payload_Writer      : XSD_To_Ada.Writers.Writer;
-      Payload_Type_Writer : XSD_To_Ada.Writers.Writer;
-      Model_Group         : XML.Schema.Model_Groups.XS_Model_Group;
+      Types_Writer      : XSD_To_Ada.Writers.Writer;
+      Types_Type_Writer : XSD_To_Ada.Writers.Writer;
+      Model_Group       : XML.Schema.Model_Groups.XS_Model_Group;
 
       Type_Name : League.Strings.Universal_String;
    begin
@@ -197,9 +195,9 @@ package body XSD_To_Ada.Payloads is
          if Current.Object.Is_Type_Definition then
             Print_Type_Definition
               (Type_D       => Current.Object.To_Type_Definition,
-               Types_Writer => Types_Writer,
-               Writer       => Payload_Writer,
-               Writer_types => Payload_Type_Writer,
+               Payload      => Payloads,
+               Writer       => Types_Writer,
+               Writer_types => Types_Type_Writer,
                Name         => Current.Short_Ada_Type_Name,
                Element_Name => Current.Element_Name,
                Choice       => Current.Choice,
@@ -216,7 +214,7 @@ package body XSD_To_Ada.Payloads is
               and then not Current.Min
             then
                if Current.Choice then
-                  Payload_Writer.P
+                  Types_Writer.P
                     ("   type "
                      & Type_Name & LF
                      & "     (Kind : " & Type_Name & "_Kind" & LF
@@ -224,25 +222,25 @@ package body XSD_To_Ada.Payloads is
                      & "_Kind'First) is record" & LF
                      & "       case Kind is");
                else
-                  Payload_Writer.P ("   type " & Type_Name & " is record");
+                  Types_Writer.P ("   type " & Type_Name & " is record");
                end if;
 
                Print_Model
                  (Model_Group  => Model_Group,
-                  Writer       => Payload_Writer,
-                  Writer_types => Payload_Type_Writer,
+                  Writer       => Types_Writer,
+                  Writer_types => Types_Type_Writer,
                   Name         => Current.Short_Ada_Type_Name,
                   Choice       => Current.Choice);
 
                if Current.Choice then
-                  Payload_Writer.P ("      end case;");
+                  Types_Writer.P ("      end case;");
                end if;
 
-               Payload_Writer.P ("   end record;" & LF);
+               Types_Writer.P ("   end record;" & LF);
 
             elsif Current.Max then
                Writers.P
-                 (Payload_Writer,
+                 (Types_Writer,
                   "   package "
                   & Add_Separator (Current.Short_Ada_Type_Name) & "s is" & LF
                   & "     new Ada.Containers.Vectors" & LF
@@ -261,17 +259,11 @@ package body XSD_To_Ada.Payloads is
             end if;
          end if;
 
-         Types.N (Types_Writer.Text);
          Types.N (Types_Type_Writer.Text);
+         Types.N (Types_Writer.Text);
 
-         Writer.N (Payload_Type_Writer.Text);
-         Writer.N (Payload_Writer.Text);
-
-         Types_Writer.Text.Clear;
          Types_Type_Writer.Text.Clear;
-
-         Payload_Type_Writer.Text.Clear;
-         Payload_Writer.Text.Clear;
+         Types_Writer.Text.Clear;
       end loop;
    end Print_Payloads;
 
@@ -281,7 +273,7 @@ package body XSD_To_Ada.Payloads is
 
    procedure Print_Type_Definition
      (Type_D       : XML.Schema.Type_Definitions.XS_Type_Definition;
-      Types_Writer : in out Writers.Writer;
+      Payload      : in out Writers.Writer;
       Writer       : in out Writers.Writer;
       Writer_types : in out Writers.Writer;
       Name         : League.Strings.Universal_String;
@@ -308,14 +300,14 @@ package body XSD_To_Ada.Payloads is
         and XS_Base /= Type_D
       then
          if XS_Base.Get_Name.To_Wide_Wide_String = "anyType" then
-            Writer_types.P
+            Payload.P
               ("   type " & Add_Separator (Name) & " is" & LF
                & "     new Web_Services.SOAP.Payloads.Abstract_SOAP_Payload"
                & LF
                & "       with null record;" & LF);
 
             XSD_To_Ada.Utils.Gen_Access_Type
-              (Writer_types, Add_Separator (Name));
+              (Payload, Add_Separator (Name));
             return;
          else
             Base_Type := League.Strings.To_Universal_String
@@ -355,7 +347,7 @@ package body XSD_To_Ada.Payloads is
                elsif XSD_To_Ada.Mappings.XML.Payload_Types.Index (Name)
                  /= 0 then
 
-                  Types_Writer.P
+                  Payload.P
                     ("   type " & XSD_To_Ada.Utils.Add_Separator (Name)
                      & " is" & LF
                      & "     new Web_Services.SOAP.Payloads."
@@ -373,7 +365,7 @@ package body XSD_To_Ada.Payloads is
                else
                   Writer_types.P
                     ("   type " & XSD_To_Ada.Utils.Add_Separator (Name)
-                                  & " is record");
+                     & " is record");
                end if;
 
                Writer.N (Base_Type);
@@ -401,11 +393,8 @@ package body XSD_To_Ada.Payloads is
                Writer.P ("   end record;" & LF);
 
                if XSD_To_Ada.Mappings.XML.Payload_Types.Index (Name) /= 0 then
---                  XSD_To_Ada.Utils.Gen_Access_Type
---                    (Writer, XSD_To_Ada.Utils.Add_Separator (Name));
-
                   XSD_To_Ada.Utils.Gen_Access_Type
-                    (Types_Writer, XSD_To_Ada.Utils.Add_Separator (Name));
+                    (Payload, XSD_To_Ada.Utils.Add_Separator (Name));
                end if;
 
             elsif Is_Min_Occur then

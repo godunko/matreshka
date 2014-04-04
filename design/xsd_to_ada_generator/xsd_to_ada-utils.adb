@@ -206,10 +206,10 @@ package body XSD_To_Ada.Utils is
 --      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
    begin
 
-      Put_Header (Types_Writer);
-      Writers.P (Types_Writer, "with IATS_Types;");
-      Writers.P (Types_Writer, "with Web_Services.SOAP.Payloads;");
-      Writers.P (Types_Writer, "package Payloads is" & LF);
+      Put_Header (Payload_Writer);
+      Writers.P (Payload_Writer, "with IATS_Types;");
+      Writers.P (Payload_Writer, "with Web_Services.SOAP.Payloads;");
+      Writers.P (Payload_Writer, "package Payloads is" & LF);
 
       Put_Header (Encoder_Spec_Types);
       Encoder_Spec_Types.P ("with IATS_Types;");
@@ -255,7 +255,9 @@ package body XSD_To_Ada.Utils is
 
       XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
       XSD_To_Ada.Payloads.Print_Payloads
-        (Node_Vector, Payload_Writer, Types_Writer);
+        (Node_Vector => Node_Vector,
+         Payloads    => Payload_Writer,
+         Types       => Types_Writer);
 
       Node_Vector.Clear;
 
@@ -317,17 +319,17 @@ package body XSD_To_Ada.Utils is
       Encoder_Full_Writer.N ("end Encoder;");
       Encoder_Spec_Writer.N ("end Encoder;");
 
-      Writers.N (Payload_Writer, "end IATS_Types;");
+      Writers.N (Types_Writer, "end IATS_Types;");
       Payload_Spec.Save;
 
-      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Types_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
         (Encoder_Full_Writer.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
         (Encoder_Spec_Writer.Text.To_Wide_Wide_String);
 
-      Writers.N (Types_Writer, "end Payloads;");
-      Ada.Wide_Wide_Text_IO.Put_Line (Types_Writer.Text.To_Wide_Wide_String);
+      Writers.N (Payload_Writer, "end Payloads;");
+      Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
 
       Encoder_Types.N ("end Encoder_Types;");
       Encoder_Spec_Types.P ("end Encoder_Types;");
@@ -436,7 +438,6 @@ package body XSD_To_Ada.Utils is
       Unit.Add_With (+"ICTS.Types");
       Unit.Add_With (+"ICTSClient.Types");
       Unit.Add_With (+"League.Strings");
-      Unit.Add_With (+"Web_Services.SOAP.Payloads");
    end Create_Package_Name;
 
    ------------------------
