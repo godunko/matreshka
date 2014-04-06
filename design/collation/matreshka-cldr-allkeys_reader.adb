@@ -4,7 +4,7 @@
 --                                                                          --
 --         Localization, Internationalization, Globalization for Ada        --
 --                                                                          --
---                              Tools Component                             --
+--                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
@@ -92,7 +92,8 @@ package body Matreshka.CLDR.AllKeys_Reader is
    -----------------------
 
    function Load_AllKeys_File
-     return Matreshka.CLDR.Collation_Data.Collation_Information_Access
+    (File_Name : League.Strings.Universal_String)
+       return Matreshka.CLDR.Collation_Data.Collation_Information_Access
    is
       use type Matreshka.CLDR.Collation_Data.Collation_Record_Access;
 
@@ -111,7 +112,7 @@ package body Matreshka.CLDR.AllKeys_Reader is
       Ada.Wide_Wide_Text_IO.Open
        (File,
         Ada.Wide_Wide_Text_IO.In_File,
-        "../../data/cldr/25/common/uca/allkeys_CLDR.txt",
+        File_Name.To_UTF_8_String,
         "wcem=8");
 
       while not Ada.Wide_Wide_Text_IO.End_Of_File (File) loop

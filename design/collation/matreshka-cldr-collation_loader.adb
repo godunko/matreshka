@@ -41,13 +41,55 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with Matreshka.CLDR.AllKeys_Reader;
+with Matreshka.CLDR.Collation_Compiler;
 with Matreshka.CLDR.Collation_Data;
+with Matreshka.CLDR.LDML_Parsers;
+with XML.SAX.File_Input_Sources;
+with XML.SAX.Simple_Readers;
 
-package Matreshka.CLDR.AllKeys_Reader is
+package body Matreshka.CLDR.Collation_Loader is
 
-   function Load_AllKeys_File
-    (File_Name : League.Strings.Universal_String)
-       return Matreshka.CLDR.Collation_Data.Collation_Information_Access;
+   CLDR_Root      : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+          ("/home/godunko/Matreshka/matreshka/data/cldr/25");
+   AllKeys_Path   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("/common/uca/allkeys_CLDR.txt");
+   --  Path to allkeys.txt file relative to root CLDR directory.
+   Collation_Root : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("/common/collation/");
+   XML_Suffix     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String (".xml");
 
-end Matreshka.CLDR.AllKeys_Reader;
+   -------------------------
+   -- Load_Collation_Data --
+   -------------------------
+
+   procedure Load_Collation_Data
+    (Language : League.Strings.Universal_String;
+     Locale   : not null access Matreshka.Internals.Locales.Locale_Data)
+   is
+      use type League.Strings.Universal_String;
+
+      Data   : Matreshka.CLDR.Collation_Data.Collation_Information_Access;
+      Input  : aliased XML.SAX.File_Input_Sources.File_Input_Source;
+      Parser : aliased Matreshka.CLDR.LDML_Parsers.LDML_Parser;
+      Reader : XML.SAX.Simple_Readers.Simple_Reader;
+
+   begin
+      Data :=
+        Matreshka.CLDR.AllKeys_Reader.Load_AllKeys_File
+         (CLDR_Root & AllKeys_Path);
+
+      Input.Open_By_File_Name
+       (CLDR_Root & Collation_Root & Language & XML_Suffix);
+      Parser.Collations := Data;
+      Reader.Set_Content_Handler (Parser'Unchecked_Access);
+      Reader.Parse (Input'Unchecked_Access);
+      Input.Close;
+
+      Matreshka.CLDR.Collation_Compiler.Construct_Collation_Information
+       (Data.all, Locale);
+   end Load_Collation_Data;
+
+end Matreshka.CLDR.Collation_Loader;

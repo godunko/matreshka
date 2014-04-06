@@ -42,12 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
-with Matreshka.CLDR.Collation_Data;
+with Matreshka.Internals.Locales;
 
-package Matreshka.CLDR.AllKeys_Reader is
+package Matreshka.CLDR.Collation_Loader is
 
-   function Load_AllKeys_File
-    (File_Name : League.Strings.Universal_String)
-       return Matreshka.CLDR.Collation_Data.Collation_Information_Access;
+   procedure Load_Collation_Data
+    (Language : League.Strings.Universal_String;
+     Locale   : not null access Matreshka.Internals.Locales.Locale_Data);
 
-end Matreshka.CLDR.AllKeys_Reader;
+end Matreshka.CLDR.Collation_Loader;
