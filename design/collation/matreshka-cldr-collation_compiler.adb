@@ -95,7 +95,6 @@ package body Matreshka.CLDR.Collation_Compiler is
       Contraction_Last : Matreshka.Internals.Unicode.Ucd.Sequence_Index;
       Mapping          : Collation_First_Stage := (others => null);
       Last_Variable    : Matreshka.Internals.Unicode.Ucd.Collation_Weight := 0;
-      Backwards        : Boolean;
 
       procedure Append_Expansion
        (Sequence : Matreshka.CLDR.Collation_Data.Collation_Element_Array;
