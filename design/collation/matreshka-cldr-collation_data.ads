@@ -41,42 +41,28 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with XML.SAX.Attributes;
-with XML.SAX.Content_Handlers;
+with Matreshka.CLDR.AllKeys_Reader;
+with Matreshka.Internals.Unicode;
 
-with AllKeys_Reader;
+package Matreshka.CLDR.Collation_Data is
 
-package CLDR_Parsers is
+   type Collation_Operator is
+    (Identically,
+     Primary,
+     Secondary,
+     Trinary);
 
-   type CLDR_Parser is
-     limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
-      Collect_Text : Boolean := False;
-      Text         : League.Strings.Universal_String;
-      Collations   : AllKeys_Reader.Collation_Information_Access;
-   end record;
+   procedure Suppress_Contractions
+    (Data : in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     Code : Matreshka.Internals.Unicode.Code_Point);
+   --  Turns off any existing contractions that begin with given character, as
+   --  well as any prefixes for given character.
 
-   overriding procedure Characters
-    (Self    : in out CLDR_Parser;
-     Text    : League.Strings.Universal_String;
-     Success : in out Boolean);
+   procedure Reorder
+    (Data          :
+       in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     Reset_Code    : Matreshka.Internals.Unicode.Code_Point;
+     Operator      : Collation_Operator;
+     Relation_Code : Matreshka.Internals.Unicode.Code_Point);
 
-   overriding procedure End_Element
-    (Self           : in out CLDR_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Success        : in out Boolean);
-
-   overriding function Error_String
-    (Self : CLDR_Parser) return League.Strings.Universal_String;
-
-   overriding procedure Start_Element
-    (Self           : in out CLDR_Parser;
-     Namespace_URI  : League.Strings.Universal_String;
-     Local_Name     : League.Strings.Universal_String;
-     Qualified_Name : League.Strings.Universal_String;
-     Attributes     : XML.SAX.Attributes.SAX_Attributes;
-     Success        : in out Boolean);
-
-end CLDR_Parsers;
+end Matreshka.CLDR.Collation_Data;

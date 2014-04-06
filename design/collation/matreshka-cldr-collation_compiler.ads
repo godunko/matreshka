@@ -41,28 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with AllKeys_Reader;
+--  This package constructs collation data in form used by implementation of
+--  Unicode Collation Algorithm.
+------------------------------------------------------------------------------
+with Matreshka.CLDR.AllKeys_Reader;
+with Matreshka.Internals.Locales;
 
-with Matreshka.Internals.Unicode;
+package Matreshka.CLDR.Collation_Compiler is
 
-package Collations is
+   procedure Construct_Collation_Information
+    (Data   : AllKeys_Reader.Collation_Information;
+     Locale : not null access Matreshka.Internals.Locales.Locale_Data);
+   --  Constructs collation data in internals form and replaces collation data
+   --  in locale by it. Replaced collation data is not deallocated. It is
+   --  expected that it is default one.
 
-   type Collation_Operator is
-    (Identically,
-     Primary,
-     Secondary,
-     Trinary);
-
-   procedure Suppress_Contractions
-    (Data : in out AllKeys_Reader.Collation_Information;
-     Code : Matreshka.Internals.Unicode.Code_Point);
-   --  Turns off any existing contractions that begin with given character, as
-   --  well as any prefixes for given character.
-
-   procedure Reorder
-    (Data          : in out AllKeys_Reader.Collation_Information;
-     Reset_Code    : Matreshka.Internals.Unicode.Code_Point;
-     Operator      : Collation_Operator;
-     Relation_Code : Matreshka.Internals.Unicode.Code_Point);
-
-end Collations;
+end Matreshka.CLDR.Collation_Compiler;

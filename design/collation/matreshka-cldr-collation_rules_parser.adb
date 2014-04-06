@@ -42,13 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Characters.Wide_Wide_Latin_1;
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
 with League.Strings;
 
-with Collations;
+with Matreshka.CLDR.Collation_Data;
 
-package body Rule_Parser is
+package body Matreshka.CLDR.Collation_Rules_Parser is
 
 --   function Is_Collation_Syntax_Character
 --    (Item : Wide_Wide_Character) return Boolean;
@@ -71,7 +70,7 @@ package body Rule_Parser is
     (Buffer  : Wide_Wide_String;
      Index   : in out Positive;
      Last    : Natural;
-     Value   : out Collations.Collation_Operator;
+     Value   : out Matreshka.CLDR.Collation_Data.Collation_Operator;
      Success : out Boolean);
    --  Parses string.
 
@@ -91,12 +90,11 @@ package body Rule_Parser is
       Index    : Positive := Buffer'First;
       Reset    : League.Strings.Universal_String;
       Next     : League.Strings.Universal_String;
-      Operator : Collations.Collation_Operator;
+      Operator : Matreshka.CLDR.Collation_Data.Collation_Operator;
       Success  : Boolean;
 
    begin
       Skip_Spaces (Buffer, Index, Buffer'Last);
-      Put_Line (Buffer (Index .. Buffer'Last));
 
       if Buffer (Index) /= '&' then
          raise Program_Error;
@@ -112,11 +110,11 @@ package body Rule_Parser is
 
       while Index <= Buffer'Last loop
          Skip_Spaces (Buffer, Index, Buffer'Last);
-         Put_Line (Buffer (Index .. Buffer'Last));
 
          exit when Index > Buffer'Last;
 
-         Parse_Relation_Operator (Buffer, Index, Buffer'Last, Operator, Success);
+         Parse_Relation_Operator
+          (Buffer, Index, Buffer'Last, Operator, Success);
 
          if not Success then
             raise Program_Error;
@@ -135,7 +133,7 @@ package body Rule_Parser is
             raise Program_Error;
 
          else
-            Collations.Reorder
+            Matreshka.CLDR.Collation_Data.Reorder
              (Data,
               Wide_Wide_Character'Pos (Reset (1).To_Wide_Wide_Character),
               Operator,
@@ -154,10 +152,10 @@ package body Rule_Parser is
     (Buffer  : Wide_Wide_String;
      Index   : in out Positive;
      Last    : Natural;
-     Value   : out Collations.Collation_Operator;
+     Value   : out Matreshka.CLDR.Collation_Data.Collation_Operator;
      Success : out Boolean) is
    begin
-      Value   := Collations.Identically;
+      Value   := Matreshka.CLDR.Collation_Data.Identically;
       Success := False;
 
       Skip_Spaces (Buffer, Index, Last);
@@ -170,19 +168,19 @@ package body Rule_Parser is
          case Buffer (Index) is
             when '<' =>
                case Value is
-                  when Collations.Identically =>
+                  when Matreshka.CLDR.Collation_Data.Identically =>
                      Success := True;
-                     Value   := Collations.Primary;
+                     Value   := Matreshka.CLDR.Collation_Data.Primary;
 
-                  when Collations.Primary =>
+                  when Matreshka.CLDR.Collation_Data.Primary =>
                      Success := True;
-                     Value   := Collations.Secondary;
+                     Value   := Matreshka.CLDR.Collation_Data.Secondary;
 
-                  when Collations.Secondary =>
+                  when Matreshka.CLDR.Collation_Data.Secondary =>
                      Success := True;
-                     Value   := Collations.Trinary;
+                     Value   := Matreshka.CLDR.Collation_Data.Trinary;
 
-                  when Collations.Trinary =>
+                  when Matreshka.CLDR.Collation_Data.Trinary =>
                      Success := True;
 
                      raise Program_Error;
@@ -274,4 +272,4 @@ package body Rule_Parser is
       end loop;
    end Skip_Spaces;
 
-end Rule_Parser;
+end Matreshka.CLDR.Collation_Rules_Parser;

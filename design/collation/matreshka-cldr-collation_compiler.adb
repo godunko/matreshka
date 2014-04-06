@@ -41,10 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Unchecked_Deallocation;
+
 with Matreshka.Internals.Unicode.Ucd;
 
-package body Builder is
+package body Matreshka.CLDR.Collation_Compiler is
 
    type Collation_Element_Sequence_Access is
      access all Matreshka.Internals.Unicode.Ucd.Collation_Element_Sequence;
@@ -61,41 +62,28 @@ package body Builder is
    type Contractor_Array_Access is
      access all Matreshka.Internals.Unicode.Ucd.Contractor_Array;
 
-   procedure Put_Line (Item : Matreshka.Internals.Unicode.Ucd.Contractor_Record);
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Matreshka.Internals.Unicode.Ucd.Collation_Second_Stage,
+           Collation_Second_Stage_Access);
 
-   procedure Put (Item : Matreshka.Internals.Unicode.Code_Point) is
-      use type Matreshka.Internals.Unicode.Code_Point;
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Matreshka.Internals.Unicode.Ucd.Collation_Element_Sequence,
+           Collation_Element_Sequence_Access);
 
-      Hex : constant array (Matreshka.Internals.Unicode.Code_Point range 0 .. 15) of Character := "0123456789ABCDEF";
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Matreshka.Internals.Unicode.Ucd.Contractor_Array,
+           Contractor_Array_Access);
 
-   begin
-      Put ("16#");
-      Put (Hex ((Item / 2 ** 20) mod 2 ** 4));
-      Put (Hex ((Item / 2 ** 16) mod 2 ** 4));
-      Put (Hex ((Item / 2 ** 12) mod 2 ** 4));
-      Put (Hex ((Item / 2 ** 8) mod 2 ** 4));
-      Put (Hex ((Item / 2 ** 4) mod 2 ** 4));
-      Put (Hex ((Item) mod 2 ** 4));
-      Put ('#');
-   end Put;
+   -------------------------------------
+   -- Construct_Collation_Information --
+   -------------------------------------
 
-   procedure Put_Line (Item : Matreshka.Internals.Unicode.Ucd.Contractor_Record) is
-   begin
-      Put (Item.Code);
-      Put (Matreshka.Internals.Unicode.Ucd.Sequence_Count'Image (Item.Contractor_First));
-      Put (Matreshka.Internals.Unicode.Ucd.Sequence_Count'Image (Item.Contractor_Last));
-      Put (Matreshka.Internals.Unicode.Ucd.Sequence_Count'Image (Item.Expansion_First));
-      Put (Matreshka.Internals.Unicode.Ucd.Sequence_Count'Image (Item.Expansion_Last));
-      New_Line;
-   end Put_Line;
-
-   -----------
-   -- Build --
-   -----------
-
-   function Build
-    (Data : AllKeys_Reader.Collation_Information)
-       return Matreshka.Internals.Locales.Collation_Data
+   procedure Construct_Collation_Information
+    (Data   : AllKeys_Reader.Collation_Information;
+     Locale : not null access Matreshka.Internals.Locales.Locale_Data)
    is
       use type AllKeys_Reader.Collation_Record_Access;
       use type Matreshka.Internals.Unicode.Code_Point;
@@ -108,8 +96,6 @@ package body Builder is
       Mapping          : Collation_First_Stage := (others => null);
       Last_Variable    : Matreshka.Internals.Unicode.Ucd.Collation_Weight := 0;
       Backwards        : Boolean;
-
-      Current_Record : AllKeys_Reader.Collation_Record_Access;
 
       procedure Append_Expansion
        (Sequence : AllKeys_Reader.Collation_Element_Array;
@@ -136,8 +122,9 @@ package body Builder is
       is
          use type Matreshka.Internals.Unicode.Ucd.Collation_Element_Sequence;
 
-         Internal        : Matreshka.Internals.Unicode.Ucd.Collation_Element_Sequence
-                     (1 .. Sequence'Length);
+         Internal        :
+           Matreshka.Internals.Unicode.Ucd.Collation_Element_Sequence
+            (1 .. Sequence'Length);
          Internal_Last   : Matreshka.Internals.Unicode.Ucd.Sequence_Index
            := Internal'First;
          Expansion_First : Matreshka.Internals.Unicode.Ucd.Sequence_Index;
@@ -189,38 +176,37 @@ package body Builder is
       procedure Process_Code_Point_Chain
        (Starter : Matreshka.Internals.Unicode.Code_Point)
       is
-         Starter_First_Stage  : constant Matreshka.Internals.Unicode.Ucd.First_Stage_Index
+         First  : constant Matreshka.Internals.Unicode.Ucd.First_Stage_Index
            := Matreshka.Internals.Unicode.Ucd.First_Stage_Index
-               (Starter
-                  / Matreshka.Internals.Unicode.Ucd.Second_Stage_Index'Modulus);
-         Starter_Second_Stage : constant Matreshka.Internals.Unicode.Ucd.Second_Stage_Index
+               (Starter / Internals.Unicode.Ucd.Second_Stage_Index'Modulus);
+         Second : constant Matreshka.Internals.Unicode.Ucd.Second_Stage_Index
            := Matreshka.Internals.Unicode.Ucd.Second_Stage_Index
-               (Starter
-                  mod Matreshka.Internals.Unicode.Ucd.Second_Stage_Index'Modulus);
-         Current_Record       : AllKeys_Reader.Collation_Record_Access
+               (Starter mod Internals.Unicode.Ucd.Second_Stage_Index'Modulus);
+
+         Current_Record : AllKeys_Reader.Collation_Record_Access
            := Data.Collations (Starter);
 
       begin
          --  Allocate block when it wasn't allocated.
 
-         if Mapping (Starter_First_Stage) = null then
-            Mapping (Starter_First_Stage) :=
+         if Mapping (First) = null then
+            Mapping (First) :=
               new Matreshka.Internals.Unicode.Ucd.Collation_Second_Stage'
                    (others => (0, 0, 0, 0));
---            Put ("Group created for ");
---            Put (Matreshka.Internals.Unicode.Code_Point (Starter));
---            New_Line;
          end if;
 
          --  Lookup for collation record of code point itself (without
          --  contractors) and process it.
 
          while Current_Record /= null loop
+            --  XXX Loop can be removed if collations chain will be sorted in
+            --  contractors order (single character will be first element).
+
             if Current_Record.Contractors'Length = 1 then
                Append_Expansion
                 (Current_Record.Collations.all,
-               Mapping (Starter_First_Stage) (Starter_Second_Stage).Expansion_First,
-               Mapping (Starter_First_Stage) (Starter_Second_Stage).Expansion_Last);
+                 Mapping (First) (Second).Expansion_First,
+                 Mapping (First) (Second).Expansion_Last);
 
                exit;
             end if;
@@ -231,8 +217,8 @@ package body Builder is
          Process_Contractors
           (Data.Collations (Starter),
            (1 => Starter),
-           Mapping (Starter_First_Stage) (Starter_Second_Stage).Contractor_First,
-           Mapping (Starter_First_Stage) (Starter_Second_Stage).Contractor_Last);
+           Mapping (First) (Second).Contractor_First,
+           Mapping (First) (Second).Contractor_Last);
       end Process_Code_Point_Chain;
 
       -------------------------
@@ -278,18 +264,6 @@ package body Builder is
 
                Last := Contraction_Last;
 
---               Put ("Add contractor for");
---
---               for J in Prefix'Range loop
---                  Put (' ');
---                  Put (Prefix (J));
---               end loop;
---
---               Put (" new contractor ");
---               Put (Current_Record.Contractors (Current_Record.Contractors'Last));
---
---               New_Line;
-
                Contraction (Contraction_Last).Code :=
                  Current_Record.Contractors (Current_Record.Contractors'Last);
 
@@ -313,13 +287,6 @@ package body Builder is
          end if;
       end Process_Contractors;
 
-      First : Matreshka.Internals.Unicode.Ucd.Sequence_Index;
-      Last  : Matreshka.Internals.Unicode.Ucd.Sequence_Index;
-      Starter_First_Stage  : Matreshka.Internals.Unicode.Ucd.First_Stage_Index;
-      Starter_Second_Stage : Matreshka.Internals.Unicode.Ucd.Second_Stage_Index;
-      Contractors_Found    : Boolean;
-      Contractors_Level    : Natural;
-
       use type Matreshka.Internals.Unicode.Ucd.First_Stage_Index;
       use type Matreshka.Internals.Unicode.Ucd.Collation_Second_Stage;
 
@@ -334,44 +301,54 @@ package body Builder is
          Process_Code_Point_Chain (Starting_Code);
       end loop;
 
-      Put_Line (Matreshka.Internals.Unicode.Ucd.Sequence_Index'Image (Expansion_Last));
-      Put_Line (Matreshka.Internals.Unicode.Ucd.Sequence_Index'Image (Contraction_Last));
-
---      for J in Contraction'First .. Contraction_Last loop
---         Put (Matreshka.Internals.Unicode.Ucd.Sequence_Index'Image (J));
---         Put (" => ");
---         Put_Line (Contraction (J));
---      end loop;
+      --  Remove duplicate tables and share one copy each time it duplicates.
 
       for J in Mapping'Range loop
          if not Replaced (J) then
             for K in J + 1 .. Mapping'Last loop
                if Mapping (J).all = Mapping (K).all then
---                  Free (Mapping (K));
+                  Free (Mapping (K));
                   Mapping (K) := Mapping (J);
                   Replaced (K) := True;
---            Put ("Group ");
---            Put (Matreshka.Internals.Unicode.Code_Point (J));
---            Put (" is equal to ");
---            Put (Matreshka.Internals.Unicode.Code_Point (K));
---            New_Line;
                end if;
            end loop;
          end if;
       end loop;
 
-      return
-       (Expansion     =>
-          new Matreshka.Internals.Unicode.Ucd.Collation_Element_Sequence'
-               (Expansion (Expansion'First .. Expansion_Last)),
-        Contraction   =>
-          new Matreshka.Internals.Unicode.Ucd.Contractor_Array'
-               (Contraction (Contraction'First .. Contraction_Last)),
-        Mapping       => null,
---          Matreshka.Internals.Unicode.Ucd.Collation_First_Stage_Access
---           (Mapping),
-        Last_Variable => Last_Variable,
-        Backwards     => Backwards);
-   end Build;
+      --  Construct collation information for locale finally.
 
-end Builder;
+      Locale.Collation.Expansion :=
+        new Matreshka.Internals.Unicode.Ucd.Collation_Element_Sequence'
+             (Expansion (Expansion'First .. Expansion_Last));
+      Locale.Collation.Contraction :=
+        new Matreshka.Internals.Unicode.Ucd.Contractor_Array'
+             (Contraction (Contraction'First .. Contraction_Last));
+
+      declare
+         Aux : Matreshka.Internals.Unicode.Ucd.Collation_First_Stage
+           := (others =>
+                 Matreshka.Internals.Unicode.Ucd.Collation_Second_Stage_Access
+                  (Mapping (1)));
+
+      begin
+         for J in Mapping'Range loop
+            Aux (J) :=
+              Matreshka.Internals.Unicode.Ucd.Collation_Second_Stage_Access
+               (Mapping (J));
+         end loop;
+
+         Locale.Collation.Mapping :=
+           new Matreshka.Internals.Unicode.Ucd.Collation_First_Stage'(Aux);
+      end;
+
+      Locale.Collation.Last_Variable := Last_Variable;
+      Locale.Collation.Backwards := False;
+      --  XXX 'backward' must be taken from collation data.
+
+      --  Release auxiliary data.
+
+      Free (Expansion);
+      Free (Contraction);
+   end Construct_Collation_Information;
+
+end Matreshka.CLDR.Collation_Compiler;

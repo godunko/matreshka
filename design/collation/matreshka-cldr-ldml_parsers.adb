@@ -41,10 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Collations;
-with Rule_Parser;
+with Matreshka.CLDR.Collation_Data;
+with Matreshka.CLDR.Collation_Rules_Parser;
 
-package body CLDR_Parsers is
+package body Matreshka.CLDR.LDML_Parsers is
 
    use type League.Strings.Universal_String;
 
@@ -80,7 +80,7 @@ package body CLDR_Parsers is
    ----------------
 
    overriding procedure Characters
-    (Self    : in out CLDR_Parser;
+    (Self    : in out LDML_Parser;
      Text    : League.Strings.Universal_String;
      Success : in out Boolean) is
    begin
@@ -92,14 +92,14 @@ package body CLDR_Parsers is
    -----------------
 
    overriding procedure End_Element
-    (Self           : in out CLDR_Parser;
+    (Self           : in out LDML_Parser;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
      Success        : in out Boolean) is
    begin
       if Qualified_Name = Cr_Tag then
-         Rule_Parser.Parse_Collation_Rules
+         Collation_Rules_Parser.Parse_Collation_Rules
           (Self.Collations.all, Self.Text.To_Wide_Wide_String);
          Self.Collect_Text := False;
 
@@ -107,7 +107,7 @@ package body CLDR_Parsers is
          for J in 2 .. Self.Text.Length - 1 loop
             --  XXX This field must be parsed as Unicode Set.
 
-            Collations.Suppress_Contractions
+            Matreshka.CLDR.Collation_Data.Suppress_Contractions
              (Self.Collations.all,
               Wide_Wide_Character'Pos (Self.Text (J).To_Wide_Wide_Character));
          end loop;
@@ -121,7 +121,7 @@ package body CLDR_Parsers is
    ------------------
 
    overriding function Error_String
-    (Self : CLDR_Parser) return League.Strings.Universal_String is
+    (Self : LDML_Parser) return League.Strings.Universal_String is
    begin
       return League.Strings.Empty_Universal_String;
    end Error_String;
@@ -131,7 +131,7 @@ package body CLDR_Parsers is
    -------------------
 
    overriding procedure Start_Element
-    (Self           : in out CLDR_Parser;
+    (Self           : in out LDML_Parser;
      Namespace_URI  : League.Strings.Universal_String;
      Local_Name     : League.Strings.Universal_String;
      Qualified_Name : League.Strings.Universal_String;
@@ -177,4 +177,4 @@ package body CLDR_Parsers is
       end if;
    end Start_Element;
 
-end CLDR_Parsers;
+end Matreshka.CLDR.LDML_Parsers;

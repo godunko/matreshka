@@ -3,19 +3,21 @@ with Matreshka.Internals.Locales;
 with XML.SAX.File_Input_Sources;
 with XML.SAX.Simple_Readers;
 
-with AllKeys_Reader;
-with Builder;
-with CLDR_Parsers;
+with Matreshka.CLDR.AllKeys_Reader;
+with Matreshka.CLDR.Collation_Compiler;
+with Matreshka.CLDR.LDML_Parsers;
 
 procedure MLC is
-   Collations : AllKeys_Reader.Collation_Information_Access;
+   Collations : Matreshka.CLDR.AllKeys_Reader.Collation_Information_Access;
 
    Input      : aliased XML.SAX.File_Input_Sources.File_Input_Source;
-   Parser     : aliased CLDR_Parsers.CLDR_Parser;
+   Parser     : aliased Matreshka.CLDR.LDML_Parsers.LDML_Parser;
    Reader     : XML.SAX.Simple_Readers.Simple_Reader;
+   Locale     : Matreshka.Internals.Locales.Locale_Data_Access
+     := Matreshka.Internals.Locales.Get_Locale;
 
 begin
-   Collations := AllKeys_Reader.Load_AllKeys_File;
+   Collations := Matreshka.CLDR.AllKeys_Reader.Load_AllKeys_File;
 
    Input.Open_By_File_Name
     (League.Strings.To_Universal_String
@@ -26,11 +28,6 @@ begin
    Reader.Parse (Input'Unchecked_Access);
    Input.Close;
 
-   declare
-      Locale : constant Matreshka.Internals.Locales.Collation_Data
-        := Builder.Build (Collations.all);
-
-   begin
-      null;
-   end;
+   Matreshka.CLDR.Collation_Compiler.Construct_Collation_Information
+    (Collations.all, Locale);
 end MLC;

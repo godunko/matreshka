@@ -42,39 +42,38 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Unchecked_Deallocation;
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
 with Matreshka.Internals.Unicode.Ucd;
 
-package body Collations is
+package body Matreshka.CLDR.Collation_Data is
 
-   use type AllKeys_Reader.Collation_Record_Access;
-
-   procedure Free is
-     new Ada.Unchecked_Deallocation
-          (AllKeys_Reader.Collation_Record,
-           AllKeys_Reader.Collation_Record_Access);
+   use type Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
 
    procedure Free is
      new Ada.Unchecked_Deallocation
-          (AllKeys_Reader.Collation_Element_Array,
-           AllKeys_Reader.Collation_Element_Array_Access);
+          (Matreshka.CLDR.AllKeys_Reader.Collation_Record,
+           Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access);
+
+   procedure Free is
+     new Ada.Unchecked_Deallocation
+          (Matreshka.CLDR.AllKeys_Reader.Collation_Element_Array,
+           Matreshka.CLDR.AllKeys_Reader.Collation_Element_Array_Access);
 
    function Lookup
-    (Data : AllKeys_Reader.Collation_Information;
-     Item : AllKeys_Reader.Code_Point_Array)
-       return AllKeys_Reader.Collation_Record_Access;
+    (Data : Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     Item : Matreshka.CLDR.AllKeys_Reader.Code_Point_Array)
+       return Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
 
    procedure Attach
-    (Data  : in out AllKeys_Reader.Collation_Information;
-     After : AllKeys_Reader.Collation_Record_Access;
-     Item  : AllKeys_Reader.Collation_Record_Access);
+    (Data  : in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     After : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
+     Item  : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access);
    --  Attach given collation record into the list of relative position of
    --  collation records immidiately after specified collation record.
 
    procedure Detach
-    (Data : in out AllKeys_Reader.Collation_Information;
-     Item : AllKeys_Reader.Collation_Record_Access);
+    (Data : in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     Item : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access);
    --  Detach given collation record from the list of relative position of
    --  collation records.
 
@@ -83,9 +82,9 @@ package body Collations is
    ------------
 
    procedure Attach
-    (Data  : in out AllKeys_Reader.Collation_Information;
-     After : AllKeys_Reader.Collation_Record_Access;
-     Item  : AllKeys_Reader.Collation_Record_Access) is
+    (Data  : in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     After : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
+     Item  : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access) is
    begin
       if Data.Greater_Record = After then
          Data.Greater_Record := Item;
@@ -106,8 +105,8 @@ package body Collations is
    ------------
 
    procedure Detach
-    (Data : in out AllKeys_Reader.Collation_Information;
-     Item : AllKeys_Reader.Collation_Record_Access) is
+    (Data : in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     Item : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access) is
    begin
       --  Remove all other collation records.
 
@@ -136,13 +135,13 @@ package body Collations is
    ------------
 
    function Lookup
-    (Data : AllKeys_Reader.Collation_Information;
-     Item : AllKeys_Reader.Code_Point_Array)
-       return AllKeys_Reader.Collation_Record_Access
+    (Data : Matreshka.CLDR.AllKeys_Reader.Collation_Information;
+     Item : Matreshka.CLDR.AllKeys_Reader.Code_Point_Array)
+       return Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access
    is
-      use type AllKeys_Reader.Code_Point_Array;
+      use type Matreshka.CLDR.AllKeys_Reader.Code_Point_Array;
 
-      Current : AllKeys_Reader.Collation_Record_Access
+      Current : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access
         := Data.Collations (Item (Item'First));
 
    begin
@@ -160,24 +159,26 @@ package body Collations is
    -------------
 
    procedure Reorder
-    (Data          : in out AllKeys_Reader.Collation_Information;
+    (Data          :
+       in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
      Reset_Code    : Matreshka.Internals.Unicode.Code_Point;
      Operator      : Collation_Operator;
      Relation_Code : Matreshka.Internals.Unicode.Code_Point)
    is
       use type Matreshka.Internals.Unicode.Ucd.Collation_Weight;
 
-      Reset_Record    : AllKeys_Reader.Collation_Record_Access
+      Reset_Record    : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access
         := Lookup (Data, (1 => Reset_Code));
-      Relation_Record : AllKeys_Reader.Collation_Record_Access
+      Relation_Record : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access
         := Lookup (Data, (1 => Relation_Code));
 
       procedure Update_Primary
-       (Item           : AllKeys_Reader.Collation_Record_Access;
+       (Item           : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
         Minimum_Weight : Matreshka.Internals.Unicode.Ucd.Collation_Weight);
 
       procedure Update_Trinary
-       (Item             : AllKeys_Reader.Collation_Record_Access;
+       (Item             :
+          Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
         Primary_Weight   : Matreshka.Internals.Unicode.Ucd.Collation_Weight;
         Secondary_Weight : Matreshka.Internals.Unicode.Ucd.Collation_Weight;
         Minimum_Weight   : Matreshka.Internals.Unicode.Ucd.Collation_Weight);
@@ -187,10 +188,11 @@ package body Collations is
       --------------------
 
       procedure Update_Primary
-       (Item           : AllKeys_Reader.Collation_Record_Access;
+       (Item           : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
         Minimum_Weight : Matreshka.Internals.Unicode.Ucd.Collation_Weight)
       is
-         Current_Record : AllKeys_Reader.Collation_Record_Access := Item;
+         Current_Record : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access
+           := Item;
 
       begin
          if Current_Record.Collations (1).Primary < Minimum_Weight then
@@ -209,12 +211,14 @@ package body Collations is
       --------------------
 
       procedure Update_Trinary
-       (Item             : AllKeys_Reader.Collation_Record_Access;
+       (Item             :
+          Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
         Primary_Weight   : Matreshka.Internals.Unicode.Ucd.Collation_Weight;
         Secondary_Weight : Matreshka.Internals.Unicode.Ucd.Collation_Weight;
         Minimum_Weight   : Matreshka.Internals.Unicode.Ucd.Collation_Weight)
       is
-         Current_Record : AllKeys_Reader.Collation_Record_Access := Item;
+         Current_Record : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access
+           := Item;
 
       begin
          if Current_Record.Collations (1).Primary = Primary_Weight
@@ -235,35 +239,12 @@ package body Collations is
       end Update_Trinary;
 
    begin
-      Put (Wide_Wide_String'(1 => Wide_Wide_Character'Val (Reset_Code)) & " => ");
-
-      if Reset_Record /= null then
-         Put_Line ("found, length" & Integer'Wide_Wide_Image (Reset_Record.Collations'Length));
-
-      else
-         Put_Line ("not found");
-
-         raise Program_Error;
-      end if;
-
-      Put_Line (Collations.Collation_Operator'Wide_Wide_Image (Operator));
-      Put (Wide_Wide_String'(1 => Wide_Wide_Character'Val (Relation_Code)) & " => ");
-
-      if Relation_Record /= null then
-         Put_Line ("found, length" & Integer'Wide_Wide_Image (Relation_Record.Collations'Length));
-
-      else
-         Put_Line ("not found");
-
-         raise Program_Error;
-      end if;
-
       --  Detach relation collation record.
 
       Detach (Data, Relation_Record);
       Free (Relation_Record.Collations);
       Relation_Record.Collations :=
-        new AllKeys_Reader.Collation_Element_Array'
+        new Matreshka.CLDR.AllKeys_Reader.Collation_Element_Array'
              (Reset_Record.Collations.all);
 
       if Relation_Record.Collations'Length /= 1 then
@@ -304,11 +285,11 @@ package body Collations is
    ---------------------------
 
    procedure Suppress_Contractions
-    (Data : in out AllKeys_Reader.Collation_Information;
+    (Data : in out Matreshka.CLDR.AllKeys_Reader.Collation_Information;
      Code : Matreshka.Internals.Unicode.Code_Point)
    is
-      Current : AllKeys_Reader.Collation_Record_Access;
-      Next    : AllKeys_Reader.Collation_Record_Access;
+      Current : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
+      Next    : Matreshka.CLDR.AllKeys_Reader.Collation_Record_Access;
 
    begin
       Current := Data.Collations (Code);
@@ -350,4 +331,4 @@ package body Collations is
       end loop;
    end Suppress_Contractions;
 
-end Collations;
+end Matreshka.CLDR.Collation_Data;

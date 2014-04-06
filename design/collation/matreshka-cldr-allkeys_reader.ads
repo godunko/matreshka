@@ -4,7 +4,7 @@
 --                                                                          --
 --         Localization, Internationalization, Globalization for Ada        --
 --                                                                          --
---                        Runtime Library Component                         --
+--                              Tools Component                             --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
@@ -41,14 +41,54 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.Internals.Locales;
+with Matreshka.Internals.Unicode.Ucd;
 
-with AllKeys_Reader;
+package Matreshka.CLDR.AllKeys_Reader is
 
-package Builder is
+   type Code_Point_Array is
+     array (Positive range <>) of Matreshka.Internals.Unicode.Code_Point;
 
-   function Build
-    (Data : AllKeys_Reader.Collation_Information)
-       return Matreshka.Internals.Locales.Collation_Data;
+   type Code_Point_Array_Access is access all Code_Point_Array;
 
-end Builder;
+   type Collation_Element is record
+      Is_Variable : Boolean;
+      Primary     : Matreshka.Internals.Unicode.Ucd.Collation_Weight;
+      Secondary   : Matreshka.Internals.Unicode.Ucd.Collation_Weight;
+      Trinary     : Matreshka.Internals.Unicode.Ucd.Collation_Weight;
+      Code        : Matreshka.Internals.Unicode.Code_Point;
+   end record;
+
+   type Collation_Element_Array is
+     array (Positive range <>) of Collation_Element;
+
+   type Collation_Element_Array_Access is access all Collation_Element_Array;
+
+   type Collation_Record;
+   type Collation_Record_Access is access Collation_Record;
+
+   type Collation_Record is record
+      Contractors      : Code_Point_Array_Access;
+      Collations       : Collation_Element_Array_Access;
+
+      Less_Or_Equal    : Collation_Record_Access;
+      Greater_Or_Equal : Collation_Record_Access;
+      --  'previous' and 'next' collation record in collation order.
+
+      Next             : Collation_Record_Access;
+      --  Next collation record which starts from the same code point.
+   end record;
+
+   type Code_Point_Collations is
+     array (Matreshka.Internals.Unicode.Code_Point) of Collation_Record_Access;
+
+   type Collation_Information is record
+      Collations     : Code_Point_Collations;
+      Lower_Record   : Collation_Record_Access;
+      Greater_Record : Collation_Record_Access;
+   end record;
+
+   type Collation_Information_Access is access all Collation_Information;
+
+   function Load_AllKeys_File return Collation_Information_Access;
+
+end Matreshka.CLDR.AllKeys_Reader;

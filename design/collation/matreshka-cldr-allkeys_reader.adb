@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO;
 
-package body AllKeys_Reader is
+package body Matreshka.CLDR.AllKeys_Reader is
 
    function Parse_Code_Points
     (Image : Wide_Wide_String;
@@ -94,9 +94,6 @@ package body AllKeys_Reader is
       Last           : Natural;
       Current_Record : Collation_Record_Access;
       Aux_Record     : Collation_Record_Access;
-      Delimiter      : Natural;
-      Field_First    : Positive;
-      Field_Last     : Natural;
       Index          : Positive;
 
    begin
@@ -450,4 +447,4 @@ package body AllKeys_Reader is
       end loop;
    end Skip_Spaces;
 
-end AllKeys_Reader;
+end Matreshka.CLDR.AllKeys_Reader;
