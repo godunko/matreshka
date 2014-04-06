@@ -5,10 +5,11 @@ with XML.SAX.Simple_Readers;
 
 with Matreshka.CLDR.AllKeys_Reader;
 with Matreshka.CLDR.Collation_Compiler;
+with Matreshka.CLDR.Collation_Data;
 with Matreshka.CLDR.LDML_Parsers;
 
 procedure MLC is
-   Collations : Matreshka.CLDR.AllKeys_Reader.Collation_Information_Access;
+   Collations : Matreshka.CLDR.Collation_Data.Collation_Information_Access;
 
    Input      : aliased XML.SAX.File_Input_Sources.File_Input_Source;
    Parser     : aliased Matreshka.CLDR.LDML_Parsers.LDML_Parser;

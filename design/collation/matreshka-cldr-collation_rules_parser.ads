@@ -41,12 +41,12 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.CLDR.AllKeys_Reader;
+with Matreshka.CLDR.Collation_Data;
 
 package Matreshka.CLDR.Collation_Rules_Parser is
 
    procedure Parse_Collation_Rules
-    (Data   : in out AllKeys_Reader.Collation_Information;
+    (Data   : in out Matreshka.CLDR.Collation_Data.Collation_Information;
      Buffer : Wide_Wide_String);
 
 end Matreshka.CLDR.Collation_Rules_Parser;

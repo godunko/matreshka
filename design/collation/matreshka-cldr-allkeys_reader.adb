@@ -43,15 +43,19 @@
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO;
 
+with Matreshka.Internals.Unicode.Ucd;
+
 package body Matreshka.CLDR.AllKeys_Reader is
 
    function Parse_Code_Points
     (Image : Wide_Wide_String;
-     Index : in out Positive) return Code_Point_Array_Access;
+     Index : in out Positive)
+       return Matreshka.CLDR.Collation_Data.Code_Point_Array_Access;
 
    function Parse_Collation_Elements
     (Image : Wide_Wide_String;
-     Index : in out Positive) return Collation_Element_Array_Access;
+     Index : in out Positive)
+       return Matreshka.CLDR.Collation_Data.Collation_Element_Array_Access;
 
    procedure Parse_Code_Point
     (Buffer  : Wide_Wide_String;
@@ -65,7 +69,7 @@ package body Matreshka.CLDR.AllKeys_Reader is
     (Buffer  : Wide_Wide_String;
      Index   : in out Positive;
      Last    : Natural;
-     Value   : out Collation_Element;
+     Value   : out Matreshka.CLDR.Collation_Data.Collation_Element;
      Success : out Boolean);
    --  Parses single collation element.
 
@@ -87,17 +91,22 @@ package body Matreshka.CLDR.AllKeys_Reader is
    -- Load_AllKeys_File --
    -----------------------
 
-   function Load_AllKeys_File return Collation_Information_Access is
-      Result         : Collation_Information_Access;
+   function Load_AllKeys_File
+     return Matreshka.CLDR.Collation_Data.Collation_Information_Access
+   is
+      use type Matreshka.CLDR.Collation_Data.Collation_Record_Access;
+
+      Result         :
+        Matreshka.CLDR.Collation_Data.Collation_Information_Access;
       File           : Ada.Wide_Wide_Text_IO.File_Type;
       Buffer         : Wide_Wide_String (1 .. 1024);
       Last           : Natural;
-      Current_Record : Collation_Record_Access;
-      Aux_Record     : Collation_Record_Access;
+      Current_Record : Matreshka.CLDR.Collation_Data.Collation_Record_Access;
+      Aux_Record     : Matreshka.CLDR.Collation_Data.Collation_Record_Access;
       Index          : Positive;
 
    begin
-      Result := new Collation_Information;
+      Result := new Matreshka.CLDR.Collation_Data.Collation_Information;
 
       Ada.Wide_Wide_Text_IO.Open
        (File,
@@ -122,7 +131,8 @@ package body Matreshka.CLDR.AllKeys_Reader is
             null;
 
          else
-            Current_Record := new Collation_Record;
+            Current_Record :=
+              new Matreshka.CLDR.Collation_Data.Collation_Record;
             Current_Record.Contractors :=
               Parse_Code_Points (Buffer (Index .. Last), Index);
 
@@ -224,9 +234,10 @@ package body Matreshka.CLDR.AllKeys_Reader is
 
    function Parse_Code_Points
     (Image : Wide_Wide_String;
-     Index : in out Positive) return Code_Point_Array_Access
+     Index : in out Positive)
+       return Matreshka.CLDR.Collation_Data.Code_Point_Array_Access
    is
-      Result  : Code_Point_Array (1 .. 3);
+      Result  : Matreshka.CLDR.Collation_Data.Code_Point_Array (1 .. 3);
       Used    : Natural := 0;
       Success : Boolean;
 
@@ -248,7 +259,9 @@ package body Matreshka.CLDR.AllKeys_Reader is
          Used := Used + 1;
       end loop;
 
-      return new Code_Point_Array'(Result (1 .. Used));
+      return
+        new Matreshka.CLDR.Collation_Data.Code_Point_Array'
+             (Result (1 .. Used));
    end Parse_Code_Points;
 
    -----------------------------
@@ -259,7 +272,7 @@ package body Matreshka.CLDR.AllKeys_Reader is
     (Buffer  : Wide_Wide_String;
      Index   : in out Positive;
      Last    : Natural;
-     Value   : out Collation_Element;
+     Value   : out Matreshka.CLDR.Collation_Data.Collation_Element;
      Success : out Boolean) is
    begin
       Value   := (False, 0, 0, 0, 0);
@@ -347,9 +360,11 @@ package body Matreshka.CLDR.AllKeys_Reader is
 
    function Parse_Collation_Elements
     (Image : Wide_Wide_String;
-     Index : in out Positive) return Collation_Element_Array_Access
+     Index : in out Positive)
+       return Matreshka.CLDR.Collation_Data.Collation_Element_Array_Access
    is
-      Result  : Collation_Element_Array (1 .. 18);
+      Result  :
+        Matreshka.CLDR.Collation_Data.Collation_Element_Array (1 .. 18);
       Used    : Natural := 0;
       Success : Boolean;
 
@@ -369,7 +384,9 @@ package body Matreshka.CLDR.AllKeys_Reader is
          Used := Used + 1;
       end loop;
 
-      return new Collation_Element_Array'(Result (1 .. Used));
+      return
+        new Matreshka.CLDR.Collation_Data.Collation_Element_Array'
+             (Result (1 .. Used));
    end Parse_Collation_Elements;
 
    ----------------------------

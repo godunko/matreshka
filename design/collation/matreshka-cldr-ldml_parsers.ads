@@ -45,7 +45,7 @@ with League.Strings;
 with XML.SAX.Attributes;
 with XML.SAX.Content_Handlers;
 
-with Matreshka.CLDR.AllKeys_Reader;
+with Matreshka.CLDR.Collation_Data;
 
 package Matreshka.CLDR.LDML_Parsers is
 
@@ -53,7 +53,8 @@ package Matreshka.CLDR.LDML_Parsers is
      limited new XML.SAX.Content_Handlers.SAX_Content_Handler with record
       Collect_Text : Boolean := False;
       Text         : League.Strings.Universal_String;
-      Collations   : AllKeys_Reader.Collation_Information_Access;
+      Collations   :
+        Matreshka.CLDR.Collation_Data.Collation_Information_Access;
    end record;
 
    overriding procedure Characters

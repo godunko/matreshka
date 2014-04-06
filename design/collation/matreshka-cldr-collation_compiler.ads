@@ -44,13 +44,13 @@
 --  This package constructs collation data in form used by implementation of
 --  Unicode Collation Algorithm.
 ------------------------------------------------------------------------------
-with Matreshka.CLDR.AllKeys_Reader;
+with Matreshka.CLDR.Collation_Data;
 with Matreshka.Internals.Locales;
 
 package Matreshka.CLDR.Collation_Compiler is
 
    procedure Construct_Collation_Information
-    (Data   : AllKeys_Reader.Collation_Information;
+    (Data   : Matreshka.CLDR.Collation_Data.Collation_Information;
      Locale : not null access Matreshka.Internals.Locales.Locale_Data);
    --  Constructs collation data in internals form and replaces collation data
    --  in locale by it. Replaced collation data is not deallocated. It is

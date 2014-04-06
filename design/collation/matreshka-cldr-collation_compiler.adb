@@ -82,10 +82,10 @@ package body Matreshka.CLDR.Collation_Compiler is
    -------------------------------------
 
    procedure Construct_Collation_Information
-    (Data   : AllKeys_Reader.Collation_Information;
+    (Data   : Matreshka.CLDR.Collation_Data.Collation_Information;
      Locale : not null access Matreshka.Internals.Locales.Locale_Data)
    is
-      use type AllKeys_Reader.Collation_Record_Access;
+      use type Matreshka.CLDR.Collation_Data.Collation_Record_Access;
       use type Matreshka.Internals.Unicode.Code_Point;
       use type Matreshka.Internals.Unicode.Ucd.Sequence_Index;
 
@@ -98,15 +98,15 @@ package body Matreshka.CLDR.Collation_Compiler is
       Backwards        : Boolean;
 
       procedure Append_Expansion
-       (Sequence : AllKeys_Reader.Collation_Element_Array;
+       (Sequence : Matreshka.CLDR.Collation_Data.Collation_Element_Array;
         First    : out Matreshka.Internals.Unicode.Ucd.Sequence_Index;
         Last     : out Matreshka.Internals.Unicode.Ucd.Sequence_Index);
       --  Appends specified expansion sequence to collectd set of expansion
       --  sequences.
 
       procedure Process_Contractors
-       (Start  : AllKeys_Reader.Collation_Record_Access;
-        Prefix : AllKeys_Reader.Code_Point_Array;
+       (Start  : Matreshka.CLDR.Collation_Data.Collation_Record_Access;
+        Prefix : Matreshka.CLDR.Collation_Data.Code_Point_Array;
         First  : out Matreshka.Internals.Unicode.Ucd.Sequence_Count;
         Last   : out Matreshka.Internals.Unicode.Ucd.Sequence_Count);
       --  Process contractors recursively.
@@ -116,7 +116,7 @@ package body Matreshka.CLDR.Collation_Compiler is
       ----------------------
 
       procedure Append_Expansion
-       (Sequence : AllKeys_Reader.Collation_Element_Array;
+       (Sequence : Matreshka.CLDR.Collation_Data.Collation_Element_Array;
         First    : out Matreshka.Internals.Unicode.Ucd.Sequence_Index;
         Last     : out Matreshka.Internals.Unicode.Ucd.Sequence_Index)
       is
@@ -183,7 +183,7 @@ package body Matreshka.CLDR.Collation_Compiler is
            := Matreshka.Internals.Unicode.Ucd.Second_Stage_Index
                (Starter mod Internals.Unicode.Ucd.Second_Stage_Index'Modulus);
 
-         Current_Record : AllKeys_Reader.Collation_Record_Access
+         Current_Record : Matreshka.CLDR.Collation_Data.Collation_Record_Access
            := Data.Collations (Starter);
 
       begin
@@ -226,14 +226,15 @@ package body Matreshka.CLDR.Collation_Compiler is
       -------------------------
 
       procedure Process_Contractors
-       (Start  : AllKeys_Reader.Collation_Record_Access;
-        Prefix : AllKeys_Reader.Code_Point_Array;
+       (Start  : Matreshka.CLDR.Collation_Data.Collation_Record_Access;
+        Prefix : Matreshka.CLDR.Collation_Data.Code_Point_Array;
         First  : out Matreshka.Internals.Unicode.Ucd.Sequence_Count;
         Last   : out Matreshka.Internals.Unicode.Ucd.Sequence_Count)
       is
-         use type AllKeys_Reader.Code_Point_Array;
+         use type Matreshka.CLDR.Collation_Data.Code_Point_Array;
 
-         Current_Record : AllKeys_Reader.Collation_Record_Access := Start;
+         Current_Record : Matreshka.CLDR.Collation_Data.Collation_Record_Access
+           := Start;
 
       begin
          First := 0;

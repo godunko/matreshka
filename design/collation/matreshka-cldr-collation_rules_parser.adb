@@ -45,8 +45,6 @@ with Ada.Characters.Wide_Wide_Latin_1;
 
 with League.Strings;
 
-with Matreshka.CLDR.Collation_Data;
-
 package body Matreshka.CLDR.Collation_Rules_Parser is
 
 --   function Is_Collation_Syntax_Character
@@ -84,7 +82,7 @@ package body Matreshka.CLDR.Collation_Rules_Parser is
    ---------------------------
 
    procedure Parse_Collation_Rules
-    (Data   : in out AllKeys_Reader.Collation_Information;
+    (Data   : in out Matreshka.CLDR.Collation_Data.Collation_Information;
      Buffer : Wide_Wide_String)
    is
       Index    : Positive := Buffer'First;
