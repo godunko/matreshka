@@ -386,9 +386,9 @@ package body XSD_To_Ada.Payloads is
                      Choice       => Choice);
                end if;
 
-                  if Choice then
-                     Writer.P ("      end case;");
-                  end if;
+               if Choice then
+                  Writer.P ("      end case;");
+               end if;
 
                Writer.P ("   end record;" & LF);
 

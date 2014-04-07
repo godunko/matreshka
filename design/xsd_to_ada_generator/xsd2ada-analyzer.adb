@@ -465,10 +465,14 @@ package body XSD2Ada.Analyzer is
                Max_Occurs   => Max_Occurs,
                Anonym_Name  => Anonym_Prefix & "Case",
                Short_Ada_Type_Name => Anonym_Prefix & "Case_Anonym");
-         else
-            Traverse_Model_Group (XS_Model_Group => XS_Term.To_Model_Group,
-                                  Node_Vector    => Node_Vector,
-                                  Anonym_Prefix  => Anonym_Prefix);
+           else
+            Create_Node_Vector
+              (Object       => XS_Term,
+               Node_Vector  => Node_Vector,
+               Min_Occurs   => Min_Occurs,
+               Max_Occurs   => Max_Occurs,
+               Anonym_Name  => Anonym_Prefix,
+               Short_Ada_Type_Name => Anonym_Prefix & "Anonym");
          end if;
 
       elsif XS_Term.Is_Element_Declaration then

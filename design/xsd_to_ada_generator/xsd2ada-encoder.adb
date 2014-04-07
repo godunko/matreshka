@@ -434,11 +434,13 @@ package body XSD2Ada.Encoder is
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "boolean" then
 
          Writer.P
-           ("      Writer.Characters (Image (Data." & Payload_Type
+           ("      Writer.Characters" & LF
+              & "        (League.Strings.From_UTF_8_String (Data."
+            & Payload_Type
             & Top_Name
             & Add_Separator (XS_Term.Get_Name)
             & Optional_Value_Marker.To_Wide_Wide_String
-            & "));"
+            & "'Img));"
             & LF & "  --  "
             & Type_D.Get_Base_Type.Get_Name);
       else
@@ -636,7 +638,7 @@ package body XSD2Ada.Encoder is
    procedure Print_Type_Definition
      (Type_D        : XML.Schema.Type_Definitions.XS_Type_Definition;
       Encoder_Types : in out XSD_To_Ada.Writers.Writer;
-      Encoder_Spec_Types   : in out XSD_To_Ada.Writers.Writer;
+      Encoder_Spec_Types : in out XSD_To_Ada.Writers.Writer;
       Writer        : in out XSD_To_Ada.Writers.Writer;
       Writer_types  : in out XSD_To_Ada.Writers.Writer;
       Spec_Writer   : in out XSD_To_Ada.Writers.Writer;

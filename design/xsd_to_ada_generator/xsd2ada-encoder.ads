@@ -71,7 +71,7 @@ package XSD2Ada.Encoder is
       Writer       : in out XSD_To_Ada.Writers.Writer;
       Element_Name : League.Strings.Universal_String;
       Base_Name    : League.Strings.Universal_String;
-        Min_Occurs : Boolean;
+      Min_Occurs   : Boolean;
       Max_Occurs   : Boolean);
 
    procedure Generate_Overriding_Procedure_Encode_Header

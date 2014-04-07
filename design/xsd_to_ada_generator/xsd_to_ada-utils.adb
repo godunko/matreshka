@@ -195,7 +195,7 @@ package body XSD_To_Ada.Utils is
       Encoder_Spec_Types  : XSD_To_Ada.Writers.Writer;
 
       Encoder_Writer      : XSD_To_Ada.Writers.Writer;
-      Encoder_Full_Writer : XSD_To_Ada.Writers.Writer;
+      Encoder_Payload     : XSD_To_Ada.Writers.Writer;
       Encoder_Spec_Writer : XSD_To_Ada.Writers.Writer;
       Encoder_Names_Writer : XSD_To_Ada.Writers.Writer;
 
@@ -222,18 +222,7 @@ package body XSD_To_Ada.Utils is
       Encoder_Types.P
         ("   IATS_URI : constant League.Strings.Universal_String :=");
       Encoder_Types.P ("     League.Strings.To_Universal_String "
-                            & "(""http://www.actforex.com/iats"");");
-      Encoder_Types.P ("   function Image (Item : Boolean) "
-                            & "return League.Strings.Universal_String is");
-      Encoder_Types.P ("     begin");
-      Encoder_Types.P ("       if Item then");
-      Encoder_Types.P
-        ("         return League.Strings.To_Universal_String (""true"");");
-      Encoder_Types.P ("           else");
-      Encoder_Types.P
-        ("         return League.Strings.To_Universal_String (""false"");");
-      Encoder_Types.P ("       end if;");
-      Encoder_Types.P ("   end Image;");
+                       & "(""http://www.actforex.com/iats"");");
 
       Put_Header (Payload_Spec);
       Create_Package_Name (Payload_Spec);
@@ -273,8 +262,8 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
-      Put_Header (Encoder_Full_Writer);
-      XSD2Ada.Encoder.Generate_Package_Header (Encoder_Full_Writer);
+      Put_Header (Encoder_Payload);
+      XSD2Ada.Encoder.Generate_Package_Header (Encoder_Payload);
 
       Writers.P
         (Encoder_Spec_Writer,
@@ -295,41 +284,41 @@ package body XSD_To_Ada.Utils is
          Encoder_Names_Writer,
          Tag_Vector);
 
-      Encoder_Full_Writer.N (Encoder_Names_Writer.Text);
-      Encoder_Full_Writer.N (Encoder_Writer.Text);
-      Encoder_Full_Writer.P ("   begin");
+      Encoder_Payload.N (Encoder_Names_Writer.Text);
+      Encoder_Payload.N (Encoder_Writer.Text);
+      Encoder_Payload.P ("   begin");
 
       for Index in 1 .. Tag_Vector.Length loop
          Writers.P
-           (Encoder_Full_Writer,
+           (Encoder_Payload,
             ("   Web_Services.SOAP.Payloads.Encoders.Registry.Register"));
 
-         Writers.P (Encoder_Full_Writer,
+         Writers.P (Encoder_Payload,
                     ("     (Payloads."
                      & Add_Separator (Tag_Vector.Element (Index))
                      & "'Tag,"));
 
          Writers.P
-           (Encoder_Full_Writer,
+           (Encoder_Payload,
             ("        "
              & Add_Separator (Tag_Vector.Element (Index))
              & "_Encoder'Tag);"));
       end loop;
 
-      Encoder_Full_Writer.N ("end Encoder;");
+      Encoder_Payload.N ("end Encoder;");
       Encoder_Spec_Writer.N ("end Encoder;");
 
       Writers.N (Types_Writer, "end IATS_Types;");
       Payload_Spec.Save;
-
       Ada.Wide_Wide_Text_IO.Put_Line (Types_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Encoder_Full_Writer.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Encoder_Spec_Writer.Text.To_Wide_Wide_String);
 
       Writers.N (Payload_Writer, "end Payloads;");
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Encoder_Payload.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Encoder_Spec_Writer.Text.To_Wide_Wide_String);
 
       Encoder_Types.N ("end Encoder_Types;");
       Encoder_Spec_Types.P ("end Encoder_Types;");
