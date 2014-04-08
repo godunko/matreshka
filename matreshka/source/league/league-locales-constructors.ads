@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package League.Locales.Constrcutors is
+package League.Locales.Constructors is
 
    function Create_Locale
     (Language : League.Strings.Universal_String) return Locale;

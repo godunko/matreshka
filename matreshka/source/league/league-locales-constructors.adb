@@ -42,8 +42,9 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Matreshka.CLDR.Collation_Loader;
+with Matreshka.Internals.Locales.Defaults;
 
-package body League.Locales.Constrcutors is
+package body League.Locales.Constructors is
 
    -------------------
    -- Create_Locale --
@@ -58,18 +59,18 @@ package body League.Locales.Constrcutors is
                 new Matreshka.Internals.Locales.Locale_Data'
                      (Counter => <>,
                       Core    =>
-                        Matreshka.Internals.Locales.Defaults
-                          .Default_Locale_Data.Core,
+                        Matreshka.Internals.Locales.Defaults.Default_Locale
+                          .Core,
                       Casing  =>
-                        Matreshka.Internals.Locales.Defaults
-                          .Default_Locale_Data.Casing,
+                        Matreshka.Internals.Locales.Defaults.Default_Locale
+                          .Casing,
                       Collation =>
-                        Matreshka.Internals.Locales.Defaults
-                          .Default_Locale_Data.Collation))
+                        Matreshka.Internals.Locales.Defaults.Default_Locale
+                          .Collation))
       do
          Matreshka.CLDR.Collation_Loader.Load_Collation_Data
           (Language, Result.Data);
       end return;
    end Create_Locale;
 
-end League.Locales.Constrcutors;
+end League.Locales.Constructors;
