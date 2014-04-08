@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2009-2011, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,102 +41,52 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Unchecked_Deallocation;
-
 with Matreshka.Internals.Locales.Defaults;
 
-package body Matreshka.Internals.Locales is
+package body League.Locales is
 
-   Application_Locale : Locale_Data_Access := null;
-   Thread_Locale      : Locale_Data_Access := null;
-   pragma Thread_Local_Storage (Thread_Locale);
+   ------------
+   -- Adjust --
+   ------------
 
-   -----------------
-   -- Dereference --
-   -----------------
-
-   procedure Dereference (Self : in out Locale_Data_Access) is
-
-      procedure Free is
-        new Ada.Unchecked_Deallocation (Locale_Data, Locale_Data_Access);
-
+   overriding procedure Adjust (Self : in out Locale) is
    begin
-      if Matreshka.Atomics.Counters.Decrement (Self.Counter) then
-         pragma Assert (Self /= Defaults.Default_Locale'Access);
-
-         Free (Self);
-      end if;
-   end Dereference;
+      Matreshka.Internals.Locales.Reference (Self.Data);
+   end Adjust;
 
    --------------
-   -- Get_Core --
+   -- Finalize --
    --------------
 
-   function Get_Core
-    (Self : not null access Locale_Data'Class;
-     Code : Unicode.Code_Point)
-       return Unicode.Ucd.Core_Values
-   is
-
-      function Element is
-        new Matreshka.Internals.Unicode.Ucd.Generic_Element
-             (Matreshka.Internals.Unicode.Ucd.Core_Values,
-              Matreshka.Internals.Unicode.Ucd.Core_Second_Stage,
-              Matreshka.Internals.Unicode.Ucd.Core_Second_Stage_Access,
-              Matreshka.Internals.Unicode.Ucd.Core_First_Stage);
+   overriding procedure Finalize (Self : in out Locale) is
+      use type Matreshka.Internals.Locales.Locale_Data_Access;
 
    begin
-      return Element (Self.Core.all, Code);
-   end Get_Core;
-
-   ----------------
-   -- Get_Locale --
-   ----------------
-
-   function Get_Locale return not null Locale_Data_Access is
-   begin
-      if Thread_Locale /= null then
-         Reference (Thread_Locale);
-
-         return Thread_Locale;
-
-      elsif Application_Locale /= null then
-         Reference (Application_Locale);
-
-         return Application_Locale;
-
-      else
-         Reference
-          (Matreshka.Internals.Locales.Defaults.Default_Locale'Access);
-
-         return Matreshka.Internals.Locales.Defaults.Default_Locale'Access;
+      if Self.Data /= null then
+         Matreshka.Internals.Locales.Dereference (Self.Data);
       end if;
-   end Get_Locale;
+   end Finalize;
 
-   ---------------
-   -- Reference --
-   ---------------
+   ----------------
+   -- Initialize --
+   ----------------
 
-   procedure Reference (Self : Locale_Data_Access) is
+   overriding procedure Initialize (Self : in out Locale) is
    begin
-      Matreshka.Atomics.Counters.Increment (Self.Counter);
-   end Reference;
+      --  Set locale data. It is not initialized by default to avoid dependency
+      --  from large generated data packages.
+
+      Self.Data := Matreshka.Internals.Locales.Defaults.Default_Locale'Access;
+      Matreshka.Internals.Locales.Reference (Self.Data);
+   end Initialize;
 
    -----------------------
    -- Set_Thread_Locale --
    -----------------------
 
-   procedure Set_Thread_Locale (Self : Locale_Data_Access) is
+   procedure Set_Thread_Locale (Self : Locale'Class) is
    begin
-      if Thread_Locale /= null then
-         Dereference (Thread_Locale);
-      end if;
-
-      Thread_Locale := Self;
-
-      if Thread_Locale /= null then
-         Reference (Thread_Locale);
-      end if;
+      null;
    end Set_Thread_Locale;
 
-end Matreshka.Internals.Locales;
+end League.Locales;
