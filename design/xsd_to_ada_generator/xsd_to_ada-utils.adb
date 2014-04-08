@@ -175,7 +175,15 @@ package body XSD_To_Ada.Utils is
       Complex_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
         Model.Get_Components_By_Namespace
           (Object_Type => XML.Schema.Complex_Type,
-           Namespace   => Namespace);
+           Namespace   => League.Strings.To_Universal_String
+             ("http://www.actforex.com/iats"));
+
+      Crutches_Element_Declarations :
+      constant XML.Schema.Named_Maps.XS_Named_Map
+        := Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Element_Declaration,
+           Namespace   => League.Strings.To_Universal_String
+             ("http://www.actforex.com/iats/crutches"));
 
       Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map
         := Model.Get_Components_By_Namespace
@@ -205,12 +213,6 @@ package body XSD_To_Ada.Utils is
 
 --      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
    begin
-
-      Put_Header (Payload_Writer);
-      Writers.P (Payload_Writer, "with IATS_Types;");
-      Writers.P (Payload_Writer, "with Web_Services.SOAP.Payloads;");
-      Writers.P (Payload_Writer, "package Payloads is" & LF);
-
       Put_Header (Encoder_Spec_Types);
       Encoder_Spec_Types.P ("with IATS_Types;");
       Encoder_Spec_Types.P ("with XML.SAX.Writers;");
@@ -243,6 +245,7 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
+
       XSD_To_Ada.Payloads.Print_Payloads
         (Node_Vector => Node_Vector,
          Payloads    => Payload_Writer,
@@ -262,18 +265,25 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
+      for J in 1 .. Crutches_Element_Declarations.Length loop
+         if XSD_To_Ada.Mappings.XML.Payload_Types.Index
+           (Element_Declarations.Item (J).Get_Name) /= 0
+           and then not Element_Declarations.Item (J).Get_Name.Ends_With
+           ("Response")
+         then
+            XSD2Ada.Analyzer.Create_Element_Node
+              (Crutches_Element_Declarations.Item (J).To_Element_Declaration,
+               Node_Vector);
+         end if;
+      end loop;
+
       Put_Header (Encoder_Payload);
       XSD2Ada.Encoder.Generate_Package_Header (Encoder_Payload);
 
-      Writers.P
-        (Encoder_Spec_Writer,
-         "with XML.SAX.Writers;" & LF
-         & "with League.Strings;" & LF
+      Encoder_Spec_Writer.P
+        ("with XML.SAX.Writers;" & LF
          & "with Web_Services.SOAP.Payloads.Encoders;" & LF & LF
-         & "package Encoder is"  & LF & LF
-         & "   function Image (Item : Boolean) return League.Strings."
-         & "Universal_String;"
-         & LF);
+         & "package Encoder is"  & LF);
 
       XSD2Ada.Encoder.Print_Type_Title
         (Node_Vector,

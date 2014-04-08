@@ -271,6 +271,7 @@ package body XSD2Ada.Encoder is
         ("with Encoder_Types;" & LF
          & "with Payloads;" & LF
          & "with IATS_Types;" & LF
+         & "with League.Strings;" & LF
          & "with Web_Services.SOAP.Payloads.Encoders.Registry;"
          & LF & LF
          & "pragma Style_Checks (""N"");"
@@ -281,19 +282,7 @@ package body XSD2Ada.Encoder is
          & "     League.Strings.To_Universal_String"
          & " (""http://www.actforex.com/iats"");" & LF
          & "   IATS_Prefix : constant League.Strings.Universal_String :=" & LF
-         & "     League.Strings.To_Universal_String (""iats"");"
-         & LF & LF
-         & "   function Image (Item : Boolean) return League.Strings."
-         & "Universal_String is" & LF
-         & "     begin" & LF
-         & "       if Item then" & LF
-         & "         return League.Strings.To_Universal_String (""true"");"
-         & LF
-         & "           else" & LF
-         & "         return League.Strings.To_Universal_String (""false"");"
-         & LF
-         & "       end if;" & LF
-         & "   end Image;" & LF);
+         & "     League.Strings.To_Universal_String (""iats"");" & LF);
    end Generate_Package_Header;
 
    --------------------------------------

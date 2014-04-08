@@ -190,6 +190,11 @@ package body XSD_To_Ada.Payloads is
    begin
       Payloads_Node_Vector := Node_Vector;
 
+      XSD_To_Ada.Utils.Put_Header (Payloads);
+      Writers.P (Payloads, "with IATS_Types;");
+      Writers.P (Payloads, "with Web_Services.SOAP.Payloads;");
+      Writers.P (Payloads, "package Payloads is" & LF);
+
       for Current of Node_Vector loop
 
          if Current.Object.Is_Type_Definition then

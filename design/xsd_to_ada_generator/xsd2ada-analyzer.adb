@@ -248,7 +248,20 @@ package body XSD2Ada.Analyzer is
         := Model.Get_Components_By_Namespace
             (Object_Type => XML.Schema.Element_Declaration,
              Namespace   => XSD_To_Ada.Utils.Namespace);
+
+      Crutches_Element_Declarations :
+      constant XML.Schema.Named_Maps.XS_Named_Map
+        := Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Element_Declaration,
+           Namespace   => League.Strings.To_Universal_String
+             ("http://www.actforex.com/iats/crutches"));
    begin
+      for J in 1 .. Crutches_Element_Declarations.Length loop
+         XSD2Ada.Analyzer.Create_Element_Node
+           (Crutches_Element_Declarations.Item (J).To_Element_Declaration,
+            Node_Vector);
+      end loop;
+
       for J in 1 .. Element_Declarations.Length loop
          Create_Element_Node
            (Element_Declarations.Item (J).To_Element_Declaration,
