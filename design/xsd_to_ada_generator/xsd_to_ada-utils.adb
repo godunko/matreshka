@@ -218,9 +218,23 @@ package body XSD_To_Ada.Utils is
       Encoder_Spec_Types.P ("with XML.SAX.Writers;");
       Encoder_Spec_Types.P ("with League.Strings;" & LF);
       Encoder_Spec_Types.P ("package Encoder_Types is" & LF);
+      Encoder_Spec_Types.P ("   function Image (Item : Boolean) "
+                            & "return League.Strings.Universal_String;" & LF);
 
       Put_Header (Encoder_Types);
       Encoder_Types.P ("package body Encoder_Types is" & LF);
+      Encoder_Types.P ("   function Image (Item : Boolean) "
+                            & "return League.Strings.Universal_String is");
+      Encoder_Types.P ("     begin");
+      Encoder_Types.P ("       if Item then");
+      Encoder_Types.P
+        ("         return League.Strings.To_Universal_String (""true"");");
+      Encoder_Types.P ("           else");
+      Encoder_Types.P
+        ("         return League.Strings.To_Universal_String (""false"");");
+      Encoder_Types.P ("       end if;");
+      Encoder_Types.P ("   end Image;" & LF);
+
       Encoder_Types.P
         ("   IATS_URI : constant League.Strings.Universal_String :=");
       Encoder_Types.P ("     League.Strings.To_Universal_String "
@@ -413,13 +427,6 @@ package body XSD_To_Ada.Utils is
 
       Unit.Add_With (+"Ada.Strings.Unbounded");
       Unit.New_Line;
-      Unit.Put_Line
-       (+"   type Rate_String is new Ada.Strings.Unbounded.Unbounded_String;");
-      Unit.New_Line;
-      Unit.Put_Line (+"   Null_Rate : constant Rate_String");
-      Unit.Put_Line
-       (+"     := Rate_String"
-          & " (Ada.Strings.Unbounded.Null_Unbounded_String);");
 
       Unit.Add_With (+"Interfaces");
       Unit.New_Line;

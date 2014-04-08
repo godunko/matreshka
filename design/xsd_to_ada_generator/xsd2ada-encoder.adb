@@ -423,13 +423,11 @@ package body XSD2Ada.Encoder is
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "boolean" then
 
          Writer.P
-           ("      Writer.Characters" & LF
-              & "        (League.Strings.From_UTF_8_String (Data."
+           ("      Writer.Characters (Encoder_Types.Image (Data."
             & Payload_Type
             & Top_Name
             & Add_Separator (XS_Term.Get_Name)
-            & Optional_Value_Marker.To_Wide_Wide_String
-            & "'Img));"
+            & Optional_Value_Marker.To_Wide_Wide_String & "));"
             & LF & "  --  "
             & Type_D.Get_Base_Type.Get_Name);
       else
