@@ -130,11 +130,11 @@ package body XSD2Ada.Encoder is
 
       if Vector then
          Writer.P
-           (Add_Indent (Spaces_Count + New_Spaces)
-            & "for Index in 1 .. Natural (Data." & Payload_Type
-            & Top_Name
-            & Add_Separator (XS_Term.Get_Name)
-            & ".Length) loop");
+           (Split_Line
+              ("for Index in 1 .. Natural (Data." & Payload_Type
+               & Top_Name
+               & Add_Separator (XS_Term.Get_Name)
+               & ".Length) loop", Spaces_Count + New_Spaces));
 
          New_Spaces := New_Spaces + 3;
       end if;
@@ -274,8 +274,6 @@ package body XSD2Ada.Encoder is
          & "with League.Strings;" & LF
          & "with Web_Services.SOAP.Payloads.Encoders.Registry;"
          & LF & LF
-         & "pragma Style_Checks (""N"");"
-         & LF & LF
          & "package body Encoder is"
          & LF & LF
          & "   IATS_URI : constant League.Strings.Universal_String :=" & LF
@@ -349,18 +347,20 @@ package body XSD2Ada.Encoder is
            League.Strings.To_Universal_String (".Value");
 
          Writer.P
-           ("      if Data." & Payload_Type
-            & Top_Name
-            & Add_Separator (XS_Term.Get_Name)
-            & ".Is_Set then");
+           (Split_Line
+              ("if Data." & Payload_Type
+               & Top_Name
+               & Add_Separator (XS_Term.Get_Name)
+               & ".Is_Set then", 6));
       end if;
 
       if Max_Occurs then
          Writer.P
-           ("      for Index in 1 .. Natural (Data." & Payload_Type
+           (Split_Line
+              ("for Index in 1 .. Natural (Data." & Payload_Type
             & Top_Name
             & Add_Separator (XS_Term.Get_Name)
-            & ".Length) loop");
+            & ".Length) loop", 6));
       end if;
 
       Writer.N (Write_Start_Element (XS_Term.Get_Name));
@@ -423,13 +423,14 @@ package body XSD2Ada.Encoder is
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "boolean" then
 
          Writer.P
-           ("      Writer.Characters (Encoder_Types.Image (Data."
-            & Payload_Type
-            & Top_Name
-            & Add_Separator (XS_Term.Get_Name)
-            & Optional_Value_Marker.To_Wide_Wide_String & "));"
-            & LF & "  --  "
-            & Type_D.Get_Base_Type.Get_Name);
+           (Split_Line
+              ("Writer.Characters (Encoder_Types.Image (Data."
+               & Payload_Type
+               & Top_Name
+               & Add_Separator (XS_Term.Get_Name)
+               & Optional_Value_Marker.To_Wide_Wide_String & "));"
+               & LF & "  --  "
+               & Type_D.Get_Base_Type.Get_Name, 6));
       else
          Writer.P
            ("      Writer.Characters (Data." & Payload_Type
@@ -582,16 +583,17 @@ package body XSD2Ada.Encoder is
 
                   if Model_Groups_Choice then
                      Writer.P
-                       ("      case Data." & Payload_Type
-                        & Name & "." & Full_Base_Name &".Kind is");
+                       (Split_Line
+                          ("case Data." & Payload_Type
+                           & Name & "." & Full_Base_Name &".Kind is", 6));
                   end if;
                else
                   Full_Name.Append ("_Anonym");
 
                   if Model_Groups_Choice then
                      Writer.P
-                       ("      case Data." & Payload_Type
-                        & Full_Name & ".Kind is");
+                       (Split_Line ("case Data." & Payload_Type
+                        & Full_Name & ".Kind is", 6));
                   end if;
                end if;
 
@@ -817,11 +819,10 @@ package body XSD2Ada.Encoder is
          Encoder_Writer.Text.Clear;
       end loop;
 
-      Encoder_Names_Writer.P (Element_Name.Text);
+      Encoder_Names_Writer.N (Element_Name.Text);
 
       Encoder_Types.N (Type_Element_Name.Text);
       Encoder_Types.N (Types.Text);
-
    end Print_Type_Title;
 
    -----------------------

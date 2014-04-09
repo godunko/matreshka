@@ -766,8 +766,9 @@ package body XSD_To_Ada.Utils is
                 and then Temp_US.Element (J) = ' '
                 and then Temp_US.Element (J + 1) = ':'
                 and then J /= 1)
-              or (Temp_US.Element (J) = '('
-                  and then J /= 1)
+              or (J + 1 < Temp_US.Length
+                  and then Temp_US.Element (J) = ' '
+                  and then Temp_US.Element (J + 1) = '(')
               or (J + 3 < Temp_US.Length
                   and then Temp_US.Element (J) = ' '
                   and then Temp_US.Element (J + 1) = 'i'
