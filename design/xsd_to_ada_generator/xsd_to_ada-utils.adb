@@ -178,6 +178,13 @@ package body XSD_To_Ada.Utils is
            Namespace   => League.Strings.To_Universal_String
              ("http://www.actforex.com/iats"));
 
+      Crutches_Complex_Types :
+      constant XML.Schema.Named_Maps.XS_Named_Map
+        := Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Complex_Type,
+           Namespace   => League.Strings.To_Universal_String
+             ("http://www.actforex.com/iats/crutches"));
+
       Crutches_Element_Declarations :
       constant XML.Schema.Named_Maps.XS_Named_Map
         := Model.Get_Components_By_Namespace
@@ -247,6 +254,13 @@ package body XSD_To_Ada.Utils is
       for J in 1 .. Complex_Types.Length loop
          XSD2Ada.Analyzer.Create_Type_Node
            (Complex_Types.Item (J).To_Type_Definition,
+            Node_Vector,
+            Mapping);
+      end loop;
+
+      for J in 1 .. Crutches_Complex_Types.Length loop
+         XSD2Ada.Analyzer.Create_Type_Node
+           (Crutches_Complex_Types.Item (J).To_Type_Definition,
             Node_Vector,
             Mapping);
       end loop;

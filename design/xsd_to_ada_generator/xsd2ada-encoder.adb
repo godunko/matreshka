@@ -95,9 +95,9 @@ package body XSD2Ada.Encoder is
       Optional : Boolean := False;
       Vector   : Boolean := False;
 
-      Vector_Element_Marker       : League.Strings.Universal_String;
-      Optional_Value_Marker       : League.Strings.Universal_String;
-      Top_Name : League.Strings.Universal_String;
+      Vector_Element_Marker : League.Strings.Universal_String;
+      Optional_Value_Marker : League.Strings.Universal_String;
+      Top_Name              : League.Strings.Universal_String;
    begin
 
       if not Element_Name.Is_Empty then
@@ -328,8 +328,8 @@ package body XSD2Ada.Encoder is
       use League.Strings;
 
       Optional_Value_Marker : League.Strings.Universal_String;
-      Top_Name : League.Strings.Universal_String;
-      Base_Type_Name : League.Strings.Universal_String;
+      Top_Name              : League.Strings.Universal_String;
+      Base_Type_Name        : League.Strings.Universal_String;
    begin
 
       if not Base_Name.Is_Empty then
