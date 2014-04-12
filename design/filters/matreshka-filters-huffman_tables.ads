@@ -40,138 +40,62 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Huffman table is able to read from bit stream elements encoded with
+--  bit-pieces of variable size.
 
-package body Matreshka.Filters.Deflate.Bit_Streams is
+with Matreshka.Filters.Bit_Streams;
 
-   Byte : constant := Ada.Streams.Stream_Element'Size;
-   --  Size of one Stream_Element
+generic
+   type Encoded_Element is range <>;
 
-   ------------
-   -- Append --
-   ------------
+   Max_Length : Bit_Streams.Bit_Count;
+package Matreshka.Filters.Huffman_Tables is
+   pragma Preelaborate;
 
-   not overriding procedure Append
-     (Self  : out Bit_Stream;
-      Input : League.Stream_Element_Vectors.Stream_Element_Vector)
-   is
-      use type Ada.Streams.Stream_Element_Offset;
-   begin
-      if Self.Index > Self.Data.Length then
-         --  Strip old data
-         Self.Data.Clear;
-         Self.Index := 1;
-      end if;
+   subtype Length is Bit_Streams.Bit_Count range 0 .. Max_Length;
 
-      Self.Data.Append (Input);
-      Self.Left := Self.Left + Natural (Byte * Input.Length);
-   end Append;
+   type Length_Map is array (Encoded_Element) of Length;
+   --  Map each encoded element to its length
 
-   ---------------
-   -- Fill_Head --
-   ---------------
+   type Huffman_Table is tagged private;
+   pragma Preelaborable_Initialization (Huffman_Table);
 
-   not overriding procedure Fill_Head (Self : in out Bit_Stream) is
-      use type Ada.Streams.Stream_Element_Offset;
-      Next : Word;
-   begin
-      while Self.Ready + Byte <= Word_Bit_Count'Last
-        and Self.Index <= Self.Data.Length
-      loop
-         Next := Word (Self.Data.Element (Self.Index));
-         Self.Index := Self.Index + 1;
-         Next := Shift_Left (Next, Self.Ready);
-         Self.Head := Self.Head or Next;
-         Self.Ready := Self.Ready + Byte;
-      end loop;
-   end Fill_Head;
+   procedure Initialize
+     (Self : in out Huffman_Table;
+      Map  : Length_Map);
+   --  Create Huffman table for given length Map
 
-   --------------
-   -- Has_Bits --
-   --------------
+   function Read
+     (Self  : Huffman_Table;
+      Input : in out Matreshka.Filters.Bit_Streams.Bit_Stream;
+      Value : in out Encoded_Element)
+      return Boolean;
+   --  Read encoded Value from Input stream if it has enought bits
 
-   not overriding function Has_Bits
-     (Self  : Bit_Stream;
-      Count : Bit_Count) return Boolean is
-   begin
-      return Self.Left >= Natural (Count);
-   end Has_Bits;
+   procedure Write
+     (Self   : Huffman_Table;
+      Value  : Encoded_Element;
+      Output : in out Matreshka.Filters.Bit_Streams.Bit_Stream);
+   --  Encode value and write in to Output
 
-   -----------
-   -- Reset --
-   -----------
+private
 
-   not overriding procedure Reset (Self : out Bit_Stream) is
-   begin
-      Self.Left := 0;
-      Self.Head := 0;
-      Self.Ready := 0;
-      Self.Data.Clear;
-      Self.Index := 1;
-   end Reset;
+   use type Matreshka.Filters.Bit_Streams.Bits;
 
-   ----------
-   -- Read --
-   ----------
+   subtype Bits is Bit_Streams.Bits range 0 .. 2 ** Natural (Max_Length) - 1;
 
-   not overriding procedure Read
-     (Self  : in out Bit_Stream;
-      Count : Bit_Count;
-      Value : in out Bits)
-   is
-      Mask : constant Word := Shift_Left (1, Natural (Count)) - 1;
-   begin
-      Fill_Head (Self);
-      Value := Bits (Self.Head and Mask);
-      Self.Skip (Count);
-   end Read;
+   type Value_Table  is array (Bits) of Encoded_Element;
+   --  This table maps any value of length Max_Length to Encoded_Element.
+   --  Prefix of value is equal code of Encoded_Element.
 
-   ----------
-   -- Read --
-   ----------
+   type Bits_Array is array (Encoded_Element) of Bits;
 
-   not overriding function Read
-     (Self  : in out Bit_Stream;
-      Count : Bit_Count;
-      Value : in out Bits) return Boolean is
-   begin
-      if Self.Has_Bits (Count) then
-         Self.Read (Count, Value);
-         return True;
-      else
-         return False;
-      end if;
-   end Read;
+   type Huffman_Table is tagged record
+      Mask       : Bits;
+      Max_Length : Length;
+      Values     : Value_Table;
+      Length     : Length_Map;
+      Bits       : Bits_Array;
+   end record;
 
-   ----------------
-   -- Read_Ahead --
-   ----------------
-
-   not overriding procedure Read_Ahead
-     (Self  : in out Bit_Stream;
-      Count : Bit_Count;
-      Got   : in out Bit_Count;
-      Value : in out Bits)
-   is
-      Mask : Word;
-   begin
-      Fill_Head (Self);
-      Got := Bit_Count (Integer'Min (Max_Bits, Self.Ready));
-      Got := Bit_Count'Min (Got, Count);
-      Mask := Shift_Left (1, Natural (Got)) - 1;
-      Value := Bits (Self.Head and Mask);
-   end Read_Ahead;
-
-   ----------
-   -- Skip --
-   ----------
-
-   not overriding procedure Skip
-     (Self  : in out Bit_Stream;
-      Count : Bit_Count) is
-   begin
-      Self.Left := Self.Left - Natural (Count);
-      Self.Ready := Self.Ready - Word_Bit_Count (Count);
-      Self.Head := Shift_Right (Self.Head, Natural (Count));
-   end Skip;
-
-end Matreshka.Filters.Deflate.Bit_Streams;
+end Matreshka.Filters.Huffman_Tables;

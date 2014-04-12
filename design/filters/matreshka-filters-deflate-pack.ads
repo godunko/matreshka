@@ -38,55 +38,84 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
+--  $Revision: 3946 $ $Date: 2013-06-16 21:48:41 +0300 (Вс., 16 июня 2013) $
 ------------------------------------------------------------------------------
---  Huffman table is able to read from bit stream elements encoded with
---  bit-pieces of variable size.
+--  Code related to Deflate compression method.
 
-with Matreshka.Filters.Deflate.Bit_Streams;
+private with Matreshka.Filters.Bit_Streams;
 
-generic
-   type Encoded_Element is range <>;
-
-   Max_Length : Deflate.Bit_Streams.Bit_Count;
-package Matreshka.Filters.Deflate.Huffman_Tables is
+package Matreshka.Filters.Deflate.Pack is
    pragma Preelaborate;
 
-   subtype Length is Deflate.Bit_Streams.Bit_Count range 0 .. Max_Length;
+   procedure Initialize;
+   --  Initialize fixed tables. Should be executed before other code.
 
-   type Length_Map is array (Encoded_Element) of Length;
-   --  Map each encoded element to its length
+   type Filter is new Matreshka.Filters.Filter with private;
+   pragma Preelaborable_Initialization (Filter);
+   --  Unpacker for stream compressed with Deflate method
 
-   type Huffman_Table is tagged private;
-   pragma Preelaborable_Initialization (Huffman_Table);
+   overriding procedure Read
+     (Self   : in out Filter;
+      Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
 
-   procedure Initialize
-     (Self : in out Huffman_Table;
-      Map  : Length_Map);
-   --  Create Huffman table for given length Map
-
-   function Read
-     (Self  : Huffman_Table;
-      Input : in out Matreshka.Filters.Deflate.Bit_Streams.Bit_Stream;
-      Value : in out Encoded_Element)
-      return Boolean;
-   --  Read encoded Value from Input stream if it has enought bits
+   overriding procedure Flush
+     (Self   : in out Filter;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
 
 private
 
-   use type Matreshka.Filters.Deflate.Bit_Streams.Bits;
+   type Stage is (Empty, Completed_Search, Incomplete_Search);
 
-   subtype Bits is Bit_Streams.Bits range 0 .. 2 ** Natural (Max_Length) - 1;
-
-   type Value_Table  is array (Bits) of Encoded_Element;
-   --  This table maps any value of length Max_Length to Encoded_Element.
-   --  Prefix of value is equal code of Encoded_Element.
-
-   type Huffman_Table is tagged record
-      Mask       : Bits;
-      Max_Length : Length;
-      Values     : Value_Table;
-      Length     : Length_Map;
+   type Buffer is tagged record
+      Data     : Cycle_Buffer;
+      Index    : Cycle_Index;  --  Current byte in Data
+      Last     : Cycle_Index;  --  Last read element in buffer
+      Filled   : Boolean;      --  If buffer has been filled once
    end record;
 
-end Matreshka.Filters.Deflate.Huffman_Tables;
+   Max_Look_Ahead_Count : constant := 64;
+   --  Max count of look ahead searches
+   Max_Look_Ahead : constant := 1 + Max_Length * Max_Look_Ahead_Count;
+   --  We could skip a byte then make Look_Ahead searches of Max_Length each,
+   --  so Max bytes of look ahead searches is here.
+
+   type Look_Ahead_Count is range 1 .. Max_Look_Ahead_Count;
+   --  Count of look ahead searches
+   type Look_Ahead_Position is range 0 .. Max_Look_Ahead;
+   --  Bytes of look ahead searches
+
+   type Look_Ahead_Kinds is (Use_Current, Skip_Current);
+   --  We search for best of:
+   --  * Skip_Current - skip one byte and search for back references then
+   --  * Use_Current - search for back references from current byte
+
+   subtype Length_Step is Cycle_Index range 0 .. Max_Length;
+   --  Length of back reference
+
+   type Look_Ahead_Data is record
+      Length : Length_Step;  --  Length of back reference
+      Where  : Cycle_Index;  --  Where back reference found
+   end record;
+
+   type Look_Ahead_Data_Array is
+     array (Look_Ahead_Count, Look_Ahead_Kinds) of Look_Ahead_Data;
+
+   type Look_Ahead_Context is record
+      Skipped    : Ada.Streams.Stream_Element;  --  Skipped literal
+      A          : Look_Ahead_Position := 0;
+      B          : Look_Ahead_Position := 1;
+      M          : Look_Ahead_Count'Base;
+      K          : Look_Ahead_Kinds;
+      LA         : Look_Ahead_Data_Array;  --  Lookahead data
+   end record;
+   --  Lookahead data
+
+   type Filter is new Matreshka.Filters.Filter with record
+      Last_Stage : Stage := Empty;
+      Output     : Matreshka.Filters.Bit_Streams.Bit_Stream;
+      Context    : Look_Ahead_Context;
+      Buf        : Buffer;
+   end record;
+
+end Matreshka.Filters.Deflate.Pack;

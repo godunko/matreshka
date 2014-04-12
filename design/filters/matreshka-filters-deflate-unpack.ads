@@ -42,9 +42,7 @@
 ------------------------------------------------------------------------------
 --  Unpack Deflate binary stream
 
-private with Ada.Streams;
-private with Matreshka.Filters.Deflate.Bit_Streams;
-private with Matreshka.Filters.Deflate.Huffman_Tables;
+private with Matreshka.Filters.Bit_Streams;
 
 package Matreshka.Filters.Deflate.Unpack is
    pragma Preelaborate;
@@ -83,50 +81,11 @@ private
       Read_Fixed_Distance_Extra);
    --  Deflate filter can leave Read function in one of these stages.
 
-   type Block_Kind is
-     (Stored_Block,            --  Block stored without any compression
-      Fixed_Huffman_Block,     --  Block with predefined codes
-      Dynamic_Huffman_Block,   --  Block with codes saved in stream
-      Reserved);               --  Not used value
-   --  Kind of block inside of deflate stream
-
-   type Literal is range 0..287;
-   --  Literal used to encode byte values, end of block and length
-
-   subtype Literal_Range is Literal range   0 .. 255;
-   subtype End_Of_Block  is Literal range 256 .. 256;
-   subtype Length_Range  is Literal range 257 .. 285;
-
-   package Literal_Tables is new Huffman_Tables
-     (Encoded_Element => Literal,
-      Max_Length      => 15);
-
-   type Length_Code is range 0..18;
-   --  Length code used to encode length values
-   subtype Direct_Length_Code     is Length_Code range 00 .. 15;
-   subtype Copy_Length_Code       is Length_Code range 16 .. 16;
-   subtype Zero_Length_Code       is Length_Code range 17 .. 17;
-   subtype Long_Zero_Length_Code  is Length_Code range 18 .. 18;
-
-   package Length_Tables is new Huffman_Tables
-     (Encoded_Element => Length_Code,
-      Max_Length      => 7);
-
-   type Distance_Code is range 0..29;
-   --  Distance code used to encode distance values
-
-   package Distance_Tables is new Huffman_Tables
-     (Encoded_Element => Distance_Code,
-      Max_Length      => 15);
-
-   type Cycle_Index is mod 2**15;
-   type Cycle_Buffer is array (Cycle_Index) of Ada.Streams.Stream_Element;
-
    type Filter is new Matreshka.Filters.Filter with record
-      Input            : Matreshka.Filters.Deflate.Bit_Streams.Bit_Stream;
+      Input            : Matreshka.Filters.Bit_Streams.Bit_Stream;
       Last_Stage       : Stage := Read_Block;
       Last_Block       : Boolean := False;
-      Block_Kind       : Unpack.Block_Kind;
+      Block_Kind       : Deflate.Block_Kind;
       Index            : Cycle_Index := 0;
       Buffer           : Cycle_Buffer;
       Length           : Cycle_Index;

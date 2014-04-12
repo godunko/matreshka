@@ -47,7 +47,7 @@ with "../../gnat/matreshka_config.gpr";
 
 project Filters is
 
-   for Main use ("main.adb", "xz_cat.adb");
+   for Main use ("main.adb", "xz_cat.adb", "defl2.adb");
    for Object_Dir use ".objs";
 
    package Compiler is

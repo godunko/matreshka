@@ -45,41 +45,10 @@
 
 package body Matreshka.Filters.Deflate.Unpack is
 
-   type Extra_Bits is record
-      Extra_Bits  : Bit_Streams.Bit_Count;
-      Base_Length : Cycle_Index;
-   end record;
-   --  This record stores number of extra bits to read for some length code
-   --  and corresponding length.
-
-   Length_Codes : constant array (Length_Range) of Extra_Bits :=
-     ((0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10),
-      (1, 11), (1, 13), (1, 15), (1, 17),
-      (2, 19), (2, 23), (2, 27), (2, 31),
-      (3, 35), (3, 43), (3, 51), (3, 59),
-      (4, 67), (4, 83), (4, 99), (4, 115),
-      (5, 131), (5, 163), (5, 195), (5, 227),
-      (0,258));
-   --  This table stores number of extra bits to read for each length code
-   --  and corresponding length.
-
-   Distance_Codes : constant array (Distance_Code) of Extra_Bits :=
-     ((0, 1),  (0, 2),  (0, 3),  (0, 4),  (1, 5),  (1, 7),  (2, 9),   (2, 13),
-      (3, 17), (3, 25), (4, 33), (4, 49), (5, 65), (5, 97), (6, 129), (6, 193),
-      (7, 257), (7, 385), (8, 513), (8, 769), (9, 1025), (9, 1537),
-      (10, 2049), (10, 3073), (11, 4097), (11, 6145), (12, 8193), (12, 12289),
-      (13, 16385), (13, 24577));
-   --  This table stores number of extra bits to read for each length code
-   --  and corresponding length.
-
-   Fixed_Literal_Table  : Literal_Tables.Huffman_Table;
-   Fixed_Distance_Table : Distance_Tables.Huffman_Table;
-   --  Predefined (fixed) Huffman tables for deflate method.
-
    generic
       with package Value_Tables is new Huffman_Tables(<>);
 
-      Input  : in out Matreshka.Filters.Deflate.Bit_Streams.Bit_Stream;
+      Input  : in out Matreshka.Filters.Bit_Streams.Bit_Stream;
       Length : in out Length_Code;
       Index  : in out Value_Tables.Encoded_Element;
       Map    : in out Value_Tables.Length_Map;
@@ -281,7 +250,7 @@ package body Matreshka.Filters.Deflate.Unpack is
       Self.Input.Read (Count => 1, Value => Value);
       Self.Last_Block := Boolean'Val (Value);
       Self.Input.Read (Count => 2, Value => Value);
-      Self.Block_Kind := Unpack.Block_Kind'Val (Value);
+      Self.Block_Kind := Deflate.Block_Kind'Val (Value);
 
       case Self.Block_Kind is
          when Dynamic_Huffman_Block =>

@@ -43,7 +43,7 @@
 
 with Interfaces;
 
-package body Matreshka.Filters.Deflate.Huffman_Tables is
+package body Matreshka.Filters.Huffman_Tables is
 
    type Shiftable is new Interfaces.Unsigned_32;
 
@@ -115,6 +115,7 @@ package body Matreshka.Filters.Deflate.Huffman_Tables is
                Count := Shift_Left (1, Natural (Len));
                Step  := Bits (Count);
                Count := Shift_Left (1, Natural (Max_Len - Len));
+               Self.Bits (K) := Next_Code;
 
                for J in 1 .. Count loop
                   Self.Values (Next_Code) := K;
@@ -132,7 +133,7 @@ package body Matreshka.Filters.Deflate.Huffman_Tables is
 
    function Read
      (Self  : Huffman_Table;
-      Input : in out Matreshka.Filters.Deflate.Bit_Streams.Bit_Stream;
+      Input : in out Matreshka.Filters.Bit_Streams.Bit_Stream;
       Value : in out Encoded_Element)
       return Boolean
    is
@@ -177,4 +178,18 @@ package body Matreshka.Filters.Deflate.Huffman_Tables is
       return Bits (Result);
    end Reverse_Bits;
 
-end Matreshka.Filters.Deflate.Huffman_Tables;
+   -----------
+   -- Write --
+   -----------
+
+   procedure Write
+     (Self   : Huffman_Table;
+      Value  : Encoded_Element;
+      Output : in out Matreshka.Filters.Bit_Streams.Bit_Stream) is
+   begin
+      Output.Write
+        (Count  => Self.Length (Value),
+         Value  => Self.Bits (Value));
+   end Write;
+
+end Matreshka.Filters.Huffman_Tables;

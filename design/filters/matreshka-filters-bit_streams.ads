@@ -45,7 +45,7 @@
 private with Ada.Streams;
 private with Interfaces;
 
-package Matreshka.Filters.Deflate.Bit_Streams is
+package Matreshka.Filters.Bit_Streams is
    pragma Preelaborate;
 
    Max_Bits : constant := 16;
@@ -99,6 +99,16 @@ package Matreshka.Filters.Deflate.Bit_Streams is
    --  Rewind stream to Count bits forward.
    --  Precondition: Self.Has_Bits (Count)
 
+   not overriding procedure Write
+     (Self   : in out Bit_Stream;
+      Count  : Bit_Count;
+      Value  : Bits);
+   --  Write bits to internal Data buffer
+
+   not overriding procedure Get_Data
+     (Self   : in out Bit_Stream;
+      Output : in out League.Stream_Element_Vectors.Stream_Element_Vector);
+   --  Append internal buffer of completed data to Output and flush it
 
 private
 
@@ -123,4 +133,4 @@ private
    pragma Inline (Read_Ahead);
    pragma Inline (Skip);
 
-end Matreshka.Filters.Deflate.Bit_Streams;
+end Matreshka.Filters.Bit_Streams;
