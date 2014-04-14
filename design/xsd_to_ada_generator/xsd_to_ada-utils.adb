@@ -210,13 +210,9 @@ package body XSD_To_Ada.Utils is
       Encoder_Spec_Types  : XSD_To_Ada.Writers.Writer;
 
       Encoder             : XSD_To_Ada.Writers.Writer;
-      Encoder_Payload     : XSD_To_Ada.Writers.Writer;
       Encoder_Spec        : XSD_To_Ada.Writers.Writer;
-      Encoder_Names_Writer : XSD_To_Ada.Writers.Writer;
 
       Node_Vector : XSD2Ada.Analyzer.Items;
-
-      Tag_Vector : League.String_Vectors.Universal_String_Vector;
 
 --      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
    begin
@@ -286,27 +282,15 @@ package body XSD_To_Ada.Utils is
          Encoder_Types        => Encoder_Types,
          Encoder_Spec_Types   => Encoder_Spec_Types,
          Encoder              => Encoder,
-         Encoder_Spec         => Encoder_Spec,
-         Encoder_Names_Writer => Encoder_Names_Writer,
-         Tag_Vector           => Tag_Vector);
+         Encoder_Spec         => Encoder_Spec);
 
-      Encoder_Payload.N (Encoder.Text);
+      Payload_Spec.Save;
 
       Writers.N (Types_Writer, "end IATS_Types;");
-      Payload_Spec.Save;
       Ada.Wide_Wide_Text_IO.Put_Line (Types_Writer.Text.To_Wide_Wide_String);
 
       Writers.N (Payload_Writer, "end Payloads;");
       Ada.Wide_Wide_Text_IO.Put_Line (Payload_Writer.Text.To_Wide_Wide_String);
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Encoder_Payload.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Encoder_Spec.Text.To_Wide_Wide_String);
-
-      Ada.Wide_Wide_Text_IO.Put_Line
-        (Encoder_Spec_Types.Text.To_Wide_Wide_String);
-      Ada.Wide_Wide_Text_IO.Put_Line (Encoder_Types.Text.To_Wide_Wide_String);
    end Create_Complex_Type;
 
    ------------------------------------

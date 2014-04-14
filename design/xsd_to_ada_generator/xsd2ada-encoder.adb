@@ -781,12 +781,11 @@ package body XSD2Ada.Encoder is
       Encoder_Types        : in out XSD_To_Ada.Writers.Writer;
       Encoder_Spec_Types   : in out XSD_To_Ada.Writers.Writer;
       Encoder              : in out XSD_To_Ada.Writers.Writer;
-      Encoder_Spec         : in out XSD_To_Ada.Writers.Writer;
-      Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
-      Tag_Vector           : in out
-       League.String_Vectors.Universal_String_Vector)
+      Encoder_Spec         : in out XSD_To_Ada.Writers.Writer)
    is
       Types        : XSD_To_Ada.Writers.Writer;
+
+      Tag_Vector : League.String_Vectors.Universal_String_Vector;
 
       Encoder_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Type_Writer : XSD_To_Ada.Writers.Writer;
@@ -854,8 +853,6 @@ package body XSD2Ada.Encoder is
          Encoder_Writer.Text.Clear;
       end loop;
 
-      Encoder_Names_Writer.N (Element_Name.Text);
-
       Encoder.N (Element_Name.Text);
       Encoder.N (Encoder_Procedures.Text);
 
@@ -883,6 +880,13 @@ package body XSD2Ada.Encoder is
 
       Encoder_Types.N ("end Encoder_Types;");
       Encoder_Spec_Types.P ("end Encoder_Types;");
+
+      Ada.Wide_Wide_Text_IO.Put_Line (Encoder_Spec.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Encoder.Text.To_Wide_Wide_String);
+
+      Ada.Wide_Wide_Text_IO.Put_Line
+        (Encoder_Spec_Types.Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Encoder_Types.Text.To_Wide_Wide_String);
    end Print_Type_Title;
 
    -----------------------
