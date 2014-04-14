@@ -126,8 +126,8 @@ package XSD2Ada.Encoder is
      (Node_Vector          : XSD2Ada.Analyzer.Items;
       Encoder_Types        : in out XSD_To_Ada.Writers.Writer;
       Encoder_Spec_Types   : in out XSD_To_Ada.Writers.Writer;
-      Writer               : in out XSD_To_Ada.Writers.Writer;
-      Spec_Writer          : in out XSD_To_Ada.Writers.Writer;
+      Encoder              : in out XSD_To_Ada.Writers.Writer;
+      Encoder_Spec         : in out XSD_To_Ada.Writers.Writer;
       Encoder_Names_Writer : in out XSD_To_Ada.Writers.Writer;
       Tag_Vector           : in out
         League.String_Vectors.Universal_String_Vector);

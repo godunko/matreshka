@@ -211,7 +211,7 @@ package body XSD_To_Ada.Utils is
 
       Encoder_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Payload     : XSD_To_Ada.Writers.Writer;
-      Encoder_Spec_Writer : XSD_To_Ada.Writers.Writer;
+      Encoder_Spec        : XSD_To_Ada.Writers.Writer;
       Encoder_Names_Writer : XSD_To_Ada.Writers.Writer;
 
       Node_Vector : XSD2Ada.Analyzer.Items;
@@ -220,33 +220,6 @@ package body XSD_To_Ada.Utils is
 
 --      File_Type : Ada.Wide_Wide_Text_IO.File_Type;
    begin
-      Put_Header (Encoder_Spec_Types);
-      Encoder_Spec_Types.P ("with IATS_Types;");
-      Encoder_Spec_Types.P ("with XML.SAX.Writers;");
-      Encoder_Spec_Types.P ("with League.Strings;" & LF);
-      Encoder_Spec_Types.P ("package Encoder_Types is" & LF);
-      Encoder_Spec_Types.P ("   function Image (Item : Boolean) "
-                            & "return League.Strings.Universal_String;" & LF);
-
-      Put_Header (Encoder_Types);
-      Encoder_Types.P ("package body Encoder_Types is" & LF);
-      Encoder_Types.P ("   function Image (Item : Boolean) "
-                            & "return League.Strings.Universal_String is");
-      Encoder_Types.P ("     begin");
-      Encoder_Types.P ("       if Item then");
-      Encoder_Types.P
-        ("         return League.Strings.To_Universal_String (""true"");");
-      Encoder_Types.P ("           else");
-      Encoder_Types.P
-        ("         return League.Strings.To_Universal_String (""false"");");
-      Encoder_Types.P ("       end if;");
-      Encoder_Types.P ("   end Image;" & LF);
-
-      Encoder_Types.P
-        ("   IATS_URI : constant League.Strings.Universal_String :=");
-      Encoder_Types.P ("     League.Strings.To_Universal_String "
-                       & "(""http://www.actforex.com/iats"");");
-
       Put_Header (Payload_Spec);
       Create_Package_Name (Payload_Spec);
       Create_Enumeration_Simple_Type (Model, Payload_Spec);
@@ -308,19 +281,14 @@ package body XSD_To_Ada.Utils is
       Put_Header (Encoder_Payload);
       XSD2Ada.Encoder.Generate_Package_Header (Encoder_Payload);
 
-      Encoder_Spec_Writer.P
-        ("with XML.SAX.Writers;" & LF
-         & "with Web_Services.SOAP.Payloads.Encoders;" & LF & LF
-         & "package Encoder is"  & LF);
-
       XSD2Ada.Encoder.Print_Type_Title
-        (Node_Vector,
-         Encoder_Types,
-         Encoder_Spec_Types,
-         Encoder_Writer,
-         Encoder_Spec_Writer,
-         Encoder_Names_Writer,
-         Tag_Vector);
+        (Node_Vector          => Node_Vector,
+         Encoder_Types        => Encoder_Types,
+         Encoder_Spec_Types   => Encoder_Spec_Types,
+         Encoder              => Encoder_Writer,
+         Encoder_Spec         => Encoder_Spec,
+         Encoder_Names_Writer => Encoder_Names_Writer,
+         Tag_Vector           => Tag_Vector);
 
       Encoder_Payload.N (Encoder_Names_Writer.Text);
       Encoder_Payload.N (Encoder_Writer.Text);
@@ -344,7 +312,6 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       Encoder_Payload.N ("end Encoder;");
-      Encoder_Spec_Writer.N ("end Encoder;");
 
       Writers.N (Types_Writer, "end IATS_Types;");
       Payload_Spec.Save;
@@ -356,10 +323,7 @@ package body XSD_To_Ada.Utils is
       Ada.Wide_Wide_Text_IO.Put_Line
         (Encoder_Payload.Text.To_Wide_Wide_String);
       Ada.Wide_Wide_Text_IO.Put_Line
-        (Encoder_Spec_Writer.Text.To_Wide_Wide_String);
-
-      Encoder_Types.N ("end Encoder_Types;");
-      Encoder_Spec_Types.P ("end Encoder_Types;");
+        (Encoder_Spec.Text.To_Wide_Wide_String);
 
       Ada.Wide_Wide_Text_IO.Put_Line
         (Encoder_Spec_Types.Text.To_Wide_Wide_String);
