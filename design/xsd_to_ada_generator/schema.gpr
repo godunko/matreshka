@@ -1,5 +1,5 @@
-with "../../gnat/matreshka_league.gpr";
-with "../../gnat/matreshka_xml.gpr";
+with "league.gpr";
+with "xml.gpr";
 
 project Schema is
 

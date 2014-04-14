@@ -209,7 +209,7 @@ package body XSD_To_Ada.Utils is
       Encoder_Types       : XSD_To_Ada.Writers.Writer;
       Encoder_Spec_Types  : XSD_To_Ada.Writers.Writer;
 
-      Encoder_Writer      : XSD_To_Ada.Writers.Writer;
+      Encoder             : XSD_To_Ada.Writers.Writer;
       Encoder_Payload     : XSD_To_Ada.Writers.Writer;
       Encoder_Spec        : XSD_To_Ada.Writers.Writer;
       Encoder_Names_Writer : XSD_To_Ada.Writers.Writer;
@@ -278,40 +278,19 @@ package body XSD_To_Ada.Utils is
          end if;
       end loop;
 
-      Put_Header (Encoder_Payload);
-      XSD2Ada.Encoder.Generate_Package_Header (Encoder_Payload);
+      Put_Header (Encoder);
+      XSD2Ada.Encoder.Generate_Package_Header (Encoder);
 
       XSD2Ada.Encoder.Print_Type_Title
         (Node_Vector          => Node_Vector,
          Encoder_Types        => Encoder_Types,
          Encoder_Spec_Types   => Encoder_Spec_Types,
-         Encoder              => Encoder_Writer,
+         Encoder              => Encoder,
          Encoder_Spec         => Encoder_Spec,
          Encoder_Names_Writer => Encoder_Names_Writer,
          Tag_Vector           => Tag_Vector);
 
-      Encoder_Payload.N (Encoder_Names_Writer.Text);
-      Encoder_Payload.N (Encoder_Writer.Text);
-      Encoder_Payload.P ("   begin");
-
-      for Index in 1 .. Tag_Vector.Length loop
-         Writers.P
-           (Encoder_Payload,
-            ("   Web_Services.SOAP.Payloads.Encoders.Registry.Register"));
-
-         Writers.P (Encoder_Payload,
-                    ("     (Payloads."
-                     & Add_Separator (Tag_Vector.Element (Index))
-                     & "'Tag,"));
-
-         Writers.P
-           (Encoder_Payload,
-            ("        "
-             & Add_Separator (Tag_Vector.Element (Index))
-             & "_Encoder'Tag);"));
-      end loop;
-
-      Encoder_Payload.N ("end Encoder;");
+      Encoder_Payload.N (Encoder.Text);
 
       Writers.N (Types_Writer, "end IATS_Types;");
       Payload_Spec.Save;

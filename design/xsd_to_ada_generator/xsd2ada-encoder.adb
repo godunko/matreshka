@@ -790,6 +790,8 @@ package body XSD2Ada.Encoder is
 
       Encoder_Writer      : XSD_To_Ada.Writers.Writer;
       Encoder_Type_Writer : XSD_To_Ada.Writers.Writer;
+
+      Encoder_Procedures  : XSD_To_Ada.Writers.Writer;
    begin
 
       Put_Header (Encoder_Spec_Types);
@@ -831,7 +833,7 @@ package body XSD2Ada.Encoder is
               (Type_D        => Current.Object.To_Type_Definition,
                Encoder_Types => Types,
                Encoder_Spec_Types => Encoder_Spec_Types,
-               Writer        => Encoder,
+               Writer        => Encoder_Procedures,
                Writer_types  => Encoder_Type_Writer,
                Spec_Writer   => Encoder_Spec,
                Name          => Current.Short_Ada_Type_Name,
@@ -853,6 +855,26 @@ package body XSD2Ada.Encoder is
       end loop;
 
       Encoder_Names_Writer.N (Element_Name.Text);
+
+      Encoder.N (Element_Name.Text);
+      Encoder.N (Encoder_Procedures.Text);
+
+      Encoder.P ("   begin");
+
+      for Index in 1 .. Tag_Vector.Length loop
+         Encoder.P
+           ("   Web_Services.SOAP.Payloads.Encoders.Registry.Register");
+
+         Encoder.P ("     (Payloads."
+                    & Add_Separator (Tag_Vector.Element (Index)) & "'Tag,");
+
+         Encoder.P
+            ("        "
+             & Add_Separator (Tag_Vector.Element (Index))
+             & "_Encoder'Tag);");
+      end loop;
+
+      Encoder.N ("end Encoder;");
 
       Encoder_Types.N (Type_Element_Name.Text);
       Encoder_Types.N (Types.Text);
