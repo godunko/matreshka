@@ -95,7 +95,7 @@ package body Matreshka.XML_Schema.Loaders is
       Source  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
       Handler : aliased Matreshka.XML_Schema.Handlers.XML_Schema_Handler
                          (Self'Access);
-      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Reader  : aliased XML.SAX.Simple_Readers.Simple_Reader;
       Schema  : Matreshka.XML_Schema.AST.Schema_Access;
       Next    : Document_Access;
       Failure : Boolean;
