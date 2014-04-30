@@ -1,4 +1,4 @@
-with "league.gpr";
+with "matreshka/league";
 with "xml.gpr";
 
 project Schema is

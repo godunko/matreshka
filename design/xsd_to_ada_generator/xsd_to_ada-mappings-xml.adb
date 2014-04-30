@@ -94,7 +94,7 @@ package body XSD_To_Ada.Mappings.XML is
    is
       Source  : aliased
         Standard.XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
-      Reader  : aliased Standard.XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Reader  : aliased Standard.XML.SAX.Simple_Readers.Simple_Reader;
       Handler : aliased XSD_To_Ada.Mappings.XML.Mapping_XML;
 
    begin

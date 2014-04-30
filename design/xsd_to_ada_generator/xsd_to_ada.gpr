@@ -1,5 +1,5 @@
 with "schema";
-with "league.gpr";
+with "matreshka/league";
 with "xml.gpr";
 
 project Xsd_To_Ada is
