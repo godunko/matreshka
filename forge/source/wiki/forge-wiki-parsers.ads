@@ -40,6 +40,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 private with Ada.Containers.Vectors;
+with Ada.Tags;
 
 private with League.Regexps;
 with League.Strings;
@@ -84,6 +85,26 @@ package Forge.Wiki.Parsers is
    procedure Parse
     (Self : in out Wiki_Parser'Class; Data : League.Strings.Universal_String);
    --  Parses given string.
+
+   procedure Register_Block_Parser
+    (Regexp_String : League.Strings.Universal_String;
+     Total_Groups  : Positive;
+     Offset_Group  : Positive;
+     Tag           : Ada.Tags.Tag);
+   --  Registers custom block parser. Regexp_String is regular expression to
+   --  detect start of custom block. Offset_Group is number of group in regular
+   --  expression which is used to detect position of first significant
+   --  character of text on block's start line. Total_Groups is total number of
+   --  groups used in regular expression. Tag is tag of the custom block parser
+   --  to create its instance.
+
+   procedure Register_Paragraph_Block_Parser
+    (Regexp_String : League.Strings.Universal_String;
+     Total_Groups  : Positive;
+     Offset_Group  : Positive;
+     Tag           : Ada.Tags.Tag);
+   --  Register custom block parser for base paragraph block. Only one parser
+   --  can be registered in this way.
 
 private
 

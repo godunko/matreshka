@@ -41,7 +41,20 @@
 ------------------------------------------------------------------------------
 with Ada.Text_IO; use Ada.Text_IO;
 
+with Forge.Wiki.Parsers;
+
 package body Forge.Wiki.Block_Parsers.Paragraphs is
+
+   ------------
+   -- Create --
+   ------------
+
+   overriding function Create
+    (Parameters : not null access Constructor_Parameters)
+       return Paragraph_Block_Parser is
+   begin
+      return Paragraph_Block_Parser'(others => <>);
+   end Create;
 
    ---------------
    -- End_Block --
@@ -63,6 +76,20 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    begin
       Put_Line (Text.To_UTF_8_String);
    end Line;
+
+   --------------
+   -- Register --
+   --------------
+
+   procedure Register is
+   begin
+      Forge.Wiki.Parsers.Register_Paragraph_Block_Parser
+       (League.Strings.To_Universal_String
+         ("^\p{White_Space}*(\P{White_Space})"),
+        1,
+        1,
+        Paragraph_Block_Parser'Tag);
+   end Register;
 
    -----------------
    -- Start_Block --

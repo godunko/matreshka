@@ -41,12 +41,11 @@
 ------------------------------------------------------------------------------
 with Ada.Text_IO; use Ada.Text_IO;
 
+with Ada.Tags.Generic_Dispatching_Constructor;
 with Ada.Unchecked_Deallocation;
 
 with League.Characters.Latin;
 with League.String_Vectors;
-
-with Forge.Wiki.Block_Parsers.Paragraphs;
 
 package body Forge.Wiki.Parsers is
 
@@ -58,6 +57,24 @@ package body Forge.Wiki.Parsers is
           (Forge.Wiki.Block_Parsers.Abstract_Block_Parser'Class,
            Block_Parser_Access);
 
+   function Create_Block_Parser
+    (Tag : Ada.Tags.Tag) return not null Block_Parser_Access;
+   --  Constructor to create block parser.
+
+   type Block_Parser_Information is record
+      Regexp_String : League.Strings.Universal_String;
+      Total_Groups  : Positive;
+      Offset_Group  : Positive;
+--      Match_Index   : Positive;
+      Parser_Tag    : Ada.Tags.Tag;
+   end record;
+
+   package Block_Parser_Information_Vectors is
+     new Ada.Containers.Vectors (Positive, Block_Parser_Information);
+
+   Block_Registry     : Block_Parser_Information_Vectors.Vector;
+   Paragraph_Registry : Block_Parser_Information;
+
    Base_Expression       : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String
          ("(^\p{White_Space}*(\P{White_Space}))"  --  Regular paragraph
@@ -67,6 +84,27 @@ package body Forge.Wiki.Parsers is
    Separator_Block_Match : constant Positive := 3;
    --  Base regular expression to handle paragraph's start line, block's
    --  continuation line and block separator line.
+
+   -------------------------
+   -- Create_Block_Parser --
+   -------------------------
+
+   function Create_Block_Parser
+    (Tag : Ada.Tags.Tag) return not null Block_Parser_Access
+   is
+      function Create is
+        new Ada.Tags.Generic_Dispatching_Constructor
+             (Forge.Wiki.Block_Parsers.Abstract_Block_Parser,
+              Forge.Wiki.Block_Parsers.Constructor_Parameters,
+              Forge.Wiki.Block_Parsers.Create);
+
+      Parameters : aliased Forge.Wiki.Block_Parsers.Constructor_Parameters;
+
+   begin
+      return
+        new Forge.Wiki.Block_Parsers.Abstract_Block_Parser'Class'
+             (Create (Tag, Parameters'Access));
+   end Create_Block_Parser;
 
    -----------------------------
    -- Initialize_Block_Regexp --
@@ -97,11 +135,11 @@ package body Forge.Wiki.Parsers is
       while Line <= Lines.Length loop
          Match := Self.Block_Regexp.Find_Match (Lines (Line));
 
-         Put_Line (Integer'Image (Match.Capture_Count) & ' ' & Boolean'Image (Match.Is_Matched));
-
-         for C in 1 .. Match.Capture_Count loop
-            Put_Line (Integer'Image (Match.First_Index (C)) & " .." & Integer'Image (Match.Last_Index (C)));
-         end loop;
+--         Put_Line (Integer'Image (Match.Capture_Count) & ' ' & Boolean'Image (Match.Is_Matched));
+--
+--         for C in 1 .. Match.Capture_Count loop
+--            Put_Line (Integer'Image (Match.First_Index (C)) & " .." & Integer'Image (Match.Last_Index (C)));
+--         end loop;
 
          if Match.First_Index (Para_Block_Match)
               <= Match.Last_Index (Para_Block_Match)
@@ -109,20 +147,20 @@ package body Forge.Wiki.Parsers is
             Offset := Match.First_Index (Para_Offset_Match);
 
             if Self.Block_State = null then
-               Put_Line ("  paragraph started");
+--               Put_Line ("  paragraph started");
 
                Self.Block_State :=
-                 new Forge.Wiki.Block_Parsers.Paragraphs.Paragraph_Block_Parser;
+                 Create_Block_Parser (Paragraph_Registry.Parser_Tag);
                Self.Block_State.Start_Block;
                Self.Block_State.Line (Lines (Line).Tail_From (Offset));
 
             else
-               Put_Line ("  paragraph matched");
+--               Put_Line ("  paragraph matched");
                Self.Block_State.Line (Lines (Line).Tail_From (Offset));
             end if;
 
          else
-            Put_Line ("  block separator matched");
+--            Put_Line ("  block separator matched");
             Self.Block_State.End_Block;
             Free (Self.Block_State);
 
@@ -135,5 +173,32 @@ package body Forge.Wiki.Parsers is
          Line := Line + 1;
       end loop;
    end Parse;
+
+   -------------------------------------
+   -- Register_Paragraph_Block_Parser --
+   -------------------------------------
+
+   procedure Register_Paragraph_Block_Parser
+    (Regexp_String : League.Strings.Universal_String;
+     Total_Groups  : Positive;
+     Offset_Group  : Positive;
+     Tag           : Ada.Tags.Tag) is
+   begin
+      Paragraph_Registry := (Regexp_String, Total_Groups, Offset_Group, Tag);
+   end Register_Paragraph_Block_Parser;
+
+   ---------------------------
+   -- Register_Block_Parser --
+   ---------------------------
+
+   procedure Register_Block_Parser
+    (Regexp_String : League.Strings.Universal_String;
+     Total_Groups  : Positive;
+     Offset_Group  : Positive;
+     Tag           : Ada.Tags.Tag) is
+   begin
+      Block_Registry.Append ((Regexp_String, Total_Groups, Offset_Group, Tag));
+      Put_Line ("Register: " & Ada.Tags.External_Tag (Tag));
+   end Register_Block_Parser;
 
 end Forge.Wiki.Parsers;

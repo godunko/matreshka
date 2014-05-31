@@ -42,4 +42,26 @@
 
 package Forge.Wiki.Block_Parsers.Lists is
 
+--   pragma Preelaborate;
+
+   type List_Block_Parser is
+     new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with null record;
+
+   overriding procedure Start_Block
+    (Self : not null access List_Block_Parser);
+
+   overriding procedure End_Block
+    (Self : not null access List_Block_Parser);
+
+   overriding procedure Line
+    (Self : not null access List_Block_Parser;
+     Text : League.Strings.Universal_String);
+
+   overriding function Create
+    (Parameters : not null access Constructor_Parameters)
+       return List_Block_Parser;
+
+   procedure Register;
+   --  Registers block parser to handle lists.
+
 end Forge.Wiki.Block_Parsers.Lists;

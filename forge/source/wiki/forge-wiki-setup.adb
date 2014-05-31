@@ -44,4 +44,7 @@ with Forge.Wiki.Block_Parsers.Paragraphs;
 
 package body Forge.Wiki.Setup is
 
+begin
+   Forge.Wiki.Block_Parsers.Lists.Register;
+   Forge.Wiki.Block_Parsers.Paragraphs.Register;
 end Forge.Wiki.Setup;

@@ -39,32 +39,63 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with Forge.Wiki.Parsers;
 
-private package Forge.Wiki.Block_Parsers is
+package body Forge.Wiki.Block_Parsers.Lists is
 
-   pragma Preelaborate;
+   ------------
+   -- Create --
+   ------------
 
-   type Constructor_Parameters is null record;
-
-   type Abstract_Block_Parser is abstract tagged limited null record;
-
-   not overriding procedure Start_Block
-    (Self : not null access Abstract_Block_Parser) is abstract;
-   --  Called when start of block element is detected.
-
-   not overriding procedure End_Block
-    (Self : not null access Abstract_Block_Parser) is abstract;
-   --  Called when end of block element is detected.
-
-   not overriding procedure Line
-    (Self : not null access Abstract_Block_Parser;
-     Text : League.Strings.Universal_String) is abstract;
-   --  Called to process single line of text in processed block element.
-
-   not overriding function Create
+   overriding function Create
     (Parameters : not null access Constructor_Parameters)
-       return Abstract_Block_Parser is abstract;
-   --  Dispatching constructor to create instance of block element parser.
+       return List_Block_Parser is
+   begin
+      return List_Block_Parser'(others => <>);
+   end Create;
 
-end Forge.Wiki.Block_Parsers;
+   ---------------
+   -- End_Block --
+   ---------------
+
+   overriding procedure End_Block
+    (Self : not null access List_Block_Parser) is
+   begin
+      null;
+   end End_Block;
+
+   ----------
+   -- Line --
+   ----------
+
+   overriding procedure Line
+    (Self : not null access List_Block_Parser;
+     Text : League.Strings.Universal_String) is
+   begin
+      null;
+   end Line;
+
+   --------------
+   -- Register --
+   --------------
+
+   procedure Register is
+   begin
+      Forge.Wiki.Parsers.Register_Block_Parser
+       (League.Strings.To_Universal_String (""),
+        1,
+        1,
+        List_Block_Parser'Tag);
+   end Register;
+
+   -----------------
+   -- Start_Block --
+   -----------------
+
+   overriding procedure Start_Block
+    (Self : not null access List_Block_Parser) is
+   begin
+      null;
+   end Start_Block;
+
+end Forge.Wiki.Block_Parsers.Lists;

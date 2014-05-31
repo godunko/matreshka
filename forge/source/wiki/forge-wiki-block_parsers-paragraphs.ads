@@ -57,4 +57,11 @@ package Forge.Wiki.Block_Parsers.Paragraphs is
     (Self : not null access Paragraph_Block_Parser;
      Text : League.Strings.Universal_String);
 
+   overriding function Create
+    (Parameters : not null access Constructor_Parameters)
+       return Paragraph_Block_Parser;
+
+   procedure Register;
+   --  Registers block parser to handle paragraphs.
+
 end Forge.Wiki.Block_Parsers.Paragraphs;
