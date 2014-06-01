@@ -82,7 +82,8 @@ package body Forge.Wiki.Block_Parsers.Lists is
    procedure Register is
    begin
       Forge.Wiki.Parsers.Register_Block_Parser
-       (League.Strings.To_Universal_String (""),
+       (League.Strings.To_Universal_String
+         ("^\p{White_Space}*\-\p{White_Space}*(\P{White_Space})"),
         1,
         1,
         List_Block_Parser'Tag);
