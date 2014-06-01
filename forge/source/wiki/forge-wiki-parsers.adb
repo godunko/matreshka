@@ -110,13 +110,21 @@ package body Forge.Wiki.Parsers is
       Expression : League.Strings.Universal_String;
       Group      : Positive := 1;
 
-      procedure Append (Block : Block_Parser_Information);
+      procedure Append
+       (Block    : Block_Parser_Information;
+        Is_Start : Boolean);
+      --  Appends regular expression of the specified block to the result block
+      --  detection regular expression, compute absolute position of
+      --  significant groups of result expression, and add this data into
+      --  internal information.
 
       ------------
       -- Append --
       ------------
 
-      procedure Append (Block : Block_Parser_Information) is
+      procedure Append
+       (Block    : Block_Parser_Information;
+        Is_Start : Boolean) is
       begin
          if not Expression.Is_Empty then
             Expression.Append ('|');
@@ -126,16 +134,17 @@ package body Forge.Wiki.Parsers is
          Self.Block_Info.Append
           ((Match_Group  => Group,
             Offset_Group => Group + Block.Offset_Group,
+            Is_Start     => Is_Start,
             Parser_Tag   => Block.Parser_Tag));
          Group := Group + Block.Total_Groups + 1;
       end Append;
 
    begin
       for Block of Block_Registry loop
-         Append (Block);
+         Append (Block, True);
       end loop;
 
-      Append (Paragraph_Registry);
+      Append (Paragraph_Registry, False);
       Expression.Append (Separator_Expression);
       Self.Separator_Group := Group;
 
@@ -165,21 +174,19 @@ package body Forge.Wiki.Parsers is
 
          Found := False;
 
-         for Index in 1 .. Natural (Self.Block_Info.Length) loop
-            if Match.First_Index (Self.Block_Info (Index).Match_Group)
-                 <= Match.Last_Index (Self.Block_Info (Index).Match_Group)
+         for Item of Self.Block_Info loop
+            if Match.First_Index (Item.Match_Group)
+                 <= Match.Last_Index (Item.Match_Group)
             then
-               Offset :=
-                 Match.First_Index (Self.Block_Info (Index).Match_Group);
+               Offset := Match.First_Index (Item.Match_Group);
 
                if Self.Block_State = null then
-                  Self.Block_State :=
-                    Create_Block_Parser (Self.Block_Info (Index).Parser_Tag);
+                  Self.Block_State := Create_Block_Parser (Item.Parser_Tag);
                   Self.Block_State.Start_Block;
                   Self.Block_State.Line (Lines (Line).Tail_From (Offset));
 
                else
-                  if Index /= Self.Block_Info.Last_Index then
+                  if Item.Is_Start then
                      Put_Line (Standard_Error, "WARNING!");
                      --  This is start of next block element, not handled right
                      --  now.

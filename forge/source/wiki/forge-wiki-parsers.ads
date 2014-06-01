@@ -111,6 +111,11 @@ private
    type Block_Expression_Item is record
       Match_Group  : Positive;
       Offset_Group : Positive;
+      Is_Start     : Boolean;
+      --  Regular expression detects start of new block element of this kind.
+      --  Note, ordinary paragraph has same expression for both start and
+      --  continuation, so it is not set for it till another way to distinguish
+      --  this case will be found.
       Parser_Tag   : Ada.Tags.Tag;
    end record;
 
