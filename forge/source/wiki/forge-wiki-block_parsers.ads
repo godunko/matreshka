@@ -51,14 +51,23 @@ private package Forge.Wiki.Block_Parsers is
       Text_Offset   : Positive;
    end record;
 
+   type End_Block_Action is
+    (Continue); -- Replace current block parser by new one.
+
    type Abstract_Block_Parser is abstract tagged limited null record;
 
-   not overriding procedure Start_Block
-    (Self : not null access Abstract_Block_Parser) is abstract;
+   type Block_Parser_Access is access all Abstract_Block_Parser'Class;
+
+   not overriding function Start_Block
+    (Self    : not null access Abstract_Block_Parser;
+     Previos : access Abstract_Block_Parser'Class)
+       return Block_Parser_Access is abstract;
    --  Called when start of block element is detected.
 
-   not overriding procedure End_Block
-    (Self : not null access Abstract_Block_Parser) is abstract;
+   not overriding function End_Block
+    (Self : not null access Abstract_Block_Parser;
+     Next : access Abstract_Block_Parser'Class)
+       return End_Block_Action is abstract;
    --  Called when end of block element is detected.
 
    not overriding procedure Line

@@ -55,13 +55,14 @@ package body Forge.Wiki.Parsers is
    procedure Free is
      new Ada.Unchecked_Deallocation
           (Forge.Wiki.Block_Parsers.Abstract_Block_Parser'Class,
-           Block_Parser_Access);
+           Forge.Wiki.Block_Parsers.Block_Parser_Access);
 
    function Create_Block_Parser
     (Tag           : Ada.Tags.Tag;
      Markup        : League.Strings.Universal_String;
      Markup_Offset : Natural;
-     Text_Offset   : Positive) return not null Block_Parser_Access;
+     Text_Offset   : Positive)
+       return not null Forge.Wiki.Block_Parsers.Block_Parser_Access;
    --  Constructor to create block parser.
 
    type Block_Parser_Information is record
@@ -91,7 +92,8 @@ package body Forge.Wiki.Parsers is
     (Tag           : Ada.Tags.Tag;
      Markup        : League.Strings.Universal_String;
      Markup_Offset : Natural;
-     Text_Offset   : Positive) return not null Block_Parser_Access
+     Text_Offset   : Positive)
+       return not null Forge.Wiki.Block_Parsers.Block_Parser_Access
    is
       function Create is
         new Ada.Tags.Generic_Dispatching_Constructor
@@ -169,13 +171,17 @@ package body Forge.Wiki.Parsers is
    procedure Parse
     (Self : in out Wiki_Parser'Class; Data : League.Strings.Universal_String)
    is
-      Lines       : constant League.String_Vectors.Universal_String_Vector
+      use type Forge.Wiki.Block_Parsers.Block_Parser_Access;
+
+      Lines          : constant League.String_Vectors.Universal_String_Vector
         := Data.Split (League.Characters.Latin.Line_Feed);
-      Line        : Positive := 1;
-      Match       : League.Regexps.Regexp_Match;
-      Text_Offset : Natural;
-      Found       : Boolean;
-      Next_Block  : Block_Parser_Access;
+      Line           : Positive := 1;
+      Match          : League.Regexps.Regexp_Match;
+      Text_Offset    : Natural;
+      Found          : Boolean;
+      Previous_Block : Forge.Wiki.Block_Parsers.Block_Parser_Access;
+      Next_Block     : Forge.Wiki.Block_Parsers.Block_Parser_Access;
+      Nested_Block   : Forge.Wiki.Block_Parsers.Block_Parser_Access;
 
    begin
       Self.Initialize_Block_Regexp;
@@ -199,6 +205,8 @@ package body Forge.Wiki.Parsers is
                   Self.Is_Separated := False;
                   Put_Line (Standard_Error, ">>> new block parser created <<<");
                   Put_Line (Standard_Error, Ada.Tags.External_Tag (Item.Parser_Tag));
+
+                  Previous_Block := Self.Block_State;
                   Next_Block :=
                     Create_Block_Parser
                      (Item.Parser_Tag,
@@ -208,16 +216,26 @@ package body Forge.Wiki.Parsers is
                       (if Item.Markup_Group = 0
                          then 0 else Match.First_Index (Item.Markup_Group)),
                       Text_Offset);
+                  Self.Block_State := null;
 
-                  if Self.Block_State /= null then
-                     Self.Block_State.End_Block (Next_Block);
+                  if Previous_Block /= null then
+                     case Previous_Block.End_Block (Next_Block) is
+                        when Forge.Wiki.Block_Parsers.Continue =>
+                           null;
+                     end case;
                   end if;
 
-                  Free (Self.Block_State);
-                  Self.Block_State := Next_Block;
-                  Next_Block := null;
+                  Nested_Block := Next_Block.Start_Block (Previous_Block);
 
-                  Self.Block_State.Start_Block;
+                  if Nested_Block /= null then
+                     Self.Block_Stack.Append (Next_Block);
+                     Self.Block_State := Nested_Block;
+
+                  else
+                     Self.Block_State := Next_Block;
+                  end if;
+
+                  Free (Previous_Block);
                end if;
 
                Self.Block_State.Line (Lines (Line).Tail_From (Text_Offset));
@@ -239,7 +257,10 @@ package body Forge.Wiki.Parsers is
       end loop;
 
       if Self.Block_State /= null then
-         Self.Block_State.End_Block (null);
+         case Self.Block_State.End_Block (null) is
+            when Forge.Wiki.Block_Parsers.Continue =>
+               null;
+         end case;
       end if;
    end Parse;
 

@@ -60,10 +60,13 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    -- End_Block --
    ---------------
 
-   overriding procedure End_Block
-    (Self : not null access Paragraph_Block_Parser) is
+   overriding function End_Block
+    (Self : not null access Paragraph_Block_Parser;
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
       Put_Line ("</p>");
+
+      return Continue;
    end End_Block;
 
    ----------
@@ -95,10 +98,14 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    -- Start_Block --
    -----------------
 
-   overriding procedure Start_Block
-    (Self : not null access Paragraph_Block_Parser) is
+   overriding function Start_Block
+    (Self    : not null access Paragraph_Block_Parser;
+     Previos : access Abstract_Block_Parser'Class)
+       return Block_Parser_Access is
    begin
       Put_Line ("<p>");
+
+      return null;
    end Start_Block;
 
 end Forge.Wiki.Block_Parsers.Paragraphs;

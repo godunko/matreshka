@@ -128,19 +128,17 @@ private
    package Block_Expression_Vectors is
      new Ada.Containers.Vectors (Positive, Block_Expression_Item);
 
---   type Initial_Block_Parser is new Abstract_Block_Parser with null record;
-
-   type Block_Parser_Access is
-     access all Forge.Wiki.Block_Parsers.Abstract_Block_Parser'Class;
-
    package Block_Parser_Vectors is
-     new Ada.Containers.Vectors (Positive, Block_Parser_Access);
+     new Ada.Containers.Vectors
+          (Positive,
+           Forge.Wiki.Block_Parsers.Block_Parser_Access,
+           Forge.Wiki.Block_Parsers."=");
 
    type Wiki_Parser is tagged limited record
       Block_Regexp    : League.Regexps.Regexp_Pattern;
       Block_Info      : Block_Expression_Vectors.Vector;
       Separator_Group : Positive;
-      Block_State     : Block_Parser_Access;
+      Block_State     : Forge.Wiki.Block_Parsers.Block_Parser_Access;
       Block_Stack     : Block_Parser_Vectors.Vector;
       Is_Separated    : Boolean;
    end record;

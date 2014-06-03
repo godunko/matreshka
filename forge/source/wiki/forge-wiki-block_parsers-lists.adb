@@ -39,6 +39,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Text_IO; use Ada.Text_IO;
+
+with Forge.Wiki.Block_Parsers.Paragraphs;
 with Forge.Wiki.Parsers;
 
 package body Forge.Wiki.Block_Parsers.Lists is
@@ -58,10 +61,11 @@ package body Forge.Wiki.Block_Parsers.Lists is
    -- End_Block --
    ---------------
 
-   overriding procedure End_Block
-    (Self : not null access List_Block_Parser) is
+   overriding function End_Block
+    (Self : not null access List_Block_Parser;
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
-      null;
+      return Continue;
    end End_Block;
 
    ----------
@@ -72,7 +76,10 @@ package body Forge.Wiki.Block_Parsers.Lists is
     (Self : not null access List_Block_Parser;
      Text : League.Strings.Universal_String) is
    begin
-      null;
+      --  List block element parser never receives text information, it creates
+      --  nested paragraph block element parser to handle text.
+
+      raise Program_Error;
    end Line;
 
    --------------
@@ -94,10 +101,15 @@ package body Forge.Wiki.Block_Parsers.Lists is
    -- Start_Block --
    -----------------
 
-   overriding procedure Start_Block
-    (Self : not null access List_Block_Parser) is
+   overriding function Start_Block
+    (Self    : not null access List_Block_Parser;
+     Previos : access Abstract_Block_Parser'Class)
+       return Block_Parser_Access is
    begin
-      null;
+      Put_Line ("<ul>");
+      Put_Line ("  <li>");
+
+      return new Forge.Wiki.Block_Parsers.Paragraphs.Paragraph_Block_Parser;
    end Start_Block;
 
 end Forge.Wiki.Block_Parsers.Lists;

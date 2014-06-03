@@ -47,11 +47,13 @@ package Forge.Wiki.Block_Parsers.Lists is
    type List_Block_Parser is
      new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with null record;
 
-   overriding procedure Start_Block
-    (Self : not null access List_Block_Parser);
+   overriding function Start_Block
+    (Self    : not null access List_Block_Parser;
+     Previos : access Abstract_Block_Parser'Class) return Block_Parser_Access;
 
-   overriding procedure End_Block
-    (Self : not null access List_Block_Parser);
+   overriding function End_Block
+    (Self : not null access List_Block_Parser;
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action;
 
    overriding procedure Line
     (Self : not null access List_Block_Parser;
