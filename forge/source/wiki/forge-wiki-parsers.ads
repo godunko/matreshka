@@ -142,6 +142,7 @@ private
       Separator_Group : Positive;
       Block_State     : Block_Parser_Access;
       Block_Stack     : Block_Parser_Vectors.Vector;
+      Is_Separated    : Boolean;
    end record;
 
 end Forge.Wiki.Parsers;

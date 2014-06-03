@@ -169,15 +169,17 @@ package body Forge.Wiki.Parsers is
    procedure Parse
     (Self : in out Wiki_Parser'Class; Data : League.Strings.Universal_String)
    is
-      Lines  : constant League.String_Vectors.Universal_String_Vector
+      Lines       : constant League.String_Vectors.Universal_String_Vector
         := Data.Split (League.Characters.Latin.Line_Feed);
-      Line   : Positive := 1;
-      Match  : League.Regexps.Regexp_Match;
-      Offset : Natural;
-      Found  : Boolean;
+      Line        : Positive := 1;
+      Match       : League.Regexps.Regexp_Match;
+      Text_Offset : Natural;
+      Found       : Boolean;
+      Next_Block  : Block_Parser_Access;
 
    begin
       Self.Initialize_Block_Regexp;
+      Self.Is_Separated := True;
       Self.Block_State := null;
 
       while Line <= Lines.Length loop
@@ -189,10 +191,15 @@ package body Forge.Wiki.Parsers is
             if Match.First_Index (Item.Match_Group)
                  <= Match.Last_Index (Item.Match_Group)
             then
-               Offset := Match.First_Index (Item.Match_Group);
+               Text_Offset := Match.First_Index (Item.Offset_Group);
 
-               if Self.Block_State = null then
-                  Self.Block_State :=
+               if Item.Is_Start
+                 or else Self.Is_Separated
+               then
+                  Self.Is_Separated := False;
+                  Put_Line (Standard_Error, ">>> new block parser created <<<");
+                  Put_Line (Standard_Error, Ada.Tags.External_Tag (Item.Parser_Tag));
+                  Next_Block :=
                     Create_Block_Parser
                      (Item.Parser_Tag,
                       (if Item.Markup_Group = 0
@@ -200,19 +207,20 @@ package body Forge.Wiki.Parsers is
                          else Match.Capture (Item.Markup_Group)),
                       (if Item.Markup_Group = 0
                          then 0 else Match.First_Index (Item.Markup_Group)),
-                      Offset);
-                  Self.Block_State.Start_Block;
-                  Self.Block_State.Line (Lines (Line).Tail_From (Offset));
+                      Text_Offset);
 
-               else
-                  if Item.Is_Start then
-                     Put_Line (Standard_Error, "WARNING!");
-                     --  This is start of next block element, not handled right
-                     --  now.
+                  if Self.Block_State /= null then
+                     Self.Block_State.End_Block (Next_Block);
                   end if;
 
-                  Self.Block_State.Line (Lines (Line).Tail_From (Offset));
+                  Free (Self.Block_State);
+                  Self.Block_State := Next_Block;
+                  Next_Block := null;
+
+                  Self.Block_State.Start_Block;
                end if;
+
+               Self.Block_State.Line (Lines (Line).Tail_From (Text_Offset));
 
                Found := True;
 
@@ -221,17 +229,18 @@ package body Forge.Wiki.Parsers is
          end loop;
 
          if not Found then
-            Self.Block_State.End_Block;
-            Free (Self.Block_State);
+            --  It means that separator line's regular expression was matched,
+            --  mark last block as explicitly separated.
 
-            if not Self.Block_Stack.Is_Empty then
-               Self.Block_State := Self.Block_Stack.Last_Element;
-               Self.Block_Stack.Delete_Last;
-            end if;
+            Self.Is_Separated := True;
          end if;
 
          Line := Line + 1;
       end loop;
+
+      if Self.Block_State /= null then
+         Self.Block_State.End_Block (null);
+      end if;
    end Parse;
 
    -------------------------------------
