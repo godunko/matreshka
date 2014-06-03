@@ -89,6 +89,7 @@ package Forge.Wiki.Parsers is
    procedure Register_Block_Parser
     (Regexp_String : League.Strings.Universal_String;
      Total_Groups  : Positive;
+     Markup_Group  : Natural;
      Offset_Group  : Positive;
      Tag           : Ada.Tags.Tag);
    --  Registers custom block parser. Regexp_String is regular expression to
@@ -110,7 +111,12 @@ private
 
    type Block_Expression_Item is record
       Match_Group  : Positive;
+      Markup_Group : Natural;
       Offset_Group : Positive;
+      --  Regular expression's groups to extract:
+      --   - matching of block element's regular expression
+      --   - markup part of block element (it is optional part)
+      --   - start of text after markup part
       Is_Start     : Boolean;
       --  Regular expression detects start of new block element of this kind.
       --  Note, ordinary paragraph has same expression for both start and

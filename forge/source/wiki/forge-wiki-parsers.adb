@@ -64,6 +64,7 @@ package body Forge.Wiki.Parsers is
    type Block_Parser_Information is record
       Regexp_String : League.Strings.Universal_String;
       Total_Groups  : Positive;
+      Markup_Group  : Natural;
       Offset_Group  : Positive;
       Parser_Tag    : Ada.Tags.Tag;
    end record;
@@ -133,6 +134,9 @@ package body Forge.Wiki.Parsers is
          Expression.Append ('(' & Block.Regexp_String & ')');
          Self.Block_Info.Append
           ((Match_Group  => Group,
+            Markup_Group =>
+              (if Block.Markup_Group = 0 then 0
+                 else Group + Block.Offset_Group),
             Offset_Group => Group + Block.Offset_Group,
             Is_Start     => Is_Start,
             Parser_Tag   => Block.Parser_Tag));
@@ -225,7 +229,8 @@ package body Forge.Wiki.Parsers is
      Offset_Group  : Positive;
      Tag           : Ada.Tags.Tag) is
    begin
-      Paragraph_Registry := (Regexp_String, Total_Groups, Offset_Group, Tag);
+      Paragraph_Registry :=
+       (Regexp_String, Total_Groups, 0, Offset_Group, Tag);
    end Register_Paragraph_Block_Parser;
 
    ---------------------------
@@ -235,10 +240,12 @@ package body Forge.Wiki.Parsers is
    procedure Register_Block_Parser
     (Regexp_String : League.Strings.Universal_String;
      Total_Groups  : Positive;
+     Markup_Group  : Natural;
      Offset_Group  : Positive;
      Tag           : Ada.Tags.Tag) is
    begin
-      Block_Registry.Append ((Regexp_String, Total_Groups, Offset_Group, Tag));
+      Block_Registry.Append
+       ((Regexp_String, Total_Groups, Markup_Group, Offset_Group, Tag));
    end Register_Block_Parser;
 
 end Forge.Wiki.Parsers;
