@@ -50,31 +50,6 @@ private with Forge.Wiki.Block_Parsers;
 package Forge.Wiki.Parsers is
 
 --   pragma Preelaborate;
---   type Parser_Handler (Found : Boolean) is record
---      case Found is
---         when False =>
---            null;
---
---         when True =>
---            Handler : 
---      end case;
---   end record;
---
---   type Block_Parser_Extension is limited interface;
---
---   not overriding function Parser (Self : Block_Parser_Extension) return Parser_Handler;
---
---   type Start_Pattern_Information is record
---      Expression   : League.Strings.Universal_String;
---      Offset_Group : Positive;
---      Total_Groups : Positive;
---   end record;
---
---   type Block_Parser_Extension is limited interface;
---
---   not overriding function Start_Pattern
---    (Self : Block_Parser_Extension) return Start_Pattern_Information
---       is abstract;
 
    -----------------
    -- Wiki_Parser --
