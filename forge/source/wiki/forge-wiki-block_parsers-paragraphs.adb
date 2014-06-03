@@ -53,7 +53,7 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
     (Parameters : not null access Constructor_Parameters)
        return Paragraph_Block_Parser is
    begin
-      return Paragraph_Block_Parser'(others => <>);
+      return Paragraph_Block_Parser'(Offset => Parameters.Text_Offset);
    end Create;
 
    ---------------
@@ -65,6 +65,15 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
      Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
       Put_Line ("</p>");
+
+      if Next /= null then
+         if Next.Offset < Self.Offset then
+            return Unwind;
+         end if;
+
+      else
+         return Unwind;
+      end if;
 
       return Continue;
    end End_Block;
@@ -99,8 +108,8 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    -----------------
 
    overriding function Start_Block
-    (Self    : not null access Paragraph_Block_Parser;
-     Previos : access Abstract_Block_Parser'Class)
+    (Self     : not null access Paragraph_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class)
        return Block_Parser_Access is
    begin
       Put_Line ("<p>");

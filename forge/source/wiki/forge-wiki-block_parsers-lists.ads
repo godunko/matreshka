@@ -45,11 +45,13 @@ package Forge.Wiki.Block_Parsers.Lists is
 --   pragma Preelaborate;
 
    type List_Block_Parser is
-     new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with null record;
+     new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with record
+      Text_Offset : Positive;
+   end record;
 
    overriding function Start_Block
-    (Self    : not null access List_Block_Parser;
-     Previos : access Abstract_Block_Parser'Class) return Block_Parser_Access;
+    (Self     : not null access List_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access;
 
    overriding function End_Block
     (Self : not null access List_Block_Parser;

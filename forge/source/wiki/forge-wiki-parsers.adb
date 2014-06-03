@@ -145,7 +145,7 @@ package body Forge.Wiki.Parsers is
           ((Match_Group  => Group,
             Markup_Group =>
               (if Block.Markup_Group = 0 then 0
-                 else Group + Block.Offset_Group),
+                 else Group + Block.Markup_Group),
             Offset_Group => Group + Block.Offset_Group,
             Is_Start     => Is_Start,
             Parser_Tag   => Block.Parser_Tag));
@@ -182,6 +182,7 @@ package body Forge.Wiki.Parsers is
       Previous_Block : Forge.Wiki.Block_Parsers.Block_Parser_Access;
       Next_Block     : Forge.Wiki.Block_Parsers.Block_Parser_Access;
       Nested_Block   : Forge.Wiki.Block_Parsers.Block_Parser_Access;
+      Aux            : Forge.Wiki.Block_Parsers.Block_Parser_Access;
 
    begin
       Self.Initialize_Block_Regexp;
@@ -203,10 +204,7 @@ package body Forge.Wiki.Parsers is
                  or else Self.Is_Separated
                then
                   Self.Is_Separated := False;
-                  Put_Line (Standard_Error, ">>> new block parser created <<<");
-                  Put_Line (Standard_Error, Ada.Tags.External_Tag (Item.Parser_Tag));
 
-                  Previous_Block := Self.Block_State;
                   Next_Block :=
                     Create_Block_Parser
                      (Item.Parser_Tag,
@@ -216,20 +214,34 @@ package body Forge.Wiki.Parsers is
                       (if Item.Markup_Group = 0
                          then 0 else Match.First_Index (Item.Markup_Group)),
                       Text_Offset);
+
+                  Previous_Block := Self.Block_State;
                   Self.Block_State := null;
 
-                  if Previous_Block /= null then
+                  while Previous_Block /= null loop
                      case Previous_Block.End_Block (Next_Block) is
                         when Forge.Wiki.Block_Parsers.Continue =>
-                           null;
+                           exit;
+
+                        when Forge.Wiki.Block_Parsers.Unwind =>
+                           Free (Previous_Block);
+
+                           if not Self.Block_Stack.Is_Empty then
+                              Previous_Block := Self.Block_Stack.Last_Element;
+                              Self.Block_Stack.Delete_Last;
+
+                           else
+                              Previous_Block := null;
+                           end if;
                      end case;
-                  end if;
+                  end loop;
 
                   Nested_Block := Next_Block.Start_Block (Previous_Block);
 
                   if Nested_Block /= null then
                      Self.Block_Stack.Append (Next_Block);
                      Self.Block_State := Nested_Block;
+                     Aux := Nested_Block.Start_Block (null);
 
                   else
                      Self.Block_State := Next_Block;
@@ -256,12 +268,21 @@ package body Forge.Wiki.Parsers is
          Line := Line + 1;
       end loop;
 
-      if Self.Block_State /= null then
+      while Self.Block_State /= null loop
          case Self.Block_State.End_Block (null) is
             when Forge.Wiki.Block_Parsers.Continue =>
-               null;
+               raise Program_Error;
+
+            when Forge.Wiki.Block_Parsers.Unwind =>
+               if not Self.Block_Stack.Is_Empty then
+                  Self.Block_State := Self.Block_Stack.Last_Element;
+                  Self.Block_Stack.Delete_Last;
+
+               else
+                  Self.Block_State := null;
+               end if;
          end case;
-      end if;
+      end loop;
    end Parse;
 
    -------------------------------------

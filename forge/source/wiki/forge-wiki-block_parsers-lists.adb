@@ -54,7 +54,10 @@ package body Forge.Wiki.Block_Parsers.Lists is
     (Parameters : not null access Constructor_Parameters)
        return List_Block_Parser is
    begin
-      return List_Block_Parser'(others => <>);
+      return
+        List_Block_Parser'
+         (Offset      => Parameters.Markup_Offset,
+          Text_Offset => Parameters.Text_Offset);
    end Create;
 
    ---------------
@@ -65,6 +68,26 @@ package body Forge.Wiki.Block_Parsers.Lists is
     (Self : not null access List_Block_Parser;
      Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
+      Put_Line (" </li>");
+
+      if Next /= null then
+         if Next.Offset < Self.Offset then
+            Put_Line ("</ul>");
+
+            return Unwind;
+
+         elsif Next.Offset = Self.Offset
+           and Next.all in List_Block_Parser'Class
+         then
+            return Continue;
+         end if;
+
+      else
+         Put_Line ("</ul>");
+
+         return Unwind;
+      end if;
+
       return Continue;
    end End_Block;
 
@@ -102,14 +125,26 @@ package body Forge.Wiki.Block_Parsers.Lists is
    -----------------
 
    overriding function Start_Block
-    (Self    : not null access List_Block_Parser;
-     Previos : access Abstract_Block_Parser'Class)
-       return Block_Parser_Access is
+    (Self     : not null access List_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access
+   is
+      Parameters : aliased Constructor_Parameters
+        := (Markup        => League.Strings.Empty_Universal_String,
+            Markup_Offset => 0,
+            Text_Offset   => Self.Text_Offset);
+
    begin
-      Put_Line ("<ul>");
+      if Previous /= null
+        and then Previous.all not in List_Block_Parser'Class
+      then
+         Put_Line ("<ul>");
+      end if;
+
       Put_Line ("  <li>");
 
-      return new Forge.Wiki.Block_Parsers.Paragraphs.Paragraph_Block_Parser;
+      return
+        new Forge.Wiki.Block_Parsers.Paragraphs.Paragraph_Block_Parser'
+             (Forge.Wiki.Block_Parsers.Paragraphs.Create (Parameters'Access));
    end Start_Block;
 
 end Forge.Wiki.Block_Parsers.Lists;
