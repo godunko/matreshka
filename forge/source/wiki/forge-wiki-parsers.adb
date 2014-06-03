@@ -58,7 +58,10 @@ package body Forge.Wiki.Parsers is
            Block_Parser_Access);
 
    function Create_Block_Parser
-    (Tag : Ada.Tags.Tag) return not null Block_Parser_Access;
+    (Tag           : Ada.Tags.Tag;
+     Markup        : League.Strings.Universal_String;
+     Markup_Offset : Natural;
+     Text_Offset   : Positive) return not null Block_Parser_Access;
    --  Constructor to create block parser.
 
    type Block_Parser_Information is record
@@ -85,7 +88,10 @@ package body Forge.Wiki.Parsers is
    -------------------------
 
    function Create_Block_Parser
-    (Tag : Ada.Tags.Tag) return not null Block_Parser_Access
+    (Tag           : Ada.Tags.Tag;
+     Markup        : League.Strings.Universal_String;
+     Markup_Offset : Natural;
+     Text_Offset   : Positive) return not null Block_Parser_Access
    is
       function Create is
         new Ada.Tags.Generic_Dispatching_Constructor
@@ -93,7 +99,8 @@ package body Forge.Wiki.Parsers is
               Forge.Wiki.Block_Parsers.Constructor_Parameters,
               Forge.Wiki.Block_Parsers.Create);
 
-      Parameters : aliased Forge.Wiki.Block_Parsers.Constructor_Parameters;
+      Parameters : aliased Forge.Wiki.Block_Parsers.Constructor_Parameters
+        := (Markup, Markup_Offset, Text_Offset);
 
    begin
       return
@@ -185,7 +192,15 @@ package body Forge.Wiki.Parsers is
                Offset := Match.First_Index (Item.Match_Group);
 
                if Self.Block_State = null then
-                  Self.Block_State := Create_Block_Parser (Item.Parser_Tag);
+                  Self.Block_State :=
+                    Create_Block_Parser
+                     (Item.Parser_Tag,
+                      (if Item.Markup_Group = 0
+                         then League.Strings.Empty_Universal_String
+                         else Match.Capture (Item.Markup_Group)),
+                      (if Item.Markup_Group = 0
+                         then 0 else Match.First_Index (Item.Markup_Group)),
+                      Offset);
                   Self.Block_State.Start_Block;
                   Self.Block_State.Line (Lines (Line).Tail_From (Offset));
 

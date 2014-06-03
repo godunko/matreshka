@@ -45,7 +45,11 @@ private package Forge.Wiki.Block_Parsers is
 
    pragma Preelaborate;
 
-   type Constructor_Parameters is null record;
+   type Constructor_Parameters is record
+      Markup        : League.Strings.Universal_String;
+      Markup_Offset : Natural;
+      Text_Offset   : Positive;
+   end record;
 
    type Abstract_Block_Parser is abstract tagged limited null record;
 
