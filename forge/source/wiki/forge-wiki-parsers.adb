@@ -39,8 +39,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Text_IO; use Ada.Text_IO;
-
 with Ada.Tags.Generic_Dispatching_Constructor;
 with Ada.Unchecked_Deallocation;
 
