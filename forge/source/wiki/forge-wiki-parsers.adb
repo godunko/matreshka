@@ -47,6 +47,11 @@ with League.String_Vectors;
 
 package body Forge.Wiki.Parsers is
 
+   HTML5_URI : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
+   HTML_Tag  : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("html");
+
    procedure Initialize_Block_Regexp (Self : in out Wiki_Parser'Class);
    --  Build and compile block detection regexp.
 
@@ -57,6 +62,7 @@ package body Forge.Wiki.Parsers is
 
    function Create_Block_Parser
     (Tag           : Ada.Tags.Tag;
+     Writer        : not null Forge.Types.SAX_Writer_Access;
      Markup        : League.Strings.Universal_String;
      Markup_Offset : Natural;
      Text_Offset   : Positive)
@@ -88,6 +94,7 @@ package body Forge.Wiki.Parsers is
 
    function Create_Block_Parser
     (Tag           : Ada.Tags.Tag;
+     Writer        : not null Forge.Types.SAX_Writer_Access;
      Markup        : League.Strings.Universal_String;
      Markup_Offset : Natural;
      Text_Offset   : Positive)
@@ -100,7 +107,7 @@ package body Forge.Wiki.Parsers is
               Forge.Wiki.Block_Parsers.Create);
 
       Parameters : aliased Forge.Wiki.Block_Parsers.Constructor_Parameters
-        := (Markup, Markup_Offset, Text_Offset);
+        := (Markup, Markup_Offset, Text_Offset, Writer);
 
    begin
       return
@@ -167,7 +174,9 @@ package body Forge.Wiki.Parsers is
    -----------
 
    procedure Parse
-    (Self : in out Wiki_Parser'Class; Data : League.Strings.Universal_String)
+    (Self   : in out Wiki_Parser'Class;
+     Data   : League.Strings.Universal_String;
+     Writer : not null Forge.Types.SAX_Writer_Access)
    is
       use type Forge.Wiki.Block_Parsers.Block_Parser_Access;
 
@@ -186,6 +195,14 @@ package body Forge.Wiki.Parsers is
       Self.Initialize_Block_Regexp;
       Self.Is_Separated := True;
       Self.Block_State := null;
+
+      Writer.Start_Document;
+      Writer.Start_Prefix_Mapping
+       (Prefix        => League.Strings.Empty_Universal_String,
+        Namespace_URI => HTML5_URI);
+      Writer.Start_Element
+       (Local_Name    => HTML_Tag,
+        Namespace_URI => HTML5_URI);
 
       while Line <= Lines.Length loop
          Match := Self.Block_Regexp.Find_Match (Lines (Line));
@@ -206,6 +223,7 @@ package body Forge.Wiki.Parsers is
                   Next_Block :=
                     Create_Block_Parser
                      (Item.Parser_Tag,
+                      Writer,
                       (if Item.Markup_Group = 0
                          then League.Strings.Empty_Universal_String
                          else Match.Capture (Item.Markup_Group)),
@@ -281,6 +299,11 @@ package body Forge.Wiki.Parsers is
                end if;
          end case;
       end loop;
+
+      Writer.End_Element
+       (Local_Name    => HTML_Tag,
+        Namespace_URI => HTML5_URI);
+      Writer.End_Document;
    end Parse;
 
    -------------------------------------

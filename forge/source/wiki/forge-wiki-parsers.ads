@@ -45,6 +45,7 @@ with Ada.Tags;
 private with League.Regexps;
 with League.Strings;
 
+with Forge.Types;
 private with Forge.Wiki.Block_Parsers;
 
 package Forge.Wiki.Parsers is
@@ -58,7 +59,9 @@ package Forge.Wiki.Parsers is
    type Wiki_Parser is tagged limited private;
 
    procedure Parse
-    (Self : in out Wiki_Parser'Class; Data : League.Strings.Universal_String);
+    (Self   : in out Wiki_Parser'Class;
+     Data   : League.Strings.Universal_String;
+     Writer : not null Forge.Types.SAX_Writer_Access);
    --  Parses given string.
 
    procedure Register_Block_Parser

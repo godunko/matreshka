@@ -39,12 +39,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Text_IO; use Ada.Text_IO;
-
 with Forge.Wiki.Block_Parsers.Paragraphs;
 with Forge.Wiki.Parsers;
 
 package body Forge.Wiki.Block_Parsers.Lists is
+
+   HTML5_URI : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
+   UL_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("ul");
+   LI_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("li");
 
    ------------
    -- Create --
@@ -56,7 +61,8 @@ package body Forge.Wiki.Block_Parsers.Lists is
    begin
       return
         List_Block_Parser'
-         (Offset      => Parameters.Markup_Offset,
+         (Writer      => Parameters.Writer,
+          Offset      => Parameters.Markup_Offset,
           Text_Offset => Parameters.Text_Offset);
    end Create;
 
@@ -68,11 +74,15 @@ package body Forge.Wiki.Block_Parsers.Lists is
     (Self : not null access List_Block_Parser;
      Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
-      Put_Line (" </li>");
+      Self.Writer.End_Element
+       (Local_Name    => LI_Tag,
+        Namespace_URI => HTML5_URI);
 
       if Next /= null then
          if Next.Offset < Self.Offset then
-            Put_Line ("</ul>");
+            Self.Writer.End_Element
+             (Local_Name    => UL_Tag,
+              Namespace_URI => HTML5_URI);
 
             return Unwind;
 
@@ -83,7 +93,9 @@ package body Forge.Wiki.Block_Parsers.Lists is
          end if;
 
       else
-         Put_Line ("</ul>");
+         Self.Writer.End_Element
+          (Local_Name    => UL_Tag,
+           Namespace_URI => HTML5_URI);
 
          return Unwind;
       end if;
@@ -129,7 +141,8 @@ package body Forge.Wiki.Block_Parsers.Lists is
      Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access
    is
       Parameters : aliased Constructor_Parameters
-        := (Markup        => League.Strings.Empty_Universal_String,
+        := (Writer        => Self.Writer,
+            Markup        => League.Strings.Empty_Universal_String,
             Markup_Offset => 0,
             Text_Offset   => Self.Text_Offset);
 
@@ -137,10 +150,14 @@ package body Forge.Wiki.Block_Parsers.Lists is
       if Previous /= null
         and then Previous.all not in List_Block_Parser'Class
       then
-         Put_Line ("<ul>");
+         Self.Writer.Start_Element
+          (Local_Name    => UL_Tag,
+           Namespace_URI => HTML5_URI);
       end if;
 
-      Put_Line ("  <li>");
+      Self.Writer.Start_Element
+       (Local_Name    => LI_Tag,
+        Namespace_URI => HTML5_URI);
 
       return
         new Forge.Wiki.Block_Parsers.Paragraphs.Paragraph_Block_Parser'

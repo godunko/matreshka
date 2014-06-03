@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
+with Forge.Types;
+
 private package Forge.Wiki.Block_Parsers is
 
    pragma Preelaborate;
@@ -49,6 +51,7 @@ private package Forge.Wiki.Block_Parsers is
       Markup        : League.Strings.Universal_String;
       Markup_Offset : Natural;
       Text_Offset   : Positive;
+      Writer        : not null Forge.Types.SAX_Writer_Access;
    end record;
 
    type End_Block_Action is
@@ -57,6 +60,7 @@ private package Forge.Wiki.Block_Parsers is
 
    type Abstract_Block_Parser is abstract tagged limited record
       Offset : Positive;
+      Writer : Forge.Types.SAX_Writer_Access;
    end record;
 
    type Block_Parser_Access is access all Abstract_Block_Parser'Class;

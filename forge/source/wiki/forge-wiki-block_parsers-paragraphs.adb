@@ -39,11 +39,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Text_IO; use Ada.Text_IO;
-
 with Forge.Wiki.Parsers;
 
 package body Forge.Wiki.Block_Parsers.Paragraphs is
+
+   HTML5_URI : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
+   P_Tag     : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("p");
 
    ------------
    -- Create --
@@ -53,7 +56,8 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
     (Parameters : not null access Constructor_Parameters)
        return Paragraph_Block_Parser is
    begin
-      return Paragraph_Block_Parser'(Offset => Parameters.Text_Offset);
+      return Paragraph_Block_Parser'
+              (Offset => Parameters.Text_Offset, Writer => Parameters.Writer);
    end Create;
 
    ---------------
@@ -64,7 +68,9 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
     (Self : not null access Paragraph_Block_Parser;
      Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
-      Put_Line ("</p>");
+      Self.Writer.End_Element
+       (Local_Name    => P_Tag,
+        Namespace_URI => HTML5_URI);
 
       if Next /= null then
          if Next.Offset < Self.Offset then
@@ -86,7 +92,7 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
     (Self : not null access Paragraph_Block_Parser;
      Text : League.Strings.Universal_String) is
    begin
-      Put_Line (Text.To_UTF_8_String);
+      Self.Writer.Characters (Text);
    end Line;
 
    --------------
@@ -112,7 +118,9 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
      Previous : access Abstract_Block_Parser'Class)
        return Block_Parser_Access is
    begin
-      Put_Line ("<p>");
+      Self.Writer.Start_Element
+       (Local_Name    => P_Tag,
+        Namespace_URI => HTML5_URI);
 
       return null;
    end Start_Block;
