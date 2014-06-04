@@ -39,14 +39,31 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Forge.Wiki.Block_Parsers.Headers;
-with Forge.Wiki.Block_Parsers.Lists;
-with Forge.Wiki.Block_Parsers.Paragraphs;
 
-package body Forge.Wiki.Setup is
+package Forge.Wiki.Block_Parsers.Headers is
 
-begin
-   Forge.Wiki.Block_Parsers.Headers.Register;
-   Forge.Wiki.Block_Parsers.Lists.Register;
-   Forge.Wiki.Block_Parsers.Paragraphs.Register;
-end Forge.Wiki.Setup;
+--   pragma Preelaborate;
+
+   type Header_Block_Parser is
+     new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with null record;
+
+   overriding function Start_Block
+    (Self     : not null access Header_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access;
+
+   overriding function End_Block
+    (Self : not null access Header_Block_Parser;
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action;
+
+   overriding procedure Line
+    (Self : not null access Header_Block_Parser;
+     Text : League.Strings.Universal_String);
+
+   overriding function Create
+    (Parameters : not null access Constructor_Parameters)
+       return Header_Block_Parser;
+
+   procedure Register;
+   --  Registers block parser to handle headers.
+
+end Forge.Wiki.Block_Parsers.Headers;
