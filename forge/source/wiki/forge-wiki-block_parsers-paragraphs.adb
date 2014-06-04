@@ -72,16 +72,9 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
        (Local_Name    => P_Tag,
         Namespace_URI => HTML5_URI);
 
-      if Next /= null then
-         if Next.Offset < Self.Offset then
-            return Unwind;
-         end if;
-
-      else
-         return Unwind;
-      end if;
-
-      return Continue;
+      return
+        Forge.Wiki.Block_Parsers.Nestables.Nestable_Block_Parser
+         (Self.all).End_Block (Next);
    end End_Block;
 
    ----------

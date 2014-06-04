@@ -39,119 +39,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Forge.Wiki.Block_Parsers.Paragraphs;
-with Forge.Wiki.Parsers;
 
-package body Forge.Wiki.Block_Parsers.Lists is
-
-   HTML5_URI : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
-   UL_Tag    : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("ul");
-   LI_Tag    : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("li");
-
-   ------------
-   -- Create --
-   ------------
-
-   overriding function Create
-    (Parameters : not null access Constructor_Parameters)
-       return List_Block_Parser is
-   begin
-      return
-        List_Block_Parser'
-         (Writer      => Parameters.Writer,
-          Offset      => Parameters.Markup_Offset,
-          Text_Offset => Parameters.Text_Offset);
-   end Create;
+package body Forge.Wiki.Block_Parsers.Nestables is
 
    ---------------
    -- End_Block --
    ---------------
 
    overriding function End_Block
-    (Self : not null access List_Block_Parser;
+    (Self : not null access Nestable_Block_Parser;
      Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
-      Self.Writer.End_Element
-       (Local_Name    => LI_Tag,
-        Namespace_URI => HTML5_URI);
-
-      case Forge.Wiki.Block_Parsers.Nestables.Nestable_Block_Parser
-            (Self.all).End_Block (Next)
-      is
-         when Continue =>
+      if Next /= null then
+         if Next.all not in Nestable_Block_Parser'Class then
             return Continue;
+--            return Unwind_All;
 
-         when Unwind =>
-            Self.Writer.End_Element
-             (Local_Name    => UL_Tag,
-              Namespace_URI => HTML5_URI);
-
+         elsif Nestable_Block_Parser (Next.all).Offset < Self.Offset then
             return Unwind;
-      end case;
+
+         else
+            return Continue;
+         end if;
+
+      else
+         -- This is special case to simplify unwind of stack of block element
+         -- parsers at the end of the document processing.
+
+         return Unwind;
+      end if;
    end End_Block;
 
-   ----------
-   -- Line --
-   ----------
-
-   overriding procedure Line
-    (Self : not null access List_Block_Parser;
-     Text : League.Strings.Universal_String) is
-   begin
-      --  List block element parser never receives text information, it creates
-      --  nested paragraph block element parser to handle text.
-
-      raise Program_Error;
-   end Line;
-
-   --------------
-   -- Register --
-   --------------
-
-   procedure Register is
-   begin
-      Forge.Wiki.Parsers.Register_Block_Parser
-       (League.Strings.To_Universal_String
-         ("^\p{White_Space}*(\-)\p{White_Space}*(\P{White_Space})"),
-        2,
-        1,
-        2,
-        List_Block_Parser'Tag);
-   end Register;
-
-   -----------------
-   -- Start_Block --
-   -----------------
-
-   overriding function Start_Block
-    (Self     : not null access List_Block_Parser;
-     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access
-   is
-      Parameters : aliased Constructor_Parameters
-        := (Writer        => Self.Writer,
-            Markup        => League.Strings.Empty_Universal_String,
-            Markup_Offset => 0,
-            Text_Offset   => Self.Text_Offset);
-
-   begin
-      if Previous /= null
-        and then Previous.all not in List_Block_Parser'Class
-      then
-         Self.Writer.Start_Element
-          (Local_Name    => UL_Tag,
-           Namespace_URI => HTML5_URI);
-      end if;
-
-      Self.Writer.Start_Element
-       (Local_Name    => LI_Tag,
-        Namespace_URI => HTML5_URI);
-
-      return
-        new Forge.Wiki.Block_Parsers.Paragraphs.Paragraph_Block_Parser'
-             (Forge.Wiki.Block_Parsers.Paragraphs.Create (Parameters'Access));
-   end Start_Block;
-
-end Forge.Wiki.Block_Parsers.Lists;
+end Forge.Wiki.Block_Parsers.Nestables;

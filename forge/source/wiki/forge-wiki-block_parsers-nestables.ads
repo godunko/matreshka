@@ -39,34 +39,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Forge.Wiki.Block_Parsers.Nestables;
 
-package Forge.Wiki.Block_Parsers.Lists is
+package Forge.Wiki.Block_Parsers.Nestables is
 
---   pragma Preelaborate;
+   pragma Preelaborate;
 
-   type List_Block_Parser is
-     new Forge.Wiki.Block_Parsers.Nestables.Nestable_Block_Parser with record
-      Text_Offset : Positive;
+   type Nestable_Block_Parser is abstract new Abstract_Block_Parser with record
+      Offset : Positive;
+      --  Offset of block to control nesting of nestable blocks.
    end record;
 
-   overriding function Start_Block
-    (Self     : not null access List_Block_Parser;
-     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access;
-
    overriding function End_Block
-    (Self : not null access List_Block_Parser;
+    (Self : not null access Nestable_Block_Parser;
      Next : access Abstract_Block_Parser'Class) return End_Block_Action;
+   --  Provides default implementation to make decision is it needed or not to
+   --  unwind nesting block element.
 
-   overriding procedure Line
-    (Self : not null access List_Block_Parser;
-     Text : League.Strings.Universal_String);
-
-   overriding function Create
-    (Parameters : not null access Constructor_Parameters)
-       return List_Block_Parser;
-
-   procedure Register;
-   --  Registers block parser to handle lists.
-
-end Forge.Wiki.Block_Parsers.Lists;
+end Forge.Wiki.Block_Parsers.Nestables;

@@ -59,7 +59,6 @@ private package Forge.Wiki.Block_Parsers is
      Unwind);  --  Unwind block parsers stack and check with next block parser.
 
    type Abstract_Block_Parser is abstract tagged limited record
-      Offset : Positive;
       Writer : Forge.Types.SAX_Writer_Access;
    end record;
 
