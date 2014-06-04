@@ -52,8 +52,7 @@ package body Forge.Wiki.Block_Parsers.Nestables is
    begin
       if Next /= null then
          if Next.all not in Nestable_Block_Parser'Class then
-            return Continue;
---            return Unwind_All;
+            return Unwind;
 
          elsif Nestable_Block_Parser (Next.all).Offset < Self.Offset then
             return Unwind;
