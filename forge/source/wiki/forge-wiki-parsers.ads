@@ -68,10 +68,10 @@ package Forge.Wiki.Parsers is
     (Regexp_String : League.Strings.Universal_String;
      Total_Groups  : Positive;
      Markup_Group  : Natural;
-     Offset_Group  : Positive;
+     Text_Group    : Positive;
      Tag           : Ada.Tags.Tag);
    --  Registers custom block parser. Regexp_String is regular expression to
-   --  detect start of custom block. Offset_Group is number of group in regular
+   --  detect start of custom block. Text_Group is number of group in regular
    --  expression which is used to detect position of first significant
    --  character of text on block's start line. Total_Groups is total number of
    --  groups used in regular expression. Tag is tag of the custom block parser
@@ -80,7 +80,7 @@ package Forge.Wiki.Parsers is
    procedure Register_Paragraph_Block_Parser
     (Regexp_String : League.Strings.Universal_String;
      Total_Groups  : Positive;
-     Offset_Group  : Positive;
+     Text_Group    : Positive;
      Tag           : Ada.Tags.Tag);
    --  Register custom block parser for base paragraph block. Only one parser
    --  can be registered in this way.
@@ -90,11 +90,11 @@ private
    type Block_Expression_Item is record
       Match_Group  : Positive;
       Markup_Group : Natural;
-      Offset_Group : Positive;
+      Text_Group   : Positive;
       --  Regular expression's groups to extract:
       --   - matching of block element's regular expression
       --   - markup part of block element (it is optional part)
-      --   - start of text after markup part
+      --   - text part of block element
       Is_Start     : Boolean;
       --  Regular expression detects start of new block element of this kind.
       --  Note, ordinary paragraph has same expression for both start and

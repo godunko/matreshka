@@ -73,7 +73,7 @@ package body Forge.Wiki.Parsers is
       Regexp_String : League.Strings.Universal_String;
       Total_Groups  : Positive;
       Markup_Group  : Natural;
-      Offset_Group  : Positive;
+      Text_Group    : Positive;
       Parser_Tag    : Ada.Tags.Tag;
    end record;
 
@@ -151,7 +151,7 @@ package body Forge.Wiki.Parsers is
             Markup_Group =>
               (if Block.Markup_Group = 0 then 0
                  else Group + Block.Markup_Group),
-            Offset_Group => Group + Block.Offset_Group,
+            Text_Group   => Group + Block.Text_Group,
             Is_Start     => Is_Start,
             Parser_Tag   => Block.Parser_Tag));
          Group := Group + Block.Total_Groups + 1;
@@ -214,8 +214,8 @@ package body Forge.Wiki.Parsers is
             if Match.First_Index (Item.Match_Group)
                  <= Match.Last_Index (Item.Match_Group)
             then
-               Text_First := Match.First_Index (Item.Offset_Group);
-               Text_Last  := Match.Last_Index (Item.Offset_Group);
+               Text_First := Match.First_Index (Item.Text_Group);
+               Text_Last  := Match.Last_Index (Item.Text_Group);
 
                if Item.Is_Start
                  or else Self.Is_Separated
@@ -320,11 +320,10 @@ package body Forge.Wiki.Parsers is
    procedure Register_Paragraph_Block_Parser
     (Regexp_String : League.Strings.Universal_String;
      Total_Groups  : Positive;
-     Offset_Group  : Positive;
+     Text_Group    : Positive;
      Tag           : Ada.Tags.Tag) is
    begin
-      Paragraph_Registry :=
-       (Regexp_String, Total_Groups, 0, Offset_Group, Tag);
+      Paragraph_Registry := (Regexp_String, Total_Groups, 0, Text_Group, Tag);
    end Register_Paragraph_Block_Parser;
 
    ---------------------------
@@ -335,11 +334,11 @@ package body Forge.Wiki.Parsers is
     (Regexp_String : League.Strings.Universal_String;
      Total_Groups  : Positive;
      Markup_Group  : Natural;
-     Offset_Group  : Positive;
+     Text_Group    : Positive;
      Tag           : Ada.Tags.Tag) is
    begin
       Block_Registry.Append
-       ((Regexp_String, Total_Groups, Markup_Group, Offset_Group, Tag));
+       ((Regexp_String, Total_Groups, Markup_Group, Text_Group, Tag));
    end Register_Block_Parser;
 
 end Forge.Wiki.Parsers;
