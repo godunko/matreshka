@@ -39,6 +39,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  This package provides abstract block element parser to construct nestable
+--  block element parsers. There are two specialized block element parsers
+--  right now: paragraph and list.
+------------------------------------------------------------------------------
 
 package Forge.Wiki.Block_Parsers.Nestables is
 
