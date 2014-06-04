@@ -57,7 +57,9 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
        return Paragraph_Block_Parser is
    begin
       return Paragraph_Block_Parser'
-              (Offset => Parameters.Text_Offset, Writer => Parameters.Writer);
+              (Offset       => Parameters.Text_Offset,
+               Writer       => Parameters.Writer,
+               Space_Needed => False);
    end Create;
 
    ---------------
@@ -85,6 +87,13 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
     (Self : not null access Paragraph_Block_Parser;
      Text : League.Strings.Universal_String) is
    begin
+      if Self.Space_Needed then
+         Self.Writer.Characters (' ');
+
+      else
+         Self.Space_Needed := True;
+      end if;
+
       Self.Writer.Characters (Text);
    end Line;
 

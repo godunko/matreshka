@@ -46,8 +46,11 @@ package Forge.Wiki.Block_Parsers.Paragraphs is
 --   pragma Preelaborate;
 
    type Paragraph_Block_Parser is
-     new Forge.Wiki.Block_Parsers.Nestables.Nestable_Block_Parser
-       with null record;
+     new Forge.Wiki.Block_Parsers.Nestables.Nestable_Block_Parser with record
+      Space_Needed : Boolean;
+      --  Whether to output or to suppress space character before emitting text
+      --  of line.
+   end record;
 
    overriding function Start_Block
     (Self     : not null access Paragraph_Block_Parser;
