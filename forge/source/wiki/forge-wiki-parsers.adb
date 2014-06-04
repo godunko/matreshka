@@ -184,7 +184,8 @@ package body Forge.Wiki.Parsers is
         := Data.Split (League.Characters.Latin.Line_Feed);
       Line           : Positive := 1;
       Match          : League.Regexps.Regexp_Match;
-      Text_Offset    : Natural;
+      Text_First     : Natural;
+      Text_Last      : Natural;
       Found          : Boolean;
       Previous_Block : Forge.Wiki.Block_Parsers.Block_Parser_Access;
       Next_Block     : Forge.Wiki.Block_Parsers.Block_Parser_Access;
@@ -213,7 +214,8 @@ package body Forge.Wiki.Parsers is
             if Match.First_Index (Item.Match_Group)
                  <= Match.Last_Index (Item.Match_Group)
             then
-               Text_Offset := Match.First_Index (Item.Offset_Group);
+               Text_First := Match.First_Index (Item.Offset_Group);
+               Text_Last  := Match.Last_Index (Item.Offset_Group);
 
                if Item.Is_Start
                  or else Self.Is_Separated
@@ -229,7 +231,7 @@ package body Forge.Wiki.Parsers is
                          else Match.Capture (Item.Markup_Group)),
                       (if Item.Markup_Group = 0
                          then 0 else Match.First_Index (Item.Markup_Group)),
-                      Text_Offset);
+                      Text_First);
 
                   Previous_Block := Self.Block_State;
                   Self.Block_State := null;
@@ -266,7 +268,8 @@ package body Forge.Wiki.Parsers is
                   Free (Previous_Block);
                end if;
 
-               Self.Block_State.Line (Lines (Line).Tail_From (Text_Offset));
+               Self.Block_State.Line
+                (Lines (Line).Slice (Text_First, Text_Last));
 
                --  Detect whether block element occupy only one line.
 

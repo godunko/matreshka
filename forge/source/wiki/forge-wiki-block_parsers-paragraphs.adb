@@ -96,7 +96,7 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    begin
       Forge.Wiki.Parsers.Register_Paragraph_Block_Parser
        (League.Strings.To_Universal_String
-         ("^\p{White_Space}*(\P{White_Space})"),
+         ("^\p{White_Space}* (\P{White_Space}.*) \p{White_Space}*$"),
         1,
         1,
         Paragraph_Block_Parser'Tag);
