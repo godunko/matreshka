@@ -63,6 +63,10 @@ package Forge.Wiki.Block_Parsers.Headers is
     (Parameters : not null access Constructor_Parameters)
        return Header_Block_Parser;
 
+   overriding function Can_Be_Continued
+    (Self : not null access constant Header_Block_Parser) return Boolean;
+   --  Returns False always. Header block element can occupy one line only.
+
    procedure Register;
    --  Registers block parser to handle headers.
 

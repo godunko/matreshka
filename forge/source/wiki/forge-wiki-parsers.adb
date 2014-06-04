@@ -268,6 +268,10 @@ package body Forge.Wiki.Parsers is
 
                Self.Block_State.Line (Lines (Line).Tail_From (Text_Offset));
 
+               --  Detect whether block element occupy only one line.
+
+               Self.Is_Separated := not Self.Block_State.Can_Be_Continued;
+
                Found := True;
 
                exit;

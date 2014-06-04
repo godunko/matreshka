@@ -86,4 +86,9 @@ private package Forge.Wiki.Block_Parsers is
        return Abstract_Block_Parser is abstract;
    --  Dispatching constructor to create instance of block element parser.
 
+   not overriding function Can_Be_Continued
+    (Self : not null access constant Abstract_Block_Parser) return Boolean;
+   --  Returns True when block element can be continued on next line. Default
+   --  implementation returns True always.
+
 end Forge.Wiki.Block_Parsers;
