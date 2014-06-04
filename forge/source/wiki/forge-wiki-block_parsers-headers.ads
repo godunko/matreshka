@@ -45,7 +45,9 @@ package Forge.Wiki.Block_Parsers.Headers is
 --   pragma Preelaborate;
 
    type Header_Block_Parser is
-     new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with null record;
+     new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with record
+      Depth : Positive;
+   end record;
 
    overriding function Start_Block
     (Self     : not null access Header_Block_Parser;

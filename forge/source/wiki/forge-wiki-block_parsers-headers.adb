@@ -45,8 +45,14 @@ package body Forge.Wiki.Block_Parsers.Headers is
 
    HTML5_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
-   H1_Tag    : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("h1");
+   H_Tag     : constant
+     array (Positive range 1 .. 6) of League.Strings.Universal_String
+       := (League.Strings.To_Universal_String ("h1"),
+           League.Strings.To_Universal_String ("h2"),
+           League.Strings.To_Universal_String ("h3"),
+           League.Strings.To_Universal_String ("h4"),
+           League.Strings.To_Universal_String ("h5"),
+           League.Strings.To_Universal_String ("h6"));
 
    ----------------------
    -- Can_Be_Continued --
@@ -66,7 +72,10 @@ package body Forge.Wiki.Block_Parsers.Headers is
     (Parameters : not null access Constructor_Parameters)
        return Header_Block_Parser is
    begin
-      return Header_Block_Parser'(Writer => Parameters.Writer);
+      return
+        Header_Block_Parser'
+         (Writer => Parameters.Writer,
+          Depth  => Integer'Min (Parameters.Markup.Length, 6));
    end Create;
 
    ---------------
@@ -78,7 +87,7 @@ package body Forge.Wiki.Block_Parsers.Headers is
      Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
       Self.Writer.End_Element
-       (Local_Name    => H1_Tag,
+       (Local_Name    => H_Tag (Self.Depth),
         Namespace_URI => HTML5_URI);
 
       if Next /= null then
@@ -114,7 +123,7 @@ package body Forge.Wiki.Block_Parsers.Headers is
       Forge.Wiki.Parsers.Register_Block_Parser
        (League.Strings.To_Universal_String
          ("^\p{White_Space}* (\=+) \p{White_Space}*"
-            & " (\P{White_Space}+) \p{White_Space}* \=*$"),
+            & " (\P{White_Space}.*?) \p{White_Space}* \=*$"),
         2,
         1,
         2,
@@ -131,7 +140,7 @@ package body Forge.Wiki.Block_Parsers.Headers is
        return Block_Parser_Access is
    begin
       Self.Writer.Start_Element
-       (Local_Name    => H1_Tag,
+       (Local_Name    => H_Tag (Self.Depth),
         Namespace_URI => HTML5_URI);
 
       return null;
