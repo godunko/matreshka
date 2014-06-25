@@ -208,12 +208,9 @@ package body Matreshka.XML_Schema.Containment_Iterators is
 
             end if;
          when Matreshka.XML_Schema.AST.Complex_Types.Simple =>
-            Matreshka.XML_Schema.Visitors.Visit
-              (Self,
-               Visitor,
-               Matreshka.XML_Schema.AST.Node_Access
-                 (Node.Content_Type.Simple_Type_Definition),
-               Control);
+            --  No visit to base type in simple content need, because it's
+            --  always reference to type definred elsewhere
+            null;
          when Matreshka.XML_Schema.AST.Complex_Types.Empty =>
             null;
       end case;
