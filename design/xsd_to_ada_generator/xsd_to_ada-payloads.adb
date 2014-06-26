@@ -47,9 +47,9 @@ with XML.Schema.Complex_Type_Definitions;
 with XML.Schema.Object_Lists;
 with XML.Schema.Particles;
 
-with XSD_To_Ada.Utils; use XSD_To_Ada.Utils;
 with XML.Schema.Type_Definitions;
 with XML.Schema.Terms;
+with XSD_To_Ada.Utils; use XSD_To_Ada.Utils;
 with XSD_To_Ada.Mappings.XML;
 
 package body XSD_To_Ada.Payloads is
@@ -333,6 +333,20 @@ package body XSD_To_Ada.Payloads is
 
                if XS_Term.Is_Model_Group then
                   Model_Group := XS_Term.To_Model_Group;
+               end if;
+
+            elsif CTD.Get_Content_Type in Simple then
+               if Name = Type_D.Get_Name then
+                  Writer.P ("     " & Add_Separator (Name) & " : " &
+                              XSD2Ada.Analyzer.Get_Type_Name
+                              (XSD2Ada.Analyzer.Find_Object
+                                 (Node_Vector => Payloads_Node_Vector,
+                                  Object      => XS_Base,
+                                  Min_Occurs  => False,
+                                  Max_Occurs  => False))& ";");
+
+                  Type_D.
+
                end if;
             else
                raise Constraint_Error;
