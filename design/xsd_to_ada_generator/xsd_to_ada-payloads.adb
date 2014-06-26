@@ -344,9 +344,6 @@ package body XSD_To_Ada.Payloads is
                                   Object      => XS_Base,
                                   Min_Occurs  => False,
                                   Max_Occurs  => False))& ";");
-
-                  Type_D.
-
                end if;
             else
                raise Constraint_Error;

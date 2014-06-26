@@ -241,7 +241,7 @@ package body XSD_To_Ada.Utils is
             Mapping);
       end loop;
 
-      XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
+    XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
 
       XSD_To_Ada.Payloads.Print_Payloads
         (Node_Vector => Node_Vector,
