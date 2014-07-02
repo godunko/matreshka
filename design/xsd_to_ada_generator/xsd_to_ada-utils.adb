@@ -268,8 +268,8 @@ package body XSD_To_Ada.Utils is
       end loop;
 
       for J in 1 .. Crutches_Element_Declarations.Length loop
-         if not Crutches_Element_Declarations.Item
-           (J).Get_Name.Ends_With ("Response")
+         if XSD_To_Ada.Mappings.XML.Payload_Types.Index
+           (Crutches_Element_Declarations.Item (J).Get_Name) /= 0
          then
             XSD2Ada.Analyzer.Create_Element_Node
               (Crutches_Element_Declarations.Item (J).To_Element_Declaration,
