@@ -76,9 +76,15 @@ package body Matreshka.XML_Schema.Loaders is
               (Schema_Location)).To_Universal_String;
       end if;
 
-      Self.Documents.Insert
-       (Namespace_URI,
-        new Document_Record'(Namespace_URI, Location_Hint, null));
+      --  When schema document is imported multiple times (from different
+      --  schema documents) it need to be included to the list of documents
+      --  only once.
+
+      if not Self.Documents.Contains (Namespace_URI) then
+         Self.Documents.Insert
+          (Namespace_URI,
+           new Document_Record'(Namespace_URI, Location_Hint, null));
+      end if;
    end Enqueue_Document;
 
    ----------
