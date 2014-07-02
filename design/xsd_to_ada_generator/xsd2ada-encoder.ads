@@ -79,6 +79,7 @@ package XSD2Ada.Encoder is
       Spec_Writer     : in out XSD_To_Ada.Writers.Writer;
       Procedures_Name : League.Strings.Universal_String;
       Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
+      Namespace       : League.Strings.Universal_String;
       Is_AnyType      : Boolean := False);
 
    procedure Generate_Package_Header
@@ -108,6 +109,7 @@ package XSD2Ada.Encoder is
       Name          : League.Strings.Universal_String;
       Element_Name  : League.Strings.Universal_String;
       Tag_Vector    : in out League.String_Vectors.Universal_String_Vector;
+      Namespace     : League.Strings.Universal_String;
       Choice        : Boolean := False;
       Is_Min_Occur  : Boolean := False;
       Is_Max_Occur  : Boolean := False);
@@ -130,11 +132,13 @@ package XSD2Ada.Encoder is
       Encoder_Spec         : in out XSD_To_Ada.Writers.Writer);
 
    function Write_End_Element
-     (Name : League.Strings.Universal_String)
+     (Name      : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String)
       return League.Strings.Universal_String;
 
    function Write_Start_Element
-     (Name : League.Strings.Universal_String)
+     (Name      : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String)
       return League.Strings.Universal_String;
 
 end XSD2Ada.Encoder;

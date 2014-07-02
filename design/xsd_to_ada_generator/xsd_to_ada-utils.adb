@@ -178,6 +178,16 @@ package body XSD_To_Ada.Utils is
            Namespace   => League.Strings.To_Universal_String
              ("http://www.actforex.com/iats"));
 
+      Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map
+        := Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Element_Declaration,
+           Namespace   => Namespace);
+
+      Simple_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
+        Model.Get_Components_By_Namespace
+          (Object_Type => XML.Schema.Simple_Type,
+           Namespace   => Namespace);
+
       Crutches_Complex_Types :
       constant XML.Schema.Named_Maps.XS_Named_Map
         := Model.Get_Components_By_Namespace
@@ -191,16 +201,6 @@ package body XSD_To_Ada.Utils is
           (Object_Type => XML.Schema.Element_Declaration,
            Namespace   => League.Strings.To_Universal_String
              ("http://www.actforex.com/iats/crutches"));
-
-      Element_Declarations : constant XML.Schema.Named_Maps.XS_Named_Map
-        := Model.Get_Components_By_Namespace
-          (Object_Type => XML.Schema.Element_Declaration,
-           Namespace   => Namespace);
-
-      Simple_Types : constant XML.Schema.Named_Maps.XS_Named_Map :=
-        Model.Get_Components_By_Namespace
-          (Object_Type => XML.Schema.Simple_Type,
-           Namespace   => Namespace);
 
       Payload_Spec        : Generator.Units.Ada_Units.Ada_Unit;
       Types_Writer        : XSD_To_Ada.Writers.Writer;
@@ -224,24 +224,28 @@ package body XSD_To_Ada.Utils is
          XSD2Ada.Analyzer.Create_Type_Node
            (Complex_Types.Item (J).To_Type_Definition,
             Node_Vector,
-            Mapping);
+            Mapping,
+            Namespace);
       end loop;
 
       for J in 1 .. Crutches_Complex_Types.Length loop
          XSD2Ada.Analyzer.Create_Type_Node
            (Crutches_Complex_Types.Item (J).To_Type_Definition,
             Node_Vector,
-            Mapping);
+            Mapping,
+            League.Strings.To_Universal_String
+              ("http://www.actforex.com/iats/crutches"));
       end loop;
 
       for J in 1 .. Simple_Types.Length loop
          XSD2Ada.Analyzer.Create_Type_Node
            (Simple_Types.Item (J).To_Type_Definition,
             Node_Vector,
-            Mapping);
+            Mapping,
+            Namespace);
       end loop;
 
-    XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
+      XSD2Ada.Analyzer.Create_Element_Nodes (Model, Node_Vector);
 
       XSD_To_Ada.Payloads.Print_Payloads
         (Node_Vector => Node_Vector,
@@ -258,19 +262,19 @@ package body XSD_To_Ada.Utils is
          then
             XSD2Ada.Analyzer.Create_Element_Node
               (Element_Declarations.Item (J).To_Element_Declaration,
-               Node_Vector);
+               Node_Vector,
+               Namespace);
          end if;
       end loop;
 
       for J in 1 .. Crutches_Element_Declarations.Length loop
-         if XSD_To_Ada.Mappings.XML.Payload_Types.Index
-           (Element_Declarations.Item (J).Get_Name) /= 0
-           and then not Element_Declarations.Item (J).Get_Name.Ends_With
-           ("Response")
+         if not Crutches_Element_Declarations.Item
+           (J).Get_Name.Ends_With ("Response")
          then
             XSD2Ada.Analyzer.Create_Element_Node
               (Crutches_Element_Declarations.Item (J).To_Element_Declaration,
-               Node_Vector);
+               Node_Vector,
+               XSD_To_Ada.Utils.Crutches_Namespace);
          end if;
       end loop;
 

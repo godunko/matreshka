@@ -174,6 +174,7 @@ package body XSD2Ada.Encoder is
       Spec_Writer     : in out XSD_To_Ada.Writers.Writer;
       Procedures_Name : League.Strings.Universal_String;
       Tag_Vector      : in out League.String_Vectors.Universal_String_Vector;
+      Namespace       : League.Strings.Universal_String;
       Is_AnyType      : Boolean := False)
    is
       Name : constant League.Strings.Universal_String := Procedures_Name;
@@ -234,7 +235,8 @@ package body XSD2Ada.Encoder is
             & "     use IATS_Types;"
             & LF & LF
             & "   begin" & LF
-            & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
+            & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
+              "         To_Universal_String (""" & Namespace & """));");
       else
          Writer.P
            ("   overriding procedure Encode" & LF
@@ -254,10 +256,11 @@ package body XSD2Ada.Encoder is
             & Name & " (Message);"
             & LF & LF
             & "   begin" & LF
-            & "      Writer.Start_Prefix_Mapping (IATS_Prefix, IATS_URI);");
+            & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
+              "         To_Universal_String (""" & Namespace & """));");
       end if;
 
-      Writer.P (Write_Start_Element (Procedures_Name));
+      Writer.P (Write_Start_Element (Procedures_Name, Namespace));
    end Generate_Overriding_Procedure_Encode_Header;
 
    -----------------------------
@@ -271,14 +274,11 @@ package body XSD2Ada.Encoder is
         ("with Encoder_Types;" & LF
          & "with Payloads;" & LF
          & "with IATS_Types;" & LF
-         & "with League.Strings;" & LF
+         & "with League.Strings; use League.Strings;" & LF
          & "with Web_Services.SOAP.Payloads.Encoders.Registry;"
          & LF & LF
          & "package body Encoder is"
          & LF & LF
-         & "   IATS_URI : constant League.Strings.Universal_String :=" & LF
-         & "     League.Strings.To_Universal_String"
-         & " (""http://www.actforex.com/iats"");" & LF
          & "   IATS_Prefix : constant League.Strings.Universal_String :=" & LF
          & "     League.Strings.To_Universal_String (""iats"");" & LF);
    end Generate_Package_Header;
@@ -363,7 +363,9 @@ package body XSD2Ada.Encoder is
             & ".Length) loop", 6));
       end if;
 
-      Writer.N (Write_Start_Element (XS_Term.Get_Name));
+      Writer.N (Write_Start_Element (XS_Term.Get_Name,
+                League.Strings.To_Universal_String
+                  ("http://www.actforex.com/iats")));
 
       if Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "string" then
          if not Type_D.To_Simple_Type_Definition.Get_Lexical_Enumeration
@@ -378,7 +380,8 @@ package body XSD2Ada.Encoder is
                   & Optional_Value_Marker.To_Wide_Wide_String
                   & "'Img));", 6)
                & LF & "  --  "
-               & Add_Separator (Type_D.Get_Base_Type.Get_Name));
+               & Add_Separator
+                 (Type_D.Get_Base_Type.Get_Name));
          else
             Writer.P
               (Split_Line
@@ -388,7 +391,8 @@ package body XSD2Ada.Encoder is
                   & Optional_Value_Marker.To_Wide_Wide_String
                   & ");", 6)
                & LF & "  --  "
-               & Add_Separator (Type_D.Get_Base_Type.Get_Name));
+               & Add_Separator
+                 (Type_D.Get_Base_Type.Get_Name));
          end if;
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "decimal" then
@@ -418,7 +422,8 @@ package body XSD2Ada.Encoder is
                & "'Img)", 8)
             & ");"
             & LF &  "  --  "
-            & Add_Separator (Type_D.Get_Base_Type.Get_Name));
+            & Add_Separator
+              (Type_D.Get_Base_Type.Get_Name));
 
       elsif Type_D.Get_Base_Type.Get_Name.To_UTF_8_String = "boolean" then
 
@@ -442,7 +447,10 @@ package body XSD2Ada.Encoder is
             & Type_D.Get_Base_Type.Get_Name);
       end if;
 
-      Writer.N (Write_End_Element (XS_Term.Get_Name));
+      Writer.N (Write_End_Element
+                (XS_Term.Get_Name,
+                   League.Strings.To_Universal_String
+                     ("http://www.actforex.com/iats")));
 
       if Min_Occurs
         and then not Max_Occurs
@@ -634,6 +642,7 @@ package body XSD2Ada.Encoder is
       Name          : League.Strings.Universal_String;
       Element_Name  : League.Strings.Universal_String;
       Tag_Vector    : in out League.String_Vectors.Universal_String_Vector;
+      Namespace     : League.Strings.Universal_String;
       Choice        : Boolean := False;
       Is_Min_Occur  : Boolean := False;
       Is_Max_Occur  : Boolean := False)
@@ -666,9 +675,10 @@ package body XSD2Ada.Encoder is
                      Spec_Writer,
                      Add_Separator (Name),
                      Tag_Vector,
+                     Namespace,
                      True);
 
-            Writer.N (Write_End_Element (Add_Separator (Name)));
+            Writer.N (Write_End_Element (Add_Separator (Name), Namespace));
             Writer.P ("   end Encode;" & LF);
             return;
          end if;
@@ -699,9 +709,11 @@ package body XSD2Ada.Encoder is
                      Spec_Writer,
                      Add_Separator (Name),
                      Tag_Vector,
+                     Namespace,
                      True);
 
-                  Writer.N (Write_End_Element (Add_Separator (Name)));
+                  Writer.N
+                    (Write_End_Element (Add_Separator (Name), Namespace));
 
                elsif XSD_To_Ada.Mappings.XML.Payload_Types.Index (Name)
                  /= 0
@@ -713,7 +725,8 @@ package body XSD2Ada.Encoder is
                     (Writer,
                      Spec_Writer,
                      Add_Separator (Name),
-                     Tag_Vector);
+                     Tag_Vector,
+                     Namespace);
 
                   if XS_Base.Get_Type_Category in XML.Schema.Complex_Type
                     and XS_Base /= Type_D
@@ -738,7 +751,9 @@ package body XSD2Ada.Encoder is
                      Element_Name => Top_Name,
                      Choice       => Choice);
 
-                  Writer.N (Write_End_Element (Add_Separator (Name)));
+                  Writer.N
+                    (Write_End_Element (Add_Separator (Name), Namespace));
+
                   Writer.P ("   end Encode;" & LF);
                else
                   Payload_Type.Clear;
@@ -749,7 +764,9 @@ package body XSD2Ada.Encoder is
                      Add_Separator (Name));
 
                   Encoder_Types.P
-                    ("      Writer.Start_Element (IATS_URI, Name);");
+                    ("      Writer.Start_Element" & LF &
+                       "        (To_Universal_String (""" & Namespace & """),"
+                     & LF & "         Name);");
 
                   Print_Model
                     (Model_Group  => Model_Group,
@@ -760,7 +777,10 @@ package body XSD2Ada.Encoder is
                      Choice       => Choice);
 
                   Encoder_Types.P
-                    ("      Writer.End_Element (IATS_URI, Name);");
+                    ("      Writer.End_Element" & LF &
+                       "        (To_Universal_String (""" & Namespace & """),"
+                     & LF & "         Name);");
+
                   Encoder_Types.P ("   end Encode;" & LF);
                end if;
             end if;
@@ -796,7 +816,7 @@ package body XSD2Ada.Encoder is
       Put_Header (Encoder_Spec_Types);
       Encoder_Spec_Types.P ("with IATS_Types;");
       Encoder_Spec_Types.P ("with XML.SAX.Writers;");
-      Encoder_Spec_Types.P ("with League.Strings;" & LF);
+      Encoder_Spec_Types.P ("with League.Strings; use League.Strings;" & LF);
       Encoder_Spec_Types.P ("package Encoder_Types is" & LF);
       Encoder_Spec_Types.P ("   function Image (Item : Boolean) "
                             & "return League.Strings.Universal_String;" & LF);
@@ -814,11 +834,6 @@ package body XSD2Ada.Encoder is
         ("         return League.Strings.To_Universal_String (""false"");");
       Encoder_Types.P ("       end if;");
       Encoder_Types.P ("   end Image;" & LF);
-
-      Encoder_Types.P
-        ("   IATS_URI : constant League.Strings.Universal_String :=");
-      Encoder_Types.P ("     League.Strings.To_Universal_String "
-                       & "(""http://www.actforex.com/iats"");");
 
       Encoder_Spec.P
         ("with XML.SAX.Writers;" & LF
@@ -838,6 +853,7 @@ package body XSD2Ada.Encoder is
                Name          => Current.Short_Ada_Type_Name,
                Element_Name  => Current.Element_Name,
                Tag_Vector    => Tag_Vector,
+               Namespace     => Current.Get_Namespace,
                Choice        => Current.Choice,
                Is_Min_Occur  => Current.Min,
                Is_Max_Occur  => Current.Max);
@@ -894,11 +910,13 @@ package body XSD2Ada.Encoder is
    -----------------------
 
    function Write_End_Element
-     (Name : League.Strings.Universal_String)
-     return League.Strings.Universal_String is
+     (Name      : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String)
+      return League.Strings.Universal_String is
    begin
-      return "      Writer.End_Element (IATS_URI, "
-        & Add_Separator (Name) & "_Name);" & LF;
+      return "      Writer.End_Element" & LF &
+        "        (To_Universal_String (""" & Namespace & """),"
+        & LF & "         " & Add_Separator (Name) & "_Name);" & LF;
    end Write_End_Element;
 
    -------------------------
@@ -906,7 +924,8 @@ package body XSD2Ada.Encoder is
    -------------------------
 
    function Write_Start_Element
-     (Name : League.Strings.Universal_String)
+     (Name : League.Strings.Universal_String;
+      Namespace : League.Strings.Universal_String)
       return League.Strings.Universal_String
    is
       N : constant League.String_Vectors.Universal_String_Vector :=
@@ -945,8 +964,9 @@ package body XSD2Ada.Encoder is
          end if;
       end if;
 
-      return "      Writer.Start_Element (IATS_URI, "
-        & Add_Separator (Name) & "_Name);" & LF;
+      return "      Writer.Start_Element" & LF &
+        "        (To_Universal_String (""" & Namespace & """),"
+       & LF & "         " & Add_Separator (Name) & "_Name);" & LF;
    end Write_Start_Element;
 
 end XSD2Ada.Encoder;

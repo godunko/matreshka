@@ -118,4 +118,8 @@ package XSD_To_Ada.Utils is
      := League.Strings.To_Universal_String
        ("http://www.actforex.com/iats");
 
+   Crutches_Namespace : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String
+       ("http://www.actforex.com/iats/crutches");
+
 end XSD_To_Ada.Utils;

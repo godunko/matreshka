@@ -78,6 +78,8 @@ package XSD2Ada.Analyzer is
      (Item : XSD2Ada.Analyzer.Item_Access)
       return League.Strings.Universal_String;
 
+   function Get_Namespace (Self : Item) return League.Strings.Universal_String;
+
    function Find_Object
      (Node_Vector : XSD2Ada.Analyzer.Items;
       Object      : XML.Schema.Objects.XS_Object'Class;
@@ -107,14 +109,16 @@ package XSD2Ada.Analyzer is
 
    procedure Create_Element_Node
     (Element     : XML.Schema.Element_Declarations.XS_Element_Declaration;
-     Node_Vector : in out XSD2Ada.Analyzer.Items);
+     Node_Vector : in out XSD2Ada.Analyzer.Items;
+     Namespace   : League.Strings.Universal_String);
    --  Add new node to Node_Vector for given Element declaration
    --  Also add types from dependencies
 
    procedure Create_Type_Node
     (Type_D      : XML.Schema.Type_Definitions.XS_Type_Definition;
      Node_Vector : in out XSD2Ada.Analyzer.Items;
-     Mapping     : XSD_To_Ada.Mappings.Mapping);
+     Mapping     : XSD_To_Ada.Mappings.Mapping;
+     Namespace   : League.Strings.Universal_String);
    --  Add new node to Node_Vector for given type definition
    --  Also add types from dependencies
 
@@ -127,6 +131,7 @@ private
       Min, Max            : Boolean := False;
       Element_Name        : League.Strings.Universal_String;
       Short_Ada_Type_Name : League.Strings.Universal_String;
+      Namespace           : League.Strings.Universal_String;
    end record;
 
 end XSD2Ada.Analyzer;
