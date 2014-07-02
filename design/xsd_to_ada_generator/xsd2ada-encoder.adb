@@ -967,10 +967,9 @@ package body XSD2Ada.Encoder is
             Type_Element_Name.P
               (XSD_To_Ada.Utils.Split_Line
                  (Add_Separator (Name)
-                  & "_Name : constant League.Strings.Universal_String :=", 3)
-               & LF
-               & "     League.Strings.To_Universal_String ("""
-               & Name_Without_Separators & """);" & LF);
+                  & "_Name : constant League.Strings.Universal_String :=", 3) &
+                 LF & "     To_Universal_String (""" &
+                 Name_Without_Separators & """);" & LF);
          end if;
       else
 
@@ -982,7 +981,7 @@ package body XSD2Ada.Encoder is
                  (Add_Separator (Name)
                   & "_Name : constant League.Strings.Universal_String :=", 3)
                & LF
-               & "     League.Strings.To_Universal_String ("""
+               & "     To_Universal_String ("""
                & Name_Without_Separators & """);" & LF);
          end if;
       end if;
