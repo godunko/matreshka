@@ -233,10 +233,21 @@ package body XSD2Ada.Encoder is
             & "     pragma Unreferenced (Self, Message);"
             & LF & LF
             & "     use IATS_Types;"
-            & LF & LF
-            & "   begin" & LF
-            & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
-              "         To_Universal_String (""" & Namespace & """));");
+            & LF & LF);
+
+         if Namespace.Ends_With ("crutches") then
+            Writer.P
+              ("   begin" & LF
+               & "      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
+               & LF &
+                 "         To_Universal_String (""" & Namespace & """));");
+         else
+            Writer.P
+              ("   begin" & LF
+               & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
+                 "         To_Universal_String (""" & Namespace & """));");
+         end if;
+
       else
          Writer.P
            ("   overriding procedure Encode" & LF
@@ -254,10 +265,20 @@ package body XSD2Ada.Encoder is
             & Name  & LF
             & "       renames Payloads."
             & Name & " (Message);"
-            & LF & LF
-            & "   begin" & LF
-            & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
-              "         To_Universal_String (""" & Namespace & """));");
+            & LF);
+
+         if Namespace.Ends_With ("crutches") then
+            Writer.P
+              ("   begin" & LF
+               & "      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
+               & LF &
+                 "         To_Universal_String (""" & Namespace & """));");
+         else
+            Writer.P
+              ("   begin" & LF
+               & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
+                 "         To_Universal_String (""" & Namespace & """));");
+         end if;
       end if;
 
       Writer.P (Write_Start_Element (Procedures_Name, Namespace));
@@ -280,7 +301,9 @@ package body XSD2Ada.Encoder is
          & "package body Encoder is"
          & LF & LF
          & "   IATS_Prefix : constant League.Strings.Universal_String :=" & LF
-         & "     League.Strings.To_Universal_String (""iats"");" & LF);
+         & "     League.Strings.To_Universal_String (""iats"");" & LF
+         & "   IATS_Crutches_Prefix : constant Universal_String :=" & LF
+         & "     League.Strings.To_Universal_String (""iatsc"");" & LF);
    end Generate_Package_Header;
 
    --------------------------------------
@@ -837,7 +860,7 @@ package body XSD2Ada.Encoder is
 
       Encoder_Spec.P
         ("with XML.SAX.Writers;" & LF
-         & "with Web_Services.SOAP.Payloads.Encoders;  --  XXXX" & LF & LF
+         & "with Web_Services.SOAP.Payloads.Encoders;" & LF & LF
          & "package Encoder is"  & LF);
 
       for Current of Node_Vector loop
