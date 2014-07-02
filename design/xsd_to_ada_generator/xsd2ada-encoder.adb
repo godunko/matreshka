@@ -238,13 +238,14 @@ package body XSD2Ada.Encoder is
          if Namespace.Ends_With ("crutches") then
             Writer.P
               ("   begin" & LF
-               & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
+               & "      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
+               & LF &
                  "         To_Universal_String (""" & Namespace & """));");
 
             Writer.P
-              ("      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
-               & LF &
-                 "         To_Universal_String (""" & Namespace & """));");
+              ("      Writer.Start_Prefix_Mapping (IATS_Prefix,"
+               & LF & "         To_Universal_String " &
+                 "(""http://www.actforex.com/iats""));");
          else
             Writer.P
               ("   begin" & LF
@@ -274,13 +275,14 @@ package body XSD2Ada.Encoder is
          if Namespace.Ends_With ("crutches") then
             Writer.P
               ("   begin" & LF
-               & "      Writer.Start_Prefix_Mapping (IATS_Prefix," & LF &
+               & "      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
+               & LF &
                  "         To_Universal_String (""" & Namespace & """));");
 
             Writer.P
-              ("      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
-               & LF &
-                 "         To_Universal_String (""" & Namespace & """));");
+              ("      Writer.Start_Prefix_Mapping (IATS_Prefix,"
+               & LF & "         To_Universal_String " &
+                 "(""http://www.actforex.com/iats""));");
          else
             Writer.P
               ("   begin" & LF
