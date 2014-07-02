@@ -242,8 +242,7 @@ package body XSD2Ada.Encoder is
                  "         To_Universal_String (""" & Namespace & """));");
 
             Writer.P
-              ("   begin" & LF
-               & "      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
+              ("      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
                & LF &
                  "         To_Universal_String (""" & Namespace & """));");
          else
@@ -279,8 +278,7 @@ package body XSD2Ada.Encoder is
                  "         To_Universal_String (""" & Namespace & """));");
 
             Writer.P
-              ("   begin" & LF
-               & "      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
+              ("      Writer.Start_Prefix_Mapping (IATS_Crutches_Prefix,"
                & LF &
                  "         To_Universal_String (""" & Namespace & """));");
          else
