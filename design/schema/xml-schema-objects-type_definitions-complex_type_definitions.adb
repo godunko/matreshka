@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,12 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
 with Matreshka.XML_Schema.AST.Complex_Types;
-
+with XML.Schema.Object_Lists.Internals;
 with XML.Schema.Objects.Particles.Internals;
 
 package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
+
+   use type Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
 
    function "+"
     (Self : Matreshka.XML_Schema.AST.Object_Access)
@@ -93,6 +94,28 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
       return Get_Annotation (Self);
    end Get_Annotation;
 
+   ------------------------
+   -- Get_Attribute_Uses --
+   ------------------------
+
+   function Get_Attribute_Uses
+    (Self : XS_Complex_Type_Definition'Class)
+       return XML.Schema.Object_Lists.XS_Object_List
+   is
+      Node : constant Matreshka.XML_Schema.AST.Complex_Type_Definition_Access
+        := Matreshka.XML_Schema.AST.Complex_Type_Definition_Access (Self.Node);
+
+   begin
+      if Node = null then
+         return XML.Schema.Object_Lists.Empty_XS_Object_List;
+
+      else
+         return
+           XML.Schema.Object_Lists.Internals.Create
+            (Node.Attribute_Uses'Access);
+      end if;
+   end Get_Attribute_Uses;
+
    ----------------------
    -- Get_Content_Type --
    ----------------------
@@ -102,7 +125,6 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
       return Content_Types
    is
       package T renames Matreshka.XML_Schema.AST.Complex_Types;
-      use type Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
 
       Convert : constant array (T.Content_Type_Variety) of Content_Types
         := (T.Empty        => Empty,

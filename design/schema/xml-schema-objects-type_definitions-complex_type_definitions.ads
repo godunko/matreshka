@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with XML.Schema.Annotations;
+with XML.Schema.Object_Lists;
 with XML.Schema.Objects.Particles;
 
 package XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
@@ -69,14 +70,14 @@ package XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
 
    function Get_Abstract
     (Self : XS_Complex_Type_Definition'Class) return Boolean;
-   --  {abstract} A boolean. Complex types for which abstract is true must not
+   --  [abstract] A boolean. Complex types for which abstract is true must not
    --  be used as the type definition for the validation of element information
    --  items.
 
-   function Get_Annotation
+   function Get_Attribute_Uses
     (Self : XS_Complex_Type_Definition'Class)
-       return XML.Schema.Annotations.XS_Annotation;
-   --  An annotation if it exists, otherwise null.
+       return XML.Schema.Object_Lists.XS_Object_List;
+   --  A set of attribute uses if it exists, otherwise an empty XSObjectList.
 
    function Get_Content_Type
     (Self : XS_Complex_Type_Definition'Class)
@@ -89,6 +90,11 @@ package XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
        return XML.Schema.Objects.Particles.XS_Particle;
    --  particle of type XSParticle, readonly
    --  A particle for a mixed or element-only content model, otherwise null.
+
+   function Get_Annotation
+    (Self : XS_Complex_Type_Definition'Class)
+       return XML.Schema.Annotations.XS_Annotation;
+   --  An annotation if it exists, otherwise null.
 
 private
 
