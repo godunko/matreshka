@@ -49,21 +49,6 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
 
    use type Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
 
-   function "+"
-    (Self : Matreshka.XML_Schema.AST.Object_Access)
-      return Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
-
-   ---------
-   -- "+" --
-   ---------
-
-   function "+"
-    (Self : Matreshka.XML_Schema.AST.Object_Access)
-      return Matreshka.XML_Schema.AST.Complex_Type_Definition_Access is
-   begin
-      return Matreshka.XML_Schema.AST.Complex_Type_Definition_Access (Self);
-   end "+";
-
    ------------------
    -- Get_Abstract --
    ------------------
@@ -121,8 +106,7 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
    ----------------------
 
    function Get_Content_Type
-     (Self : XS_Complex_Type_Definition'Class)
-      return Content_Types
+     (Self : XS_Complex_Type_Definition'Class) return Content_Types
    is
       package T renames Matreshka.XML_Schema.AST.Complex_Types;
 
@@ -133,10 +117,12 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
             T.Mixed        => Mixed);
 
       Node : constant Matreshka.XML_Schema.AST.Complex_Type_Definition_Access
-        := +Self.Node;
+        := Matreshka.XML_Schema.AST.Complex_Type_Definition_Access (Self.Node);
+
    begin
       if Node = null then
          return Empty;
+
       else
          return Convert (Node.Content_Type.Variety);
       end if;
@@ -150,13 +136,13 @@ package body XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions is
     (Self : XS_Complex_Type_Definition'Class)
        return XML.Schema.Objects.Particles.XS_Particle
    is
-      use type Matreshka.XML_Schema.AST.Complex_Type_Definition_Access;
-
       Node : constant Matreshka.XML_Schema.AST.Complex_Type_Definition_Access
-        := +Self.Node;
+        := Matreshka.XML_Schema.AST.Complex_Type_Definition_Access (Self.Node);
+
    begin
       if Node = null then
-         return E : XML.Schema.Objects.Particles.XS_Particle;
+         return XML.Schema.Objects.Particles.Null_XS_Particle;
+
       else
          return XML.Schema.Objects.Particles.Internals.Create
             (Node.Content_Type.Particle);
