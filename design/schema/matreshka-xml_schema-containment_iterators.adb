@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -166,11 +166,12 @@ package body Matreshka.XML_Schema.Containment_Iterators is
 
       --  Visit attribute uses.
 
-      for Item of Node.Attribute_Uses loop
+      for Index in 1 .. Node.Attribute_Uses.Length loop
          Matreshka.XML_Schema.Visitors.Visit
           (Self,
            Visitor,
-           Matreshka.XML_Schema.AST.Node_Access (Item),
+           Matreshka.XML_Schema.AST.Node_Access
+            (Node.Attribute_Uses.Item (Index)),
            Control);
 
          exit when Control /= Matreshka.XML_Schema.Visitors.Continue;

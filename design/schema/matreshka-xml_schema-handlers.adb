@@ -941,7 +941,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          if Node /= null then
             Self.State.Last_Complex_Type_Definition.Attribute_Uses.Append
-              (Node);
+              (Matreshka.XML_Schema.AST.Object_Access (Node));
          end if;
       end Start_Attribute_Element;
 
@@ -1218,7 +1218,7 @@ package body Matreshka.XML_Schema.Handlers is
 
          if Node /= null then
             Self.State.Last_Complex_Type_Definition.Attribute_Uses.Append
-              (Node);
+              (Matreshka.XML_Schema.AST.Object_Access (Node));
          end if;
       end Start_Type_Level_Attribute_Element;
 

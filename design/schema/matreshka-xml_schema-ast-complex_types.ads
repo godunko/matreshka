@@ -44,6 +44,7 @@
 with League.Strings;
 
 with Matreshka.XML_Schema.AST.Types;
+with Matreshka.XML_Schema.Object_LIsts;
 with XML.Schema;
 
 package Matreshka.XML_Schema.AST.Complex_Types is
@@ -125,7 +126,7 @@ package Matreshka.XML_Schema.AST.Complex_Types is
       --  {abstract}
       --  An xs:boolean value. Required.
 
-      Attribute_Uses : Types.Attribute_Use_Sets.List;
+      Attribute_Uses : aliased Matreshka.XML_Schema.Object_Lists.Object_List;
       --  {attribute uses}
       --  A set of Attribute Use components.
 
