@@ -1222,6 +1222,10 @@ package body Matreshka.XML_Schema.Handlers is
          end if;
       end Start_Type_Level_Attribute_Element;
 
+      -------------------------------------
+      -- Start_Type_Level_Choice_Element --
+      -------------------------------------
+
       procedure Start_Type_Level_Choice_Element
        (Self       : in out XML_Schema_Handler;
         Attributes : XML.SAX.Attributes.SAX_Attributes;
