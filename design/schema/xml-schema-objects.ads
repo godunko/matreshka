@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -49,6 +49,7 @@ with League.Strings;
 
 private with Matreshka.XML_Schema.AST;
 limited with XML.Schema.Namespace_Items;
+limited with XML.Schema.Objects.Attribute_Uses;
 limited with XML.Schema.Objects.Particles;
 limited with XML.Schema.Objects.Terms.Element_Declarations;
 limited with XML.Schema.Objects.Terms.Model_Groups;
@@ -108,6 +109,9 @@ package XML.Schema.Objects is
 
    --  Object type conversion subprograms.
 
+   function To_Attribute_Use
+    (Self : XS_Object'Class)
+       return XML.Schema.Objects.Attribute_Uses.XS_Attribute_Use;
    function To_Complex_Type_Definition
     (Self : XS_Object'Class)
        return

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,78 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-with Matreshka.XML_Schema.AST.Objects;
-with Matreshka.XML_Schema.AST.Types;
-with XML.Schema;
-
-package Matreshka.XML_Schema.AST.Attribute_Uses is
+package XML.Schema.Objects.Attribute_Uses is
 
    pragma Preelaborate;
 
-   type Attribute_Use_Node is
-     new Matreshka.XML_Schema.AST.Objects.Abstract_Object_Node with
-   record
-      --  Properties:
-      --
+   type XS_Attribute_Use is new XS_Object with private;
 
-      Annotations : Types.Annotation_Lists.List;
-      --  {annotations}
-      --  A sequence of Annotation components.
+   Null_XS_Attribute_Use : constant XS_Attribute_Use;
 
-      Required : Boolean;
-      --  {required}
-      --  An xs:boolean value. Required.
+private
 
-      Attribute_Declaration :
-        Matreshka.XML_Schema.AST.Attribute_Declaration_Access;
-      --  {attribute declaration}
-      --  An Attribute Declaration component. Required.
+   type XS_Attribute_Use is new XS_Object with null record;
 
-      Value_Constraint : Types.Value_Constraint;
-      --  {value constraint}
-      --  A Value Constraint property record. Optional.
+   Null_XS_Attribute_Use : constant XS_Attribute_Use
+     := (Ada.Finalization.Controlled with Node => null);
 
-      Inheritable : Boolean;
-      --  {inheritable}
-      --  An xs:boolean value. Required.
-
-      --  Internal data.
-
-      Ref : Matreshka.XML_Schema.AST.Qualified_Name;
-      --  @ref
-   end record;
-
-   overriding procedure Enter_Node
-    (Self    : not null access Attribute_Use_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Leave_Node
-    (Self    : not null access Attribute_Use_Node;
-     Visitor : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of visitor interface.
-
-   overriding procedure Visit_Node
-    (Self     : not null access Attribute_Use_Node;
-     Iterator : in out Matreshka.XML_Schema.Visitors.Abstract_Iterator'Class;
-     Visitor  : in out Matreshka.XML_Schema.Visitors.Abstract_Visitor'Class;
-     Control  : in out Matreshka.XML_Schema.Visitors.Traverse_Control);
-   --  Dispatch call to corresponding subprogram of iterator interface.
-
-   overriding function Get_Type
-    (Self : not null access Attribute_Use_Node)
-      return XML.Schema.Component_Type;
-
-   overriding function Get_Name
-    (Self : not null access Attribute_Use_Node)
-      return League.Strings.Universal_String;
-
-   overriding function Get_Target_Namespace
-    (Self : not null access Attribute_Use_Node)
-      return League.Strings.Universal_String;
-
-end Matreshka.XML_Schema.AST.Attribute_Uses;
+end XML.Schema.Objects.Attribute_Uses;

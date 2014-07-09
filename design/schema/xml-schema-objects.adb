@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.XML_Schema.AST.Attribute_Uses;
 with Matreshka.XML_Schema.AST.Complex_Types;
 with Matreshka.XML_Schema.AST.Objects;
 with Matreshka.XML_Schema.AST.Simple_Types;
@@ -50,15 +51,13 @@ with Matreshka.XML_Schema.AST.Model_Groups;
 with Matreshka.XML_Schema.AST.Particles;
 
 with XML.Schema.Namespace_Items;
-with XML.Schema.Objects.Particles;
-with XML.Schema.Objects.Terms.Element_Declarations;
-with XML.Schema.Objects.Terms.Model_Groups;
+with XML.Schema.Objects.Attribute_Uses.Internals;
+with XML.Schema.Objects.Particles.Internals;
+with XML.Schema.Objects.Terms.Element_Declarations.Internals;
+with XML.Schema.Objects.Terms.Model_Groups.Internals;
 with XML.Schema.Objects.Type_Definitions.Internals;
 with XML.Schema.Objects.Type_Definitions.Complex_Type_Definitions.Internals;
 with XML.Schema.Objects.Type_Definitions.Simple_Type_Definitions.Internals;
-with XML.Schema.Element_Declarations.Internals;
-with XML.Schema.Model_Groups.Internals;
-with XML.Schema.Particles.Internals;
 
 package body XML.Schema.Objects is
 
@@ -302,6 +301,24 @@ package body XML.Schema.Objects is
       return Self.Get_Type = Wildcard;
    end Is_Wildcard;
 
+   ----------------------
+   -- To_Attribute_Use --
+   ----------------------
+
+   function To_Attribute_Use
+    (Self : XS_Object'Class)
+       return XML.Schema.Objects.Attribute_Uses.XS_Attribute_Use is
+   begin
+      if Self.Is_Null or else not Self.Is_Attribute_Use then
+         return XML.Schema.Objects.Attribute_Uses.Null_XS_Attribute_Use;
+
+      else
+         return
+           XML.Schema.Objects.Attribute_Uses.Internals.Create
+            (Matreshka.XML_Schema.AST.Attribute_Use_Access (Self.Node));
+      end if;
+   end To_Attribute_Use;
+
    --------------------------------
    -- To_Complex_Type_Definition --
    --------------------------------
@@ -337,12 +354,14 @@ package body XML.Schema.Objects is
    is
    begin
       if Self.Is_Null or else not Self.Is_Element_Declaration then
-         return XML.Schema.Element_Declarations.Null_XS_Element_Declaration;
+         return
+           XML.Schema.Objects.Terms.Element_Declarations
+             .Null_XS_Element_Declaration;
+
       else
          return
-           XML.Schema.Element_Declarations.Internals.Create
-               (Matreshka.XML_Schema.AST.Element_Declaration_Access
-                    (Self.Node));
+           XML.Schema.Objects.Terms.Element_Declarations.Internals.Create
+            (Matreshka.XML_Schema.AST.Element_Declaration_Access (Self.Node));
       end if;
    end To_Element_Declaration;
 
@@ -355,12 +374,12 @@ package body XML.Schema.Objects is
        return XML.Schema.Objects.Terms.Model_Groups.XS_Model_Group is
    begin
       if Self.Is_Null or else not Self.Is_Model_Group then
-         return XML.Schema.Model_Groups.Null_XS_Model_Group;
+         return XML.Schema.Objects.Terms.Model_Groups.Null_XS_Model_Group;
+
       else
          return
-           XML.Schema.Model_Groups.Internals.Create
-               (Matreshka.XML_Schema.AST.Model_Group_Access
-                    (Self.Node));
+           XML.Schema.Objects.Terms.Model_Groups.Internals.Create
+            (Matreshka.XML_Schema.AST.Model_Group_Access (Self.Node));
       end if;
    end To_Model_Group;
 
@@ -373,12 +392,12 @@ package body XML.Schema.Objects is
       return XML.Schema.Objects.Particles.XS_Particle is
    begin
       if Self.Is_Null or else not Self.Is_Particle then
-         return XML.Schema.Particles.Null_XS_Particle;
+         return XML.Schema.Objects.Particles.Null_XS_Particle;
+
       else
          return
-           XML.Schema.Particles.Internals.Create
-               (Matreshka.XML_Schema.AST.Particle_Access
-                    (Self.Node));
+           XML.Schema.Objects.Particles.Internals.Create
+            (Matreshka.XML_Schema.AST.Particle_Access (Self.Node));
       end if;
    end To_Particle;
 

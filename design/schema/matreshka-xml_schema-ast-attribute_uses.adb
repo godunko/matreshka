@@ -58,6 +58,42 @@ package body Matreshka.XML_Schema.AST.Attribute_Uses is
        (Matreshka.XML_Schema.AST.Attribute_Use_Access (Self), Control);
    end Enter_Node;
 
+   --------------
+   -- Get_Name --
+   --------------
+
+   overriding function Get_Name
+    (Self : not null access Attribute_Use_Node)
+      return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Name;
+
+   --------------------------
+   -- Get_Target_Namespace --
+   --------------------------
+
+   overriding function Get_Target_Namespace
+    (Self : not null access Attribute_Use_Node)
+      return League.Strings.Universal_String is
+   begin
+      return League.Strings.Empty_Universal_String;
+   end Get_Target_Namespace;
+
+   --------------
+   -- Get_Type --
+   --------------
+
+   overriding function Get_Type
+    (Self : not null access Attribute_Use_Node)
+      return XML.Schema.Component_Type
+   is
+      pragma Unreferenced (Self);
+
+   begin
+      return XML.Schema.Attribute_Use;
+   end Get_Type;
+
    ----------------
    -- Leave_Node --
    ----------------
