@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -54,6 +54,8 @@ package XML.Schema.Objects.Attribute_Declarations is
    pragma Preelaborate;
 
    type XS_Attribute_Declaration is new XS_Object with private;
+
+   Null_XS_Attribute_Declaration : constant XS_Attribute_Declaration;
 
    function Get_Type_Definition
     (Self : XS_Attribute_Declaration'Class)
@@ -136,5 +138,8 @@ package XML.Schema.Objects.Attribute_Declarations is
 private
 
    type XS_Attribute_Declaration is new XS_Object with null record;
+
+   Null_XS_Attribute_Declaration : constant XS_Attribute_Declaration
+     := (Ada.Finalization.Controlled with Node => null);
 
 end XML.Schema.Objects.Attribute_Declarations;

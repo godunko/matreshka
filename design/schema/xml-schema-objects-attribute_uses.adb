@@ -41,89 +41,94 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Holders;
+with Matreshka.XML_Schema.AST.Attribute_Uses;
 
-with XML.Schema.Objects.Attribute_Declarations;
+package body XML.Schema.Objects.Attribute_Uses is
 
-package XML.Schema.Objects.Attribute_Uses is
+   use type Matreshka.XML_Schema.AST.Attribute_Use_Access;
 
-   pragma Preelaborate;
+   -------------------
+   -- Get_Actual_VC --
+   -------------------
 
-   type XS_Attribute_Use is new XS_Object with private;
+   function Get_Actual_VC
+    (Self : XS_Attribute_Use'Class) return League.Holders.Holder is
+   begin
+      raise Program_Error;
+      return League.Holders.Empty_Holder;
+   end Get_Actual_VC;
 
-   Null_XS_Attribute_Use : constant XS_Attribute_Use;
+   ------------------------
+   -- Get_Actual_VC_Type --
+   ------------------------
 
-   function Get_Required (Self : XS_Attribute_Use'Class) return Boolean;
-   --  [required]: determines whether this use of an attribute declaration
-   --  requires an appropriate attribute information item to be present, or
-   --  merely allows it.
+   function Get_Actual_VC_Type
+    (Self : XS_Attribute_Use'Class) return XML.Schema.Built_In_Type is
+   begin
+      raise Program_Error;
+      return XML.Schema.Unavailable_DT;
+   end Get_Actual_VC_Type;
+
+   --------------------------
+   -- Get_Attr_Declaration --
+   --------------------------
 
    function Get_Attr_Declaration
     (Self : XS_Attribute_Use'Class)
        return
-         XML.Schema.Objects.Attribute_Declarations.XS_Attribute_Declaration;
-   --  [attribute declaration]: provides the attribute declaration itself,
-   --  which will in turn determine the simple type definition used.
+         XML.Schema.Objects.Attribute_Declarations.XS_Attribute_Declaration
+   is
+   begin
+      raise Program_Error;
+      return
+        XML.Schema.Objects.Attribute_Declarations
+          .Null_XS_Attribute_Declaration;
+   end Get_Attr_Declaration;
+
+   -------------------------
+   -- Get_Constraint_Type --
+   -------------------------
 
    function Get_Constraint_Type
-    (Self : XS_Attribute_Use'Class) return XML.Schema.Value_Constraint;
-   --  Value Constraint: one of default, fixed.
+    (Self : XS_Attribute_Use'Class) return XML.Schema.Value_Constraint is
+   begin
+      raise Program_Error;
+      return XML.Schema.VC_Fixed;
+   end Get_Constraint_Type;
+
+   --------------------------
+   -- Get_Constraint_Value --
+   --------------------------
 
    function Get_Constraint_Value
-    (Self : XS_Attribute_Use'Class) return League.Strings.Universal_String;
-   --  Value Constraint: The constraint value, otherwise null.
+    (Self : XS_Attribute_Use'Class) return League.Strings.Universal_String is
+   begin
+      raise Program_Error;
+      return League.Strings.Empty_Universal_String;
+   end Get_Constraint_Value;
 
-   function Get_Actual_VC
-    (Self : XS_Attribute_Use'Class) return League.Holders.Holder;
-   --  Value Constraint: Binding specific actual constraint value or null if
-   --  the value is in error or there is no value constraint.
-   --
-   --  Exceptions on retrieval
-   --
-   --    XSException
-   --
-   --      NOT_SUPPORTED_ERR: Raised if the implementation does not support
-   --      this method.
-
-   function Get_Actual_VC_Type
-    (Self : XS_Attribute_Use'Class) return XML.Schema.Built_In_Type;
-   --  The actual constraint value built-in datatype, e.g. STRING_DT, SHORT_DT.
-   --  If the type definition of this value is a list type definition, this
-   --  method returns LIST_DT. If the type definition of this value is a list
-   --  type definition whose item type is a union type definition, this method
-   --  returns LISTOFUNION_DT. To query the actual constraint value of the list
-   --  or list of union type definitions use itemValueTypes. If the
-   --  actualNormalizedValue is null, this method returns UNAVAILABLE_DT.
-   --
-   --  Exceptions on retrieval
-   --
-   --    XSException
-   --
-   --      NOT_SUPPORTED_ERR: Raised if the implementation does not support
-   --      this method.
+   --------------------------
+   -- Get_Item_Value_Types --
+   --------------------------
 
 --   function Get_Item_Value_Types
 --    (Self : XS_Attribute_Use'Class) return XML.Schema.Built_In_Type_List;
-   --  In the case the actual constraint value represents a list, i.e. the
-   --  actualValueType is LIST_DT, the returned array consists of one type kind
-   --  which represents the itemType. If the actual constraint value represents
-   --  a list type definition whose item type is a union type definition, i.e.
-   --  LISTOFUNION_DT, for each actual constraint value in the list the array
-   --  contains the corresponding memberType kind. For examples, see
-   --  ItemPSVI.itemValueTypes.
-   --
-   --  Exceptions on retrieval
-   --
-   --    XSException
-   --
-   --      NOT_SUPPORTED_ERR: Raised if the implementation does not support
-   --      this method.
 
-private
+   ------------------
+   -- Get_Required --
+   ------------------
 
-   type XS_Attribute_Use is new XS_Object with null record;
+   function Get_Required (Self : XS_Attribute_Use'Class) return Boolean is
+      Node : constant Matreshka.XML_Schema.AST.Attribute_Use_Access
+        := Matreshka.XML_Schema.AST.Attribute_Use_Access (Self.Node);
 
-   Null_XS_Attribute_Use : constant XS_Attribute_Use
-     := (Ada.Finalization.Controlled with Node => null);
+   begin
+      if Node = null then
+         return False;
+
+      else
+         return Node.Required;
+      end if;
+   end Get_Required;
 
 end XML.Schema.Objects.Attribute_Uses;
