@@ -41,104 +41,21 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Matreshka.XML_Schema.AST.Attribute_Uses;
-with XML.Schema.Objects.Attribute_Declarations.Internals;
+with Matreshka.XML_Schema.AST.Attribute_Declarations;
 
-package body XML.Schema.Objects.Attribute_Uses is
+package body XML.Schema.Objects.Attribute_Declarations.Internals is
 
-   use type Matreshka.XML_Schema.AST.Attribute_Use_Access;
+   ------------
+   -- Create --
+   ------------
 
-   -------------------
-   -- Get_Actual_VC --
-   -------------------
-
-   function Get_Actual_VC
-    (Self : XS_Attribute_Use'Class) return League.Holders.Holder is
+   function Create
+     (Node : Matreshka.XML_Schema.AST.Attribute_Declaration_Access)
+        return XS_Attribute_Declaration is
    begin
-      raise Program_Error;
-      return League.Holders.Empty_Holder;
-   end Get_Actual_VC;
+      return
+       (Ada.Finalization.Controlled with
+          Node => Matreshka.XML_Schema.AST.Object_Access (Node));
+   end Create;
 
-   ------------------------
-   -- Get_Actual_VC_Type --
-   ------------------------
-
-   function Get_Actual_VC_Type
-    (Self : XS_Attribute_Use'Class) return XML.Schema.Built_In_Type is
-   begin
-      raise Program_Error;
-      return XML.Schema.Unavailable_DT;
-   end Get_Actual_VC_Type;
-
-   --------------------------
-   -- Get_Attr_Declaration --
-   --------------------------
-
-   function Get_Attr_Declaration
-    (Self : XS_Attribute_Use'Class)
-       return
-         XML.Schema.Objects.Attribute_Declarations.XS_Attribute_Declaration
-   is
-      Node : constant Matreshka.XML_Schema.AST.Attribute_Use_Access
-        := Matreshka.XML_Schema.AST.Attribute_Use_Access (Self.Node);
-
-   begin
-      if Node = null then
-         return
-           XML.Schema.Objects.Attribute_Declarations
-             .Null_XS_Attribute_Declaration;
-
-      else
-         return
-           XML.Schema.Objects.Attribute_Declarations.Internals.Create
-            (Node.Attribute_Declaration);
-      end if;
-   end Get_Attr_Declaration;
-
-   -------------------------
-   -- Get_Constraint_Type --
-   -------------------------
-
-   function Get_Constraint_Type
-    (Self : XS_Attribute_Use'Class) return XML.Schema.Value_Constraint is
-   begin
-      raise Program_Error;
-      return XML.Schema.VC_Fixed;
-   end Get_Constraint_Type;
-
-   --------------------------
-   -- Get_Constraint_Value --
-   --------------------------
-
-   function Get_Constraint_Value
-    (Self : XS_Attribute_Use'Class) return League.Strings.Universal_String is
-   begin
-      raise Program_Error;
-      return League.Strings.Empty_Universal_String;
-   end Get_Constraint_Value;
-
-   --------------------------
-   -- Get_Item_Value_Types --
-   --------------------------
-
---   function Get_Item_Value_Types
---    (Self : XS_Attribute_Use'Class) return XML.Schema.Built_In_Type_List;
-
-   ------------------
-   -- Get_Required --
-   ------------------
-
-   function Get_Required (Self : XS_Attribute_Use'Class) return Boolean is
-      Node : constant Matreshka.XML_Schema.AST.Attribute_Use_Access
-        := Matreshka.XML_Schema.AST.Attribute_Use_Access (Self.Node);
-
-   begin
-      if Node = null then
-         return False;
-
-      else
-         return Node.Required;
-      end if;
-   end Get_Required;
-
-end XML.Schema.Objects.Attribute_Uses;
+end XML.Schema.Objects.Attribute_Declarations.Internals;
