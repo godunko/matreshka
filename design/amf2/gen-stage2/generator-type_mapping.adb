@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -402,7 +402,7 @@ package body Generator.Type_Mapping is
    ------------------
 
    procedure Load_Mapping is
-      Reader  : aliased XML.SAX.Simple_Readers.SAX_Simple_Reader;
+      Reader  : aliased XML.SAX.Simple_Readers.Simple_Reader;
       Input   : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
       Handler : aliased Generator.Type_Mapping.Handlers.Mapping_Handler;
 
