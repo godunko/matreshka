@@ -52,6 +52,7 @@ with AMF.CMOF.Primitive_Types;
 with AMF.Extents;
 with AMF.URI_Extents;
 
+with Generator.Arguments;
 with Generator.Names;
 with Generator.Type_Mapping.Handlers;
 
@@ -407,8 +408,7 @@ package body Generator.Type_Mapping is
       Handler : aliased Generator.Type_Mapping.Handlers.Mapping_Handler;
 
    begin
-      Input.Open_By_File_Name
-       (League.Strings.To_Universal_String ("mapping.xml"));
+      Input.Open_By_File_Name (Generator.Arguments.Type_Mapping_File);
       Reader.Set_Content_Handler (Handler'Unchecked_Access);
 --      Reader.Set_Error_Handler (Handler'Unchecked_Access);
       Reader.Parse (Input'Unchecked_Access);

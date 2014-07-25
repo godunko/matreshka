@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 with League.String_Vectors;
 
 package Generator.Arguments is
@@ -57,6 +58,9 @@ package Generator.Arguments is
 
    Metamodel_URIs        : League.String_Vectors.Universal_String_Vector;
    --  URIs of metamodels to be analyzed and generated as module.
+
+   Type_Mapping_File     : League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("mapping.xml");
 
    First_Year            : Natural := 0;
    Last_Year             : Natural := 0;

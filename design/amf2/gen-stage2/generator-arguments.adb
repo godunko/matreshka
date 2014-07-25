@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2014, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -50,9 +50,10 @@ package body Generator.Arguments is
    ----------------------------------
 
    procedure Parse_Command_Line_Arguments is
-      Arguments : constant League.String_Vectors.Universal_String_Vector
+      Arguments    : constant League.String_Vectors.Universal_String_Vector
         := League.Application.Arguments;
-      Argument  : League.Strings.Universal_String;
+      Argument     : League.Strings.Universal_String;
+      Next_Is_File : Boolean := False;
 
    begin
       --  Parse first and last years for copyright statement.
@@ -79,6 +80,13 @@ package body Generator.Arguments is
             Generate_Reflection   := True;
             Generate_Public_API   := False;
             Generate_API_Stubs    := True;
+
+         elsif Argument = +"--mapping" then
+            Next_Is_File := True;
+
+         elsif Next_Is_File then
+            Next_Is_File := False;
+            Type_Mapping_File := Argument;
 
          else
             --  Command line argument is not recognized, treat it as metamodel
