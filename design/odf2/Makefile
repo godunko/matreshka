@@ -80,3 +80,8 @@ demo:
 
 run: demo
 	.objs/vdocs-aws
+
+domconf:
+	gprbuild -p -j0 -P domconf.gpr
+	.objs/domconf ../../testsuite/xml/DOM-Test-Suite/level2/core/attrgetownerelement01.xml
+#	.objs/domconf ../../testsuite/xml/DOM-Test-Suite/level2/core/alltests.xml
