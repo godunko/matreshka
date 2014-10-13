@@ -7,6 +7,7 @@ with Asis.Compilation_Units;
 with Asis.Elements;
 with Asis.Errors;
 with Asis.Exceptions;
+with Asis.Extensions.Flat_Kinds;
 with Asis.Implementation;
 
 with League.Application;
@@ -16,8 +17,8 @@ with League.Strings;
 with Engines;
 with Engines.Property_Names;
 
+with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Procedure_Body_Declarations;
-with Asis.Extensions.Flat_Kinds;
 
 procedure Asis2JS is
    procedure Register_Actions (Engine : in out Engines.Engine);
@@ -60,6 +61,10 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_Procedure_Body_Declaration,
          Engines.Property_Names.Code,
          Properties.Declarations.Procedure_Body_Declarations.Code'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Defining_Identifier,
+         Engines.Property_Names.Code,
+         Properties.Declarations.Defining_Names.Code'Access);
    end Register_Actions;
 
 begin

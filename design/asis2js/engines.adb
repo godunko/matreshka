@@ -1,3 +1,5 @@
+with Ada.Wide_Text_IO;
+
 with Asis.Elements;
 
 with League.Strings.Hash;
@@ -35,6 +37,15 @@ package body Engines is
          begin
             Self.Actions.Element ((Kind, Name)) (Self, Element, Name);
             Pos := Self.Property_Cache.Find (Key);
+         exception
+            when Constraint_Error =>
+               Ada.Wide_Text_IO.Put
+                 (Asis.Extensions.Flat_Kinds.Flat_Element_Kinds'Wide_Image
+                    (Kind));
+               Ada.Wide_Text_IO.Put (" ");
+               Ada.Wide_Text_IO.Put_Line (Name.To_UTF_16_Wide_String);
+               Ada.Wide_Text_IO.Put_Line (Asis.Elements.Debug_Image (Element));
+               raise;
          end;
       end if;
 
