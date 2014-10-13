@@ -8,6 +8,9 @@ package WebAPI.HTML.Windows is
 
    not overriding function Get_Document
     (Self : not null access Window)
-      return WebAPI.HTML.Documents.Document_Access is abstract;
+      return WebAPI.HTML.Documents.Document_Access is abstract
+        with Import     => True,
+             Convention => JavaScript_Getter,
+             Link_Name  => "document";
 
 end WebAPI.HTML.Windows;
