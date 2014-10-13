@@ -4,6 +4,17 @@ with League.Strings.Hash;
 
 package body Engines is
 
+   ---------
+   -- "=" --
+   ---------
+
+   overriding function "=" (Left, Right : Property_Key) return Boolean is
+      use type League.Strings.Universal_String;
+   begin
+      return Asis.Elements.Is_Identical (Left.Element, Right.Element) and then
+        Left.Name = Right.Name;
+   end "=";
+
    ------------------
    -- Get_Property --
    ------------------
@@ -42,7 +53,7 @@ package body Engines is
       Name_Hash : constant Ada.Containers.Hash_Type :=
         League.Strings.Hash (Value.Name);
    begin
-      return Name_Hash + Ada.Containers.Hash_Type (Element_Hash);
+      return Name_Hash + Ada.Containers.Hash_Type (abs Element_Hash);
    end Hash;
 
    ----------

@@ -1,6 +1,6 @@
 with League.Holders;
 
-package body Properties.Declarations.Procedure_Declarations is
+package body Properties.Declarations.Procedure_Body_Declarations is
 
    ----------
    -- Code --
@@ -23,4 +23,4 @@ package body Properties.Declarations.Procedure_Declarations is
          Value   => Value);
    end Code;
 
-end Properties.Declarations.Procedure_Declarations;
+end Properties.Declarations.Procedure_Body_Declarations;

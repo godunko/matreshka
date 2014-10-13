@@ -6,7 +6,7 @@ project ASIS2JS is
    for Main use ("asis2js.adb");
 
    package Compiler is
-      for Default_Switches ("ada") use ("-g", "-O2", "-gnatwa",
+      for Default_Switches ("ada") use ("-g", "-O0", "-gnatwa",
           "-gnatyaAbcdefhiIkmnoOprsStux", "-gnato", "-fstack-check");
    end Compiler;
 

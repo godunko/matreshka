@@ -41,6 +41,7 @@ private
    end record;
 
    function Hash (Value : Property_Key) return Ada.Containers.Hash_Type;
+   overriding function "=" (Left, Right : Property_Key) return Boolean;
 
    package Property_Maps is new Ada.Containers.Hashed_Maps
      (Key_Type        => Property_Key,

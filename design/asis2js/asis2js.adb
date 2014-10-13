@@ -16,7 +16,11 @@ with League.Strings;
 with Engines;
 with Engines.Property_Names;
 
+with Properties.Declarations.Procedure_Body_Declarations;
+with Asis.Extensions.Flat_Kinds;
+
 procedure Asis2JS is
+   procedure Register_Actions (Engine : in out Engines.Engine);
    procedure Compile (Unit : Asis.Compilation_Unit);
 
    Engine      : Engines.Engine;
@@ -30,6 +34,10 @@ procedure Asis2JS is
 
    File_Name   : constant Wide_String := File.To_UTF_16_Wide_String;
 
+   -------------
+   -- Compile --
+   -------------
+
    procedure Compile (Unit : Asis.Compilation_Unit) is
       Result : League.Holders.Holder;
       Code   : League.Strings.Universal_String;
@@ -42,6 +50,18 @@ procedure Asis2JS is
       Ada.Wide_Wide_Text_IO.Put_Line (Code.To_Wide_Wide_String);
    end Compile;
 
+   ----------------------
+   -- Register_Actions --
+   ----------------------
+
+   procedure Register_Actions (Engine : in out Engines.Engine) is
+   begin
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Procedure_Body_Declaration,
+         Engines.Property_Names.Code,
+         Properties.Declarations.Procedure_Body_Declarations.Code'Access);
+   end Register_Actions;
+
 begin
    Asis.Implementation.Initialize ("");
 
@@ -51,6 +71,8 @@ begin
       Parameters  => ASIS_Params.To_UTF_16_Wide_String);
 
    Asis.Ada_Environments.Open (Context);
+
+   Register_Actions (Engine);
 
    declare
       Units : constant Asis.Compilation_Unit_List :=
