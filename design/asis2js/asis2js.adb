@@ -20,6 +20,7 @@ with Engines.Property_Names;
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Function_Declarations;
+with Properties.Declarations.Function_Renaming_Declaration;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
 with Properties.Expressions.Function_Calls;
@@ -92,6 +93,10 @@ procedure Asis2JS is
          Engines.Property_Names.Code,
          Properties.Declarations.Procedure_Body_Declarations.Code'Access);
       Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Function_Renaming_Declaration,
+         Engines.Property_Names.Code,
+         Properties.Declarations.Function_Renaming_Declaration.Code'Access);
+      Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Defining_Identifier,
          Engines.Property_Names.Code,
          Properties.Declarations.Defining_Names.Code'Access);
@@ -114,6 +119,11 @@ procedure Asis2JS is
          Engines.Property_Names.Call_Convention,
          Properties.Declarations.Function_Declarations.Call_Convention'Access);
       Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Function_Renaming_Declaration,
+         Engines.Property_Names.Call_Convention,
+         Properties.Declarations.Function_Renaming_Declaration
+           .Call_Convention'Access);
+      Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Procedure_Declaration,
          Engines.Property_Names.Call_Convention,
          Properties.Declarations.Procedure_Declaration.Call_Convention'Access);
@@ -128,6 +138,11 @@ procedure Asis2JS is
          Engines.Property_Names.Intrinsic_Name,
          Properties.Declarations.Function_Declarations.Intrinsic_Name'Access);
       Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Function_Renaming_Declaration,
+         Engines.Property_Names.Intrinsic_Name,
+         Properties.Declarations.Function_Renaming_Declaration
+           .Intrinsic_Name'Access);
+      Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Procedure_Declaration,
          Engines.Property_Names.Intrinsic_Name,
          Properties.Declarations.Procedure_Declaration.Intrinsic_Name'Access);
@@ -139,6 +154,24 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_Selected_Component,
          Engines.Property_Names.Intrinsic_Name,
          Properties.Expressions.Selected_Components.Call_Convention'Access);
+
+      for J in Asis.Extensions.Flat_Kinds.An_And_Operator
+        .. Asis.Extensions.Flat_Kinds.A_Not_Operator
+      loop
+         Engine.Register_Calculator
+           (J,
+            Engines.Property_Names.Code,
+            Properties.Expressions.Identifiers.Code'Access);
+         Engine.Register_Calculator
+           (J,
+            Engines.Property_Names.Call_Convention,
+            Properties.Expressions.Identifiers.Call_Convention'Access);
+         Engine.Register_Calculator
+           (J,
+            Engines.Property_Names.Intrinsic_Name,
+            Properties.Expressions.Identifiers.Intrinsic_Name'Access);
+      end loop;
+
    end Register_Actions;
 
 begin
