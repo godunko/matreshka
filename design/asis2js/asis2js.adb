@@ -28,6 +28,7 @@ with Properties.Expressions.Identifiers;
 with Properties.Expressions.Selected_Components;
 with Properties.Expressions.String_Literal;
 with Properties.Expressions.Type_Conversion;
+with Properties.Statements.Null_Statement;
 with Properties.Statements.Procedure_Call_Statement;
 
 procedure Asis2JS is
@@ -100,6 +101,10 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_Defining_Identifier,
          Engines.Property_Names.Code,
          Properties.Declarations.Defining_Names.Code'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Null_Statement,
+         Engines.Property_Names.Code,
+         Properties.Statements.Null_Statement.Code'Access);
       Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Procedure_Call_Statement,
          Engines.Property_Names.Code,
