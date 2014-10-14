@@ -41,26 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-
-with WebAPI.HTML.Elements;
 with WebAPI.HTML.Rendering_Contexts;
 
-package WebAPI.HTML.Canvas_Elements is
+package WebAPI.WebGL.Rendering_Contexts is
 
-   type HTML_Canvas_Element is limited interface
-     and WebAPI.HTML.Elements.HTML_Element;
+   type WebGL_Rendering_Context is limited interface
+     and WebAPI.HTML.Rendering_Contexts.Rendering_Context;
 
-   type HTML_Canvas_Element_Access is access all HTML_Canvas_Element'Class
-      with Storage_Size => 0;
+   type WebGL_Rendering_Context_Access is
+     access all WebGL_Rendering_Context'Class
+       with Storage_Size => 0;
 
-   not overriding function Get_Context
-    (Self       : not null access HTML_Canvas_Element;
-     Context_Id : League.Strings.Universal_String)
-       return WebAPI.HTML.Rendering_Contexts.Rendering_Context_Access
-         is abstract
-           with Import     => True,
-                Convention => JavaScript_Function,
-                Link_Name  => "getContext";
-
-end WebAPI.HTML.Canvas_Elements;
+end WebAPI.WebGL.Rendering_Contexts;
