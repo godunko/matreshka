@@ -4,7 +4,8 @@ package WebAPI.HTML.Windows is
 
    type Window is limited interface;
 
-   type Window_Access is access all Window'Class;
+   type Window_Access is access all Window'Class
+     with Storage_Size => 0;
 
    not overriding function Get_Document
     (Self : not null access Window)
