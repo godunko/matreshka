@@ -2,7 +2,30 @@ with Asis.Declarations;
 with Asis.Elements;
 with Asis.Expressions;
 
+with Engines.Property_Types;
+
 package body Properties.Expressions.Identifiers is
+
+   ---------------------
+   -- Call_Convention --
+   ---------------------
+
+   function Call_Convention
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      Def : constant Asis.Declaration :=
+        Asis.Expressions.Corresponding_Name_Definition (Element);
+   begin
+      if Asis.Elements.Is_Nil (Def) then
+         return Engines.Property_Types.Call_Convention_Holders.To_Holder
+           (Engines.Property_Types.Unspecified);
+      end if;
+
+      return Engine.Get_Property
+        (Asis.Elements.Enclosing_Element (Def), Name);
+   end Call_Convention;
 
    ----------
    -- Code --

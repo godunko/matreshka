@@ -19,6 +19,7 @@ with Engines.Property_Names;
 
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
+with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
@@ -60,6 +61,7 @@ procedure Asis2JS is
 
    procedure Register_Actions (Engine : in out Engines.Engine) is
    begin
+      --  Code
       Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Constant_Declaration,
          Engines.Property_Names.Code,
@@ -80,6 +82,20 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_Defining_Identifier,
          Engines.Property_Names.Code,
          Properties.Declarations.Defining_Names.Code'Access);
+
+      --  Call_Convention
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Function_Call,
+         Engines.Property_Names.Call_Convention,
+         Properties.Expressions.Function_Calls.Call_Convention'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.An_Identifier,
+         Engines.Property_Names.Call_Convention,
+         Properties.Expressions.Identifiers.Call_Convention'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Function_Declaration,
+         Engines.Property_Names.Call_Convention,
+         Properties.Declarations.Function_Declarations.Call_Convention'Access);
    end Register_Actions;
 
 begin
