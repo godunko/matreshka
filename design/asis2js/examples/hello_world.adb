@@ -15,7 +15,7 @@ procedure Hello_World is
    P : constant WebAPI.DOM.Elements.Element_Access
      := D.Get_Element_By_Id (League.Strings.To_Universal_String ("text"));
    T : constant WebAPI.DOM.Texts.Text_Access
-     := D.Create_Text_Node (League.Strings.To_Universal_String ("label"));
+     := D.Create_Text_Node (League.Strings.To_Universal_String ("Hello, world!"));
 
 begin
    P.Append_Child (T);
