@@ -39,6 +39,21 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          end loop;
       end;
 
+      declare
+         List : constant Asis.Element_List :=
+           Asis.Declarations.Body_Statements (Element);
+      begin
+         for J in List'Range loop
+            declare
+               Stmt_Code : constant League.Strings.Universal_String :=
+                 League.Holders.Element
+                   (Engine.Get_Property (List (J), Name));
+            begin
+               Text.Append (Stmt_Code);
+            end;
+         end loop;
+      end;
+
       Text.Append ("}");
       Value := League.Holders.To_Holder (Text);
 

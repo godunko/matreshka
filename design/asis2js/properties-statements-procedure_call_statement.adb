@@ -6,26 +6,12 @@ with Asis.Statements;
 with Engines.Property_Names;
 with Engines.Property_Types;
 
-package body Properties.Expressions.Function_Calls is
+package body Properties.Statements.Procedure_Call_Statement is
 
    function Intrinsic
      (Engine  : access Engines.Engine;
       Element : Asis.Expression;
       Name    : League.Strings.Universal_String) return League.Holders.Holder;
-
-   ---------------------
-   -- Call_Convention --
-   ---------------------
-
-   function Call_Convention
-     (Engine  : access Engines.Engine;
-      Element : Asis.Expression;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
-   is
-   begin
-      return Engine.Get_Property
-        (Asis.Expressions.Prefix (Element), Name);
-   end Call_Convention;
 
    ----------
    -- Code --
@@ -42,8 +28,9 @@ package body Properties.Expressions.Function_Calls is
       Value : League.Holders.Holder;
       Conv  : constant Engines.Property_Types.Call_Convention :=
         Engines.Property_Types.Call_Convention_Holders.Element
-          (Engine.Get_Property (Element,
-                                Engines.Property_Names.Call_Convention));
+          (Engine.Get_Property
+             (Asis.Statements.Called_Name (Element),
+              Engines.Property_Names.Call_Convention));
    begin
       if Conv = Engines.Property_Types.Intrinsic then
          return Intrinsic (Engine, Element, Name);
@@ -54,12 +41,12 @@ package body Properties.Expressions.Function_Calls is
          Arg    : League.Strings.Universal_String;
          Prefix : League.Strings.Universal_String;
          List   : constant Asis.Association_List :=
-           Asis.Expressions.Function_Call_Parameters
+           Asis.Statements.Call_Statement_Parameters
              (Element, Normalized => False);
       begin
          Prefix := League.Holders.Element
            (Engine.Get_Property
-              (Asis.Expressions.Prefix (Element), Name));
+              (Asis.Statements.Called_Name (Element), Name));
 
          Text := League.Holders.Element
            (Engine.Get_Property
@@ -67,7 +54,7 @@ package body Properties.Expressions.Function_Calls is
          Text.Append (".");
          Text.Append (Prefix);
 
-         if Conv /= Engines.Property_Types.JavaScript_Getter then
+         if Conv /= Engines.Property_Types.JavaScript_Setter then
             Text.Append ("(");
 
             for J in 2 .. List'Last loop
@@ -83,6 +70,8 @@ package body Properties.Expressions.Function_Calls is
             end loop;
 
             Text.Append (")");
+         else
+            raise Program_Error with "not implemented";
          end if;
       end;
 
@@ -99,24 +88,21 @@ package body Properties.Expressions.Function_Calls is
       Element : Asis.Expression;
       Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
+      pragma Unreferenced (Name);
       Func : constant League.Strings.Universal_String :=
         League.Holders.Element
           (Engine.Get_Property
-             (Asis.Expressions.Prefix (Element),
+             (Asis.Statements.Called_Name (Element),
               Engines.Property_Names.Intrinsic_Name));
 
       List   : constant Asis.Association_List :=
-        Asis.Expressions.Function_Call_Parameters
+        Asis.Statements.Call_Statement_Parameters
           (Element, Normalized => False);
    begin
-      if Func.To_Wide_Wide_String = "League.Strings.To_Universal_String" then
-         return Engine.Get_Property
-           (Asis.Expressions.Actual_Parameter (List (1)), Name);
-      else
-         Ada.Wide_Wide_Text_IO.Put ("Unimplemented Intrinsic: ");
-         Ada.Wide_Wide_Text_IO.Put (Func.To_Wide_Wide_String);
-         raise Program_Error;
-      end if;
+      Ada.Wide_Wide_Text_IO.Put ("Unimplemented Intrinsic: ");
+      Ada.Wide_Wide_Text_IO.Put (Func.To_Wide_Wide_String);
+      raise Program_Error;
+      return E : League.Holders.Holder;
    end Intrinsic;
 
-end Properties.Expressions.Function_Calls;
+end Properties.Statements.Procedure_Call_Statement;

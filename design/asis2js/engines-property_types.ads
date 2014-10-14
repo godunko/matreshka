@@ -5,6 +5,7 @@ package Engines.Property_Types is
    type Call_Convention is
      (Intrinsic,
       JavaScript_Getter,
+      JavaScript_Setter,
       JavaScript_Function,
       Unspecified);
 

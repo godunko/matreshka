@@ -21,11 +21,13 @@ with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Procedure_Body_Declarations;
+with Properties.Declarations.Procedure_Declaration;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
 with Properties.Expressions.Selected_Components;
 with Properties.Expressions.String_Literal;
 with Properties.Expressions.Type_Conversion;
+with Properties.Statements.Procedure_Call_Statement;
 
 procedure Asis2JS is
    procedure Register_Actions (Engine : in out Engines.Engine);
@@ -93,6 +95,10 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_Defining_Identifier,
          Engines.Property_Names.Code,
          Properties.Declarations.Defining_Names.Code'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Procedure_Call_Statement,
+         Engines.Property_Names.Code,
+         Properties.Statements.Procedure_Call_Statement.Code'Access);
 
       --  Call_Convention
       Engine.Register_Calculator
@@ -108,6 +114,10 @@ procedure Asis2JS is
          Engines.Property_Names.Call_Convention,
          Properties.Declarations.Function_Declarations.Call_Convention'Access);
       Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Procedure_Declaration,
+         Engines.Property_Names.Call_Convention,
+         Properties.Declarations.Procedure_Declaration.Call_Convention'Access);
+      Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Selected_Component,
          Engines.Property_Names.Call_Convention,
          Properties.Expressions.Selected_Components.Call_Convention'Access);
@@ -117,6 +127,10 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_Function_Declaration,
          Engines.Property_Names.Intrinsic_Name,
          Properties.Declarations.Function_Declarations.Intrinsic_Name'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Procedure_Declaration,
+         Engines.Property_Names.Intrinsic_Name,
+         Properties.Declarations.Procedure_Declaration.Intrinsic_Name'Access);
       Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.An_Identifier,
          Engines.Property_Names.Intrinsic_Name,
