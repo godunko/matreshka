@@ -1,17 +1,15 @@
 with Asis.Declarations;
 
-with League.Holders;
-
 package body Properties.Declarations.Procedure_Body_Declarations is
 
    ----------
    -- Code --
    ----------
 
-   procedure Code
-     (Engine  : in out Engines.Engine;
+   function Code
+     (Engine  : access Engines.Engine;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String)
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
       Subprogram_Name : constant League.Strings.Universal_String :=
         League.Holders.Element
@@ -24,14 +22,27 @@ package body Properties.Declarations.Procedure_Body_Declarations is
    begin
       Text.Append ("function ");
       Text.Append (Subprogram_Name);
-      Text.Append (" (){}");
+      Text.Append (" (){");
 
+      declare
+         List : constant Asis.Element_List :=
+           Asis.Declarations.Body_Declarative_Items (Element);
+      begin
+         for J in List'Range loop
+            declare
+               Var_Code : constant League.Strings.Universal_String :=
+                 League.Holders.Element
+                   (Engine.Get_Property (List (J), Name));
+            begin
+               Text.Append (Var_Code);
+            end;
+         end loop;
+      end;
+
+      Text.Append ("}");
       Value := League.Holders.To_Holder (Text);
 
-      Engine.Set_Property
-        (Element => Element,
-         Name    => Name,
-         Value   => Value);
+      return Value;
    end Code;
 
 end Properties.Declarations.Procedure_Body_Declarations;

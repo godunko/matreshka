@@ -17,14 +17,17 @@ with League.Strings;
 with Engines;
 with Engines.Property_Names;
 
+with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Procedure_Body_Declarations;
+with Properties.Expressions.Function_Calls;
+with Properties.Expressions.Identifiers;
 
 procedure Asis2JS is
    procedure Register_Actions (Engine : in out Engines.Engine);
    procedure Compile (Unit : Asis.Compilation_Unit);
 
-   Engine      : Engines.Engine;
+   Engine      : aliased Engines.Engine;
    Context     : Asis.Context;
 
    ASIS_Params : constant League.Strings.Universal_String :=
@@ -57,6 +60,18 @@ procedure Asis2JS is
 
    procedure Register_Actions (Engine : in out Engines.Engine) is
    begin
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Constant_Declaration,
+         Engines.Property_Names.Code,
+         Properties.Declarations.Constant_Declarations.Code'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Function_Call,
+         Engines.Property_Names.Code,
+         Properties.Expressions.Function_Calls.Code'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.An_Identifier,
+         Engines.Property_Names.Code,
+         Properties.Expressions.Identifiers.Code'Access);
       Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Procedure_Body_Declaration,
          Engines.Property_Names.Code,

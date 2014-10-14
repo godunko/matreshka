@@ -2,13 +2,14 @@ with Asis;
 
 with Engines;
 
+with League.Holders;
 with League.Strings;
 
 package Properties.Declarations.Procedure_Body_Declarations is
 
-   procedure Code
-     (Engine  : in out Engines.Engine;
+   function Code
+     (Engine  : access Engines.Engine;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String);
+      Name    : League.Strings.Universal_String) return League.Holders.Holder;
 
 end Properties.Declarations.Procedure_Body_Declarations;

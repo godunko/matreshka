@@ -1,5 +1,4 @@
 with Asis.Declarations;
-with League.Holders;
 
 package body Properties.Declarations.Defining_Names is
 
@@ -7,11 +6,12 @@ package body Properties.Declarations.Defining_Names is
    -- Code --
    ----------
 
-   procedure Code
-     (Engine  : in out Engines.Engine;
+   function Code
+     (Engine  : access Engines.Engine;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String)
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
+      pragma Unreferenced (Engine, Name);
       Image : constant Wide_String :=
         Asis.Declarations.Defining_Name_Image (Element);
       Text : constant League.Strings.Universal_String :=
@@ -19,7 +19,7 @@ package body Properties.Declarations.Defining_Names is
       Value : constant League.Holders.Holder :=
         League.Holders.To_Holder (Text.To_Lowercase);
    begin
-      Engine.Set_Property (Element, Name, Value);
+      return Value;
    end Code;
 
 end Properties.Declarations.Defining_Names;

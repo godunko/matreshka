@@ -11,21 +11,16 @@ package Engines is
    type Engine is tagged limited private;
 
    function Get_Property
-     (Self    : in out Engine;
+     (Self    : access Engine;
       Element : Asis.Element;
       Name    : League.Strings.Universal_String)
      return League.Holders.Holder;
 
-   procedure Set_Property
-     (Self    : in out Engine;
+   type Action_Callback is access function
+     (Engine  : access Engines.Engine;
       Element : Asis.Element;
-      Name    : League.Strings.Universal_String;
-      Value   : League.Holders.Holder);
-
-   type Action_Callback is access procedure
-     (Engine  : in out Engines.Engine;
-      Element : Asis.Element;
-      Name    : League.Strings.Universal_String);
+      Name    : League.Strings.Universal_String)
+      return League.Holders.Holder;
 
    procedure Register_Calculator
      (Self : in out Engine;

@@ -22,21 +22,24 @@ package body Engines is
    ------------------
 
    function Get_Property
-     (Self    : in out Engine;
+     (Self    : access Engine;
       Element : Asis.Element;
       Name    : League.Strings.Universal_String)
       return League.Holders.Holder
    is
       Key : constant Property_Key := (Element, Name);
-      Pos : Property_Maps.Cursor := Self.Property_Cache.Find (Key);
+      Pos : constant Property_Maps.Cursor := Self.Property_Cache.Find (Key);
+      Value : League.Holders.Holder;
    begin
-      if not Property_Maps.Has_Element (Pos) then
+      if Property_Maps.Has_Element (Pos) then
+         Value := Property_Maps.Element (Pos);
+      else
          declare
             Kind : constant Asis.Extensions.Flat_Kinds.Flat_Element_Kinds :=
               Asis.Extensions.Flat_Kinds.Flat_Element_Kind (Element);
          begin
-            Self.Actions.Element ((Kind, Name)) (Self, Element, Name);
-            Pos := Self.Property_Cache.Find (Key);
+            Value := Self.Actions.Element ((Kind, Name)) (Self, Element, Name);
+            Self.Property_Cache.Insert (Key, Value);
          exception
             when Constraint_Error =>
                Ada.Wide_Text_IO.Put
@@ -49,7 +52,7 @@ package body Engines is
          end;
       end if;
 
-      return Property_Maps.Element (Pos);
+      return Value;
    end Get_Property;
 
    ----------
@@ -95,20 +98,5 @@ package body Engines is
    begin
       Self.Actions.Insert ((Kind, Name), Action);
    end Register_Calculator;
-
-   ------------------
-   -- Set_Property --
-   ------------------
-
-   procedure Set_Property
-     (Self    : in out Engine;
-      Element : Asis.Element;
-      Name    : League.Strings.Universal_String;
-      Value   : League.Holders.Holder)
-   is
-      Key : constant Property_Key := (Element, Name);
-   begin
-      Self.Property_Cache.Insert (Key, Value);
-   end Set_Property;
 
 end Engines;
