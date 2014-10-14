@@ -53,4 +53,25 @@ package body Properties.Expressions.Identifiers is
       end if;
    end Code;
 
+   --------------------
+   -- Intrinsic_Name --
+   --------------------
+
+   function Intrinsic_Name
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      Def : constant Asis.Declaration :=
+        Asis.Expressions.Corresponding_Name_Definition (Element);
+   begin
+      if Asis.Elements.Is_Nil (Def) then
+         return League.Holders.To_Holder
+           (League.Strings.Empty_Universal_String);
+      end if;
+
+      return Engine.Get_Property
+        (Asis.Elements.Enclosing_Element (Def), Name);
+   end Intrinsic_Name;
+
 end Properties.Expressions.Identifiers;

@@ -5,7 +5,7 @@ with Engines;
 with League.Holders;
 with League.Strings;
 
-package Properties.Declarations.Function_Declarations is
+package Properties.Expressions.Selected_Components is
 
    function Call_Convention
      (Engine  : access Engines.Engine;
@@ -17,4 +17,4 @@ package Properties.Declarations.Function_Declarations is
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String) return League.Holders.Holder;
 
-end Properties.Declarations.Function_Declarations;
+end Properties.Expressions.Selected_Components;

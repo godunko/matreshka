@@ -23,6 +23,8 @@ with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
+with Properties.Expressions.Selected_Components;
+with Properties.Expressions.String_Literal;
 
 procedure Asis2JS is
    procedure Register_Actions (Engine : in out Engines.Engine);
@@ -75,6 +77,10 @@ procedure Asis2JS is
          Engines.Property_Names.Code,
          Properties.Expressions.Identifiers.Code'Access);
       Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_String_Literal,
+         Engines.Property_Names.Code,
+         Properties.Expressions.String_Literal.Code'Access);
+      Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Procedure_Body_Declaration,
          Engines.Property_Names.Code,
          Properties.Declarations.Procedure_Body_Declarations.Code'Access);
@@ -96,6 +102,24 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_Function_Declaration,
          Engines.Property_Names.Call_Convention,
          Properties.Declarations.Function_Declarations.Call_Convention'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Selected_Component,
+         Engines.Property_Names.Call_Convention,
+         Properties.Expressions.Selected_Components.Call_Convention'Access);
+
+      --  Intrinsic_Name
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Function_Declaration,
+         Engines.Property_Names.Intrinsic_Name,
+         Properties.Declarations.Function_Declarations.Intrinsic_Name'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.An_Identifier,
+         Engines.Property_Names.Intrinsic_Name,
+         Properties.Expressions.Identifiers.Intrinsic_Name'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Selected_Component,
+         Engines.Property_Names.Intrinsic_Name,
+         Properties.Expressions.Selected_Components.Call_Convention'Access);
    end Register_Actions;
 
 begin
