@@ -1,4 +1,4 @@
 all:
 	gprbuild -p -P asis2js.gpr
-	cd examples; gcc -c -gnatct -I../webapi -I../webapi/dom -I../webapi/html hello_world.adb
-	./asis2js "-CA -Texamples" `pwd`/examples/hello_world.adb
+	gprbuild -c -u -p -P examples/hello_world.gpr hello_world.adb -cargs -gnatct
+	./asis2js "-CA -Texamples/.objs" `pwd`/examples/hello_world.adb
