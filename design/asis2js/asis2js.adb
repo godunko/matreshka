@@ -25,6 +25,7 @@ with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
 with Properties.Expressions.Selected_Components;
 with Properties.Expressions.String_Literal;
+with Properties.Expressions.Type_Conversion;
 
 procedure Asis2JS is
    procedure Register_Actions (Engine : in out Engines.Engine);
@@ -80,6 +81,10 @@ procedure Asis2JS is
         (Asis.Extensions.Flat_Kinds.A_String_Literal,
          Engines.Property_Names.Code,
          Properties.Expressions.String_Literal.Code'Access);
+      Engine.Register_Calculator
+        (Asis.Extensions.Flat_Kinds.A_Type_Conversion,
+         Engines.Property_Names.Code,
+         Properties.Expressions.Type_Conversion.Code'Access);
       Engine.Register_Calculator
         (Asis.Extensions.Flat_Kinds.A_Procedure_Body_Declaration,
          Engines.Property_Names.Code,
