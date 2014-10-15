@@ -1,5 +1,6 @@
 with League.Strings;
 
+with WebAPI.DOM.Node_Lists;
 with WebAPI.HTML.Canvas_Elements;
 with WebAPI.HTML.Documents;
 with WebAPI.HTML.Globals; use WebAPI.HTML.Globals;
@@ -21,6 +22,8 @@ procedure GLDraw is
    G : constant WebAPI.WebGL.Rendering_Contexts.WebGL_Rendering_Context_Access
      := WebAPI.WebGL.Rendering_Contexts.WebGL_Rendering_Context_Access
          (C.Get_Context (+"webgl"));
+   L : constant WebAPI.DOM.Node_Lists.Node_List
+     := C.Query_Selector_All (+"test");
 
 begin
    if G = null then
