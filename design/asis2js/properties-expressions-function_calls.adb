@@ -121,7 +121,7 @@ package body Properties.Expressions.Function_Calls is
             Text : League.Strings.Universal_String;
          begin
             Text.Append (League.Holders.Element (Args (1)));
-            Text.Append (" = ");
+            Text.Append (" == ");
             Text.Append (League.Holders.Element (Args (2)));
 
             return League.Holders.To_Holder (Text);
