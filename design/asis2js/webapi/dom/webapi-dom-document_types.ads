@@ -42,19 +42,10 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with WebAPI.DOM.Child_Nodes;
-with WebAPI.DOM.Nodes;
-with WebAPI.DOM.Non_Document_Type_Child_Nodes;
-with WebAPI.DOM.Parent_Nodes;
 
-package WebAPI.DOM.Elements is
+package WebAPI.DOM.Document_Types is
 
-   type Element is limited interface
-     and WebAPI.DOM.Child_Nodes.Child_Node
-     and WebAPI.DOM.Nodes.Node
-     and WebAPI.DOM.Non_Document_Type_Child_Nodes.Non_Document_Type_Child_Node
-     and WebAPI.DOM.Parent_Nodes.Parent_Node;
+   type Document_Type is limited interface
+     and WebAIP.DOM.Child_Nodes.Child_Node;
 
-   type Element_Access is access all Element'Class
-     with Storage_Size => 0;
-
-end WebAPI.DOM.Elements;
+end WebAPI.DOM.Document_Types;

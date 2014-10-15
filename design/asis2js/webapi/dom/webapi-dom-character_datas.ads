@@ -41,12 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with WebAPI.DOM.Child_Nodes;
 with WebAPI.DOM.Nodes;
 with WebAPI.DOM.Non_Document_Type_Child_Nodes;
 
 package WebAPI.DOM.Character_Datas is
 
    type Character_Data is limited interface
+     and WebAPI.DOM.Child_Nodes.Child_Node
      and WebAPI.DOM.Nodes.Node
      and WebAPI.DOM.Non_Document_Type_Child_Nodes.Non_Document_Type_Child_Node;
 

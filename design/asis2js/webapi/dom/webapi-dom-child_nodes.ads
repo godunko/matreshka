@@ -41,20 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with WebAPI.DOM.Child_Nodes;
-with WebAPI.DOM.Nodes;
-with WebAPI.DOM.Non_Document_Type_Child_Nodes;
-with WebAPI.DOM.Parent_Nodes;
+--  This package provides binding to interface ChildNode.
+------------------------------------------------------------------------------
 
-package WebAPI.DOM.Elements is
+package WebAPI.DOM.Child_Nodes is
 
-   type Element is limited interface
-     and WebAPI.DOM.Child_Nodes.Child_Node
-     and WebAPI.DOM.Nodes.Node
-     and WebAPI.DOM.Non_Document_Type_Child_Nodes.Non_Document_Type_Child_Node
-     and WebAPI.DOM.Parent_Nodes.Parent_Node;
+   type Child_Node is limited interface;
 
-   type Element_Access is access all Element'Class
-     with Storage_Size => 0;
+   not overriding procedure Remove
+    (Self : not null access Child_Node) is abstract
+       with Import        => True,
+            Convention    => JavaScript_Function,
+            External_Name => "remove";
+   --  Removes node.
+   --
+   --  The remove() method must run these steps:
+   --
+   --   1. If the context object does not have a parent, terminate these steps.
+   --
+   --   2. Remove the context object from the context object's parent. 
 
-end WebAPI.DOM.Elements;
+end WebAPI.DOM.Child_Nodes;
