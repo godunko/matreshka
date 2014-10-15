@@ -43,10 +43,64 @@
 ------------------------------------------------------------------------------
 --  This package provides binding to interface HTMLCollection.
 ------------------------------------------------------------------------------
+with League.Strings;
+
+limited with WebAPI.DOM.Elements;
 
 package WebAPI.DOM.HTML_Collections is
 
-   type HTML_Collection is tagged private;
+   type HTML_Collection is tagged private
+     with Constant_Indexing => Item;
+
+   function Length (Self : HTML_Collection'Class) return Natural
+     with Import        => True,
+          Convention    => JavaScript_Property_Getter,
+          External_Name => "length";
+   --  Returns the number of elements in the collection.
+   --
+   --  The length attribute must return the number of nodes represented by the
+   --  collection.
+
+   function Item
+    (Self  : HTML_Collection'Class;
+     Index : Positive) return WebAPI.DOM.Elements.Element_Access
+       with Import        => True,
+            Convention    => JavaScript_Getter,
+            External_Name => "item";
+   --  Returns the element with index index from the collection. The elements
+   --  are sorted in tree order.
+   --
+   --  The item(index) method must return the indexth element in the
+   --  collection. If there is no indexth element in the collection, then the
+   --  method must return null.
+
+   function Named_Item
+    (Self : HTML_Collection'Class;
+     Name : League.Strings.Universal_String)
+       return WebAPI.DOM.Elements.Element_Access
+         with Import        => True,
+              Convention    => JavaScript_Getter,
+              External_Name => "namedItem";
+   --  Returns the first element with ID or name name from the collection.
+   --
+   --  The namedItem(key) method must run these steps:
+   --
+   --   1. If key is the empty string, return null.
+   --
+   --   2. Return the first element in the collection for which at least one of
+   --      the following is true:
+   --
+   --       - it has an ID which is key.
+   --
+   --       - it has a name attribute whose value is key; 
+   --
+   --      or null if there is no such element. 
+
+   function Item
+    (Self : HTML_Collection'Class;
+     Name : League.Strings.Universal_String)
+       return WebAPI.DOM.Elements.Element_Access renames Named_Item;
+   --  To allow Ada compiler to resolve constant indexing.
 
 private
 
