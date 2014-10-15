@@ -43,10 +43,24 @@
 ------------------------------------------------------------------------------
 --  This package provides binding to interface NodeList
 ------------------------------------------------------------------------------
+with WebAPI.DOM.Nodes;
 
 package WebAPI.DOM.Node_Lists is
 
-   type Node_List is tagged private;
+   type Node_List is tagged private
+     with Constant_Indexing => Item;
+
+   function Item
+    (Self  : Node_List'Class;
+     Index : Positive) return WebAPI.DOM.Nodes.Node_Access
+       with Import        => True,
+            Convention    => JavaScript_Getter,
+            External_Name => "item";
+
+   function Length (Self : Node_List'Class) return Natural
+     with Import        => True,
+          Convention    => JavaScript_Property_Getter,
+          External_Name => "length";
 
 private
 
