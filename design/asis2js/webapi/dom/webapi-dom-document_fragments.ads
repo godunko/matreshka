@@ -41,16 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with WebAPI.DOM.Nodes;
+--  This package provides binding to interface DocumentFragment.
+------------------------------------------------------------------------------
+with WebAPI.DOM.Non_Element_Parent_Nodes;
 with WebAPI.DOM.Parent_Nodes;
 
-package WebAPI.DOM.Elements is
+package WebAPI.DOM.Document_Fragments is
 
-   type Element is limited interface
-     and WebAPI.DOM.Nodes.Node
+   type Document_Fragment is limited interface
+     and WebAPI.DOM.Non_Element_Parent_Nodes.Non_Element_Parent_Node
      and WebAPI.DOM.Parent_Nodes.Parent_Node;
 
-   type Element_Access is access all Element'Class
+   type Document_Fragment_Access is access all Document_Fragment'Class
      with Storage_Size => 0;
 
-end WebAPI.DOM.Elements;
+end WebAPI.DOM.Document_Fragments;

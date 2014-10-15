@@ -41,16 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with WebAPI.DOM.Nodes;
-with WebAPI.DOM.Parent_Nodes;
+--  This package provides binding to interface NodeList
+------------------------------------------------------------------------------
 
-package WebAPI.DOM.Elements is
+package WebAPI.DOM.Node_Lists is
 
-   type Element is limited interface
-     and WebAPI.DOM.Nodes.Node
-     and WebAPI.DOM.Parent_Nodes.Parent_Node;
+   type Node_List is tagged private;
 
-   type Element_Access is access all Element'Class
-     with Storage_Size => 0;
+private
 
-end WebAPI.DOM.Elements;
+   type Node_List is tagged null record;
+
+end WebAPI.DOM.Node_Lists;

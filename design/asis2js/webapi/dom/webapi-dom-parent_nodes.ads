@@ -41,24 +41,89 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package is binding to interface NonElementParentNode.
+--  This package provides binding to interface ParentNode.
 ------------------------------------------------------------------------------
 with League.Strings;
 
-with WebAPI.DOM.Elements;
+limited with WebAPI.DOM.Elements;
+with WebAPI.DOM.HTML_Collections;
+with WebAPI.DOM.Node_Lists;
 
-package WebAPI.DOM.Non_Element_Parent_Nodes is
+package WebAPI.DOM.Parent_Nodes is
 
-   type Non_Element_Parent_Node is limited interface;
+   type Parent_Node is limited interface;
 
-   not overriding function Get_Element_By_Id
-    (Self       : not null access constant Non_Element_Parent_Node;
-     Element_Id : League.Strings.Universal_String)
+   type Parent_Node_Access is access all Parent_Node'Class
+     with Storage_Size => 0;
+
+   not overriding function Get_Children
+    (Self : not null access constant Parent_Node)
+       return not null WebAPI.DOM.HTML_Collections.HTML_Collection_Access
+         is abstract
+           with Import        => True,
+                Convention    => JavaScript_Getter,
+                External_Name => "children";
+   --  Returns the child elements.
+   --
+   --  The children attribute must return an HTMLCollection collection rooted
+   --  at the context object matching only element children.
+
+   not overriding function Get_First_Element_Child
+    (Self : not null access constant Parent_Node)
        return WebAPI.DOM.Elements.Element_Access is abstract
-         with Import     => True,
-              Convention => JavaScript_Function,
-              Link_Name  => "getElementById";
-   --  Returns the first element within node's descendants whose ID is
-   --  elementId.
+         with Import        => True,
+              Convention    => JavaScript_Getter,
+              External_Name => "firstElementChild";
+   --  Returns the first child that is an element, and null otherwise.
+   --
+   --  The firstElementChild attribute must return the first child that is an
+   --  element, and null otherwise.
 
-end WebAPI.DOM.Non_Element_Parent_Nodes;
+   not overriding function Get_Last_Element_Child
+    (Self : not null access constant Parent_Node)
+       return WebAPI.DOM.Elements.Element_Access is abstract
+         with Import        => True,
+              Convention    => JavaScript_Getter,
+              External_Name => "lastElementChild";
+   --  Returns the last child that is an element, and null otherwise.
+   --
+   --  The lastElementChild attribute must return the last child that is an
+   --  element, and null otherwise.
+
+   not overriding function Get_Child_Element_Count
+    (Self : not null access constant Parent_Node)
+       return Natural is abstract
+         with Import        => True,
+              Convention    => JavaScript_Getter,
+              External_Name => "childElementCount";
+   --  The childElementCount attribute must return the number of children of
+   --  the context object that are elements.
+
+   not overriding function Query_Selector
+    (Self      : not null access constant Parent_Node;
+     Selectors : League.Strings.Universal_String)
+       return WebAPI.DOM.Elements.Element_Access is abstract
+         with Import        => True,
+              Convention    => JavaScript_Function,
+              External_Name => "querySelector";
+   --  Returns the first element that is a descendant of node that matches
+   --  selectors. 
+   --
+   --  The querySelector(selectors) method must return the first result of
+   --  running scope-match a selectors string selectors against the context
+   --  object, and null if the result is an empty list otherwise.
+
+   not overriding function Query_Selector_All
+    (Self      : not null access constant Parent_Node;
+     Selectors : League.Strings.Universal_String)
+       return WebAPI.DOM.Node_Lists.Node_List is abstract
+         with Import        => True,
+              Convention    => JavaScript_Function,
+              External_Name => "querySelectorAll";
+   --  Returns all element descendants of node that match selectors.
+   --
+   --  The querySelectorAll(selectors) method must return the static result of
+   --  running scope-match a selectors string selectors against the context
+   --  object.
+
+end WebAPI.DOM.Parent_Nodes;

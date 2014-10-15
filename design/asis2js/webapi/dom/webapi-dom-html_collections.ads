@@ -41,16 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with WebAPI.DOM.Nodes;
-with WebAPI.DOM.Parent_Nodes;
+--  This package provides binding to interface HTMLCollection.
+------------------------------------------------------------------------------
 
-package WebAPI.DOM.Elements is
+package WebAPI.DOM.HTML_Collections is
 
-   type Element is limited interface
-     and WebAPI.DOM.Nodes.Node
-     and WebAPI.DOM.Parent_Nodes.Parent_Node;
+   type HTML_Collection is limited interface;
 
-   type Element_Access is access all Element'Class
+   type HTML_Collection_Access is access all HTML_Collection'Class
      with Storage_Size => 0;
 
-end WebAPI.DOM.Elements;
+end WebAPI.DOM.HTML_Collections;
