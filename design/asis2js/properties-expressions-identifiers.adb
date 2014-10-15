@@ -15,10 +15,19 @@ package body Properties.Expressions.Identifiers is
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
+      use type Asis.Expression_Kinds;
+
       Def : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Name_Definition (Element);
    begin
       if Asis.Elements.Is_Nil (Def) then
+         if Asis.Elements.Expression_Kind (Element) =
+           Asis.An_Operator_Symbol
+         then
+            return Engines.Property_Types.Call_Convention_Holders.To_Holder
+              (Engines.Property_Types.Intrinsic);
+         end if;
+
          return Engines.Property_Types.Call_Convention_Holders.To_Holder
            (Engines.Property_Types.Unspecified);
       end if;
@@ -62,10 +71,24 @@ package body Properties.Expressions.Identifiers is
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
+      use type Asis.Expression_Kinds;
+
       Def : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Name_Definition (Element);
    begin
       if Asis.Elements.Is_Nil (Def) then
+         if Asis.Elements.Expression_Kind (Element) =
+           Asis.An_Operator_Symbol
+         then
+            declare
+               Text : constant League.Strings.Universal_String :=
+                 League.Strings.From_UTF_16_Wide_String
+                   (Asis.Expressions.Name_Image (Element));
+            begin
+               return League.Holders.To_Holder (Text);
+            end;
+         end if;
+
          return League.Holders.To_Holder
            (League.Strings.Empty_Universal_String);
       end if;

@@ -20,11 +20,24 @@ package body Properties.Declarations.Function_Declarations is
       Name    : League.Strings.Universal_String)
       return League.Holders.Holder
    is
-      pragma Unreferenced (Engine, Name);
       Mark : Asis.Expression;
       List : constant Asis.Declaration_List :=
         Asis.Declarations.Aspect_Specifications (Element);
    begin
+      Ada.Wide_Text_IO.Put_Line
+        (Asis.Declarations.Defining_Name_Image
+           (Asis.Declarations.Names (Element) (1)));
+      if Asis.Elements.Is_Part_Of_Inherited (Element) then
+         return Engine.Get_Property
+           (Asis.Declarations.Corresponding_Subprogram_Derivation (Element),
+            Name);
+      end if;
+
+      if Asis.Elements.Is_Part_Of_Implicit (Element) then
+         return Engines.Property_Types.Call_Convention_Holders
+           .To_Holder (Engines.Property_Types.Intrinsic);
+      end if;
+
       if Asis.Compilation_Units.Unit_Full_Name
         (Asis.Elements.Enclosing_Compilation_Unit (Element))
           = "League.Strings"

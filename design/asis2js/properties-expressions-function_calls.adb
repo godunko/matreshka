@@ -1,7 +1,6 @@
 with Ada.Wide_Wide_Text_IO;
 
 with Asis.Expressions;
-with Asis.Statements;
 
 with Engines.Property_Names;
 with Engines.Property_Types;
@@ -108,10 +107,25 @@ package body Properties.Expressions.Function_Calls is
       List   : constant Asis.Association_List :=
         Asis.Expressions.Function_Call_Parameters
           (Element, Normalized => False);
+      Args   : array (List'Range) of League.Holders.Holder;
    begin
+      for J in List'Range loop
+         Args (J) := Engine.Get_Property
+           (Asis.Expressions.Actual_Parameter (List (J)), Name);
+      end loop;
+
       if Func.To_Wide_Wide_String = "League.Strings.To_Universal_String" then
-         return Engine.Get_Property
-           (Asis.Expressions.Actual_Parameter (List (1)), Name);
+         return Args (1);
+      elsif Func.To_Wide_Wide_String = """=""" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append (League.Holders.Element (Args (1)));
+            Text.Append (" = ");
+            Text.Append (League.Holders.Element (Args (2)));
+
+            return League.Holders.To_Holder (Text);
+         end;
       else
          Ada.Wide_Wide_Text_IO.Put ("Unimplemented Intrinsic: ");
          Ada.Wide_Wide_Text_IO.Put (Func.To_Wide_Wide_String);
