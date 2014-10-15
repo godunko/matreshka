@@ -17,12 +17,12 @@ package body Properties.Expressions.Indexed_Component is
    begin
       Text := League.Holders.Element
         (Engine.Get_Property (Asis.Expressions.Prefix (Element), Name));
-      Text.Append (" (");
+      Text.Append (" [");
       Down := League.Holders.Element
         (Engine.Get_Property (Asis.Expressions.Index_Expressions (Element) (1),
          Name));
       Text.Append (Down);
-      Text.Append (")");
+      Text.Append (" -1]");
 
       return League.Holders.To_Holder (Text);
    end Code;
