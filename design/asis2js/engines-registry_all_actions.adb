@@ -6,12 +6,17 @@ with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
+with Properties.Definitions.Simple_Expression_Range;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
+with Properties.Expressions.Indexed_Component;
+with Properties.Expressions.Integer_Literal;
 with Properties.Expressions.Null_Literal;
 with Properties.Expressions.Selected_Components;
 with Properties.Expressions.String_Literal;
 with Properties.Expressions.Type_Conversion;
+with Properties.Statements.Assignment_Statement;
+with Properties.Statements.For_Loop_Statement;
 with Properties.Statements.If_Statement;
 with Properties.Statements.Null_Statement;
 with Properties.Statements.Procedure_Call_Statement;
@@ -44,21 +49,6 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Constant_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
       (Name   => N.Code,
-       Kind   => F.A_Function_Call,
-       Action => P.Expressions.Function_Calls.Code'Access),
-      (Name   => N.Code,
-       Kind   => F.An_Identifier,
-       Action => P.Expressions.Identifiers.Code'Access),
-      (Name   => N.Code,
-       Kind   => F.A_Null_Literal,
-       Action => P.Expressions.Null_Literal.Code'Access),
-      (Name   => N.Code,
-       Kind   => F.A_String_Literal,
-       Action => P.Expressions.String_Literal.Code'Access),
-      (Name   => N.Code,
-       Kind   => F.A_Type_Conversion,
-       Action => P.Expressions.Type_Conversion.Code'Access),
-      (Name   => N.Code,
        Kind   => F.A_Procedure_Body_Declaration,
        Action => P.Declarations.Procedure_Body_Declarations.Code'Access),
       (Name   => N.Code,
@@ -70,6 +60,36 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Code,
        Kind   => F.A_Defining_Identifier,
        Action => P.Declarations.Defining_Names.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
+       Action => P.Definitions.Simple_Expression_Range.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Function_Call,
+       Action => P.Expressions.Function_Calls.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.An_Identifier,
+       Action => P.Expressions.Identifiers.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.An_Indexed_Component,
+       Action => P.Expressions.Indexed_Component.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.An_Integer_Literal,
+       Action => P.Expressions.Integer_Literal.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Null_Literal,
+       Action => P.Expressions.Null_Literal.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_String_Literal,
+       Action => P.Expressions.String_Literal.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Type_Conversion,
+       Action => P.Expressions.Type_Conversion.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.An_Assignment_Statement,
+       Action => P.Statements.Assignment_Statement.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_For_Loop_Statement,
+       Action => P.Statements.For_Loop_Statement.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_If_Statement,
        Action => P.Statements.If_Statement.Code'Access),
