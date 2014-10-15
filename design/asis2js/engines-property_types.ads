@@ -4,9 +4,10 @@ package Engines.Property_Types is
 
    type Call_Convention is
      (Intrinsic,
-      JavaScript_Getter,
-      JavaScript_Setter,
+      JavaScript_Property_Getter,
+      JavaScript_Property_Setter,
       JavaScript_Function,
+      JavaScript_Getter,
       Unspecified);
 
    package Call_Convention_Holders is new

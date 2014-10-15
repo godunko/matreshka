@@ -66,7 +66,7 @@ package body Properties.Expressions.Function_Calls is
          Text.Append (".");
          Text.Append (Prefix);
 
-         if Conv /= Engines.Property_Types.JavaScript_Getter then
+         if Conv /= Engines.Property_Types.JavaScript_Property_Getter then
             Text.Append ("(");
 
             for J in 2 .. List'Last loop

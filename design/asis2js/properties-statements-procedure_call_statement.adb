@@ -54,7 +54,7 @@ package body Properties.Statements.Procedure_Call_Statement is
          Text.Append (".");
          Text.Append (Prefix);
 
-         if Conv /= Engines.Property_Types.JavaScript_Setter then
+         if Conv /= Engines.Property_Types.JavaScript_Property_Setter then
             Text.Append ("(");
 
             for J in 2 .. List'Last loop

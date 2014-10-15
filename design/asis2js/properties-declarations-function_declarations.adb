@@ -53,7 +53,11 @@ package body Properties.Declarations.Function_Declarations is
                Result : constant Wide_String := Asis.Expressions.Name_Image
                  (Asis.Definitions.Aspect_Definition (List (J)));
             begin
-               if Result = "JavaScript_Getter" then
+               if Result = "JavaScript_Property_Getter" then
+                  return Engines.Property_Types.Call_Convention_Holders
+                    .To_Holder
+                      (Engines.Property_Types.JavaScript_Property_Getter);
+               elsif Result = "JavaScript_Getter" then
                   return Engines.Property_Types.Call_Convention_Holders
                     .To_Holder (Engines.Property_Types.JavaScript_Getter);
                elsif Result = "JavaScript_Function" then
