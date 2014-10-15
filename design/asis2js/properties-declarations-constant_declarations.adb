@@ -24,8 +24,10 @@ package body Properties.Declarations.Constant_Declarations is
       Text  : League.Strings.Universal_String;
       Value : League.Holders.Holder;
    begin
-      Init_Code := League.Holders.Element
-        (Engine.Get_Property (Init, Name));
+      if not Asis.Elements.Is_Nil (Init) then
+         Init_Code := League.Holders.Element
+           (Engine.Get_Property (Init, Name));
+      end if;
 
       for J in List'Range loop
          Constant_Name := League.Holders.Element
