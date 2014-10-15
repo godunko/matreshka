@@ -53,9 +53,6 @@ package WebAPI.DOM.Parent_Nodes is
 
    type Parent_Node is limited interface;
 
-   type Parent_Node_Access is access all Parent_Node'Class
-     with Storage_Size => 0;
-
    not overriding function Get_Children
     (Self : not null access constant Parent_Node)
        return not null WebAPI.DOM.HTML_Collections.HTML_Collection_Access
