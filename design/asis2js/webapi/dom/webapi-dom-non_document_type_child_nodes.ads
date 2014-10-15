@@ -41,18 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with WebAPI.DOM.Nodes;
-with WebAPI.DOM.Non_Document_Type_Child_Nodes;
-with WebAPI.DOM.Parent_Nodes;
+--  This package provides binding to interface DOM::NonDocumentTypeChildNode.
+------------------------------------------------------------------------------
+limited with WebAPI.DOM.Elements;
 
-package WebAPI.DOM.Elements is
+package WebAPI.DOM.Non_Document_Type_Child_Nodes is
 
-   type Element is limited interface
-     and WebAPI.DOM.Nodes.Node
-     and WebAPI.DOM.Non_Document_Type_Child_Nodes.Non_Document_Type_Child_Node
-     and WebAPI.DOM.Parent_Nodes.Parent_Node;
+   type Non_Document_Type_Child_Node is limited interface;
 
-   type Element_Access is access all Element'Class
-     with Storage_Size => 0;
+   not overriding function Get_Previous_Element_Sibling
+    (Self : not null access constant Non_Document_Type_Child_Node)
+       return WebAPI.DOM.Elements.Element_Access is abstract
+         with Import        => True,
+              Convention    => JavaScript_Getter,
+              External_Name => "previousElementSibling";
+   --  Returns the first preceding sibling that is an element, and null
+   --  otherwise.
+   --
+   --  The previousElementSibling attribute must return the first preceding
+   --  sibling that is an element, and null otherwise.
 
-end WebAPI.DOM.Elements;
+   not overriding function Get_Next_Element_Sibling
+    (Self : not null access constant Non_Document_Type_Child_Node)
+       return WebAPI.DOM.Elements.Element_Access is abstract
+         with Import        => True,
+              Convention    => JavaScript_Getter,
+              External_Name => "nextElementSibling";
+   --  Returns the first following sibling that is an element, and null
+   --  otherwise.
+   --
+   --  The nextElementSibling attribute must return the first following sibling
+   --  that is an element, and null otherwise.
+
+end WebAPI.DOM.Non_Document_Type_Child_Nodes;

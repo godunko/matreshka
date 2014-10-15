@@ -42,11 +42,13 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with WebAPI.DOM.Nodes;
+with WebAPI.DOM.Non_Document_Type_Child_Nodes;
 
 package WebAPI.DOM.Character_Datas is
 
    type Character_Data is limited interface
-     and WebAPI.DOM.Nodes.Node;
+     and WebAPI.DOM.Nodes.Node
+     and WebAPI.DOM.Non_Document_Type_Child_Nodes.Non_Document_Type_Child_Node;
 
    type Character_Data_Access is access all Character_Data'Class
      with Storage_Size => 0;
