@@ -54,7 +54,7 @@ package WebAPI.HTML.Windows is
     (Self : not null access Window)
       return WebAPI.HTML.Documents.Document_Access is abstract
         with Import     => True,
-             Convention => JavaScript_Getter,
+             Convention => JavaScript_Property_Getter,
              Link_Name  => "document";
 
 end WebAPI.HTML.Windows;

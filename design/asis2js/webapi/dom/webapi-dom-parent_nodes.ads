@@ -58,7 +58,7 @@ package WebAPI.DOM.Parent_Nodes is
        return WebAPI.DOM.HTML_Collections.HTML_Collection
          is abstract
            with Import        => True,
-                Convention    => JavaScript_Getter,
+                Convention    => JavaScript_Property_Getter,
                 External_Name => "children";
    --  Returns the child elements.
    --
@@ -69,7 +69,7 @@ package WebAPI.DOM.Parent_Nodes is
     (Self : not null access constant Parent_Node)
        return WebAPI.DOM.Elements.Element_Access is abstract
          with Import        => True,
-              Convention    => JavaScript_Getter,
+              Convention    => JavaScript_Property_Getter,
               External_Name => "firstElementChild";
    --  Returns the first child that is an element, and null otherwise.
    --
@@ -80,7 +80,7 @@ package WebAPI.DOM.Parent_Nodes is
     (Self : not null access constant Parent_Node)
        return WebAPI.DOM.Elements.Element_Access is abstract
          with Import        => True,
-              Convention    => JavaScript_Getter,
+              Convention    => JavaScript_Property_Getter,
               External_Name => "lastElementChild";
    --  Returns the last child that is an element, and null otherwise.
    --
@@ -91,7 +91,7 @@ package WebAPI.DOM.Parent_Nodes is
     (Self : not null access constant Parent_Node)
        return Natural is abstract
          with Import        => True,
-              Convention    => JavaScript_Getter,
+              Convention    => JavaScript_Property_Getter,
               External_Name => "childElementCount";
    --  The childElementCount attribute must return the number of children of
    --  the context object that are elements.
