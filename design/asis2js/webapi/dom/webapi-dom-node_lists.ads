@@ -56,11 +56,21 @@ package WebAPI.DOM.Node_Lists is
        with Import        => True,
             Convention    => JavaScript_Getter,
             External_Name => "item";
+   --  Returns the node with index index from the collection. The nodes are
+   --  sorted in tree order.
+   --
+   --  The item(index) method must return the indexth node in the collection.
+   --  If there is no indexth node in the collection, then the method must
+   --  return null.
 
    function Length (Self : Node_List'Class) return Natural
      with Import        => True,
           Convention    => JavaScript_Property_Getter,
           External_Name => "length";
+   --  Returns the number of nodes in the collection.
+   --
+   --  The length attribute must return the number of nodes represented by the
+   --  collection.
 
 private
 
