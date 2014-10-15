@@ -7,7 +7,6 @@ with Asis.Compilation_Units;
 with Asis.Elements;
 with Asis.Errors;
 with Asis.Exceptions;
-with Asis.Extensions.Flat_Kinds;
 with Asis.Implementation;
 
 with League.Application;
@@ -16,23 +15,9 @@ with League.Strings;
 
 with Engines;
 with Engines.Property_Names;
-
-with Properties.Declarations.Constant_Declarations;
-with Properties.Declarations.Defining_Names;
-with Properties.Declarations.Function_Declarations;
-with Properties.Declarations.Function_Renaming_Declaration;
-with Properties.Declarations.Procedure_Body_Declarations;
-with Properties.Declarations.Procedure_Declaration;
-with Properties.Expressions.Function_Calls;
-with Properties.Expressions.Identifiers;
-with Properties.Expressions.Selected_Components;
-with Properties.Expressions.String_Literal;
-with Properties.Expressions.Type_Conversion;
-with Properties.Statements.Null_Statement;
-with Properties.Statements.Procedure_Call_Statement;
+with Engines.Registry_All_Actions;
 
 procedure Asis2JS is
-   procedure Register_Actions (Engine : in out Engines.Engine);
    procedure Compile (Unit : Asis.Compilation_Unit);
 
    Engine      : aliased Engines.Engine;
@@ -62,123 +47,6 @@ procedure Asis2JS is
       Ada.Wide_Wide_Text_IO.Put_Line (Code.To_Wide_Wide_String);
    end Compile;
 
-   ----------------------
-   -- Register_Actions --
-   ----------------------
-
-   procedure Register_Actions (Engine : in out Engines.Engine) is
-   begin
-      --  Code
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Constant_Declaration,
-         Engines.Property_Names.Code,
-         Properties.Declarations.Constant_Declarations.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Function_Call,
-         Engines.Property_Names.Code,
-         Properties.Expressions.Function_Calls.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.An_Identifier,
-         Engines.Property_Names.Code,
-         Properties.Expressions.Identifiers.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_String_Literal,
-         Engines.Property_Names.Code,
-         Properties.Expressions.String_Literal.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Type_Conversion,
-         Engines.Property_Names.Code,
-         Properties.Expressions.Type_Conversion.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Procedure_Body_Declaration,
-         Engines.Property_Names.Code,
-         Properties.Declarations.Procedure_Body_Declarations.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Function_Renaming_Declaration,
-         Engines.Property_Names.Code,
-         Properties.Declarations.Function_Renaming_Declaration.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Defining_Identifier,
-         Engines.Property_Names.Code,
-         Properties.Declarations.Defining_Names.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Null_Statement,
-         Engines.Property_Names.Code,
-         Properties.Statements.Null_Statement.Code'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Procedure_Call_Statement,
-         Engines.Property_Names.Code,
-         Properties.Statements.Procedure_Call_Statement.Code'Access);
-
-      --  Call_Convention
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Function_Call,
-         Engines.Property_Names.Call_Convention,
-         Properties.Expressions.Function_Calls.Call_Convention'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.An_Identifier,
-         Engines.Property_Names.Call_Convention,
-         Properties.Expressions.Identifiers.Call_Convention'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Function_Declaration,
-         Engines.Property_Names.Call_Convention,
-         Properties.Declarations.Function_Declarations.Call_Convention'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Function_Renaming_Declaration,
-         Engines.Property_Names.Call_Convention,
-         Properties.Declarations.Function_Renaming_Declaration
-           .Call_Convention'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Procedure_Declaration,
-         Engines.Property_Names.Call_Convention,
-         Properties.Declarations.Procedure_Declaration.Call_Convention'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Selected_Component,
-         Engines.Property_Names.Call_Convention,
-         Properties.Expressions.Selected_Components.Call_Convention'Access);
-
-      --  Intrinsic_Name
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Function_Declaration,
-         Engines.Property_Names.Intrinsic_Name,
-         Properties.Declarations.Function_Declarations.Intrinsic_Name'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Function_Renaming_Declaration,
-         Engines.Property_Names.Intrinsic_Name,
-         Properties.Declarations.Function_Renaming_Declaration
-           .Intrinsic_Name'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Procedure_Declaration,
-         Engines.Property_Names.Intrinsic_Name,
-         Properties.Declarations.Procedure_Declaration.Intrinsic_Name'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.An_Identifier,
-         Engines.Property_Names.Intrinsic_Name,
-         Properties.Expressions.Identifiers.Intrinsic_Name'Access);
-      Engine.Register_Calculator
-        (Asis.Extensions.Flat_Kinds.A_Selected_Component,
-         Engines.Property_Names.Intrinsic_Name,
-         Properties.Expressions.Selected_Components.Call_Convention'Access);
-
-      for J in Asis.Extensions.Flat_Kinds.An_And_Operator
-        .. Asis.Extensions.Flat_Kinds.A_Not_Operator
-      loop
-         Engine.Register_Calculator
-           (J,
-            Engines.Property_Names.Code,
-            Properties.Expressions.Identifiers.Code'Access);
-         Engine.Register_Calculator
-           (J,
-            Engines.Property_Names.Call_Convention,
-            Properties.Expressions.Identifiers.Call_Convention'Access);
-         Engine.Register_Calculator
-           (J,
-            Engines.Property_Names.Intrinsic_Name,
-            Properties.Expressions.Identifiers.Intrinsic_Name'Access);
-      end loop;
-
-   end Register_Actions;
-
 begin
    Asis.Implementation.Initialize ("");
 
@@ -189,7 +57,7 @@ begin
 
    Asis.Ada_Environments.Open (Context);
 
-   Register_Actions (Engine);
+   Engines.Registry_All_Actions (Engine);
 
    declare
       Units : constant Asis.Compilation_Unit_List :=

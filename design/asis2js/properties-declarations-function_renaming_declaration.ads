@@ -7,11 +7,6 @@ with League.Strings;
 
 package Properties.Declarations.Function_Renaming_Declaration is
 
-   function Code
-     (Engine  : access Engines.Engine;
-      Element : Asis.Expression;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
-
    function Call_Convention
      (Engine  : access Engines.Engine;
       Element : Asis.Declaration;
