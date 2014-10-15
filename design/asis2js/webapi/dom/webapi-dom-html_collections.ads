@@ -46,9 +46,10 @@
 
 package WebAPI.DOM.HTML_Collections is
 
-   type HTML_Collection is limited interface;
+   type HTML_Collection is tagged private;
 
-   type HTML_Collection_Access is access all HTML_Collection'Class
-     with Storage_Size => 0;
+private
+
+   type HTML_Collection is tagged null record;
 
 end WebAPI.DOM.HTML_Collections;

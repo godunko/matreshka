@@ -55,7 +55,7 @@ package WebAPI.DOM.Parent_Nodes is
 
    not overriding function Get_Children
     (Self : not null access constant Parent_Node)
-       return not null WebAPI.DOM.HTML_Collections.HTML_Collection_Access
+       return WebAPI.DOM.HTML_Collections.HTML_Collection
          is abstract
            with Import        => True,
                 Convention    => JavaScript_Getter,
