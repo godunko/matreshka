@@ -49,6 +49,8 @@ limited with WebAPI.DOM.Elements;
 
 package WebAPI.DOM.HTML_Collections is
 
+   pragma Preelaborate;
+
    type HTML_Collection is tagged private
      with Constant_Indexing => Item;
 

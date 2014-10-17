@@ -45,6 +45,8 @@ with WebAPI.DOM.Character_Datas;
 
 package WebAPI.DOM.Texts is
 
+   pragma Preelaborate;
+
    type Text is limited interface
      and WEbAPI.DOM.Character_Datas.Character_Data;
 

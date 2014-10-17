@@ -49,6 +49,8 @@ with WebAPI.DOM.Texts;
 
 package WebAPI.DOM.Documents is
 
+   pragma Preelaborate;
+
    type Document is limited interface
      and WebAPI.DOM.Non_Element_Parent_Nodes.Non_Element_Parent_Node
      and WebAPI.DOM.Parent_Nodes.Parent_Node;

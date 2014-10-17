@@ -51,6 +51,8 @@ with WebAPI.DOM.Node_Lists;
 
 package WebAPI.DOM.Parent_Nodes is
 
+   pragma Preelaborate;
+
    type Parent_Node is limited interface;
 
    not overriding function Get_Children

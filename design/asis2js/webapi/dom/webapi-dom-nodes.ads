@@ -44,6 +44,8 @@
 
 package WebAPI.DOM.Nodes is
 
+   pragma Preelaborate;
+
    type Node is limited interface;
 
    type Node_Access is access all Node'Class

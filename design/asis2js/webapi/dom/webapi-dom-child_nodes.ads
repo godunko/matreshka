@@ -46,6 +46,8 @@
 
 package WebAPI.DOM.Child_Nodes is
 
+   pragma Preelaborate;
+
    type Child_Node is limited interface;
 
    not overriding procedure Remove

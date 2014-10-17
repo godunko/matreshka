@@ -49,6 +49,8 @@ with WebAPI.DOM.Elements;
 
 package WebAPI.DOM.Non_Element_Parent_Nodes is
 
+   pragma Preelaborate;
+
    type Non_Element_Parent_Node is limited interface;
 
    not overriding function Get_Element_By_Id

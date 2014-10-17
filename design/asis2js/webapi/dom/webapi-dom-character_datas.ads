@@ -47,6 +47,8 @@ with WebAPI.DOM.Non_Document_Type_Child_Nodes;
 
 package WebAPI.DOM.Character_Datas is
 
+   pragma Preelaborate;
+
    type Character_Data is limited interface
      and WebAPI.DOM.Child_Nodes.Child_Node
      and WebAPI.DOM.Nodes.Node

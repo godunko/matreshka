@@ -47,6 +47,8 @@ limited with WebAPI.DOM.Elements;
 
 package WebAPI.DOM.Non_Document_Type_Child_Nodes is
 
+   pragma Preelaborate;
+
    type Non_Document_Type_Child_Node is limited interface;
 
    not overriding function Get_Previous_Element_Sibling

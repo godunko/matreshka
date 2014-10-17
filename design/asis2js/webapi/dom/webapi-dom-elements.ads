@@ -48,6 +48,8 @@ with WebAPI.DOM.Parent_Nodes;
 
 package WebAPI.DOM.Elements is
 
+   pragma Preelaborate;
+
    type Element is limited interface
      and WebAPI.DOM.Child_Nodes.Child_Node
      and WebAPI.DOM.Nodes.Node

@@ -48,6 +48,8 @@ with WebAPI.DOM.Parent_Nodes;
 
 package WebAPI.DOM.Document_Fragments is
 
+   pragma Preelaborate;
+
    type Document_Fragment is limited interface
      and WebAPI.DOM.Non_Element_Parent_Nodes.Non_Element_Parent_Node
      and WebAPI.DOM.Parent_Nodes.Parent_Node;

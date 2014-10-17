@@ -47,6 +47,8 @@ with WebAPI.DOM.Nodes;
 
 package WebAPI.DOM.Node_Lists is
 
+   pragma Preelaborate;
+
    type Node_List is tagged private
      with Constant_Indexing => Item;
 

@@ -45,6 +45,8 @@ with WebAPI.DOM.Child_Nodes;
 
 package WebAPI.DOM.Document_Types is
 
+   pragma Preelaborate;
+
    type Document_Type is limited interface
      and WebAIP.DOM.Child_Nodes.Child_Node;
 
