@@ -4,9 +4,11 @@ with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
+with Properties.Declarations.Ordinary_Type;
 with Properties.Declarations.Package_Declaration;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
+with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
@@ -50,6 +52,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Constant_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
       (Name   => N.Code,
+       Kind   => F.An_Ordinary_Type_Declaration,
+       Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Package_Declaration,
        Action => P.Declarations.Package_Declaration.Code'Access),
       (Name   => N.Code,
@@ -64,6 +69,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Code,
        Kind   => F.A_Defining_Identifier,
        Action => P.Declarations.Defining_Names.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.An_Enumeration_Type_Definition,
+       Action => P.Definitions.Enumeration_Type.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
        Action => P.Definitions.Simple_Expression_Range.Code'Access),

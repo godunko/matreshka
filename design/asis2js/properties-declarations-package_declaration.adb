@@ -13,6 +13,8 @@ package body Properties.Declarations.Package_Declaration is
    is
       use type Asis.Element_List;
 
+      First : Boolean := True;
+
       Down : League.Strings.Universal_String;
       Text : League.Strings.Universal_String;
       List : constant Asis.Element_List :=
@@ -21,13 +23,23 @@ package body Properties.Declarations.Package_Declaration is
    begin
       Text := League.Holders.Element
         (Engine.Get_Property (Asis.Declarations.Names (Element) (1), Name));
-      Text.Append (" = {}");
+      Text.Append (" = {");
 
       for J in List'Range loop
          Down := League.Holders.Element
            (Engine.Get_Property (List (J), Name));
-         Text.Append (Down);
+
+         if not Down.Is_Empty then
+            if not First then
+               Text.Append (", ");
+            end if;
+
+            Text.Append (Down);
+            First := False;
+         end if;
       end loop;
+
+      Text.Append ("}");
 
       return League.Holders.To_Holder (Text);
    end Code;
