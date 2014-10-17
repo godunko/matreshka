@@ -392,7 +392,7 @@ package WebAPI.DOM.Nodes is
    procedure Insert_Before
     (Self  : not null access Node'Class;
      Node  : not null access WebAPI.DOM.Nodes.Node'Class;
-     Child : access WebAPI.DOM.Nodes.Node'Class) is abstract
+     Child : access WebAPI.DOM.Nodes.Node'Class)
        with Import        => True,
             Convention    => JavaScript_Function,
             External_Name => "insertBefore";
@@ -425,7 +425,7 @@ package WebAPI.DOM.Nodes is
    procedure Replace_Child
     (Self  : not null access Node'Class;
      Node  : not null access WebAPI.DOM.Nodes.Node'Class;
-     Child : not null access WebAPI.DOM.Nodes.Node'Class) is abstract
+     Child : not null access WebAPI.DOM.Nodes.Node'Class)
        with Import        => True,
             Convention    => JavaScript_Function,
             External_Name => "replaceChild";
