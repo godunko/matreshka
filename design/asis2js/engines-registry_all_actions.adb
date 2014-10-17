@@ -70,6 +70,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Defining_Identifier,
        Action => P.Declarations.Defining_Names.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Package_Instantiation,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
        Kind   => F.An_Enumeration_Type_Definition,
        Action => P.Definitions.Enumeration_Type.Code'Access),
       (Name   => N.Code,
