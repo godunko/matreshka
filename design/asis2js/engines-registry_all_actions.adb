@@ -65,13 +65,16 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Action => P.Declarations.Constant_Declarations.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Function_Renaming_Declaration,
-       Action => P.Statements.Null_Statement.Code'Access),
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
        Kind   => F.A_Defining_Identifier,
        Action => P.Declarations.Defining_Names.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_Enumeration_Type_Definition,
        Action => P.Definitions.Enumeration_Type.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Record_Type_Definition,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
        Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
        Action => P.Definitions.Simple_Expression_Range.Code'Access),
@@ -110,7 +113,7 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Action => P.Statements.Null_Statement.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Use_Type_Clause,
-       Action => P.Statements.Null_Statement.Code'Access),
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
        Kind   => F.A_Procedure_Call_Statement,
        Action => P.Statements.Procedure_Call_Statement.Code'Access),
