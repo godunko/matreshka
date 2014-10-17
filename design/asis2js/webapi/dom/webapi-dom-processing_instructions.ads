@@ -41,16 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with WebAPI.DOM.Child_Nodes;
+--  This package provides binding to interface ProcessingInstruction.
+------------------------------------------------------------------------------
+with WebAPI.DOM.Character_Datas;
 
-package WebAPI.DOM.Document_Types is
+package WebAPI.DOM.Processing_Instructions is
 
    pragma Preelaborate;
 
-   type Document_Type is limited interface
-     and WebAPI.DOM.Child_Nodes.Child_Node;
+   type Processing_Instruction is limited interface
+     and WebAPI.DOM.Character_Datas.Character_Data;
 
-   type Document_Type_Access is access all Document_Type'Class
-     with Storage_Size => 0;
+   type Processing_Instruction_Access is
+     access all Processing_Instruction'Class
+       with Storage_Size => 0;
 
-end WebAPI.DOM.Document_Types;
+end WebAPI.DOM.Processing_Instructions;
