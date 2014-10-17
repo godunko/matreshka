@@ -4,6 +4,7 @@ with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
+with Properties.Declarations.Package_Declaration;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
 with Properties.Definitions.Simple_Expression_Range;
@@ -48,6 +49,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
      ((Name   => N.Code,
        Kind   => F.A_Constant_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Package_Declaration,
+       Action => P.Declarations.Package_Declaration.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Procedure_Body_Declaration,
        Action => P.Declarations.Procedure_Body_Declarations.Code'Access),
