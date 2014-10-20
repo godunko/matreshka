@@ -4,3 +4,7 @@ all:
 	./asis2js "-CA -Texamples/.objs" `pwd`/examples/hello_world.adb
 	gprbuild -c -u -p -P examples/examples.gpr gldraw.adb -cargs -gnatct
 	./asis2js "-CA -Texamples/.objs" `pwd`/examples/gldraw.adb
+
+webgl:
+	gprbuild -c -u -p -P examples/examples.gpr hello_webgl.adb -cargs -gnatct
+	./asis2js "-CA -Texamples/.objs" `pwd`/examples/hello_webgl.adb
