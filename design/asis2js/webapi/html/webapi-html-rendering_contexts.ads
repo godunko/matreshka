@@ -44,6 +44,8 @@
 
 package WebAPI.HTML.Rendering_Contexts is
 
+   pragma Preelaborate;
+
    type Rendering_Context is limited interface;
 
    type Rendering_Context_Access is access all Rendering_Context'Class

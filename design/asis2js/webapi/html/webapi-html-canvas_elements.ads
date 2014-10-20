@@ -50,6 +50,8 @@ with WebAPI.HTML.Rendering_Contexts;
 
 package WebAPI.HTML.Canvas_Elements is
 
+   pragma Preelaborate;
+
    type HTML_Canvas_Element is limited interface
      and WebAPI.HTML.Elements.HTML_Element;
 

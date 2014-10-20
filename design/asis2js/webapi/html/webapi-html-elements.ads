@@ -45,6 +45,8 @@ with WebAPI.DOM.Elements;
 
 package WebAPI.HTML.Elements is
 
+   pragma Preelaborate;
+
    type HTML_Element is limited interface
      and WebAPI.DOM.Elements.Element;
 
