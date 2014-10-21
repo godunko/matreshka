@@ -48,7 +48,7 @@ procedure Asis2JS is
    end Compile;
 
 begin
-   Asis.Implementation.Initialize ("");
+   Asis.Implementation.Initialize ("-ws");
 
    Asis.Ada_Environments.Associate
      (The_Context => Context,
