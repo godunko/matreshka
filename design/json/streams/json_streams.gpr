@@ -1,0 +1,8 @@
+with "../../../gnat/matreshka_league.gpr";
+
+project JSON_Streams is
+
+   for Object_Dir use ".objs";
+   for Main use ("demo-driver.adb");
+
+end JSON_Streams;
