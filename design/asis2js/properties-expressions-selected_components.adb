@@ -16,6 +16,19 @@ package body Properties.Expressions.Selected_Components is
       return Engine.Get_Property (Asis.Expressions.Selector (Element), Name);
    end Call_Convention;
 
+   ----------
+   -- Code --
+   ----------
+
+   function Code
+     (Engine  : access Engines.Engine;
+      Element : Asis.Expression;
+      Name    : League.Strings.Universal_String)
+      return League.Holders.Holder is
+   begin
+      return Engine.Get_Property (Asis.Expressions.Selector (Element), Name);
+   end Code;
+
    function Intrinsic_Name
      (Engine  : access Engines.Engine;
       Element : Asis.Declaration;

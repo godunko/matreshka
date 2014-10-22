@@ -126,6 +126,16 @@ package body Properties.Expressions.Function_Calls is
 
             return League.Holders.To_Holder (Text);
          end;
+      elsif Func.To_Wide_Wide_String = """&""" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append (League.Holders.Element (Args (1)));
+            Text.Append (" + ");
+            Text.Append (League.Holders.Element (Args (2)));
+
+            return League.Holders.To_Holder (Text);
+         end;
       else
          Ada.Wide_Wide_Text_IO.Put ("Unimplemented Intrinsic: ");
          Ada.Wide_Wide_Text_IO.Put (Func.To_Wide_Wide_String);

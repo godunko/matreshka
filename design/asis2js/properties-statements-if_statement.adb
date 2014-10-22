@@ -57,7 +57,7 @@ package body Properties.Statements.If_Statement is
          end;
       end loop;
 
-      Text.Append ("}");
+      Text.Append ("};");
 
       return League.Holders.To_Holder (Text);
    end Code;

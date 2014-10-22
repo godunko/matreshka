@@ -31,13 +31,35 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       if League.Holders.Booleans.Element
         (Engine.Get_Property (Element, Engines.Property_Names.Export))
       then
-         Text.Append ("=");
+         Text.Append ("= this.");
          Text.Append (Subprogram_Name);
       end if;
 
       Text.Append (" = function ");
       Text.Append (Subprogram_Name);
-      Text.Append (" (){");
+      Text.Append (" (");
+
+      declare
+         List : constant Asis.Declaration_List :=
+           Asis.Declarations.Parameter_Profile (Element);
+      begin
+         for J in List'Range loop
+            declare
+               Arg_Code : constant League.Strings.Universal_String :=
+                 League.Holders.Element
+                   (Engine.Get_Property
+                      (Asis.Declarations.Names (List (J)) (1), Name));
+            begin
+               Text.Append (Arg_Code);
+
+               if J /= List'Last then
+                  Text.Append (",");
+               end if;
+            end;
+         end loop;
+      end;
+
+      Text.Append ("){");
 
       declare
          List : constant Asis.Element_List :=
@@ -69,7 +91,7 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          end loop;
       end;
 
-      Text.Append ("}");
+      Text.Append ("};");
 
       Value := League.Holders.To_Holder (Text);
 
@@ -94,7 +116,7 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       if Result = "True" then
          return League.Holders.Booleans.To_Holder (True);
       elsif Asis.Elements.Is_Nil (Spec) then
-         return League.Holders.Booleans.To_Holder (True);
+         return League.Holders.Booleans.To_Holder (False);
       else
          return Engine.Get_Property (Spec, Name);
       end if;

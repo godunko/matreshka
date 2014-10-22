@@ -46,7 +46,7 @@ package body Properties.Statements.For_Loop_Statement is
          Text.Append (Down);
       end loop;
 
-      Text.Append ("}");
+      Text.Append ("};");
 
       return League.Holders.To_Holder (Text);
    end Code;

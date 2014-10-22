@@ -38,6 +38,7 @@ package body Properties.Declarations.Package_Declaration is
 
       Full_Name : League.Strings.Universal_String;
 
+      Parents : League.Strings.Universal_String;
       Down : League.Strings.Universal_String;
       Text : League.Strings.Universal_String;
       List : constant Asis.Element_List :=
@@ -53,22 +54,24 @@ package body Properties.Declarations.Package_Declaration is
          Names  : constant League.String_Vectors.Universal_String_Vector :=
           Down.Split ('.');
       begin
-         for J in 1 .. Names.Length - 1 loop
+         for J in 1 .. Names.Length loop
+            if J /= 1 then
+               Full_Name.Append (".");
+            end if;
+
             Full_Name.Append (Names.Element (J));
 
             --  Make each parent package visible by 'with(obj)' statement
-            Text.Append ("with (");
-            Text.Append (Full_Name);
-            Text.Append (")");
-            Full_Name.Append (".");
+            Parents.Append ("with (");
+            Parents.Append (Full_Name);
+            Parents.Append (")");
          end loop;
-
-         Full_Name.Append (Names.Element (Names.Length));
       end;
 
-      Text.Append ("{");
       Text.Append (Full_Name);
       Text.Append ("={};");
+      Text.Append (Parents);
+      Text.Append ("{");
 
       for J in List'Range loop
          Down := League.Holders.Element (Engine.Get_Property (List (J), Name));
@@ -77,11 +80,10 @@ package body Properties.Declarations.Package_Declaration is
             Text.Append (Full_Name);
             Text.Append (".");
             Text.Append (Down);
-            Text.Append (";");
          end if;
       end loop;
 
-      Text.Append ("}");
+      Text.Append ("};");
 
       return League.Holders.To_Holder (Text);
    end Code;

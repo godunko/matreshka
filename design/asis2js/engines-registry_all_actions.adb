@@ -1,5 +1,6 @@
 with Engines.Property_Names;
 
+with Properties.Clauses.Use_Package_Clause;
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Function_Declarations;
@@ -49,6 +50,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
    Action_List : constant Action_Array :=
      --  Code
      ((Name   => N.Code,
+       Kind   => F.A_Use_Package_Clause,
+       Action => P.Clauses.Use_Package_Clause.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Constant_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
       (Name   => N.Code,
@@ -67,8 +71,14 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Procedure_Body_Declaration,
        Action => P.Declarations.Procedure_Body_Declarations.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Function_Body_Declaration,
+       Action => P.Declarations.Procedure_Body_Declarations.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Procedure_Declaration,
        Action => P.Declarations.Function_Declarations.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Subtype_Declaration,
+       Action => P.Statements.Null_Statement.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Variable_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
@@ -109,6 +119,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Null_Literal,
        Action => P.Expressions.Null_Literal.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Selected_Component,
+       Action => P.Expressions.Selected_Components.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_String_Literal,
        Action => P.Expressions.String_Literal.Code'Access),
       (Name   => N.Code,
@@ -135,6 +148,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Code,
        Kind   => F.A_Return_Statement,
        Action => P.Statements.Return_Statement.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_With_Clause,
+       Action => P.Statements.Null_Statement.Code'Access),
 
       --  Call_Convention
       (Name   => N.Call_Convention,
@@ -158,6 +174,12 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Action => P.Expressions.Selected_Components
                    .Call_Convention'Access),
       --  Export
+      (Name   => N.Export,
+       Kind   => F.A_Function_Body_Declaration,
+       Action => P.Declarations.Procedure_Body_Declarations.Export'Access),
+      (Name   => N.Export,
+       Kind   => F.A_Function_Declaration,
+       Action => P.Declarations.Function_Declarations.Export'Access),
       (Name   => N.Export,
        Kind   => F.A_Procedure_Body_Declaration,
        Action => P.Declarations.Procedure_Body_Declarations.Export'Access),

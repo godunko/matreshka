@@ -18,7 +18,8 @@ with Engines.Property_Names;
 with Engines.Registry_All_Actions;
 
 procedure Asis2JS is
-   procedure Compile (Unit : Asis.Compilation_Unit);
+   procedure Compile_Unit (Unit : Asis.Compilation_Unit);
+   procedure Compile_File (File : League.Strings.Universal_String);
 
    Engine      : aliased Engines.Engine;
    Context     : Asis.Context;
@@ -26,26 +27,50 @@ procedure Asis2JS is
    ASIS_Params : constant League.Strings.Universal_String :=
      League.Application.Arguments.Element (1);
 
-   File        : constant League.Strings.Universal_String :=
-     League.Application.Arguments.Element (2);
+   ------------------
+   -- Compile_File --
+   ------------------
 
-   File_Name   : constant Wide_String := File.To_UTF_16_Wide_String;
+   procedure Compile_File (File : League.Strings.Universal_String) is
+      File_Name   : constant Wide_String := File.To_UTF_16_Wide_String;
+   begin
+      declare
+         Units : constant Asis.Compilation_Unit_List :=
+           Asis.Compilation_Units.Compilation_Units (Context);
+      begin
+         for J in Units'Range loop
+            if Asis.Compilation_Units.Text_Name (Units (J)) = File_Name then
+               Compile_Unit (Units (J));
+            end if;
+         end loop;
+      end;
+   end Compile_File;
 
-   -------------
-   -- Compile --
-   -------------
+   ------------------
+   -- Compile_Unit --
+   ------------------
 
-   procedure Compile (Unit : Asis.Compilation_Unit) is
+   procedure Compile_Unit (Unit : Asis.Compilation_Unit) is
+      List   : constant Asis.Context_Clause_List :=
+        Asis.Elements.Context_Clause_Elements (Unit);
       Result : League.Holders.Holder;
       Code   : League.Strings.Universal_String;
    begin
+      for J in List'Range loop
+         Result := Engine.Get_Property
+           (List (J), Engines.Property_Names.Code);
+         Code.Append (League.Holders.Element (Result));
+      end loop;
+
       Result := Engine.Get_Property
         (Element => Asis.Elements.Unit_Declaration (Unit),
          Name    => Engines.Property_Names.Code);
 
-      Code := League.Holders.Element (Result);
+      Code.Append ("{");
+      Code.Append (League.Holders.Element (Result));
+      Code.Append ("};");
       Ada.Wide_Wide_Text_IO.Put_Line (Code.To_Wide_Wide_String);
-   end Compile;
+   end Compile_Unit;
 
 begin
    Asis.Implementation.Initialize ("-ws");
@@ -61,16 +86,9 @@ begin
 
    Ada.Wide_Wide_Text_IO.Put_Line ("var standard = standard || {};");
 
-   declare
-      Units : constant Asis.Compilation_Unit_List :=
-        Asis.Compilation_Units.Compilation_Units (Context);
-   begin
-      for J in Units'Range loop
-         if Asis.Compilation_Units.Text_Name (Units (J)) = File_Name then
-            Compile (Units (J));
-         end if;
-      end loop;
-   end;
+   for J in 2 .. League.Application.Arguments.Length loop
+      Compile_File (League.Application.Arguments.Element (J));
+   end loop;
 
    Asis.Ada_Environments.Close (Context);
    Asis.Ada_Environments.Dissociate (Context);
