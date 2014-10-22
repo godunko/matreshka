@@ -65,6 +65,16 @@ package body League.JSON.Streams is
    procedure Pop (Self : not null access JSON_Stream'Class);
    --  Unwind state stack and add constructed value to new state.
 
+   function Read
+    (Self : in out JSON_Stream'Class)
+       return League.JSON.Values.JSON_Value;
+   --  Reads current value and updates stream's position.
+
+   procedure Write
+    (Self : in out JSON_Stream'Class;
+     Item : League.JSON.Values.JSON_Value);
+   --  Writes value into the stream and updates stream's position.
+
    ---------------
    -- End_Array --
    ---------------
@@ -91,20 +101,7 @@ package body League.JSON.Streams is
        (Stream : in out JSON_Stream'Class;
         Item   : out T) is
       begin
-         case Stream.Current.Kind is
-            when Array_State =>
-               Item :=
-                 T
-                  (Stream.Current.Current_Array
-                    (Stream.Current.Index).To_Integer);
-               Stream.Current.Index := Stream.Current.Index + 1;
-
-            when Object_State =>
-               Item :=
-                 T
-                   (Stream.Current.Current_Object
-                     (Stream.Current.Key).To_Integer);
-         end case;
+         Item := T (Stream.Read.To_Integer);
       end Read;
 
       -----------
@@ -115,11 +112,9 @@ package body League.JSON.Streams is
        (Stream : in out JSON_Stream'Class;
         Item   : T) is
       begin
-         Stream.Update
+         Stream.Write
           (League.JSON.Values.To_JSON_Value
             (League.Holders.Universal_Integer (Item)));
-
-         Stream.Current.Modified := True;
       end Write;
 
    end Generic_Integer_Stream_Operations;
@@ -228,6 +223,37 @@ package body League.JSON.Streams is
    begin
       raise Program_Error;
    end Read;
+
+   ----------
+   -- Read --
+   ----------
+
+   function Read
+    (Self : in out JSON_Stream'Class)
+       return League.JSON.Values.JSON_Value is
+   begin
+      case Self.Current.Kind is
+         when Array_State =>
+            Self.Current.Index := Self.Current.Index + 1;
+
+            return Self.Current.Current_Array (Self.Current.Index - 1);
+
+         when Object_State =>
+            return Self.Current.Current_Object (Self.Current.Key);
+      end case;
+   end Read;
+
+   -----------
+   -- Write --
+   -----------
+
+   procedure Write
+    (Self : in out JSON_Stream'Class;
+     Item : League.JSON.Values.JSON_Value) is
+   begin
+      Self.Update (Item);
+      Self.Current.Modified := True;
+   end Write;
 
    -----------------------
    -- Set_JSON_Document --
