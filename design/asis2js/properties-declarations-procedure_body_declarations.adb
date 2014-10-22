@@ -1,4 +1,10 @@
 with Asis.Declarations;
+with Asis.Elements;
+
+with League.Holders.Booleans;
+
+with Engines.Property_Names;
+with Properties.Tools;
 
 package body Properties.Declarations.Procedure_Body_Declarations is
 
@@ -20,7 +26,16 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       Text : League.Strings.Universal_String;
       Value : League.Holders.Holder;
    begin
-      Text.Append ("function ");
+      Text.Append (Subprogram_Name);
+
+      if League.Holders.Booleans.Element
+        (Engine.Get_Property (Element, Engines.Property_Names.Export))
+      then
+         Text.Append ("=");
+         Text.Append (Subprogram_Name);
+      end if;
+
+      Text.Append (" = function ");
       Text.Append (Subprogram_Name);
       Text.Append (" (){");
 
@@ -55,9 +70,34 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       end;
 
       Text.Append ("}");
+
       Value := League.Holders.To_Holder (Text);
 
       return Value;
    end Code;
+
+   ------------
+   -- Export --
+   ------------
+
+   function Export
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      Spec   : constant Asis.Declaration :=
+        Asis.Declarations.Corresponding_Declaration (Element);
+
+      Result : constant Wide_String :=
+        Properties.Tools.Get_Aspect (Element, "Export");
+   begin
+      if Result = "True" then
+         return League.Holders.Booleans.To_Holder (True);
+      elsif Asis.Elements.Is_Nil (Spec) then
+         return League.Holders.Booleans.To_Holder (True);
+      else
+         return Engine.Get_Property (Spec, Name);
+      end if;
+   end Export;
 
 end Properties.Declarations.Procedure_Body_Declarations;

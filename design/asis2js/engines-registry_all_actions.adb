@@ -52,6 +52,12 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Constant_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Deferred_Constant_Declaration,
+       Action => P.Statements.Null_Statement.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Function_Declaration,
+       Action => P.Declarations.Function_Declarations.Code'Access),
+      (Name   => N.Code,
        Kind   => F.An_Ordinary_Type_Declaration,
        Action => P.Declarations.Ordinary_Type.Code'Access),
       (Name   => N.Code,
@@ -61,6 +67,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Procedure_Body_Declaration,
        Action => P.Declarations.Procedure_Body_Declarations.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Procedure_Declaration,
+       Action => P.Declarations.Function_Declarations.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Variable_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
       (Name   => N.Code,
@@ -68,6 +77,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
        Kind   => F.A_Defining_Identifier,
+       Action => P.Declarations.Defining_Names.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Defining_Expanded_Name,
        Action => P.Declarations.Defining_Names.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Package_Instantiation,
@@ -145,6 +157,13 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Selected_Component,
        Action => P.Expressions.Selected_Components
                    .Call_Convention'Access),
+      --  Export
+      (Name   => N.Export,
+       Kind   => F.A_Procedure_Body_Declaration,
+       Action => P.Declarations.Procedure_Body_Declarations.Export'Access),
+      (Name   => N.Export,
+       Kind   => F.A_Procedure_Declaration,
+       Action => P.Declarations.Function_Declarations.Export'Access),
 
       --  Intrinsic_Name
       (Name   => N.Intrinsic_Name,
@@ -180,7 +199,6 @@ begin
    for X of Action_List loop
       Self.Register_Calculator (X.Kind, X.Name, X.Action);
    end loop;
-   --  Code
 
    for X of Range_List loop
       for J in X.From .. X.To loop

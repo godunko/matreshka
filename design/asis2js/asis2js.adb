@@ -59,6 +59,8 @@ begin
 
    Engines.Registry_All_Actions (Engine);
 
+   Ada.Wide_Wide_Text_IO.Put_Line ("var standard = standard || {};");
+
    declare
       Units : constant Asis.Compilation_Unit_List :=
         Asis.Compilation_Units.Compilation_Units (Context);

@@ -1,12 +1,13 @@
 with Ada.Wide_Text_IO;
 
+with League.Holders.Booleans;
+
 with Asis.Compilation_Units;
 with Asis.Declarations;
-with Asis.Definitions;
 with Asis.Elements;
-with Asis.Expressions;
 
 with Engines.Property_Types;
+with Properties.Tools;
 
 package body Properties.Declarations.Function_Declarations is
 
@@ -18,11 +19,7 @@ package body Properties.Declarations.Function_Declarations is
      (Engine  : access Engines.Engine;
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
-   is
-      Mark : Asis.Expression;
-      List : constant Asis.Declaration_List :=
-        Asis.Declarations.Aspect_Specifications (Element);
+      return League.Holders.Holder is
    begin
       if Asis.Elements.Is_Part_Of_Inherited (Element) then
          return Call_Convention
@@ -44,35 +41,62 @@ package body Properties.Declarations.Function_Declarations is
            .To_Holder (Engines.Property_Types.Intrinsic);
       end if;
 
-      for J in List'Range loop
-         Mark := Asis.Definitions.Aspect_Mark (List (J));
-         if Asis.Expressions.Name_Image (Mark) = "Convention" then
-            declare
-               Result : constant Wide_String := Asis.Expressions.Name_Image
-                 (Asis.Definitions.Aspect_Definition (List (J)));
-            begin
-               if Result = "JavaScript_Property_Getter" then
-                  return Engines.Property_Types.Call_Convention_Holders
-                    .To_Holder
-                      (Engines.Property_Types.JavaScript_Property_Getter);
-               elsif Result = "JavaScript_Getter" then
-                  return Engines.Property_Types.Call_Convention_Holders
-                    .To_Holder (Engines.Property_Types.JavaScript_Getter);
-               elsif Result = "JavaScript_Function" then
-                  return Engines.Property_Types.Call_Convention_Holders
-                    .To_Holder (Engines.Property_Types.JavaScript_Function);
-               else
-                  Ada.Wide_Text_IO.Put ("Unknown call conv: ");
-                  Ada.Wide_Text_IO.Put_Line (Result);
-                  raise Program_Error;
-               end if;
-            end;
+      declare
+         Result : constant Wide_String :=
+           Properties.Tools.Get_Aspect (Element, "Convention");
+      begin
+         if Result = "" then
+            null;
+         elsif Result = "JavaScript_Property_Getter" then
+            return Engines.Property_Types.Call_Convention_Holders
+              .To_Holder
+                (Engines.Property_Types.JavaScript_Property_Getter);
+         elsif Result = "JavaScript_Getter" then
+            return Engines.Property_Types.Call_Convention_Holders
+              .To_Holder (Engines.Property_Types.JavaScript_Getter);
+         elsif Result = "JavaScript_Function" then
+            return Engines.Property_Types.Call_Convention_Holders
+              .To_Holder (Engines.Property_Types.JavaScript_Function);
+         else
+            Ada.Wide_Text_IO.Put ("Unknown call conv: ");
+            Ada.Wide_Text_IO.Put_Line (Result);
+            raise Program_Error;
          end if;
-      end loop;
+      end;
 
       return Engines.Property_Types.Call_Convention_Holders
         .To_Holder (Engines.Property_Types.Unspecified);
    end Call_Convention;
+
+   ----------
+   -- Code --
+   ----------
+
+   function Code
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      pragma Unreferenced (Engine, Element, Name);
+   begin
+      return League.Holders.To_Holder (League.Strings.Empty_Universal_String);
+   end Code;
+
+   ------------
+   -- Export --
+   ------------
+
+   function Export
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      pragma Unreferenced (Engine, Name);
+      Result : constant Wide_String :=
+        Properties.Tools.Get_Aspect (Element, "Export");
+   begin
+      return League.Holders.Booleans.To_Holder (Result = "True");
+   end Export;
 
    --------------------
    -- Intrinsic_Name --
