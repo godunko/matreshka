@@ -1,10 +1,13 @@
 with Ada.Streams;
+with League.Strings;
 
 package Demo is
 
    type Rect is record
+      F : Boolean;
       X : Integer;
       Y : Integer;
+      N : League.Strings.Universal_String;
    end record;
 
    procedure Read
