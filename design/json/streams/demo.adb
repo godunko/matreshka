@@ -1,10 +1,12 @@
-with League.JSON.Streams;
+with League.JSON.Streams.Float_Stream_Operations;
+with League.JSON.Streams.Long_Float_Stream_Operations;
+with League.JSON.Streams.Generic_Float_Stream_Operations;
+with League.JSON.Streams.Generic_Integer_Stream_Operations;
+with League.JSON.Streams.Integer_Stream_Operations;
+with League.JSON.Streams.Long_Integer_Stream_Operations;
 with League.Strings;
 
 package body Demo is
-
-   package Integer_Stream_Operations is
-     new League.JSON.Streams.Generic_Integer_Stream_Operations (Integer);
 
    ----------
    -- Read --
@@ -23,10 +25,10 @@ package body Demo is
             JS.Start_Object;
             JS.Key (League.Strings.To_Universal_String ("x"));
             JS.Start_Array;
-            Integer_Stream_Operations.Read (JS, V.X);
+            League.JSON.Streams.Integer_Stream_Operations.Read (JS, V.X);
             JS.End_Array;
             JS.Key (League.Strings.To_Universal_String ("y"));
-            Integer_Stream_Operations.Read (JS, V.Y);
+            League.JSON.Streams.Integer_Stream_Operations.Read (JS, V.Y);
             JS.End_Object;
          end;
 
@@ -53,10 +55,10 @@ package body Demo is
             JS.Start_Object;
             JS.Key (League.Strings.To_Universal_String ("x"));
             JS.Start_Array;
-            Integer_Stream_Operations.Write (JS, V.X);
+            League.JSON.Streams.Integer_Stream_Operations.Write (JS, V.X);
             JS.End_Array;
             JS.Key (League.Strings.To_Universal_String ("y"));
-            Integer_Stream_Operations.Write (JS, V.Y);
+            League.JSON.Streams.Integer_Stream_Operations.Write (JS, V.Y);
             JS.End_Object;
          end;
 

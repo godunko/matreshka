@@ -41,83 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Containers.Vectors;
-with Ada.Streams;
 
-private with League.JSON.Arrays;
-with League.JSON.Documents;
-private with League.JSON.Objects;
-private with League.JSON.Values;
-with League.Strings;
+generic
+   type Num is range <>;
 
-package League.JSON.Streams is
+package League.JSON.Streams.Generic_Integer_Stream_Operations is
 
    pragma Preelaborate;
 
-   type JSON_Stream is new Ada.Streams.Root_Stream_Type with private;
-
-   procedure Start_Object (Self : not null access JSON_Stream'Class);
-
-   procedure End_Object (Self : not null access JSON_Stream'Class);
-
-   procedure Start_Array (Self : not null access JSON_Stream'Class);
-
-   procedure End_Array (Self : not null access JSON_Stream'Class);
-
-   procedure Key
-    (Self : not null access JSON_Stream'Class;
-     Key  : League.Strings.Universal_String);
-
-   function Get_JSON_Document
-    (Self : not null access JSON_Stream'Class)
-       return League.JSON.Documents.JSON_Document;
-
-   procedure Set_JSON_Document
-    (Self : not null access JSON_Stream'Class;
-     Data : League.JSON.Documents.JSON_Document);
-
-private
-
-   type State_Kinds is (Array_State, Object_State);
-
-   type State (Kind : State_Kinds := Array_State) is record
-      Modified : Boolean := False;
-
-      case Kind is
-         when Array_State =>
-            Current_Array : League.JSON.Arrays.JSON_Array;
-            Index         : Positive := 1;
-
-         when Object_State =>
-            Current_Object : League.JSON.Objects.JSON_Object;
-            Key            : League.Strings.Universal_String;
-      end case;
-   end record;
-
-   package State_Vectors is new Ada.Containers.Vectors (Positive, State);
-
-   type JSON_Stream is new Ada.Streams.Root_Stream_Type with record
-      Current : State;
-      Stack   : State_Vectors.Vector;
-   end record;
-
-   overriding procedure Read
-     (Stream : in out JSON_Stream;
-      Item   : out Ada.Streams.Stream_Element_Array;
-      Last   : out Ada.Streams.Stream_Element_Offset);
-
-   overriding procedure Write
-     (Stream : in out JSON_Stream;
-      Item   : Ada.Streams.Stream_Element_Array);
-
-   function Read
-    (Self : in out JSON_Stream'Class)
-       return League.JSON.Values.JSON_Value;
-   --  Reads current value and updates stream's position.
+   procedure Read
+    (Stream : in out League.JSON.Streams.JSON_Stream'Class;
+     Item   : out Num);
 
    procedure Write
-    (Self : in out JSON_Stream'Class;
-     Item : League.JSON.Values.JSON_Value);
-   --  Writes value into the stream and updates stream's position.
+    (Stream : in out League.JSON.Streams.JSON_Stream'Class;
+     Item   : Num);
 
-end League.JSON.Streams;
+end League.JSON.Streams.Generic_Integer_Stream_Operations;

@@ -41,8 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Holders;
-with League.JSON.Values;
 
 package body League.JSON.Streams is
 
@@ -65,16 +63,6 @@ package body League.JSON.Streams is
    procedure Pop (Self : not null access JSON_Stream'Class);
    --  Unwind state stack and add constructed value to new state.
 
-   function Read
-    (Self : in out JSON_Stream'Class)
-       return League.JSON.Values.JSON_Value;
-   --  Reads current value and updates stream's position.
-
-   procedure Write
-    (Self : in out JSON_Stream'Class;
-     Item : League.JSON.Values.JSON_Value);
-   --  Writes value into the stream and updates stream's position.
-
    ---------------
    -- End_Array --
    ---------------
@@ -86,38 +74,6 @@ package body League.JSON.Streams is
    ----------------
 
    procedure End_Object (Self : not null access JSON_Stream'Class) renames Pop;
-
-   ---------------------------------------
-   -- Generic_Integer_Stream_Operations --
-   ---------------------------------------
-
-   package body Generic_Integer_Stream_Operations is
-
-      ----------
-      -- Read --
-      ----------
-
-      procedure Read
-       (Stream : in out JSON_Stream'Class;
-        Item   : out T) is
-      begin
-         Item := T (Stream.Read.To_Integer);
-      end Read;
-
-      -----------
-      -- Write --
-      -----------
-
-      procedure Write
-       (Stream : in out JSON_Stream'Class;
-        Item   : T) is
-      begin
-         Stream.Write
-          (League.JSON.Values.To_JSON_Value
-            (League.Holders.Universal_Integer (Item)));
-      end Write;
-
-   end Generic_Integer_Stream_Operations;
 
    -----------------------
    -- Get_JSON_Document --
