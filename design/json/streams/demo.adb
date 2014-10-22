@@ -15,7 +15,20 @@ package body Demo is
       V : out Rect) is
    begin
       if S.all in League.JSON.Streams.JSON_Stream'Class then
-         raise Program_Error;
+         declare
+            JS : League.JSON.Streams.JSON_Stream'Class
+              renames League.JSON.Streams.JSON_Stream'Class (S.all);
+
+         begin
+            JS.Start_Object;
+            JS.Key (League.Strings.To_Universal_String ("x"));
+            JS.Start_Array;
+            Integer_Stream_Operations.Read (JS, V.X);
+            JS.End_Array;
+            JS.Key (League.Strings.To_Universal_String ("y"));
+            Integer_Stream_Operations.Read (JS, V.Y);
+            JS.End_Object;
+         end;
 
       else
          Integer'Read (S, V.X);
@@ -39,10 +52,10 @@ package body Demo is
          begin
             JS.Start_Object;
             JS.Key (League.Strings.To_Universal_String ("x"));
---            Integer'Write (S, V.X);
+            JS.Start_Array;
             Integer_Stream_Operations.Write (JS, V.X);
+            JS.End_Array;
             JS.Key (League.Strings.To_Universal_String ("y"));
---            Integer'Write (S, V.Y);
             Integer_Stream_Operations.Write (JS, V.Y);
             JS.End_Object;
          end;

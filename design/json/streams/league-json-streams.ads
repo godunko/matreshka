@@ -69,6 +69,10 @@ package League.JSON.Streams is
     (Self : not null access JSON_Stream'Class)
        return League.JSON.Documents.JSON_Document;
 
+   procedure Set_JSON_Document
+    (Self : not null access JSON_Stream'Class;
+     Data : League.JSON.Documents.JSON_Document);
+
    generic
       type T is range <>;
 
@@ -89,9 +93,12 @@ private
    type State_Kinds is (Array_State, Object_State);
 
    type State (Kind : State_Kinds := Array_State) is record
+      Modified : Boolean := False;
+
       case Kind is
          when Array_State =>
             Current_Array : League.JSON.Arrays.JSON_Array;
+            Index         : Positive := 1;
 
          when Object_State =>
             Current_Object : League.JSON.Objects.JSON_Object;
