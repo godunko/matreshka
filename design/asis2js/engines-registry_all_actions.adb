@@ -21,6 +21,7 @@ with Properties.Expressions.Selected_Components;
 with Properties.Expressions.String_Literal;
 with Properties.Expressions.Type_Conversion;
 with Properties.Statements.Assignment_Statement;
+with Properties.Statements.Case_Statement;
 with Properties.Statements.For_Loop_Statement;
 with Properties.Statements.If_Statement;
 with Properties.Statements.Null_Statement;
@@ -134,6 +135,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Code,
        Kind   => F.An_Assignment_Statement,
        Action => P.Statements.Assignment_Statement.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Case_Statement,
+       Action => P.Statements.Case_Statement.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_For_Loop_Statement,
        Action => P.Statements.For_Loop_Statement.Code'Access),

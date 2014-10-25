@@ -146,6 +146,17 @@ package body REPORT is
 
    procedure RESULT is
    begin
+      case TEST_STATUS is
+         when PASS =>
+            Console.Log ("==== PASSED");
+         when DOES_NOT_APPLY =>
+            Console.Log ("++++ NOT-APPLICABLE");
+         when ACTION_REQUIRED =>
+            Console.Log ("!!!! TENTATIVELY PASSED");
+         when others =>
+            Console.Log ("**** FAILED");
+      end case;
+
       TEST_STATUS := FAIL;
    end RESULT;
 
