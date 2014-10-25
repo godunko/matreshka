@@ -20,7 +20,6 @@ package body Properties.Definitions.Enumeration_Type is
         Asis.Definitions.Enumeration_Literal_Declarations (Element);
       Text  : League.Strings.Universal_String;
    begin
-      Text.Append ("'");
       declare
          Image : constant Wide_String :=
            Asis.Declarations.Defining_Name_Image
@@ -32,7 +31,7 @@ package body Properties.Definitions.Enumeration_Type is
          Text.Append (Name.To_Lowercase);
       end;
 
-      Text.Append ("' : {");
+      Text.Append (" = {");
 
       for J in List'Range loop
          declare
@@ -54,7 +53,7 @@ package body Properties.Definitions.Enumeration_Type is
          end;
       end loop;
 
-      Text.Append ("}");
+      Text.Append ("};");
 
       return League.Holders.To_Holder (Text);
    end Code;

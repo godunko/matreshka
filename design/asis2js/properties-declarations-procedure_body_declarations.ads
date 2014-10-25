@@ -12,6 +12,11 @@ package Properties.Declarations.Procedure_Body_Declarations is
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String) return League.Holders.Holder;
 
+   function Declaration_Prefix
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+
    function Export
      (Engine  : access Engines.Engine;
       Element : Asis.Declaration;

@@ -1,6 +1,8 @@
 with Asis.Declarations;
 with Asis.Elements;
 
+with Engines.Property_Names;
+
 package body Properties.Declarations.Constant_Declarations is
 
    ----------
@@ -19,6 +21,7 @@ package body Properties.Declarations.Constant_Declarations is
         Asis.Declarations.Initialization_Expression (Element);
 
       Init_Code : League.Strings.Universal_String;
+      Prefix    : League.Strings.Universal_String;
 
       Constant_Name : League.Strings.Universal_String;
       Text  : League.Strings.Universal_String;
@@ -30,9 +33,15 @@ package body Properties.Declarations.Constant_Declarations is
       end if;
 
       for J in List'Range loop
+         Prefix := League.Holders.Element
+           (Engine.Get_Property
+              (Asis.Elements.Enclosing_Element (Element),
+               Engines.Property_Names.Declaration_Prefix));
+
+         Text.Append (Prefix);
+
          Constant_Name := League.Holders.Element
              (Engine.Get_Property (List (J), Name));
-         Text.Append ("var ");
          Text.Append (Constant_Name);
 
          if not Asis.Elements.Is_Nil (Init) then

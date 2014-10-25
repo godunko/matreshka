@@ -2,6 +2,11 @@ with WebAPI.Consoles; use WebAPI.Consoles;
 
 package body REPORT is
 
+   TYPE STATUS IS (PASS, FAIL, DOES_NOT_APPLY, ACTION_REQUIRED,
+                   UNKNOWN);
+
+   TEST_STATUS : STATUS := FAIL;
+
    -------------
    -- COMMENT --
    -------------
@@ -33,7 +38,7 @@ package body REPORT is
      (DESCR : STRING)
    is
    begin
-      null;
+      TEST_STATUS := FAIL;
    end FAILED;
 
    ----------------
@@ -129,7 +134,10 @@ package body REPORT is
      (DESCR : STRING)
    is
    begin
-      null;
+      IF TEST_STATUS = PASS  --  OR TEST_STATUS = ACTION_REQUIRED
+      THEN
+         TEST_STATUS := DOES_NOT_APPLY;
+      END IF;
    end NOT_APPLICABLE;
 
    ------------
@@ -138,7 +146,7 @@ package body REPORT is
 
    procedure RESULT is
    begin
-      null;
+      TEST_STATUS := FAIL;
    end RESULT;
 
    --------------------
@@ -149,7 +157,9 @@ package body REPORT is
      (DESCR : STRING)
    is
    begin
-      null;
+      IF TEST_STATUS = PASS THEN
+         TEST_STATUS := ACTION_REQUIRED;
+      END IF;
    end SPECIAL_ACTION;
 
    ----------
@@ -161,6 +171,7 @@ package body REPORT is
       DESCR : STRING)
    is
    begin
+      TEST_STATUS := PASS;
       Console.Log (NAME & " " & DESCR);
    end TEST;
 

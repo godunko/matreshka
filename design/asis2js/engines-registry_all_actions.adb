@@ -11,6 +11,7 @@ with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Simple_Expression_Range;
+with Properties.Expressions.Enumeration_Literal;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
 with Properties.Expressions.Indexed_Component;
@@ -104,6 +105,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
        Action => P.Definitions.Simple_Expression_Range.Code'Access),
       (Name   => N.Code,
+       Kind   => F.An_Enumeration_Literal,
+       Action => P.Expressions.Enumeration_Literal.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Function_Call,
        Action => P.Expressions.Function_Calls.Code'Access),
       (Name   => N.Code,
@@ -171,8 +175,20 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Action => P.Declarations.Procedure_Declaration.Call_Convention'Access),
       (Name   => N.Call_Convention,
        Kind   => F.A_Selected_Component,
-       Action => P.Expressions.Selected_Components
-                   .Call_Convention'Access),
+       Action => P.Expressions.Selected_Components.Call_Convention'Access),
+
+      --  Declaration_Prefix
+      (Name   => N.Declaration_Prefix,
+       Kind   => F.A_Procedure_Body_Declaration,
+       Action => P.Declarations.Procedure_Body_Declarations
+                    .Declaration_Prefix'Access),
+      (Name   => N.Declaration_Prefix,
+       Kind   => F.A_Package_Declaration,
+       Action => P.Declarations.Package_Declaration.Declaration_Prefix'Access),
+      (Name   => N.Declaration_Prefix,
+       Kind   => F.A_Package_Body_Declaration,
+       Action => P.Declarations.Package_Declaration.Declaration_Prefix'Access),
+
       --  Export
       (Name   => N.Export,
        Kind   => F.A_Function_Body_Declaration,

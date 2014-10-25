@@ -12,4 +12,9 @@ package Properties.Declarations.Package_Declaration is
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String) return League.Holders.Holder;
 
+   function Declaration_Prefix
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+
 end Properties.Declarations.Package_Declaration;

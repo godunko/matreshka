@@ -98,6 +98,22 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       return Value;
    end Code;
 
+   ------------------------
+   -- Declaration_Prefix --
+   ------------------------
+
+   function Declaration_Prefix
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      pragma Unreferenced (Name, Engine, Element);
+      Text : constant League.Strings.Universal_String :=
+        League.Strings.To_Universal_String ("var ");
+   begin
+      return League.Holders.To_Holder (Text);
+   end Declaration_Prefix;
+
    ------------
    -- Export --
    ------------

@@ -3,6 +3,8 @@ with Asis.Elements;
 
 with League.String_Vectors;
 
+with Engines.Property_Names;
+
 package body Properties.Declarations.Package_Declaration is
 
    ----------
@@ -75,17 +77,33 @@ package body Properties.Declarations.Package_Declaration is
 
       for J in List'Range loop
          Down := League.Holders.Element (Engine.Get_Property (List (J), Name));
-
-         if not Down.Is_Empty then
-            Text.Append (Full_Name);
-            Text.Append (".");
-            Text.Append (Down);
-         end if;
+         Text.Append (Down);
       end loop;
 
       Text.Append ("};");
 
       return League.Holders.To_Holder (Text);
    end Code;
+
+   ------------------------
+   -- Declaration_Prefix --
+   ------------------------
+
+   function Declaration_Prefix
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      pragma Unreferenced (Name);
+      Text : League.Strings.Universal_String;
+   begin
+      Text := League.Holders.Element
+        (Engine.Get_Property
+           (Asis.Declarations.Names (Element) (1),
+            Engines.Property_Names.Code));
+      Text.Append (".");
+
+      return League.Holders.To_Holder (Text);
+   end Declaration_Prefix;
 
 end Properties.Declarations.Package_Declaration;
