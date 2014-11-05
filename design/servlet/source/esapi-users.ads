@@ -51,6 +51,12 @@ package ESAPI.Users is
 
    type User_Access is access all User'Class;
 
+   function Get_User_Identifier
+    (Self : not null access constant User'Class) return User_Identifier;
+
+   function Is_Enabled
+    (Self : not null access constant User'Class) return Boolean;
+
    not overriding function Initialize
     (Store : not null access ESAPI.Users.Stores.User_Store'Class) return User;
    --  Dispatching constructor used by store to initialize object from store's
@@ -58,11 +64,12 @@ package ESAPI.Users is
 
 private
 
-   type User_Identifier is mod 2**64;
+   type User_Identifier is range 0 .. 2**63 - 1;
 
    type User is tagged limited record
       Store      : not null access ESAPI.Users.Stores.User_Store'Class;
       Identifier : User_Identifier;
+      Enabled    : Boolean;
    end record;
 
 end ESAPI.Users;

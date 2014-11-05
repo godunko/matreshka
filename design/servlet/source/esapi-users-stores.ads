@@ -41,24 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Tags;
 
 package ESAPI.Users.Stores is
 
-   type User_Store is tagged limited private;
+   type User_Store is limited interface;
 
-   not overriding function Create
-    (Self : not null access User_Store) return not null User_Access;
+   not overriding function Get_User_Identifier
+    (Self : not null access User_Store) return User_Identifier is abstract;
 
-   function Create
-    (Self : not null access User_Store'Class;
-     Tag  : Ada.Tags.Tag) return not null User_Access;
-
-   function Get_User_Identifier
-    (Self : not null access User_Store'Class) return User_Identifier;
-
-private
-
-   type User_Store is tagged limited null record;
+   not overriding function Get_Enabled
+    (Self : not null access User_Store) return Boolean is abstract;
 
 end ESAPI.Users.Stores;

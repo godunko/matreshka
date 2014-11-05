@@ -45,6 +45,16 @@ with ESAPI.Users.Stores;
 
 package body ESAPI.Users is
 
+   -------------------------
+   -- Get_User_Identifier --
+   -------------------------
+
+   function Get_User_Identifier
+    (Self : not null access constant User'Class) return User_Identifier is
+   begin
+      return Self.Identifier;
+   end Get_User_Identifier;
+
    ----------------
    -- Initialize --
    ----------------
@@ -55,7 +65,18 @@ package body ESAPI.Users is
    begin
       return
        (Store      => Store,
-        Identifier => Store.Get_User_Identifier);
+        Identifier => Store.Get_User_Identifier,
+        Enabled    => Store.Get_Enabled);
    end Initialize;
+
+   ----------------
+   -- Is_Enabled --
+   ----------------
+
+   function Is_Enabled
+    (Self : not null access constant User'Class) return Boolean is
+   begin
+      return Self.Enabled;
+   end Is_Enabled;
 
 end ESAPI.Users;
