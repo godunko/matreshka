@@ -49,7 +49,7 @@ package ESAPI.Users is
 
    type User is tagged limited private;
 
-   type User_Access is access all User'Class;
+   type User_Access is access all User'Class with Storage_Size => 0;
 
    function Get_User_Identifier
     (Self : not null access constant User'Class) return User_Identifier;
