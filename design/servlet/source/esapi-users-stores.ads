@@ -44,6 +44,8 @@
 
 package ESAPI.Users.Stores is
 
+   pragma Preelaborate;
+
    type User_Store is limited interface;
 
    not overriding function Get_User_Identifier

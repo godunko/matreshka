@@ -41,17 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with ESAPI.Users.Stores;
 
-package body ESAPI.Users is
+package ESAPI.Users.Non_Anonymous is
 
-   ----------
-   -- Hash --
-   ----------
+   pragma Preelaborate;
 
-   function Hash (Item : User_Identifier) return Ada.Containers.Hash_Type is
-   begin
-      return
-        Ada.Containers.Hash_Type (Item mod Ada.Containers.Hash_Type'Modulus);
-   end Hash;
+   type Non_Anonymous_User is limited new ESAPI.Users.User with private;
 
-end ESAPI.Users;
+   overriding function Get_User_Identifier
+    (Self : not null access constant Non_Anonymous_User)
+       return User_Identifier;
+
+   overriding function Is_Anonymous
+    (Self : not null access constant Non_Anonymous_User) return Boolean;
+
+   overriding function Is_Enabled
+    (Self : not null access constant Non_Anonymous_User) return Boolean;
+
+   not overriding function Initialize
+    (Store : not null access ESAPI.Users.Stores.User_Store'Class)
+       return Non_Anonymous_User;
+   --  Dispatching constructor used by store to initialize object from store's
+   --  content.
+
+private
+
+   type Non_Anonymous_User is limited new ESAPI.Users.User with record
+      Store      : not null access ESAPI.Users.Stores.User_Store'Class;
+      Identifier : User_Identifier;
+      Enabled    : Boolean;
+   end record;
+
+end ESAPI.Users.Non_Anonymous;

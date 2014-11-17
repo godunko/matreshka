@@ -41,35 +41,35 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-limited with ESAPI.Users.Stores;
+with Ada.Containers;
 
 package ESAPI.Users is
 
+   pragma Preelaborate;
+
    type User_Identifier is private;
 
-   type User is tagged limited private;
+   Anonymous_User_Identifier : constant User_Identifier;
+
+   type User is limited interface;
 
    type User_Access is access all User'Class with Storage_Size => 0;
 
-   function Get_User_Identifier
-    (Self : not null access constant User'Class) return User_Identifier;
+   not overriding function Get_User_Identifier
+    (Self : not null access constant User) return User_Identifier is abstract;
 
-   function Is_Enabled
-    (Self : not null access constant User'Class) return Boolean;
+   not overriding function Is_Anonymous
+    (Self : not null access constant User) return Boolean is abstract;
 
-   not overriding function Initialize
-    (Store : not null access ESAPI.Users.Stores.User_Store'Class) return User;
-   --  Dispatching constructor used by store to initialize object from store's
-   --  content.
+   not overriding function Is_Enabled
+    (Self : not null access constant User) return Boolean is abstract;
+
+   function Hash (Item : User_Identifier) return Ada.Containers.Hash_Type;
 
 private
 
    type User_Identifier is range 0 .. 2**63 - 1;
 
-   type User is tagged limited record
-      Store      : not null access ESAPI.Users.Stores.User_Store'Class;
-      Identifier : User_Identifier;
-      Enabled    : Boolean;
-   end record;
+   Anonymous_User_Identifier : constant User_Identifier := 0;
 
 end ESAPI.Users;

@@ -42,16 +42,23 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body ESAPI.Users is
+package ESAPI.Users.Anonymous is
 
-   ----------
-   -- Hash --
-   ----------
+   pragma Preelaborate;
 
-   function Hash (Item : User_Identifier) return Ada.Containers.Hash_Type is
-   begin
-      return
-        Ada.Containers.Hash_Type (Item mod Ada.Containers.Hash_Type'Modulus);
-   end Hash;
+   type Anonymous_User is limited new ESAPI.Users.User with private;
 
-end ESAPI.Users;
+   overriding function Get_User_Identifier
+    (Self : not null access constant Anonymous_User) return User_Identifier;
+
+   overriding function Is_Anonymous
+    (Self : not null access constant Anonymous_User) return Boolean;
+
+   overriding function Is_Enabled
+    (Self : not null access constant Anonymous_User) return Boolean;
+
+private
+
+   type Anonymous_User is limited new ESAPI.Users.User with null record;
+
+end ESAPI.Users.Anonymous;
