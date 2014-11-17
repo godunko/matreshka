@@ -48,6 +48,14 @@ package ESAPI.Users.Anonymous is
 
    type Anonymous_User is limited new ESAPI.Users.User with private;
 
+private
+
+   type Anonymous_User is limited new ESAPI.Users.User with null record;
+
+   overriding procedure Disable (Self : not null access Anonymous_User);
+
+   overriding procedure Enable (Self : not null access Anonymous_User);
+
    overriding function Get_User_Identifier
     (Self : not null access constant Anonymous_User) return User_Identifier;
 
@@ -56,9 +64,5 @@ package ESAPI.Users.Anonymous is
 
    overriding function Is_Enabled
     (Self : not null access constant Anonymous_User) return Boolean;
-
-private
-
-   type Anonymous_User is limited new ESAPI.Users.User with null record;
 
 end ESAPI.Users.Anonymous;

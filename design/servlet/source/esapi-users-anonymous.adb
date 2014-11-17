@@ -44,6 +44,24 @@
 
 package body ESAPI.Users.Anonymous is
 
+   -------------
+   -- Disable --
+   -------------
+
+   overriding procedure Disable (Self : not null access Anonymous_User) is
+   begin
+      raise Program_Error with "Anonymous user can't be disabled";
+   end Disable;
+
+   ------------
+   -- Enable --
+   ------------
+
+   overriding procedure Enable (Self : not null access Anonymous_User) is
+   begin
+      raise Program_Error with "Anonymous user is enabled always";
+   end Enable;
+
    -------------------------
    -- Get_User_Identifier --
    -------------------------

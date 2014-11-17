@@ -49,16 +49,6 @@ package ESAPI.Users.Non_Anonymous is
 
    type Non_Anonymous_User is limited new ESAPI.Users.User with private;
 
-   overriding function Get_User_Identifier
-    (Self : not null access constant Non_Anonymous_User)
-       return User_Identifier;
-
-   overriding function Is_Anonymous
-    (Self : not null access constant Non_Anonymous_User) return Boolean;
-
-   overriding function Is_Enabled
-    (Self : not null access constant Non_Anonymous_User) return Boolean;
-
    not overriding function Initialize
     (Store : not null access ESAPI.Users.Stores.User_Store'Class)
        return Non_Anonymous_User;
@@ -72,5 +62,19 @@ private
       Identifier : User_Identifier;
       Enabled    : Boolean;
    end record;
+
+   overriding procedure Disable (Self : not null access Non_Anonymous_User);
+
+   overriding procedure Enable (Self : not null access Non_Anonymous_User);
+
+   overriding function Get_User_Identifier
+    (Self : not null access constant Non_Anonymous_User)
+       return User_Identifier;
+
+   overriding function Is_Anonymous
+    (Self : not null access constant Non_Anonymous_User) return Boolean;
+
+   overriding function Is_Enabled
+    (Self : not null access constant Non_Anonymous_User) return Boolean;
 
 end ESAPI.Users.Non_Anonymous;

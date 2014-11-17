@@ -64,6 +64,12 @@ package ESAPI.Users is
    not overriding function Is_Enabled
     (Self : not null access constant User) return Boolean is abstract;
 
+   not overriding procedure Enable (Self : not null access User) is abstract;
+   --  Enable user's account.
+
+   not overriding procedure Disable (Self : not null access User) is abstract;
+   --  Disable user's account.
+
    function Hash (Item : User_Identifier) return Ada.Containers.Hash_Type;
 
 private

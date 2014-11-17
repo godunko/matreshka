@@ -48,10 +48,14 @@ package ESAPI.Users.Stores is
 
    type User_Store is limited interface;
 
+   not overriding function Get_Enabled
+    (Self : not null access User_Store) return Boolean is abstract;
+
    not overriding function Get_User_Identifier
     (Self : not null access User_Store) return User_Identifier is abstract;
 
-   not overriding function Get_Enabled
-    (Self : not null access User_Store) return Boolean is abstract;
+   not overriding procedure Update_Enabled
+    (Self : not null access User_Store;
+     User : not null access constant ESAPI.Users.User'Class) is abstract;
 
 end ESAPI.Users.Stores;

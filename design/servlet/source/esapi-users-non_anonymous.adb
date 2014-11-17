@@ -44,6 +44,30 @@
 
 package body ESAPI.Users.Non_Anonymous is
 
+   -------------
+   -- Disable --
+   -------------
+
+   overriding procedure Disable (Self : not null access Non_Anonymous_User) is
+   begin
+      if Self.Enabled then
+         Self.Enabled := False;
+         Self.Store.Update_Enabled (Self);
+      end if;
+   end Disable;
+
+   ------------
+   -- Enable --
+   ------------
+
+   overriding procedure Enable (Self : not null access Non_Anonymous_User) is
+   begin
+      if not Self.Enabled then
+         Self.Enabled := True;
+         Self.Store.Update_Enabled (Self);
+      end if;
+   end Enable;
+
    -------------------------
    -- Get_User_Identifier --
    -------------------------
