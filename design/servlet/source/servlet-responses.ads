@@ -52,4 +52,6 @@ package Servlet.Responses is
 
    type Servlet_Response is limited interface;
 
+   type Servlet_Response_Access is access all Servlet_Response'Class;
+
 end Servlet.Responses;

@@ -52,4 +52,6 @@ package Servlet.Requests is
 
    type Servlet_Request is limited interface;
 
+   type Servlet_Request_Access is access all Servlet_Request'Class;
+
 end Servlet.Requests;
