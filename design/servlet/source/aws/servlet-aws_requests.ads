@@ -41,15 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Servlet.Requests;
 
 package Servlet.AWS_Requests is
 
-   type AWS_Servet_Request is
+   type AWS_Servlet_Request is
      limited new Servlet.Requests.Servlet_Request with private;
 
 private
 
-   type AWS_Servet_Request is
+   type AWS_Servlet_Request is
      limited new Servlet.Requests.Servlet_Request with null record;
+
+   overriding function Is_Async_Supported
+    (Self : not null access AWS_Servlet_Request) return Boolean;
+   --  Checks if this request supports asynchronous operation.
 
 end Servlet.AWS_Requests;

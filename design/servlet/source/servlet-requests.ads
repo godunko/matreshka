@@ -54,4 +54,8 @@ package Servlet.Requests is
 
    type Servlet_Request_Access is access all Servlet_Request'Class;
 
+   not overriding function Is_Async_Supported
+    (Self : not null access Servlet_Request) return Boolean is abstract;
+   --  Checks if this request supports asynchronous operation.
+
 end Servlet.Requests;

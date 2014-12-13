@@ -41,22 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Provides a convenient implementation of the ServletRequest interface that
---  can be subclassed by developers wishing to adapt the request to a Servlet.
---  This class implements the Wrapper or Decorator pattern. Methods default to
---  calling through to the wrapped request object.
-------------------------------------------------------------------------------
-with Servlet.Requests;
 
-package Servlet.Request_Wrappers is
+package body Servlet.Request_Wrappers is
 
-   pragma Preelaborate;
-
-   type Servlet_Request_Wrapper
-    (Request : not null access Servlet.Requests.Servlet_Request'Class) is
-       limited new Servlet.Requests.Servlet_Request with null record;
+   ------------------------
+   -- Is_Async_Supported --
+   ------------------------
 
    overriding function Is_Async_Supported
-    (Self : not null access Servlet_Request_Wrapper) return Boolean;
+    (Self : not null access Servlet_Request_Wrapper) return Boolean is
+   begin
+      return Self.Request.Is_Async_Supported;
+   end Is_Async_Supported;
 
 end Servlet.Request_Wrappers;
