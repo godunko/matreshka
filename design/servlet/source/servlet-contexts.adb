@@ -41,44 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Defines a set of methods that a servlet uses to communicate with its
---  servlet container, for example, to get the MIME type of a file, dispatch
---  requests, or write to a log file.
-------------------------------------------------------------------------------
-with League.Strings;
 
-with Servlet.Servlet_Registrations;
-with Servlet.Servlets;
+package body Servlet.Contexts is
 
-package Servlet.Contexts is
-
-   pragma Preelaborate;
-
-   type Servlet_Context is limited interface;
-
-   type Servlet_Context_Access is access all Servlet_Context'Class;
-
-   not overriding function Add_Servlet
-    (Self     : not null access Servlet_Context;
-     Name     : League.Strings.Universal_String;
-     Instance : not null access Servlet.Servlets.Servlet'Class)
-       return not null access
-         Servlet.Servlet_Registrations.Servlet_Registration'Class
-           is abstract;
-   --  Registers the given servlet instance with this ServletContext under the
-   --  given servletName.
-   --
-   --  The registered servlet may be further configured via the returned
-   --  ServletRegistration object.
-   --
-   --  If this ServletContext already contains a preliminary
-   --  ServletRegistration for a servlet with the given servletName, it will be
-   --  completed (by assigning the class name of the given servlet instance to
-   --  it) and returned.
+   -----------------
+   -- Add_Servlet --
+   -----------------
 
    procedure Add_Servlet
     (Self     : not null access Servlet_Context'Class;
      Name     : League.Strings.Universal_String;
-     Instance : not null access Servlet.Servlets.Servlet'Class);
+     Instance : not null access Servlet.Servlets.Servlet'Class)
+   is
+      Aux : constant not null access
+        Servlet.Servlet_Registrations.Servlet_Registration'Class
+          := Self.Add_Servlet (Name, Instance);
+
+   begin
+      null;
+   end Add_Servlet;
 
 end Servlet.Contexts;
