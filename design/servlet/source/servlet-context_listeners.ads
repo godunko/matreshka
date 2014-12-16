@@ -64,7 +64,7 @@ package Servlet.Context_Listeners is
      access all Servlet_Context_Listener'Class;
 
    not overriding procedure Context_Destroyed
-    (Self    : not null access constant Servlet_Context_Listener;
+    (Self    : not null access Servlet_Context_Listener;
      Context : not null access Servlet.Contexts.Servlet_Context'Class) is null;
    --  Receives notification that the ServletContext is about to be shut down.
    --
@@ -72,7 +72,7 @@ package Servlet.Context_Listeners is
    --  ServletContextListeners are notified of context destruction.
 
    not overriding procedure Context_Initialized
-    (Self    : not null access constant Servlet_Context_Listener;
+    (Self    : not null access Servlet_Context_Listener;
      Context : not null access Servlet.Contexts.Servlet_Context'Class) is null;
    --  Receives notification that the web application initialization process is
    --  starting.
