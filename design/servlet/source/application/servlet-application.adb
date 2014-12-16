@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Application;
 
 package body Servlet.Application is
 
@@ -61,6 +62,16 @@ package body Servlet.Application is
    begin
       null;
    end Finalize;
+
+   -------------------------
+   -- Get_Servlet_Context --
+   -------------------------
+
+   function Get_Servlet_Context
+     return not null Servlet.Contexts.Servlet_Context_Access is
+   begin
+      return null;
+   end Get_Servlet_Context;
 
    ----------------
    -- Initialize --

@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
+with Servlet.Contexts;
+
 package Servlet.Application is
 
    procedure Initialize
@@ -50,9 +52,18 @@ package Servlet.Application is
      Application_Version : League.Strings.Universal_String;
      Organization_Name   : League.Strings.Universal_String;
      Organization_Domain : League.Strings.Universal_String);
+   --  Initialize servlet container. It detects run of application under
+   --  FastCGI environment and use it when possible, or fallback to start as
+   --  standalone AWS server when it supports was enabled at build time.
 
    procedure Execute;
 
    procedure Finalize;
+
+   function Get_Servlet_Context return
+     not null Servlet.Contexts.Servlet_Context_Access;
+   --  Returns servlet context of the initialized servlet container.
+   --  Application should use this context to add and configure servlets and
+   --  filters.
 
 end Servlet.Application;
