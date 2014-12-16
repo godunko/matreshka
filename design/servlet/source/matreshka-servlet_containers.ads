@@ -41,71 +41,27 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+private with League.Strings;
 
-with Matreshka.Servlet_Containers;
+with Servlet.Contexts;
+private with Servlet.Servlets;
+private with Servlet.Servlet_Registrations;
 
-package body Servlet.Application is
+package Matreshka.Servlet_Containers is
 
-   Container : aliased Matreshka.Servlet_Containers.Servlet_Container;
-   --  Global object of servlet container.
+   type Servlet_Container is
+     limited new Servlet.Contexts.Servlet_Context with private;
 
-   ------------------
-   -- Add_Listener --
-   ------------------
+private
 
-   procedure Add_Listener
-    (Listener : not null
-       Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
-   begin
-      null;
-   end Add_Listener;
+   type Servlet_Container is
+     limited new Servlet.Contexts.Servlet_Context with null record;
 
-   -------------
-   -- Execute --
-   -------------
+   overriding function Add_Servlet
+    (Self     : not null access Servlet_Container;
+     Name     : League.Strings.Universal_String;
+     Instance : not null access Servlet.Servlets.Servlet'Class)
+       return not null access
+         Servlet.Servlet_Registrations.Servlet_Registration'Class;
 
-   procedure Execute is
-   begin
-      null;
-   end Execute;
-
-   --------------
-   -- Finalize --
-   --------------
-
-   procedure Finalize is
-   begin
-      null;
-   end Finalize;
-
-   -------------------------
-   -- Get_Servlet_Context --
-   -------------------------
-
-   function Get_Servlet_Context
-     return not null Servlet.Contexts.Servlet_Context_Access is
-   begin
-      return Container'Access;
-   end Get_Servlet_Context;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize
-    (Application_Name    : League.Strings.Universal_String;
-     Application_Version : League.Strings.Universal_String;
-     Organization_Name   : League.Strings.Universal_String;
-     Organization_Domain : League.Strings.Universal_String) is
-   begin
-      League.Application.Set_Application_Name (Application_Name);
-      League.Application.Set_Application_Version (Application_Version);
-      League.Application.Set_Organization_Name (Organization_Name);
-      League.Application.Set_Organization_Domain (Organization_Domain);
-
-      --  Check whether application is run in FastCGI environment.
-
-   end Initialize;
-
-end Servlet.Application;
+end Matreshka.Servlet_Containers;
