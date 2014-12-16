@@ -41,38 +41,43 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-
+--  Interface for receiving notification events about ServletContext lifecycle
+--  changes.
+--
+--  In order to receive these notification events, the implementation class
+--  must be registered via one of the Add_Listener methods defined on
+--  Servlet_Context or in Servelt.Application package.
+--
+--  Implementations of this interface are invoked at their Context_Initialized
+--  method in the order in which they have been declared, and at their
+--  Context_Destroyed method in reverse order.
+------------------------------------------------------------------------------
 with Servlet.Contexts;
-with Servlet.Context_Listeners;
 
-package Servlet.Application is
+package Servlet.Context_Listeners is
 
-   procedure Initialize
-    (Application_Name    : League.Strings.Universal_String;
-     Application_Version : League.Strings.Universal_String;
-     Organization_Name   : League.Strings.Universal_String;
-     Organization_Domain : League.Strings.Universal_String);
-   --  Initialize servlet container. It detects run of application under
-   --  FastCGI environment and use it when possible, or fallback to start as
-   --  standalone AWS server when it supports was enabled at build time.
+   pragma Preelaborate;
 
-   procedure Execute;
+   type Servlet_Context_Listener is limited interface;
 
-   procedure Finalize;
+   type Servlet_Context_Listener_Access is
+     access all Servlet_Context_Listener'Class;
 
-   procedure Add_Listener
-    (Listener : not null
-       Servlet.Context_Listeners.Servlet_Context_Listener_Access);
-   --  Adds Servlet_Context_Listener. Context_Initialized subprogram of this
-   --  interface will be called during execution of Initialize subprogram; and
-   --  Context_Destoyed subprogram will be called during execution of Finalize
-   --  subprogram.
+   not overriding procedure Context_Destroyed
+    (Self    : not null access constant Servlet_Context_Listener;
+     Context : not null access Servlet.Contexts.Servlet_Context'Class) is null;
+   --  Receives notification that the ServletContext is about to be shut down.
+   --
+   --  All servlets and filters will have been destroyed before any
+   --  ServletContextListeners are notified of context destruction.
 
-   function Get_Servlet_Context return
-     not null Servlet.Contexts.Servlet_Context_Access;
-   --  Returns servlet context of the initialized servlet container.
-   --  Application should use this context to add and configure servlets and
-   --  filters.
+   not overriding procedure Context_Initialized
+    (Self    : not null access constant Servlet_Context_Listener;
+     Context : not null access Servlet.Contexts.Servlet_Context'Class) is null;
+   --  Receives notification that the web application initialization process is
+   --  starting.
+   --
+   --  All ServletContextListeners are notified of context initialization
+   --  before any filters or servlets in the web application are initialized.
 
-end Servlet.Application;
+end Servlet.Context_Listeners;

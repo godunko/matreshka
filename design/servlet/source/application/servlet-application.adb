@@ -45,6 +45,17 @@ with League.Application;
 
 package body Servlet.Application is
 
+   ------------------
+   -- Add_Listener --
+   ------------------
+
+   procedure Add_Listener
+    (Listener : not null
+       Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
+   begin
+      null;
+   end Add_Listener;
+
    -------------
    -- Execute --
    -------------
