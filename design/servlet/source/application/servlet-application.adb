@@ -66,9 +66,19 @@ package body Servlet.Application is
    -- Initialize --
    ----------------
 
-   procedure Initialize is
+   procedure Initialize
+    (Application_Name    : League.Strings.Universal_String;
+     Application_Version : League.Strings.Universal_String;
+     Organization_Name   : League.Strings.Universal_String;
+     Organization_Domain : League.Strings.Universal_String) is
    begin
-      null;
+      League.Application.Set_Application_Name (Application_Name);
+      League.Application.Set_Application_Version (Application_Version);
+      League.Application.Set_Organization_Name (Organization_Name);
+      League.Application.Set_Organization_Domain (Organization_Domain);
+
+      --  Check whether application is run in FastCGI environment.
+
    end Initialize;
 
 end Servlet.Application;

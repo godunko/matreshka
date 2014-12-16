@@ -41,10 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 
 package Servlet.Application is
 
-   procedure Initialize;
+   procedure Initialize
+    (Application_Name    : League.Strings.Universal_String;
+     Application_Version : League.Strings.Universal_String;
+     Organization_Name   : League.Strings.Universal_String;
+     Organization_Domain : League.Strings.Universal_String);
 
    procedure Execute;
 
