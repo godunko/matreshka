@@ -52,7 +52,7 @@ package Servlet.Contexts is
 
    type Servlet_Context is limited interface;
 
-   type Servel_Context_Access is access all Servlet_Context'Class;
+   type Servlet_Context_Access is access all Servlet_Context'Class;
 
 end Servlet.Contexts;
 
