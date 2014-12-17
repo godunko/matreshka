@@ -58,4 +58,24 @@ package body Matreshka.Servlet_Containers is
       return null;
    end Add_Servlet;
 
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (Self : not null access Servlet_Container'Class) is
+   begin
+      null;
+   end Finalize;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self   : not null access Servlet_Container'Class;
+     Server : not null Matreshka.Servlet_Servers.Server_Access) is
+   begin
+      null;
+   end Initialize;
+
 end Matreshka.Servlet_Containers;

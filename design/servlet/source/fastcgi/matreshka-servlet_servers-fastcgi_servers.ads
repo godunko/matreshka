@@ -41,96 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+--  Server implementation based on FastCGI module of Matreshka.
+------------------------------------------------------------------------------
 
-with Matreshka.Servlet_Containers;
-with Matreshka.Servlet_Servers.AWS_Servers;
-with Matreshka.Servlet_Servers.FastCGI_Servers;
+package Matreshka.Servlet_Servers.FastCGI_Servers is
 
-package body Servlet.Application is
-
-   AWS_Server  : aliased Matreshka.Servlet_Servers.AWS_Servers.AWS_Server;
-   --  Global object of AWS server.
-   FCGI_Server :
-     aliased Matreshka.Servlet_Servers.FastCGI_Servers.FastCGI_Server;
-   --  Global object of FastCGI server.
-   Container   : aliased Matreshka.Servlet_Containers.Servlet_Container;
-   --  Global object of servlet container.
-
-   ------------------
-   -- Add_Listener --
-   ------------------
-
-   procedure Add_Listener
-    (Listener : not null
-       Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
-   begin
-      null;
-   end Add_Listener;
-
-   -------------
-   -- Execute --
-   -------------
-
-   procedure Execute is
-   begin
-      null;
-   end Execute;
-
-   --------------
-   -- Finalize --
-   --------------
-
-   procedure Finalize is
-   begin
-      null;
-   end Finalize;
-
-   -------------------------
-   -- Get_Servlet_Context --
-   -------------------------
-
-   function Get_Servlet_Context
-     return not null Servlet.Contexts.Servlet_Context_Access is
-   begin
-      return Container'Access;
-   end Get_Servlet_Context;
-
-   ----------------
-   -- Initialize --
-   ----------------
+   type FastCGI_Server is new Abstract_Server with null record;
 
    procedure Initialize
-    (Application_Name    : League.Strings.Universal_String;
-     Application_Version : League.Strings.Universal_String;
-     Organization_Name   : League.Strings.Universal_String;
-     Organization_Domain : League.Strings.Universal_String)
-   is
-      Server  : Matreshka.Servlet_Servers.Server_Access;
-      Success : Boolean;
+    (Self    : not null access FastCGI_Server'Class;
+     Success : out Boolean);
+   --  Detects FastCGI environment and initialize FastCGI server when
+   --  application run in FastCGI environment.
 
-   begin
-      League.Application.Set_Application_Name (Application_Name);
-      League.Application.Set_Application_Version (Application_Version);
-      League.Application.Set_Organization_Name (Organization_Name);
-      League.Application.Set_Organization_Domain (Organization_Domain);
-
-      --  Check whether application is run in FastCGI environment.
-
-      FCGI_Server.Initialize (Success);
-
-      if Success then
-         Server := FCGI_Server'Access;
-      end if;
-
-      --  Fallback to use AWS server.
-
-      if not Success then
-         AWS_Server.Initialize;
-         Server := AWS_Server'Access;
-      end if;
-
-      Container.Initialize (Server);
-   end Initialize;
-
-end Servlet.Application;
+end Matreshka.Servlet_Servers.FastCGI_Servers;

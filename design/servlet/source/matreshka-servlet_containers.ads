@@ -46,11 +46,21 @@ private with League.Strings;
 with Servlet.Contexts;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
+with Matreshka.Servlet_Servers;
 
 package Matreshka.Servlet_Containers is
 
    type Servlet_Container is
      limited new Servlet.Contexts.Servlet_Context with private;
+
+   procedure Initialize
+    (Self   : not null access Servlet_Container'Class;
+     Server : not null Matreshka.Servlet_Servers.Server_Access);
+   --  Initializes servlet container. Specified server object must be
+   --  initialized.
+
+   procedure Finalize (Self : not null access Servlet_Container'Class);
+   --  Finalizes servlet container.
 
 private
 
