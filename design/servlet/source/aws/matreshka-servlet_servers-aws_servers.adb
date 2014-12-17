@@ -41,8 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Synchronous_Task_Control;
+
+with GNAT.Ctrl_C;
+
+with AWS.Config.Set;
+with AWS.Messages;
+with AWS.Response;
+with AWS.Server.Log;
+with AWS.Status;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
+
+   Config           : AWS.Config.Object;
+   Server           : AWS.Server.HTTP;
+   Shutdown_Request : Ada.Synchronous_Task_Control.Suspension_Object;
+
+   procedure Shutdown_Request_Handler;
+   --  Interrupt handler to process shutdown request from the operating system.
+
+   task Shutdown_Controller is
+      entry Start;
+   end Shutdown_Controller;
+
+   function Request_Callback
+    (Request : AWS.Status.Data) return AWS.Response.Data;
+   --  Handles request.
 
    ----------------
    -- Initialize --
@@ -50,7 +74,56 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
 
    procedure Initialize (Self : not null access AWS_Server'Class) is
    begin
-      null;
+      AWS.Config.Set.Reuse_Address (Config, True);
+
+      AWS.Server.Log.Start (Server);
+      AWS.Server.Log.Start_Error (Server);
+      AWS.Server.Start (Server, Request_Callback'Access, Config);
+      Shutdown_Controller.Start;
    end Initialize;
+
+   ----------------------
+   -- Request_Callback --
+   ----------------------
+
+   function Request_Callback
+    (Request : AWS.Status.Data) return AWS.Response.Data is
+   begin
+      return AWS.Response.Acknowledge (AWS.Messages.S500);
+   end Request_Callback;
+
+   -------------------------
+   -- Shutdown_Controller --
+   -------------------------
+
+   task body Shutdown_Controller is
+   begin
+      select
+         accept Start;
+
+         Ada.Synchronous_Task_Control.Set_False (Shutdown_Request);
+         GNAT.Ctrl_C.Install_Handler (Shutdown_Request_Handler'Access);
+
+      or
+         terminate;
+      end select;
+
+      --  Wait till shutdown request was received.
+
+      Ada.Synchronous_Task_Control.Suspend_Until_True (Shutdown_Request);
+
+      --  Shutdown AWS server.
+
+      AWS.Server.Shutdown (Server);
+   end Shutdown_Controller;
+
+   ------------------------------
+   -- Shutdown_Request_Handler --
+   ------------------------------
+
+   procedure Shutdown_Request_Handler is
+   begin
+      Ada.Synchronous_Task_Control.Set_True (Shutdown_Request);
+   end Shutdown_Request_Handler;
 
 end Matreshka.Servlet_Servers.AWS_Servers;
