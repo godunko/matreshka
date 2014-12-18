@@ -41,30 +41,54 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Interface through which a Servlet may be further configured.
-------------------------------------------------------------------------------
-with League.String_Vectors;
-with League.Strings;
 
-package Servlet.Servlet_Registrations is
+package body Servlet.Servlet_Registrations is
 
-   pragma Preelaborate;
+   -----------------
+   -- Add_Mapping --
+   -----------------
 
-   type Servlet_Registration is limited interface;
-
-   not overriding function Add_Mapping
-    (Self         : not null access Servlet_Registration;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector)
-       return League.String_Vectors.Universal_String_Vector is abstract;
    function Add_Mapping
     (Self        : not null access Servlet_Registration'Class;
      URL_Pattern : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector;
+       return League.String_Vectors.Universal_String_Vector
+   is
+      URL_Patterns : League.String_Vectors.Universal_String_Vector;
+
+   begin
+      URL_Patterns.Append (URL_Pattern);
+
+      return Self.Add_Mapping (URL_Patterns);
+   end Add_Mapping;
+
+   -----------------
+   -- Add_Mapping --
+   -----------------
+
    procedure Add_Mapping
     (Self         : not null access Servlet_Registration'Class;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector);
+     URL_Patterns : League.String_Vectors.Universal_String_Vector)
+   is
+      Aux : constant League.String_Vectors.Universal_String_Vector
+        := Self.Add_Mapping (URL_Patterns);
+
+   begin
+      null;
+   end Add_Mapping;
+
+   -----------------
+   -- Add_Mapping --
+   -----------------
+
    procedure Add_Mapping
     (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String);
+     URL_Pattern : League.Strings.Universal_String)
+   is
+      Aux : constant League.String_Vectors.Universal_String_Vector
+        := Self.Add_Mapping (URL_Pattern);
+
+   begin
+      null;
+   end Add_Mapping;
 
 end Servlet.Servlet_Registrations;

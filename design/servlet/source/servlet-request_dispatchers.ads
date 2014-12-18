@@ -41,30 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Interface through which a Servlet may be further configured.
-------------------------------------------------------------------------------
-with League.String_Vectors;
-with League.Strings;
 
-package Servlet.Servlet_Registrations is
+package Servlet.Request_Dispatchers is
 
    pragma Preelaborate;
 
-   type Servlet_Registration is limited interface;
+   type Request_Dispatcher is limited interface;
 
-   not overriding function Add_Mapping
-    (Self         : not null access Servlet_Registration;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector)
-       return League.String_Vectors.Universal_String_Vector is abstract;
-   function Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector;
-   procedure Add_Mapping
-    (Self         : not null access Servlet_Registration'Class;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector);
-   procedure Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String);
-
-end Servlet.Servlet_Registrations;
+end Servlet.Request_Dispatchers;

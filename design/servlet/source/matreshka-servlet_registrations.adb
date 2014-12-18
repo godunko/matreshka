@@ -41,30 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Interface through which a Servlet may be further configured.
-------------------------------------------------------------------------------
-with League.String_Vectors;
-with League.Strings;
 
-package Servlet.Servlet_Registrations is
+package body Matreshka.Servlet_Registrations is
 
-   pragma Preelaborate;
+   -----------------
+   -- Add_Mapping --
+   -----------------
 
-   type Servlet_Registration is limited interface;
-
-   not overriding function Add_Mapping
+   overriding function Add_Mapping
     (Self         : not null access Servlet_Registration;
      URL_Patterns : League.String_Vectors.Universal_String_Vector)
-       return League.String_Vectors.Universal_String_Vector is abstract;
-   function Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector;
-   procedure Add_Mapping
-    (Self         : not null access Servlet_Registration'Class;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector);
-   procedure Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String);
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return League.String_Vectors.Empty_Universal_String_Vector;
+   end Add_Mapping;
 
-end Servlet.Servlet_Registrations;
+end Matreshka.Servlet_Registrations;
