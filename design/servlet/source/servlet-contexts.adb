@@ -53,7 +53,7 @@ package body Servlet.Contexts is
      Name     : League.Strings.Universal_String;
      Instance : not null access Servlet.Servlets.Servlet'Class)
    is
-      Aux : constant not null access
+      Aux : constant access
         Servlet.Servlet_Registrations.Servlet_Registration'Class
           := Self.Add_Servlet (Name, Instance);
 
