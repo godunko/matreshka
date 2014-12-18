@@ -116,7 +116,7 @@ package body Matreshka.Servlet_Containers is
 
    procedure Finalize (Self : not null access Servlet_Container'Class) is
    begin
-      for Listener of Self.Context_Listeners loop
+      for Listener of reverse Self.Context_Listeners loop
          Listener.Context_Destroyed (Self);
       end loop;
 
