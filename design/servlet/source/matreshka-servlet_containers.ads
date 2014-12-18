@@ -41,9 +41,10 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Containers.Hashed_Maps;
 private with Ada.Containers.Vectors;
 
-private with League.Strings;
+private with League.Strings.Hash;
 
 private with Servlet.Context_Listeners;
 with Servlet.Contexts;
@@ -53,6 +54,7 @@ with Servlet.Responses;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
 with Matreshka.Servlet_Servers;
+private with Matreshka.Servlet_Registrations;
 
 package Matreshka.Servlet_Containers is
 
@@ -84,10 +86,19 @@ private
            Servlet.Context_Listeners.Servlet_Context_Listener_Access,
            Servlet.Context_Listeners."=");
 
+   package Servlet_Registration_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Matreshka.Servlet_Registrations.Servlet_Registration_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           Matreshka.Servlet_Registrations."=");
+
    type Servlet_Container is
      limited new Servlet.Contexts.Servlet_Context with record
       State             : Container_States := Uninitialized;
       Context_Listeners : Servlet_Context_Listener_Vectors.Vector;
+      Servlets          : Servlet_Registration_Maps.Map;
    end record;
 
    overriding procedure Add_Listener
@@ -98,7 +109,6 @@ private
     (Self     : not null access Servlet_Container;
      Name     : League.Strings.Universal_String;
      Instance : not null access Servlet.Servlets.Servlet'Class)
-       return not null access
-         Servlet.Servlet_Registrations.Servlet_Registration'Class;
+       return access Servlet.Servlet_Registrations.Servlet_Registration'Class;
 
 end Matreshka.Servlet_Containers;

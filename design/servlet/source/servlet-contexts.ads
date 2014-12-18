@@ -63,9 +63,8 @@ package Servlet.Contexts is
     (Self     : not null access Servlet_Context;
      Name     : League.Strings.Universal_String;
      Instance : not null access Servlet.Servlets.Servlet'Class)
-       return not null access
-         Servlet.Servlet_Registrations.Servlet_Registration'Class
-           is abstract;
+       return access Servlet.Servlet_Registrations.Servlet_Registration'Class
+         is abstract;
    --  Registers the given servlet instance with this ServletContext under the
    --  given servletName.
    --

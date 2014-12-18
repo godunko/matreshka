@@ -92,10 +92,41 @@ package body Matreshka.Servlet_Containers is
     (Self     : not null access Servlet_Container;
      Name     : League.Strings.Universal_String;
      Instance : not null access Servlet.Servlets.Servlet'Class)
-       return not null access
-         Servlet.Servlet_Registrations.Servlet_Registration'Class is
+       return access Servlet.Servlet_Registrations.Servlet_Registration'Class
+   is
+      use type League.Strings.Universal_String;
+      use type Matreshka.Servlet_Registrations.Servlet_Access;
+
+      Object       : constant Matreshka.Servlet_Registrations.Servlet_Access
+        := Matreshka.Servlet_Registrations.Servlet_Access (Instance);
+      Registration :
+        Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+
    begin
-      return null;
+      if Self.State = Initialized then
+         raise Servlet.Illegal_State_Exception
+           with "servlet context has already been initialized";
+      end if;
+
+      if Name.Is_Empty then
+         raise Servlet.Illegal_Argument_Exception with "servlet name is empty";
+      end if;
+
+      --  Check whether servlet instance or servlet name was registered.
+
+      for Registration of Self.Servlets loop
+         if Registration.Servlet = Object or Registration.Name = Name then
+            return null;
+         end if;
+      end loop;
+
+      Registration :=
+        new Matreshka.Servlet_Registrations.Servlet_Registration'
+             (Name    => Name,
+              Servlet => Object);
+      Self.Servlets.Insert (Name, Registration);
+
+      return Registration;
    end Add_Servlet;
 
    --------------
