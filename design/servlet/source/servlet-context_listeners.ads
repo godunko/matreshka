@@ -53,12 +53,14 @@
 --  Context_Destroyed method in reverse order.
 ------------------------------------------------------------------------------
 with Servlet.Contexts;
+with Servlet.Event_Listeners;
 
 package Servlet.Context_Listeners is
 
    pragma Preelaborate;
 
-   type Servlet_Context_Listener is limited interface;
+   type Servlet_Context_Listener is limited interface
+     and Servlet.Event_Listeners.Event_Listener;
 
    type Servlet_Context_Listener_Access is
      access all Servlet_Context_Listener'Class;

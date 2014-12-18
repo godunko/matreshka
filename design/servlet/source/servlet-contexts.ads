@@ -47,6 +47,7 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
+with Servlet.Event_Listeners;
 with Servlet.Servlet_Registrations;
 with Servlet.Servlets;
 
@@ -80,5 +81,32 @@ package Servlet.Contexts is
     (Self     : not null access Servlet_Context'Class;
      Name     : League.Strings.Universal_String;
      Instance : not null access Servlet.Servlets.Servlet'Class);
+
+   not overriding procedure Add_Listener
+    (Self     : not null access Servlet_Context;
+     Listener : not null Servlet.Event_Listeners.Event_Listener_Access)
+       is abstract;
+   --  Adds a listener of the given class type to this ServletContext.
+   --
+   --  The given listenerClass must implement one or more of the following
+   --  interfaces:
+   --
+   --    ServletContextAttributeListener
+   --    ServletRequestListener
+   --    ServletRequestAttributeListener
+   --    HttpSessionAttributeListener
+   --    HttpSessionIdListener
+   --    HttpSessionListener 
+   --
+   --  If this ServletContext was passed to
+   --  Servlet_Container_Initializer.On_Startup, then the given listener may
+   --  also be an instance of ServletContextListener, in addition to the
+   --  interfaces listed above.
+   --
+   --  If the given listenerClass implements a listener interface whose
+   --  invocation order corresponds to the declaration order (i.e., if it
+   --  implements ServletRequestListener, ServletContextListener, or
+   --  HttpSessionListener), then the new listener will be added to the end of
+   --  the ordered list of listeners of that interface.
 
 end Servlet.Contexts;

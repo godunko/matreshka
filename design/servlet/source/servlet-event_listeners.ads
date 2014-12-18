@@ -42,63 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Matreshka.Servlet_Containers is
+package Servlet.Event_Listeners is
 
-   ------------------
-   -- Add_Listener --
-   ------------------
+   pragma Preelaborate;
 
-   overriding procedure Add_Listener
-    (Self     : not null access Servlet_Container;
-     Listener : not null Servlet.Event_Listeners.Event_Listener_Access) is
-   begin
-      null;
-   end Add_Listener;
+   type Event_Listener is limited interface;
 
-   -----------------
-   -- Add_Servlet --
-   -----------------
+   type Event_Listener_Access is access all Event_Listener'Class;
 
-   overriding function Add_Servlet
-    (Self     : not null access Servlet_Container;
-     Name     : League.Strings.Universal_String;
-     Instance : not null access Servlet.Servlets.Servlet'Class)
-       return not null access
-         Servlet.Servlet_Registrations.Servlet_Registration'Class is
-   begin
-      return null;
-   end Add_Servlet;
-
-   --------------
-   -- Dispatch --
-   --------------
-
-   procedure Dispatch
-    (Self     : not null access Servlet_Container'Class;
-     Request  : not null Servlet.Requests.Servlet_Request_Access;
-     Response : not null Servlet.Responses.Servlet_Response_Access) is
-   begin
-      null;
-   end Dispatch;
-
-   --------------
-   -- Finalize --
-   --------------
-
-   procedure Finalize (Self : not null access Servlet_Container'Class) is
-   begin
-      null;
-   end Finalize;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize
-    (Self   : not null access Servlet_Container'Class;
-     Server : not null Matreshka.Servlet_Servers.Server_Access) is
-   begin
-      null;
-   end Initialize;
-
-end Matreshka.Servlet_Containers;
+end Servlet.Event_Listeners;

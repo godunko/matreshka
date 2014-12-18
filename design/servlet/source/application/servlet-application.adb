@@ -46,6 +46,7 @@ with League.Application;
 with Matreshka.Servlet_Containers;
 with Matreshka.Servlet_Servers.AWS_Servers;
 with Matreshka.Servlet_Servers.FastCGI_Servers;
+with Servlet.Event_Listeners;
 
 package body Servlet.Application is
 
@@ -65,7 +66,8 @@ package body Servlet.Application is
     (Listener : not null
        Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
    begin
-      null;
+      Container.Add_Listener
+       (Servlet.Event_Listeners.Event_Listener_Access (Listener));
    end Add_Listener;
 
    -------------

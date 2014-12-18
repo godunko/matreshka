@@ -44,6 +44,9 @@
 private with League.Strings;
 
 with Servlet.Contexts;
+private with Servlet.Event_Listeners;
+with Servlet.Requests;
+with Servlet.Responses;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
 with Matreshka.Servlet_Servers;
@@ -62,10 +65,20 @@ package Matreshka.Servlet_Containers is
    procedure Finalize (Self : not null access Servlet_Container'Class);
    --  Finalizes servlet container.
 
+   procedure Dispatch
+    (Self     : not null access Servlet_Container'Class;
+     Request  : not null Servlet.Requests.Servlet_Request_Access;
+     Response : not null Servlet.Responses.Servlet_Response_Access);
+   --  Dispatch request to filters/servlet.
+
 private
 
    type Servlet_Container is
      limited new Servlet.Contexts.Servlet_Context with null record;
+
+   overriding procedure Add_Listener
+    (Self     : not null access Servlet_Container;
+     Listener : not null Servlet.Event_Listeners.Event_Listener_Access);
 
    overriding function Add_Servlet
     (Self     : not null access Servlet_Container;
