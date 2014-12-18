@@ -41,8 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Containers.Vectors;
+
 private with League.Strings;
 
+private with Servlet.Context_Listeners;
 with Servlet.Contexts;
 private with Servlet.Event_Listeners;
 with Servlet.Requests;
@@ -73,8 +76,19 @@ package Matreshka.Servlet_Containers is
 
 private
 
+   type Container_States is (Uninitialized, Initialization, Initialized);
+
+   package Servlet_Context_Listener_Vectors is
+     new Ada.Containers.Vectors
+          (Positive,
+           Servlet.Context_Listeners.Servlet_Context_Listener_Access,
+           Servlet.Context_Listeners."=");
+
    type Servlet_Container is
-     limited new Servlet.Contexts.Servlet_Context with null record;
+     limited new Servlet.Contexts.Servlet_Context with record
+      State             : Container_States := Uninitialized;
+      Context_Listeners : Servlet_Context_Listener_Vectors.Vector;
+   end record;
 
    overriding procedure Add_Listener
     (Self     : not null access Servlet_Container;

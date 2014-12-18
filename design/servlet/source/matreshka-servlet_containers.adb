@@ -50,9 +50,38 @@ package body Matreshka.Servlet_Containers is
 
    overriding procedure Add_Listener
     (Self     : not null access Servlet_Container;
-     Listener : not null Servlet.Event_Listeners.Event_Listener_Access) is
+     Listener : not null Servlet.Event_Listeners.Event_Listener_Access)
+   is
+      Success : Boolean := False;
+
    begin
-      null;
+      if Self.State = Initialized then
+         raise Servlet.Illegal_State_Exception
+           with "servlet context has already been initialized";
+      end if;
+
+      --  Check for support of Servlet_Context_Listener interface and register
+      --  listener in appropriate state of servlet context.
+
+      if Listener.all
+           in Servlet.Context_Listeners.Servlet_Context_Listener'Class
+      then
+         if Self.State = Uninitialized then
+            Self.Context_Listeners.Append
+             (Servlet.Context_Listeners.Servlet_Context_Listener_Access
+               (Listener));
+            Success := True;
+
+         else
+            raise Servlet.Illegal_State_Exception
+              with "Servlet_Container_Listener can't be added";
+         end if;
+      end if;
+
+      if not Success then
+         raise Servlet.Illegal_Argument_Exception
+           with "listener doesn't supports any of expected interfaces";
+      end if;
    end Add_Listener;
 
    -----------------
@@ -87,7 +116,11 @@ package body Matreshka.Servlet_Containers is
 
    procedure Finalize (Self : not null access Servlet_Container'Class) is
    begin
-      null;
+      for Listener of Self.Context_Listeners loop
+         Listener.Context_Destroyed (Self);
+      end loop;
+
+      Self.State := Uninitialized;
    end Finalize;
 
    ----------------
@@ -98,7 +131,13 @@ package body Matreshka.Servlet_Containers is
     (Self   : not null access Servlet_Container'Class;
      Server : not null Matreshka.Servlet_Servers.Server_Access) is
    begin
-      null;
+      Self.State := Initialization;
+
+      for Listener of Self.Context_Listeners loop
+         Listener.Context_Initialized (Self);
+      end loop;
+
+      Self.State := Initialized;
    end Initialize;
 
 end Matreshka.Servlet_Containers;

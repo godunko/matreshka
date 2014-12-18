@@ -46,4 +46,7 @@ package Servlet is
 
    pragma Pure;
 
+   Illegal_Argument_Exception : exception;
+   Illegal_State_Exception    : exception;
+
 end Servlet;
