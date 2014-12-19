@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.Servlets;
 
 package body Matreshka.Servlet_Containers is
 
@@ -112,6 +113,11 @@ package body Matreshka.Servlet_Containers is
          raise Servlet.Illegal_Argument_Exception with "servlet name is empty";
       end if;
 
+      if Instance.all not in Matreshka.Servlets.Abstract_Servlet'Class then
+         raise Servlet.Illegal_Argument_Exception
+           with "not descedant of base servlet type";
+      end if;
+
       --  Check whether servlet instance or servlet name was registered.
 
       for Registration of Self.Servlets loop
@@ -125,6 +131,7 @@ package body Matreshka.Servlet_Containers is
              (Name    => Name,
               Servlet => Object);
       Self.Servlets.Insert (Name, Registration);
+      Matreshka.Servlets.Abstract_Servlet'Class (Instance.all).Name := Name;
 
       return Registration;
    end Add_Servlet;

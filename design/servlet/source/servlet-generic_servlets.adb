@@ -41,45 +41,26 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Defines a generic, protocol-independent servlet. To write an HTTP servlet
---  for use on the Web, extend HttpServlet instead.
---
---  GenericServlet implements the Servlet and ServletConfig interfaces.
---  GenericServlet may be directly extended by a servlet, although it's more
---  common to extend a protocol-specific subclass such as HttpServlet.
---
---  GenericServlet makes writing servlets easier. It provides simple versions
---  of the lifecycle methods init and destroy and of the methods in the
---  ServletConfig interface. GenericServlet also implements the log method,
---  declared in the ServletContext interface.
---
---  To write a generic servlet, you need only override the abstract service
---  method.
-------------------------------------------------------------------------------
-with League.Strings;
+with Ada.Tags;
 
-private with Matreshka.Servlets;
-with Servlet.Configs;
-with Servlet.Servlets;
+package body Servlet.Generic_Servlets is
 
-package Servlet.Generic_Servlets is
-
-   pragma Preelaborate;
-
-   type Generic_Servlet is
-     abstract limited new Servlet.Servlets.Servlet
-       and Servlet.Configs.Servlet_Config with private;
+   ----------------------
+   -- Get_Servlet_Name --
+   ----------------------
 
    overriding function Get_Servlet_Name
     (Self : not null access constant Generic_Servlet)
-       return League.Strings.Universal_String;
-   --  Returns the name of this servlet instance. See
-   --  ServletConfig.getServletName().
+       return League.Strings.Universal_String is
+   begin
+      if not Self.Name.Is_Empty then
+         return Self.Name;
 
-private
-
-   type Generic_Servlet is
-     abstract limited new Matreshka.Servlets.Abstract_Servlet
-       and Servlet.Configs.Servlet_Config with null record;
+      else
+         return
+           League.Strings.From_UTF_8_String
+            (Ada.Tags.External_Tag (Generic_Servlet'Class (Self.all)'Tag));
+      end if;
+   end Get_Servlet_Name;
 
 end Servlet.Generic_Servlets;

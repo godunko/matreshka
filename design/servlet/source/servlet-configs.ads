@@ -41,45 +41,23 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Defines a generic, protocol-independent servlet. To write an HTTP servlet
---  for use on the Web, extend HttpServlet instead.
---
---  GenericServlet implements the Servlet and ServletConfig interfaces.
---  GenericServlet may be directly extended by a servlet, although it's more
---  common to extend a protocol-specific subclass such as HttpServlet.
---
---  GenericServlet makes writing servlets easier. It provides simple versions
---  of the lifecycle methods init and destroy and of the methods in the
---  ServletConfig interface. GenericServlet also implements the log method,
---  declared in the ServletContext interface.
---
---  To write a generic servlet, you need only override the abstract service
---  method.
+--  A servlet configuration object used by a servlet container to pass
+--  information to a servlet during initialization.
 ------------------------------------------------------------------------------
 with League.Strings;
 
-private with Matreshka.Servlets;
-with Servlet.Configs;
-with Servlet.Servlets;
-
-package Servlet.Generic_Servlets is
+package Servlet.Configs is
 
    pragma Preelaborate;
 
-   type Generic_Servlet is
-     abstract limited new Servlet.Servlets.Servlet
-       and Servlet.Configs.Servlet_Config with private;
+   type Servlet_Config is limited interface;
 
-   overriding function Get_Servlet_Name
-    (Self : not null access constant Generic_Servlet)
-       return League.Strings.Universal_String;
-   --  Returns the name of this servlet instance. See
-   --  ServletConfig.getServletName().
+   not overriding function Get_Servlet_Name
+    (Self : not null access constant Servlet_Config)
+       return League.Strings.Universal_String is abstract;
+   --  Returns the name of this servlet instance. The name may be provided via
+   --  server administration, assigned in the web application deployment
+   --  descriptor, or for an unregistered (and thus unnamed) servlet instance
+   --  it will be the servlet's class name.
 
-private
-
-   type Generic_Servlet is
-     abstract limited new Matreshka.Servlets.Abstract_Servlet
-       and Servlet.Configs.Servlet_Config with null record;
-
-end Servlet.Generic_Servlets;
+end Servlet.Configs;
