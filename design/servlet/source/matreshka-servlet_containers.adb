@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.String_Vectors;
 with Matreshka.Servlets;
 
 package body Matreshka.Servlet_Containers is
@@ -84,6 +85,74 @@ package body Matreshka.Servlet_Containers is
            with "listener doesn't supports any of expected interfaces";
       end if;
    end Add_Listener;
+
+   Solidus            : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("/");
+   Asterisk_Full_Stop : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("*.");
+   Solidus_Asterisk   : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("/*");
+
+   -----------------
+   -- Add_Mapping --
+   -----------------
+
+   procedure Add_Mapping
+    (Self        : not null access Servlet_Container'Class;
+     Servlet     :
+       not null Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+     URL_Pattern : League.Strings.Universal_String;
+     Success     : out Boolean) is
+      use type League.Strings.Universal_String;
+
+   begin
+      Success := False;
+
+      if URL_Pattern.Is_Empty then
+         --  Exact map to application's context root.
+
+         null;
+
+      elsif URL_Pattern = Solidus then
+         --  "Default" servlet of the application.
+
+         null;
+
+      elsif URL_Pattern.Starts_With (Asterisk_Full_Stop) then
+         --  Extension mapping.
+
+         declare
+            Extension : constant League.Strings.Universal_String
+              := URL_Pattern.Tail_From (3);
+
+         begin
+            if Extension.Is_Empty
+              or else Extension.Index ('.') /= 0
+            then
+               --  Extension can't be empty string or contains '.' character.
+
+               return;
+            end if;
+         end;
+
+      elsif URL_Pattern.Starts_With (Solidus) then
+         --  Path mapping.
+
+         declare
+            Is_Pattern : constant Boolean
+              := URL_Pattern.Ends_With (Solidus_Asterisk);
+            URL        : constant League.Strings.Universal_String
+              := (if Is_Pattern
+                    then URL_Pattern.Head (URL_Pattern.Length - 2)
+                    else URL_Pattern);
+            Path       : constant League.String_Vectors.Universal_String_Vector
+              := URL.Split ('/', League.Strings.Skip_Empty);
+
+         begin
+            null;
+         end;
+      end if;
+   end Add_Mapping;
 
    -----------------
    -- Add_Servlet --

@@ -44,6 +44,7 @@
 private with Ada.Containers.Hashed_Maps;
 private with Ada.Containers.Vectors;
 
+with League.Strings;
 private with League.Strings.Hash;
 
 private with Servlet.Context_Listeners;
@@ -53,13 +54,15 @@ with Servlet.Requests;
 with Servlet.Responses;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
+with Matreshka.Servlet_Dispatchers;
 with Matreshka.Servlet_Servers;
-private with Matreshka.Servlet_Registrations;
+with Matreshka.Servlet_Registrations;
 
 package Matreshka.Servlet_Containers is
 
    type Servlet_Container is
-     limited new Servlet.Contexts.Servlet_Context with private;
+     new Matreshka.Servlet_Dispatchers.Segment_Dispatcher
+       and Servlet.Contexts.Servlet_Context with private;
 
    procedure Initialize
     (Self   : not null access Servlet_Container'Class;
@@ -75,6 +78,13 @@ package Matreshka.Servlet_Containers is
      Request  : not null Servlet.Requests.Servlet_Request_Access;
      Response : not null Servlet.Responses.Servlet_Response_Access);
    --  Dispatch request to filters/servlet.
+
+   procedure Add_Mapping
+    (Self        : not null access Servlet_Container'Class;
+     Servlet     :
+       not null Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+     URL_Pattern : League.Strings.Universal_String;
+     Success     : out Boolean);
 
 private
 
@@ -95,7 +105,9 @@ private
            Matreshka.Servlet_Registrations."=");
 
    type Servlet_Container is
-     limited new Servlet.Contexts.Servlet_Context with record
+     new Matreshka.Servlet_Dispatchers.Segment_Dispatcher
+       and Servlet.Contexts.Servlet_Context with
+   record
       State             : Container_States := Uninitialized;
       Context_Listeners : Servlet_Context_Listener_Vectors.Vector;
       Servlets          : Servlet_Registration_Maps.Map;
