@@ -70,6 +70,20 @@ package Matreshka.Servlet_Dispatchers is
    --  must be dispatched by the current dispatcher. Returns access to servlet
    --  registration to process request of null.
 
+   type Context_Dispatcher is limited new Abstract_Dispatcher with private;
+
+   procedure Add_Mapping
+    (Self        : not null access Context_Dispatcher'Class;
+     Servlet     :
+       not null Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+     URL_Pattern : League.Strings.Universal_String;
+     Success     : out Boolean);
+   --  Adds mapping by parsing given URL_Pattern. Sets Success to True when
+   --  mapping is added successfully. Sets Success to False when mapping is
+   --  exists.
+
+private
+
    package Dispatcher_Maps is
      new Ada.Containers.Hashed_Maps
           (League.Strings.Universal_String,
@@ -139,15 +153,5 @@ package Matreshka.Servlet_Dispatchers is
      Path  : League.String_Vectors.Universal_String_Vector;
      Index : Positive)
        return Matreshka.Servlet_Registrations.Servlet_Registration_Access;
-
-   procedure Add_Mapping
-    (Self        : not null access Context_Dispatcher'Class;
-     Servlet     :
-       not null Matreshka.Servlet_Registrations.Servlet_Registration_Access;
-     URL_Pattern : League.Strings.Universal_String;
-     Success     : out Boolean);
-   --  Adds mapping by parsing given URL_Pattern. Sets Success to True when
-   --  mapping is added successfully. Sets Success to False when mapping is
-   --  exists.
 
 end Matreshka.Servlet_Dispatchers;

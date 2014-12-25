@@ -60,7 +60,7 @@ with Matreshka.Servlet_Registrations;
 package Matreshka.Servlet_Containers is
 
    type Servlet_Container is
-     new Matreshka.Servlet_Dispatchers.Segment_Dispatcher
+     new Matreshka.Servlet_Dispatchers.Context_Dispatcher
        and Servlet.Contexts.Servlet_Context with private;
 
    procedure Initialize
@@ -97,7 +97,7 @@ private
            Matreshka.Servlet_Registrations."=");
 
    type Servlet_Container is
-     new Matreshka.Servlet_Dispatchers.Segment_Dispatcher
+     new Matreshka.Servlet_Dispatchers.Context_Dispatcher
        and Servlet.Contexts.Servlet_Context with
    record
       State             : Container_States := Uninitialized;
