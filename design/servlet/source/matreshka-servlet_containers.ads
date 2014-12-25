@@ -44,7 +44,6 @@
 private with Ada.Containers.Hashed_Maps;
 private with Ada.Containers.Vectors;
 
-with League.Strings;
 private with League.Strings.Hash;
 
 private with Servlet.Context_Listeners;
@@ -78,13 +77,6 @@ package Matreshka.Servlet_Containers is
      Request  : not null Servlet.Requests.Servlet_Request_Access;
      Response : not null Servlet.Responses.Servlet_Response_Access);
    --  Dispatch request to filters/servlet.
-
-   procedure Add_Mapping
-    (Self        : not null access Servlet_Container'Class;
-     Servlet     :
-       not null Matreshka.Servlet_Registrations.Servlet_Registration_Access;
-     URL_Pattern : League.Strings.Universal_String;
-     Success     : out Boolean);
 
 private
 

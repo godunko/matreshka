@@ -52,7 +52,10 @@ with Matreshka.Servlet_Registrations;
 
 package Matreshka.Servlet_Dispatchers is
 
-   pragma Preelaborate;
+--   pragma Preelaborate;
+--  XXX Parsing of URL pattern uses few constants of Universal_String type.
+--  Package can be marked as preelaborative if this code is moved to another
+--  place.
 
    type Abstract_Dispatcher is limited interface;
    type Dispatcher_Access is access all Abstract_Dispatcher'Class;
@@ -110,5 +113,41 @@ package Matreshka.Servlet_Dispatchers is
      Path  : League.String_Vectors.Universal_String_Vector;
      Index : Positive)
        return Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+
+   ------------------------
+   -- Context_Dispatcher --
+   ------------------------
+
+   package Extension_Maps is
+     new Ada.Containers.Hashed_Maps
+          (League.Strings.Universal_String,
+           Matreshka.Servlet_Registrations.Servlet_Registration_Access,
+           League.Strings.Hash,
+           League.Strings."=",
+           Matreshka.Servlet_Registrations."=");
+
+   type Context_Dispatcher is new Segment_Dispatcher with record
+      Root_Servlet       :
+        Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+      Default_Servlet    :
+        Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+      Extension_Servlets : Extension_Maps.Map;
+   end record;
+
+   overriding function Dispatch
+    (Self  : not null access constant Context_Dispatcher;
+     Path  : League.String_Vectors.Universal_String_Vector;
+     Index : Positive)
+       return Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+
+   procedure Add_Mapping
+    (Self        : not null access Context_Dispatcher'Class;
+     Servlet     :
+       not null Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+     URL_Pattern : League.Strings.Universal_String;
+     Success     : out Boolean);
+   --  Adds mapping by parsing given URL_Pattern. Sets Success to True when
+   --  mapping is added successfully. Sets Success to False when mapping is
+   --  exists.
 
 end Matreshka.Servlet_Dispatchers;
