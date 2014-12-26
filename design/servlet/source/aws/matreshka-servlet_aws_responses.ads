@@ -45,12 +45,12 @@ with Servlet.Responses;
 
 package Matreshka.Servlet_AWS_Responses is
 
-   type AWS_Servet_Response is
+   type AWS_Servlet_Response is
      limited new Servlet.Responses.Servlet_Response with private;
 
 private
 
-   type AWS_Servet_Response is
+   type AWS_Servlet_Response is
      limited new Servlet.Responses.Servlet_Response with null record;
 
 end Matreshka.Servlet_AWS_Responses;
