@@ -50,8 +50,6 @@ with Servlet.Servlets;
 
 package Matreshka.Servlet_Registrations is
 
-   pragma Preelaborate;
-
    type Servlet_Access is access all Servlet.Servlets.Servlet'Class;
 
    type Servlet_Registration

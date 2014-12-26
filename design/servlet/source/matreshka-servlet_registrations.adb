@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.Servlet_Containers;
 
 package body Matreshka.Servlet_Registrations is
 
@@ -51,9 +52,20 @@ package body Matreshka.Servlet_Registrations is
    overriding function Add_Mapping
     (Self         : not null access Servlet_Registration;
      URL_Patterns : League.String_Vectors.Universal_String_Vector)
-       return League.String_Vectors.Universal_String_Vector is
+       return League.String_Vectors.Universal_String_Vector
+   is
+      Success : Boolean;
+
    begin
-      return League.String_Vectors.Empty_Universal_String_Vector;
+      return Result : League.String_Vectors.Universal_String_Vector do
+         for J in 1 .. URL_Patterns.Length loop
+            Self.Context.Add_Mapping (Self, URL_Patterns (J), Success);
+
+            if not Success then
+               Result.Append (URL_Patterns (J));
+            end if;
+         end loop;
+      end return;
    end Add_Mapping;
 
 end Matreshka.Servlet_Registrations;
