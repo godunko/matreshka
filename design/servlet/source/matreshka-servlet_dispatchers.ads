@@ -52,11 +52,6 @@ with Matreshka.Servlet_Registrations;
 
 package Matreshka.Servlet_Dispatchers is
 
---   pragma Preelaborate;
---  XXX Parsing of URL pattern uses few constants of Universal_String type.
---  Package can be marked as preelaborative if this code is moved to another
---  place.
-
    type Abstract_Dispatcher is limited interface;
    type Dispatcher_Access is access all Abstract_Dispatcher'Class;
 
