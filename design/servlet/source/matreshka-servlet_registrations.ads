@@ -44,6 +44,7 @@
 with League.String_Vectors;
 with League.Strings;
 
+limited with Matreshka.Servlet_Containers;
 with Servlet.Servlet_Registrations;
 with Servlet.Servlets;
 
@@ -53,7 +54,9 @@ package Matreshka.Servlet_Registrations is
 
    type Servlet_Access is access all Servlet.Servlets.Servlet'Class;
 
-   type Servlet_Registration is
+   type Servlet_Registration
+    (Context :
+       not null access Matreshka.Servlet_Containers.Servlet_Container'Class) is
      limited new Servlet.Servlet_Registrations.Servlet_Registration with record
       Name    : League.Strings.Universal_String;
       Servlet : Servlet_Access;

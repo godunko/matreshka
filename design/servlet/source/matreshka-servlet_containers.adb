@@ -129,7 +129,8 @@ package body Matreshka.Servlet_Containers is
 
       Registration :=
         new Matreshka.Servlet_Registrations.Servlet_Registration'
-             (Name    => Name,
+             (Context => Self,
+              Name    => Name,
               Servlet => Object);
       Self.Servlets.Insert (Name, Registration);
       Matreshka.Servlets.Abstract_Servlet'Class (Instance.all).Name := Name;
