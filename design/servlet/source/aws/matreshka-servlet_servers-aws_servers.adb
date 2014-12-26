@@ -42,11 +42,11 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Synchronous_Task_Control;
+with Ada.Unchecked_Deallocation;
 
 with GNAT.Ctrl_C;
 
 with AWS.Config.Set;
-with AWS.Messages;
 with AWS.Response;
 with AWS.Server.Log;
 with AWS.Status;
@@ -54,6 +54,8 @@ with AWS.Status;
 with Matreshka.Servlet_Containers;
 with Matreshka.Servlet_AWS_Requests;
 with Matreshka.Servlet_AWS_Responses;
+with Servlet.Requests;
+with Servlet.Responses;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
 
@@ -92,9 +94,32 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    ----------------------
 
    function Request_Callback
-    (Request : AWS.Status.Data) return AWS.Response.Data is
+    (Request : AWS.Status.Data) return AWS.Response.Data
+   is
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Servlet.Requests.Servlet_Request'Class,
+              Servlet.Requests.Servlet_Request_Access);
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Servlet.Responses.Servlet_Response'Class,
+              Servlet.Responses.Servlet_Response_Access);
+
+      Servlet_Request  : Servlet.Requests.Servlet_Request_Access
+        := new Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
+      Servlet_Response : Servlet.Responses.Servlet_Response_Access
+        := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
+
    begin
-      return AWS.Response.Acknowledge (AWS.Messages.S500);
+      Container.Dispatch (Servlet_Request, Servlet_Response);
+
+      return Result : constant AWS.Response.Data
+        := Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class
+            (Servlet_Response.all).Build
+      do
+         Free (Servlet_Request);
+         Free (Servlet_Response);
+      end return;
    end Request_Callback;
 
    -------------------

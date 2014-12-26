@@ -41,21 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with AWS.Response;
+with AWS.Messages;
 
-with Servlet.Responses;
+package body Matreshka.Servlet_AWS_Responses is
 
-package Matreshka.Servlet_AWS_Responses is
+   -----------
+   -- Build --
+   -----------
 
-   type AWS_Servlet_Response is
-     limited new Servlet.Responses.Servlet_Response with private;
-
-   function Build (Self : AWS_Servlet_Response'Class) return AWS.Response.Data;
-   --  Build AWS response data.
-
-private
-
-   type AWS_Servlet_Response is
-     limited new Servlet.Responses.Servlet_Response with null record;
+   function Build
+    (Self : AWS_Servlet_Response'Class) return AWS.Response.Data is
+   begin
+      return AWS.Response.Acknowledge (AWS.Messages.S500);
+   end Build;
 
 end Matreshka.Servlet_AWS_Responses;
