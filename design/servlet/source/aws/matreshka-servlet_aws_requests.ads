@@ -41,16 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Servlet.Responses;
+with Servlet.Requests;
 
-package Servlet.AWS_Responses is
+package Matreshka.Servlet_AWS_Requests is
 
-   type AWS_Servet_Response is
-     limited new Servlet.Responses.Servlet_Response with private;
+   type AWS_Servlet_Request is
+     limited new Servlet.Requests.Servlet_Request with private;
 
 private
 
-   type AWS_Servet_Response is
-     limited new Servlet.Responses.Servlet_Response with null record;
+   type AWS_Servlet_Request is
+     limited new Servlet.Requests.Servlet_Request with null record;
 
-end Servlet.AWS_Responses;
+   overriding function Is_Async_Supported
+    (Self : not null access AWS_Servlet_Request) return Boolean;
+   --  Checks if this request supports asynchronous operation.
+
+end Matreshka.Servlet_AWS_Requests;

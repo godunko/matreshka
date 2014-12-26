@@ -52,6 +52,8 @@ with AWS.Server.Log;
 with AWS.Status;
 
 with Matreshka.Servlet_Containers;
+with Matreshka.Servlet_AWS_Requests;
+with Matreshka.Servlet_AWS_Responses;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
 

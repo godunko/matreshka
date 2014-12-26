@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Servlet.AWS_Requests is
+package body Matreshka.Servlet_AWS_Requests is
 
    ------------------------
    -- Is_Async_Supported --
@@ -59,4 +59,4 @@ package body Servlet.AWS_Requests is
       return False;
    end Is_Async_Supported;
 
-end Servlet.AWS_Requests;
+end Matreshka.Servlet_AWS_Requests;
