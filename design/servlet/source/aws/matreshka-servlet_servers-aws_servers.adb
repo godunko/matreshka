@@ -51,11 +51,14 @@ with AWS.Response;
 with AWS.Server.Log;
 with AWS.Status;
 
+with Matreshka.Servlet_Containers;
+
 package body Matreshka.Servlet_Servers.AWS_Servers is
 
    Config           : AWS.Config.Object;
    Server           : AWS.Server.HTTP;
    Shutdown_Request : Ada.Synchronous_Task_Control.Suspension_Object;
+   Container        : Matreshka.Servlet_Containers.Servlet_Container_Access;
 
    procedure Shutdown_Request_Handler;
    --  Interrupt handler to process shutdown request from the operating system.
@@ -91,6 +94,17 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    begin
       return AWS.Response.Acknowledge (AWS.Messages.S500);
    end Request_Callback;
+
+   -------------------
+   -- Set_Container --
+   -------------------
+
+   overriding procedure Set_Container
+    (Self      : not null access AWS_Server;
+     Container : Matreshka.Servlet_Containers.Servlet_Container_Access) is
+   begin
+      AWS_Servers.Container := Container;
+   end Set_Container;
 
    -------------------------
    -- Shutdown_Controller --

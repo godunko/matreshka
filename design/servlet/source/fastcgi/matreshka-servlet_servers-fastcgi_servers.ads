@@ -54,4 +54,8 @@ package Matreshka.Servlet_Servers.FastCGI_Servers is
    --  Detects FastCGI environment and initialize FastCGI server when
    --  application run in FastCGI environment.
 
+   overriding procedure Set_Container
+    (Self      : not null access FastCGI_Server;
+     Container : Matreshka.Servlet_Containers.Servlet_Container_Access);
+
 end Matreshka.Servlet_Servers.FastCGI_Servers;

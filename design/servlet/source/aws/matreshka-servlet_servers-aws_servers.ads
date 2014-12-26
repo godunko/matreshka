@@ -50,4 +50,8 @@ package Matreshka.Servlet_Servers.AWS_Servers is
 
    procedure Initialize (Self : not null access AWS_Server'Class);
 
+   overriding procedure Set_Container
+    (Self      : not null access AWS_Server;
+     Container : Matreshka.Servlet_Containers.Servlet_Container_Access);
+
 end Matreshka.Servlet_Servers.AWS_Servers;

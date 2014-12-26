@@ -171,6 +171,8 @@ package body Matreshka.Servlet_Containers is
     (Self   : not null access Servlet_Container'Class;
      Server : not null Matreshka.Servlet_Servers.Server_Access) is
    begin
+      Server.Set_Container (Self);
+
       Self.State := Initialization;
 
       for Listener of Self.Context_Listeners loop

@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.Servlet_Containers;
 
 package body Matreshka.Servlet_Servers.FastCGI_Servers is
 
@@ -56,5 +57,16 @@ package body Matreshka.Servlet_Servers.FastCGI_Servers is
 
       Success := False;
    end Initialize;
+
+   -------------------
+   -- Set_Container --
+   -------------------
+
+   overriding procedure Set_Container
+    (Self      : not null access FastCGI_Server;
+     Container : Matreshka.Servlet_Containers.Servlet_Container_Access) is
+   begin
+      null;
+   end Set_Container;
 
 end Matreshka.Servlet_Servers.FastCGI_Servers;

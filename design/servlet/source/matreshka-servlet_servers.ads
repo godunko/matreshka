@@ -43,13 +43,19 @@
 ------------------------------------------------------------------------------
 --  Abstract server type to represent integration with servers.
 ------------------------------------------------------------------------------
+limited with Matreshka.Servlet_Containers;
 
 package Matreshka.Servlet_Servers is
 
    pragma Preelaborate;
 
-   type Abstract_Server is tagged limited null record;
+   type Abstract_Server is abstract tagged limited null record;
 
    type Server_Access is access all Abstract_Server'Class;
+
+   not overriding procedure Set_Container
+    (Self      : not null access Abstract_Server;
+     Container : Matreshka.Servlet_Containers.Servlet_Container_Access)
+       is abstract;
 
 end Matreshka.Servlet_Servers;

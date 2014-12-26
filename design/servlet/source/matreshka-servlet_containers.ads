@@ -63,6 +63,8 @@ package Matreshka.Servlet_Containers is
      new Matreshka.Servlet_Dispatchers.Context_Dispatcher
        and Servlet.Contexts.Servlet_Context with private;
 
+   type Servlet_Container_Access is access all Servlet_Container'Class;
+
    procedure Initialize
     (Self   : not null access Servlet_Container'Class;
      Server : not null Matreshka.Servlet_Servers.Server_Access);
