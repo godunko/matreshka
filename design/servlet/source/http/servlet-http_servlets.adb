@@ -44,6 +44,18 @@
 
 package body Servlet.HTTP_Servlets is
 
+   ---------------
+   -- Do_Delete --
+   ---------------
+
+   not overriding procedure Do_Delete
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class) is
+   begin
+      Response.Set_Status (Servlet.HTTP_Responses.Not_Implemented);
+   end Do_Delete;
+
    ------------
    -- Do_Get --
    ------------
@@ -125,9 +137,39 @@ package body Servlet.HTTP_Servlets is
    overriding procedure Service
     (Self     : in out HTTP_Servlet;
      Request  : Servlet.Requests.Servlet_Request'Class;
-     Response : in out Servlet.Responses.Servlet_Response'Class) is
+     Response : in out Servlet.Responses.Servlet_Response'Class)
+   is
+      HTTP_Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class
+        renames Servlet.HTTP_Requests.HTTP_Servlet_Request'Class (Request);
+      HTTP_Response : Servlet.HTTP_Responses.HTTP_Servlet_Response'Class
+        renames Servlet.HTTP_Responses.HTTP_Servlet_Response'Class (Response);
+
    begin
-      raise Program_Error;
+      case HTTP_Request.Get_Method is
+         when Servlet.HTTP_Requests.Options =>
+            HTTP_Servlet'Class (Self).Do_Options (HTTP_Request, HTTP_Response);
+
+         when Servlet.HTTP_Requests.Get =>
+            HTTP_Servlet'Class (Self).Do_Get (HTTP_Request, HTTP_Response);
+
+         when Servlet.HTTP_Requests.Head =>
+            HTTP_Servlet'Class (Self).Do_Head (HTTP_Request, HTTP_Response);
+
+         when Servlet.HTTP_Requests.Post =>
+            HTTP_Servlet'Class (Self).Do_Post (HTTP_Request, HTTP_Response);
+
+         when Servlet.HTTP_Requests.Put =>
+            HTTP_Servlet'Class (Self).Do_Put (HTTP_Request, HTTP_Response);
+
+         when Servlet.HTTP_Requests.Delete =>
+            HTTP_Servlet'Class (Self).Do_Delete (HTTP_Request, HTTP_Response);
+
+         when Servlet.HTTP_Requests.Trace =>
+            HTTP_Servlet'Class (Self).Do_Trace (HTTP_Request, HTTP_Response);
+
+         when Servlet.HTTP_Requests.Connect =>
+            raise Program_Error;
+      end case;
    end Service;
 
 end Servlet.HTTP_Servlets;

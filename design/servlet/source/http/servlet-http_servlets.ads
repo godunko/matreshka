@@ -54,6 +54,22 @@ package Servlet.HTTP_Servlets is
    type HTTP_Servlet is
      abstract new Servlet.Generic_Servlets.Generic_Servlet with private;
 
+   not overriding procedure Do_Delete
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
+   --  Called by the server (via the service method) to allow a servlet to
+   --  handle a DELETE request. The DELETE operation allows a client to remove
+   --  a document or Web page from the server.
+   --
+   --  This method does not need to be either safe or idempotent. Operations
+   --  requested through DELETE can have side effects for which users can be
+   --  held accountable. When using this method, it may be useful to save a
+   --  copy of the affected URL in temporary storage.
+   --
+   --  If the HTTP DELETE request is incorrectly formatted, doDelete returns an
+   --  HTTP "Bad Request" message.
+
    not overriding procedure Do_Get
     (Self     : in out HTTP_Servlet;
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
