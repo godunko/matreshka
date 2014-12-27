@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with League.String_Vectors;
 with Matreshka.Servlets;
+with Matreshka.Servlet_Defaults;
 
 package body Matreshka.Servlet_Containers is
 
@@ -174,7 +175,10 @@ package body Matreshka.Servlet_Containers is
 
    procedure Initialize
     (Self   : not null access Servlet_Container'Class;
-     Server : not null Matreshka.Servlet_Servers.Server_Access) is
+     Server : not null Matreshka.Servlet_Servers.Server_Access)
+   is
+      Success : Boolean;
+
    begin
       Server.Set_Container (Self);
 
@@ -185,6 +189,16 @@ package body Matreshka.Servlet_Containers is
       end loop;
 
       Self.State := Initialized;
+
+      --  Setup default servlet for context.
+
+      Self.Add_Mapping
+       (new Matreshka.Servlet_Registrations.Servlet_Registration'
+             (Context => Self,
+              Name    => League.Strings.Empty_Universal_String,
+              Servlet => new Matreshka.Servlet_Defaults.Default_Servlet),
+        League.Strings.To_Universal_String ("/"),
+        Success);
    end Initialize;
 
 end Matreshka.Servlet_Containers;
