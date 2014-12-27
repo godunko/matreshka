@@ -146,9 +146,13 @@ package body Matreshka.Servlet_Containers is
     (Self     : not null access Servlet_Container'Class;
      Path     : League.String_Vectors.Universal_String_Vector;
      Request  : not null Servlet.Requests.Servlet_Request_Access;
-     Response : not null Servlet.Responses.Servlet_Response_Access) is
+     Response : not null Servlet.Responses.Servlet_Response_Access)
+   is
+      Servlet : Matreshka.Servlet_Registrations.Servlet_Registration_Access
+        := Self.Dispatch (Path, 1);
+
    begin
-      null;
+      Servlet.Servlet.Service (Request.all, Response.all);
    end Dispatch;
 
    --------------
