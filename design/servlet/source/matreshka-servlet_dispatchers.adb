@@ -215,9 +215,15 @@ package body Matreshka.Servlet_Dispatchers is
 
    begin
       if Path.Length < Index then
-         --  Exact match of root, use root servlet when available.
+         --  Exact match of root, use root servlet when available; otherwise
+         --  use default servlet.
 
-         return Self.Root_Servlet;
+         if Self.Root_Servlet /= null then
+            return Self.Root_Servlet;
+
+         else
+            return Self.Default_Servlet;
+         end if;
       end if;
 
       --  Call inherited subprogram to lookup exact servlet or longest
