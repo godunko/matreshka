@@ -42,8 +42,62 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with AWS.Messages;
+with AWS.Response.Set;
 
 package body Matreshka.Servlet_AWS_Responses is
+
+   To_AWS_Status_Code : constant
+     array (Servlet.HTTP_Responses.Status_Code) of AWS.Messages.Status_Code
+       := (Servlet.HTTP_Responses.Continue               => AWS.Messages.S100,
+           Servlet.HTTP_Responses.Switching_Protocols    => AWS.Messages.S101,
+
+           Servlet.HTTP_Responses.OK                     => AWS.Messages.S200,
+           Servlet.HTTP_Responses.Created                => AWS.Messages.S201,
+           Servlet.HTTP_Responses.Accepted               => AWS.Messages.S202,
+           Servlet.HTTP_Responses.Non_Authoritative_Information =>
+                                                            AWS.Messages.S203,
+           Servlet.HTTP_Responses.No_Content             => AWS.Messages.S204,
+           Servlet.HTTP_Responses.Reset_Content          => AWS.Messages.S205,
+           Servlet.HTTP_Responses.Partial_Content        => AWS.Messages.S206,
+
+           Servlet.HTTP_Responses.Multiple_Choices       => AWS.Messages.S300,
+           Servlet.HTTP_Responses.Moved_Permanently      => AWS.Messages.S301,
+           Servlet.HTTP_Responses.Moved_Temporarily      => AWS.Messages.S302,
+           Servlet.HTTP_Responses.Found                  => AWS.Messages.S302,
+           Servlet.HTTP_Responses.See_Other              => AWS.Messages.S303,
+           Servlet.HTTP_Responses.Not_Modified           => AWS.Messages.S304,
+           Servlet.HTTP_Responses.Use_Proxy              => AWS.Messages.S305,
+           Servlet.HTTP_Responses.Temporary_Redirect     => AWS.Messages.S307,
+
+           Servlet.HTTP_Responses.Bad_Request            => AWS.Messages.S400,
+           Servlet.HTTP_Responses.Unauthorized           => AWS.Messages.S401,
+           Servlet.HTTP_Responses.Payment_Required       => AWS.Messages.S402,
+           Servlet.HTTP_Responses.Forbidden              => AWS.Messages.S403,
+           Servlet.HTTP_Responses.Not_Found              => AWS.Messages.S404,
+           Servlet.HTTP_Responses.Method_Not_Allowed     => AWS.Messages.S405,
+           Servlet.HTTP_Responses.Not_Acceptable         => AWS.Messages.S406,
+           Servlet.HTTP_Responses.Proxy_Authentication_Required =>
+                                                            AWS.Messages.S407,
+           Servlet.HTTP_Responses.Request_Timeout        => AWS.Messages.S408,
+           Servlet.HTTP_Responses.Conflict               => AWS.Messages.S409,
+           Servlet.HTTP_Responses.Gone                   => AWS.Messages.S410,
+           Servlet.HTTP_Responses.Length_Required        => AWS.Messages.S411,
+           Servlet.HTTP_Responses.Precondition_Failed    => AWS.Messages.S412,
+           Servlet.HTTP_Responses.Request_Entity_Too_Large =>
+                                                            AWS.Messages.S413,
+           Servlet.HTTP_Responses.Request_URI_Too_Long   => AWS.Messages.S414,
+           Servlet.HTTP_Responses.Unsupported_Media_Type => AWS.Messages.S415,
+           Servlet.HTTP_Responses.Requested_Range_Not_Satisfiable =>
+                                                            AWS.Messages.S416,
+           Servlet.HTTP_Responses.Expectation_Failed     => AWS.Messages.S417,
+
+           Servlet.HTTP_Responses.Internal_Server_Error  => AWS.Messages.S500,
+           Servlet.HTTP_Responses.Not_Implemented        => AWS.Messages.S501,
+           Servlet.HTTP_Responses.Bad_Gateway            => AWS.Messages.S502,
+           Servlet.HTTP_Responses.Service_Unavailable    => AWS.Messages.S503,
+           Servlet.HTTP_Responses.Gateway_Timeout        => AWS.Messages.S504,
+           Servlet.HTTP_Responses.HTTP_Version_Not_Supported =>
+                                                            AWS.Messages.S505);
 
    -----------
    -- Build --
@@ -52,7 +106,21 @@ package body Matreshka.Servlet_AWS_Responses is
    function Build
     (Self : AWS_Servlet_Response'Class) return AWS.Response.Data is
    begin
-      return AWS.Response.Acknowledge (AWS.Messages.S500);
+      return Self.Data;
    end Build;
+
+   ----------------
+   -- Set_Status --
+   ----------------
+
+   overriding procedure Set_Status
+    (Self   : in out AWS_Servlet_Response;
+     Status : Servlet.HTTP_Responses.Status_Code) is
+   begin
+      Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response
+       (Self).Set_Status (Status);
+
+      AWS.Response.Set.Status_Code (Self.Data, To_AWS_Status_Code (Status));
+   end Set_Status;
 
 end Matreshka.Servlet_AWS_Responses;

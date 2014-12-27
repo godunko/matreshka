@@ -41,30 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with AWS.Response;
-
-with Matreshka.Servlet_HTTP_Responses;
+--  This package provides base tagged type to build server specific HTTP
+--  response objects.
+------------------------------------------------------------------------------
 with Servlet.HTTP_Responses;
 
-package Matreshka.Servlet_AWS_Responses is
+package Matreshka.Servlet_HTTP_Responses is
 
-   type AWS_Servlet_Response is
-     new Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response
-       with private;
+   pragma Preelaborate;
 
-   function Build (Self : AWS_Servlet_Response'Class) return AWS.Response.Data;
-   --  Build AWS response data.
+   type Abstract_Servlet_Response is abstract
+     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with record
+      Status : Servlet.HTTP_Responses.Status_Code
+        := Servlet.HTTP_Responses.Internal_Server_Error;
+   end record;
 
-private
-
-   type AWS_Servlet_Response is
-     new Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response with record
-      Data : AWS.Response.Data;
-   end  record;
+   overriding function Get_Status
+    (Self : Abstract_Servlet_Response)
+       return Servlet.HTTP_Responses.Status_Code;
+   --  Gets the current status code of this response.
 
    overriding procedure Set_Status
-    (Self   : in out AWS_Servlet_Response;
+    (Self   : in out Abstract_Servlet_Response;
      Status : Servlet.HTTP_Responses.Status_Code);
    --  Sets the status code for this response.
 
-end Matreshka.Servlet_AWS_Responses;
+end Matreshka.Servlet_HTTP_Responses;

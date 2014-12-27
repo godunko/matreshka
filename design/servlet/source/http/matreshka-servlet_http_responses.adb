@@ -41,30 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with AWS.Response;
 
-with Matreshka.Servlet_HTTP_Responses;
-with Servlet.HTTP_Responses;
+package body Matreshka.Servlet_HTTP_Responses is
 
-package Matreshka.Servlet_AWS_Responses is
+   ----------------
+   -- Get_Status --
+   ----------------
 
-   type AWS_Servlet_Response is
-     new Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response
-       with private;
+   overriding function Get_Status
+    (Self : Abstract_Servlet_Response)
+       return Servlet.HTTP_Responses.Status_Code is
+   begin
+      return Self.Status;
+   end Get_Status;
 
-   function Build (Self : AWS_Servlet_Response'Class) return AWS.Response.Data;
-   --  Build AWS response data.
-
-private
-
-   type AWS_Servlet_Response is
-     new Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response with record
-      Data : AWS.Response.Data;
-   end  record;
+   ----------------
+   -- Set_Status --
+   ----------------
 
    overriding procedure Set_Status
-    (Self   : in out AWS_Servlet_Response;
-     Status : Servlet.HTTP_Responses.Status_Code);
-   --  Sets the status code for this response.
+    (Self   : in out Abstract_Servlet_Response;
+     Status : Servlet.HTTP_Responses.Status_Code) is
+   begin
+      Self.Status := Status;
+   end Set_Status;
 
-end Matreshka.Servlet_AWS_Responses;
+end Matreshka.Servlet_HTTP_Responses;
