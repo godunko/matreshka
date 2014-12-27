@@ -110,7 +110,7 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
 
       Path : constant League.String_Vectors.Universal_String_Vector
         := League.Strings.From_UTF_8_String
-            (AWS.Status.URI (Request)).Split ('/');
+            (AWS.Status.URI (Request)).Split ('/', League.Strings.Skip_Empty);
       --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
       --  should be handled here.
       --  XXX Use of UTF-8 to encode URI by AWS should be checked.
