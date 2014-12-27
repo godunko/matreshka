@@ -44,6 +44,80 @@
 
 package body Servlet.HTTP_Servlets is
 
+   ------------
+   -- Do_Get --
+   ------------
+
+   not overriding procedure Do_Get
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class) is
+   begin
+      Response.Set_Status (Servlet.HTTP_Responses.Not_Implemented);
+   end Do_Get;
+
+   -------------
+   -- Do_Head --
+   -------------
+
+   not overriding procedure Do_Head
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class) is
+   begin
+      HTTP_Servlet'Class (Self).Do_Get (Request, Response);
+   end Do_Head;
+
+   ----------------
+   -- Do_Options --
+   ----------------
+
+   not overriding procedure Do_Options
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class) is
+   begin
+      Response.Set_Status (Servlet.HTTP_Responses.OK);
+   end Do_Options;
+
+   -------------
+   -- Do_Post --
+   -------------
+
+   not overriding procedure Do_Post
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class) is
+   begin
+      Response.Set_Status (Servlet.HTTP_Responses.Not_Implemented);
+   end Do_Post;
+
+   ------------
+   -- Do_Put --
+   ------------
+
+   not overriding procedure Do_Put
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class) is
+   begin
+      Response.Set_Status (Servlet.HTTP_Responses.Not_Implemented);
+   end Do_Put;
+
+   --------------
+   -- Do_Trace --
+   --------------
+
+   not overriding procedure Do_Trace
+    (Self     : in out HTTP_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class) is
+   begin
+      --  XXX It should be implemented according to RFC 2616.
+
+      Response.Set_Status (Servlet.HTTP_Responses.Not_Implemented);
+   end Do_Trace;
+
    -------------
    -- Service --
    -------------
