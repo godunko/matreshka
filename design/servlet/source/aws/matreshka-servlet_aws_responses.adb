@@ -106,7 +106,11 @@ package body Matreshka.Servlet_AWS_Responses is
    function Build
     (Self : AWS_Servlet_Response'Class) return AWS.Response.Data is
    begin
-      return Self.Data;
+      return Result : AWS.Response.Data := Self.Data do
+         AWS.Response.Set.Mode (Result, AWS.Response.Header);
+         --  XXX Temporary till output stream will be implemented to allow to
+         --  debug AWS server personality.
+      end return;
    end Build;
 
    ----------------
