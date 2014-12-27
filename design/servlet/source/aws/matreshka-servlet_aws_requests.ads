@@ -41,17 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Servlet.Requests;
+with Servlet.HTTP_Requests;
 
 package Matreshka.Servlet_AWS_Requests is
 
    type AWS_Servlet_Request is
-     limited new Servlet.Requests.Servlet_Request with private;
+     limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with private;
 
 private
 
    type AWS_Servlet_Request is
-     limited new Servlet.Requests.Servlet_Request with null record;
+     limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with null record;
 
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;

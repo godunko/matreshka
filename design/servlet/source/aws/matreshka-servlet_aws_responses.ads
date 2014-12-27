@@ -43,12 +43,12 @@
 ------------------------------------------------------------------------------
 with AWS.Response;
 
-with Servlet.Responses;
+with Servlet.HTTP_Responses;
 
 package Matreshka.Servlet_AWS_Responses is
 
    type AWS_Servlet_Response is
-     limited new Servlet.Responses.Servlet_Response with private;
+     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with private;
 
    function Build (Self : AWS_Servlet_Response'Class) return AWS.Response.Data;
    --  Build AWS response data.
@@ -56,6 +56,6 @@ package Matreshka.Servlet_AWS_Responses is
 private
 
    type AWS_Servlet_Response is
-     limited new Servlet.Responses.Servlet_Response with null record;
+     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with null record;
 
 end Matreshka.Servlet_AWS_Responses;

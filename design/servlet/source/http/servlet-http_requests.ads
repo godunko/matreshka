@@ -41,16 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Servlet.HTTP_Responses;
+with Servlet.Requests;
 
-package Servlet.FastCGI_Responses is
+package Servlet.HTTP_Requests is
 
-   type FastCGI_Servet_Response is
-     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with private;
+   pragma Preelaborate;
 
-private
+   type HTTP_Servlet_Request is limited interface
+     and Servlet.Requests.Servlet_Request;
 
-   type FastCGI_Servet_Response is
-     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with null record;
-
-end Servlet.FastCGI_Responses;
+end Servlet.HTTP_Requests;
