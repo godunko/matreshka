@@ -51,6 +51,9 @@ with AWS.Response;
 with AWS.Server.Log;
 with AWS.Status;
 
+with League.String_Vectors;
+with League.Strings;
+
 with Matreshka.Servlet_Containers;
 with Matreshka.Servlet_AWS_Requests;
 with Matreshka.Servlet_AWS_Responses;
@@ -105,13 +108,20 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
              (Servlet.Responses.Servlet_Response'Class,
               Servlet.Responses.Servlet_Response_Access);
 
+      Path : constant League.String_Vectors.Universal_String_Vector
+        := League.Strings.From_UTF_8_String
+            (AWS.Status.URI (Request)).Split ('/');
+      --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
+      --  should be handled here.
+      --  XXX Use of UTF-8 to encode URI by AWS should be checked.
+
       Servlet_Request  : Servlet.Requests.Servlet_Request_Access
         := new Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
       Servlet_Response : Servlet.Responses.Servlet_Response_Access
         := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
 
    begin
-      Container.Dispatch (Servlet_Request, Servlet_Response);
+      Container.Dispatch (Path, Servlet_Request, Servlet_Response);
 
       return Result : constant AWS.Response.Data
         := Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class

@@ -144,6 +144,7 @@ package body Matreshka.Servlet_Containers is
 
    procedure Dispatch
     (Self     : not null access Servlet_Container'Class;
+     Path     : League.String_Vectors.Universal_String_Vector;
      Request  : not null Servlet.Requests.Servlet_Request_Access;
      Response : not null Servlet.Responses.Servlet_Response_Access) is
    begin

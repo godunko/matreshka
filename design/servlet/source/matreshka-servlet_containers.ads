@@ -44,6 +44,7 @@
 private with Ada.Containers.Hashed_Maps;
 private with Ada.Containers.Vectors;
 
+with League.String_Vectors;
 private with League.Strings.Hash;
 
 private with Servlet.Context_Listeners;
@@ -76,6 +77,7 @@ package Matreshka.Servlet_Containers is
 
    procedure Dispatch
     (Self     : not null access Servlet_Container'Class;
+     Path     : League.String_Vectors.Universal_String_Vector;
      Request  : not null Servlet.Requests.Servlet_Request_Access;
      Response : not null Servlet.Responses.Servlet_Response_Access);
    --  Dispatch request to filters/servlet.
