@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with AWS.Status;
+
 with Servlet.HTTP_Requests;
 
 package Matreshka.Servlet_AWS_Requests is
@@ -48,10 +50,23 @@ package Matreshka.Servlet_AWS_Requests is
    type AWS_Servlet_Request is
      limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with private;
 
+   procedure Initialize
+    (Self : in out AWS_Servlet_Request;
+     Data : AWS.Status.Data);
+   --  Initialize object to obtain information from given data object of AWS.
+
 private
 
    type AWS_Servlet_Request is
-     limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with null record;
+     limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with record
+      Data : AWS.Status.Data;
+   end record;
+
+   overriding function Get_Method
+    (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method;
+   --  Returns the name of the HTTP method with which this request was made,
+   --  for example, GET, POST, or PUT. Same as the value of the CGI variable
+   --  REQUEST_METHOD.
 
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;

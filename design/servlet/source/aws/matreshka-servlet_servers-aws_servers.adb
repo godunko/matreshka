@@ -121,6 +121,9 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
         := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
 
    begin
+      Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request'Class
+       (Servlet_Request.all).Initialize (Request);
+
       Container.Dispatch (Path, Servlet_Request, Servlet_Response);
 
       return Result : constant AWS.Response.Data

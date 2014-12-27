@@ -47,7 +47,16 @@ package Servlet.HTTP_Requests is
 
    pragma Preelaborate;
 
+   type HTTP_Method is
+    (Options, Get, Head, Post, Put, Delete, Trace, Connect);
+
    type HTTP_Servlet_Request is limited interface
      and Servlet.Requests.Servlet_Request;
+
+   not overriding function Get_Method
+    (Self : HTTP_Servlet_Request) return HTTP_Method is abstract;
+   --  Returns the name of the HTTP method with which this request was made,
+   --  for example, GET, POST, or PUT. Same as the value of the CGI variable
+   --  REQUEST_METHOD.
 
 end Servlet.HTTP_Requests;

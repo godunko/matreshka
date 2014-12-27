@@ -44,6 +44,54 @@
 
 package body Matreshka.Servlet_AWS_Requests is
 
+   ----------------
+   -- Get_Method --
+   ----------------
+
+   overriding function Get_Method
+    (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method is
+   begin
+      case AWS.Status.Method (Self.Data) is
+         when AWS.Status.OPTIONS =>
+            return Servlet.HTTP_Requests.Options;
+
+         when AWS.Status.GET =>
+            return Servlet.HTTP_Requests.Get;
+
+         when AWS.Status.HEAD =>
+            return Servlet.HTTP_Requests.Head;
+
+         when AWS.Status.POST =>
+            return Servlet.HTTP_Requests.Post;
+
+         when AWS.Status.PUT =>
+            return Servlet.HTTP_Requests.Put;
+
+         when AWS.Status.DELETE =>
+            return Servlet.HTTP_Requests.Delete;
+
+         when AWS.Status.TRACE =>
+            return Servlet.HTTP_Requests.Trace;
+
+         when AWS.Status.CONNECT =>
+            return Servlet.HTTP_Requests.Connect;
+
+         when AWS.Status.EXTENSION_METHOD =>
+            raise Program_Error;
+      end case;
+   end Get_Method;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self : in out AWS_Servlet_Request;
+     Data : AWS.Status.Data) is
+   begin
+      Self.Data := Data;
+   end Initialize;
+
    ------------------------
    -- Is_Async_Supported --
    ------------------------
