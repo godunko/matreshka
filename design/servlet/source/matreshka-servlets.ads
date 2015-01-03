@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
+with Servlet.Configs;
 with Servlet.Servlets;
 
 package Matreshka.Servlets is
@@ -50,8 +51,9 @@ package Matreshka.Servlets is
    pragma Preelaborate;
 
    type Abstract_Servlet is
-     abstract limited new Servlet.Servlets.Servlet with record
-      Name : League.Strings.Universal_String;
+     abstract limited new Servlet.Servlets.Servlet with
+   record
+      null;
    end record;
 
 end Matreshka.Servlets;

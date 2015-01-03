@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -80,6 +80,9 @@ private
 
    type Generic_Servlet is
      abstract limited new Matreshka.Servlets.Abstract_Servlet
-       and Servlet.Configs.Servlet_Config with null record;
+       and Servlet.Configs.Servlet_Config with
+   record
+      Config : access Servlet.Configs.Servlet_Config'Class;
+   end record;
 
 end Servlet.Generic_Servlets;

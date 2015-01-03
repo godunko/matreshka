@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -134,7 +134,6 @@ package body Matreshka.Servlet_Containers is
               Name    => Name,
               Servlet => Object);
       Self.Servlets.Insert (Name, Registration);
-      Matreshka.Servlets.Abstract_Servlet'Class (Instance.all).Name := Name;
 
       return Registration;
    end Add_Servlet;
