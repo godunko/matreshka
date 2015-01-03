@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,80 +41,60 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+--  Base type for servlet requests.
+------------------------------------------------------------------------------
+with League.String_Vectors;
 
-package body Matreshka.Servlet_AWS_Requests is
+with Servlet.HTTP_Requests;
 
-   ----------------
-   -- Get_Method --
-   ----------------
+package Matreshka.Servlet_Requests is
 
-   overriding function Get_Method
-    (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method is
-   begin
-      case AWS.Status.Method (Self.Data) is
-         when AWS.Status.OPTIONS =>
-            return Servlet.HTTP_Requests.Options;
-
-         when AWS.Status.GET =>
-            return Servlet.HTTP_Requests.Get;
-
-         when AWS.Status.HEAD =>
-            return Servlet.HTTP_Requests.Head;
-
-         when AWS.Status.POST =>
-            return Servlet.HTTP_Requests.Post;
-
-         when AWS.Status.PUT =>
-            return Servlet.HTTP_Requests.Put;
-
-         when AWS.Status.DELETE =>
-            return Servlet.HTTP_Requests.Delete;
-
-         when AWS.Status.TRACE =>
-            return Servlet.HTTP_Requests.Trace;
-
-         when AWS.Status.CONNECT =>
-            return Servlet.HTTP_Requests.Connect;
-
-         when AWS.Status.EXTENSION_METHOD =>
-            raise Program_Error;
-      end case;
-   end Get_Method;
-
-   ----------------
-   -- Initialize --
-   ----------------
+   type Abstract_HTTP_Servlet_Request is
+     abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request
+       with private;
 
    procedure Initialize
-    (Self : in out AWS_Servlet_Request;
-     Data : AWS.Status.Data)
-   is
-      Path : constant League.String_Vectors.Universal_String_Vector
-        := League.Strings.From_UTF_8_String
-            (AWS.Status.URI (Data)).Split ('/', League.Strings.Skip_Empty);
-      --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
-      --  should be handled here.
-      --  XXX Use of UTF-8 to encode URI by AWS should be checked.
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Path : League.String_Vectors.Universal_String_Vector);
+   --  Initialized path of the object.
 
-   begin
-      Matreshka.Servlet_Requests.Initialize (Self, Path);
-      Self.Data := Data;
-   end Initialize;
+   overriding function Get_Context_Path
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns the portion of the request URI that indicates the context of the
+   --  request. The context path always comes first in a request URI. The path
+   --  starts with a "/" character but does not end with a "/" character. For
+   --  servlets in the default (root) context, this method returns "". The
+   --  container does not decode this string.
 
-   ------------------------
-   -- Is_Async_Supported --
-   ------------------------
+   overriding function Get_Path_Info
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns any extra path information associated with the URL the client
+   --  sent when it made this request. The extra path information follows the
+   --  servlet path but precedes the query string and will start with a "/"
+   --  character.
 
-   overriding function Is_Async_Supported
-    (Self : not null access AWS_Servlet_Request) return Boolean
-   is
-      pragma Unreferenced (Self);
+   overriding function Get_Servlet_Path
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns the part of this request's URL that calls the servlet. This path
+   --  starts with a "/" character and includes either the servlet name or a
+   --  path to the servlet, but does not include any extra path information or
+   --  a query string. Same as the value of the CGI variable SCRIPT_NAME.
 
-   begin
-      --  AWS doesn't support asynchronous processing of requests.
+private
 
-      return False;
-   end Is_Async_Supported;
+   type Abstract_HTTP_Servlet_Request is
+     abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with
+   record
+      Path            : League.String_Vectors.Universal_String_Vector;
+      Context_Last    : Natural  := 0;
+      Servlet_First   : Positive := 1;
+      Servlet_Last    : Natural  := 0;
+      Path_Info_First : Positive := 1;
+      Path_Info_Last  : Natural  := 0;
+      --  Path information computed during request dispatching.
+   end record;
 
-end Matreshka.Servlet_AWS_Requests;
+end Matreshka.Servlet_Requests;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,80 +41,51 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-package body Matreshka.Servlet_AWS_Requests is
+package body Matreshka.Servlet_Requests is
 
-   ----------------
-   -- Get_Method --
-   ----------------
+   ----------------------
+   -- Get_Context_Path --
+   ----------------------
 
-   overriding function Get_Method
-    (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method is
+   overriding function Get_Context_Path
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector is
    begin
-      case AWS.Status.Method (Self.Data) is
-         when AWS.Status.OPTIONS =>
-            return Servlet.HTTP_Requests.Options;
+      return Self.Path.Slice (1, Self.Context_Last);
+   end Get_Context_Path;
 
-         when AWS.Status.GET =>
-            return Servlet.HTTP_Requests.Get;
+   -------------------
+   -- Get_Path_Info --
+   -------------------
 
-         when AWS.Status.HEAD =>
-            return Servlet.HTTP_Requests.Head;
+   overriding function Get_Path_Info
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return Self.Path.Slice (Self.Path_Info_First, Self.Path_Info_Last);
+   end Get_Path_Info;
 
-         when AWS.Status.POST =>
-            return Servlet.HTTP_Requests.Post;
+   ----------------------
+   -- Get_Servlet_Path --
+   ----------------------
 
-         when AWS.Status.PUT =>
-            return Servlet.HTTP_Requests.Put;
-
-         when AWS.Status.DELETE =>
-            return Servlet.HTTP_Requests.Delete;
-
-         when AWS.Status.TRACE =>
-            return Servlet.HTTP_Requests.Trace;
-
-         when AWS.Status.CONNECT =>
-            return Servlet.HTTP_Requests.Connect;
-
-         when AWS.Status.EXTENSION_METHOD =>
-            raise Program_Error;
-      end case;
-   end Get_Method;
+   overriding function Get_Servlet_Path
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return Self.Path.Slice (Self.Servlet_First, Self.Servlet_Last);
+   end Get_Servlet_Path;
 
    ----------------
    -- Initialize --
    ----------------
 
    procedure Initialize
-    (Self : in out AWS_Servlet_Request;
-     Data : AWS.Status.Data)
-   is
-      Path : constant League.String_Vectors.Universal_String_Vector
-        := League.Strings.From_UTF_8_String
-            (AWS.Status.URI (Data)).Split ('/', League.Strings.Skip_Empty);
-      --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
-      --  should be handled here.
-      --  XXX Use of UTF-8 to encode URI by AWS should be checked.
-
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Path : League.String_Vectors.Universal_String_Vector) is
    begin
-      Matreshka.Servlet_Requests.Initialize (Self, Path);
-      Self.Data := Data;
+      Self.Path := Path;
    end Initialize;
 
-   ------------------------
-   -- Is_Async_Supported --
-   ------------------------
-
-   overriding function Is_Async_Supported
-    (Self : not null access AWS_Servlet_Request) return Boolean
-   is
-      pragma Unreferenced (Self);
-
-   begin
-      --  AWS doesn't support asynchronous processing of requests.
-
-      return False;
-   end Is_Async_Supported;
-
-end Matreshka.Servlet_AWS_Requests;
+end Matreshka.Servlet_Requests;
