@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Tags;
+
 with Matreshka.Servlet_Containers;
 
 package body Matreshka.Servlet_Registrations is
@@ -67,5 +69,23 @@ package body Matreshka.Servlet_Registrations is
          end loop;
       end return;
    end Add_Mapping;
+
+   ----------------------
+   -- Get_Servlet_Name --
+   ----------------------
+
+   overriding function Get_Servlet_Name
+    (Self : not null access constant Servlet_Registration)
+       return League.Strings.Universal_String is
+   begin
+      if not Self.Name.Is_Empty then
+         return Self.Name;
+
+      else
+         return
+           League.Strings.From_UTF_8_String
+            (Ada.Tags.External_Tag (Self.Servlet'Tag));
+      end if;
+   end Get_Servlet_Name;
 
 end Matreshka.Servlet_Registrations;

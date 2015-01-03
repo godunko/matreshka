@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -45,6 +45,7 @@ with League.String_Vectors;
 with League.Strings;
 
 limited with Matreshka.Servlet_Containers;
+with Servlet.Configs;
 with Servlet.Servlet_Registrations;
 with Servlet.Servlets;
 
@@ -55,7 +56,9 @@ package Matreshka.Servlet_Registrations is
    type Servlet_Registration
     (Context :
        not null access Matreshka.Servlet_Containers.Servlet_Container'Class) is
-     limited new Servlet.Servlet_Registrations.Servlet_Registration with record
+     limited new Servlet.Servlet_Registrations.Servlet_Registration
+       and Servlet.Configs.Servlet_Config with
+   record
       Name    : League.Strings.Universal_String;
       Servlet : Servlet_Access;
    end record;
@@ -66,5 +69,13 @@ package Matreshka.Servlet_Registrations is
     (Self         : not null access Servlet_Registration;
      URL_Patterns : League.String_Vectors.Universal_String_Vector)
        return League.String_Vectors.Universal_String_Vector;
+
+   overriding function Get_Servlet_Name
+    (Self : not null access constant Servlet_Registration)
+       return League.Strings.Universal_String;
+   --  Returns the name of this servlet instance. The name may be provided via
+   --  server administration, assigned in the web application deployment
+   --  descriptor, or for an unregistered (and thus unnamed) servlet instance
+   --  it will be the servlet's class name.
 
 end Matreshka.Servlet_Registrations;
