@@ -101,9 +101,7 @@ private
    record
       Path            : League.String_Vectors.Universal_String_Vector;
       Context_Last    : Natural  := 0;
-      Servlet_First   : Positive := 1;
       Servlet_Last    : Natural  := 0;
-      Path_Info_First : Positive := 1;
       Path_Info_Last  : Natural  := 0;
       --  Path information computed during request dispatching.
    end record;
