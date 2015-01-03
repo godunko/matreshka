@@ -51,6 +51,18 @@ package Servlet.Servlets is
 
    type Servlet is limited interface;
 
+   not overriding procedure Destroy (Self : in out Servlet) is null;
+   --  Called by the servlet container to indicate to a servlet that the
+   --  servlet is being taken out of service. This method is only called once
+   --  all threads within the servlet's service method have exited or after a
+   --  timeout period has passed. After the servlet container calls this
+   --  method, it will not call the service method again on this servlet.
+   --
+   --  This method gives the servlet an opportunity to clean up any resources
+   --  that are being held (for example, memory, file handles, threads) and
+   --  make sure that any persistent state is synchronized with the servlet's
+   --  current state in memory.
+
    not overriding function Get_Servlet_Config
     (Self : Servlet)
        return access Standard.Servlet.Configs.Servlet_Config'Class is abstract;
@@ -62,6 +74,23 @@ package Servlet.Servlets is
    --  ServletConfig object so that this method can return it. The
    --  GenericServlet class, which implements this interface, already does
    --  this.
+
+   not overriding procedure Initialize
+    (Self   : in out Servlet;
+     Config : not null access Standard.Servlet.Configs.Servlet_Config'Class)
+       is abstract;
+   --  Called by the servlet container to indicate to a servlet that the
+   --  servlet is being placed into service.
+   --
+   --  The servlet container calls the init method exactly once after
+   --  instantiating the servlet. The init method must complete successfully
+   --  before the servlet can receive any requests.
+   --
+   --  The servlet container cannot place the servlet into service if the init
+   --  method
+   --
+   --   1. Throws a ServletException
+   --   2. Does not return within a time period defined by the Web server
 
    not overriding procedure Service
     (Self     : in out Servlet;

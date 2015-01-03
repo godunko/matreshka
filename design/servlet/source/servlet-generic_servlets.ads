@@ -70,10 +70,11 @@ package Servlet.Generic_Servlets is
      abstract limited new Servlet.Servlets.Servlet
        and Servlet.Configs.Servlet_Config with private;
 
-   overriding function Get_Servlet_Name
-    (Self : Generic_Servlet) return League.Strings.Universal_String;
-   --  Returns the name of this servlet instance. See
-   --  ServletConfig.getServletName().
+   overriding procedure Initialize
+    (Self   : in out Generic_Servlet;
+     Config : not null access Standard.Servlet.Configs.Servlet_Config'Class);
+   --  Called by the servlet container to indicate to a servlet that the
+   --  servlet is being placed into service.
 
    overriding function Get_Servlet_Config
     (Self : Generic_Servlet)
@@ -81,6 +82,11 @@ package Servlet.Generic_Servlets is
    --  Returns a ServletConfig object, which contains initialization and
    --  startup parameters for this servlet. The ServletConfig object returned
    --  is the one passed to the init method.
+
+   overriding function Get_Servlet_Name
+    (Self : Generic_Servlet) return League.Strings.Universal_String;
+   --  Returns the name of this servlet instance. See
+   --  ServletConfig.getServletName().
 
 private
 

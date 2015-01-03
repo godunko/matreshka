@@ -135,6 +135,10 @@ package body Matreshka.Servlet_Containers is
               Servlet => Object);
       Self.Servlets.Insert (Name, Registration);
 
+      --  Initialize servlet.
+
+      Registration.Servlet.Initialize (Registration);
+
       return Registration;
    end Add_Servlet;
 

@@ -75,4 +75,15 @@ package body Servlet.Generic_Servlets is
       end if;
    end Get_Servlet_Name;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   overriding procedure Initialize
+    (Self   : in out Generic_Servlet;
+     Config : not null access Standard.Servlet.Configs.Servlet_Config'Class) is
+   begin
+      Self.Config := Config;
+   end Initialize;
+
 end Servlet.Generic_Servlets;
