@@ -45,6 +45,17 @@ with Ada.Tags;
 
 package body Servlet.Generic_Servlets is
 
+   ------------------------
+   -- Get_Servlet_Config --
+   ------------------------
+
+   overriding function Get_Servlet_Config
+    (Self : Generic_Servlet)
+       return access Standard.Servlet.Configs.Servlet_Config'Class is
+   begin
+      return Self.Config;
+   end Get_Servlet_Config;
+
    ----------------------
    -- Get_Servlet_Name --
    ----------------------

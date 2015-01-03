@@ -76,6 +76,13 @@ package Servlet.Generic_Servlets is
    --  Returns the name of this servlet instance. See
    --  ServletConfig.getServletName().
 
+   overriding function Get_Servlet_Config
+    (Self : Generic_Servlet)
+       return access Standard.Servlet.Configs.Servlet_Config'Class;
+   --  Returns a ServletConfig object, which contains initialization and
+   --  startup parameters for this servlet. The ServletConfig object returned
+   --  is the one passed to the init method.
+
 private
 
    type Generic_Servlet is

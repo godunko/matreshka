@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Servlet.Configs;
 with Servlet.Requests;
 with Servlet.Responses;
 
@@ -49,6 +50,18 @@ package Servlet.Servlets is
    pragma Preelaborate;
 
    type Servlet is limited interface;
+
+   not overriding function Get_Servlet_Config
+    (Self : Servlet)
+       return access Standard.Servlet.Configs.Servlet_Config'Class is abstract;
+   --  Returns a ServletConfig object, which contains initialization and
+   --  startup parameters for this servlet. The ServletConfig object returned
+   --  is the one passed to the init method.
+   --
+   --  Implementations of this interface are responsible for storing the
+   --  ServletConfig object so that this method can return it. The
+   --  GenericServlet class, which implements this interface, already does
+   --  this.
 
    not overriding procedure Service
     (Self     : in out Servlet;
