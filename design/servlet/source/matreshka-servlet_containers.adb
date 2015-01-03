@@ -149,12 +149,11 @@ package body Matreshka.Servlet_Containers is
 
    procedure Dispatch
     (Self     : not null access Servlet_Container'Class;
-     Path     : League.String_Vectors.Universal_String_Vector;
-     Request  : not null Servlet.Requests.Servlet_Request_Access;
+     Request  : not null Matreshka.Servlet_Requests.Servlet_Request_Access;
      Response : not null Servlet.Responses.Servlet_Response_Access)
    is
       Servlet : Matreshka.Servlet_Registrations.Servlet_Registration_Access
-        := Self.Dispatch (Path, 1);
+        := Self.Dispatch (Request.Get_Path, 1);
 
    begin
       Servlet.Servlet.Service (Request.all, Response.all);

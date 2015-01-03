@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -54,9 +54,10 @@ with AWS.Status;
 with League.String_Vectors;
 with League.Strings;
 
-with Matreshka.Servlet_Containers;
 with Matreshka.Servlet_AWS_Requests;
 with Matreshka.Servlet_AWS_Responses;
+with Matreshka.Servlet_Containers;
+with Matreshka.Servlet_Requests;
 with Servlet.Requests;
 with Servlet.Responses;
 
@@ -101,21 +102,14 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    is
       procedure Free is
         new Ada.Unchecked_Deallocation
-             (Servlet.Requests.Servlet_Request'Class,
-              Servlet.Requests.Servlet_Request_Access);
+             (Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class,
+              Matreshka.Servlet_Requests.Servlet_Request_Access);
       procedure Free is
         new Ada.Unchecked_Deallocation
              (Servlet.Responses.Servlet_Response'Class,
               Servlet.Responses.Servlet_Response_Access);
 
-      Path : constant League.String_Vectors.Universal_String_Vector
-        := League.Strings.From_UTF_8_String
-            (AWS.Status.URI (Request)).Split ('/', League.Strings.Skip_Empty);
-      --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
-      --  should be handled here.
-      --  XXX Use of UTF-8 to encode URI by AWS should be checked.
-
-      Servlet_Request  : Servlet.Requests.Servlet_Request_Access
+      Servlet_Request  : Matreshka.Servlet_Requests.Servlet_Request_Access
         := new Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
       Servlet_Response : Servlet.Responses.Servlet_Response_Access
         := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
@@ -124,7 +118,7 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
       Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request'Class
        (Servlet_Request.all).Initialize (Request);
 
-      Container.Dispatch (Path, Servlet_Request, Servlet_Response);
+      Container.Dispatch (Servlet_Request, Servlet_Response);
 
       return Result : constant AWS.Response.Data
         := Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class

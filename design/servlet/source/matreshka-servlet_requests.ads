@@ -49,14 +49,25 @@ with Servlet.HTTP_Requests;
 
 package Matreshka.Servlet_Requests is
 
+   pragma Preelaborate;
+
    type Abstract_HTTP_Servlet_Request is
      abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request
        with private;
+
+   type Servlet_Request_Access is
+     access all Abstract_HTTP_Servlet_Request'Class;
 
    procedure Initialize
     (Self : in out Abstract_HTTP_Servlet_Request'Class;
      Path : League.String_Vectors.Universal_String_Vector);
    --  Initialized path of the object.
+
+   function Get_Path
+    (Self : Abstract_HTTP_Servlet_Request'Class)
+       return League.String_Vectors.Universal_String_Vector
+         with Inline;
+   --  Returns original path of the request.
 
    overriding function Get_Context_Path
     (Self : Abstract_HTTP_Servlet_Request)

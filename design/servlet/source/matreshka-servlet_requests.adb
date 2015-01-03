@@ -55,6 +55,17 @@ package body Matreshka.Servlet_Requests is
       return Self.Path.Slice (1, Self.Context_Last);
    end Get_Context_Path;
 
+   --------------
+   -- Get_Path --
+   --------------
+
+   function Get_Path
+    (Self : Abstract_HTTP_Servlet_Request'Class)
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return Self.Path;
+   end Get_Path;
+
    -------------------
    -- Get_Path_Info --
    -------------------

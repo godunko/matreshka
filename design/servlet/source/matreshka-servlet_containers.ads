@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -50,13 +50,13 @@ private with League.Strings.Hash;
 private with Servlet.Context_Listeners;
 with Servlet.Contexts;
 private with Servlet.Event_Listeners;
-with Servlet.Requests;
 with Servlet.Responses;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
 with Matreshka.Servlet_Dispatchers;
 with Matreshka.Servlet_Servers;
 with Matreshka.Servlet_Registrations;
+with Matreshka.Servlet_Requests;
 
 package Matreshka.Servlet_Containers is
 
@@ -77,8 +77,7 @@ package Matreshka.Servlet_Containers is
 
    procedure Dispatch
     (Self     : not null access Servlet_Container'Class;
-     Path     : League.String_Vectors.Universal_String_Vector;
-     Request  : not null Servlet.Requests.Servlet_Request_Access;
+     Request  : not null Matreshka.Servlet_Requests.Servlet_Request_Access;
      Response : not null Servlet.Responses.Servlet_Response_Access);
    --  Dispatch request to filters/servlet.
 
