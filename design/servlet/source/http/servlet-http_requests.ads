@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,6 +41,15 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Extends the ServletRequest interface to provide request information for
+--  HTTP servlets.
+--
+--  The servlet container creates an HttpServletRequest object and passes it as
+--  an argument to the servlet's service methods (doGet, doPost, etc).
+------------------------------------------------------------------------------
+with League.String_Vectors;
+with League.Strings;
+
 with Servlet.Requests;
 
 package Servlet.HTTP_Requests is
@@ -53,10 +62,55 @@ package Servlet.HTTP_Requests is
    type HTTP_Servlet_Request is limited interface
      and Servlet.Requests.Servlet_Request;
 
+   not overriding function Get_Context_Path
+    (Self : HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector is abstract;
+   function Get_Context_Path
+    (Self : HTTP_Servlet_Request'Class) return League.Strings.Universal_String;
+   --  Returns the portion of the request URI that indicates the context of the
+   --  request. The context path always comes first in a request URI. The path
+   --  starts with a "/" character but does not end with a "/" character. For
+   --  servlets in the default (root) context, this method returns "". The
+   --  container does not decode this string.
+   --
+   --  It is possible that a servlet container may match a context by more than
+   --  one context path. In such cases this method will return the actual
+   --  context path used by the request and it may differ from the path
+   --  returned by the ServletContext.getContextPath() method. The context path
+   --  returned by ServletContext.getContextPath() should be considered as the
+   --  prime or preferred context path of the application.
+
    not overriding function Get_Method
     (Self : HTTP_Servlet_Request) return HTTP_Method is abstract;
    --  Returns the name of the HTTP method with which this request was made,
    --  for example, GET, POST, or PUT. Same as the value of the CGI variable
    --  REQUEST_METHOD.
+
+   not overriding function Get_Path_Info
+    (Self : HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector is abstract;
+   function Get_Path_Info
+    (Self : HTTP_Servlet_Request'Class) return League.Strings.Universal_String;
+   --  Returns any extra path information associated with the URL the client
+   --  sent when it made this request. The extra path information follows the
+   --  servlet path but precedes the query string and will start with a "/"
+   --  character.
+   --
+   --  This method returns null if there was no extra path information.
+   --
+   --  Same as the value of the CGI variable PATH_INFO.
+
+   not overriding function Get_Servlet_Path
+    (Self : HTTP_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector is abstract;
+   function Get_Servlet_Path
+    (Self : HTTP_Servlet_Request'Class) return League.Strings.Universal_String;
+   --  Returns the part of this request's URL that calls the servlet. This path
+   --  starts with a "/" character and includes either the servlet name or a
+   --  path to the servlet, but does not include any extra path information or
+   --  a query string. Same as the value of the CGI variable SCRIPT_NAME.
+   --
+   --  This method will return an empty string ("") if the servlet used to
+   --  process this request was matched using the "/*" pattern.
 
 end Servlet.HTTP_Requests;

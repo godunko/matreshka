@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,108 +42,65 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Matreshka.Servlet_AWS_Requests is
+package body Servlet.HTTP_Requests is
+
+   use type League.Strings.Universal_String;
 
    ----------------------
    -- Get_Context_Path --
    ----------------------
 
-   overriding function Get_Context_Path
-    (Self : AWS_Servlet_Request)
-       return League.String_Vectors.Universal_String_Vector is
-   begin
-      --  XXX Not implemented yet.
+   function Get_Context_Path
+    (Self : HTTP_Servlet_Request'Class) return League.Strings.Universal_String
+   is
+      Aux : constant League.String_Vectors.Universal_String_Vector
+        := Self.Get_Context_Path;
 
-      return League.String_Vectors.Empty_Universal_String_Vector;
+   begin
+      if Aux.Is_Empty then
+         return League.Strings.Empty_Universal_String;
+
+      else
+         return '/' & Aux.Join ('/');
+      end if;
    end Get_Context_Path;
-
-   ----------------
-   -- Get_Method --
-   ----------------
-
-   overriding function Get_Method
-    (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method is
-   begin
-      case AWS.Status.Method (Self.Data) is
-         when AWS.Status.OPTIONS =>
-            return Servlet.HTTP_Requests.Options;
-
-         when AWS.Status.GET =>
-            return Servlet.HTTP_Requests.Get;
-
-         when AWS.Status.HEAD =>
-            return Servlet.HTTP_Requests.Head;
-
-         when AWS.Status.POST =>
-            return Servlet.HTTP_Requests.Post;
-
-         when AWS.Status.PUT =>
-            return Servlet.HTTP_Requests.Put;
-
-         when AWS.Status.DELETE =>
-            return Servlet.HTTP_Requests.Delete;
-
-         when AWS.Status.TRACE =>
-            return Servlet.HTTP_Requests.Trace;
-
-         when AWS.Status.CONNECT =>
-            return Servlet.HTTP_Requests.Connect;
-
-         when AWS.Status.EXTENSION_METHOD =>
-            raise Program_Error;
-      end case;
-   end Get_Method;
 
    -------------------
    -- Get_Path_Info --
    -------------------
 
-   overriding function Get_Path_Info
-    (Self : AWS_Servlet_Request)
-       return League.String_Vectors.Universal_String_Vector is
-   begin
-      --  XXX Not implemented yet.
+   function Get_Path_Info
+    (Self : HTTP_Servlet_Request'Class) return League.Strings.Universal_String
+   is
+      Aux : constant League.String_Vectors.Universal_String_Vector
+        := Self.Get_Path_Info;
 
-      return League.String_Vectors.Empty_Universal_String_Vector;
+   begin
+      if Aux.Is_Empty then
+         return League.Strings.Empty_Universal_String;
+
+      else
+         return '/' & Aux.Join ('/');
+      end if;
    end Get_Path_Info;
 
    ----------------------
    -- Get_Servlet_Path --
    ----------------------
 
-   overriding function Get_Servlet_Path
-    (Self : AWS_Servlet_Request)
-       return League.String_Vectors.Universal_String_Vector is
-   begin
-      --  XXX Not implemented yet.
+   function Get_Servlet_Path
+    (Self : HTTP_Servlet_Request'Class) return League.Strings.Universal_String
+   is
+      Aux : constant League.String_Vectors.Universal_String_Vector
+        := Self.Get_Servlet_Path;
 
-      return League.String_Vectors.Empty_Universal_String_Vector;
+   begin
+      if Aux.Is_Empty then
+         return League.Strings.Empty_Universal_String;
+
+      else
+         return '/' & Aux.Join ('/');
+      end if;
    end Get_Servlet_Path;
 
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize
-    (Self : in out AWS_Servlet_Request;
-     Data : AWS.Status.Data) is
-   begin
-      Self.Data := Data;
-   end Initialize;
-
-   ------------------------
-   -- Is_Async_Supported --
-   ------------------------
-
-   overriding function Is_Async_Supported
-    (Self : not null access AWS_Servlet_Request) return Boolean
-   is
-      pragma Unreferenced (Self);
-
-   begin
-      --  AWS doesn't support asynchronous processing of requests.
-
-      return False;
-   end Is_Async_Supported;
-
-end Matreshka.Servlet_AWS_Requests;
+end Servlet.HTTP_Requests;
