@@ -61,8 +61,7 @@ package body Servlet.Generic_Servlets is
    ----------------------
 
    overriding function Get_Servlet_Name
-    (Self : not null access constant Generic_Servlet)
-       return League.Strings.Universal_String is
+    (Self : Generic_Servlet) return League.Strings.Universal_String is
    begin
       if Self.Config /= null then
          return Self.Config.Get_Servlet_Name;
@@ -72,7 +71,7 @@ package body Servlet.Generic_Servlets is
 
          return
            League.Strings.From_UTF_8_String
-            (Ada.Tags.External_Tag (Generic_Servlet'Class (Self.all)'Tag));
+            (Ada.Tags.External_Tag (Generic_Servlet'Class (Self)'Tag));
       end if;
    end Get_Servlet_Name;
 

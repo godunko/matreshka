@@ -71,8 +71,7 @@ package Matreshka.Servlet_Registrations is
        return League.String_Vectors.Universal_String_Vector;
 
    overriding function Get_Servlet_Name
-    (Self : not null access constant Servlet_Registration)
-       return League.Strings.Universal_String;
+    (Self : Servlet_Registration) return League.Strings.Universal_String;
    --  Returns the name of this servlet instance. The name may be provided via
    --  server administration, assigned in the web application deployment
    --  descriptor, or for an unregistered (and thus unnamed) servlet instance

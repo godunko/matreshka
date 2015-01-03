@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -53,8 +53,7 @@ package Servlet.Configs is
    type Servlet_Config is limited interface;
 
    not overriding function Get_Servlet_Name
-    (Self : not null access constant Servlet_Config)
-       return League.Strings.Universal_String is abstract;
+    (Self : Servlet_Config) return League.Strings.Universal_String is abstract;
    --  Returns the name of this servlet instance. The name may be provided via
    --  server administration, assigned in the web application deployment
    --  descriptor, or for an unregistered (and thus unnamed) servlet instance

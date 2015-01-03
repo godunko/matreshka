@@ -75,8 +75,7 @@ package body Matreshka.Servlet_Registrations is
    ----------------------
 
    overriding function Get_Servlet_Name
-    (Self : not null access constant Servlet_Registration)
-       return League.Strings.Universal_String is
+    (Self : Servlet_Registration) return League.Strings.Universal_String is
    begin
       if not Self.Name.Is_Empty then
          return Self.Name;

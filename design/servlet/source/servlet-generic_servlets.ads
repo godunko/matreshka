@@ -71,8 +71,7 @@ package Servlet.Generic_Servlets is
        and Servlet.Configs.Servlet_Config with private;
 
    overriding function Get_Servlet_Name
-    (Self : not null access constant Generic_Servlet)
-       return League.Strings.Universal_String;
+    (Self : Generic_Servlet) return League.Strings.Universal_String;
    --  Returns the name of this servlet instance. See
    --  ServletConfig.getServletName().
 
