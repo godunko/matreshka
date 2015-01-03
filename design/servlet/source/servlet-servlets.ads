@@ -41,6 +41,33 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Defines methods that all servlets must implement.
+--
+--  A servlet is a small Java program that runs within a Web server. Servlets
+--  receive and respond to requests from Web clients, usually across HTTP, the
+--  HyperText Transfer Protocol.
+--
+--  To implement this interface, you can write a generic servlet that extends
+--  javax.servlet.GenericServlet or an HTTP servlet that extends
+--  javax.servlet.http.HttpServlet.
+--
+--  This interface defines methods to initialize a servlet, to service
+--  requests, and to remove a servlet from the server. These are known as
+--  life-cycle methods and are called in the following sequence:
+--
+--    1. The servlet is constructed, then initialized with the init method.
+--    2. Any calls from clients to the service method are handled.
+--    3. The servlet is taken out of service, then destroyed with the destroy
+--       method, then garbage collected and finalized. 
+--
+--  In addition to the life-cycle methods, this interface provides the
+--  getServletConfig method, which the servlet can use to get any startup
+--  information, and the getServletInfo method, which allows the servlet to
+--  return basic information about itself, such as author, version, and
+--  copyright.
+------------------------------------------------------------------------------
+with League.Strings;
+
 with Servlet.Configs;
 with Servlet.Requests;
 with Servlet.Responses;
@@ -74,6 +101,14 @@ package Servlet.Servlets is
    --  ServletConfig object so that this method can return it. The
    --  GenericServlet class, which implements this interface, already does
    --  this.
+
+   not overriding function Get_Servlet_Info
+    (Self : Servlet) return League.Strings.Universal_String is abstract;
+   --  Returns information about the servlet, such as author, version, and
+   --  copyright.
+   --
+   --  The string that this method returns should be plain text and not markup
+   --  of any kind (such as HTML, XML, etc.).
 
    not overriding procedure Initialize
     (Self   : in out Servlet;

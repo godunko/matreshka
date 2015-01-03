@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,20 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 
-with Servlet.HTTP_Servlets;
+package body Matreshka.Servlet_Defaults is
 
-package Matreshka.Servlet_Defaults is
-
-   pragma Preelaborate;
-
-   type Default_Servlet is
-     new Servlet.HTTP_Servlets.HTTP_Servlet with null record;
+   ----------------------
+   -- Get_Servlet_Info --
+   ----------------------
 
    overriding function Get_Servlet_Info
-    (Self : Default_Servlet) return League.Strings.Universal_String;
-   --  Returns information about the servlet, such as author, version, and
-   --  copyright.
+    (Self : Default_Servlet) return League.Strings.Universal_String is
+   begin
+      return
+        League.Strings.To_Universal_String ("Matreshka's Default Servlet");
+   end Get_Servlet_Info;
 
 end Matreshka.Servlet_Defaults;
