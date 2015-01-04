@@ -99,4 +99,26 @@ package body Matreshka.Servlet_Requests is
       Self.Path := Path;
    end Initialize;
 
+   ------------------------------
+   -- Set_Context_Last_Segment --
+   ------------------------------
+
+   procedure Set_Context_Last_Segment
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Last : Natural) is
+   begin
+      Self.Context_Last := Last;
+   end Set_Context_Last_Segment;
+
+   ------------------------------
+   -- Set_Servlet_Last_Segment --
+   ------------------------------
+
+   procedure Set_Servlet_Last_Segment
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Last : Natural) is
+   begin
+      Self.Servlet_Last := Last;
+   end Set_Servlet_Last_Segment;
+
 end Matreshka.Servlet_Requests;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -49,21 +49,26 @@ with League.Strings.Hash;
 with Servlet.Requests;
 with Servlet.Responses;
 with Matreshka.Servlet_Registrations;
+with Matreshka.Servlet_Requests;
 
 package Matreshka.Servlet_Dispatchers is
 
    type Abstract_Dispatcher is limited interface;
    type Dispatcher_Access is access all Abstract_Dispatcher'Class;
 
-   not overriding function Dispatch
-    (Self  : not null access constant Abstract_Dispatcher;
-     Path  : League.String_Vectors.Universal_String_Vector;
-     Index : Positive)
-       return Matreshka.Servlet_Registrations.Servlet_Registration_Access
-         is abstract;
+   not overriding procedure Dispatch
+    (Self         : not null access constant Abstract_Dispatcher;
+     Request      : in out
+       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+     Path         : League.String_Vectors.Universal_String_Vector;
+     Index        : Positive;
+     Servlet      : in out
+       Matreshka.Servlet_Registrations.Servlet_Registration_Access)
+       is abstract;
    --  Dispatches request. Path is full path and Index is segment of path that
-   --  must be dispatched by the current dispatcher. Returns access to servlet
-   --  registration to process request of null.
+   --  must be dispatched by the current dispatcher. Servlet parameter is set
+   --  to servlet registration to process request. Request parameter is
+   --  modified by setting of indices of context/servlet/path segments.
 
    type Context_Dispatcher is limited new Abstract_Dispatcher with private;
 
@@ -97,11 +102,14 @@ private
       Children : Dispatcher_Maps.Map;
    end record;
 
-   overriding function Dispatch
-    (Self  : not null access constant Segment_Dispatcher;
-     Path  : League.String_Vectors.Universal_String_Vector;
-     Index : Positive)
-       return Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+   overriding procedure Dispatch
+    (Self         : not null access constant Segment_Dispatcher;
+     Request      : in out
+       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+     Path         : League.String_Vectors.Universal_String_Vector;
+     Index        : Positive;
+     Servlet      : in out
+       Matreshka.Servlet_Registrations.Servlet_Registration_Access);
 
    ------------------------
    -- Servlet_Dispatcher --
@@ -117,11 +125,14 @@ private
         Matreshka.Servlet_Registrations.Servlet_Registration_Access;
    end record;
 
-   overriding function Dispatch
-    (Self  : not null access constant Servlet_Dispatcher;
-     Path  : League.String_Vectors.Universal_String_Vector;
-     Index : Positive)
-       return Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+   overriding procedure Dispatch
+    (Self         : not null access constant Servlet_Dispatcher;
+     Request      : in out
+       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+     Path         : League.String_Vectors.Universal_String_Vector;
+     Index        : Positive;
+     Servlet      : in out
+       Matreshka.Servlet_Registrations.Servlet_Registration_Access);
 
    ------------------------
    -- Context_Dispatcher --
@@ -143,10 +154,13 @@ private
       Extension_Servlets : Extension_Maps.Map;
    end record;
 
-   overriding function Dispatch
-    (Self  : not null access constant Context_Dispatcher;
-     Path  : League.String_Vectors.Universal_String_Vector;
-     Index : Positive)
-       return Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+   overriding procedure Dispatch
+    (Self         : not null access constant Context_Dispatcher;
+     Request      : in out
+       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+     Path         : League.String_Vectors.Universal_String_Vector;
+     Index        : Positive;
+     Servlet      : in out
+       Matreshka.Servlet_Registrations.Servlet_Registration_Access);
 
 end Matreshka.Servlet_Dispatchers;

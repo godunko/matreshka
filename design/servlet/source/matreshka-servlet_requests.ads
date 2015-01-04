@@ -69,6 +69,16 @@ package Matreshka.Servlet_Requests is
          with Inline;
    --  Returns original path of the request.
 
+   procedure Set_Context_Last_Segment
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Last : Natural);
+   --  Sets index of last segment of context path in request's path.
+
+   procedure Set_Servlet_Last_Segment
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Last : Natural);
+   --  Sets index of last segment of servlet path in request's path.
+
    overriding function Get_Context_Path
     (Self : Abstract_HTTP_Servlet_Request)
        return League.String_Vectors.Universal_String_Vector;

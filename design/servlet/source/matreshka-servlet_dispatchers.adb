@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -205,13 +205,18 @@ package body Matreshka.Servlet_Dispatchers is
    -- Dispatch --
    --------------
 
-   overriding function Dispatch
-    (Self  : not null access constant Context_Dispatcher;
-     Path  : League.String_Vectors.Universal_String_Vector;
-     Index : Positive)
-       return Matreshka.Servlet_Registrations.Servlet_Registration_Access
+   overriding procedure Dispatch
+    (Self         : not null access constant Context_Dispatcher;
+     Request      : in out
+       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+     Path         : League.String_Vectors.Universal_String_Vector;
+     Index        : Positive;
+     Servlet      : in out
+       Matreshka.Servlet_Registrations.Servlet_Registration_Access)
    is
-      Aux : Matreshka.Servlet_Registrations.Servlet_Registration_Access;
+      Servlet_Found : Boolean := False;
+      --  Sets to True when servlet is found by this subprogram, but not by
+      --  call to inherited one.
 
    begin
       if Path.Length < Index then
@@ -219,117 +224,135 @@ package body Matreshka.Servlet_Dispatchers is
          --  use default servlet.
 
          if Self.Root_Servlet /= null then
-            return Self.Root_Servlet;
+            Servlet := Self.Root_Servlet;
+            Servlet_Found := True;
 
-         else
-            return Self.Default_Servlet;
+         elsif Self.Default_Servlet /= null then
+            Servlet := Self.Default_Servlet;
+            Servlet_Found := True;
          end if;
+
+      else
+         --  Call inherited subprogram to lookup exact servlet or longest
+         --  path-prefix.
+
+         Segment_Dispatcher
+          (Self.all).Dispatch (Request, Path, Index, Servlet);
+
+         if Servlet = null then
+            --  Lookup servlet using extension mapping.
+
+            declare
+               Last_Segment       : constant League.Strings.Universal_String
+                 := Path (Path.Length);
+               Full_Stop_Position : constant Natural
+                 := Last_Segment.Last_Index ('.');
+               Position           : constant Extension_Maps.Cursor
+                 := (if Full_Stop_Position /= 0
+                       then Self.Extension_Servlets.Find
+                             (Last_Segment.Tail_From (Full_Stop_Position + 1))
+                       else Extension_Maps.No_Element);
+
+            begin
+               if Extension_Maps.Has_Element (Position) then
+                  Servlet := Extension_Maps.Element (Position);
+                  Servlet_Found := True;
+               end if;
+            end;
+         end if;
+
+         if Servlet = null then
+            --  Use application's default servlet.
+
+            Servlet := Self.Default_Servlet;
+            Servlet_Found := True;
+         end if;
+
       end if;
 
-      --  Call inherited subprogram to lookup exact servlet or longest
-      --  path-prefix.
+      --  Set indices of last segment of context and servlet paths.
 
-      Aux := Segment_Dispatcher (Self.all).Dispatch (Path, Index);
+      if Servlet /= null then
+         Request.Set_Context_Last_Segment (Index - 1);
 
-      if Aux /= null then
-         --  Exact or longest path-prefix servlet was found, return it.
-
-         return Aux;
-      end if;
-
-      --  Lookup servlet using extension mapping.
-
-      declare
-         Last_Segment       : constant League.Strings.Universal_String
-           := Path (Path.Length);
-         Full_Stop_Position : constant Natural
-           := Last_Segment.Last_Index ('.');
-         Position           : constant Extension_Maps.Cursor
-           := (if Full_Stop_Position /= 0
-                 then Self.Extension_Servlets.Find
-                       (Last_Segment.Tail_From (Full_Stop_Position + 1))
-                 else Extension_Maps.No_Element);
-
-      begin
-         if Extension_Maps.Has_Element (Position) then
-            Aux := Extension_Maps.Element (Position);
-
-            if Aux /= null then
-               return Aux;
-            end if;
+         if Servlet_Found then
+            Request.Set_Servlet_Last_Segment (Index - 1);
          end if;
-      end;
-
-      --  Use application's default servlet.
-
-      return Self.Default_Servlet;
+      end if;
    end Dispatch;
 
    --------------
    -- Dispatch --
    --------------
 
-   overriding function Dispatch
-    (Self  : not null access constant Segment_Dispatcher;
-     Path  : League.String_Vectors.Universal_String_Vector;
-     Index : Positive)
-       return Matreshka.Servlet_Registrations.Servlet_Registration_Access is
+   overriding procedure Dispatch
+    (Self         : not null access constant Segment_Dispatcher;
+     Request      : in out
+       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+     Path         : League.String_Vectors.Universal_String_Vector;
+     Index        : Positive;
+     Servlet      : in out
+       Matreshka.Servlet_Registrations.Servlet_Registration_Access) is
    begin
       if Path.Length < Index then
          --  Looked path is exactly what this (simple) dispatcher handles.
          --  Request for this path should be processed in another way by one of
          --  parent dispatchers.
 
-         return null;
+         null;
+
+      else
+         declare
+            Position : constant Dispatcher_Maps.Cursor
+              := Self.Children.Find (Path (Index));
+
+         begin
+            if Dispatcher_Maps.Has_Element (Position) then
+               Dispatcher_Maps.Element (Position).Dispatch
+                (Request, Path, Index + 1, Servlet);
+            end if;
+         end;
       end if;
-
-      declare
-         Position : constant Dispatcher_Maps.Cursor
-           := Self.Children.Find (Path (Index));
-
-      begin
-         if Dispatcher_Maps.Has_Element (Position) then
-            return
-              Dispatcher_Maps.Element (Position).Dispatch (Path, Index + 1);
-         end if;
-      end;
-
-      return null;
    end Dispatch;
 
    --------------
    -- Dispatch --
    --------------
 
-   overriding function Dispatch
-    (Self  : not null access constant Servlet_Dispatcher;
-     Path  : League.String_Vectors.Universal_String_Vector;
-     Index : Positive)
-       return Matreshka.Servlet_Registrations.Servlet_Registration_Access
-   is
-      Aux : Matreshka.Servlet_Registrations.Servlet_Registration_Access;
-
+   overriding procedure Dispatch
+    (Self         : not null access constant Servlet_Dispatcher;
+     Request      : in out
+       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+     Path         : League.String_Vectors.Universal_String_Vector;
+     Index        : Positive;
+     Servlet      : in out
+       Matreshka.Servlet_Registrations.Servlet_Registration_Access) is
    begin
       if Path.Length < Index then
          --  Exact match, use exact match servlet when available.
 
-         return Self.Exact_Servlet;
+         if Self.Exact_Servlet /= null then
+            Servlet := Self.Exact_Servlet;
+            Request.Set_Servlet_Last_Segment (Index - 1);
+         end if;
+
+      else
+         --  Call inherited subprogram to lookup exact servlet or longest
+         --  path-prefix.
+
+         Segment_Dispatcher (Self.all).Dispatch
+          (Request, Path, Index, Servlet);
+
+         if Servlet = null then
+            --  Exact or longest path-prefix servlet was not found; use path
+            --  mapping servlet when available for current path-prefix.
+
+            if Self.Mapping_Servlet /= null then
+               Servlet := Self.Mapping_Servlet;
+               Request.Set_Servlet_Last_Segment (Index - 1);
+            end if;
+         end if;
       end if;
-
-      --  Call inherited subprogram to lookup exact servlet or longest
-      --  path-prefix.
-
-      Aux := Segment_Dispatcher (Self.all).Dispatch (Path, Index);
-
-      if Aux /= null then
-         --  Exact or longest path-prefix servlet was found, return it.
-
-         return Aux;
-      end if;
-
-      --  Use path mapping servlet when available for current path-prefix.
-
-      return Self.Mapping_Servlet;
    end Dispatch;
 
 end Matreshka.Servlet_Dispatchers;

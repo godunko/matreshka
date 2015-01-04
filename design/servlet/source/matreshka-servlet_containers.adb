@@ -152,10 +152,10 @@ package body Matreshka.Servlet_Containers is
      Request  : not null Matreshka.Servlet_Requests.Servlet_Request_Access;
      Response : not null Servlet.Responses.Servlet_Response_Access)
    is
-      Servlet : Matreshka.Servlet_Registrations.Servlet_Registration_Access
-        := Self.Dispatch (Request.Get_Path, 1);
+      Servlet : Matreshka.Servlet_Registrations.Servlet_Registration_Access;
 
    begin
+      Self.Dispatch (Request.all, Request.Get_Path, 1, Servlet);
       Servlet.Servlet.Service (Request.all, Response.all);
    end Dispatch;
 
