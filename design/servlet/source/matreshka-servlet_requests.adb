@@ -74,7 +74,7 @@ package body Matreshka.Servlet_Requests is
     (Self : Abstract_HTTP_Servlet_Request)
        return League.String_Vectors.Universal_String_Vector is
    begin
-      return Self.Path.Slice (Self.Servlet_Last + 1, Self.Path_Info_Last);
+      return Self.Path.Slice (Self.Servlet_Last + 1, Self.Path.Length);
    end Get_Path_Info;
 
    ----------------------

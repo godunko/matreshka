@@ -109,10 +109,9 @@ private
    type Abstract_HTTP_Servlet_Request is
      abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with
    record
-      Path            : League.String_Vectors.Universal_String_Vector;
-      Context_Last    : Natural  := 0;
-      Servlet_Last    : Natural  := 0;
-      Path_Info_Last  : Natural  := 0;
+      Path         : League.String_Vectors.Universal_String_Vector;
+      Context_Last : Natural  := 0;
+      Servlet_Last : Natural  := 0;
       --  Path information computed during request dispatching.
    end record;
 
