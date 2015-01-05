@@ -342,15 +342,15 @@ package body Matreshka.Servlet_Dispatchers is
 
          Segment_Dispatcher (Self.all).Dispatch
           (Request, Path, Index, Servlet);
+      end if;
 
-         if Servlet = null then
-            --  Exact or longest path-prefix servlet was not found; use path
-            --  mapping servlet when available for current path-prefix.
+      if Servlet = null then
+         --  Exact or longest path-prefix servlet was not found; use path
+         --  mapping servlet when available for current path-prefix.
 
-            if Self.Mapping_Servlet /= null then
-               Servlet := Self.Mapping_Servlet;
-               Request.Set_Servlet_Last_Segment (Index - 1);
-            end if;
+         if Self.Mapping_Servlet /= null then
+            Servlet := Self.Mapping_Servlet;
+            Request.Set_Servlet_Last_Segment (Index - 1);
          end if;
       end if;
    end Dispatch;
