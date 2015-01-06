@@ -50,6 +50,7 @@
 with League.String_Vectors;
 with League.Strings;
 
+with Servlet.HTTP_Sessions;
 with Servlet.Requests;
 
 package Servlet.HTTP_Requests is
@@ -112,5 +113,21 @@ package Servlet.HTTP_Requests is
    --
    --  This method will return an empty string ("") if the servlet used to
    --  process this request was matched using the "/*" pattern.
+
+   not overriding function Get_Session
+    (Self   : HTTP_Servlet_Request;
+     Create : Boolean := True)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class is abstract;
+   --  Returns the current HttpSession associated with this request or, if
+   --  there is no current session and create is true, returns a new session.
+   --
+   --  If create is false and the request has no valid HttpSession, this method
+   --  returns null.
+   --
+   --  To make sure the session is properly maintained, you must call this
+   --  method before the response is committed. If the container is using
+   --  cookies to maintain session integrity and is asked to create a new
+   --  session when the response is committed, an IllegalStateException is
+   --  thrown.
 
 end Servlet.HTTP_Requests;
