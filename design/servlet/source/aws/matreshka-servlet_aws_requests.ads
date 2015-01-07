@@ -45,14 +45,15 @@ with AWS.Status;
 
 with League.String_Vectors;
 
-with Matreshka.Servlet_Requests;
+with Matreshka.Servlet_HTTP_Requests;
 with Servlet.HTTP_Requests;
 private with Servlet.HTTP_Sessions;
 
 package Matreshka.Servlet_AWS_Requests is
 
    type AWS_Servlet_Request is
-     new Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request with private;
+     new Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request
+       with private;
 
    procedure Initialize
     (Self : in out AWS_Servlet_Request;
@@ -65,7 +66,8 @@ private
      access all Servlet.HTTP_Sessions.HTTP_Session'Class;
 
    type AWS_Servlet_Request is
-     new Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request with record
+     new Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request with
+   record
       Data    : AWS.Status.Data;
       Session : HTTP_Session_Access;
    end record;

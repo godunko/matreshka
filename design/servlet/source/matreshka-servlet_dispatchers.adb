@@ -208,7 +208,7 @@ package body Matreshka.Servlet_Dispatchers is
    overriding procedure Dispatch
     (Self         : not null access constant Context_Dispatcher;
      Request      : in out
-       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+       Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request'Class;
      Path         : League.String_Vectors.Universal_String_Vector;
      Index        : Positive;
      Servlet      : in out
@@ -288,7 +288,7 @@ package body Matreshka.Servlet_Dispatchers is
    overriding procedure Dispatch
     (Self         : not null access constant Segment_Dispatcher;
      Request      : in out
-       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+       Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request'Class;
      Path         : League.String_Vectors.Universal_String_Vector;
      Index        : Positive;
      Servlet      : in out
@@ -322,7 +322,7 @@ package body Matreshka.Servlet_Dispatchers is
    overriding procedure Dispatch
     (Self         : not null access constant Servlet_Dispatcher;
      Request      : in out
-       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+       Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request'Class;
      Path         : League.String_Vectors.Universal_String_Vector;
      Index        : Positive;
      Servlet      : in out

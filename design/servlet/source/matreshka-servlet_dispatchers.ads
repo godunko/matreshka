@@ -48,8 +48,8 @@ with League.Strings.Hash;
 
 with Servlet.Requests;
 with Servlet.Responses;
+with Matreshka.Servlet_HTTP_Requests;
 with Matreshka.Servlet_Registrations;
-with Matreshka.Servlet_Requests;
 
 package Matreshka.Servlet_Dispatchers is
 
@@ -59,7 +59,7 @@ package Matreshka.Servlet_Dispatchers is
    not overriding procedure Dispatch
     (Self         : not null access constant Abstract_Dispatcher;
      Request      : in out
-       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+       Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request'Class;
      Path         : League.String_Vectors.Universal_String_Vector;
      Index        : Positive;
      Servlet      : in out
@@ -105,7 +105,7 @@ private
    overriding procedure Dispatch
     (Self         : not null access constant Segment_Dispatcher;
      Request      : in out
-       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+       Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request'Class;
      Path         : League.String_Vectors.Universal_String_Vector;
      Index        : Positive;
      Servlet      : in out
@@ -128,7 +128,7 @@ private
    overriding procedure Dispatch
     (Self         : not null access constant Servlet_Dispatcher;
      Request      : in out
-       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+       Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request'Class;
      Path         : League.String_Vectors.Universal_String_Vector;
      Index        : Positive;
      Servlet      : in out
@@ -157,7 +157,7 @@ private
    overriding procedure Dispatch
     (Self         : not null access constant Context_Dispatcher;
      Request      : in out
-       Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class;
+       Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request'Class;
      Path         : League.String_Vectors.Universal_String_Vector;
      Index        : Positive;
      Servlet      : in out

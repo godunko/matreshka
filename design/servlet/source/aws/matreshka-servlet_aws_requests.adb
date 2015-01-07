@@ -179,7 +179,7 @@ package body Matreshka.Servlet_AWS_Requests is
       --  XXX Use of UTF-8 to encode URI by AWS should be checked.
 
    begin
-      Matreshka.Servlet_Requests.Initialize (Self, Path);
+      Matreshka.Servlet_HTTP_Requests.Initialize (Self, Path);
       Self.Data := Data;
    end Initialize;
 

@@ -41,78 +41,84 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Base type for servlet requests.
-------------------------------------------------------------------------------
-with League.String_Vectors;
 
-with Servlet.HTTP_Requests;
+package body Matreshka.Servlet_HTTP_Requests is
 
-package Matreshka.Servlet_Requests is
-
-   pragma Preelaborate;
-
-   type Abstract_HTTP_Servlet_Request is
-     abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request
-       with private;
-
-   type Servlet_Request_Access is
-     access all Abstract_HTTP_Servlet_Request'Class;
-
-   procedure Initialize
-    (Self : in out Abstract_HTTP_Servlet_Request'Class;
-     Path : League.String_Vectors.Universal_String_Vector);
-   --  Initialized path of the object.
-
-   function Get_Path
-    (Self : Abstract_HTTP_Servlet_Request'Class)
-       return League.String_Vectors.Universal_String_Vector
-         with Inline;
-   --  Returns original path of the request.
-
-   procedure Set_Context_Last_Segment
-    (Self : in out Abstract_HTTP_Servlet_Request'Class;
-     Last : Natural);
-   --  Sets index of last segment of context path in request's path.
-
-   procedure Set_Servlet_Last_Segment
-    (Self : in out Abstract_HTTP_Servlet_Request'Class;
-     Last : Natural);
-   --  Sets index of last segment of servlet path in request's path.
+   ----------------------
+   -- Get_Context_Path --
+   ----------------------
 
    overriding function Get_Context_Path
     (Self : Abstract_HTTP_Servlet_Request)
-       return League.String_Vectors.Universal_String_Vector;
-   --  Returns the portion of the request URI that indicates the context of the
-   --  request. The context path always comes first in a request URI. The path
-   --  starts with a "/" character but does not end with a "/" character. For
-   --  servlets in the default (root) context, this method returns "". The
-   --  container does not decode this string.
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return Self.Path.Slice (1, Self.Context_Last);
+   end Get_Context_Path;
+
+   --------------
+   -- Get_Path --
+   --------------
+
+   function Get_Path
+    (Self : Abstract_HTTP_Servlet_Request'Class)
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return Self.Path;
+   end Get_Path;
+
+   -------------------
+   -- Get_Path_Info --
+   -------------------
 
    overriding function Get_Path_Info
     (Self : Abstract_HTTP_Servlet_Request)
-       return League.String_Vectors.Universal_String_Vector;
-   --  Returns any extra path information associated with the URL the client
-   --  sent when it made this request. The extra path information follows the
-   --  servlet path but precedes the query string and will start with a "/"
-   --  character.
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return Self.Path.Slice (Self.Servlet_Last + 1, Self.Path.Length);
+   end Get_Path_Info;
+
+   ----------------------
+   -- Get_Servlet_Path --
+   ----------------------
 
    overriding function Get_Servlet_Path
     (Self : Abstract_HTTP_Servlet_Request)
-       return League.String_Vectors.Universal_String_Vector;
-   --  Returns the part of this request's URL that calls the servlet. This path
-   --  starts with a "/" character and includes either the servlet name or a
-   --  path to the servlet, but does not include any extra path information or
-   --  a query string. Same as the value of the CGI variable SCRIPT_NAME.
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      return Self.Path.Slice (Self.Context_Last + 1, Self.Servlet_Last);
+   end Get_Servlet_Path;
 
-private
+   ----------------
+   -- Initialize --
+   ----------------
 
-   type Abstract_HTTP_Servlet_Request is
-     abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with
-   record
-      Path         : League.String_Vectors.Universal_String_Vector;
-      Context_Last : Natural  := 0;
-      Servlet_Last : Natural  := 0;
-      --  Path information computed during request dispatching.
-   end record;
+   procedure Initialize
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Path : League.String_Vectors.Universal_String_Vector) is
+   begin
+      Self.Path := Path;
+   end Initialize;
 
-end Matreshka.Servlet_Requests;
+   ------------------------------
+   -- Set_Context_Last_Segment --
+   ------------------------------
+
+   procedure Set_Context_Last_Segment
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Last : Natural) is
+   begin
+      Self.Context_Last := Last;
+   end Set_Context_Last_Segment;
+
+   ------------------------------
+   -- Set_Servlet_Last_Segment --
+   ------------------------------
+
+   procedure Set_Servlet_Last_Segment
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     Last : Natural) is
+   begin
+      Self.Servlet_Last := Last;
+   end Set_Servlet_Last_Segment;
+
+end Matreshka.Servlet_HTTP_Requests;

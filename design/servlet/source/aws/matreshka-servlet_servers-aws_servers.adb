@@ -57,7 +57,7 @@ with League.Strings;
 with Matreshka.Servlet_AWS_Requests;
 with Matreshka.Servlet_AWS_Responses;
 with Matreshka.Servlet_Containers;
-with Matreshka.Servlet_Requests;
+with Matreshka.Servlet_HTTP_Requests;
 with Servlet.Requests;
 with Servlet.Responses;
 
@@ -102,15 +102,17 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    is
       procedure Free is
         new Ada.Unchecked_Deallocation
-             (Matreshka.Servlet_Requests.Abstract_HTTP_Servlet_Request'Class,
-              Matreshka.Servlet_Requests.Servlet_Request_Access);
+             (Matreshka.Servlet_HTTP_Requests
+                .Abstract_HTTP_Servlet_Request'Class,
+              Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access);
       procedure Free is
         new Ada.Unchecked_Deallocation
              (Servlet.Responses.Servlet_Response'Class,
               Servlet.Responses.Servlet_Response_Access);
 
-      Servlet_Request  : Matreshka.Servlet_Requests.Servlet_Request_Access
-        := new Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
+      Servlet_Request  :
+        Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access
+          := new Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
       Servlet_Response : Servlet.Responses.Servlet_Response_Access
         := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
 
