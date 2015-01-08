@@ -50,6 +50,7 @@
 with League.String_Vectors;
 with League.Strings;
 
+with Servlet.HTTP_Cookie_Vectors;
 with Servlet.HTTP_Sessions;
 with Servlet.Requests;
 
@@ -80,6 +81,12 @@ package Servlet.HTTP_Requests is
    --  returned by the ServletContext.getContextPath() method. The context path
    --  returned by ServletContext.getContextPath() should be considered as the
    --  prime or preferred context path of the application.
+
+   not overriding function Get_Cookie
+    (Self : HTTP_Servlet_Request)
+       return Servlet.HTTP_Cookie_Vectors.Cookie_Vector is abstract;
+   --  Returns an array containing all of the Cookie objects the client sent
+   --  with this request. This method returns null if no cookies were sent.
 
    not overriding function Get_Method
     (Self : HTTP_Servlet_Request) return HTTP_Method is abstract;

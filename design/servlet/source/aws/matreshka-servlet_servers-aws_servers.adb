@@ -126,6 +126,8 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
         := Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class
             (Servlet_Response.all).Build
       do
+         Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request
+          (Servlet_Request.all).Finalize;
          Free (Servlet_Request);
          Free (Servlet_Response);
       end return;

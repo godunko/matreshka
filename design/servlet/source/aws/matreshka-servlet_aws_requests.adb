@@ -41,9 +41,69 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Strings.Unbounded;
+
+with AWS.Headers.Values;
+with AWS.Messages;
+with AWS.URL;
+
 with League.Strings;
 
+with Servlet.HTTP_Cookies;
+
 package body Matreshka.Servlet_AWS_Requests is
+
+   --------------
+   -- Finalize --
+   --------------
+
+   procedure Finalize (Self : in out AWS_Servlet_Request'Class) is
+   begin
+      null;
+   end Finalize;
+
+   ----------------
+   -- Get_Cookie --
+   ----------------
+
+   overriding function Get_Cookie
+    (Self : AWS_Servlet_Request)
+       return Servlet.HTTP_Cookie_Vectors.Cookie_Vector is
+   begin
+      if Self.Data.Cookies_Computed then
+         --  Reuse cookies when they was computed.
+
+         return Self.Data.Cookies;
+      end if;
+
+      --  Compute cookies.
+
+      declare
+         Headers : constant AWS.Headers.List
+           := AWS.Status.Header (Self.Request);
+         Cookies : constant String
+           := AWS.Headers.Get_Values (Headers, AWS.Messages.Cookie_Token);
+         Set     : constant AWS.Headers.Values.Set
+           := AWS.Headers.Values.Split (Cookies);
+         Cookie  : Servlet.HTTP_Cookies.Cookie;
+
+      begin
+         Self.Data.Cookies_Computed := True;
+
+         for J in Set'Range loop
+            Servlet.HTTP_Cookies.Initialize
+             (Cookie,
+              League.Strings.From_UTF_8_String
+               (Ada.Strings.Unbounded.To_String (Set (J).Name)),
+              League.Strings.From_UTF_8_String
+               (AWS.URL.Decode
+                 (Ada.Strings.Unbounded.To_String (Set (J).Value))));
+            --  AWS.URL.Decode is used here for compatibility with AWS.Cookies.
+
+            Self.Data.Cookies.Append (Cookie);
+         end loop;
+      end;
+   end Get_Cookie;
 
    ----------------
    -- Get_Method --
@@ -52,7 +112,7 @@ package body Matreshka.Servlet_AWS_Requests is
    overriding function Get_Method
     (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method is
    begin
-      case AWS.Status.Method (Self.Data) is
+      case AWS.Status.Method (Self.Request) is
          when AWS.Status.OPTIONS =>
             return Servlet.HTTP_Requests.Options;
 
@@ -91,8 +151,8 @@ package body Matreshka.Servlet_AWS_Requests is
      Create : Boolean := True)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class is
    begin
-      if Self.Session /= null then
-         return Self.Session;
+      if Self.Data.Session /= null then
+         return Self.Data.Session;
       end if;
 --      --  XXX Most of this code is generic and Web Server API independ, thus it
 --      --  can be refactored to be reused by both AWS and FastCGI APIs.
@@ -168,7 +228,7 @@ package body Matreshka.Servlet_AWS_Requests is
    ----------------
 
    procedure Initialize
-    (Self : in out AWS_Servlet_Request;
+    (Self : in out AWS_Servlet_Request'Class;
      Data : AWS.Status.Data)
    is
       Path : constant League.String_Vectors.Universal_String_Vector
@@ -180,7 +240,8 @@ package body Matreshka.Servlet_AWS_Requests is
 
    begin
       Matreshka.Servlet_HTTP_Requests.Initialize (Self, Path);
-      Self.Data := Data;
+      Self.Request := Data;
+      Self.Data := Self.Data_Storage'Unchecked_Access;
    end Initialize;
 
    ------------------------

@@ -46,6 +46,7 @@ with AWS.Status;
 with League.String_Vectors;
 
 with Matreshka.Servlet_HTTP_Requests;
+private with Servlet.HTTP_Cookie_Vectors;
 with Servlet.HTTP_Requests;
 private with Servlet.HTTP_Sessions;
 
@@ -56,21 +57,37 @@ package Matreshka.Servlet_AWS_Requests is
        with private;
 
    procedure Initialize
-    (Self : in out AWS_Servlet_Request;
+    (Self : in out AWS_Servlet_Request'Class;
      Data : AWS.Status.Data);
    --  Initialize object to obtain information from given data object of AWS.
+
+   procedure Finalize (Self : in out AWS_Servlet_Request'Class);
+   --  Deallocate internal data.
 
 private
 
    type HTTP_Session_Access is
      access all Servlet.HTTP_Sessions.HTTP_Session'Class;
 
+   type Internal_Cache is record
+      Session          : HTTP_Session_Access;
+      Cookies          : Servlet.HTTP_Cookie_Vectors.Cookie_Vector;
+      Cookies_Computed : Boolean := False;
+   end record;
+
    type AWS_Servlet_Request is
      new Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request with
    record
-      Data    : AWS.Status.Data;
-      Session : HTTP_Session_Access;
+      Request      : AWS.Status.Data;
+      Data         : access Internal_Cache;
+      Data_Storage : aliased Internal_Cache;
    end record;
+
+   overriding function Get_Cookie
+    (Self : AWS_Servlet_Request)
+       return Servlet.HTTP_Cookie_Vectors.Cookie_Vector;
+   --  Returns an array containing all of the Cookie objects the client sent
+   --  with this request. This method returns null if no cookies were sent.
 
    overriding function Get_Method
     (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method;
