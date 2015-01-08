@@ -42,14 +42,14 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Servlet.HTTP_Cookie_Vectors is
+package body Servlet.HTTP_Cookie_Sets is
 
    ------------
    -- Append --
    ------------
 
    procedure Append
-    (Self   : in out Cookie_Vector'Class;
+    (Self   : in out Cookie_Set'Class;
      Cookie : Servlet.HTTP_Cookies.Cookie) is
    begin
       Self.Data.Append (Cookie);
@@ -60,7 +60,7 @@ package body Servlet.HTTP_Cookie_Vectors is
    -------------
 
    function Element
-    (Self  : Cookie_Vector'Class;
+    (Self  : Cookie_Set'Class;
      Index : Positive) return Servlet.HTTP_Cookies.Cookie is
    begin
       return Self.Data.Element (Index);
@@ -70,9 +70,9 @@ package body Servlet.HTTP_Cookie_Vectors is
    -- Length --
    ------------
 
-   function Length (Self : Cookie_Vector'Class) return Natural is
+   function Length (Self : Cookie_Set'Class) return Natural is
    begin
       return Natural (Self.Data.Length);
    end Length;
 
-end Servlet.HTTP_Cookie_Vectors;
+end Servlet.HTTP_Cookie_Sets;

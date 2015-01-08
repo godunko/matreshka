@@ -46,7 +46,7 @@ with AWS.Status;
 with League.String_Vectors;
 
 with Matreshka.Servlet_HTTP_Requests;
-private with Servlet.HTTP_Cookie_Vectors;
+private with Servlet.HTTP_Cookie_Sets;
 with Servlet.HTTP_Requests;
 private with Servlet.HTTP_Sessions;
 
@@ -71,7 +71,7 @@ private
 
    type Internal_Cache is record
       Session          : HTTP_Session_Access;
-      Cookies          : Servlet.HTTP_Cookie_Vectors.Cookie_Vector;
+      Cookies          : Servlet.HTTP_Cookie_Sets.Cookie_Set;
       Cookies_Computed : Boolean := False;
    end record;
 
@@ -85,7 +85,7 @@ private
 
    overriding function Get_Cookie
     (Self : AWS_Servlet_Request)
-       return Servlet.HTTP_Cookie_Vectors.Cookie_Vector;
+       return Servlet.HTTP_Cookie_Sets.Cookie_Set;
    --  Returns an array containing all of the Cookie objects the client sent
    --  with this request. This method returns null if no cookies were sent.
 

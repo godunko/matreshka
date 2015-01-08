@@ -45,22 +45,22 @@ private with Ada.Containers.Vectors;
 
 with Servlet.HTTP_Cookies;
 
-package Servlet.HTTP_Cookie_Vectors is
+package Servlet.HTTP_Cookie_Sets is
 
    pragma Preelaborate;
 
-   type Cookie_Vector is tagged private
+   type Cookie_Set is tagged private
      with Iterator_Element  => Servlet.HTTP_Cookies.Cookie,
           Constant_Indexing => Element;
 
    function Element
-    (Self  : Cookie_Vector'Class;
+    (Self  : Cookie_Set'Class;
      Index : Positive) return Servlet.HTTP_Cookies.Cookie;
 
-   function Length (Self : Cookie_Vector'Class) return Natural;
+   function Length (Self : Cookie_Set'Class) return Natural;
 
    procedure Append
-    (Self   : in out Cookie_Vector'Class;
+    (Self   : in out Cookie_Set'Class;
      Cookie : Servlet.HTTP_Cookies.Cookie);
 
 private
@@ -71,8 +71,8 @@ private
            Servlet.HTTP_Cookies.Cookie,
            Servlet.HTTP_Cookies."=");
 
-   type Cookie_Vector is tagged record
+   type Cookie_Set is tagged record
       Data : Vectors.Vector;
    end record;
 
-end Servlet.HTTP_Cookie_Vectors;
+end Servlet.HTTP_Cookie_Sets;

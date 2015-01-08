@@ -50,7 +50,7 @@
 with League.String_Vectors;
 with League.Strings;
 
-with Servlet.HTTP_Cookie_Vectors;
+with Servlet.HTTP_Cookie_Sets;
 with Servlet.HTTP_Sessions;
 with Servlet.Requests;
 
@@ -84,7 +84,7 @@ package Servlet.HTTP_Requests is
 
    not overriding function Get_Cookie
     (Self : HTTP_Servlet_Request)
-       return Servlet.HTTP_Cookie_Vectors.Cookie_Vector is abstract;
+       return Servlet.HTTP_Cookie_Sets.Cookie_Set is abstract;
    --  Returns an array containing all of the Cookie objects the client sent
    --  with this request. This method returns null if no cookies were sent.
 

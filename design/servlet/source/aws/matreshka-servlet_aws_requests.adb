@@ -68,7 +68,7 @@ package body Matreshka.Servlet_AWS_Requests is
 
    overriding function Get_Cookie
     (Self : AWS_Servlet_Request)
-       return Servlet.HTTP_Cookie_Vectors.Cookie_Vector is
+       return Servlet.HTTP_Cookie_Sets.Cookie_Set is
    begin
       if Self.Data.Cookies_Computed then
          --  Reuse cookies when they was computed.
