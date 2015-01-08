@@ -41,11 +41,14 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Base type for servlet requests.
+--  Base type for servlet requests. It provides:
+--   - splitting of request path into context/servlet/path_info components;
+--   - session management via HTTP cookie.
 ------------------------------------------------------------------------------
 with League.String_Vectors;
 
 with Servlet.HTTP_Requests;
+with Servlet.HTTP_Sessions;
 with Matreshka.Servlet_HTTP_Responses;
 
 package Matreshka.Servlet_HTTP_Requests is
@@ -107,7 +110,17 @@ package Matreshka.Servlet_HTTP_Requests is
    --  path to the servlet, but does not include any extra path information or
    --  a query string. Same as the value of the CGI variable SCRIPT_NAME.
 
+   overriding function Get_Session
+    (Self   : Abstract_HTTP_Servlet_Request;
+     Create : Boolean := True)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class;
+   --  Returns the current HttpSession associated with this request or, if
+   --  there is no current session and create is true, returns a new session.
+
 private
+
+   type HTTP_Session_Access is
+     access all Servlet.HTTP_Sessions.HTTP_Session'Class;
 
    type Abstract_HTTP_Servlet_Request is
      abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with
@@ -120,6 +133,7 @@ private
         Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access;
       --  Response object to be used when necessay (for example to send cookie
       --  with session identifier to client).
+      Session          : HTTP_Session_Access;
    end record;
 
 end Matreshka.Servlet_HTTP_Requests;

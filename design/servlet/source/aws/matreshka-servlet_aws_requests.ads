@@ -49,7 +49,6 @@ with Matreshka.Servlet_HTTP_Requests;
 with Matreshka.Servlet_HTTP_Responses;
 private with Servlet.HTTP_Cookie_Sets;
 with Servlet.HTTP_Requests;
-private with Servlet.HTTP_Sessions;
 
 package Matreshka.Servlet_AWS_Requests is
 
@@ -69,11 +68,7 @@ package Matreshka.Servlet_AWS_Requests is
 
 private
 
-   type HTTP_Session_Access is
-     access all Servlet.HTTP_Sessions.HTTP_Session'Class;
-
    type Internal_Cache is record
-      Session          : HTTP_Session_Access;
       Cookies          : Servlet.HTTP_Cookie_Sets.Cookie_Set;
       Cookies_Computed : Boolean := False;
    end record;
@@ -97,13 +92,6 @@ private
    --  Returns the name of the HTTP method with which this request was made,
    --  for example, GET, POST, or PUT. Same as the value of the CGI variable
    --  REQUEST_METHOD.
-
-   overriding function Get_Session
-    (Self   : AWS_Servlet_Request;
-     Create : Boolean := True)
-       return access Servlet.HTTP_Sessions.HTTP_Session'Class;
-   --  Returns the current HttpSession associated with this request or, if
-   --  there is no current session and create is true, returns a new session.
 
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;
