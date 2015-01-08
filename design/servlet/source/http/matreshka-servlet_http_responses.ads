@@ -56,6 +56,9 @@ package Matreshka.Servlet_HTTP_Responses is
         := Servlet.HTTP_Responses.Internal_Server_Error;
    end record;
 
+   type HTTP_Servlet_Response_Access is
+     access all Abstract_HTTP_Servlet_Response'Class;
+
    overriding function Get_Status
     (Self : Abstract_HTTP_Servlet_Response)
        return Servlet.HTTP_Responses.Status_Code;

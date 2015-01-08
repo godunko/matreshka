@@ -58,7 +58,7 @@ with Matreshka.Servlet_AWS_Requests;
 with Matreshka.Servlet_AWS_Responses;
 with Matreshka.Servlet_Containers;
 with Matreshka.Servlet_HTTP_Requests;
-with Servlet.Requests;
+with Matreshka.Servlet_HTTP_Responses;
 with Servlet.Responses;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
@@ -107,18 +107,20 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
               Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access);
       procedure Free is
         new Ada.Unchecked_Deallocation
-             (Servlet.Responses.Servlet_Response'Class,
-              Servlet.Responses.Servlet_Response_Access);
+             (Matreshka.Servlet_HTTP_Responses
+                .Abstract_HTTP_Servlet_Response'Class,
+              Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
 
       Servlet_Request  :
         Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access
           := new Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
-      Servlet_Response : Servlet.Responses.Servlet_Response_Access
-        := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
+      Servlet_Response :
+        Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access
+          := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
 
    begin
       Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request'Class
-       (Servlet_Request.all).Initialize (Request);
+       (Servlet_Request.all).Initialize (Request, Servlet_Response);
 
       Container.Dispatch (Servlet_Request, Servlet_Response);
 

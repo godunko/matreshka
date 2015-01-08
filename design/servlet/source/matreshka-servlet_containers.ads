@@ -44,17 +44,16 @@
 private with Ada.Containers.Hashed_Maps;
 private with Ada.Containers.Vectors;
 
-with League.String_Vectors;
 private with League.Strings.Hash;
 
 private with Servlet.Context_Listeners;
 with Servlet.Contexts;
 private with Servlet.Event_Listeners;
-with Servlet.Responses;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
 with Matreshka.Servlet_Dispatchers;
 with Matreshka.Servlet_HTTP_Requests;
+with Matreshka.Servlet_HTTP_Responses;
 with Matreshka.Servlet_Registrations;
 with Matreshka.Servlet_Servers;
 
@@ -79,7 +78,8 @@ package Matreshka.Servlet_Containers is
     (Self     : not null access Servlet_Container'Class;
      Request  : not null
        Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access;
-     Response : not null Servlet.Responses.Servlet_Response_Access);
+     Response : not null
+       Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
    --  Dispatch request to filters/servlet.
 
 private

@@ -93,10 +93,14 @@ package body Matreshka.Servlet_HTTP_Requests is
    ----------------
 
    procedure Initialize
-    (Self : in out Abstract_HTTP_Servlet_Request'Class;
-     Path : League.String_Vectors.Universal_String_Vector) is
+    (Self     : in out Abstract_HTTP_Servlet_Request'Class;
+     Path     : League.String_Vectors.Universal_String_Vector;
+     Response :
+       not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access)
+   is
    begin
-      Self.Path := Path;
+      Self.Path     := Path;
+      Self.Response := Response;
    end Initialize;
 
    ------------------------------

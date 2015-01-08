@@ -46,6 +46,7 @@
 with League.String_Vectors;
 
 with Servlet.HTTP_Requests;
+with Matreshka.Servlet_HTTP_Responses;
 
 package Matreshka.Servlet_HTTP_Requests is
 
@@ -59,9 +60,11 @@ package Matreshka.Servlet_HTTP_Requests is
      access all Abstract_HTTP_Servlet_Request'Class;
 
    procedure Initialize
-    (Self : in out Abstract_HTTP_Servlet_Request'Class;
-     Path : League.String_Vectors.Universal_String_Vector);
-   --  Initialized path of the object.
+    (Self     : in out Abstract_HTTP_Servlet_Request'Class;
+     Path     : League.String_Vectors.Universal_String_Vector;
+     Response :
+       not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
+   --  Initialized path of the object and corresponsing respose object.
 
    function Get_Path
     (Self : Abstract_HTTP_Servlet_Request'Class)
@@ -113,6 +116,10 @@ private
       Context_Last : Natural  := 0;
       Servlet_Last : Natural  := 0;
       --  Path information computed during request dispatching.
+      Response     :
+        Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access;
+      --  Response object to be used when necessay (for example to send cookie
+      --  with session identifier to client).
    end record;
 
 end Matreshka.Servlet_HTTP_Requests;

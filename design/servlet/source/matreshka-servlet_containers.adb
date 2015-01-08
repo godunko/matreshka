@@ -151,7 +151,8 @@ package body Matreshka.Servlet_Containers is
     (Self     : not null access Servlet_Container'Class;
      Request  : not null
        Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access;
-     Response : not null Servlet.Responses.Servlet_Response_Access)
+     Response : not null
+       Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access)
    is
       Servlet : Matreshka.Servlet_Registrations.Servlet_Registration_Access;
 

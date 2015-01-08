@@ -230,8 +230,10 @@ package body Matreshka.Servlet_AWS_Requests is
    ----------------
 
    procedure Initialize
-    (Self : in out AWS_Servlet_Request'Class;
-     Data : AWS.Status.Data)
+    (Self     : in out AWS_Servlet_Request'Class;
+     Data     : AWS.Status.Data;
+     Response :
+       not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access)
    is
       Path : constant League.String_Vectors.Universal_String_Vector
         := League.Strings.From_UTF_8_String
@@ -241,7 +243,7 @@ package body Matreshka.Servlet_AWS_Requests is
       --  XXX Use of UTF-8 to encode URI by AWS should be checked.
 
    begin
-      Matreshka.Servlet_HTTP_Requests.Initialize (Self, Path);
+      Matreshka.Servlet_HTTP_Requests.Initialize (Self, Path, Response);
       Self.Request := Data;
       Self.Data := Self.Data_Storage'Unchecked_Access;
    end Initialize;
