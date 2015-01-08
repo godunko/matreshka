@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with AWS.Cookie;
 with AWS.Messages;
 with AWS.Response.Set;
 
@@ -99,6 +100,27 @@ package body Matreshka.Servlet_AWS_Responses is
            Servlet.HTTP_Responses.HTTP_Version_Not_Supported =>
                                                             AWS.Messages.S505);
 
+   ----------------
+   -- Add_Cookie --
+   ----------------
+
+   overriding procedure Add_Cookie
+    (Self   : in out AWS_Servlet_Response;
+     Cookie : Servlet.HTTP_Cookies.Cookie) is
+   begin
+      AWS.Cookie.Set
+       (Content => Self.Data,
+        Key     => Cookie.Get_Name.To_UTF_8_String,
+        Value   => Cookie.Get_Value.To_UTF_8_String,
+        Comment => Cookie.Get_Comment.To_UTF_8_String,
+        Domain  => Cookie.Get_Domain.To_UTF_8_String,
+        --  XXX Must be encoded when containts non-ASCII characters.
+        Max_Age => AWS.Cookie.No_Max_Age,
+        --  XXX Not supported yet.
+        Path    => Cookie.Get_Path.To_UTF_8_String,
+        Secure  => Cookie.Get_Secure);
+   end Add_Cookie;
+
    -----------
    -- Build --
    -----------
@@ -106,12 +128,17 @@ package body Matreshka.Servlet_AWS_Responses is
    function Build
     (Self : AWS_Servlet_Response'Class) return AWS.Response.Data is
    begin
-      return Result : AWS.Response.Data := Self.Data do
-         AWS.Response.Set.Mode (Result, AWS.Response.Header);
-         --  XXX Temporary till output stream will be implemented to allow to
-         --  debug AWS server personality.
-      end return;
+      return Self.Data;
    end Build;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize (Self : in out AWS_Servlet_Response'Class) is
+   begin
+      AWS.Response.Set.Mode (Self.Data, AWS.Response.Header);
+   end Initialize;
 
    ----------------
    -- Set_Status --

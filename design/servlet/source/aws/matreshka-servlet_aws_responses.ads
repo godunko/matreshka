@@ -44,6 +44,7 @@
 with AWS.Response;
 
 with Matreshka.Servlet_HTTP_Responses;
+private with Servlet.HTTP_Cookies;
 with Servlet.HTTP_Responses;
 
 package Matreshka.Servlet_AWS_Responses is
@@ -51,6 +52,8 @@ package Matreshka.Servlet_AWS_Responses is
    type AWS_Servlet_Response is
      new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        with private;
+
+   procedure Initialize (Self : in out AWS_Servlet_Response'Class);
 
    function Build (Self : AWS_Servlet_Response'Class) return AWS.Response.Data;
    --  Build AWS response data.
@@ -62,6 +65,12 @@ private
    record
       Data : AWS.Response.Data;
    end  record;
+
+   overriding procedure Add_Cookie
+    (Self   : in out AWS_Servlet_Response;
+     Cookie : Servlet.HTTP_Cookies.Cookie);
+   --  Adds the specified cookie to the response. This method can be called
+   --  multiple times to set more than one cookie.
 
    overriding procedure Set_Status
     (Self   : in out AWS_Servlet_Response;

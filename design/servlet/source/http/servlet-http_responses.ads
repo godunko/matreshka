@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Servlet.HTTP_Cookies;
 with Servlet.Responses;
 
 package Servlet.HTTP_Responses is
@@ -186,6 +187,12 @@ package Servlet.HTTP_Responses is
 
    type HTTP_Servlet_Response is limited interface
      and Servlet.Responses.Servlet_Response;
+
+   not overriding procedure Add_Cookie
+    (Self   : in out HTTP_Servlet_Response;
+     Cookie : Servlet.HTTP_Cookies.Cookie) is abstract;
+   --  Adds the specified cookie to the response. This method can be called
+   --  multiple times to set more than one cookie.
 
    not overriding function Get_Status
     (Self : HTTP_Servlet_Response) return Status_Code is abstract;
