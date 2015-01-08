@@ -130,8 +130,13 @@ package body Servlet.HTTP_Cookies is
       use type League.Strings.Universal_String;
 
    begin
-      return '/' & Self.Path.Join ('/');
-      --  XXX Path segments should be escaped.
+      if Self.Path.Is_Empty then
+         return League.Strings.Empty_Universal_String;
+
+      else
+         return '/' & Self.Path.Join ('/');
+         --  XXX Path segments should be escaped.
+      end if;
    end Get_Path;
 
    ----------------
