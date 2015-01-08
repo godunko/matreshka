@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -49,7 +49,7 @@ with Servlet.HTTP_Responses;
 package Matreshka.Servlet_AWS_Responses is
 
    type AWS_Servlet_Response is
-     new Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response
+     new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        with private;
 
    function Build (Self : AWS_Servlet_Response'Class) return AWS.Response.Data;
@@ -58,7 +58,8 @@ package Matreshka.Servlet_AWS_Responses is
 private
 
    type AWS_Servlet_Response is
-     new Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response with record
+     new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response with
+   record
       Data : AWS.Response.Data;
    end  record;
 

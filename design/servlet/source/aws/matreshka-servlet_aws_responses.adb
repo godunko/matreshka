@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -121,7 +121,7 @@ package body Matreshka.Servlet_AWS_Responses is
     (Self   : in out AWS_Servlet_Response;
      Status : Servlet.HTTP_Responses.Status_Code) is
    begin
-      Matreshka.Servlet_HTTP_Responses.Abstract_Servlet_Response
+      Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        (Self).Set_Status (Status);
 
       AWS.Response.Set.Status_Code (Self.Data, To_AWS_Status_Code (Status));

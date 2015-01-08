@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -50,19 +50,19 @@ package Matreshka.Servlet_HTTP_Responses is
 
    pragma Preelaborate;
 
-   type Abstract_Servlet_Response is abstract
+   type Abstract_HTTP_Servlet_Response is abstract
      limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with record
       Status : Servlet.HTTP_Responses.Status_Code
         := Servlet.HTTP_Responses.Internal_Server_Error;
    end record;
 
    overriding function Get_Status
-    (Self : Abstract_Servlet_Response)
+    (Self : Abstract_HTTP_Servlet_Response)
        return Servlet.HTTP_Responses.Status_Code;
    --  Gets the current status code of this response.
 
    overriding procedure Set_Status
-    (Self   : in out Abstract_Servlet_Response;
+    (Self   : in out Abstract_HTTP_Servlet_Response;
      Status : Servlet.HTTP_Responses.Status_Code);
    --  Sets the status code for this response.
 
