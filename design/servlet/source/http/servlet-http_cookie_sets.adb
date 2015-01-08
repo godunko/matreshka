@@ -44,6 +44,8 @@
 
 package body Servlet.HTTP_Cookie_Sets is
 
+   use type League.Strings.Universal_String;
+
    ------------
    -- Append --
    ------------
@@ -65,6 +67,49 @@ package body Servlet.HTTP_Cookie_Sets is
    begin
       return Self.Data.Element (Index);
    end Element;
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element
+    (Self : Cookie_Set'Class;
+     Name : League.Strings.Universal_String)
+       return Servlet.HTTP_Cookies.Cookie
+   is
+      N : constant League.Strings.Universal_String
+        := Name.To_Simple_Uppercase;
+
+   begin
+      for Cookie of Self.Data loop
+         if Cookie.Get_Name.To_Simple_Uppercase = N then
+            return Cookie;
+         end if;
+      end loop;
+
+      return Servlet.HTTP_Cookies.Empty_Cookie;
+   end Element;
+
+   -----------------
+   -- Has_Element --
+   -----------------
+
+   function Has_Element
+    (Self : Cookie_Set'Class;
+     Name : League.Strings.Universal_String) return Boolean
+   is
+      N : constant League.Strings.Universal_String
+        := Name.To_Simple_Uppercase;
+
+   begin
+      for Cookie of Self.Data loop
+         if Cookie.Get_Name.To_Simple_Uppercase = N then
+            return True;
+         end if;
+      end loop;
+
+      return False;
+   end Has_Element;
 
    ------------
    -- Length --

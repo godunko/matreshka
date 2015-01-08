@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 private with Ada.Containers.Vectors;
 
+with League.Strings;
+
 with Servlet.HTTP_Cookies;
 
 package Servlet.HTTP_Cookie_Sets is
@@ -56,6 +58,15 @@ package Servlet.HTTP_Cookie_Sets is
    function Element
     (Self  : Cookie_Set'Class;
      Index : Positive) return Servlet.HTTP_Cookies.Cookie;
+
+   function Element
+    (Self : Cookie_Set'Class;
+     Name : League.Strings.Universal_String)
+       return Servlet.HTTP_Cookies.Cookie;
+
+   function Has_Element
+    (Self : Cookie_Set'Class;
+     Name : League.Strings.Universal_String) return Boolean;
 
    function Length (Self : Cookie_Set'Class) return Natural;
 

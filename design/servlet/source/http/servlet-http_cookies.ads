@@ -49,6 +49,8 @@ package Servlet.HTTP_Cookies is
 
    type Cookie is tagged private;
 
+   Empty_Cookie : constant Cookie;
+
    function Get_Name
     (Self : Cookie'Class) return League.Strings.Universal_String;
    --  Returns the name of the cookie. The name cannot be changed after
@@ -71,5 +73,9 @@ private
 --      Comment : League.Strings.Universal_String;
 --      Domain  : League.Strings.Universal_String;
    end record;
+
+   Empty_Cookie : constant Cookie
+     := (Name  => <>,
+         Value => <>);
 
 end Servlet.HTTP_Cookies;
