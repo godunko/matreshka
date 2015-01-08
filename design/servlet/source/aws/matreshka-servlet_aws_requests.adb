@@ -102,6 +102,8 @@ package body Matreshka.Servlet_AWS_Requests is
 
             Self.Data.Cookies.Append (Cookie);
          end loop;
+
+         return Self.Data.Cookies;
       end;
    end Get_Cookie;
 
