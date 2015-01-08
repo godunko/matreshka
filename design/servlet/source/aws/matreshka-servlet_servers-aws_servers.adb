@@ -121,6 +121,8 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    begin
       Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request'Class
        (Servlet_Request.all).Initialize (Request, Servlet_Response);
+      Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class
+       (Servlet_Response.all).Initialize;
 
       Container.Dispatch (Servlet_Request, Servlet_Response);
 
