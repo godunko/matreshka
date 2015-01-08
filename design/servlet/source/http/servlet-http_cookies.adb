@@ -60,8 +60,44 @@ package body Servlet.HTTP_Cookies is
          raise Constraint_Error with "Invalid name of cookie";
       end if;
 
-      return (Name, Value);
+      return
+       (Name      => Name,
+        Value     => Value,
+        Comment   => <>,
+        Domain    => <>,
+        Path      => <>,
+        Secure    => False,
+        HTTP_Only => False);
    end Create;
+
+   -----------------
+   -- Get_Comment --
+   -----------------
+
+   function Get_Comment
+    (Self : Cookie'Class) return League.Strings.Universal_String is
+   begin
+      return Self.Comment;
+   end Get_Comment;
+
+   ----------------
+   -- Get_Domain --
+   ----------------
+
+   function Get_Domain
+    (Self : Cookie'Class) return League.Strings.Universal_String is
+   begin
+      return Self.Domain;
+   end Get_Domain;
+
+   -------------------
+   -- Get_HTTP_Only --
+   -------------------
+
+   function Get_HTTP_Only (Self : Cookie'Class) return Boolean is
+   begin
+      return Self.HTTP_Only;
+   end Get_HTTP_Only;
 
    --------------
    -- Get_Name --
@@ -72,6 +108,40 @@ package body Servlet.HTTP_Cookies is
    begin
       return Self.Name;
    end Get_Name;
+
+   --------------
+   -- Get_Path --
+   --------------
+
+   function Get_Path
+    (Self : Cookie'Class) return League.String_Vectors.Universal_String_Vector
+   is
+   begin
+      return Self.Path;
+   end Get_Path;
+
+   --------------
+   -- Get_Path --
+   --------------
+
+   function Get_Path
+    (Self : Cookie'Class) return League.Strings.Universal_String
+   is
+      use type League.Strings.Universal_String;
+
+   begin
+      return '/' & Self.Path.Join ('/');
+      --  XXX Path segments should be escaped.
+   end Get_Path;
+
+   ----------------
+   -- Get_Secure --
+   ----------------
+
+   function Get_Secure (Self : Cookie'Class) return Boolean is
+   begin
+      return Self.Secure;
+   end Get_Secure;
 
    ---------------
    -- Get_Value --
@@ -96,9 +166,23 @@ package body Servlet.HTTP_Cookies is
          raise Constraint_Error with "Invalid name of cookie";
       end if;
 
-      Self.Name := Name;
-      Self.Value := Value;
+      Self.Name      := Name;
+      Self.Value     := Value;
+      Self.Comment.Clear;
+      Self.Domain.Clear;
+      Self.Path.Clear;
+      Self.Secure    := False;
+      Self.HTTP_Only := False;
    end Initialize;
+
+   --------------
+   -- Is_Empty --
+   --------------
+
+   function Is_Empty (Self : Cookie'Class) return Boolean is
+   begin
+      return Self.Name.Is_Empty;
+   end Is_Empty;
 
    -------------------------
    -- Is_Valid_HTTP_Token --

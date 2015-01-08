@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.String_Vectors;
 with League.Strings;
 
 package Servlet.HTTP_Cookies is
@@ -51,13 +52,47 @@ package Servlet.HTTP_Cookies is
 
    Empty_Cookie : constant Cookie;
 
+   function Is_Empty (Self : Cookie'Class) return Boolean;
+
+   function Get_Comment
+    (Self : Cookie'Class) return League.Strings.Universal_String
+       with Inline;
+   --  Returns the comment describing the purpose of this cookie, or null if
+   --  the cookie has no comment.
+
+   function Get_Domain
+    (Self : Cookie'Class) return League.Strings.Universal_String
+       with Inline;
+   --  Gets the domain name of this Cookie.
+   --
+   --  Domain names are formatted according to RFC 6265.
+
+   function Get_HTTP_Only (Self : Cookie'Class) return Boolean
+     with Inline;
+   --  Checks whether this Cookie has been marked as HttpOnly.
+
    function Get_Name
-    (Self : Cookie'Class) return League.Strings.Universal_String;
+    (Self : Cookie'Class) return League.Strings.Universal_String
+       with Inline;
    --  Returns the name of the cookie. The name cannot be changed after
    --  creation.
 
-   function Get_Value
+   function Get_Path
+    (Self : Cookie'Class) return League.String_Vectors.Universal_String_Vector
+       with Inline;
+   function Get_Path
     (Self : Cookie'Class) return League.Strings.Universal_String;
+   --  Returns the path on the server to which the browser returns this cookie.
+   --  The cookie is visible to all subpaths on the server.
+
+   function Get_Secure (Self : Cookie'Class) return Boolean
+     with Inline;
+   --  Returns true if the browser is sending cookies only over a secure
+   --  protocol, or false if the browser can send cookies using any protocol.
+
+   function Get_Value
+    (Self : Cookie'Class) return League.Strings.Universal_String
+       with Inline;
    --  Gets the current value of this Cookie.
 
    procedure Initialize
@@ -68,14 +103,22 @@ package Servlet.HTTP_Cookies is
 private
 
    type Cookie is tagged record
-      Name  : League.Strings.Universal_String;
-      Value : League.Strings.Universal_String;
---      Comment : League.Strings.Universal_String;
---      Domain  : League.Strings.Universal_String;
+      Name      : League.Strings.Universal_String;
+      Value     : League.Strings.Universal_String;
+      Comment   : League.Strings.Universal_String;
+      Domain    : League.Strings.Universal_String;
+      Path      : League.String_Vectors.Universal_String_Vector;
+      Secure    : Boolean := False;
+      HTTP_Only : Boolean := False;
    end record;
 
    Empty_Cookie : constant Cookie
-     := (Name  => <>,
-         Value => <>);
+     := (Name      => <>,
+         Value     => <>,
+         Comment   => <>,
+         Domain    => <>,
+         Path      => <>,
+         Secure    => <>,
+         HTTP_Only => <>);
 
 end Servlet.HTTP_Cookies;
