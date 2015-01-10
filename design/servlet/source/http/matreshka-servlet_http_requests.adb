@@ -41,6 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
+with Servlet.HTTP_Cookies;
 
 package body Matreshka.Servlet_HTTP_Requests is
 
@@ -97,16 +100,49 @@ package body Matreshka.Servlet_HTTP_Requests is
      Create : Boolean := True)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class is
    begin
-      if Self.Session /= null then
-         return Self.Session;
+      if Self.Data.Session /= null
+        or else Self.Data.Session_Computed
+      then
+         --  Session was created or not needed to be created.
+
+         return Self.Data.Session;
       end if;
---      --  XXX Most of this code is generic and Web Server API independ, thus it
---      --  can be refactored to be reused by both AWS and FastCGI APIs.
---
---      if AWS.Cookie.Exists (Request, SID_Cookie_Name) then
---         --  Decode session identifier specified in request. Detect and report
---         --  security event if this conversion fails.
---
+
+      --  Check whether session identifier was passed in HTTP cookie and
+      --  reconstruct session.
+
+      declare
+         Cookie      : Servlet.HTTP_Cookies.Cookie
+           := Abstract_HTTP_Servlet_Request'Class (Self).Get_Cookie.Element
+               (League.Strings.To_Universal_String ("MSID"));
+         Identifier  : Matreshka.Servlet_Sessions.Session_Identifier;
+         SID_Decoded : Boolean := False;
+
+      begin
+         if not Cookie.Is_Empty then
+            --  Decode session identifier specified in request. Detect and
+            --  report security event if this conversion fails.
+
+            Matreshka.Servlet_Sessions.To_Session_Identifier
+             (Cookie.Get_Value, Identifier, SID_Decoded);
+
+            if SID_Decoded then
+               Self.Data.Session :=
+                 Self.Session_Manager.Get_Session (Identifier);
+               Self.Data.Session_Computed := True;
+
+               if Self.Data.Session = null then
+                  --  XXX Security event should be reported: SID unknown.
+
+                  null;
+               end if;
+
+            else
+               --  XXX Suspicuous behavior should be reported: SID has wrong
+               --  format.
+
+               null;
+            end if;
 --         begin
 --            SID :=
 --              Server.Sessions.From_Universal_String
@@ -121,7 +157,7 @@ package body Matreshka.Servlet_HTTP_Requests is
 --               Ada.Text_IO.Put_Line
 --                (Ada.Text_IO.Standard_Error, "Security: mailformed SID");
 --         end;
---
+
 --         --  Lookup for session when session identifier was decoded
 --         --  successfully. Otherwise, new session will be allocated later.
 --
@@ -142,8 +178,30 @@ package body Matreshka.Servlet_HTTP_Requests is
 --                   & ')');
 --            end if;
 --         end if;
---      end if;
---
+         end if;
+      end;
+
+      --  Allocate new session when it was not specified in HTTP cookie or
+      --  resolved.
+
+      if Self.Data.Session = null and Create then
+         declare
+            Cookie : Servlet.HTTP_Cookies.Cookie;
+
+         begin
+            Self.Data.Session := Self.Session_Manager.New_Session;
+
+            --  Create cookie with session identifier and add it to response.
+
+            Cookie.Initialize
+             (League.Strings.To_Universal_String ("MSID"),
+              Self.Data.Session.Get_Id);
+            Cookie.Set_Http_Only (True);
+            Cookie.Set_Path (Self.Get_Context_Path);
+            Self.Response.Add_Cookie (Cookie);
+         end;
+      end if;
+
 --      --  Allocate new session when it was not specified or resolved; otherwise
 --      --  update last accessed time of the session.
 --
@@ -167,6 +225,8 @@ package body Matreshka.Servlet_HTTP_Requests is
 --               (Session.Get_Session_Identifier).To_UTF_8_String);
 --         end if;
 --      end return;
+
+      return Self.Data.Session;
    end Get_Session;
 
    ----------------
@@ -182,6 +242,7 @@ package body Matreshka.Servlet_HTTP_Requests is
    begin
       Self.Path     := Path;
       Self.Response := Response;
+      Self.Data     := Self.Storage'Unchecked_Access;
    end Initialize;
 
    ------------------------------
@@ -205,5 +266,16 @@ package body Matreshka.Servlet_HTTP_Requests is
    begin
       Self.Servlet_Last := Last;
    end Set_Servlet_Last_Segment;
+
+   -------------------------
+   -- Set_Session_Manager --
+   -------------------------
+
+   procedure Set_Session_Manager
+    (Self    : in out Abstract_HTTP_Servlet_Request'Class;
+     Manager : Matreshka.Servlet_Sessions.Session_Manager_Access) is
+   begin
+      Self.Session_Manager := Manager;
+   end Set_Session_Manager;
 
 end Matreshka.Servlet_HTTP_Requests;

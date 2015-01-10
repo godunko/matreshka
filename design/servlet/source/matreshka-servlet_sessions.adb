@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,107 +41,94 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+with Ada.Streams;
 
-with Matreshka.Servlet_Containers;
-with Matreshka.Servlet_Servers.AWS_Servers;
-with Matreshka.Servlet_Servers.FastCGI_Servers;
-with Servlet.Event_Listeners;
+with League.Base_64;
+with League.Stream_Element_Vectors;
 
-package body Servlet.Application is
+package body Matreshka.Servlet_Sessions is
 
-   AWS_Server  : aliased Matreshka.Servlet_Servers.AWS_Servers.AWS_Server;
-   --  Global object of AWS server.
-   FCGI_Server :
-     aliased Matreshka.Servlet_Servers.FastCGI_Servers.FastCGI_Server;
-   --  Global object of FastCGI server.
-   Container   : aliased Matreshka.Servlet_Containers.Servlet_Container;
-   --  Global object of servlet container.
+   use type Ada.Streams.Stream_Element_Offset;
 
-   ------------------
-   -- Add_Listener --
-   ------------------
+   ---------------------------
+   -- To_Session_Identifier --
+   ---------------------------
 
-   procedure Add_Listener
-    (Listener : not null
-       Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
-   begin
-      Container.Add_Listener
-       (Servlet.Event_Listeners.Event_Listener_Access (Listener));
-   end Add_Listener;
-
-   -------------
-   -- Execute --
-   -------------
-
-   procedure Execute is
-   begin
-      null;
-   end Execute;
-
-   --------------
-   -- Finalize --
-   --------------
-
-   procedure Finalize is
-   begin
-      null;
-   end Finalize;
-
-   -------------------------
-   -- Get_Servlet_Context --
-   -------------------------
-
-   function Get_Servlet_Context
-     return not null Servlet.Contexts.Servlet_Context_Access is
-   begin
-      return Container'Access;
-   end Get_Servlet_Context;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize
-    (Application_Name    : League.Strings.Universal_String;
-     Application_Version : League.Strings.Universal_String;
-     Organization_Name   : League.Strings.Universal_String;
-     Organization_Domain : League.Strings.Universal_String)
+   function To_Session_Identifier
+    (Item : League.Strings.Universal_String) return Session_Identifier
    is
-      Server  : Matreshka.Servlet_Servers.Server_Access;
-      Success : Boolean;
+      Decoded : constant League.Stream_Element_Vectors.Stream_Element_Vector
+        := League.Base_64.From_Base_64 (Item);
 
    begin
-      League.Application.Set_Application_Name (Application_Name);
-      League.Application.Set_Application_Version (Application_Version);
-      League.Application.Set_Organization_Name (Organization_Name);
-      League.Application.Set_Organization_Domain (Organization_Domain);
-
-      --  Check whether application is run in FastCGI environment.
-
-      FCGI_Server.Initialize (Success);
-
-      if Success then
-         Server := FCGI_Server'Access;
+      if Decoded.Length /= Session_Identifier'Max_Size_In_Storage_Elements then
+         raise Constraint_Error with "Mailformed SID";
       end if;
 
-      --  Fallback to use AWS server.
+      declare
+         Raw    : constant Ada.Streams.Stream_Element_Array
+           := Decoded.To_Stream_Element_Array;
+         for Raw'Alignment use Interfaces.Unsigned_64'Alignment;
+         Result : constant Session_Identifier
+           with Import     => True,
+                Convention => Ada,
+                Address    => Raw'Address;
+
+      begin
+         return Result;
+      end;
+   end To_Session_Identifier;
+
+   ---------------------------
+   -- To_Session_Identifier --
+   ---------------------------
+
+   procedure To_Session_Identifier
+    (Item       : League.Strings.Universal_String;
+     Identifier : out Session_Identifier;
+     Success    : out Boolean)
+   is
+      Raw     : Ada.Streams.Stream_Element_Array
+                 (1 .. Session_Identifier'Max_Size_In_Storage_Elements)
+                    with Import     => True,
+                         Convention => Ada,
+                         Address    => Identifier'Address;
+      Decoded : League.Stream_Element_Vectors.Stream_Element_Vector;
+
+   begin
+      League.Base_64.From_Base_64 (Item, Decoded, Success);
 
       if not Success then
-         AWS_Server.Initialize;
-         Server := AWS_Server'Access;
+         return;
       end if;
 
-      Container.Initialize (Server);
-   end Initialize;
+      if Decoded.Length /= Session_Identifier'Max_Size_In_Storage_Elements then
+         Success := False;
+
+         return;
+      end if;
+
+      Raw := Decoded.To_Stream_Element_Array;
+      Success := True;
+   end To_Session_Identifier;
 
    -------------------------
-   -- Set_Session_Manager --
+   -- To_Universal_String --
    -------------------------
-   procedure Set_Session_Manager
-    (Manager : Matreshka.Servlet_Sessions.Session_Manager_Access) is
+
+   function To_Universal_String
+    (Item : Session_Identifier) return League.Strings.Universal_String
+   is
+      Aux : constant Ada.Streams.Stream_Element_Array
+                      (1 .. Session_Identifier'Max_Size_In_Storage_Elements)
+        with Import     => True,
+             Convention => Ada,
+             Address    => Item'Address;
+
    begin
-      Container.Set_Session_Manager (Manager);
-   end Set_Session_Manager;
+      return
+        League.Base_64.To_Base_64
+         (League.Stream_Element_Vectors.To_Stream_Element_Vector (Aux));
+   end To_Universal_String;
 
-end Servlet.Application;
+end Matreshka.Servlet_Sessions;

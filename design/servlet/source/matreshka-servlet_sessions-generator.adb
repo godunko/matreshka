@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,107 +41,28 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+with Ada.Numerics.Discrete_Random;
 
-with Matreshka.Servlet_Containers;
-with Matreshka.Servlet_Servers.AWS_Servers;
-with Matreshka.Servlet_Servers.FastCGI_Servers;
-with Servlet.Event_Listeners;
+package body Matreshka.Servlet_Sessions.Generator is
 
-package body Servlet.Application is
+   package Unsigned_64_Random is
+     new Ada.Numerics.Discrete_Random (Interfaces.Unsigned_64);
 
-   AWS_Server  : aliased Matreshka.Servlet_Servers.AWS_Servers.AWS_Server;
-   --  Global object of AWS server.
-   FCGI_Server :
-     aliased Matreshka.Servlet_Servers.FastCGI_Servers.FastCGI_Server;
-   --  Global object of FastCGI server.
-   Container   : aliased Matreshka.Servlet_Containers.Servlet_Container;
-   --  Global object of servlet container.
+   Generator : Unsigned_64_Random.Generator;
 
-   ------------------
-   -- Add_Listener --
-   ------------------
+   ---------------------------------
+   -- Generate_Session_Identifier --
+   ---------------------------------
 
-   procedure Add_Listener
-    (Listener : not null
-       Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
+   function Generate_Session_Identifier return Session_Identifier is
    begin
-      Container.Add_Listener
-       (Servlet.Event_Listeners.Event_Listener_Access (Listener));
-   end Add_Listener;
+      return Result : Session_Identifier do
+         for J in Result'Range loop
+            Result (J) := Unsigned_64_Random.Random (Generator);
+         end loop;
+      end return;
+   end Generate_Session_Identifier;
 
-   -------------
-   -- Execute --
-   -------------
-
-   procedure Execute is
-   begin
-      null;
-   end Execute;
-
-   --------------
-   -- Finalize --
-   --------------
-
-   procedure Finalize is
-   begin
-      null;
-   end Finalize;
-
-   -------------------------
-   -- Get_Servlet_Context --
-   -------------------------
-
-   function Get_Servlet_Context
-     return not null Servlet.Contexts.Servlet_Context_Access is
-   begin
-      return Container'Access;
-   end Get_Servlet_Context;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize
-    (Application_Name    : League.Strings.Universal_String;
-     Application_Version : League.Strings.Universal_String;
-     Organization_Name   : League.Strings.Universal_String;
-     Organization_Domain : League.Strings.Universal_String)
-   is
-      Server  : Matreshka.Servlet_Servers.Server_Access;
-      Success : Boolean;
-
-   begin
-      League.Application.Set_Application_Name (Application_Name);
-      League.Application.Set_Application_Version (Application_Version);
-      League.Application.Set_Organization_Name (Organization_Name);
-      League.Application.Set_Organization_Domain (Organization_Domain);
-
-      --  Check whether application is run in FastCGI environment.
-
-      FCGI_Server.Initialize (Success);
-
-      if Success then
-         Server := FCGI_Server'Access;
-      end if;
-
-      --  Fallback to use AWS server.
-
-      if not Success then
-         AWS_Server.Initialize;
-         Server := AWS_Server'Access;
-      end if;
-
-      Container.Initialize (Server);
-   end Initialize;
-
-   -------------------------
-   -- Set_Session_Manager --
-   -------------------------
-   procedure Set_Session_Manager
-    (Manager : Matreshka.Servlet_Sessions.Session_Manager_Access) is
-   begin
-      Container.Set_Session_Manager (Manager);
-   end Set_Session_Manager;
-
-end Servlet.Application;
+begin
+   Unsigned_64_Random.Reset (Generator);
+end Matreshka.Servlet_Sessions.Generator;

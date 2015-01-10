@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,107 +41,52 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Application;
+private with Interfaces;
 
-with Matreshka.Servlet_Containers;
-with Matreshka.Servlet_Servers.AWS_Servers;
-with Matreshka.Servlet_Servers.FastCGI_Servers;
-with Servlet.Event_Listeners;
+with League.Strings;
 
-package body Servlet.Application is
+with Servlet.HTTP_Sessions;
 
-   AWS_Server  : aliased Matreshka.Servlet_Servers.AWS_Servers.AWS_Server;
-   --  Global object of AWS server.
-   FCGI_Server :
-     aliased Matreshka.Servlet_Servers.FastCGI_Servers.FastCGI_Server;
-   --  Global object of FastCGI server.
-   Container   : aliased Matreshka.Servlet_Containers.Servlet_Container;
-   --  Global object of servlet container.
+package Matreshka.Servlet_Sessions is
 
-   ------------------
-   -- Add_Listener --
-   ------------------
+   pragma Preelaborate;
 
-   procedure Add_Listener
-    (Listener : not null
-       Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
-   begin
-      Container.Add_Listener
-       (Servlet.Event_Listeners.Event_Listener_Access (Listener));
-   end Add_Listener;
+   type Session_Identifier is private;
 
-   -------------
-   -- Execute --
-   -------------
+   function To_Session_Identifier
+    (Item : League.Strings.Universal_String) return Session_Identifier;
+   --  Converts string into session identifier. Raises Constraint_Error when
+   --  conversion is impossible for some reason.
 
-   procedure Execute is
-   begin
-      null;
-   end Execute;
+   procedure To_Session_Identifier
+    (Item       : League.Strings.Universal_String;
+     Identifier : out Session_Identifier;
+     Success    : out Boolean);
+   --  Converts string into session identifier. Sets Success to False when
+   --  conversion is impossible for some reason.
 
-   --------------
-   -- Finalize --
-   --------------
+   function To_Universal_String
+    (Item : Session_Identifier) return League.Strings.Universal_String;
+   --  Converts session identifier from internal representation into textual
+   --  representation.
 
-   procedure Finalize is
-   begin
-      null;
-   end Finalize;
+   type Session_Manager is limited interface;
 
-   -------------------------
-   -- Get_Servlet_Context --
-   -------------------------
+   type Session_Manager_Access is access all Session_Manager'Class;
 
-   function Get_Servlet_Context
-     return not null Servlet.Contexts.Servlet_Context_Access is
-   begin
-      return Container'Access;
-   end Get_Servlet_Context;
+   not overriding function Get_Session
+    (Self       : Session_Manager;
+     Identifier : Session_Identifier)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class is abstract;
 
-   ----------------
-   -- Initialize --
-   ----------------
+   not overriding function New_Session
+    (Self : Session_Manager)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class is abstract;
 
-   procedure Initialize
-    (Application_Name    : League.Strings.Universal_String;
-     Application_Version : League.Strings.Universal_String;
-     Organization_Name   : League.Strings.Universal_String;
-     Organization_Domain : League.Strings.Universal_String)
-   is
-      Server  : Matreshka.Servlet_Servers.Server_Access;
-      Success : Boolean;
+private
 
-   begin
-      League.Application.Set_Application_Name (Application_Name);
-      League.Application.Set_Application_Version (Application_Version);
-      League.Application.Set_Organization_Name (Organization_Name);
-      League.Application.Set_Organization_Domain (Organization_Domain);
+   type Session_Identifier is
+     array (Positive range 1 .. 2) of Interfaces.Unsigned_64
+       with Size => 128;
 
-      --  Check whether application is run in FastCGI environment.
-
-      FCGI_Server.Initialize (Success);
-
-      if Success then
-         Server := FCGI_Server'Access;
-      end if;
-
-      --  Fallback to use AWS server.
-
-      if not Success then
-         AWS_Server.Initialize;
-         Server := AWS_Server'Access;
-      end if;
-
-      Container.Initialize (Server);
-   end Initialize;
-
-   -------------------------
-   -- Set_Session_Manager --
-   -------------------------
-   procedure Set_Session_Manager
-    (Manager : Matreshka.Servlet_Sessions.Session_Manager_Access) is
-   begin
-      Container.Set_Session_Manager (Manager);
-   end Set_Session_Manager;
-
-end Servlet.Application;
+end Matreshka.Servlet_Sessions;

@@ -80,11 +80,18 @@
 --  (ServletContext), so information stored in one context will not be directly
 --  visible in another.
 ------------------------------------------------------------------------------
+with League.Strings;
 
 package Servlet.HTTP_Sessions is
 
    pragma Preelaborate;
 
    type HTTP_Session is limited interface;
+
+   not overriding function Get_Id
+    (Self : HTTP_Session) return League.Strings.Universal_String is abstract;
+   --  Returns a string containing the unique identifier assigned to this
+   --  session. The identifier is assigned by the servlet container and is
+   --  implementation dependent.
 
 end Servlet.HTTP_Sessions;

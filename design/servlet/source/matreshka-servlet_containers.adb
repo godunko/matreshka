@@ -158,6 +158,7 @@ package body Matreshka.Servlet_Containers is
 
    begin
       Self.Dispatch (Request.all, Request.Get_Path, 1, Servlet);
+      Request.Set_Session_Manager (Self.Session_Manager);
       Servlet.Servlet.Service (Request.all, Response.all);
    end Dispatch;
 
@@ -173,6 +174,17 @@ package body Matreshka.Servlet_Containers is
 
       Self.State := Uninitialized;
    end Finalize;
+
+   -------------------------
+   -- Get_Session_Manager --
+   -------------------------
+
+   function Get_Session_Manager
+    (Self : Servlet_Container'Class)
+       return Matreshka.Servlet_Sessions.Session_Manager_Access is
+   begin
+      return Self.Session_Manager;
+   end Get_Session_Manager;
 
    ----------------
    -- Initialize --
@@ -205,5 +217,16 @@ package body Matreshka.Servlet_Containers is
         League.Strings.To_Universal_String ("/"),
         Success);
    end Initialize;
+
+   -------------------------
+   -- Set_Session_Manager --
+   -------------------------
+
+   procedure Set_Session_Manager
+    (Self    : in out Servlet_Container'Class;
+     Manager : not null Matreshka.Servlet_Sessions.Session_Manager_Access) is
+   begin
+      Self.Session_Manager := Manager;
+   end Set_Session_Manager;
 
 end Matreshka.Servlet_Containers;

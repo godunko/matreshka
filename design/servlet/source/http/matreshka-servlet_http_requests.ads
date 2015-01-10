@@ -50,6 +50,7 @@ with League.String_Vectors;
 with Servlet.HTTP_Requests;
 with Servlet.HTTP_Sessions;
 with Matreshka.Servlet_HTTP_Responses;
+with Matreshka.Servlet_Sessions;
 
 package Matreshka.Servlet_HTTP_Requests is
 
@@ -68,6 +69,12 @@ package Matreshka.Servlet_HTTP_Requests is
      Response :
        not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
    --  Initialized path of the object and corresponsing respose object.
+
+   procedure Set_Session_Manager
+    (Self    : in out Abstract_HTTP_Servlet_Request'Class;
+     Manager : Matreshka.Servlet_Sessions.Session_Manager_Access);
+   --  Sets session manager should be used to manage HTTP sessions. This called
+   --  by servlet container.
 
    function Get_Path
     (Self : Abstract_HTTP_Servlet_Request'Class)
@@ -122,18 +129,25 @@ private
    type HTTP_Session_Access is
      access all Servlet.HTTP_Sessions.HTTP_Session'Class;
 
+   type Internal_Data is record
+      Session_Computed : Boolean := False;
+      Session          : HTTP_Session_Access;
+   end record;
+
    type Abstract_HTTP_Servlet_Request is
      abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with
    record
-      Path         : League.String_Vectors.Universal_String_Vector;
-      Context_Last : Natural  := 0;
-      Servlet_Last : Natural  := 0;
+      Path            : League.String_Vectors.Universal_String_Vector;
+      Context_Last    : Natural  := 0;
+      Servlet_Last    : Natural  := 0;
       --  Path information computed during request dispatching.
-      Response     :
+      Response        :
         Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access;
       --  Response object to be used when necessay (for example to send cookie
       --  with session identifier to client).
-      Session          : HTTP_Session_Access;
+      Session_Manager : Matreshka.Servlet_Sessions.Session_Manager_Access;
+      Data            : access Internal_Data;
+      Storage         : aliased Internal_Data;
    end record;
 
 end Matreshka.Servlet_HTTP_Requests;
