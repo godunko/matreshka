@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,44 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Defines an object to assist a servlet in sending a response to the client.
---  The servlet container creates a ServletResponse object and passes it as an
---  argument to the servlet's service method.
---
---  To send binary data in a MIME body response, use the ServletOutputStream
---  returned by getOutputStream().
---
---  The charset for the MIME body response can be specified explicitly using
---  the setCharacterEncoding(java.lang.String) and
---  setContentType(java.lang.String) methods, or implicitly using the
---  setLocale(java.util.Locale) method. Explicit specifications take precedence
---  over implicit specifications. If no charset is specified, ISO-8859-1 will
---  be used. The setCharacterEncoding, setContentType, or setLocale method must
---  be called before getWriter and before committing the response for the
---  character encoding to be used.
---
---  See the Internet RFCs such as RFC 2045 for more information on MIME.
---  Protocols such as SMTP and HTTP define profiles of MIME, and those
---  standards are still evolving.
-------------------------------------------------------------------------------
-with Servlet.Output_Streams;
 
-package Servlet.Responses is
+package body Servlet.Response_Wrappers is
 
-   pragma Preelaborate;
+   -----------------------
+   -- Get_Output_Stream --
+   -----------------------
 
-   type Servlet_Response is limited interface;
-
-   type Servlet_Response_Access is access all Servlet_Response'Class;
-
-   not overriding function Get_Output_Stream
-    (Self : Servlet_Response)
+   overriding function Get_Output_Stream
+    (Self : Servlet_Response_Wrapper)
        return
-         not null access Servlet.Output_Streams.Servlet_Output_Stream'Class
-           is abstract;
-   --  Returns a ServletOutputStream suitable for writing binary data in the
-   --  response. The servlet container does not encode the binary data.
-   --
-   --  Calling flush() on the ServletOutputStream commits the response.
+         not null access Servlet.Output_Streams.Servlet_Output_Stream'Class is
+   begin
+      return Self.Response.Get_Output_Stream;
+   end Get_Output_Stream;
 
-end Servlet.Responses;
+end Servlet.Response_Wrappers;

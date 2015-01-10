@@ -41,17 +41,23 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Streams;
+
+private with AWS.Resources.Streams.Memory;
 with AWS.Response;
 
 with Matreshka.Servlet_HTTP_Responses;
 private with Servlet.HTTP_Cookies;
 with Servlet.HTTP_Responses;
+with Servlet.Output_Streams;
+private with Servlet.Write_Listeners;
 
 package Matreshka.Servlet_AWS_Responses is
 
    type AWS_Servlet_Response is
      new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
-       with private;
+       and Servlet.Output_Streams.Servlet_Output_Stream
+         with private;
 
    procedure Initialize (Self : in out AWS_Servlet_Response'Class);
 
@@ -61,9 +67,12 @@ package Matreshka.Servlet_AWS_Responses is
 private
 
    type AWS_Servlet_Response is
-     new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response with
+     new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
+       and Servlet.Output_Streams.Servlet_Output_Stream with
    record
-      Data : AWS.Response.Data;
+      Data   : AWS.Response.Data;
+      Stream : aliased AWS.Resources.Streams.Memory.Stream_Type;
+      Output : access Servlet.Output_Streams.Servlet_Output_Stream'Class;
    end  record;
 
    overriding procedure Add_Cookie
@@ -76,5 +85,26 @@ private
     (Self   : in out AWS_Servlet_Response;
      Status : Servlet.HTTP_Responses.Status_Code);
    --  Sets the status code for this response.
+
+   overriding function Get_Output_Stream
+    (Self : AWS_Servlet_Response)
+       return
+         not null access Servlet.Output_Streams.Servlet_Output_Stream'Class;
+   --  Returns a ServletOutputStream suitable for writing binary data in the
+   --  response. The servlet container does not encode the binary data.
+
+   overriding function Is_Ready (Self : AWS_Servlet_Response) return Boolean;
+   --  This method can be used to determine if data can be written without
+   --  blocking.
+
+   overriding procedure Set_Write_Listener
+    (Self     : in out AWS_Servlet_Response;
+     Listener : not null access Servlet.Write_Listeners.Write_Listener'Class);
+   -- Instructs the ServletOutputStream to invoke the provided WriteListener
+   -- when it is possible to write.
+
+   overriding procedure Write
+    (Self : in out AWS_Servlet_Response;
+     Item : Ada.Streams.Stream_Element_Array);
 
 end Matreshka.Servlet_AWS_Responses;

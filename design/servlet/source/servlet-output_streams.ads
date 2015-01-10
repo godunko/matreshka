@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Streams;
+
 with Servlet.Write_Listeners;
 
 package Servlet.Output_Streams is
@@ -60,5 +62,9 @@ package Servlet.Output_Streams is
        is abstract;
    -- Instructs the ServletOutputStream to invoke the provided WriteListener
    -- when it is possible to write.
+
+   not overriding procedure Write
+    (Self : in out Servlet_Output_Stream;
+     Item : Ada.Streams.Stream_Element_Array) is abstract;
 
 end Servlet.Output_Streams;

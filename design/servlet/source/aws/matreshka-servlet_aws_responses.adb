@@ -131,14 +131,38 @@ package body Matreshka.Servlet_AWS_Responses is
       return Self.Data;
    end Build;
 
+   -----------------------
+   -- Get_Output_Stream --
+   -----------------------
+
+   overriding function Get_Output_Stream
+    (Self : AWS_Servlet_Response)
+       return
+         not null access Servlet.Output_Streams.Servlet_Output_Stream'Class is
+   begin
+      return Self.Output;
+   end Get_Output_Stream;
+
    ----------------
    -- Initialize --
    ----------------
 
    procedure Initialize (Self : in out AWS_Servlet_Response'Class) is
    begin
-      AWS.Response.Set.Mode (Self.Data, AWS.Response.Header);
+      AWS.Response.Set.Stream (Self.Data, Self.Stream'Unchecked_Access);
+      Self.Output := Self'Unchecked_Access;
    end Initialize;
+
+   --------------
+   -- Is_Ready --
+   --------------
+
+   overriding function Is_Ready (Self : AWS_Servlet_Response) return Boolean is
+   begin
+      --  Asynchronous mode is not supported by AWS.
+
+      return False;
+   end Is_Ready;
 
    ----------------
    -- Set_Status --
@@ -153,5 +177,27 @@ package body Matreshka.Servlet_AWS_Responses is
 
       AWS.Response.Set.Status_Code (Self.Data, To_AWS_Status_Code (Status));
    end Set_Status;
+
+   ------------------------
+   -- Set_Write_Listener --
+   ------------------------
+
+   overriding procedure Set_Write_Listener
+    (Self     : in out AWS_Servlet_Response;
+     Listener : not null access Servlet.Write_Listeners.Write_Listener'Class) is
+   begin
+      null;
+   end Set_Write_Listener;
+
+   -----------
+   -- Write --
+   -----------
+
+   overriding procedure Write
+    (Self : in out AWS_Servlet_Response;
+     Item : Ada.Streams.Stream_Element_Array) is
+   begin
+      Self.Stream.Append (Item);
+   end Write;
 
 end Matreshka.Servlet_AWS_Responses;

@@ -46,6 +46,7 @@
 --  Servlet. This class implements the Wrapper or Decorator pattern. Methods
 --  default to calling through to the wrapped response object.
 ------------------------------------------------------------------------------
+with Servlet.Output_Streams;
 with Servlet.Responses;
 
 package Servlet.Response_Wrappers is
@@ -55,5 +56,10 @@ package Servlet.Response_Wrappers is
    type Servlet_Response_Wrapper
     (Response : not null access Servlet.Responses.Servlet_Response'Class) is
        limited new Servlet.Responses.Servlet_Response with null record;
+
+   overriding function Get_Output_Stream
+    (Self : Servlet_Response_Wrapper)
+       return
+         not null access Servlet.Output_Streams.Servlet_Output_Stream'Class;
 
 end Servlet.Response_Wrappers;
