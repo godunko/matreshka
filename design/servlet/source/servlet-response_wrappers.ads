@@ -46,6 +46,8 @@
 --  Servlet. This class implements the Wrapper or Decorator pattern. Methods
 --  default to calling through to the wrapped response object.
 ------------------------------------------------------------------------------
+with League.Strings;
+
 with Servlet.Output_Streams;
 with Servlet.Responses;
 
@@ -61,5 +63,13 @@ package Servlet.Response_Wrappers is
     (Self : Servlet_Response_Wrapper)
        return
          not null access Servlet.Output_Streams.Servlet_Output_Stream'Class;
+
+   overriding procedure Set_Character_Encoding
+    (Self     : in out Servlet_Response_Wrapper;
+     Encoding : League.Strings.Universal_String);
+
+   overriding procedure Set_Content_Type
+    (Self : in out Servlet_Response_Wrapper;
+     To   : League.Strings.Universal_String);
 
 end Servlet.Response_Wrappers;

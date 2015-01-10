@@ -167,6 +167,54 @@ package body Matreshka.Servlet_AWS_Responses is
       return False;
    end Is_Ready;
 
+   ----------------------------
+   -- Set_Character_Encoding --
+   ----------------------------
+
+   overriding procedure Set_Character_Encoding
+    (Self     : in out AWS_Servlet_Response;
+     Encoding : League.Strings.Universal_String) is
+   begin
+      Self.Encoding := Encoding;
+
+      if Self.Encoding.Is_Empty then
+         AWS.Response.Set.Content_Type
+          (Self.Data, Self.Content_Type.To_UTF_8_String);
+
+      else
+         AWS.Response.Set.Content_TYpe
+          (Self.Data,
+           Self.Content_Type.To_UTF_8_String
+             & ";charset="
+             & Self.Encoding.To_UTF_8_String);
+      end if;
+   end Set_Character_Encoding;
+
+   ----------------------
+   -- Set_Content_Type --
+   ----------------------
+
+   overriding procedure Set_Content_Type
+    (Self : in out AWS_Servlet_Response;
+     To   : League.Strings.Universal_String) is
+   begin
+      --  XXX Encoding must be extracted from passed content type and set.
+
+      Self.Content_Type := To;
+
+      if Self.Encoding.Is_Empty then
+         AWS.Response.Set.Content_Type
+          (Self.Data, Self.Content_Type.To_UTF_8_String);
+
+      else
+         AWS.Response.Set.Content_TYpe
+          (Self.Data,
+           Self.Content_Type.To_UTF_8_String
+             & ";charset="
+             & Self.Encoding.To_UTF_8_String);
+      end if;
+   end Set_Content_Type;
+
    ----------------
    -- Set_Status --
    ----------------
@@ -177,7 +225,6 @@ package body Matreshka.Servlet_AWS_Responses is
    begin
       Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        (Self).Set_Status (Status);
-      Ada.Text_IO.Put_Line ("Status set");
 
       AWS.Response.Set.Status_Code (Self.Data, To_AWS_Status_Code (Status));
    end Set_Status;

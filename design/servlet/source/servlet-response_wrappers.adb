@@ -56,4 +56,26 @@ package body Servlet.Response_Wrappers is
       return Self.Response.Get_Output_Stream;
    end Get_Output_Stream;
 
+   ----------------------------
+   -- Set_Character_Encoding --
+   ----------------------------
+
+   overriding procedure Set_Character_Encoding
+    (Self     : in out Servlet_Response_Wrapper;
+     Encoding : League.Strings.Universal_String) is
+   begin
+      Self.Response.Set_Character_Encoding (Encoding);
+   end Set_Character_Encoding;
+
+   ----------------------
+   -- Set_Content_Type --
+   ----------------------
+
+   overriding procedure Set_Content_Type
+    (Self : in out Servlet_Response_Wrapper;
+     To   : League.Strings.Universal_String) is
+   begin
+      Self.Response.Set_Content_Type (To);
+   end Set_Content_Type;
+
 end Servlet.Response_Wrappers;

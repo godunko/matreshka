@@ -46,6 +46,8 @@ private with Ada.Streams;
 private with AWS.Resources.Streams.Memory;
 with AWS.Response;
 
+private with League.Strings;
+
 with Matreshka.Servlet_HTTP_Responses;
 private with Servlet.HTTP_Cookies;
 with Servlet.HTTP_Responses;
@@ -73,9 +75,11 @@ private
      new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        and Servlet.Output_Streams.Servlet_Output_Stream with
    record
-      Data   : AWS.Response.Data;
-      Stream : Stream_Access;
-      Output : access Servlet.Output_Streams.Servlet_Output_Stream'Class;
+      Data         : AWS.Response.Data;
+      Encoding     : League.Strings.Universal_String;
+      Content_Type : League.Strings.Universal_String;
+      Stream       : Stream_Access;
+      Output       : access Servlet.Output_Streams.Servlet_Output_Stream'Class;
    end  record;
 
    overriding procedure Add_Cookie
@@ -83,6 +87,27 @@ private
      Cookie : Servlet.HTTP_Cookies.Cookie);
    --  Adds the specified cookie to the response. This method can be called
    --  multiple times to set more than one cookie.
+
+   overriding procedure Set_Character_Encoding
+    (Self     : in out AWS_Servlet_Response;
+     Encoding : League.Strings.Universal_String);
+   --  Sets the character encoding (MIME charset) of the response being sent to
+   --  the client, for example, to UTF-8. If the character encoding has already
+   --  been set by setContentType(java.lang.String) or
+   --  setLocale(java.util.Locale), this method overrides it. Calling
+   --  setContentType(java.lang.String) with the String of text/html and
+   --  calling this method with the String of UTF-8 is equivalent with calling
+   --  setContentType with the String of text/html; charset=UTF-8.
+
+   overriding procedure Set_Content_Type
+    (Self : in out AWS_Servlet_Response;
+     To   : League.Strings.Universal_String);
+   --  Sets the content type of the response being sent to the client, if the
+   --  response has not been committed yet. The given content type may include
+   --  a character encoding specification, for example,
+   --  text/html;charset=UTF-8. The response's character encoding is only set
+   --  from the given content type if this method is called before getWriter is
+   --  called.
 
    overriding procedure Set_Status
     (Self   : in out AWS_Servlet_Response;
