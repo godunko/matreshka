@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with AWS.Cookie;
 with AWS.Messages;
+with AWS.Resources.Streams.Memory;
 with AWS.Response.Set;
 
 package body Matreshka.Servlet_AWS_Responses is
@@ -149,7 +150,9 @@ package body Matreshka.Servlet_AWS_Responses is
 
    procedure Initialize (Self : in out AWS_Servlet_Response'Class) is
    begin
-      AWS.Response.Set.Stream (Self.Data, Self.Stream'Unchecked_Access);
+      Self.Stream := new AWS.Resources.Streams.Memory.Stream_Type;
+      AWS.Response.Set.Stream (Self.Data, Self.Stream);
+      --  Memory will be released by AWS.
       Self.Output := Self'Unchecked_Access;
    end Initialize;
 
@@ -174,6 +177,7 @@ package body Matreshka.Servlet_AWS_Responses is
    begin
       Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        (Self).Set_Status (Status);
+      Ada.Text_IO.Put_Line ("Status set");
 
       AWS.Response.Set.Status_Code (Self.Data, To_AWS_Status_Code (Status));
    end Set_Status;

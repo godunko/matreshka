@@ -66,12 +66,15 @@ package Matreshka.Servlet_AWS_Responses is
 
 private
 
+   type Stream_Access is
+     access all AWS.Resources.Streams.Memory.Stream_Type'Class;
+
    type AWS_Servlet_Response is
      new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        and Servlet.Output_Streams.Servlet_Output_Stream with
    record
       Data   : AWS.Response.Data;
-      Stream : aliased AWS.Resources.Streams.Memory.Stream_Type;
+      Stream : Stream_Access;
       Output : access Servlet.Output_Streams.Servlet_Output_Stream'Class;
    end  record;
 
