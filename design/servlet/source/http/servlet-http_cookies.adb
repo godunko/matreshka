@@ -238,4 +238,26 @@ package body Servlet.HTTP_Cookies is
       end if;
    end Is_Valid_HTTP_Token;
 
+   -------------------
+   -- Set_HTTP_Only --
+   -------------------
+
+   procedure Set_HTTP_Only
+    (Self : in out Cookie'Class;
+     To   : Boolean := True) is
+   begin
+      Self.HTTP_Only := To;
+   end Set_HTTP_Only;
+
+   --------------
+   -- Set_Path --
+   --------------
+
+   procedure Set_Path
+    (Self : in out Cookie'Class;
+     To   : League.String_Vectors.Universal_String_Vector) is
+   begin
+      Self.Path := To;
+   end Set_Path;
+
 end Servlet.HTTP_Cookies;

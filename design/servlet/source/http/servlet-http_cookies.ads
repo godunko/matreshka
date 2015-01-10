@@ -71,6 +71,18 @@ package Servlet.HTTP_Cookies is
      with Inline;
    --  Checks whether this Cookie has been marked as HttpOnly.
 
+   procedure Set_HTTP_Only
+    (Self : in out Cookie'Class;
+     To   : Boolean := True);
+   --  Marks or unmarks this Cookie as HttpOnly.
+   --
+   --  If isHttpOnly is set to true, this cookie is marked as HttpOnly, by
+   --  adding the HttpOnly attribute to it.
+   --
+   --  HttpOnly cookies are not supposed to be exposed to client-side scripting
+   --  code, and may therefore help mitigate certain kinds of cross-site
+   --  scripting attacks.
+
    function Get_Name
     (Self : Cookie'Class) return League.Strings.Universal_String
        with Inline;
@@ -84,6 +96,21 @@ package Servlet.HTTP_Cookies is
     (Self : Cookie'Class) return League.Strings.Universal_String;
    --  Returns the path on the server to which the browser returns this cookie.
    --  The cookie is visible to all subpaths on the server.
+
+   procedure Set_Path
+    (Self : in out Cookie'Class;
+     To   : League.String_Vectors.Universal_String_Vector);
+   --  Specifies a path for the cookie to which the client should return the
+   --  cookie.
+   --
+   --  The cookie is visible to all the pages in the directory you specify, and
+   --  all the pages in that directory's subdirectories. A cookie's path must
+   --  include the servlet that set the cookie, for example, /catalog, which
+   --  makes the cookie visible to all directories on the server under
+   --  /catalog.
+   --
+   --  Consult RFC 6265 (available on the Internet) for more information on
+   --  setting path names for cookies.
 
    function Get_Secure (Self : Cookie'Class) return Boolean
      with Inline;
