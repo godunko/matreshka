@@ -125,4 +125,19 @@ private
      Instance : not null access Servlet.Servlets.Servlet'Class)
        return access Servlet.Servlet_Registrations.Servlet_Registration'Class;
 
+   overriding function Get_MIME_Type
+    (Self : Servlet_Container;
+     Path : League.Strings.Universal_String)
+       return League.Strings.Universal_String;
+   --  Returns the MIME type of the specified file, or null if the MIME type is
+   --  not known. The MIME type is determined by the configuration of the
+   --  servlet container, and may be specified in a web application deployment
+   --  descriptor. Common MIME types include text/html and image/gif.
+
+   overriding function Get_Real_Path
+    (Self : Servlet_Container;
+     Path : League.Strings.Universal_String)
+       return League.Strings.Universal_String;
+   --  Gets the real path corresponding to the given virtual path.
+
 end Matreshka.Servlet_Containers;

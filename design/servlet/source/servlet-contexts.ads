@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -107,5 +107,38 @@ package Servlet.Contexts is
    --  implements ServletRequestListener, ServletContextListener, or
    --  HttpSessionListener), then the new listener will be added to the end of
    --  the ordered list of listeners of that interface.
+
+   not overriding function Get_MIME_Type
+    (Self : Servlet_Context;
+     Path : League.Strings.Universal_String)
+       return League.Strings.Universal_String is abstract;
+   --  Returns the MIME type of the specified file, or null if the MIME type is
+   --  not known. The MIME type is determined by the configuration of the
+   --  servlet container, and may be specified in a web application deployment
+   --  descriptor. Common MIME types include text/html and image/gif.
+
+   not overriding function Get_Real_Path
+    (Self : Servlet_Context;
+     Path : League.Strings.Universal_String)
+       return League.Strings.Universal_String is abstract;
+   --  Gets the real path corresponding to the given virtual path.
+   --
+   --  For example, if path is equal to /index.html, this method will return
+   --  the absolute file path on the server's filesystem to which a request of
+   --  the form http://<host>:<port>/<contextPath>/index.html would be mapped,
+   --  where <contextPath> corresponds to the context path of this
+   --  ServletContext.
+   --
+   --  The real path returned will be in a form appropriate to the computer and
+   --  operating system on which the servlet container is running, including
+   --  the proper path separators.
+   --
+   --  Resources inside the /META-INF/resources directories of JAR files
+   --  bundled in the application's /WEB-INF/lib directory must be considered
+   --  only if the container has unpacked them from their containing JAR file,
+   --  in which case the path to the unpacked location must be returned.
+   --
+   --  This method returns null if the servlet container is unable to translate
+   --  the given virtual path to a real path.
 
 end Servlet.Contexts;

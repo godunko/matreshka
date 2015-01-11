@@ -48,6 +48,8 @@ with Matreshka.Servlet_Defaults;
 
 package body Matreshka.Servlet_Containers is
 
+   use type League.Strings.Universal_String;
+
    ------------------
    -- Add_Listener --
    ------------------
@@ -98,7 +100,6 @@ package body Matreshka.Servlet_Containers is
      Instance : not null access Servlet.Servlets.Servlet'Class)
        return access Servlet.Servlet_Registrations.Servlet_Registration'Class
    is
-      use type League.Strings.Universal_String;
       use type Matreshka.Servlet_Registrations.Servlet_Access;
 
       Object       : constant Matreshka.Servlet_Registrations.Servlet_Access
@@ -174,6 +175,41 @@ package body Matreshka.Servlet_Containers is
 
       Self.State := Uninitialized;
    end Finalize;
+
+   -------------------
+   -- Get_MIME_Type --
+   -------------------
+
+   overriding function Get_MIME_Type
+    (Self : Servlet_Container;
+     Path : League.Strings.Universal_String)
+       return League.Strings.Universal_String is
+   begin
+      if Path.Ends_With (".css") then
+         return League.Strings.To_Universal_String ("text/css");
+
+      elsif Path.Ends_With (".png") then
+         return League.Strings.To_Universal_String ("image/png");
+
+      elsif Path.Ends_With (".txt") then
+         return League.Strings.To_Universal_String ("text/plain");
+
+      else
+         return League.Strings.Empty_Universal_String;
+      end if;
+   end Get_MIME_Type;
+      
+   -------------------
+   -- Get_Real_Path --
+   -------------------
+
+   overriding function Get_Real_Path
+    (Self : Servlet_Container;
+     Path : League.Strings.Universal_String)
+       return League.Strings.Universal_String is
+   begin
+      return "source/web" & Path;
+   end Get_Real_Path;
 
    -------------------------
    -- Get_Session_Manager --
