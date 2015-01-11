@@ -141,7 +141,9 @@ package body Matreshka.Servlet_AWS_Responses is
        return
          not null access Servlet.Output_Streams.Servlet_Output_Stream'Class is
    begin
-      if AWS_Servlet_Response (Self.Output.all).Codec = null then
+      if AWS_Servlet_Response (Self.Output.all).Codec = null
+        and not Self.Encoding.Is_Empty
+      then
          AWS_Servlet_Response (Self.Output.all).Codec :=
            new League.Text_Codecs.Text_Codec'
                 (League.Text_Codecs.Codec (Self.Encoding));
