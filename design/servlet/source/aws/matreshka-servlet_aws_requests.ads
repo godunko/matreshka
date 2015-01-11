@@ -43,7 +43,8 @@
 ------------------------------------------------------------------------------
 with AWS.Status;
 
-with League.String_Vectors;
+private with League.String_Vectors;
+private with League.Strings;
 
 with Matreshka.Servlet_HTTP_Requests;
 with Matreshka.Servlet_HTTP_Responses;
@@ -92,6 +93,13 @@ private
    --  Returns the name of the HTTP method with which this request was made,
    --  for example, GET, POST, or PUT. Same as the value of the CGI variable
    --  REQUEST_METHOD.
+
+   overriding function Get_Parameter_Values
+    (Self : AWS_Servlet_Request;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns an array of String objects containing all of the values the
+   --  given request parameter has, or null if the parameter does not exist.
 
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;

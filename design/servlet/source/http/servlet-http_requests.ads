@@ -108,6 +108,15 @@ package Servlet.HTTP_Requests is
    --
    --  Same as the value of the CGI variable PATH_INFO.
 
+   not overriding function Get_Parameter_Values
+    (Self : HTTP_Servlet_Request;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector is abstract;
+   --  Returns an array of String objects containing all of the values the
+   --  given request parameter has, or null if the parameter does not exist.
+   --
+   --  If the parameter has a single value, the array has a length of 1.
+
    not overriding function Get_Servlet_Path
     (Self : HTTP_Servlet_Request)
        return League.String_Vectors.Universal_String_Vector is abstract;
