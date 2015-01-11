@@ -160,6 +160,7 @@ package body Matreshka.Servlet_Containers is
    begin
       Self.Dispatch (Request.all, Request.Get_Path, 1, Servlet);
       Request.Set_Session_Manager (Self.Session_Manager);
+      Request.Set_Servlet_Context (Self);
       Servlet.Servlet.Service (Request.all, Response.all);
    end Dispatch;
 
