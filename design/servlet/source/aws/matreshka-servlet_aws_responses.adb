@@ -141,6 +141,12 @@ package body Matreshka.Servlet_AWS_Responses is
        return
          not null access Servlet.Output_Streams.Servlet_Output_Stream'Class is
    begin
+      if AWS_Servlet_Response (Self.Output.all).Codec = null then
+         AWS_Servlet_Response (Self.Output.all).Codec :=
+           new League.Text_Codecs.Text_Codec'
+                (League.Text_Codecs.Codec (Self.Encoding));
+      end if;
+
       return Self.Output;
    end Get_Output_Stream;
 
@@ -249,6 +255,17 @@ package body Matreshka.Servlet_AWS_Responses is
      Item : Ada.Streams.Stream_Element_Array) is
    begin
       Self.Stream.Append (Item);
+   end Write;
+
+   -----------
+   -- Write --
+   -----------
+
+   overriding procedure Write
+    (Self : in out AWS_Servlet_Response;
+     Item : League.Strings.Universal_String) is
+   begin
+      Self.Stream.Append (Self.Codec.Encode (Item).To_Stream_Element_Array);
    end Write;
 
 end Matreshka.Servlet_AWS_Responses;

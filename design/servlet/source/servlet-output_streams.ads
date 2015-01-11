@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with Ada.Streams;
 
+with League.Strings;
+
 with Servlet.Write_Listeners;
 
 package Servlet.Output_Streams is
@@ -66,5 +68,9 @@ package Servlet.Output_Streams is
    not overriding procedure Write
     (Self : in out Servlet_Output_Stream;
      Item : Ada.Streams.Stream_Element_Array) is abstract;
+
+   not overriding procedure Write
+    (Self : in out Servlet_Output_Stream;
+     Item : League.Strings.Universal_String) is abstract;
 
 end Servlet.Output_Streams;

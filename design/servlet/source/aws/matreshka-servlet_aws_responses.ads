@@ -47,6 +47,7 @@ private with AWS.Resources.Streams.Memory;
 with AWS.Response;
 
 private with League.Strings;
+private with League.Text_Codecs;
 
 with Matreshka.Servlet_HTTP_Responses;
 private with Servlet.HTTP_Cookies;
@@ -71,6 +72,8 @@ private
    type Stream_Access is
      access all AWS.Resources.Streams.Memory.Stream_Type'Class;
 
+   type Text_Codec_Access is access all League.Text_Codecs.Text_Codec'Class;
+
    type AWS_Servlet_Response is
      new Matreshka.Servlet_HTTP_Responses.Abstract_HTTP_Servlet_Response
        and Servlet.Output_Streams.Servlet_Output_Stream with
@@ -79,6 +82,7 @@ private
       Encoding     : League.Strings.Universal_String;
       Content_Type : League.Strings.Universal_String;
       Stream       : Stream_Access;
+      Codec        : Text_Codec_Access;
       Output       : access Servlet.Output_Streams.Servlet_Output_Stream'Class;
    end  record;
 
@@ -134,5 +138,9 @@ private
    overriding procedure Write
     (Self : in out AWS_Servlet_Response;
      Item : Ada.Streams.Stream_Element_Array);
+
+   overriding procedure Write
+    (Self : in out AWS_Servlet_Response;
+     Item : League.Strings.Universal_String);
 
 end Matreshka.Servlet_AWS_Responses;
