@@ -49,6 +49,7 @@ with League.String_Vectors;
 
 with Servlet.HTTP_Requests;
 with Servlet.HTTP_Sessions;
+with Servlet.Contexts;
 with Matreshka.Servlet_HTTP_Responses;
 with Matreshka.Servlet_Sessions;
 
@@ -92,6 +93,11 @@ package Matreshka.Servlet_HTTP_Requests is
      Last : Natural);
    --  Sets index of last segment of servlet path in request's path.
 
+   procedure Set_Servlet_Context
+    (Self    : in out Abstract_HTTP_Servlet_Request'Class;
+     Context : Servlet.Contexts.Servlet_Context_Access);
+   --  Sets servlet context to which request was last dispatched.
+
    overriding function Get_Context_Path
     (Self : Abstract_HTTP_Servlet_Request)
        return League.String_Vectors.Universal_String_Vector;
@@ -108,6 +114,12 @@ package Matreshka.Servlet_HTTP_Requests is
    --  sent when it made this request. The extra path information follows the
    --  servlet path but precedes the query string and will start with a "/"
    --  character.
+
+   overriding function Get_Servlet_Context
+    (Self : Abstract_HTTP_Servlet_Request)
+       return access Servlet.Contexts.Servlet_Context'Class;
+   --  Gets the servlet context to which this ServletRequest was last
+   --  dispatched.
 
    overriding function Get_Servlet_Path
     (Self : Abstract_HTTP_Servlet_Request)
@@ -141,6 +153,7 @@ private
       Context_Last    : Natural  := 0;
       Servlet_Last    : Natural  := 0;
       --  Path information computed during request dispatching.
+      Context         : Servlet.Contexts.Servlet_Context_Access;
       Response        :
         Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access;
       --  Response object to be used when necessay (for example to send cookie

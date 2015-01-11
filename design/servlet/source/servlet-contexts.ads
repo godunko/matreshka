@@ -49,7 +49,7 @@ with League.Strings;
 
 with Servlet.Event_Listeners;
 with Servlet.Servlet_Registrations;
-with Servlet.Servlets;
+limited with Servlet.Servlets;
 
 package Servlet.Contexts is
 

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -43,6 +43,17 @@
 ------------------------------------------------------------------------------
 
 package body Servlet.Request_Wrappers is
+
+   -------------------------
+   -- Get_Servlet_Context --
+   -------------------------
+
+   overriding function Get_Servlet_Context
+    (Self : Servlet_Request_Wrapper)
+       return access Servlet.Contexts.Servlet_Context'Class is
+   begin
+      return Self.Request.Get_Servlet_Context;
+   end Get_Servlet_Context;
 
    ------------------------
    -- Is_Async_Supported --

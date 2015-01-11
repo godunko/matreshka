@@ -45,6 +45,7 @@
 --  servlet container creates a ServletRequest object and passes it as an
 --  argument to the servlet's service method.
 ------------------------------------------------------------------------------
+with Servlet.Contexts;
 
 package Servlet.Requests is
 
@@ -53,6 +54,12 @@ package Servlet.Requests is
    type Servlet_Request is limited interface;
 
    type Servlet_Request_Access is access all Servlet_Request'Class;
+
+   not overriding function Get_Servlet_Context
+    (Self : Servlet_Request)
+       return access Servlet.Contexts.Servlet_Context'Class is abstract;
+   --  Gets the servlet context to which this ServletRequest was last
+   --  dispatched.
 
    not overriding function Is_Async_Supported
     (Self : not null access Servlet_Request) return Boolean is abstract;

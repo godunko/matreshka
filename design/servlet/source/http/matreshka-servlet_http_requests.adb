@@ -80,6 +80,17 @@ package body Matreshka.Servlet_HTTP_Requests is
       return Self.Path.Slice (Self.Servlet_Last + 1, Self.Path.Length);
    end Get_Path_Info;
 
+   -------------------------
+   -- Get_Servlet_Context --
+   -------------------------
+
+   overriding function Get_Servlet_Context
+    (Self : Abstract_HTTP_Servlet_Request)
+       return access Servlet.Contexts.Servlet_Context'Class is
+   begin
+      return Self.Context;
+   end Get_Servlet_Context;
+
    ----------------------
    -- Get_Servlet_Path --
    ----------------------
@@ -196,6 +207,17 @@ package body Matreshka.Servlet_HTTP_Requests is
    begin
       Self.Context_Last := Last;
    end Set_Context_Last_Segment;
+
+   -------------------------
+   -- Set_Servlet_Context --
+   -------------------------
+
+   procedure Set_Servlet_Context
+    (Self    : in out Abstract_HTTP_Servlet_Request'Class;
+     Context : Servlet.Contexts.Servlet_Context_Access) is
+   begin
+      Self.Context := Context;
+   end Set_Servlet_Context;
 
    ------------------------------
    -- Set_Servlet_Last_Segment --

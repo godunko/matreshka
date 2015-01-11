@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -46,6 +46,7 @@
 --  This class implements the Wrapper or Decorator pattern. Methods default to
 --  calling through to the wrapped request object.
 ------------------------------------------------------------------------------
+with Servlet.Contexts;
 with Servlet.Requests;
 
 package Servlet.Request_Wrappers is
@@ -55,6 +56,10 @@ package Servlet.Request_Wrappers is
    type Servlet_Request_Wrapper
     (Request : not null access Servlet.Requests.Servlet_Request'Class) is
        limited new Servlet.Requests.Servlet_Request with null record;
+
+   overriding function Get_Servlet_Context
+    (Self : Servlet_Request_Wrapper)
+       return access Servlet.Contexts.Servlet_Context'Class;
 
    overriding function Is_Async_Supported
     (Self : not null access Servlet_Request_Wrapper) return Boolean;
