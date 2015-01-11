@@ -143,41 +143,6 @@ package body Matreshka.Servlet_HTTP_Requests is
 
                null;
             end if;
---         begin
---            SID :=
---              Server.Sessions.From_Universal_String
---               (League.Strings.From_UTF_8_String
---                 (AWS.Cookie.Get (Request, SID_Cookie_Name)));
---            SID_Decoded := True;
---
---         exception
---            when Constraint_Error =>
---               --  XXX Security event must be reported!!!
---
---               Ada.Text_IO.Put_Line
---                (Ada.Text_IO.Standard_Error, "Security: mailformed SID");
---         end;
-
---         --  Lookup for session when session identifier was decoded
---         --  successfully. Otherwise, new session will be allocated later.
---
---         if SID_Decoded then
---            Session := Server.Sessions.Controller.Get_Session (SID);
---
---            if Session = null then
---               --  XXX Security event must be reported!
---
---               SID_Decoded := False;
---               --  Reset SID_Decoded flag to force sent of new session
---               --  identifier to client after request.
---
---               Ada.Text_IO.Put_Line
---                (Ada.Text_IO.Standard_Error,
---                 "Security: unavailable session ("
---                   & AWS.Cookie.Get (Request, SID_Cookie_Name)
---                   & ')');
---            end if;
---         end if;
          end if;
       end;
 
@@ -201,30 +166,6 @@ package body Matreshka.Servlet_HTTP_Requests is
             Self.Response.Add_Cookie (Cookie);
          end;
       end if;
-
---      --  Allocate new session when it was not specified or resolved; otherwise
---      --  update last accessed time of the session.
---
---      if Session = null then
---         Session := Server.Sessions.Controller.Create_Session;
---
---      else
---         Server.Sessions.Controller.Update_Last_Accessed_Time (Session);
---      end if;
---
---      return Result : AWS.Response.Data
---        := Dispatch_Request (Request, Session)
---      do
---         if not SID_Decoded or Session.Get_Session_Identifier /= SID then
---            --  Send session identifer when it was changed.
---
---            AWS.Cookie.Set
---             (Result,
---              SID_Cookie_Name,
---              Server.Sessions.To_Universal_String
---               (Session.Get_Session_Identifier).To_UTF_8_String);
---         end if;
---      end return;
 
       return Self.Data.Session;
    end Get_Session;
