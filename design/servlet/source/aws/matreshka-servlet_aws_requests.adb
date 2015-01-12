@@ -167,6 +167,7 @@ package body Matreshka.Servlet_AWS_Requests is
          exit when Aux.Is_Empty;
 
          Result.Append (Aux);
+         Index := Index + 1;
       end loop;
 
       return Result;
