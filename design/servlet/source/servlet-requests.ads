@@ -45,6 +45,9 @@
 --  servlet container creates a ServletRequest object and passes it as an
 --  argument to the servlet's service method.
 ------------------------------------------------------------------------------
+with League.String_Vectors;
+with League.Strings;
+
 with Servlet.Contexts;
 
 package Servlet.Requests is
@@ -54,6 +57,15 @@ package Servlet.Requests is
    type Servlet_Request is limited interface;
 
    type Servlet_Request_Access is access all Servlet_Request'Class;
+
+   not overriding function Get_Parameter_Values
+    (Self : Servlet_Request;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector is abstract;
+   --  Returns an array of String objects containing all of the values the
+   --  given request parameter has, or null if the parameter does not exist.
+   --
+   --  If the parameter has a single value, the array has a length of 1.
 
    not overriding function Get_Servlet_Context
     (Self : Servlet_Request)

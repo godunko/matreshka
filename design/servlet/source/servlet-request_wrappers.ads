@@ -46,6 +46,9 @@
 --  This class implements the Wrapper or Decorator pattern. Methods default to
 --  calling through to the wrapped request object.
 ------------------------------------------------------------------------------
+with League.String_Vectors;
+with League.Strings;
+
 with Servlet.Contexts;
 with Servlet.Requests;
 
@@ -56,6 +59,11 @@ package Servlet.Request_Wrappers is
    type Servlet_Request_Wrapper
     (Request : not null access Servlet.Requests.Servlet_Request'Class) is
        limited new Servlet.Requests.Servlet_Request with null record;
+
+   overriding function Get_Parameter_Values
+    (Self : Servlet_Request_Wrapper;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector;
 
    overriding function Get_Servlet_Context
     (Self : Servlet_Request_Wrapper)
