@@ -175,6 +175,20 @@ package body Matreshka.Servlet_AWS_Responses is
       return False;
    end Is_Ready;
 
+   -------------------
+   -- Send_Redirect --
+   -------------------
+
+   overriding procedure Send_Redirect
+    (Self     : in out AWS_Servlet_Response;
+     Location : League.IRIs.IRI) is
+   begin
+      AWS.Response.Set.Status_Code (Self.Data, AWS.Messages.S302);
+      AWS.Response.Set.Location
+       (Self.Data, Location.To_Universal_String.To_UTF_8_String);
+      AWS.Response.Set.Mode (Self.Data, AWS.Response.Header);
+   end Send_Redirect;
+
    ----------------------------
    -- Set_Character_Encoding --
    ----------------------------

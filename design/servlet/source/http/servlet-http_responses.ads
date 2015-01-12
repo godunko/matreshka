@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.IRIs;
 with Servlet.HTTP_Cookies;
 with Servlet.Responses;
 
@@ -197,6 +198,26 @@ package Servlet.HTTP_Responses is
    not overriding function Get_Status
     (Self : HTTP_Servlet_Response) return Status_Code is abstract;
    --  Gets the current status code of this response.
+
+   not overriding procedure Send_Redirect
+    (Self     : in out HTTP_Servlet_Response;
+     Location : League.IRIs.IRI) is abstract;
+   --  Sends a temporary redirect response to the client using the specified
+   --  redirect location URL and clears the buffer. The buffer will be replaced
+   --  with the data set by this method. Calling this method sets the status
+   --  code to SC_FOUND 302 (Found). This method can accept relative URLs;the
+   --  servlet container must convert the relative URL to an absolute URL
+   --  before sending the response to the client. If the location is relative
+   --  without a leading '/' the container interprets it as relative to the
+   --  current request URI. If the location is relative with a leading '/' the
+   --  container interprets it as relative to the servlet container root. If
+   --  the location is relative with two leading '/' the container interprets
+   --  it as a network-path reference (see RFC 3986: Uniform Resource
+   --  Identifier (URI): Generic Syntax, section 4.2 "Relative Reference").
+   --
+   --  If the response has already been committed, this method throws an
+   --  IllegalStateException. After using this method, the response should be
+   --  considered to be committed and should not be written to.
 
    not overriding procedure Set_Status
     (Self : in out HTTP_Servlet_Response;

@@ -46,6 +46,7 @@ private with Ada.Streams;
 private with AWS.Resources.Streams.Memory;
 with AWS.Response;
 
+private with League.IRIs;
 private with League.Strings;
 private with League.Text_Codecs;
 
@@ -91,6 +92,12 @@ private
      Cookie : Servlet.HTTP_Cookies.Cookie);
    --  Adds the specified cookie to the response. This method can be called
    --  multiple times to set more than one cookie.
+
+   overriding procedure Send_Redirect
+    (Self     : in out AWS_Servlet_Response;
+     Location : League.IRIs.IRI);
+   --  Sends a temporary redirect response to the client using the specified
+   --  redirect location URL and clears the buffer.
 
    overriding procedure Set_Character_Encoding
     (Self     : in out AWS_Servlet_Response;
