@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Streams;
 
-with League.Base_64;
+with League.Base_Codecs;
 with League.Stream_Element_Vectors;
 
 package body Matreshka.Servlet_Sessions is
@@ -58,7 +58,7 @@ package body Matreshka.Servlet_Sessions is
     (Item : League.Strings.Universal_String) return Session_Identifier
    is
       Decoded : constant League.Stream_Element_Vectors.Stream_Element_Vector
-        := League.Base_64.From_Base_64 (Item);
+        := League.Base_Codecs.From_Base_64_URL (Item);
 
    begin
       if Decoded.Length /= Session_Identifier'Max_Size_In_Storage_Elements then
@@ -96,7 +96,7 @@ package body Matreshka.Servlet_Sessions is
       Decoded : League.Stream_Element_Vectors.Stream_Element_Vector;
 
    begin
-      League.Base_64.From_Base_64 (Item, Decoded, Success);
+      League.Base_Codecs.From_Base_64_URL (Item, Decoded, Success);
 
       if not Success then
          return;
@@ -127,7 +127,7 @@ package body Matreshka.Servlet_Sessions is
 
    begin
       return
-        League.Base_64.To_Base_64
+        League.Base_Codecs.To_Base_64_URL
          (League.Stream_Element_Vectors.To_Stream_Element_Vector (Aux));
    end To_Universal_String;
 
