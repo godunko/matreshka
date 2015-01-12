@@ -71,6 +71,9 @@ package Servlet.Request_Wrappers is
    overriding function Get_Server_Name
     (Self : Servlet_Request_Wrapper) return League.Strings.Universal_String;
 
+   overriding function Get_Server_Port
+    (Self : Servlet_Request_Wrapper) return Positive;
+
    overriding function Get_Servlet_Context
     (Self : Servlet_Request_Wrapper)
        return access Servlet.Contexts.Servlet_Context'Class;

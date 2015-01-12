@@ -197,6 +197,16 @@ package body Matreshka.Servlet_AWS_Requests is
          (AWS.URL.Host (AWS.Status.URI (Self.Request)));
    end Get_Server_Name;
 
+   ---------------------
+   -- Get_Server_Port --
+   ---------------------
+
+   overriding function Get_Server_Port
+    (Self : AWS_Servlet_Request) return Positive is
+   begin
+      return AWS.URL.Port (AWS.Status.URI (Self.Request));
+   end Get_Server_Port;
+
    ----------------
    -- Initialize --
    ----------------

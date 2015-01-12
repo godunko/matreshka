@@ -76,6 +76,16 @@ package body Servlet.Request_Wrappers is
       return Self.Request.Get_Server_Name;
    end Get_Server_Name;
 
+   ---------------------
+   -- Get_Server_Port --
+   ---------------------
+
+   overriding function Get_Server_Port
+    (Self : Servlet_Request_Wrapper) return Positive is
+   begin
+      return Self.Request.Get_Server_Port;
+   end Get_Server_Port;
+
    -------------------------
    -- Get_Servlet_Context --
    -------------------------

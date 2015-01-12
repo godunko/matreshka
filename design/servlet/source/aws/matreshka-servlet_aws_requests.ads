@@ -113,6 +113,12 @@ private
    --  the value of the part before ":" in the Host header value, if any, or
    --  the resolved server name, or the server IP address.
 
+   overriding function Get_Server_Port
+    (Self : AWS_Servlet_Request) return Positive;
+   --  Returns the port number to which the request was sent. It is the value
+   --  of the part after ":" in the Host header value, if any, or the server
+   --  port where the client connection was accepted on.
+
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;
    --  Checks if this request supports asynchronous operation.

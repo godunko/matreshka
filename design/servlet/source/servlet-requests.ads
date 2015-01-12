@@ -81,6 +81,12 @@ package Servlet.Requests is
    --  the value of the part before ":" in the Host header value, if any, or
    --  the resolved server name, or the server IP address.
 
+   not overriding function Get_Server_Port
+    (Self : Servlet_Request) return Positive is abstract;
+   --  Returns the port number to which the request was sent. It is the value
+   --  of the part after ":" in the Host header value, if any, or the server
+   --  port where the client connection was accepted on.
+
    not overriding function Get_Servlet_Context
     (Self : Servlet_Request)
        return access Servlet.Contexts.Servlet_Context'Class is abstract;
