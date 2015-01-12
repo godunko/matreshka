@@ -67,6 +67,13 @@ package Servlet.Requests is
    --
    --  If the parameter has a single value, the array has a length of 1.
 
+   not overriding function Get_Scheme
+    (Self : Servlet_Request) return League.Strings.Universal_String
+       is abstract;
+   --  Returns the name of the scheme used to make this request, for example,
+   --  http, https, or ftp. Different schemes have different rules for
+   --  constructing URLs, as noted in RFC 1738.
+
    not overriding function Get_Servlet_Context
     (Self : Servlet_Request)
        return access Servlet.Contexts.Servlet_Context'Class is abstract;

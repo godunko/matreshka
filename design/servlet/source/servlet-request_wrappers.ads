@@ -65,6 +65,9 @@ package Servlet.Request_Wrappers is
      Name : League.Strings.Universal_String)
        return League.String_Vectors.Universal_String_Vector;
 
+   overriding function Get_Scheme
+    (Self : Servlet_Request_Wrapper) return League.Strings.Universal_String;
+
    overriding function Get_Servlet_Context
     (Self : Servlet_Request_Wrapper)
        return access Servlet.Contexts.Servlet_Context'Class;

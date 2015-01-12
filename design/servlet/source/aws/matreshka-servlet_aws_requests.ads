@@ -101,6 +101,12 @@ private
    --  Returns an array of String objects containing all of the values the
    --  given request parameter has, or null if the parameter does not exist.
 
+   overriding function Get_Scheme
+    (Self : AWS_Servlet_Request) return League.Strings.Universal_String;
+   --  Returns the name of the scheme used to make this request, for example,
+   --  http, https, or ftp. Different schemes have different rules for
+   --  constructing URLs, as noted in RFC 1738.
+
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;
    --  Checks if this request supports asynchronous operation.

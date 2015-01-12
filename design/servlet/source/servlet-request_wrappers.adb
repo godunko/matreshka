@@ -56,6 +56,16 @@ package body Servlet.Request_Wrappers is
       return Self.Request.Get_Parameter_Values (Name);
    end Get_Parameter_Values;
 
+   ----------------
+   -- Get_Scheme --
+   ----------------
+
+   overriding function Get_Scheme
+    (Self : Servlet_Request_Wrapper) return League.Strings.Universal_String is
+   begin
+      return Self.Request.Get_Scheme;
+   end Get_Scheme;
+
    -------------------------
    -- Get_Servlet_Context --
    -------------------------
