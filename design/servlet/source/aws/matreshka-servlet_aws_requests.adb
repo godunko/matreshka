@@ -185,6 +185,18 @@ package body Matreshka.Servlet_AWS_Requests is
          (AWS.URL.Protocol_Name (AWS.Status.URI (Self.Request)));
    end Get_Scheme;
 
+   ---------------------
+   -- Get_Server_Name --
+   ---------------------
+
+   overriding function Get_Server_Name
+    (Self : AWS_Servlet_Request) return League.Strings.Universal_String is
+   begin
+      return
+        League.Strings.From_UTF_8_String
+         (AWS.URL.Host (AWS.Status.URI (Self.Request)));
+   end Get_Server_Name;
+
    ----------------
    -- Initialize --
    ----------------

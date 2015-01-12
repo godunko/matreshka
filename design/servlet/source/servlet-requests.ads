@@ -74,6 +74,13 @@ package Servlet.Requests is
    --  http, https, or ftp. Different schemes have different rules for
    --  constructing URLs, as noted in RFC 1738.
 
+   not overriding function Get_Server_Name
+    (Self : Servlet_Request) return League.Strings.Universal_String
+       is abstract;
+   --  Returns the host name of the server to which the request was sent. It is
+   --  the value of the part before ":" in the Host header value, if any, or
+   --  the resolved server name, or the server IP address.
+
    not overriding function Get_Servlet_Context
     (Self : Servlet_Request)
        return access Servlet.Contexts.Servlet_Context'Class is abstract;

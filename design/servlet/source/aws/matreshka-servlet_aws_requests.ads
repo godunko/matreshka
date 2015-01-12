@@ -107,6 +107,12 @@ private
    --  http, https, or ftp. Different schemes have different rules for
    --  constructing URLs, as noted in RFC 1738.
 
+   overriding function Get_Server_Name
+    (Self : AWS_Servlet_Request) return League.Strings.Universal_String;
+   --  Returns the host name of the server to which the request was sent. It is
+   --  the value of the part before ":" in the Host header value, if any, or
+   --  the resolved server name, or the server IP address.
+
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;
    --  Checks if this request supports asynchronous operation.
