@@ -101,24 +101,6 @@ private
    --  Returns an array of String objects containing all of the values the
    --  given request parameter has, or null if the parameter does not exist.
 
-   overriding function Get_Scheme
-    (Self : AWS_Servlet_Request) return League.Strings.Universal_String;
-   --  Returns the name of the scheme used to make this request, for example,
-   --  http, https, or ftp. Different schemes have different rules for
-   --  constructing URLs, as noted in RFC 1738.
-
-   overriding function Get_Server_Name
-    (Self : AWS_Servlet_Request) return League.Strings.Universal_String;
-   --  Returns the host name of the server to which the request was sent. It is
-   --  the value of the part before ":" in the Host header value, if any, or
-   --  the resolved server name, or the server IP address.
-
-   overriding function Get_Server_Port
-    (Self : AWS_Servlet_Request) return Positive;
-   --  Returns the port number to which the request was sent. It is the value
-   --  of the part after ":" in the Host header value, if any, or the server
-   --  port where the client connection was accepted on.
-
    overriding function Is_Async_Supported
     (Self : not null access AWS_Servlet_Request) return Boolean;
    --  Checks if this request supports asynchronous operation.

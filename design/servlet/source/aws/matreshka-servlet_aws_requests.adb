@@ -48,6 +48,7 @@ with AWS.Messages;
 with AWS.Parameters;
 with AWS.URL;
 
+with League.IRIs;
 with League.Strings;
 
 with Servlet.HTTP_Cookies;
@@ -170,40 +171,6 @@ package body Matreshka.Servlet_AWS_Requests is
    end Get_Parameter_Values;
 
    ----------------
-   -- Get_Scheme --
-   ----------------
-
-   overriding function Get_Scheme
-    (Self : AWS_Servlet_Request) return League.Strings.Universal_String is
-   begin
-      return
-        League.Strings.From_UTF_8_String
-         (AWS.URL.Protocol_Name (AWS.Status.URI (Self.Request)));
-   end Get_Scheme;
-
-   ---------------------
-   -- Get_Server_Name --
-   ---------------------
-
-   overriding function Get_Server_Name
-    (Self : AWS_Servlet_Request) return League.Strings.Universal_String is
-   begin
-      return
-        League.Strings.From_UTF_8_String
-         (AWS.URL.Host (AWS.Status.URI (Self.Request)));
-   end Get_Server_Name;
-
-   ---------------------
-   -- Get_Server_Port --
-   ---------------------
-
-   overriding function Get_Server_Port
-    (Self : AWS_Servlet_Request) return Positive is
-   begin
-      return AWS.URL.Port (AWS.Status.URI (Self.Request));
-   end Get_Server_Port;
-
-   ----------------
    -- Initialize --
    ----------------
 
@@ -218,10 +185,26 @@ package body Matreshka.Servlet_AWS_Requests is
             (AWS.Status.URI (Data)).Split ('/', League.Strings.Skip_Empty);
       --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
       --  should be handled here.
-      --  XXX Use of UTF-8 to encode URI by AWS should be checked.
+      --  XXX Use of UTF-9 to encode URI by AWS should be checked.
+      Port : constant String := AWS.URL.Port (AWS.Status.URI (Data));
+
+      URL  : League.IRIs.IRI;
 
    begin
-      Matreshka.Servlet_HTTP_Requests.Initialize (Self, Path, Response);
+      --  Reconstruct request's URL.
+
+      URL.Set_Scheme
+       (League.Strings.From_UTF_8_String
+         (AWS.URL.Protocol_Name (AWS.Status.URI (Data))));
+      URL.Set_Host
+       (League.Strings.From_UTF_8_String
+         (AWS.URL.Host (AWS.Status.URI (Data))));
+      URL.Set_Port (AWS.URL.Port (AWS.Status.URI (Data)));
+      URL.Set_Absolute_Path (Path);
+
+      --  Initialize object.
+
+      Matreshka.Servlet_HTTP_Requests.Initialize (Self, URL, Response);
       Self.Request := Data;
       Self.Data := Self.Data_Storage'Unchecked_Access;
    end Initialize;

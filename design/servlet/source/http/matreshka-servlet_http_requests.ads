@@ -45,7 +45,9 @@
 --   - splitting of request path into context/servlet/path_info components;
 --   - session management via HTTP cookie.
 ------------------------------------------------------------------------------
+with League.IRIs;
 with League.String_Vectors;
+with League.Strings;
 
 with Servlet.HTTP_Requests;
 with Servlet.HTTP_Sessions;
@@ -66,7 +68,7 @@ package Matreshka.Servlet_HTTP_Requests is
 
    procedure Initialize
     (Self     : in out Abstract_HTTP_Servlet_Request'Class;
-     Path     : League.String_Vectors.Universal_String_Vector;
+     URL      : League.IRIs.IRI;
      Response :
        not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
    --  Initialized path of the object and corresponsing respose object.
@@ -115,6 +117,26 @@ package Matreshka.Servlet_HTTP_Requests is
    --  servlet path but precedes the query string and will start with a "/"
    --  character.
 
+   overriding function Get_Scheme
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.Strings.Universal_String;
+   --  Returns the name of the scheme used to make this request, for example,
+   --  http, https, or ftp. Different schemes have different rules for
+   --  constructing URLs, as noted in RFC 1738.
+
+   overriding function Get_Server_Name
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.Strings.Universal_String;
+   --  Returns the host name of the server to which the request was sent. It is
+   --  the value of the part before ":" in the Host header value, if any, or
+   --  the resolved server name, or the server IP address.
+
+   overriding function Get_Server_Port
+    (Self : Abstract_HTTP_Servlet_Request) return Positive;
+   --  Returns the port number to which the request was sent. It is the value
+   --  of the part after ":" in the Host header value, if any, or the server
+   --  port where the client connection was accepted on.
+
    overriding function Get_Servlet_Context
     (Self : Abstract_HTTP_Servlet_Request)
        return access Servlet.Contexts.Servlet_Context'Class;
@@ -149,7 +171,7 @@ private
    type Abstract_HTTP_Servlet_Request is
      abstract limited new Servlet.HTTP_Requests.HTTP_Servlet_Request with
    record
-      Path            : League.String_Vectors.Universal_String_Vector;
+      URL             : League.IRIs.IRI;
       Context_Last    : Natural  := 0;
       Servlet_Last    : Natural  := 0;
       --  Path information computed during request dispatching.

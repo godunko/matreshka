@@ -55,7 +55,7 @@ package body Matreshka.Servlet_HTTP_Requests is
     (Self : Abstract_HTTP_Servlet_Request)
        return League.String_Vectors.Universal_String_Vector is
    begin
-      return Self.Path.Slice (1, Self.Context_Last);
+      return Self.URL.Get_Path.Slice (1, Self.Context_Last);
    end Get_Context_Path;
 
    --------------
@@ -66,7 +66,7 @@ package body Matreshka.Servlet_HTTP_Requests is
     (Self : Abstract_HTTP_Servlet_Request'Class)
        return League.String_Vectors.Universal_String_Vector is
    begin
-      return Self.Path;
+      return Self.URL.Get_Path;
    end Get_Path;
 
    -------------------
@@ -75,10 +75,46 @@ package body Matreshka.Servlet_HTTP_Requests is
 
    overriding function Get_Path_Info
     (Self : Abstract_HTTP_Servlet_Request)
-       return League.String_Vectors.Universal_String_Vector is
+       return League.String_Vectors.Universal_String_Vector
+   is
+      Path : constant League.String_Vectors.Universal_String_Vector
+        := Self.URL.Get_Path;
+
    begin
-      return Self.Path.Slice (Self.Servlet_Last + 1, Self.Path.Length);
+      return Path.Slice (Self.Servlet_Last + 1, Path.Length);
    end Get_Path_Info;
+
+   ----------------
+   -- Get_Scheme --
+   ----------------
+
+   overriding function Get_Scheme
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.Strings.Universal_String is
+   begin
+      return Self.URL.Get_Scheme;
+   end Get_Scheme;
+
+   ---------------------
+   -- Get_Server_Name --
+   ---------------------
+
+   overriding function Get_Server_Name
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.Strings.Universal_String is
+   begin
+      return Self.URL.Get_Host;
+   end Get_Server_Name;
+
+   ---------------------
+   -- Get_Server_Port --
+   ---------------------
+
+   overriding function Get_Server_Port
+    (Self : Abstract_HTTP_Servlet_Request) return Positive is
+   begin
+      return Self.URL.Get_Port;
+   end Get_Server_Port;
 
    -------------------------
    -- Get_Servlet_Context --
@@ -99,7 +135,8 @@ package body Matreshka.Servlet_HTTP_Requests is
     (Self : Abstract_HTTP_Servlet_Request)
        return League.String_Vectors.Universal_String_Vector is
    begin
-      return Self.Path.Slice (Self.Context_Last + 1, Self.Servlet_Last);
+      return
+        Self.URL.Get_Path.Slice (Self.Context_Last + 1, Self.Servlet_Last);
    end Get_Servlet_Path;
 
    -----------------
@@ -187,12 +224,12 @@ package body Matreshka.Servlet_HTTP_Requests is
 
    procedure Initialize
     (Self     : in out Abstract_HTTP_Servlet_Request'Class;
-     Path     : League.String_Vectors.Universal_String_Vector;
+     URL      : League.IRIs.IRI;
      Response :
        not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access)
    is
    begin
-      Self.Path     := Path;
+      Self.URL      := URL;
       Self.Response := Response;
       Self.Data     := Self.Storage'Unchecked_Access;
    end Initialize;
