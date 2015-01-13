@@ -127,8 +127,9 @@ package body Matreshka.Servlet_AWS_Responses is
    -----------
 
    function Build
-    (Self : AWS_Servlet_Response'Class) return AWS.Response.Data is
+    (Self : in out AWS_Servlet_Response'Class) return AWS.Response.Data is
    begin
+      Self.Set_Session_Cookie;
       return Self.Data;
    end Build;
 
@@ -156,8 +157,12 @@ package body Matreshka.Servlet_AWS_Responses is
    -- Initialize --
    ----------------
 
-   procedure Initialize (Self : in out AWS_Servlet_Response'Class) is
+   procedure Initialize
+    (Self    : in out AWS_Servlet_Response'Class;
+     Request :
+       not null Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access) is
    begin
+      Matreshka.Servlet_HTTP_Responses.Initialize (Self, Request);
       Self.Stream := new AWS.Resources.Streams.Memory.Stream_Type;
       AWS.Response.Set.Stream (Self.Data, Self.Stream);
       --  Memory will be released by AWS.

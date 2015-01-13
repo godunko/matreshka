@@ -51,6 +51,7 @@ private with League.Strings;
 private with League.Text_Codecs;
 
 with Matreshka.Servlet_HTTP_Responses;
+with Matreshka.Servlet_HTTP_Requests;
 private with Servlet.HTTP_Cookies;
 with Servlet.HTTP_Responses;
 with Servlet.Output_Streams;
@@ -63,9 +64,13 @@ package Matreshka.Servlet_AWS_Responses is
        and Servlet.Output_Streams.Servlet_Output_Stream
          with private;
 
-   procedure Initialize (Self : in out AWS_Servlet_Response'Class);
+   procedure Initialize
+    (Self    : in out AWS_Servlet_Response'Class;
+     Request :
+       not null Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access);
 
-   function Build (Self : AWS_Servlet_Response'Class) return AWS.Response.Data;
+   function Build
+    (Self : in out AWS_Servlet_Response'Class) return AWS.Response.Data;
    --  Build AWS response data.
 
 private

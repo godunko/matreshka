@@ -41,8 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
+with Servlet.HTTP_Cookies;
+with Servlet.HTTP_Sessions;
 
 package body Matreshka.Servlet_HTTP_Responses is
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self    : in out Abstract_HTTP_Servlet_Response'Class;
+     Request :
+       not null Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access) is
+   begin
+      Self.Request := Request;
+   end Initialize;
 
    ----------------
    -- Get_Status --
@@ -54,6 +70,31 @@ package body Matreshka.Servlet_HTTP_Responses is
    begin
       return Self.Status;
    end Get_Status;
+
+   ------------------------
+   -- Set_Session_Cookie --
+   ------------------------
+
+   procedure Set_Session_Cookie
+    (Self : in out Abstract_HTTP_Servlet_Response'Class)
+   is
+      Session : constant access Servlet.HTTP_Sessions.HTTP_Session'Class
+        := Self.Request.Get_Session (False);
+      Cookie  : Servlet.HTTP_Cookies.Cookie;
+
+   begin
+      if Session /= null
+        and then not Self.Request.Is_Requested_Session_Id_Valid
+      then
+         --  Create cookie with session identifier and add it to response.
+
+         Cookie.Initialize
+          (League.Strings.To_Universal_String ("MSID"), Session.Get_Id);
+         Cookie.Set_Http_Only (True);
+         Cookie.Set_Path (Self.Request.Get_Context_Path);
+         Self.Add_Cookie (Cookie);
+      end if;
+   end Set_Session_Cookie;
 
    ----------------
    -- Set_Status --

@@ -44,6 +44,7 @@
 --  This package provides base tagged type to build server specific HTTP
 --  response objects.
 ------------------------------------------------------------------------------
+with Matreshka.Servlet_HTTP_Requests;
 with Servlet.HTTP_Responses;
 
 package Matreshka.Servlet_HTTP_Responses is
@@ -51,13 +52,19 @@ package Matreshka.Servlet_HTTP_Responses is
    pragma Preelaborate;
 
    type Abstract_HTTP_Servlet_Response is abstract
-     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with record
-      Status : Servlet.HTTP_Responses.Status_Code
-        := Servlet.HTTP_Responses.Internal_Server_Error;
-   end record;
+     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with private;
 
    type HTTP_Servlet_Response_Access is
      access all Abstract_HTTP_Servlet_Response'Class;
+
+   procedure Initialize
+    (Self    : in out Abstract_HTTP_Servlet_Response'Class;
+     Request :
+       not null Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access);
+
+   procedure Set_Session_Cookie
+    (Self : in out Abstract_HTTP_Servlet_Response'Class);
+   --  Sets HTTP session cookie when necessary.
 
    overriding function Get_Status
     (Self : Abstract_HTTP_Servlet_Response)
@@ -68,5 +75,14 @@ package Matreshka.Servlet_HTTP_Responses is
     (Self   : in out Abstract_HTTP_Servlet_Response;
      Status : Servlet.HTTP_Responses.Status_Code);
    --  Sets the status code for this response.
+
+private
+
+   type Abstract_HTTP_Servlet_Response is abstract
+     limited new Servlet.HTTP_Responses.HTTP_Servlet_Response with record
+      Status  : Servlet.HTTP_Responses.Status_Code
+        := Servlet.HTTP_Responses.Internal_Server_Error;
+      Request : Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access;
+   end record;
 
 end Matreshka.Servlet_HTTP_Responses;

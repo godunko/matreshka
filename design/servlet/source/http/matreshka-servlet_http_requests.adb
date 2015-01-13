@@ -225,21 +225,7 @@ package body Matreshka.Servlet_HTTP_Requests is
       --  resolved.
 
       if Self.Data.Session = null and Create then
-         declare
-            Cookie : Servlet.HTTP_Cookies.Cookie;
-
-         begin
-            Self.Data.Session := Self.Session_Manager.New_Session;
-
-            --  Create cookie with session identifier and add it to response.
-
-            Cookie.Initialize
-             (League.Strings.To_Universal_String ("MSID"),
-              Self.Data.Session.Get_Id);
-            Cookie.Set_Http_Only (True);
-            Cookie.Set_Path (Self.Get_Context_Path);
-            Self.Response.Add_Cookie (Cookie);
-         end;
+         Self.Data.Session := Self.Session_Manager.New_Session;
       end if;
 
       return Self.Data.Session;
@@ -250,15 +236,11 @@ package body Matreshka.Servlet_HTTP_Requests is
    ----------------
 
    procedure Initialize
-    (Self     : in out Abstract_HTTP_Servlet_Request'Class;
-     URL      : League.IRIs.IRI;
-     Response :
-       not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access)
-   is
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     URL  : League.IRIs.IRI) is
    begin
-      Self.URL      := URL;
-      Self.Response := Response;
-      Self.Data     := Self.Storage'Unchecked_Access;
+      Self.URL  := URL;
+      Self.Data := Self.Storage'Unchecked_Access;
    end Initialize;
 
    -----------------------------------

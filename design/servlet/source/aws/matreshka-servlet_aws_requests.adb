@@ -175,10 +175,8 @@ package body Matreshka.Servlet_AWS_Requests is
    ----------------
 
    procedure Initialize
-    (Self     : in out AWS_Servlet_Request'Class;
-     Data     : AWS.Status.Data;
-     Response :
-       not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access)
+    (Self : in out AWS_Servlet_Request'Class;
+     Data : AWS.Status.Data)
    is
       Path : constant League.String_Vectors.Universal_String_Vector
         := League.Strings.From_UTF_8_String
@@ -204,9 +202,9 @@ package body Matreshka.Servlet_AWS_Requests is
 
       --  Initialize object.
 
-      Matreshka.Servlet_HTTP_Requests.Initialize (Self, URL, Response);
+      Matreshka.Servlet_HTTP_Requests.Initialize (Self, URL);
       Self.Request := Data;
-      Self.Data := Self.Data_Storage'Unchecked_Access;
+      Self.Data    := Self.Data_Storage'Unchecked_Access;
    end Initialize;
 
    ------------------------

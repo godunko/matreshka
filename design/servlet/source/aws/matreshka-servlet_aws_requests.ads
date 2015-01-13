@@ -47,7 +47,6 @@ private with League.String_Vectors;
 private with League.Strings;
 
 with Matreshka.Servlet_HTTP_Requests;
-with Matreshka.Servlet_HTTP_Responses;
 private with Servlet.HTTP_Cookie_Sets;
 with Servlet.HTTP_Requests;
 
@@ -58,10 +57,8 @@ package Matreshka.Servlet_AWS_Requests is
        with private;
 
    procedure Initialize
-    (Self     : in out AWS_Servlet_Request'Class;
-     Data     : AWS.Status.Data;
-     Response :
-       not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
+    (Self : in out AWS_Servlet_Request'Class;
+     Data : AWS.Status.Data);
    --  Initialize object to obtain information from given data object of AWS.
 
    procedure Finalize (Self : in out AWS_Servlet_Request'Class);

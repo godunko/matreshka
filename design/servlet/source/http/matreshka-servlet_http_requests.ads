@@ -52,7 +52,6 @@ with League.Strings;
 with Servlet.HTTP_Requests;
 with Servlet.HTTP_Sessions;
 with Servlet.Contexts;
-with Matreshka.Servlet_HTTP_Responses;
 with Matreshka.Servlet_Sessions;
 
 package Matreshka.Servlet_HTTP_Requests is
@@ -67,10 +66,8 @@ package Matreshka.Servlet_HTTP_Requests is
      access all Abstract_HTTP_Servlet_Request'Class;
 
    procedure Initialize
-    (Self     : in out Abstract_HTTP_Servlet_Request'Class;
-     URL      : League.IRIs.IRI;
-     Response :
-       not null Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
+    (Self : in out Abstract_HTTP_Servlet_Request'Class;
+     URL  : League.IRIs.IRI);
    --  Initialized path of the object and corresponsing respose object.
 
    procedure Set_Session_Manager
@@ -191,8 +188,8 @@ private
       Servlet_Last    : Natural  := 0;
       --  Path information computed during request dispatching.
       Context         : Servlet.Contexts.Servlet_Context_Access;
-      Response        :
-        Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access;
+--      Response        :
+--        Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access;
       --  Response object to be used when necessay (for example to send cookie
       --  with session identifier to client).
       Session_Manager : Matreshka.Servlet_Sessions.Session_Manager_Access;

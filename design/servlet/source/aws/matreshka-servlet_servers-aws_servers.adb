@@ -119,10 +119,14 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
           := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
 
    begin
-      Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request'Class
-       (Servlet_Request.all).Initialize (Request, Servlet_Response);
-      Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class
-       (Servlet_Response.all).Initialize;
+      Matreshka.Servlet_AWS_Requests.Initialize
+       (Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request'Class
+         (Servlet_Request.all),
+        Request);
+      Matreshka.Servlet_AWS_Responses.Initialize
+       (Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class
+         (Servlet_Response.all),
+        Servlet_Request);
 
       Container.Dispatch (Servlet_Request, Servlet_Response);
 
