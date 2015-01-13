@@ -108,6 +108,13 @@ package Servlet.HTTP_Requests is
    --
    --  Same as the value of the CGI variable PATH_INFO.
 
+   not overriding function Get_Requested_Session_Id
+    (Self : HTTP_Servlet_Request)
+       return League.Strings.Universal_String is abstract;
+   --  Returns the session ID specified by the client. This may not be the same
+   --  as the ID of the current valid session for this request. If the client
+   --  did not specify a session ID, this method returns null.
+
    not overriding function Get_Servlet_Path
     (Self : HTTP_Servlet_Request)
        return League.String_Vectors.Universal_String_Vector is abstract;
@@ -137,4 +144,10 @@ package Servlet.HTTP_Requests is
    --  session when the response is committed, an IllegalStateException is
    --  thrown.
 
+   not overriding function Is_Requested_Session_Id_Valid
+    (Self : HTTP_Servlet_Request) return Boolean is abstract;
+   --  Checks whether the requested session ID is still valid.
+   --
+   --  If the client did not specify any session ID, this method returns false.
+     
 end Servlet.HTTP_Requests;

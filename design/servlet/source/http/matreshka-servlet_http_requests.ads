@@ -117,6 +117,13 @@ package Matreshka.Servlet_HTTP_Requests is
    --  servlet path but precedes the query string and will start with a "/"
    --  character.
 
+   overriding function Get_Requested_Session_Id
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.Strings.Universal_String;
+   --  Returns the session ID specified by the client. This may not be the same
+   --  as the ID of the current valid session for this request. If the client
+   --  did not specify a session ID, this method returns null.
+
    overriding function Get_Scheme
     (Self : Abstract_HTTP_Servlet_Request)
        return League.Strings.Universal_String;
@@ -158,14 +165,22 @@ package Matreshka.Servlet_HTTP_Requests is
    --  Returns the current HttpSession associated with this request or, if
    --  there is no current session and create is true, returns a new session.
 
+   overriding function Is_Requested_Session_Id_Valid
+    (Self : Abstract_HTTP_Servlet_Request) return Boolean;
+   --  Checks whether the requested session ID is still valid.
+
 private
 
    type HTTP_Session_Access is
      access all Servlet.HTTP_Sessions.HTTP_Session'Class;
 
    type Internal_Data is record
-      Session_Computed : Boolean := False;
-      Session          : HTTP_Session_Access;
+      Session_Computed      : Boolean := False;
+      Session               : HTTP_Session_Access;
+
+      Requested_Id_Computed : Boolean := False;
+      Requested_Id          : League.Strings.Universal_String;
+      --  Cache for requested session id
    end record;
 
    type Abstract_HTTP_Servlet_Request is

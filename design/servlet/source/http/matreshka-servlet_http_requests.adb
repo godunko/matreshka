@@ -84,6 +84,34 @@ package body Matreshka.Servlet_HTTP_Requests is
       return Path.Slice (Self.Servlet_Last + 1, Path.Length);
    end Get_Path_Info;
 
+   ------------------------------
+   -- Get_Requested_Session_Id --
+   ------------------------------
+
+   overriding function Get_Requested_Session_Id
+    (Self : Abstract_HTTP_Servlet_Request)
+       return League.Strings.Universal_String is
+   begin
+      if not Self.Data.Requested_Id_Computed then
+         --  Obtain session identifier from the request.
+
+         declare
+            Cookie : constant Servlet.HTTP_Cookies.Cookie
+              := Abstract_HTTP_Servlet_Request'Class (Self).Get_Cookie.Element
+                  (League.Strings.To_Universal_String ("MSID"));
+
+         begin
+            if not Cookie.Is_Empty then
+               Self.Data.Requested_Id := Cookie.Get_Value;
+            end if;
+
+            Self.Data.Requested_Id_Computed := True;
+         end;
+      end if;
+
+      return Self.Data.Requested_Id;
+   end Get_Requested_Session_Id;
+
    ----------------
    -- Get_Scheme --
    ----------------
@@ -156,23 +184,22 @@ package body Matreshka.Servlet_HTTP_Requests is
          return Self.Data.Session;
       end if;
 
-      --  Check whether session identifier was passed in HTTP cookie and
-      --  reconstruct session.
-
       declare
-         Cookie      : Servlet.HTTP_Cookies.Cookie
-           := Abstract_HTTP_Servlet_Request'Class (Self).Get_Cookie.Element
-               (League.Strings.To_Universal_String ("MSID"));
-         Identifier  : Matreshka.Servlet_Sessions.Session_Identifier;
-         SID_Decoded : Boolean := False;
+         Identifier_Image : constant League.Strings.Universal_String
+           := Self.Get_Requested_Session_Id;
+         Identifier       : Matreshka.Servlet_Sessions.Session_Identifier;
+         SID_Decoded      : Boolean := False;
 
       begin
-         if not Cookie.Is_Empty then
+         --  Check whether session identifier was passed in HTTP cookie and
+         --  attempt to reconstruct session.
+
+         if not Identifier_Image.Is_Empty then
             --  Decode session identifier specified in request. Detect and
             --  report security event if this conversion fails.
 
             Matreshka.Servlet_Sessions.To_Session_Identifier
-             (Cookie.Get_Value, Identifier, SID_Decoded);
+             (Identifier_Image, Identifier, SID_Decoded);
 
             if SID_Decoded then
                Self.Data.Session :=
@@ -233,6 +260,22 @@ package body Matreshka.Servlet_HTTP_Requests is
       Self.Response := Response;
       Self.Data     := Self.Storage'Unchecked_Access;
    end Initialize;
+
+   -----------------------------------
+   -- Is_Requested_Session_Id_Valid --
+   -----------------------------------
+
+   overriding function Is_Requested_Session_Id_Valid
+    (Self : Abstract_HTTP_Servlet_Request) return Boolean
+   is
+      use type League.Strings.Universal_String;
+
+   begin
+      return
+        Self.Data.Requested_Id_Computed
+          and then Self.Data.Session /= null
+          and then Self.Data.Session.Get_Id = Self.Data.Requested_Id;
+   end Is_Requested_Session_Id_Valid;
 
    ------------------------------
    -- Set_Context_Last_Segment --
