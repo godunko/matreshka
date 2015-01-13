@@ -45,6 +45,7 @@ with Ada.Strings.Unbounded;
 
 with AWS.Headers.Values;
 with AWS.Messages;
+with AWS.Parameters;
 with AWS.URL;
 
 with League.Strings;
@@ -153,21 +154,16 @@ package body Matreshka.Servlet_AWS_Requests is
      Name : League.Strings.Universal_String)
        return League.String_Vectors.Universal_String_Vector
    is
-      N      : constant String := Name.To_UTF_8_String;
-      Aux    : League.Strings.Universal_String;
-      Result : League.String_Vectors.Universal_String_Vector;
-      Index  : Positive := 1;
+      Values : constant AWS.Parameters.VString_Array
+        := AWS.Parameters.Get_Values
+            (AWS.Status.Parameters (Self.Request), Name.To_UTF_8_String);
+      Result     : League.String_Vectors.Universal_String_Vector;
 
    begin
-      loop
-         Aux :=
-           League.Strings.From_UTF_8_String
-            (AWS.Status.Parameter (Self.Request, N, Index));
-
-         exit when Aux.Is_Empty;
-
-         Result.Append (Aux);
-         Index := Index + 1;
+      for Value of Values loop
+         Result.Append
+          (League.Strings.From_UTF_8_String
+            (Ada.Strings.Unbounded.To_String (Value)));
       end loop;
 
       return Result;
