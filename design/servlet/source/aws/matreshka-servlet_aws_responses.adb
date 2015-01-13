@@ -107,7 +107,15 @@ package body Matreshka.Servlet_AWS_Responses is
 
    overriding procedure Add_Cookie
     (Self   : in out AWS_Servlet_Response;
-     Cookie : Servlet.HTTP_Cookies.Cookie) is
+     Cookie : Servlet.HTTP_Cookies.Cookie)
+   is
+      Path     : constant League.Strings.Universal_String := Cookie.Get_Path;
+      AWS_Path : constant League.Strings.Universal_String
+        := (if Path.Is_Empty
+              then League.Strings.To_Universal_String ("/")
+              else Path);
+      --  AWS sends Path attributes always, so set its value to root.
+
    begin
       AWS.Cookie.Set
        (Content => Self.Data,
@@ -118,7 +126,7 @@ package body Matreshka.Servlet_AWS_Responses is
         --  XXX Must be encoded when containts non-ASCII characters.
         Max_Age => AWS.Cookie.No_Max_Age,
         --  XXX Not supported yet.
-        Path    => Cookie.Get_Path.To_UTF_8_String,
+        Path    => AWS_Path.To_UTF_8_String,
         Secure  => Cookie.Get_Secure);
    end Add_Cookie;
 
