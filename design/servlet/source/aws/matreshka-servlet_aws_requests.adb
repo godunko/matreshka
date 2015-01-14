@@ -178,15 +178,19 @@ package body Matreshka.Servlet_AWS_Requests is
     (Self : in out AWS_Servlet_Request'Class;
      Data : AWS.Status.Data)
    is
-      Path : constant League.String_Vectors.Universal_String_Vector
+      Headers   : constant AWS.Headers.List := AWS.Status.Header (Data);
+      Path      : constant League.String_Vectors.Universal_String_Vector
         := League.Strings.From_UTF_8_String
             (AWS.Status.URI (Data)).Split ('/', League.Strings.Skip_Empty);
       --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
       --  should be handled here.
       --  XXX Use of UTF-9 to encode URI by AWS should be checked.
-      Port : constant String := AWS.URL.Port (AWS.Status.URI (Data));
+      AWS_Port  : constant String
+        := AWS.URL.Port_Not_Default (AWS.Status.URI (Data));
+      Host      : League.Strings.Universal_String;
+      Delimiter : Natural;
 
-      URL  : League.IRIs.IRI;
+      URL       : League.IRIs.IRI;
 
    begin
       --  Reconstruct request's URL.
@@ -194,10 +198,41 @@ package body Matreshka.Servlet_AWS_Requests is
       URL.Set_Scheme
        (League.Strings.From_UTF_8_String
          (AWS.URL.Protocol_Name (AWS.Status.URI (Data))));
-      URL.Set_Host
-       (League.Strings.From_UTF_8_String
-         (AWS.URL.Host (AWS.Status.URI (Data))));
-      URL.Set_Port (AWS.URL.Port (AWS.Status.URI (Data)));
+
+      if AWS.Headers.Exist (Headers, AWS.Messages.Host_Token) then
+         --  When 'Host' header exists use its content to specify host and port
+         --  components of original URL.
+
+         Host :=
+           League.Strings.From_UTF_8_String
+            (AWS.Headers.Get (Headers, AWS.Messages.Host_Token));
+         Delimiter := Host.Index (':');
+
+         if Delimiter /= 0 then
+            URL.Set_Host (Host.Head_To (Delimiter - 1));
+            URL.Set_Port
+             (Integer'Wide_Wide_Value
+               (Host.Tail_From (Delimiter + 1).To_Wide_Wide_String));
+
+         else
+            URL.Set_Host (Host);
+         end if;
+
+      else
+         --  Otherwise (with old HTTP 1.0 client) fallback to host:port data
+         --  provided by AWS. As of AWS 3.1 this is address of socket where AWS
+         --  accepts connections, so it is incorrect in case of work in
+         --  internal network behind proxy/load balancer.
+
+         URL.Set_Host
+          (League.Strings.From_UTF_8_String
+            (AWS.URL.Host (AWS.Status.URI (Data))));
+
+         if AWS_Port'Length /= 0 then
+            URL.Set_Port (Integer'Value (AWS_Port));
+         end if;
+      end if;
+
       URL.Set_Absolute_Path (Path);
 
       --  Initialize object.
