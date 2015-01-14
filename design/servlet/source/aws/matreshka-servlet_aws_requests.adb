@@ -158,7 +158,7 @@ package body Matreshka.Servlet_AWS_Requests is
       Values : constant AWS.Parameters.VString_Array
         := AWS.Parameters.Get_Values
             (AWS.Status.Parameters (Self.Request), Name.To_UTF_8_String);
-      Result     : League.String_Vectors.Universal_String_Vector;
+      Result : League.String_Vectors.Universal_String_Vector;
 
    begin
       for Value of Values loop
