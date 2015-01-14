@@ -179,14 +179,14 @@ package body Matreshka.Servlet_AWS_Requests is
      Data : AWS.Status.Data)
    is
       Headers   : constant AWS.Headers.List := AWS.Status.Header (Data);
+      AWS_URI   : constant AWS.URL.Object := AWS.Status.URI (Data);
+      Protocol  : constant String := AWS.URL.Protocol_Name (AWS_URI);
       Path      : constant League.String_Vectors.Universal_String_Vector
         := League.Strings.From_UTF_8_String
             (AWS.Status.URI (Data)).Split ('/', League.Strings.Skip_Empty);
       --  XXX HTTP protocol uses some protocol specific escaping sequnces, they
       --  should be handled here.
       --  XXX Use of UTF-9 to encode URI by AWS should be checked.
-      AWS_Port  : constant String
-        := AWS.URL.Port_Not_Default (AWS.Status.URI (Data));
       Host      : League.Strings.Universal_String;
       Delimiter : Natural;
 
@@ -195,9 +195,7 @@ package body Matreshka.Servlet_AWS_Requests is
    begin
       --  Reconstruct request's URL.
 
-      URL.Set_Scheme
-       (League.Strings.From_UTF_8_String
-         (AWS.URL.Protocol_Name (AWS.Status.URI (Data))));
+      URL.Set_Scheme (League.Strings.From_UTF_8_String (Protocol));
 
       if AWS.Headers.Exist (Headers, AWS.Messages.Host_Token) then
          --  When 'Host' header exists use its content to specify host and port
@@ -216,6 +214,18 @@ package body Matreshka.Servlet_AWS_Requests is
 
          else
             URL.Set_Host (Host);
+
+            --  Default port was used by client. It depends from protocol.
+
+            if Protocol = "http" then
+               URL.Set_Port (80);
+
+            elsif Protocol = "https" then
+               URL.Set_Port (443);
+
+            else
+               raise Program_Error;
+            end if;
          end if;
 
       else
@@ -225,12 +235,8 @@ package body Matreshka.Servlet_AWS_Requests is
          --  internal network behind proxy/load balancer.
 
          URL.Set_Host
-          (League.Strings.From_UTF_8_String
-            (AWS.URL.Host (AWS.Status.URI (Data))));
-
-         if AWS_Port'Length /= 0 then
-            URL.Set_Port (Integer'Value (AWS_Port));
-         end if;
+          (League.Strings.From_UTF_8_String (AWS.URL.Host (AWS_URI)));
+         URL.Set_Port (AWS.URL.Port (AWS_URI));
       end if;
 
       URL.Set_Absolute_Path (Path);
