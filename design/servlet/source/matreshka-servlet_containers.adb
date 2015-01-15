@@ -209,7 +209,7 @@ package body Matreshka.Servlet_Containers is
      Path : League.Strings.Universal_String)
        return League.Strings.Universal_String is
    begin
-      return "source/web" & Path;
+      return "install" & Path;
    end Get_Real_Path;
 
    -------------------------
