@@ -189,6 +189,9 @@ package body Matreshka.Servlet_Containers is
       if Path.Ends_With (".css") then
          return League.Strings.To_Universal_String ("text/css");
 
+      elsif Path.Ends_With (".js") then
+         return League.Strings.To_Universal_String ("text/javascript");
+
       elsif Path.Ends_With (".png") then
          return League.Strings.To_Universal_String ("image/png");
 
