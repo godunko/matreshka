@@ -109,6 +109,28 @@ package body Matreshka.Servlet_AWS_Requests is
       end;
    end Get_Cookies;
 
+   -----------------
+   -- Get_Headers --
+   -----------------
+
+   overriding function Get_Headers
+    (Self : AWS_Servlet_Request;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector
+   is
+      N       : constant String := Name.To_UTF_8_String;
+      Headers : constant AWS.Headers.List := AWS.Status.Header (Self.Request);
+      Result  : League.String_Vectors.Universal_String_Vector;
+
+   begin
+      for J in 1 .. AWS.Headers.Count (Headers, N) loop
+         Result.Append
+          (League.Strings.From_UTF_8_String (AWS.Headers.Get (Headers, N, J)));
+      end loop;
+
+      return Result;
+   end Get_Headers;
+
    ----------------
    -- Get_Method --
    ----------------

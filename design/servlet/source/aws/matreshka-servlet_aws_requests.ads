@@ -86,6 +86,13 @@ private
    --  Returns an array containing all of the Cookie objects the client sent
    --  with this request. This method returns null if no cookies were sent.
 
+   overriding function Get_Headers
+    (Self : AWS_Servlet_Request;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns all the values of the specified request header as an Enumeration
+   --  of String objects.
+
    overriding function Get_Method
     (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method;
    --  Returns the name of the HTTP method with which this request was made,

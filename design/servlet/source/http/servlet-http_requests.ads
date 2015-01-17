@@ -89,6 +89,21 @@ package Servlet.HTTP_Requests is
    --  Returns an array containing all of the Cookie objects the client sent
    --  with this request. This method returns null if no cookies were sent.
 
+   not overriding function Get_Headers
+    (Self : HTTP_Servlet_Request;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector is abstract;
+   --  Returns all the values of the specified request header as an Enumeration
+   --  of String objects.
+   --
+   --  Some headers, such as Accept-Language can be sent by clients as several
+   --  headers each with a different value rather than sending the header as a
+   --  comma separated list.
+   --
+   --  If the request did not include any headers of the specified name, this
+   --  method returns an empty Enumeration. The header name is case
+   --  insensitive. You can use this method with any request header.
+
    not overriding function Get_Method
     (Self : HTTP_Servlet_Request) return HTTP_Method is abstract;
    --  Returns the name of the HTTP method with which this request was made,
