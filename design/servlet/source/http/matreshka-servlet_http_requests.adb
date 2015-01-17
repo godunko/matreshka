@@ -97,7 +97,7 @@ package body Matreshka.Servlet_HTTP_Requests is
 
          declare
             Cookie : constant Servlet.HTTP_Cookies.Cookie
-              := Abstract_HTTP_Servlet_Request'Class (Self).Get_Cookie.Element
+              := Abstract_HTTP_Servlet_Request'Class (Self).Get_Cookies.Element
                   (League.Strings.To_Universal_String ("MSID"));
 
          begin

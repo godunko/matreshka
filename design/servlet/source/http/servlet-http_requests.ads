@@ -83,7 +83,7 @@ package Servlet.HTTP_Requests is
    --  returned by ServletContext.getContextPath() should be considered as the
    --  prime or preferred context path of the application.
 
-   not overriding function Get_Cookie
+   not overriding function Get_Cookies
     (Self : HTTP_Servlet_Request)
        return Servlet.HTTP_Cookie_Sets.Cookie_Set is abstract;
    --  Returns an array containing all of the Cookie objects the client sent

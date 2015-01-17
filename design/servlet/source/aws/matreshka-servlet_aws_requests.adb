@@ -68,7 +68,7 @@ package body Matreshka.Servlet_AWS_Requests is
    -- Get_Cookie --
    ----------------
 
-   overriding function Get_Cookie
+   overriding function Get_Cookies
     (Self : AWS_Servlet_Request)
        return Servlet.HTTP_Cookie_Sets.Cookie_Set is
    begin
@@ -107,7 +107,7 @@ package body Matreshka.Servlet_AWS_Requests is
 
          return Self.Data.Cookies;
       end;
-   end Get_Cookie;
+   end Get_Cookies;
 
    ----------------
    -- Get_Method --

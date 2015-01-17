@@ -80,7 +80,7 @@ private
       Data_Storage : aliased Internal_Cache;
    end record;
 
-   overriding function Get_Cookie
+   overriding function Get_Cookies
     (Self : AWS_Servlet_Request)
        return Servlet.HTTP_Cookie_Sets.Cookie_Set;
    --  Returns an array containing all of the Cookie objects the client sent
