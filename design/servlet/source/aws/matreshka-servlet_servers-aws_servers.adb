@@ -42,11 +42,11 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Synchronous_Task_Control;
-with Ada.Unchecked_Deallocation;
 
 with GNAT.Ctrl_C;
 
 with AWS.Config.Set;
+with AWS.Net.WebSocket.Registry;
 with AWS.Response;
 with AWS.Server.Log;
 with AWS.Status;
@@ -59,6 +59,7 @@ with Matreshka.Servlet_AWS_Responses;
 with Matreshka.Servlet_Containers;
 with Matreshka.Servlet_HTTP_Requests;
 with Matreshka.Servlet_HTTP_Responses;
+with Servlet.HTTP_Responses;
 with Servlet.Responses;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
@@ -79,6 +80,11 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
     (Request : AWS.Status.Data) return AWS.Response.Data;
    --  Handles request.
 
+   function WebSocket_Callback
+    (Socket  : AWS.Net.Socket_Access;
+     Request : AWS.Status.Data) return AWS.Net.WebSocket.Object'Class;
+   --  Handles request of WebSocket connection.
+
    ----------------
    -- Initialize --
    ----------------
@@ -90,6 +96,7 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
       AWS.Server.Log.Start (Server);
       AWS.Server.Log.Start_Error (Server);
       AWS.Server.Start (Server, Request_Callback'Access, Config);
+      AWS.Net.WebSocket.Registry.Register ("/*", WebSocket_Callback'Access);
       Shutdown_Controller.Start;
    end Initialize;
 
@@ -100,44 +107,21 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    function Request_Callback
     (Request : AWS.Status.Data) return AWS.Response.Data
    is
-      procedure Free is
-        new Ada.Unchecked_Deallocation
-             (Matreshka.Servlet_HTTP_Requests
-                .Abstract_HTTP_Servlet_Request'Class,
-              Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access);
-      procedure Free is
-        new Ada.Unchecked_Deallocation
-             (Matreshka.Servlet_HTTP_Responses
-                .Abstract_HTTP_Servlet_Response'Class,
-              Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access);
-
       Servlet_Request  :
-        Matreshka.Servlet_HTTP_Requests.HTTP_Servlet_Request_Access
-          := new Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
+        aliased Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
       Servlet_Response :
-        Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access
-          := new Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
+        aliased Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
 
    begin
-      Matreshka.Servlet_AWS_Requests.Initialize
-       (Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request'Class
-         (Servlet_Request.all),
-        Request);
+      Matreshka.Servlet_AWS_Requests.Initialize (Servlet_Request, Request);
       Matreshka.Servlet_AWS_Responses.Initialize
-       (Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class
-         (Servlet_Response.all),
-        Servlet_Request);
+       (Servlet_Response, Servlet_Request'Unchecked_Access);
 
-      Container.Dispatch (Servlet_Request, Servlet_Response);
+      Container.Dispatch
+       (Servlet_Request'Unchecked_Access, Servlet_Response'Unchecked_Access);
 
-      return Result : constant AWS.Response.Data
-        := Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response'Class
-            (Servlet_Response.all).Build
-      do
-         Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request
-          (Servlet_Request.all).Finalize;
-         Free (Servlet_Request);
-         Free (Servlet_Response);
+      return Result : constant AWS.Response.Data := Servlet_Response.Build do
+         Servlet_Request.Finalize;
       end return;
    end Request_Callback;
 
@@ -185,5 +169,42 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    begin
       Ada.Synchronous_Task_Control.Set_True (Shutdown_Request);
    end Shutdown_Request_Handler;
+
+   ------------------------
+   -- WebSocket_Callback --
+   ------------------------
+
+   function WebSocket_Callback
+    (Socket  : AWS.Net.Socket_Access;
+     Request : AWS.Status.Data) return AWS.Net.WebSocket.Object'Class
+   is
+      use type Servlet.HTTP_Responses.Status_Code;
+
+      Servlet_Request  :
+        aliased Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
+      Servlet_Response :
+        aliased Matreshka.Servlet_AWS_Responses.AWS_Servlet_Response;
+
+   begin
+      Matreshka.Servlet_AWS_Requests.Initialize (Servlet_Request, Request);
+      Matreshka.Servlet_AWS_Responses.Initialize
+       (Servlet_Response, Servlet_Request'Unchecked_Access);
+
+      Container.Dispatch
+       (Servlet_Request'Unchecked_Access, Servlet_Response'Unchecked_Access);
+
+      if Servlet_Response.Get_Status
+           = Servlet.HTTP_Responses.Switching_Protocols
+      then
+         Servlet_Request.Finalize;
+
+         return AWS.Net.WebSocket.Create (Socket, Request);
+
+      else
+         Servlet_Request.Finalize;
+
+         raise Program_Error;
+      end if;
+   end WebSocket_Callback;
 
 end Matreshka.Servlet_Servers.AWS_Servers;
