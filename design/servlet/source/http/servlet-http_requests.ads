@@ -52,6 +52,7 @@ with League.Strings;
 
 with Servlet.HTTP_Cookie_Sets;
 with Servlet.HTTP_Sessions;
+with Servlet.HTTP_Upgrade_Handlers;
 with Servlet.Requests;
 
 package Servlet.HTTP_Requests is
@@ -149,5 +150,12 @@ package Servlet.HTTP_Requests is
    --  Checks whether the requested session ID is still valid.
    --
    --  If the client did not specify any session ID, this method returns false.
-     
+
+   not overriding procedure Upgrade
+    (Self    : HTTP_Servlet_Request;
+     Handler :
+       not null Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access)
+         is abstract;
+   --  Uses given upgrade handler for the http protocol upgrade processing.
+
 end Servlet.HTTP_Requests;

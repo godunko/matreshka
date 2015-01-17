@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,72 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with AWS.Status;
 
-private with League.String_Vectors;
-private with League.Strings;
+package Servlet.HTTP_Upgrade_Handlers is
 
-with Matreshka.Servlet_HTTP_Requests;
-private with Servlet.HTTP_Cookie_Sets;
-with Servlet.HTTP_Requests;
-with Servlet.HTTP_Upgrade_Handlers;
+   pragma Preelaborate;
 
-package Matreshka.Servlet_AWS_Requests is
+   type HTTP_Upgrade_Handler is limited interface;
 
-   type AWS_Servlet_Request is
-     new Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request
-       with private;
+   type HTTP_Upgrade_Handler_Access is access all HTTP_Upgrade_Handler'Class;
 
-   procedure Initialize
-    (Self : in out AWS_Servlet_Request'Class;
-     Data : AWS.Status.Data);
-   --  Initialize object to obtain information from given data object of AWS.
-
-   procedure Finalize (Self : in out AWS_Servlet_Request'Class);
-   --  Deallocate internal data.
-
-private
-
-   type Internal_Cache is record
-      Cookies          : Servlet.HTTP_Cookie_Sets.Cookie_Set;
-      Cookies_Computed : Boolean := False;
-   end record;
-
-   type AWS_Servlet_Request is
-     new Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request with
-   record
-      Request      : AWS.Status.Data;
-      Data         : access Internal_Cache;
-      Data_Storage : aliased Internal_Cache;
-   end record;
-
-   overriding function Get_Cookie
-    (Self : AWS_Servlet_Request)
-       return Servlet.HTTP_Cookie_Sets.Cookie_Set;
-   --  Returns an array containing all of the Cookie objects the client sent
-   --  with this request. This method returns null if no cookies were sent.
-
-   overriding function Get_Method
-    (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method;
-   --  Returns the name of the HTTP method with which this request was made,
-   --  for example, GET, POST, or PUT. Same as the value of the CGI variable
-   --  REQUEST_METHOD.
-
-   overriding function Get_Parameter_Values
-    (Self : AWS_Servlet_Request;
-     Name : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector;
-   --  Returns an array of String objects containing all of the values the
-   --  given request parameter has, or null if the parameter does not exist.
-
-   overriding function Is_Async_Supported
-    (Self : not null access AWS_Servlet_Request) return Boolean;
-   --  Checks if this request supports asynchronous operation.
-
-   overriding procedure Upgrade
-    (Self    : AWS_Servlet_Request;
-     Handler :
-       not null Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access);
-   --  Uses given upgrade handler for the http protocol upgrade processing.
-
-end Matreshka.Servlet_AWS_Requests;
+end Servlet.HTTP_Upgrade_Handlers;

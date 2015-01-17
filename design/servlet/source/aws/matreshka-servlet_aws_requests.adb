@@ -263,4 +263,16 @@ package body Matreshka.Servlet_AWS_Requests is
       return False;
    end Is_Async_Supported;
 
+   -------------
+   -- Upgrade --
+   -------------
+
+   overriding procedure Upgrade
+    (Self    : AWS_Servlet_Request;
+     Handler :
+       not null Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access) is
+   begin
+      null;
+   end Upgrade;
+
 end Matreshka.Servlet_AWS_Requests;
