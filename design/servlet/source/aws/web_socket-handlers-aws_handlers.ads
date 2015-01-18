@@ -41,12 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Strings.Unbounded;
+private with Ada.Strings.Unbounded;
 
 with AWS.Net.WebSocket;
 with AWS.Status;
 
-with League.Strings;
+private with League.Stream_Element_Vectors;
+private with League.Strings;
 
 package Web_Socket.Handlers.AWS_Handlers is
 
@@ -69,17 +70,13 @@ private
       Socket : access AWS_Web_Socket'Class;
    end record;
 
-   overriding procedure Send
+   overriding procedure Send_Text
     (Self : in out AWS_Web_Socket_Handler;
      Text : League.Strings.Universal_String);
 
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : Ada.Streams.Stream_Element_Array) is abstract;
---
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : League.Stream_Element_Vectors.Stream_Element_Vector) is abstract;
+   overriding procedure Send_Binary
+    (Self : in out AWS_Web_Socket_Handler;
+     Data : League.Stream_Element_Vectors.Stream_Element_Vector);
 
    type AWS_Web_Socket is new AWS.Net.WebSocket.Object with record
       Handler : AWS_Web_Socket_Handler_Access;

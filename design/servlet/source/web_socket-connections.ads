@@ -41,8 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Streams;
-
 with League.Stream_Element_Vectors;
 with League.Strings;
 
@@ -59,16 +57,12 @@ package Web_Socket.Connections is
      Listener : not null Web_Socket.Listeners.Web_Socket_Listener_Access)
        is abstract;
 
-   not overriding procedure Send
+   not overriding procedure Send_Text
     (Self : in out Connection;
      Text : League.Strings.Universal_String) is abstract;
 
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : Ada.Streams.Stream_Element_Array) is abstract;
---
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : League.Stream_Element_Vectors.Stream_Element_Vector) is abstract;
+   not overriding procedure Send_Binary
+    (Self : in out Connection;
+     Data : League.Stream_Element_Vectors.Stream_Element_Vector) is abstract;
 
 end Web_Socket.Connections;

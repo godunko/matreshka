@@ -180,16 +180,31 @@ package body Web_Socket.Handlers.AWS_Handlers is
       end if;
    end On_Open;
 
-   ----------
-   -- Send --
-   ----------
+   -----------------
+   -- Send_Binary --
+   -----------------
 
-   overriding procedure Send
+   overriding procedure Send_Binary
+    (Self : in out AWS_Web_Socket_Handler;
+     Data : League.Stream_Element_Vectors.Stream_Element_Vector) is
+   begin
+      Self.Socket.Send
+       (Message   => Data.To_Stream_Element_Array,
+        Is_Binary => True);
+   end Send_Binary;
+
+   ---------------
+   -- Send_Text --
+   ---------------
+
+   overriding procedure Send_Text
     (Self : in out AWS_Web_Socket_Handler;
      Text : League.Strings.Universal_String) is
    begin
-      null;
-   end Send;
+      Self.Socket.Send
+       (Message   => Text.To_UTF_8_String,
+        Is_Binary => False);
+   end Send_Text;
 
 begin
    Constructor := Create'Access;
