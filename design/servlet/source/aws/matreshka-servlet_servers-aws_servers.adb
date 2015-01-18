@@ -46,7 +46,7 @@ with Ada.Synchronous_Task_Control;
 with GNAT.Ctrl_C;
 
 with AWS.Config.Set;
-with AWS.Net.WebSocket.Registry;
+with AWS.Net.WebSocket.Registry.Control;
 with AWS.Response;
 with AWS.Server.Log;
 with AWS.Status;
@@ -60,7 +60,9 @@ with Matreshka.Servlet_Containers;
 with Matreshka.Servlet_HTTP_Requests;
 with Matreshka.Servlet_HTTP_Responses;
 with Servlet.HTTP_Responses;
+with Servlet.HTTP_Upgrade_Handlers;
 with Servlet.Responses;
+with Web_Socket.Handlers.AWS_Handlers;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
 
@@ -96,7 +98,10 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
       AWS.Server.Log.Start (Server);
       AWS.Server.Log.Start_Error (Server);
       AWS.Server.Start (Server, Request_Callback'Access, Config);
+
       AWS.Net.WebSocket.Registry.Register ("/*", WebSocket_Callback'Access);
+      AWS.Net.WebSocket.Registry.Control.Start;
+
       Shutdown_Controller.Start;
    end Initialize;
 
@@ -179,6 +184,7 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
      Request : AWS.Status.Data) return AWS.Net.WebSocket.Object'Class
    is
       use type Servlet.HTTP_Responses.Status_Code;
+      use type Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access;
 
       Servlet_Request  :
         aliased Matreshka.Servlet_AWS_Requests.AWS_Servlet_Request;
@@ -195,10 +201,16 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
 
       if Servlet_Response.Get_Status
            = Servlet.HTTP_Responses.Switching_Protocols
+        and then Servlet_Request.Get_Upgrade_Handler /= null
       then
          Servlet_Request.Finalize;
 
-         return AWS.Net.WebSocket.Create (Socket, Request);
+         return
+           Web_Socket.Handlers.AWS_Handlers.Create
+            (Socket,
+             Request,
+             Web_Socket.Handlers.AWS_Handlers.AWS_Web_Socket_Handler_Access
+              (Servlet_Request.Get_Upgrade_Handler));
 
       else
          Servlet_Request.Finalize;

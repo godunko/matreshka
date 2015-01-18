@@ -41,34 +41,42 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Streams;
+with Servlet.HTTP_Upgrade_Handlers;
 
-with League.Stream_Element_Vectors;
-with League.Strings;
-
+with Web_Socket.Connections;
 with Web_Socket.Listeners;
 
-package Web_Socket.Connections is
+package Web_Socket.Handlers is
 
    pragma Preelaborate;
 
-   type Connection is limited interface;
+   type Web_Socket_Handler is
+     abstract limited new Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler
+       and Web_Socket.Connections.Connection with private;
 
-   not overriding procedure Set_Web_Socket_Listener
-    (Self     : in out Connection;
-     Listener : not null Web_Socket.Listeners.Web_Socket_Listener_Access)
-       is abstract;
+   overriding procedure Set_Web_Socket_Listener
+    (Self     : in out Web_Socket_Handler;
+     Listener : not null Web_Socket.Listeners.Web_Socket_Listener_Access);
 
-   not overriding procedure Send
-    (Self : in out Connection;
-     Text : League.Strings.Universal_String) is abstract;
+   package Constructors is
 
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : Ada.Streams.Stream_Element_Array) is abstract;
---
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : League.Stream_Element_Vectors.Stream_Element_Vector) is abstract;
+      function Create_Web_Socket return Web_Socket_Handler'Class;
+--      function Create_Web_Socket
+--        return Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler'Class;
 
-end Web_Socket.Connections;
+   end Constructors;
+
+private
+
+   type Web_Socket_Handler is
+     abstract limited new Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler
+       and Web_Socket.Connections.Connection with
+   record
+      Listener : Web_Socket.Listeners.Web_Socket_Listener_Access;
+   end record;
+
+   type Constructor_Access is access function return Web_Socket_Handler'Class;
+
+   Constructor : Constructor_Access;
+
+end Web_Socket.Handlers;

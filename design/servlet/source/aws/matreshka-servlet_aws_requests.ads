@@ -65,11 +65,17 @@ package Matreshka.Servlet_AWS_Requests is
    procedure Finalize (Self : in out AWS_Servlet_Request'Class);
    --  Deallocate internal data.
 
+   function Get_Upgrade_Handler
+    (Self : AWS_Servlet_Request'Class)
+       return Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access;
+
 private
 
    type Internal_Cache is record
       Cookies          : Servlet.HTTP_Cookie_Sets.Cookie_Set;
       Cookies_Computed : Boolean := False;
+      Upgrade          :
+        Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access;
    end record;
 
    type AWS_Servlet_Request is

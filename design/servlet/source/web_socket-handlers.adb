@@ -41,34 +41,37 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Streams;
 
-with League.Stream_Element_Vectors;
-with League.Strings;
+package body Web_Socket.Handlers is
 
-with Web_Socket.Listeners;
+   ------------------
+   -- Constructors --
+   ------------------
 
-package Web_Socket.Connections is
+   package body Constructors is
 
-   pragma Preelaborate;
+      -----------------------
+      -- Create_Web_Socket --
+      -----------------------
 
-   type Connection is limited interface;
+      function Create_Web_Socket return Web_Socket_Handler'Class is
+--      function Create_Web_Socket
+--        return Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler'Class is
+      begin
+         return Constructor.all;
+      end Create_Web_Socket;
 
-   not overriding procedure Set_Web_Socket_Listener
-    (Self     : in out Connection;
-     Listener : not null Web_Socket.Listeners.Web_Socket_Listener_Access)
-       is abstract;
+   end Constructors;
 
-   not overriding procedure Send
-    (Self : in out Connection;
-     Text : League.Strings.Universal_String) is abstract;
+   -----------------------------
+   -- Set_Web_Socket_Listener --
+   -----------------------------
 
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : Ada.Streams.Stream_Element_Array) is abstract;
---
---   not overriding procedure Send
---    (Self : in out Connection;
---     Data : League.Stream_Element_Vectors.Stream_Element_Vector) is abstract;
+   overriding procedure Set_Web_Socket_Listener
+    (Self     : in out Web_Socket_Handler;
+     Listener : not null Web_Socket.Listeners.Web_Socket_Listener_Access) is
+   begin
+      Self.Listener := Listener;
+   end Set_Web_Socket_Listener;
 
-end Web_Socket.Connections;
+end Web_Socket.Handlers;

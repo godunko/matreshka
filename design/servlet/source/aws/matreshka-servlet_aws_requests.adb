@@ -192,6 +192,17 @@ package body Matreshka.Servlet_AWS_Requests is
       return Result;
    end Get_Parameter_Values;
 
+   -------------------------
+   -- Get_Upgrade_Handler --
+   -------------------------
+
+   function Get_Upgrade_Handler
+    (Self : AWS_Servlet_Request'Class)
+       return Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access is
+   begin
+      return Self.Data.Upgrade;
+   end Get_Upgrade_Handler;
+
    ----------------
    -- Initialize --
    ----------------
@@ -294,7 +305,7 @@ package body Matreshka.Servlet_AWS_Requests is
      Handler :
        not null Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access) is
    begin
-      null;
+      Self.Data.Upgrade := Handler;
    end Upgrade;
 
 end Matreshka.Servlet_AWS_Requests;

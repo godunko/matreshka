@@ -41,27 +41,37 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Streams;
+with Ada.Strings.Unbounded;
 
-with League.Stream_Element_Vectors;
+with AWS.Net.WebSocket;
+with AWS.Status;
+
 with League.Strings;
 
-with Web_Socket.Listeners;
+package Web_Socket.Handlers.AWS_Handlers is
 
-package Web_Socket.Connections is
+   type AWS_Web_Socket_Handler is new Web_Socket_Handler with private;
 
-   pragma Preelaborate;
+   type AWS_Web_Socket_Handler_Access is
+     access all AWS_Web_Socket_Handler'Class;
 
-   type Connection is limited interface;
+   type AWS_Web_Socket is new AWS.Net.WebSocket.Object with private;
 
-   not overriding procedure Set_Web_Socket_Listener
-    (Self     : in out Connection;
-     Listener : not null Web_Socket.Listeners.Web_Socket_Listener_Access)
-       is abstract;
+   function Create
+    (Socket  : AWS.Net.Socket_Access;
+     Request : AWS.Status.Data;
+     Handler : not null AWS_Web_Socket_Handler_Access)
+       return AWS_Web_Socket'Class;
 
-   not overriding procedure Send
-    (Self : in out Connection;
-     Text : League.Strings.Universal_String) is abstract;
+private
+
+   type AWS_Web_Socket_Handler is new Web_Socket_Handler with record
+      Socket : access AWS_Web_Socket'Class;
+   end record;
+
+   overriding procedure Send
+    (Self : in out AWS_Web_Socket_Handler;
+     Text : League.Strings.Universal_String);
 
 --   not overriding procedure Send
 --    (Self : in out Connection;
@@ -71,4 +81,23 @@ package Web_Socket.Connections is
 --    (Self : in out Connection;
 --     Data : League.Stream_Element_Vectors.Stream_Element_Vector) is abstract;
 
-end Web_Socket.Connections;
+   type AWS_Web_Socket is new AWS.Net.WebSocket.Object with record
+      Handler : AWS_Web_Socket_Handler_Access;
+   end record;
+
+   overriding procedure Adjust (Self : in out AWS_Web_Socket);
+
+   overriding procedure On_Message
+    (Self    : in out AWS_Web_Socket;
+     Message : Ada.Strings.Unbounded.Unbounded_String);
+
+   overriding procedure On_Open
+    (Self : in out AWS_Web_Socket; Message : String);
+
+   overriding procedure On_Close
+    (Self : in out AWS_Web_Socket; Message : String);
+
+   overriding procedure On_Error
+    (Self : in out AWS_Web_Socket; Message : String);
+
+end Web_Socket.Handlers.AWS_Handlers;
