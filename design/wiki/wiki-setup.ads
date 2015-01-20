@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,12 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with XML.SAX.Writers;
+--  Configure default set of wiki parser capabilities.
+------------------------------------------------------------------------------
 
-package Forge.Types is
+package Wiki.Setup is
 
-   pragma Preelaborate;
+   pragma Elaborate_Body;
 
-   type SAX_Writer_Access is access all XML.SAX.Writers.SAX_Writer'Class;
-
-end Forge.Types;
+end Wiki.Setup;

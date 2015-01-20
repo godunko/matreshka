@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -40,10 +42,9 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
+with XML.SAX.Writers;
 
-with Forge.Types;
-
-private package Forge.Wiki.Block_Parsers is
+private package Wiki.Block_Parsers is
 
    pragma Preelaborate;
 
@@ -51,7 +52,7 @@ private package Forge.Wiki.Block_Parsers is
       Markup        : League.Strings.Universal_String;
       Markup_Offset : Natural;
       Text_Offset   : Positive;
-      Writer        : not null Forge.Types.SAX_Writer_Access;
+      Writer        : not null access XML.SAX.Writers.SAX_Writer'Class;
    end record;
 
    type End_Block_Action is
@@ -59,7 +60,7 @@ private package Forge.Wiki.Block_Parsers is
      Unwind);  --  Unwind block parsers stack and check with next block parser.
 
    type Abstract_Block_Parser is abstract tagged limited record
-      Writer : Forge.Types.SAX_Writer_Access;
+      Writer : access XML.SAX.Writers.SAX_Writer'Class;
    end record;
 
    type Block_Parser_Access is access all Abstract_Block_Parser'Class;
@@ -91,4 +92,4 @@ private package Forge.Wiki.Block_Parsers is
    --  Returns True when block element can be continued on next line. Default
    --  implementation returns True always.
 
-end Forge.Wiki.Block_Parsers;
+end Wiki.Block_Parsers;

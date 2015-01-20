@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -40,16 +42,36 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Forge.Wiki.Block_Parsers is
+package Wiki.Block_Parsers.Headers is
 
-   ----------------------
-   -- Can_Be_Continued --
-   ----------------------
+--   pragma Preelaborate;
 
-   not overriding function Can_Be_Continued
-    (Self : not null access constant Abstract_Block_Parser) return Boolean is
-   begin
-      return True;
-   end Can_Be_Continued;
+   type Header_Block_Parser is
+     new Wiki.Block_Parsers.Abstract_Block_Parser with record
+      Depth : Positive;
+   end record;
 
-end Forge.Wiki.Block_Parsers;
+   overriding function Start_Block
+    (Self     : not null access Header_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access;
+
+   overriding function End_Block
+    (Self : not null access Header_Block_Parser;
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action;
+
+   overriding procedure Line
+    (Self : not null access Header_Block_Parser;
+     Text : League.Strings.Universal_String);
+
+   overriding function Create
+    (Parameters : not null access Constructor_Parameters)
+       return Header_Block_Parser;
+
+   overriding function Can_Be_Continued
+    (Self : not null access constant Header_Block_Parser) return Boolean;
+   --  Returns False always. Header block element can occupy one line only.
+
+   procedure Register;
+   --  Registers block parser to handle headers.
+
+end Wiki.Block_Parsers.Headers;

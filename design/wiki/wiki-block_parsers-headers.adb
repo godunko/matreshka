@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,37 +41,111 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Wiki.Parsers;
 
-package Forge.Wiki.Block_Parsers.Headers is
+package body Wiki.Block_Parsers.Headers is
 
---   pragma Preelaborate;
+   HTML5_URI : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
+   H_Tag     : constant
+     array (Positive range 1 .. 6) of League.Strings.Universal_String
+       := (League.Strings.To_Universal_String ("h1"),
+           League.Strings.To_Universal_String ("h2"),
+           League.Strings.To_Universal_String ("h3"),
+           League.Strings.To_Universal_String ("h4"),
+           League.Strings.To_Universal_String ("h5"),
+           League.Strings.To_Universal_String ("h6"));
 
-   type Header_Block_Parser is
-     new Forge.Wiki.Block_Parsers.Abstract_Block_Parser with record
-      Depth : Positive;
-   end record;
+   ----------------------
+   -- Can_Be_Continued --
+   ----------------------
 
-   overriding function Start_Block
-    (Self     : not null access Header_Block_Parser;
-     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access;
+   overriding function Can_Be_Continued
+    (Self : not null access constant Header_Block_Parser) return Boolean is
+   begin
+      return False;
+   end Can_Be_Continued;
 
-   overriding function End_Block
-    (Self : not null access Header_Block_Parser;
-     Next : access Abstract_Block_Parser'Class) return End_Block_Action;
-
-   overriding procedure Line
-    (Self : not null access Header_Block_Parser;
-     Text : League.Strings.Universal_String);
+   ------------
+   -- Create --
+   ------------
 
    overriding function Create
     (Parameters : not null access Constructor_Parameters)
-       return Header_Block_Parser;
+       return Header_Block_Parser is
+   begin
+      return
+        Header_Block_Parser'
+         (Writer => Parameters.Writer,
+          Depth  => Integer'Min (Parameters.Markup.Length, 6));
+   end Create;
 
-   overriding function Can_Be_Continued
-    (Self : not null access constant Header_Block_Parser) return Boolean;
-   --  Returns False always. Header block element can occupy one line only.
+   ---------------
+   -- End_Block --
+   ---------------
 
-   procedure Register;
-   --  Registers block parser to handle headers.
+   overriding function End_Block
+    (Self : not null access Header_Block_Parser;
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action is
+   begin
+      Self.Writer.End_Element
+       (Local_Name    => H_Tag (Self.Depth),
+        Namespace_URI => HTML5_URI);
 
-end Forge.Wiki.Block_Parsers.Headers;
+      if Next /= null then
+         return Continue;
+
+      else
+         -- This is special case to simplify unwind of stack of block element
+         -- parsers at the end of the document processing.
+
+         return Unwind;
+      end if;
+   end End_Block;
+
+   ----------
+   -- Line --
+   ----------
+
+   overriding procedure Line
+    (Self : not null access Header_Block_Parser;
+     Text : League.Strings.Universal_String) is
+   begin
+      --  XXX trailing '='* must be removed first!!!
+
+      Self.Writer.Characters (Text);
+   end Line;
+
+   --------------
+   -- Register --
+   --------------
+
+   procedure Register is
+   begin
+      Wiki.Parsers.Register_Block_Parser
+       (League.Strings.To_Universal_String
+         ("^\p{White_Space}* (\=+) \p{White_Space}*"
+            & " (\P{White_Space}.*?) \p{White_Space}* \=*$"),
+        2,
+        1,
+        2,
+        Header_Block_Parser'Tag);
+   end Register;
+
+   -----------------
+   -- Start_Block --
+   -----------------
+
+   overriding function Start_Block
+    (Self     : not null access Header_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class)
+       return Block_Parser_Access is
+   begin
+      Self.Writer.Start_Element
+       (Local_Name    => H_Tag (Self.Depth),
+        Namespace_URI => HTML5_URI);
+
+      return null;
+   end Start_Block;
+
+end Wiki.Block_Parsers.Headers;

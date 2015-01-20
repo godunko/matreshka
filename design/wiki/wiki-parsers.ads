@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -44,11 +46,11 @@ with Ada.Tags;
 
 private with League.Regexps;
 with League.Strings;
+with XML.SAX.Writers;
 
-with Forge.Types;
-private with Forge.Wiki.Block_Parsers;
+private with Wiki.Block_Parsers;
 
-package Forge.Wiki.Parsers is
+package Wiki.Parsers is
 
 --   pragma Preelaborate;
 
@@ -61,7 +63,7 @@ package Forge.Wiki.Parsers is
    procedure Parse
     (Self   : in out Wiki_Parser'Class;
      Data   : League.Strings.Universal_String;
-     Writer : not null Forge.Types.SAX_Writer_Access);
+     Writer : in out XML.SAX.Writers.SAX_Writer'Class);
    --  Parses given string.
 
    procedure Register_Block_Parser
@@ -109,16 +111,16 @@ private
    package Block_Parser_Vectors is
      new Ada.Containers.Vectors
           (Positive,
-           Forge.Wiki.Block_Parsers.Block_Parser_Access,
-           Forge.Wiki.Block_Parsers."=");
+           Wiki.Block_Parsers.Block_Parser_Access,
+           Wiki.Block_Parsers."=");
 
    type Wiki_Parser is tagged limited record
       Block_Regexp    : League.Regexps.Regexp_Pattern;
       Block_Info      : Block_Expression_Vectors.Vector;
       Separator_Group : Positive;
-      Block_State     : Forge.Wiki.Block_Parsers.Block_Parser_Access;
+      Block_State     : Wiki.Block_Parsers.Block_Parser_Access;
       Block_Stack     : Block_Parser_Vectors.Vector;
       Is_Separated    : Boolean;
    end record;
 
-end Forge.Wiki.Parsers;
+end Wiki.Parsers;

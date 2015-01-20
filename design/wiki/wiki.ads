@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,36 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Forge.Wiki.Block_Parsers.Nestables;
 
-package Forge.Wiki.Block_Parsers.Paragraphs is
+package Wiki is
 
---   pragma Preelaborate;
+   pragma Pure;
 
-   type Paragraph_Block_Parser is
-     new Forge.Wiki.Block_Parsers.Nestables.Nestable_Block_Parser with record
-      Space_Needed : Boolean;
-      --  Whether to output or to suppress space character before emitting text
-      --  of line.
-   end record;
-
-   overriding function Start_Block
-    (Self     : not null access Paragraph_Block_Parser;
-     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access;
-
-   overriding function End_Block
-    (Self : not null access Paragraph_Block_Parser;
-     Next : access Abstract_Block_Parser'Class) return End_Block_Action;
-
-   overriding procedure Line
-    (Self : not null access Paragraph_Block_Parser;
-     Text : League.Strings.Universal_String);
-
-   overriding function Create
-    (Parameters : not null access Constructor_Parameters)
-       return Paragraph_Block_Parser;
-
-   procedure Register;
-   --  Registers block parser to handle paragraphs.
-
-end Forge.Wiki.Block_Parsers.Paragraphs;
+end Wiki;

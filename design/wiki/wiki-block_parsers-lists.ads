@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,34 +41,34 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Wiki.Block_Parsers.Nestables;
 
-package body Forge.Wiki.Block_Parsers.Nestables is
+package Wiki.Block_Parsers.Lists is
 
-   ---------------
-   -- End_Block --
-   ---------------
+--   pragma Preelaborate;
+
+   type List_Block_Parser is
+     new Wiki.Block_Parsers.Nestables.Nestable_Block_Parser with record
+      Text_Offset : Positive;
+   end record;
+
+   overriding function Start_Block
+    (Self     : not null access List_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access;
 
    overriding function End_Block
-    (Self : not null access Nestable_Block_Parser;
-     Next : access Abstract_Block_Parser'Class) return End_Block_Action is
-   begin
-      if Next /= null then
-         if Next.all not in Nestable_Block_Parser'Class then
-            return Unwind;
+    (Self : not null access List_Block_Parser;
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action;
 
-         elsif Nestable_Block_Parser (Next.all).Offset < Self.Offset then
-            return Unwind;
+   overriding procedure Line
+    (Self : not null access List_Block_Parser;
+     Text : League.Strings.Universal_String);
 
-         else
-            return Continue;
-         end if;
+   overriding function Create
+    (Parameters : not null access Constructor_Parameters)
+       return List_Block_Parser;
 
-      else
-         -- This is special case to simplify unwind of stack of block element
-         -- parsers at the end of the document processing.
+   procedure Register;
+   --  Registers block parser to handle lists.
 
-         return Unwind;
-      end if;
-   end End_Block;
-
-end Forge.Wiki.Block_Parsers.Nestables;
+end Wiki.Block_Parsers.Lists;

@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -45,7 +47,7 @@ with Ada.Unchecked_Deallocation;
 with League.Characters.Latin;
 with League.String_Vectors;
 
-package body Forge.Wiki.Parsers is
+package body Wiki.Parsers is
 
    HTML5_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
@@ -57,16 +59,16 @@ package body Forge.Wiki.Parsers is
 
    procedure Free is
      new Ada.Unchecked_Deallocation
-          (Forge.Wiki.Block_Parsers.Abstract_Block_Parser'Class,
-           Forge.Wiki.Block_Parsers.Block_Parser_Access);
+          (Wiki.Block_Parsers.Abstract_Block_Parser'Class,
+           Wiki.Block_Parsers.Block_Parser_Access);
 
    function Create_Block_Parser
     (Tag           : Ada.Tags.Tag;
-     Writer        : not null Forge.Types.SAX_Writer_Access;
+     Writer        : not null access XML.SAX.Writers.SAX_Writer'Class;
      Markup        : League.Strings.Universal_String;
      Markup_Offset : Natural;
      Text_Offset   : Positive)
-       return not null Forge.Wiki.Block_Parsers.Block_Parser_Access;
+       return not null Wiki.Block_Parsers.Block_Parser_Access;
    --  Constructor to create block parser.
 
    type Block_Parser_Information is record
@@ -94,24 +96,24 @@ package body Forge.Wiki.Parsers is
 
    function Create_Block_Parser
     (Tag           : Ada.Tags.Tag;
-     Writer        : not null Forge.Types.SAX_Writer_Access;
+     Writer        : not null access XML.SAX.Writers.SAX_Writer'Class;
      Markup        : League.Strings.Universal_String;
      Markup_Offset : Natural;
      Text_Offset   : Positive)
-       return not null Forge.Wiki.Block_Parsers.Block_Parser_Access
+       return not null Wiki.Block_Parsers.Block_Parser_Access
    is
       function Create is
         new Ada.Tags.Generic_Dispatching_Constructor
-             (Forge.Wiki.Block_Parsers.Abstract_Block_Parser,
-              Forge.Wiki.Block_Parsers.Constructor_Parameters,
-              Forge.Wiki.Block_Parsers.Create);
+             (Wiki.Block_Parsers.Abstract_Block_Parser,
+              Wiki.Block_Parsers.Constructor_Parameters,
+              Wiki.Block_Parsers.Create);
 
-      Parameters : aliased Forge.Wiki.Block_Parsers.Constructor_Parameters
+      Parameters : aliased Wiki.Block_Parsers.Constructor_Parameters
         := (Markup, Markup_Offset, Text_Offset, Writer);
 
    begin
       return
-        new Forge.Wiki.Block_Parsers.Abstract_Block_Parser'Class'
+        new Wiki.Block_Parsers.Abstract_Block_Parser'Class'
              (Create (Tag, Parameters'Access));
    end Create_Block_Parser;
 
@@ -176,9 +178,9 @@ package body Forge.Wiki.Parsers is
    procedure Parse
     (Self   : in out Wiki_Parser'Class;
      Data   : League.Strings.Universal_String;
-     Writer : not null Forge.Types.SAX_Writer_Access)
+     Writer : in out XML.SAX.Writers.SAX_Writer'Class)
    is
-      use type Forge.Wiki.Block_Parsers.Block_Parser_Access;
+      use type Wiki.Block_Parsers.Block_Parser_Access;
 
       Lines          : constant League.String_Vectors.Universal_String_Vector
         := Data.Split (League.Characters.Latin.Line_Feed);
@@ -187,10 +189,10 @@ package body Forge.Wiki.Parsers is
       Text_First     : Natural;
       Text_Last      : Natural;
       Found          : Boolean;
-      Previous_Block : Forge.Wiki.Block_Parsers.Block_Parser_Access;
-      Next_Block     : Forge.Wiki.Block_Parsers.Block_Parser_Access;
-      Nested_Block   : Forge.Wiki.Block_Parsers.Block_Parser_Access;
-      Aux            : Forge.Wiki.Block_Parsers.Block_Parser_Access;
+      Previous_Block : Wiki.Block_Parsers.Block_Parser_Access;
+      Next_Block     : Wiki.Block_Parsers.Block_Parser_Access;
+      Nested_Block   : Wiki.Block_Parsers.Block_Parser_Access;
+      Aux            : Wiki.Block_Parsers.Block_Parser_Access;
 
    begin
       Self.Initialize_Block_Regexp;
@@ -225,7 +227,7 @@ package body Forge.Wiki.Parsers is
                   Next_Block :=
                     Create_Block_Parser
                      (Item.Parser_Tag,
-                      Writer,
+                      Writer'Unchecked_Access,
                       (if Item.Markup_Group = 0
                          then League.Strings.Empty_Universal_String
                          else Match.Capture (Item.Markup_Group)),
@@ -238,10 +240,10 @@ package body Forge.Wiki.Parsers is
 
                   while Previous_Block /= null loop
                      case Previous_Block.End_Block (Next_Block) is
-                        when Forge.Wiki.Block_Parsers.Continue =>
+                        when Wiki.Block_Parsers.Continue =>
                            exit;
 
-                        when Forge.Wiki.Block_Parsers.Unwind =>
+                        when Wiki.Block_Parsers.Unwind =>
                            Free (Previous_Block);
 
                            if not Self.Block_Stack.Is_Empty then
@@ -293,10 +295,10 @@ package body Forge.Wiki.Parsers is
 
       while Self.Block_State /= null loop
          case Self.Block_State.End_Block (null) is
-            when Forge.Wiki.Block_Parsers.Continue =>
+            when Wiki.Block_Parsers.Continue =>
                raise Program_Error;
 
-            when Forge.Wiki.Block_Parsers.Unwind =>
+            when Wiki.Block_Parsers.Unwind =>
                if not Self.Block_Stack.Is_Empty then
                   Self.Block_State := Self.Block_Stack.Last_Element;
                   Self.Block_Stack.Delete_Last;
@@ -341,4 +343,4 @@ package body Forge.Wiki.Parsers is
        ((Regexp_String, Total_Groups, Markup_Group, Text_Group, Tag));
    end Register_Block_Parser;
 
-end Forge.Wiki.Parsers;
+end Wiki.Parsers;

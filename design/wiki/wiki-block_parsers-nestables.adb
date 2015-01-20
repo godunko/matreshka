@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,24 +41,34 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This package provides abstract block element parser to construct nestable
---  block element parsers. There are two specialized block element parsers
---  right now: paragraph and list.
-------------------------------------------------------------------------------
 
-package Forge.Wiki.Block_Parsers.Nestables is
+package body Wiki.Block_Parsers.Nestables is
 
-   pragma Preelaborate;
-
-   type Nestable_Block_Parser is abstract new Abstract_Block_Parser with record
-      Offset : Positive;
-      --  Offset of block to control nesting of nestable blocks.
-   end record;
+   ---------------
+   -- End_Block --
+   ---------------
 
    overriding function End_Block
     (Self : not null access Nestable_Block_Parser;
-     Next : access Abstract_Block_Parser'Class) return End_Block_Action;
-   --  Provides default implementation to make decision is it needed or not to
-   --  unwind nesting block element.
+     Next : access Abstract_Block_Parser'Class) return End_Block_Action is
+   begin
+      if Next /= null then
+         if Next.all not in Nestable_Block_Parser'Class then
+            return Unwind;
 
-end Forge.Wiki.Block_Parsers.Nestables;
+         elsif Nestable_Block_Parser (Next.all).Offset < Self.Offset then
+            return Unwind;
+
+         else
+            return Continue;
+         end if;
+
+      else
+         -- This is special case to simplify unwind of stack of block element
+         -- parsers at the end of the document processing.
+
+         return Unwind;
+      end if;
+   end End_Block;
+
+end Wiki.Block_Parsers.Nestables;

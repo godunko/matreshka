@@ -1,12 +1,14 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                               Forge on Ada                               --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,14 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Forge.Wiki.Parsers;
+with Wiki.Block_Parsers.Paragraphs;
+with Wiki.Parsers;
 
-package body Forge.Wiki.Block_Parsers.Paragraphs is
+package body Wiki.Block_Parsers.Lists is
 
    HTML5_URI : constant League.Strings.Universal_String
      := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
-   P_Tag     : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("p");
+   UL_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("ul");
+   LI_Tag    : constant League.Strings.Universal_String
+     := League.Strings.To_Universal_String ("li");
 
    ------------
    -- Create --
@@ -54,12 +59,13 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
 
    overriding function Create
     (Parameters : not null access Constructor_Parameters)
-       return Paragraph_Block_Parser is
+       return List_Block_Parser is
    begin
-      return Paragraph_Block_Parser'
-              (Offset       => Parameters.Text_Offset,
-               Writer       => Parameters.Writer,
-               Space_Needed => False);
+      return
+        List_Block_Parser'
+         (Writer      => Parameters.Writer,
+          Offset      => Parameters.Markup_Offset,
+          Text_Offset => Parameters.Text_Offset);
    end Create;
 
    ---------------
@@ -67,16 +73,26 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    ---------------
 
    overriding function End_Block
-    (Self : not null access Paragraph_Block_Parser;
+    (Self : not null access List_Block_Parser;
      Next : access Abstract_Block_Parser'Class) return End_Block_Action is
    begin
       Self.Writer.End_Element
-       (Local_Name    => P_Tag,
+       (Local_Name    => LI_Tag,
         Namespace_URI => HTML5_URI);
 
-      return
-        Forge.Wiki.Block_Parsers.Nestables.Nestable_Block_Parser
-         (Self.all).End_Block (Next);
+      case Wiki.Block_Parsers.Nestables.Nestable_Block_Parser
+            (Self.all).End_Block (Next)
+      is
+         when Continue =>
+            return Continue;
+
+         when Unwind =>
+            Self.Writer.End_Element
+             (Local_Name    => UL_Tag,
+              Namespace_URI => HTML5_URI);
+
+            return Unwind;
+      end case;
    end End_Block;
 
    ----------
@@ -84,17 +100,13 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    ----------
 
    overriding procedure Line
-    (Self : not null access Paragraph_Block_Parser;
+    (Self : not null access List_Block_Parser;
      Text : League.Strings.Universal_String) is
    begin
-      if Self.Space_Needed then
-         Self.Writer.Characters (' ');
+      --  List block element parser never receives text information, it creates
+      --  nested paragraph block element parser to handle text.
 
-      else
-         Self.Space_Needed := True;
-      end if;
-
-      Self.Writer.Characters (Text);
+      raise Program_Error;
    end Line;
 
    --------------
@@ -103,12 +115,14 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
 
    procedure Register is
    begin
-      Forge.Wiki.Parsers.Register_Paragraph_Block_Parser
+      Wiki.Parsers.Register_Block_Parser
        (League.Strings.To_Universal_String
-         ("^\p{White_Space}* (\P{White_Space}.*) \p{White_Space}*$"),
+         ("^\p{White_Space}* (\-) \p{White_Space}*"
+            & " (\P{White_Space}.*) \p{White_Space}*$"),
+        2,
         1,
-        1,
-        Paragraph_Block_Parser'Tag);
+        2,
+        List_Block_Parser'Tag);
    end Register;
 
    -----------------
@@ -116,15 +130,31 @@ package body Forge.Wiki.Block_Parsers.Paragraphs is
    -----------------
 
    overriding function Start_Block
-    (Self     : not null access Paragraph_Block_Parser;
-     Previous : access Abstract_Block_Parser'Class)
-       return Block_Parser_Access is
+    (Self     : not null access List_Block_Parser;
+     Previous : access Abstract_Block_Parser'Class) return Block_Parser_Access
+   is
+      Parameters : aliased Constructor_Parameters
+        := (Writer        => Self.Writer,
+            Markup        => League.Strings.Empty_Universal_String,
+            Markup_Offset => 0,
+            Text_Offset   => Self.Text_Offset);
+
    begin
+      if Previous /= null
+        and then Previous.all not in List_Block_Parser'Class
+      then
+         Self.Writer.Start_Element
+          (Local_Name    => UL_Tag,
+           Namespace_URI => HTML5_URI);
+      end if;
+
       Self.Writer.Start_Element
-       (Local_Name    => P_Tag,
+       (Local_Name    => LI_Tag,
         Namespace_URI => HTML5_URI);
 
-      return null;
+      return
+        new Wiki.Block_Parsers.Paragraphs.Paragraph_Block_Parser'
+             (Wiki.Block_Parsers.Paragraphs.Create (Parameters'Access));
    end Start_Block;
 
-end Forge.Wiki.Block_Parsers.Paragraphs;
+end Wiki.Block_Parsers.Lists;
