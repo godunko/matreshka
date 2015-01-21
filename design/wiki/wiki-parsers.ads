@@ -52,8 +52,6 @@ private with Wiki.Block_Parsers;
 
 package Wiki.Parsers is
 
---   pragma Preelaborate;
-
    -----------------
    -- Wiki_Parser --
    -----------------
@@ -64,7 +62,10 @@ package Wiki.Parsers is
     (Self   : in out Wiki_Parser'Class;
      Data   : League.Strings.Universal_String;
      Writer : in out XML.SAX.Writers.SAX_Writer'Class);
-   --  Parses given string.
+   --  Parses given string. Generated stream contains only events for parsed
+   --  text, and need to be wrapped by <HTML><BODY>/etc tags. Caller is
+   --  responsible to map default prefix (or some other prefix) to XHTML
+   --  namespace URI.
 
    procedure Register_Block_Parser
     (Regexp_String : League.Strings.Universal_String;

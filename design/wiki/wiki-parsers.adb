@@ -49,11 +49,6 @@ with League.String_Vectors;
 
 package body Wiki.Parsers is
 
-   HTML5_URI : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("http://www.w3.org/1999/xhtml");
-   HTML_Tag  : constant League.Strings.Universal_String
-     := League.Strings.To_Universal_String ("html");
-
    procedure Initialize_Block_Regexp (Self : in out Wiki_Parser'Class);
    --  Build and compile block detection regexp.
 
@@ -199,14 +194,6 @@ package body Wiki.Parsers is
       Self.Is_Separated := True;
       Self.Block_State := null;
 
-      Writer.Start_Document;
-      Writer.Start_Prefix_Mapping
-       (Prefix        => League.Strings.Empty_Universal_String,
-        Namespace_URI => HTML5_URI);
-      Writer.Start_Element
-       (Local_Name    => HTML_Tag,
-        Namespace_URI => HTML5_URI);
-
       while Line <= Lines.Length loop
          Match := Self.Block_Regexp.Find_Match (Lines (Line));
 
@@ -308,11 +295,6 @@ package body Wiki.Parsers is
                end if;
          end case;
       end loop;
-
-      Writer.End_Element
-       (Local_Name    => HTML_Tag,
-        Namespace_URI => HTML5_URI);
-      Writer.End_Document;
    end Parse;
 
    -------------------------------------
