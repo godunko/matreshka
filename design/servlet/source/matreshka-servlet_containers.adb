@@ -50,6 +50,14 @@ package body Matreshka.Servlet_Containers is
 
    use type League.Strings.Universal_String;
 
+   package Loader is
+
+      procedure Load (Context : in out Servlet.Contexts.Servlet_Context'Class);
+
+   end Loader;
+
+   package body Loader is separate;
+
    ------------------
    -- Add_Listener --
    ------------------
@@ -242,6 +250,10 @@ package body Matreshka.Servlet_Containers is
       Server.Set_Container (Self);
 
       Self.State := Initialization;
+
+      --  Load application.
+
+      Loader.Load (Self.all);
 
       for Listener of Self.Context_Listeners loop
          Listener.Context_Initialized (Self);
