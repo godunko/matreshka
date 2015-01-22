@@ -42,8 +42,8 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.String_Vectors;
+with Servlet.Generic_Servlets;
 
-with Matreshka.Servlets;
 with Matreshka.Servlet_Defaults;
 
 package body Matreshka.Servlet_Containers is
@@ -117,7 +117,9 @@ package body Matreshka.Servlet_Containers is
          raise Servlet.Illegal_Argument_Exception with "servlet name is empty";
       end if;
 
-      if Instance.all not in Matreshka.Servlets.Abstract_Servlet'Class then
+      if Instance.all
+           not in Servlet.Generic_Servlets.Generic_Servlet'Class
+      then
          raise Servlet.Illegal_Argument_Exception
            with "not descedant of base servlet type";
       end if;
