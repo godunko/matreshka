@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -57,8 +57,8 @@ package Servlet.Container_Initializers is
      access all Servlet_Container_Initializer'Class;
 
    not overriding procedure On_Startup
-    (Self    : not null access Servlet_Container_Initializer;
-     Context : not null access Servlet.Contexts.Servlet_Context'Class)
+    (Self    : in out Servlet_Container_Initializer;
+     Context : in out Servlet.Contexts.Servlet_Context'Class)
        is abstract;
    --  Notifies this ServletContainerInitializer of the startup of the
    --  application represented by the given ServletContext.
