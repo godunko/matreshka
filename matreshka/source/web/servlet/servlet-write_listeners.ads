@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,54 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Callback notification mechanism that signals to the developer it's possible
+--  to write content without blocking.
+------------------------------------------------------------------------------
 
-package body Servlet.Servlet_Registrations is
+package Servlet.Write_Listeners is
 
-   -----------------
-   -- Add_Mapping --
-   -----------------
+   pragma Preelaborate;
 
-   function Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector
-   is
-      URL_Patterns : League.String_Vectors.Universal_String_Vector;
+   type Write_Listener is limited interface;
 
-   begin
-      URL_Patterns.Append (URL_Pattern);
+   not overriding procedure On_Error
+    (Self : in out Write_Listener) is abstract;
+   --  Invoked when an error occurs writing data using the non-blocking APIs.
 
-      return Self.Add_Mapping (URL_Patterns);
-   end Add_Mapping;
+   not overriding procedure On_Write_Possible
+    (Self : in out Write_Listener) is abstract;
+   --  When an instance of the WriteListener is registered with a
+   --  ServletOutputStream, this method will be invoked by the container the
+   --  first time when it is possible to write data.
 
-   -----------------
-   -- Add_Mapping --
-   -----------------
-
-   procedure Add_Mapping
-    (Self         : not null access Servlet_Registration'Class;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector)
-   is
-      Aux : constant League.String_Vectors.Universal_String_Vector
-        := Self.Add_Mapping (URL_Patterns);
-
-   begin
-      null;
-   end Add_Mapping;
-
-   -----------------
-   -- Add_Mapping --
-   -----------------
-
-   procedure Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String)
-   is
-      Aux : constant League.String_Vectors.Universal_String_Vector
-        := Self.Add_Mapping (URL_Pattern);
-
-   begin
-      null;
-   end Add_Mapping;
-
-end Servlet.Servlet_Registrations;
+end Servlet.Write_Listeners;

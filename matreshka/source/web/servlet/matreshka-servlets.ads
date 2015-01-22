@@ -41,9 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-
-with Servlet.Configs;
 with Servlet.Servlets;
 
 package Matreshka.Servlets is

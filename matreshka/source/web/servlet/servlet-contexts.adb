@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,30 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Interface through which a Servlet may be further configured.
-------------------------------------------------------------------------------
-with League.String_Vectors;
-with League.Strings;
 
-package Servlet.Servlet_Registrations is
+package body Servlet.Contexts is
 
-   pragma Preelaborate;
+   -----------------
+   -- Add_Servlet --
+   -----------------
 
-   type Servlet_Registration is limited interface;
+   procedure Add_Servlet
+    (Self     : not null access Servlet_Context'Class;
+     Name     : League.Strings.Universal_String;
+     Instance : not null access Servlet.Servlets.Servlet'Class)
+   is
+      Aux : constant access
+        Servlet.Servlet_Registrations.Servlet_Registration'Class
+          := Self.Add_Servlet (Name, Instance);
 
-   not overriding function Add_Mapping
-    (Self         : not null access Servlet_Registration;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector)
-       return League.String_Vectors.Universal_String_Vector is abstract;
-   function Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector;
-   procedure Add_Mapping
-    (Self         : not null access Servlet_Registration'Class;
-     URL_Patterns : League.String_Vectors.Universal_String_Vector);
-   procedure Add_Mapping
-    (Self        : not null access Servlet_Registration'Class;
-     URL_Pattern : League.Strings.Universal_String);
+   begin
+      null;
+   end Add_Servlet;
 
-end Servlet.Servlet_Registrations;
+end Servlet.Contexts;

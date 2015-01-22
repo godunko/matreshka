@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,23 +42,55 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Servlet.Contexts is
+package body Servlet.Servlet_Registrations is
 
    -----------------
-   -- Add_Servlet --
+   -- Add_Mapping --
    -----------------
 
-   procedure Add_Servlet
-    (Self     : not null access Servlet_Context'Class;
-     Name     : League.Strings.Universal_String;
-     Instance : not null access Servlet.Servlets.Servlet'Class)
+   function Add_Mapping
+    (Self        : not null access Servlet_Registration'Class;
+     URL_Pattern : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector
    is
-      Aux : constant access
-        Servlet.Servlet_Registrations.Servlet_Registration'Class
-          := Self.Add_Servlet (Name, Instance);
+      URL_Patterns : League.String_Vectors.Universal_String_Vector;
+
+   begin
+      URL_Patterns.Append (URL_Pattern);
+
+      return Self.Add_Mapping (URL_Patterns);
+   end Add_Mapping;
+
+   -----------------
+   -- Add_Mapping --
+   -----------------
+
+   procedure Add_Mapping
+    (Self         : not null access Servlet_Registration'Class;
+     URL_Patterns : League.String_Vectors.Universal_String_Vector)
+   is
+      Aux : constant League.String_Vectors.Universal_String_Vector
+        := Self.Add_Mapping (URL_Patterns);
+      pragma Unreferenced (Aux);
 
    begin
       null;
-   end Add_Servlet;
+   end Add_Mapping;
 
-end Servlet.Contexts;
+   -----------------
+   -- Add_Mapping --
+   -----------------
+
+   procedure Add_Mapping
+    (Self        : not null access Servlet_Registration'Class;
+     URL_Pattern : League.Strings.Universal_String)
+   is
+      Aux : constant League.String_Vectors.Universal_String_Vector
+        := Self.Add_Mapping (URL_Pattern);
+      pragma Unreferenced (Aux);
+
+   begin
+      null;
+   end Add_Mapping;
+
+end Servlet.Servlet_Registrations;

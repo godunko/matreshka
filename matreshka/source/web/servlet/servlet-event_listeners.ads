@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2105, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,11 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package Servlet is
+package Servlet.Event_Listeners is
 
-   pragma Pure;
+   pragma Preelaborate;
 
-   Illegal_Argument_Exception : exception;
-   Illegal_State_Exception    : exception;
+   type Event_Listener is limited interface;
 
-end Servlet;
+   type Event_Listener_Access is access all Event_Listener'Class;
+
+end Servlet.Event_Listeners;
