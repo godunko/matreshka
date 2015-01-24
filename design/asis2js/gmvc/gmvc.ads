@@ -46,4 +46,6 @@ package GMVC is
 
    pragma Pure;
 
+   subtype Real is Long_Float;
+
 end GMVC;
