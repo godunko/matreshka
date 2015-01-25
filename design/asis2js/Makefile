@@ -7,6 +7,9 @@ all:
 	gprbuild -c -u -p -P examples/examples.gpr gldraw.adb -cargs -gnatct
 	./asis2js "-CA -Texamples/.objs" `pwd`/examples/gldraw.adb
 
+build-webapi:
+	gprbuild -p -P webapi/webapi.gpr -cargs -gnatct
+
 webgl:
 	rm -rf examples/.objs/*
 	gprbuild -c -u -p -P examples/examples.gpr hello_webgl.adb -cargs -gnatct
