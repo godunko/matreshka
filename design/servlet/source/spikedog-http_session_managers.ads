@@ -45,22 +45,22 @@ with League.Strings;
 
 with Servlet.HTTP_Sessions;
 
-package Matreshka.Servlet_Sessions is
+package Spikedog.HTTP_Session_Managers is
 
    pragma Preelaborate;
 
-   type Session_Manager is limited interface;
+   type HTTP_Session_Manager is limited interface;
 
-   type Session_Manager_Access is access all Session_Manager'Class;
+   type HTTP_Session_Manager_Access is access all HTTP_Session_Manager'Class;
 
    not overriding function Is_Session_Identifier_Valid
-    (Self       : Session_Manager;
+    (Self       : HTTP_Session_Manager;
      Identifier : League.Strings.Universal_String) return Boolean is abstract;
    --  Returns True when given session identifier is valid (it can be processed
    --  by session manager, but not necessary points to any active session).
 
    not overriding function Get_Session
-    (Self       : Session_Manager;
+    (Self       : HTTP_Session_Manager;
      Identifier : League.Strings.Universal_String)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class is abstract;
    --  Returns session this specified identifier, or null when session with
@@ -68,7 +68,7 @@ package Matreshka.Servlet_Sessions is
    --  time attribute is updated to current time.
 
    not overriding function New_Session
-    (Self : Session_Manager)
+    (Self : HTTP_Session_Manager)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class is abstract;
 
-end Matreshka.Servlet_Sessions;
+end Spikedog.HTTP_Session_Managers;

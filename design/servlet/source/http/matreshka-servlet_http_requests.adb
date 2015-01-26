@@ -295,7 +295,7 @@ package body Matreshka.Servlet_HTTP_Requests is
 
    procedure Set_Session_Manager
     (Self    : in out Abstract_HTTP_Servlet_Request'Class;
-     Manager : Matreshka.Servlet_Sessions.Session_Manager_Access) is
+     Manager : Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access) is
    begin
       Self.Session_Manager := Manager;
    end Set_Session_Manager;

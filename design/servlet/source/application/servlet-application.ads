@@ -45,7 +45,6 @@ with League.Strings;
 
 with Servlet.Contexts;
 with Servlet.Context_Listeners;
-with Matreshka.Servlet_Sessions;
 
 package Servlet.Application is
 
@@ -75,9 +74,5 @@ package Servlet.Application is
    --  Returns servlet context of the initialized servlet container.
    --  Application should use this context to add and configure servlets and
    --  filters.
-
-   procedure Set_Session_Manager
-    (Manager : Matreshka.Servlet_Sessions.Session_Manager_Access);
-   --  Sets session manager.
 
 end Servlet.Application;

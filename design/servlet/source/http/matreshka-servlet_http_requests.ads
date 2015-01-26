@@ -52,7 +52,7 @@ with League.Strings;
 with Servlet.HTTP_Requests;
 with Servlet.HTTP_Sessions;
 with Servlet.Contexts;
-with Matreshka.Servlet_Sessions;
+with Spikedog.HTTP_Session_Managers;
 
 package Matreshka.Servlet_HTTP_Requests is
 
@@ -72,7 +72,7 @@ package Matreshka.Servlet_HTTP_Requests is
 
    procedure Set_Session_Manager
     (Self    : in out Abstract_HTTP_Servlet_Request'Class;
-     Manager : Matreshka.Servlet_Sessions.Session_Manager_Access);
+     Manager : Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access);
    --  Sets session manager should be used to manage HTTP sessions. This called
    --  by servlet container.
 
@@ -192,7 +192,8 @@ private
 --        Matreshka.Servlet_HTTP_Responses.HTTP_Servlet_Response_Access;
       --  Response object to be used when necessay (for example to send cookie
       --  with session identifier to client).
-      Session_Manager : Matreshka.Servlet_Sessions.Session_Manager_Access;
+      Session_Manager :
+        Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access;
       Data            : access Internal_Data;
       Storage         : aliased Internal_Data;
    end record;

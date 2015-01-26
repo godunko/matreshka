@@ -135,13 +135,4 @@ package body Servlet.Application is
       Container.Initialize (Server);
    end Initialize;
 
-   -------------------------
-   -- Set_Session_Manager --
-   -------------------------
-   procedure Set_Session_Manager
-    (Manager : Matreshka.Servlet_Sessions.Session_Manager_Access) is
-   begin
-      Container.Set_Session_Manager (Manager);
-   end Set_Session_Manager;
-
 end Servlet.Application;

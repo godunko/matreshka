@@ -225,17 +225,6 @@ package body Matreshka.Servlet_Containers is
       return "install" & Path;
    end Get_Real_Path;
 
-   -------------------------
-   -- Get_Session_Manager --
-   -------------------------
-
-   function Get_Session_Manager
-    (Self : Servlet_Container'Class)
-       return Matreshka.Servlet_Sessions.Session_Manager_Access is
-   begin
-      return Self.Session_Manager;
-   end Get_Session_Manager;
-
    ----------------
    -- Initialize --
    ----------------
@@ -278,7 +267,8 @@ package body Matreshka.Servlet_Containers is
 
    procedure Set_Session_Manager
     (Self    : in out Servlet_Container'Class;
-     Manager : not null Matreshka.Servlet_Sessions.Session_Manager_Access) is
+     Manager :
+       not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access) is
    begin
       Self.Session_Manager := Manager;
    end Set_Session_Manager;

@@ -51,12 +51,12 @@ with Servlet.Contexts;
 private with Servlet.Event_Listeners;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
+with Spikedog.HTTP_Session_Managers;
 with Matreshka.Servlet_Dispatchers;
 with Matreshka.Servlet_HTTP_Requests;
 with Matreshka.Servlet_HTTP_Responses;
 with Matreshka.Servlet_Registrations;
 with Matreshka.Servlet_Servers;
-with Matreshka.Servlet_Sessions;
 
 package Matreshka.Servlet_Containers is
 
@@ -77,7 +77,8 @@ package Matreshka.Servlet_Containers is
 
    procedure Set_Session_Manager
     (Self    : in out Servlet_Container'Class;
-     Manager : not null Matreshka.Servlet_Sessions.Session_Manager_Access);
+     Manager :
+       not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access);
 
    procedure Dispatch
     (Self     : not null access Servlet_Container'Class;
@@ -112,7 +113,8 @@ private
       State             : Container_States := Uninitialized;
       Context_Listeners : Servlet_Context_Listener_Vectors.Vector;
       Servlets          : Servlet_Registration_Maps.Map;
-      Session_Manager   : Matreshka.Servlet_Sessions.Session_Manager_Access;
+      Session_Manager   :
+        Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access;
    end record;
 
    overriding procedure Add_Listener
