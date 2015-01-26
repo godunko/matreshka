@@ -41,8 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Interfaces;
-
 with League.Strings;
 
 with Servlet.HTTP_Sessions;
@@ -51,42 +49,26 @@ package Matreshka.Servlet_Sessions is
 
    pragma Preelaborate;
 
-   type Session_Identifier is private;
-
-   function To_Session_Identifier
-    (Item : League.Strings.Universal_String) return Session_Identifier;
-   --  Converts string into session identifier. Raises Constraint_Error when
-   --  conversion is impossible for some reason.
-
-   procedure To_Session_Identifier
-    (Item       : League.Strings.Universal_String;
-     Identifier : out Session_Identifier;
-     Success    : out Boolean);
-   --  Converts string into session identifier. Sets Success to False when
-   --  conversion is impossible for some reason.
-
-   function To_Universal_String
-    (Item : Session_Identifier) return League.Strings.Universal_String;
-   --  Converts session identifier from internal representation into textual
-   --  representation.
-
    type Session_Manager is limited interface;
 
    type Session_Manager_Access is access all Session_Manager'Class;
 
+   not overriding function Is_Session_Identifier_Valid
+    (Self       : Session_Manager;
+     Identifier : League.Strings.Universal_String) return Boolean is abstract;
+   --  Returns True when given session identifier is valid (it can be processed
+   --  by session manager, but not necessary points to any active session).
+
    not overriding function Get_Session
     (Self       : Session_Manager;
-     Identifier : Session_Identifier)
+     Identifier : League.Strings.Universal_String)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class is abstract;
+   --  Returns session this specified identifier, or null when session with
+   --  given identifier is not known. When session is found its last access
+   --  time attribute is updated to current time.
 
    not overriding function New_Session
     (Self : Session_Manager)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class is abstract;
-
-private
-
-   type Session_Identifier is
-     array (Positive range 1 .. 2) of Interfaces.Unsigned_64
-       with Size => 128;
 
 end Matreshka.Servlet_Sessions;

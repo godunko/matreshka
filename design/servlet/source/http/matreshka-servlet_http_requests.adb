@@ -185,23 +185,20 @@ package body Matreshka.Servlet_HTTP_Requests is
       end if;
 
       declare
-         Identifier_Image : constant League.Strings.Universal_String
+         Identifier : constant League.Strings.Universal_String
            := Self.Get_Requested_Session_Id;
-         Identifier       : Matreshka.Servlet_Sessions.Session_Identifier;
-         SID_Decoded      : Boolean := False;
 
       begin
          --  Check whether session identifier was passed in HTTP cookie and
          --  attempt to reconstruct session.
 
-         if not Identifier_Image.Is_Empty then
+         if not Identifier.Is_Empty then
             --  Decode session identifier specified in request. Detect and
             --  report security event if this conversion fails.
 
-            Matreshka.Servlet_Sessions.To_Session_Identifier
-             (Identifier_Image, Identifier, SID_Decoded);
-
-            if SID_Decoded then
+            if Self.Session_Manager.Is_Session_Identifier_Valid
+                (Identifier)
+            then
                Self.Data.Session :=
                  Self.Session_Manager.Get_Session (Identifier);
                Self.Data.Session_Computed := True;
