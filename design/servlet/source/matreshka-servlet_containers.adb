@@ -265,8 +265,8 @@ package body Matreshka.Servlet_Containers is
    -- Set_Session_Manager --
    -------------------------
 
-   procedure Set_Session_Manager
-    (Self    : in out Servlet_Container'Class;
+   overriding procedure Set_Session_Manager
+    (Self    : in out Servlet_Container;
      Manager :
        not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access) is
    begin

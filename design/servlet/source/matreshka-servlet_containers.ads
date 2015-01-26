@@ -51,7 +51,8 @@ with Servlet.Contexts;
 private with Servlet.Event_Listeners;
 private with Servlet.Servlets;
 private with Servlet.Servlet_Registrations;
-with Spikedog.HTTP_Session_Managers;
+with Spikedog.Servlet_Contexts;
+private with Spikedog.HTTP_Session_Managers;
 with Matreshka.Servlet_Dispatchers;
 with Matreshka.Servlet_HTTP_Requests;
 with Matreshka.Servlet_HTTP_Responses;
@@ -62,6 +63,7 @@ package Matreshka.Servlet_Containers is
 
    type Servlet_Container is
      new Matreshka.Servlet_Dispatchers.Context_Dispatcher
+       and Spikedog.Servlet_Contexts.Spikedog_Servlet_Context
        and Servlet.Contexts.Servlet_Context with private;
 
    type Servlet_Container_Access is access all Servlet_Container'Class;
@@ -74,11 +76,6 @@ package Matreshka.Servlet_Containers is
 
    procedure Finalize (Self : not null access Servlet_Container'Class);
    --  Finalizes servlet container.
-
-   procedure Set_Session_Manager
-    (Self    : in out Servlet_Container'Class;
-     Manager :
-       not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access);
 
    procedure Dispatch
     (Self     : not null access Servlet_Container'Class;
@@ -108,6 +105,7 @@ private
 
    type Servlet_Container is
      new Matreshka.Servlet_Dispatchers.Context_Dispatcher
+       and Spikedog.Servlet_Contexts.Spikedog_Servlet_Context
        and Servlet.Contexts.Servlet_Context with
    record
       State             : Container_States := Uninitialized;
@@ -141,5 +139,10 @@ private
      Path : League.Strings.Universal_String)
        return League.Strings.Universal_String;
    --  Gets the real path corresponding to the given virtual path.
+
+   overriding procedure Set_Session_Manager
+    (Self    : in out Servlet_Container;
+     Manager :
+       not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access);
 
 end Matreshka.Servlet_Containers;
