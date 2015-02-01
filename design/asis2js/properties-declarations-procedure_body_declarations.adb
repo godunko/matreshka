@@ -3,7 +3,6 @@ with Asis.Elements;
 
 with League.Holders.Booleans;
 
-with Engines.Property_Names;
 with Properties.Tools;
 
 package body Properties.Declarations.Procedure_Body_Declarations is
@@ -17,6 +16,10 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
+
+      Is_Library_Level : constant Boolean := Asis.Elements.Is_Nil
+        (Asis.Elements.Enclosing_Element (Element));
+
       Subprogram_Name : constant League.Strings.Universal_String :=
         League.Holders.Element
           (Engine.Get_Property
@@ -24,18 +27,15 @@ package body Properties.Declarations.Procedure_Body_Declarations is
               Name    => Name));
 
       Text : League.Strings.Universal_String;
-      Value : League.Holders.Holder;
    begin
-      Text.Append (Subprogram_Name);
-
-      if League.Holders.Booleans.Element
-        (Engine.Get_Property (Element, Engines.Property_Names.Export))
-      then
-         Text.Append ("= this.");
-         Text.Append (Subprogram_Name);
+      if Is_Library_Level then
+         Text.Append
+           (Properties.Tools.Library_Level_Header
+              (Asis.Elements.Enclosing_Compilation_Unit (Element)));
+         Text.Append ("function(_ec){return ");
       end if;
 
-      Text.Append (" = function ");
+      Text.Append ("function ");
       Text.Append (Subprogram_Name);
       Text.Append (" (");
 
@@ -93,9 +93,11 @@ package body Properties.Declarations.Procedure_Body_Declarations is
 
       Text.Append ("};");
 
-      Value := League.Holders.To_Holder (Text);
+      if Is_Library_Level then
+         Text.Append ("});");
+      end if;
 
-      return Value;
+      return League.Holders.To_Holder (Text);
    end Code;
 
    ------------------------

@@ -1,9 +1,10 @@
 with Asis.Declarations;
 with Asis.Elements;
 
-with League.String_Vectors;
+--  with League.String_Vectors;
 
 with Engines.Property_Names;
+with Properties.Tools;
 
 package body Properties.Declarations.Package_Declaration is
 
@@ -38,9 +39,9 @@ package body Properties.Declarations.Package_Declaration is
          end if;
       end Body_Declarative_Items;
 
-      Full_Name : League.Strings.Universal_String;
+      Is_Library_Level : constant Boolean := Asis.Elements.Is_Nil
+        (Asis.Elements.Enclosing_Element (Element));
 
-      Parents : League.Strings.Universal_String;
       Down : League.Strings.Universal_String;
       Text : League.Strings.Universal_String;
       List : constant Asis.Element_List :=
@@ -50,37 +51,36 @@ package body Properties.Declarations.Package_Declaration is
    begin
       Down := League.Holders.Element
         (Engine.Get_Property (Asis.Declarations.Names (Element) (1), Name));
-      Down.Prepend ("standard.");
 
-      declare
-         Names  : constant League.String_Vectors.Universal_String_Vector :=
-          Down.Split ('.');
-      begin
-         for J in 1 .. Names.Length loop
-            if J /= 1 then
-               Full_Name.Append (".");
-            end if;
+      if Is_Library_Level then
+         Text.Append
+           (Properties.Tools.Library_Level_Header
+              (Asis.Elements.Enclosing_Compilation_Unit (Element)));
+      end if;
 
-            Full_Name.Append (Names.Element (J));
+      Text.Append ("function (_parent){");
+      Text.Append ("var _ec = new _parent._nested();");
 
-            --  Make each parent package visible by 'with(obj)' statement
-            Parents.Append ("with (");
-            Parents.Append (Full_Name);
-            Parents.Append (")");
-         end loop;
-      end;
+      if Is_Library_Level then
+         Text.Append ("_parent.");
+         Text.Append (Down);
+         Text.Append (" = _ec;");
+      end if;
 
-      Text.Append (Full_Name);
-      Text.Append ("={};");
-      Text.Append (Parents);
-      Text.Append ("{");
+      Text.Append ("_ec._nested = function (){};");
+      Text.Append ("_ec._nested.prototype = _ec;");
 
       for J in List'Range loop
          Down := League.Holders.Element (Engine.Get_Property (List (J), Name));
          Text.Append (Down);
       end loop;
 
-      Text.Append ("};");
+      Text.Append ("return _ec;");
+      Text.Append ("}");
+
+      if Is_Library_Level then
+         Text.Append (");");
+      end if;
 
       return League.Holders.To_Holder (Text);
    end Code;

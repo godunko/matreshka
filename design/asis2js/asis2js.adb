@@ -33,17 +33,14 @@ procedure Asis2JS is
 
    procedure Compile_File (File : League.Strings.Universal_String) is
       File_Name   : constant Wide_String := File.To_UTF_16_Wide_String;
+      Units : constant Asis.Compilation_Unit_List :=
+        Asis.Compilation_Units.Compilation_Units (Context);
    begin
-      declare
-         Units : constant Asis.Compilation_Unit_List :=
-           Asis.Compilation_Units.Compilation_Units (Context);
-      begin
-         for J in Units'Range loop
-            if Asis.Compilation_Units.Text_Name (Units (J)) = File_Name then
-               Compile_Unit (Units (J));
-            end if;
-         end loop;
-      end;
+      for J in Units'Range loop
+         if Asis.Compilation_Units.Text_Name (Units (J)) = File_Name then
+            Compile_Unit (Units (J));
+         end if;
+      end loop;
    end Compile_File;
 
    ------------------
@@ -66,9 +63,8 @@ procedure Asis2JS is
         (Element => Asis.Elements.Unit_Declaration (Unit),
          Name    => Engines.Property_Names.Code);
 
-      Code.Append ("{");
       Code.Append (League.Holders.Element (Result));
-      Code.Append ("};");
+
       Ada.Wide_Wide_Text_IO.Put_Line (Code.To_Wide_Wide_String);
    end Compile_Unit;
 
@@ -83,8 +79,6 @@ begin
    Asis.Ada_Environments.Open (Context);
 
    Engines.Registry_All_Actions (Engine);
-
-   Ada.Wide_Wide_Text_IO.Put_Line ("var standard = standard || {};");
 
    for J in 2 .. League.Application.Arguments.Length loop
       Compile_File (League.Application.Arguments.Element (J));

@@ -1,3 +1,4 @@
+with Asis.Compilation_Units;
 with Asis.Declarations;
 with Asis.Definitions;
 with Asis.Elements;
@@ -45,5 +46,34 @@ package body Properties.Tools is
 
       return "";
    end Get_Aspect;
+
+   --------------------------
+   -- Library_Level_Header --
+   --------------------------
+
+   function Library_Level_Header
+     (Unit : Asis.Compilation_Unit) return League.Strings.Universal_String
+   is
+      Text : League.Strings.Universal_String;
+
+      Parent : constant Asis.Compilation_Unit :=
+        Asis.Compilation_Units.Corresponding_Parent_Declaration (Unit);
+
+      Full_Name : constant League.Strings.Universal_String :=
+        League.Strings.From_UTF_16_Wide_String
+          (Asis.Compilation_Units.Unit_Full_Name (Unit)).To_Lowercase;
+
+      Parent_Name : constant League.Strings.Universal_String :=
+        League.Strings.From_UTF_16_Wide_String
+          (Asis.Compilation_Units.Unit_Full_Name (Parent)).To_Lowercase;
+   begin
+      Text.Append ("define('standard.");
+      Text.Append (Full_Name);
+      Text.Append ("', ['");
+      Text.Append (Parent_Name);
+      Text.Append ("'], ");
+
+      return Text;
+   end Library_Level_Header;
 
 end Properties.Tools;
