@@ -11,6 +11,7 @@ with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Simple_Expression_Range;
+with Properties.Definitions.Tagged_Record_Type;
 with Properties.Expressions.Enumeration_Literal;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
@@ -70,6 +71,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Package_Declaration,
        Action => P.Declarations.Package_Declaration.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Private_Type_Declaration,
+       Action => P.Statements.Null_Statement.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Procedure_Body_Declaration,
        Action => P.Declarations.Procedure_Body_Declarations.Code'Access),
       (Name   => N.Code,
@@ -99,6 +103,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Code,
        Kind   => F.An_Enumeration_Type_Definition,
        Action => P.Definitions.Enumeration_Type.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Tagged_Record_Type_Definition,
+       Action => P.Definitions.Tagged_Record_Type.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Record_Type_Definition,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore

@@ -6,6 +6,44 @@ with Asis.Expressions;
 
 package body Properties.Tools is
 
+   ------------------------------------
+   -- Corresponding_Type_Subprograms --
+   ------------------------------------
+
+   function Corresponding_Type_Subprograms
+     (Definition : Asis.Definition) return Asis.Declaration_List
+   is
+      use type Asis.Declaration_Kinds;
+      Decl : constant Asis.Declaration :=
+        Asis.Elements.Enclosing_Element (Definition);
+      Pkg  : constant Asis.Element := Asis.Elements.Enclosing_Element (Decl);
+   begin
+      if Asis.Elements.Declaration_Kind (Pkg) = Asis.A_Package_Declaration then
+         declare
+            use type Asis.Element_List;
+
+            List : Asis.Element_List :=
+              Asis.Declarations.Visible_Part_Declarative_Items (Pkg) &
+              Asis.Declarations.Private_Part_Declarative_Items (Pkg);
+            Last : Natural := 0;
+         begin
+            for J in List'Range loop
+               if Asis.Elements.Declaration_Kind (List (J)) in
+                    Asis.A_Procedure_Declaration | Asis.A_Function_Declaration
+                 and then Is_Primitive_Subprogram (Definition, List (J))
+               then
+                  Last := Last + 1;
+                  List (Last) := List (J);
+               end if;
+            end loop;
+
+            return List (1 .. Last);
+         end;
+      else
+         return Asis.Nil_Element_List;
+      end if;
+   end Corresponding_Type_Subprograms;
+
    ----------------
    -- Get_Aspect --
    ----------------
@@ -46,6 +84,100 @@ package body Properties.Tools is
 
       return "";
    end Get_Aspect;
+
+   -------------------
+   -- Is_Equal_Type --
+   -------------------
+
+   function Is_Equal_Type
+     (Left  : Asis.Declaration;
+      Right : Asis.Declaration) return Boolean
+   is
+      function Up (X : Asis.Declaration) return Asis.Declaration;
+
+      --------
+      -- Up --
+      --------
+
+      function Up (X : Asis.Declaration) return Asis.Declaration is
+      begin
+         case Asis.Elements.Declaration_Kind (X) is
+            when Asis.An_Ordinary_Type_Declaration |
+                 Asis.A_Task_Type_Declaration |
+                 Asis.A_Protected_Type_Declaration =>
+               declare
+                  CT : constant Asis.Declaration :=
+                    Asis.Declarations.Corresponding_Type_Declaration (X);
+               begin
+                  case Asis.Elements.Declaration_Kind (CT) is
+                     when Asis.An_Incomplete_Type_Declaration |
+                          Asis.A_Tagged_Incomplete_Type_Declaration =>
+                        return X;
+                     when Asis.A_Private_Type_Declaration |
+                          Asis.A_Private_Extension_Declaration =>
+                        return CT;
+                     when others =>
+                        return X;
+                  end case;
+               end;
+
+            when Asis.An_Incomplete_Type_Declaration
+               | Asis.A_Tagged_Incomplete_Type_Declaration =>
+
+               declare
+                  CT : constant Asis.Declaration :=
+                    Asis.Declarations.Corresponding_Type_Declaration (X);
+               begin
+                  case Asis.Elements.Declaration_Kind (CT) is
+                     when Asis.A_Private_Type_Declaration |
+                          Asis.A_Private_Extension_Declaration =>
+                        return CT;
+                     when others =>
+                        return Up (CT);
+                  end case;
+               end;
+
+            when others =>
+               return X;
+         end case;
+      end Up;
+
+      Left_Up : constant Asis.Declaration := Up (Left);
+      Right_Up : constant Asis.Declaration := Up (Right);
+   begin
+      return Asis.Elements.Is_Equal (Left_Up, Right_Up);
+   end Is_Equal_Type;
+
+   -----------------------------
+   -- Is_Primitive_Subprogram --
+   -----------------------------
+
+   function Is_Primitive_Subprogram
+     (Definition : Asis.Definition;
+      Subprogram : Asis.Declaration) return Boolean
+   is
+      List : constant Asis.Declaration_List :=
+        Asis.Declarations.Parameter_Profile (Subprogram);
+   begin
+      if List'Length > 1 then
+         declare
+            use type Asis.Expression_Kinds;
+
+            Decl  : Asis.Declaration;
+            First : constant Asis.Element :=
+              Asis.Declarations.Object_Declaration_View (List (List'First));
+         begin
+            if Asis.Elements.Expression_Kind (First) = Asis.An_Identifier then
+               Decl := Asis.Expressions.Corresponding_Name_Declaration (First);
+
+               return Is_Equal_Type
+                 (Asis.Elements.Enclosing_Element (Definition), Decl);
+            end if;
+         end;
+      end if;
+
+      return False;
+   end Is_Primitive_Subprogram;
 
    --------------------------
    -- Library_Level_Header --

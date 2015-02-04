@@ -62,7 +62,7 @@ package body Properties.Declarations.Package_Declaration is
       Text.Append ("var _ec = new _parent._nested();");
 
       if Is_Library_Level then
-         Text.Append ("_parent.");
+         Text.Append ("_parent.standard.");
          Text.Append (Down);
          Text.Append (" = _ec;");
       end if;
