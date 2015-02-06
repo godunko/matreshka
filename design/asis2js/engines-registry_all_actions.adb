@@ -110,6 +110,12 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_Record_Type_Definition,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
+       Kind   => F.An_Access_To_Variable,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
+       Kind   => F.A_Pool_Specific_Access_To_Variable,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
        Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
        Action => P.Definitions.Simple_Expression_Range.Code'Access),
       (Name   => N.Code,
