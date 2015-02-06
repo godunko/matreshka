@@ -49,12 +49,25 @@ package GMVC.Items is
 
    type Abstract_Item is abstract tagged limited private;
 
+   type Item_Access is access Abstract_Item'Class;
+
    not overriding procedure Paint
     (Self    : in out Abstract_Item;
      Painter : in out GMVC.Painters.Abstract_Painter'Class) is abstract;
 
 private
 
-   type Abstract_Item is abstract tagged limited null record;
+   type Abstract_Container is abstract tagged limited record
+      First : Item_Access;
+      Last  : Item_Access;
+   end record;
+
+   type Container_Access is access all Abstract_Container'Class;
+
+   type Abstract_Item is abstract tagged limited record
+      Next      : Item_Access;
+      Previous  : Item_Access;
+      Container : Container_Access;
+   end record;
 
 end GMVC.Items;
