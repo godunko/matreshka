@@ -12,6 +12,7 @@ with Properties.Declarations.Procedure_Declaration;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Tagged_Record_Type;
+with Properties.Expressions.Attribute_Reference;
 with Properties.Expressions.Enumeration_Literal;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
@@ -243,7 +244,10 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
    Range_List : constant Range_Array :=
      ((N.Code,
        F.An_And_Operator, F.A_Not_Operator,
-       P.Expressions.Identifiers.Code'Access),
+      P.Expressions.Identifiers.Code'Access),
+      (N.Code,
+       F.An_Access_Attribute, F.An_Implementation_Defined_Attribute,
+       P.Expressions.Attribute_Reference.Code'Access),
       (N.Call_Convention,
        F.An_And_Operator, F.A_Not_Operator,
        P.Expressions.Identifiers.Call_Convention'Access),

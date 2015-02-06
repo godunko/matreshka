@@ -3,6 +3,7 @@ with Asis.Elements;
 
 with League.Holders.Booleans;
 
+with Engines.Property_Names;
 with Properties.Tools;
 
 package body Properties.Declarations.Procedure_Body_Declarations is
@@ -33,6 +34,18 @@ package body Properties.Declarations.Procedure_Body_Declarations is
            (Properties.Tools.Library_Level_Header
               (Asis.Elements.Enclosing_Compilation_Unit (Element)));
          Text.Append ("function(_ec){return ");
+      else
+         declare
+            Prefix : constant League.Strings.Universal_String :=
+                 League.Holders.Element
+                   (Engine.Get_Property
+                      (Asis.Elements.Enclosing_Element (Element),
+                       Engines.Property_Names.Declaration_Prefix));
+         begin
+            Text.Append (Prefix);
+            Text.Append (Subprogram_Name);
+            Text.Append (" = ");
+         end;
       end if;
 
       Text.Append ("function ");

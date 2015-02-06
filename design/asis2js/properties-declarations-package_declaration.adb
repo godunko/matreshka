@@ -3,7 +3,6 @@ with Asis.Elements;
 
 --  with League.String_Vectors;
 
-with Engines.Property_Names;
 with Properties.Tools;
 
 package body Properties.Declarations.Package_Declaration is
@@ -94,14 +93,10 @@ package body Properties.Declarations.Package_Declaration is
       Element : Asis.Declaration;
       Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
-      pragma Unreferenced (Name);
+      pragma Unreferenced (Name, Engine, Element);
       Text : League.Strings.Universal_String;
    begin
-      Text := League.Holders.Element
-        (Engine.Get_Property
-           (Asis.Declarations.Names (Element) (1),
-            Engines.Property_Names.Code));
-      Text.Append (".");
+      Text.Append ("_ec.");
 
       return League.Holders.To_Holder (Text);
    end Declaration_Prefix;
