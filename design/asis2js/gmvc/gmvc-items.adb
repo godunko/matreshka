@@ -41,37 +41,28 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with GMVC.Painters;
 
-package GMVC.Items is
+package body GMVC.Items is
 
-   pragma Preelaborate;
-
-   type Abstract_Item is abstract tagged limited private;
-
-   type Item_Access is access Abstract_Item'Class;
-
-   not overriding procedure Paint
-    (Self    : in out Abstract_Item;
-     Painter : in out GMVC.Painters.Abstract_Painter'Class) is abstract;
-
-private
-
-   type Abstract_Container is abstract tagged limited record
-      Head : Item_Access;
-      Tail : Item_Access;
-   end record;
-
-   type Container_Access is access all Abstract_Container'Class;
+   ------------
+   -- Append --
+   ------------
 
    procedure Append
     (Self : in out Abstract_Container'Class;
-     Item : Item_Access);
+     Item : Item_Access) is
+   begin
+      Item.Container := Self'Unchecked_Access;
 
-   type Abstract_Item is abstract tagged limited record
-      Next      : Item_Access;
-      Previous  : Item_Access;
-      Container : Container_Access;
-   end record;
+      if Self.Head = null then
+         Self.Head := Item;
+         Self.Tail := Item;
+
+      else
+         Self.Tail.Next := Item;
+         Item.Previous := Self.Tail;
+         Self.Tail := Item;
+      end if;
+   end Append;
 
 end GMVC.Items;
