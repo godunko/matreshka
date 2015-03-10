@@ -1,0 +1,12 @@
+with "matreshka/league.gpr";
+
+project AMF3 is
+
+   for Object_Dir use ".objs";
+   for Main use ("demo-driver.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-g");
+   end Compiler;
+
+end AMF3;
