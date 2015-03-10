@@ -48,6 +48,10 @@ package AMF3.Slots.Long_Floats is
 
    type Long_Float_Slot is new Abstract_Slot with private;
 
+   type Long_Float_Slot_With_Default
+         (Default : not null access constant Long_Float) is
+     new Abstract_Slot with private;
+
 private
 
    type Long_Float_Value is array (Boolean) of Long_Float;
@@ -58,5 +62,14 @@ private
 
    overriding function Get
     (Self : Long_Float_Slot) return League.Holders.Holder;
+
+   type Long_Float_Slot_With_Default
+         (Default : not null access constant Long_Float) is
+     new Abstract_Slot with record
+      Value : Long_Float_Value := (others => Default.all);
+   end record;
+
+   overriding function Get
+    (Self : Long_Float_Slot_With_Default) return League.Holders.Holder;
 
 end AMF3.Slots.Long_Floats;

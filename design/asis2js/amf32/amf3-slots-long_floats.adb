@@ -56,4 +56,11 @@ package body AMF3.Slots.Long_Floats is
         League.Holders.Long_Floats.To_Holder (Self.Value (Self.Current_Value));
    end Get;
 
+   overriding function Get
+    (Self : Long_Float_Slot_With_Default) return League.Holders.Holder is
+   begin
+      return
+        League.Holders.Long_Floats.To_Holder (Self.Value (Self.Current_Value));
+   end Get;
+
 end AMF3.Slots.Long_Floats;
