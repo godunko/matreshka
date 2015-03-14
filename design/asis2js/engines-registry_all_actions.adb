@@ -1,6 +1,5 @@
 with Engines.Property_Names;
 
-with Properties.Clauses.Use_Package_Clause;
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Function_Declarations;
@@ -55,7 +54,7 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
      --  Code
      ((Name   => N.Code,
        Kind   => F.A_Use_Package_Clause,
-       Action => P.Clauses.Use_Package_Clause.Code'Access),
+       Action => P.Statements.Null_Statement.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Constant_Declaration,
        Action => P.Declarations.Constant_Declarations.Code'Access),
@@ -71,6 +70,9 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Code,
        Kind   => F.A_Package_Declaration,
        Action => P.Declarations.Package_Declaration.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Private_Extension_Declaration,
+       Action => P.Statements.Null_Statement.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Private_Type_Declaration,
        Action => P.Statements.Null_Statement.Code'Access),
@@ -104,6 +106,12 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Code,
        Kind   => F.An_Enumeration_Type_Definition,
        Action => P.Definitions.Enumeration_Type.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Constrained_Array_Definition,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
+       Kind   => F.A_Derived_Record_Extension_Definition,
+       Action => P.Definitions.Tagged_Record_Type.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Tagged_Record_Type_Definition,
        Action => P.Definitions.Tagged_Record_Type.Code'Access),

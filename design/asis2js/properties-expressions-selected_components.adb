@@ -33,11 +33,13 @@ package body Properties.Expressions.Selected_Components is
       Def_Name : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Name_Definition (Selector);
       Decl     : Asis.Declaration;
+      Kind     : Asis.Declaration_Kinds;
    begin
       if not Asis.Elements.Is_Nil (Def_Name) then
          Decl := Asis.Elements.Enclosing_Element (Def_Name);
+         Kind := Asis.Elements.Declaration_Kind (Decl);
 
-         case Asis.Elements.Declaration_Kind (Decl) is
+         case Kind is
             when Asis.A_Component_Declaration =>
                declare
                   Left  : League.Strings.Universal_String;
@@ -53,8 +55,10 @@ package body Properties.Expressions.Selected_Components is
 
                   return League.Holders.To_Holder (Left);
                end;
+            when Asis.A_Function_Declaration | Asis.A_Procedure_Declaration =>
+               null;
             when others =>
-               raise Constraint_Error with
+               raise Program_Error with
                  "Unimplemented Selected_Component";
          end case;
       end if;

@@ -6,6 +6,44 @@ with Asis.Expressions;
 
 package body Properties.Tools is
 
+   -----------------------------------
+   -- Corresponding_Type_Components --
+   -----------------------------------
+
+   function Corresponding_Type_Components
+     (Definition : Asis.Definition) return Asis.Declaration_List
+   is
+      Def_Kind : constant Asis.Definition_Kinds :=
+        Asis.Elements.Definition_Kind (Definition);
+      Type_Kind : constant Asis.Type_Kinds :=
+        Asis.Elements.Type_Kind (Definition);
+   begin
+      case Def_Kind is
+         when Asis.A_Record_Definition =>
+
+            return Asis.Definitions.Record_Components (Definition);
+
+         when Asis.A_Type_Definition =>
+
+            case Type_Kind is
+               when Asis.A_Derived_Record_Extension_Definition |
+                    Asis.A_Record_Type_Definition |
+                    Asis.A_Tagged_Record_Type_Definition =>
+
+                  return Corresponding_Type_Components
+                    (Asis.Definitions.Record_Definition (Definition));
+
+               when others =>
+
+                  raise Program_Error;
+            end case;
+
+         when others =>
+
+            raise Program_Error;
+      end case;
+   end Corresponding_Type_Components;
+
    ------------------------------------
    -- Corresponding_Type_Subprograms --
    ------------------------------------
@@ -159,7 +197,7 @@ package body Properties.Tools is
       List : constant Asis.Declaration_List :=
         Asis.Declarations.Parameter_Profile (Subprogram);
    begin
-      if List'Length > 1 then
+      if List'Length >= 1 then
          declare
             use type Asis.Expression_Kinds;
 
@@ -191,6 +229,9 @@ package body Properties.Tools is
       Parent : constant Asis.Compilation_Unit :=
         Asis.Compilation_Units.Corresponding_Parent_Declaration (Unit);
 
+      Grand_Parent : constant Asis.Compilation_Unit :=
+        Asis.Compilation_Units.Corresponding_Parent_Declaration (Parent);
+
       Full_Name : constant League.Strings.Universal_String :=
         League.Strings.From_UTF_16_Wide_String
           (Asis.Compilation_Units.Unit_Full_Name (Unit)).To_Lowercase;
@@ -201,8 +242,14 @@ package body Properties.Tools is
    begin
       Text.Append ("define('standard.");
       Text.Append (Full_Name);
-      Text.Append ("', ['");
-      Text.Append (Parent_Name);
+      Text.Append ("', ['standard");
+
+      if not Asis.Compilation_Units.Is_Nil (Grand_Parent) then
+         --  if Parent is not standard
+         Text.Append (".");
+         Text.Append (Parent_Name);
+      end if;
+
       Text.Append ("'], ");
 
       return Text;

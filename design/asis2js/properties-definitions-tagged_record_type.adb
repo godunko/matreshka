@@ -26,7 +26,42 @@ package body Properties.Definitions.Tagged_Record_Type is
         (Engine.Get_Property (Asis.Declarations.Names (Decl) (1), Name));
 
       Result.Append (Name_Image);
-      Result.Append (" =  function (){};");
+      Result.Append (" =  function (){");
+
+      declare
+         List : constant Asis.Declaration_List :=
+           Properties.Tools.Corresponding_Type_Components (Element);
+      begin
+         for J in List'Range loop
+            declare
+               Init  : constant Asis.Expression :=
+                 Asis.Declarations.Initialization_Expression (List (J));
+               Names : constant Asis.Defining_Name_List :=
+                 Asis.Declarations.Names (List (J));
+            begin
+               for N in Names'Range loop
+                  Result.Append ("this.");
+                  Result.Append
+                    (League.Holders.Element
+                       (Engine.Get_Property
+                            (Names (N), Name)));
+                  Result.Append (" = ");
+               end loop;
+
+               if Asis.Elements.Is_Nil (Init) then
+                  Result.Append ("undefined");
+               else
+                  Result.Append
+                    (League.Holders.Element
+                       (Engine.Get_Property (Init, Name)));
+               end if;
+
+               Result.Append (";");
+            end;
+         end loop;
+      end;
+
+      Result.Append ("};");
       Result.Append ("_ec.");
       Result.Append (Name_Image);
       Result.Append (".prototype = new _ec._tag('");

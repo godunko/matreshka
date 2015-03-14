@@ -3,7 +3,7 @@ define('standard', [], function(){
     var standard = {};
     standard._nested = function (){};
     standard._nested.prototype = standard;
-    standard = standard;
+    standard.standard = standard;
 
     //  This function used as abstract methods of tagged types.
     standard._abstract = function (){

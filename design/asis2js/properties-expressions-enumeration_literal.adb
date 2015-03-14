@@ -1,4 +1,6 @@
+with Asis.Compilation_Units;
 with Asis.Declarations;
+with Asis.Elements;
 with Asis.Expressions;
 
 package body Properties.Expressions.Enumeration_Literal is
@@ -15,13 +17,22 @@ package body Properties.Expressions.Enumeration_Literal is
    is
       Tipe   : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Expression_Type (Element);
+      Unit   : constant Asis.Compilation_Unit :=
+        Asis.Elements.Enclosing_Compilation_Unit (Tipe);
       Image  : constant Wide_String := Asis.Expressions.Name_Image (Element);
       Result : League.Strings.Universal_String;
    begin
-      Result := League.Holders.Element
-        (Engine.Get_Property
-           (Asis.Declarations.Names (Tipe) (1), Name));
-      Result.Append (".");
+      if not Asis.Compilation_Units.Is_Nil
+        (Asis.Compilation_Units.Corresponding_Parent_Declaration (Unit))
+      then
+         --  if not in Standard
+         Result := League.Holders.Element
+           (Engine.Get_Property
+              (Asis.Declarations.Names (Tipe) (1), Name));
+         Result.Append (".");
+
+      end if;
+
       Result.Append (League.Strings.From_UTF_16_Wide_String (Image));
 
       return League.Holders.To_Holder (Result.To_Lowercase);

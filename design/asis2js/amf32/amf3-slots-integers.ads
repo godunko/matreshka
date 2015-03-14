@@ -56,4 +56,7 @@ private
       Value : Integer_Value;
    end record;
 
+   overriding function Get
+    (Self : Integer_Slot) return League.Holders.Holder;
+
 end AMF3.Slots.Integers;

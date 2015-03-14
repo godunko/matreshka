@@ -14,6 +14,10 @@ package Properties.Tools is
      (Definition : Asis.Definition) return Asis.Declaration_List;
    --  For given type definition return list of primitive subprograms
 
+   function Corresponding_Type_Components
+     (Definition : Asis.Definition) return Asis.Declaration_List;
+   --  For given (non-array complex) type definition return list of component
+
    function Is_Primitive_Subprogram
      (Definition : Asis.Definition;
       Subprogram : Asis.Declaration) return Boolean;
