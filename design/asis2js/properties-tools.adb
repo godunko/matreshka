@@ -6,6 +6,25 @@ with Asis.Expressions;
 
 package body Properties.Tools is
 
+   ------------------------
+   -- Corresponding_Type --
+   ------------------------
+
+   function Corresponding_Type
+     (Declaration : Asis.Declaration) return Asis.Declaration
+   is
+      List : constant Asis.Declaration_List :=
+        Asis.Declarations.Parameter_Profile (Declaration);
+      View : constant Asis.Element :=
+        Asis.Declarations.Object_Declaration_View (List (List'First));
+--      Mark : constant Asis.Subtype_Mark :=
+--        Asis.Definitions.Subtype_Mark (View);
+      Decl : constant Asis.Declaration :=
+        Asis.Expressions.Corresponding_Name_Declaration (View);
+   begin
+      return Decl;
+   end Corresponding_Type;
+
    -----------------------------------
    -- Corresponding_Type_Components --
    -----------------------------------

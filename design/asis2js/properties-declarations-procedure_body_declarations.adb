@@ -18,6 +18,9 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       Name    : League.Strings.Universal_String) return League.Holders.Holder
    is
 
+      Spec : constant Asis.Declaration :=
+        Asis.Declarations.Corresponding_Declaration (Element);
+
       Is_Library_Level : constant Boolean := Asis.Elements.Is_Nil
         (Asis.Elements.Enclosing_Element (Element));
 
@@ -34,6 +37,22 @@ package body Properties.Declarations.Procedure_Body_Declarations is
            (Properties.Tools.Library_Level_Header
               (Asis.Elements.Enclosing_Compilation_Unit (Element)));
          Text.Append ("function(_ec){return ");
+      elsif Asis.Declarations.Is_Dispatching_Operation (Spec) then
+         declare
+            Tipe     : constant Asis.Declaration :=
+              Tools.Corresponding_Type (Spec);
+            Type_Name : constant Asis.Defining_Name :=
+              Asis.Declarations.Names (Tipe) (1);
+            Image : constant League.Strings.Universal_String :=
+              League.Holders.Element
+                (Engine.Get_Property (Type_Name, Name));
+         begin
+            Text.Append ("_ec.");
+            Text.Append (Image);
+            Text.Append (".prototype.");
+            Text.Append (Subprogram_Name);
+            Text.Append (" = ");
+         end;
       else
          declare
             Prefix : constant League.Strings.Universal_String :=

@@ -21,7 +21,11 @@ package Properties.Tools is
    function Is_Primitive_Subprogram
      (Definition : Asis.Definition;
       Subprogram : Asis.Declaration) return Boolean;
-   --  For given type definition return list of primitive subprograms
+   --  Check if given Subprogram is primitive subprograms for given type
+
+   function Corresponding_Type
+     (Declaration : Asis.Declaration) return Asis.Declaration;
+   --  Return type declaration for given primitive subprogram
 
    function Is_Equal_Type
      (Left  : Asis.Declaration;
