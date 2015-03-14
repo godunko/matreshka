@@ -72,4 +72,10 @@ package body Properties.Expressions.Selected_Components is
       Name    : League.Strings.Universal_String) return League.Holders.Holder
      renames Call_Convention;
 
+   function Initialize
+     (Engine  : access Engines.Engine;
+      Element : Asis.Expression;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+     renames Call_Convention;
+
 end Properties.Expressions.Selected_Components;

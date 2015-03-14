@@ -2,6 +2,7 @@ with Asis.Declarations;
 with Asis.Elements;
 
 with Properties.Tools;
+with Engines.Property_Names;
 
 package body Properties.Definitions.Tagged_Record_Type is
 
@@ -34,8 +35,6 @@ package body Properties.Definitions.Tagged_Record_Type is
       begin
          for J in List'Range loop
             declare
-               Init  : constant Asis.Expression :=
-                 Asis.Declarations.Initialization_Expression (List (J));
                Names : constant Asis.Defining_Name_List :=
                  Asis.Declarations.Names (List (J));
             begin
@@ -48,13 +47,10 @@ package body Properties.Definitions.Tagged_Record_Type is
                   Result.Append (" = ");
                end loop;
 
-               if Asis.Elements.Is_Nil (Init) then
-                  Result.Append ("undefined");
-               else
-                  Result.Append
-                    (League.Holders.Element
-                       (Engine.Get_Property (Init, Name)));
-               end if;
+               Result.Append
+                 (League.Holders.Element
+                    (Engine.Get_Property
+                         (List (J), Engines.Property_Names.Initialize)));
 
                Result.Append (";");
             end;

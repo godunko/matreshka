@@ -17,9 +17,6 @@ package body Properties.Declarations.Constant_Declarations is
       List : constant Asis.Defining_Name_List :=
         Asis.Declarations.Names (Element);
 
-      Init : constant Asis.Expression :=
-        Asis.Declarations.Initialization_Expression (Element);
-
       Init_Code : League.Strings.Universal_String;
       Prefix    : League.Strings.Universal_String;
 
@@ -27,10 +24,8 @@ package body Properties.Declarations.Constant_Declarations is
       Text  : League.Strings.Universal_String;
       Value : League.Holders.Holder;
    begin
-      if not Asis.Elements.Is_Nil (Init) then
-         Init_Code := League.Holders.Element
-           (Engine.Get_Property (Init, Name));
-      end if;
+      Init_Code := League.Holders.Element
+        (Engine.Get_Property (Element, Engines.Property_Names.Initialize));
 
       for J in List'Range loop
          Prefix := League.Holders.Element
@@ -44,7 +39,7 @@ package body Properties.Declarations.Constant_Declarations is
              (Engine.Get_Property (List (J), Name));
          Text.Append (Constant_Name);
 
-         if not Asis.Elements.Is_Nil (Init) then
+         if not Init_Code.Is_Empty then
             Text.Append (" = ");
             Text.Append (Init_Code);
          end if;
@@ -55,5 +50,26 @@ package body Properties.Declarations.Constant_Declarations is
       Value := League.Holders.To_Holder (Text);
       return Value;
    end Code;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   function Initialize
+     (Engine  : access Engines.Engine;
+      Element : Asis.Declaration;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      Tipe : constant Asis.Definition :=
+        Asis.Declarations.Object_Declaration_View (Element);
+      Init : constant Asis.Expression :=
+        Asis.Declarations.Initialization_Expression (Element);
+   begin
+      if not Asis.Elements.Is_Nil (Init) then
+         return Engine.Get_Property (Init, Engines.Property_Names.Code);
+      else
+         return Engine.Get_Property (Tipe, Name);
+      end if;
+   end Initialize;
 
 end Properties.Declarations.Constant_Declarations;

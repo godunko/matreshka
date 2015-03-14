@@ -62,6 +62,26 @@ package body Properties.Expressions.Identifiers is
       end if;
    end Code;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   function Initialize
+     (Engine  : access Engines.Engine;
+      Element : Asis.Expression;
+      Name    : League.Strings.Universal_String) return League.Holders.Holder
+   is
+      Decl : constant Asis.Declaration :=
+        Asis.Expressions.Corresponding_Name_Declaration (Element);
+   begin
+      if Asis.Elements.Is_Nil (Decl) then
+         return League.Holders.To_Holder
+           (League.Strings.To_Universal_String ("undefined"));
+      else
+         return Engine.Get_Property (Decl, Name);
+      end if;
+   end Initialize;
+
    --------------------
    -- Intrinsic_Name --
    --------------------

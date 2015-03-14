@@ -10,4 +10,7 @@ package Engines.Property_Names is
    Declaration_Prefix : League.Strings.Universal_String :=
      League.Strings.To_Universal_String ("Declaration_Prefix");
    --  String to prefix declaration. it could be 'var ' or 'pkg_name.'
+   Initialize : League.Strings.Universal_String :=
+     League.Strings.To_Universal_String ("Initialize");
+   --  Code to initialize an object of given type
 end Engines.Property_Names;

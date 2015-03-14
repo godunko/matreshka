@@ -8,9 +8,13 @@ with Properties.Declarations.Ordinary_Type;
 with Properties.Declarations.Package_Declaration;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
+with Properties.Definitions.Access_To_Object;
+with Properties.Definitions.Component_Definition;
+with Properties.Definitions.Constrained_Array_Type;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Tagged_Record_Type;
+with Properties.Definitions.Subtype_Indication;
 with Properties.Expressions.Attribute_Reference;
 with Properties.Expressions.Enumeration_Literal;
 with Properties.Expressions.Function_Calls;
@@ -228,6 +232,38 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Export,
        Kind   => F.A_Procedure_Declaration,
        Action => P.Declarations.Function_Declarations.Export'Access),
+
+      --  Initialize
+      (Name   => N.Initialize,
+       Kind   => F.A_Constant_Declaration,
+       Action => P.Declarations.Constant_Declarations.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Component_Declaration,
+       Action => P.Declarations.Constant_Declarations.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Variable_Declaration,
+       Action => P.Declarations.Constant_Declarations.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.An_Ordinary_Type_Declaration,
+       Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Component_Definition,
+       Action => P.Definitions.Component_Definition.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.An_Access_To_Variable,
+       Action => P.Definitions.Access_To_Object.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Constrained_Array_Definition,
+       Action => P.Definitions.Constrained_Array_Type.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Subtype_Indication,
+       Action => P.Definitions.Subtype_Indication.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.An_Identifier,
+       Action => P.Expressions.Identifiers.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Selected_Component,
+       Action => P.Expressions.Selected_Components.Initialize'Access),
 
       --  Intrinsic_Name
       (Name   => N.Intrinsic_Name,
