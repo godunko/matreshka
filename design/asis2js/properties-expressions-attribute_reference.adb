@@ -8,10 +8,9 @@ package body Properties.Expressions.Attribute_Reference is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Prefix : constant Asis.Expression :=
         Asis.Expressions.Prefix (Element);
@@ -21,7 +20,7 @@ package body Properties.Expressions.Attribute_Reference is
       case Kind is
          when Asis.An_Access_Attribute |
             Asis.An_Unchecked_Access_Attribute =>
-            return Engine.Get_Property (Prefix, Name);
+            return Engine.Text.Get_Property (Prefix, Name);
          when others =>
             raise Program_Error with "Unimplemented attribute: " &
               Asis.Attribute_Kinds'Image (Kind);

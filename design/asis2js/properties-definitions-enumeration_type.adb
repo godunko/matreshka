@@ -9,10 +9,9 @@ package body Properties.Definitions.Enumeration_Type is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Engine, Name);
 
@@ -55,7 +54,7 @@ package body Properties.Definitions.Enumeration_Type is
 
       Text.Append ("};");
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
 end Properties.Definitions.Enumeration_Type;

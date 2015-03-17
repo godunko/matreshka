@@ -7,15 +7,14 @@ package body Properties.Definitions.Subtype_Indication is
    ----------------
 
    function Initialize
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Mark : constant Asis.Definition :=
         Asis.Definitions.Subtype_Mark (Element);
    begin
-      return Engine.Get_Property (Mark, Name);
+      return Engine.Text.Get_Property (Mark, Name);
    end Initialize;
 
 end Properties.Definitions.Subtype_Indication;

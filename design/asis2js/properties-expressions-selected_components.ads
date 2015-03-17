@@ -1,30 +1,30 @@
 with Asis;
 
-with Engines;
+with Engines.Contexts;
 
-with League.Holders;
 with League.Strings;
 
 package Properties.Expressions.Selected_Components is
 
    function Call_Convention
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Call_Convention_Property)
+      return Engines.Call_Convention_Kind;
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
    function Intrinsic_Name
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
    function Initialize
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
 end Properties.Expressions.Selected_Components;

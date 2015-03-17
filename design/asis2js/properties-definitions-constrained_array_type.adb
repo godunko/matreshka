@@ -5,15 +5,13 @@ package body Properties.Definitions.Constrained_Array_Type is
    ----------------
 
    function Initialize
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Engine, Element, Name);
    begin
-      return League.Holders.To_Holder
-        (League.Strings.To_Universal_String ("[]"));
+      return League.Strings.To_Universal_String ("[]");
    end Initialize;
 
 end Properties.Definitions.Constrained_Array_Type;

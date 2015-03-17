@@ -10,18 +10,16 @@ with Asis.Exceptions;
 with Asis.Implementation;
 
 with League.Application;
-with League.Holders;
 with League.Strings;
 
-with Engines;
-with Engines.Property_Names;
+with Engines.Contexts;
 with Engines.Registry_All_Actions;
 
 procedure Asis2JS is
    procedure Compile_Unit (Unit : Asis.Compilation_Unit);
    procedure Compile_File (File : League.Strings.Universal_String);
 
-   Engine      : aliased Engines.Engine;
+   Engine      : aliased Engines.Contexts.Context;
    Context     : Asis.Context;
 
    ASIS_Params : constant League.Strings.Universal_String :=
@@ -50,20 +48,20 @@ procedure Asis2JS is
    procedure Compile_Unit (Unit : Asis.Compilation_Unit) is
       List   : constant Asis.Context_Clause_List :=
         Asis.Elements.Context_Clause_Elements (Unit);
-      Result : League.Holders.Holder;
+      Result : League.Strings.Universal_String;
       Code   : League.Strings.Universal_String;
    begin
       for J in List'Range loop
-         Result := Engine.Get_Property
-           (List (J), Engines.Property_Names.Code);
-         Code.Append (League.Holders.Element (Result));
+         Result := Engine.Text.Get_Property
+           (List (J), Engines.Code);
+         Code.Append (Result);
       end loop;
 
-      Result := Engine.Get_Property
+      Result := Engine.Text.Get_Property
         (Element => Asis.Elements.Unit_Declaration (Unit),
-         Name    => Engines.Property_Names.Code);
+         Name    => Engines.Code);
 
-      Code.Append (League.Holders.Element (Result));
+      Code.Append (Result);
 
       Ada.Wide_Wide_Text_IO.Put_Line (Code.To_Wide_Wide_String);
    end Compile_Unit;

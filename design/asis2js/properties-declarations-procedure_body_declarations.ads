@@ -1,25 +1,24 @@
 with Asis;
 
-with Engines;
+with Engines.Contexts;
 
-with League.Holders;
 with League.Strings;
 
 package Properties.Declarations.Procedure_Body_Declarations is
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
    function Declaration_Prefix
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
    function Export
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Boolean_Property) return Boolean;
 
 end Properties.Declarations.Procedure_Body_Declarations;

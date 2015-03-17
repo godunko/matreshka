@@ -10,10 +10,9 @@ package body Properties.Expressions.Enumeration_Literal is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Tipe   : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Expression_Type (Element);
@@ -26,16 +25,15 @@ package body Properties.Expressions.Enumeration_Literal is
         (Asis.Compilation_Units.Corresponding_Parent_Declaration (Unit))
       then
          --  if not in Standard
-         Result := League.Holders.Element
-           (Engine.Get_Property
-              (Asis.Declarations.Names (Tipe) (1), Name));
+         Result := Engine.Text.Get_Property
+           (Asis.Declarations.Names (Tipe) (1), Name);
          Result.Append (".");
 
       end if;
 
       Result.Append (League.Strings.From_UTF_16_Wide_String (Image));
 
-      return League.Holders.To_Holder (Result.To_Lowercase);
+      return Result.To_Lowercase;
    end Code;
 
 end Properties.Expressions.Enumeration_Literal;

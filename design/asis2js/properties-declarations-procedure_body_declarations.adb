@@ -1,9 +1,6 @@
 with Asis.Declarations;
 with Asis.Elements;
 
-with League.Holders.Booleans;
-
-with Engines.Property_Names;
 with Properties.Tools;
 
 package body Properties.Declarations.Procedure_Body_Declarations is
@@ -13,9 +10,9 @@ package body Properties.Declarations.Procedure_Body_Declarations is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
 
       Spec : constant Asis.Declaration :=
@@ -25,10 +22,9 @@ package body Properties.Declarations.Procedure_Body_Declarations is
         (Asis.Elements.Enclosing_Element (Element));
 
       Subprogram_Name : constant League.Strings.Universal_String :=
-        League.Holders.Element
-          (Engine.Get_Property
-             (Element => Asis.Declarations.Names (Element) (1),
-              Name    => Name));
+        Engine.Text.Get_Property
+          (Element => Asis.Declarations.Names (Element) (1),
+           Name    => Name);
 
       Text : League.Strings.Universal_String;
    begin
@@ -44,8 +40,7 @@ package body Properties.Declarations.Procedure_Body_Declarations is
             Type_Name : constant Asis.Defining_Name :=
               Asis.Declarations.Names (Tipe) (1);
             Image : constant League.Strings.Universal_String :=
-              League.Holders.Element
-                (Engine.Get_Property (Type_Name, Name));
+              Engine.Text.Get_Property (Type_Name, Name);
          begin
             Text.Append ("_ec.");
             Text.Append (Image);
@@ -56,10 +51,9 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       else
          declare
             Prefix : constant League.Strings.Universal_String :=
-                 League.Holders.Element
-                   (Engine.Get_Property
-                      (Asis.Elements.Enclosing_Element (Element),
-                       Engines.Property_Names.Declaration_Prefix));
+              Engine.Text.Get_Property
+                (Asis.Elements.Enclosing_Element (Element),
+                 Engines.Declaration_Prefix);
          begin
             Text.Append (Prefix);
             Text.Append (Subprogram_Name);
@@ -78,9 +72,8 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          for J in List'Range loop
             declare
                Arg_Code : constant League.Strings.Universal_String :=
-                 League.Holders.Element
-                   (Engine.Get_Property
-                      (Asis.Declarations.Names (List (J)) (1), Name));
+                 Engine.Text.Get_Property
+                   (Asis.Declarations.Names (List (J)) (1), Name);
             begin
                Text.Append (Arg_Code);
 
@@ -100,8 +93,7 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          for J in List'Range loop
             declare
                Var_Code : constant League.Strings.Universal_String :=
-                 League.Holders.Element
-                   (Engine.Get_Property (List (J), Name));
+                 Engine.Text.Get_Property (List (J), Name);
             begin
                Text.Append (Var_Code);
             end;
@@ -115,8 +107,7 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          for J in List'Range loop
             declare
                Stmt_Code : constant League.Strings.Universal_String :=
-                 League.Holders.Element
-                   (Engine.Get_Property (List (J), Name));
+                 Engine.Text.Get_Property (List (J), Name);
             begin
                Text.Append (Stmt_Code);
             end;
@@ -129,7 +120,7 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          Text.Append ("});");
       end if;
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
    ------------------------
@@ -137,15 +128,15 @@ package body Properties.Declarations.Procedure_Body_Declarations is
    ------------------------
 
    function Declaration_Prefix
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Name, Engine, Element);
       Text : constant League.Strings.Universal_String :=
         League.Strings.To_Universal_String ("var ");
    begin
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Declaration_Prefix;
 
    ------------
@@ -153,9 +144,9 @@ package body Properties.Declarations.Procedure_Body_Declarations is
    ------------
 
    function Export
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Boolean_Property) return Boolean
    is
       Spec   : constant Asis.Declaration :=
         Asis.Declarations.Corresponding_Declaration (Element);
@@ -164,11 +155,11 @@ package body Properties.Declarations.Procedure_Body_Declarations is
         Properties.Tools.Get_Aspect (Element, "Export");
    begin
       if Result = "True" then
-         return League.Holders.Booleans.To_Holder (True);
+         return True;
       elsif Asis.Elements.Is_Nil (Spec) then
-         return League.Holders.Booleans.To_Holder (False);
+         return False;
       else
-         return Engine.Get_Property (Spec, Name);
+         return Engine.Boolean.Get_Property (Spec, Name);
       end if;
    end Export;
 

@@ -8,10 +8,9 @@ package body Properties.Statements.If_Statement is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       List  : constant Asis.Path_List :=
         Asis.Statements.Statement_Paths (Element);
@@ -23,18 +22,16 @@ package body Properties.Statements.If_Statement is
             when Asis.An_If_Path =>
                Text.Append ("if (");
 
-               Down := League.Holders.Element
-                 (Engine.Get_Property
-                    (Asis.Statements.Condition_Expression (List (J)), Name));
+               Down := Engine.Text.Get_Property
+                 (Asis.Statements.Condition_Expression (List (J)), Name);
 
                Text.Append (Down);
                Text.Append (") {");
             when Asis.An_Elsif_Path =>
                Text.Append ("} else if (");
 
-               Down := League.Holders.Element
-                 (Engine.Get_Property
-                    (Asis.Statements.Condition_Expression (List (J)), Name));
+               Down := Engine.Text.Get_Property
+                 (Asis.Statements.Condition_Expression (List (J)), Name);
 
                Text.Append (Down);
                Text.Append (") {");
@@ -49,8 +46,7 @@ package body Properties.Statements.If_Statement is
               Asis.Statements.Sequence_Of_Statements (List (J));
          begin
             for N in Nested'Range loop
-               Down := League.Holders.Element
-                 (Engine.Get_Property (Nested (N), Name));
+               Down := Engine.Text.Get_Property (Nested (N), Name);
 
                Text.Append (Down);
             end loop;
@@ -59,7 +55,7 @@ package body Properties.Statements.If_Statement is
 
       Text.Append ("};");
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
 end Properties.Statements.If_Statement;

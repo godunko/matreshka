@@ -1,15 +1,14 @@
 with Asis;
 
-with Engines;
+with Engines.Contexts;
 
-with League.Holders;
 with League.Strings;
 
 package Properties.Definitions.Access_To_Object is
 
    function Initialize
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
 end Properties.Definitions.Access_To_Object;

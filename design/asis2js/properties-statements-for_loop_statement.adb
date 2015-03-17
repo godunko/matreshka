@@ -8,10 +8,9 @@ package body Properties.Statements.For_Loop_Statement is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Iter  : constant Asis.Declaration :=
         Asis.Statements.For_Loop_Parameter_Specification (Element);
@@ -22,15 +21,13 @@ package body Properties.Statements.For_Loop_Statement is
       Index : League.Strings.Universal_String;
    begin
       Text.Append ("for (var ");
-      Index := League.Holders.Element
-        (Engine.Get_Property
-           (Asis.Declarations.Names (Iter) (1), Name));
+      Index := Engine.Text.Get_Property
+           (Asis.Declarations.Names (Iter) (1), Name);
 
       Text.Append (Index);
       Text.Append (" = ");
-      Down := League.Holders.Element
-        (Engine.Get_Property
-           (Asis.Declarations.Specification_Subtype_Definition (Iter), Name));
+      Down := Engine.Text.Get_Property
+           (Asis.Declarations.Specification_Subtype_Definition (Iter), Name);
 
       Text.Append (Down);
       Text.Append (" >= ");
@@ -40,15 +37,14 @@ package body Properties.Statements.For_Loop_Statement is
       Text.Append ("++){");
 
       for N in List'Range loop
-         Down := League.Holders.Element
-           (Engine.Get_Property (List (N), Name));
+         Down := Engine.Text.Get_Property (List (N), Name);
 
          Text.Append (Down);
       end loop;
 
       Text.Append ("};");
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
 end Properties.Statements.For_Loop_Statement;

@@ -2,7 +2,6 @@ with Asis.Declarations;
 with Asis.Elements;
 
 with Properties.Tools;
-with Engines.Property_Names;
 
 package body Properties.Definitions.Tagged_Record_Type is
 
@@ -11,10 +10,9 @@ package body Properties.Definitions.Tagged_Record_Type is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Decl : constant Asis.Declaration :=
         Asis.Elements.Enclosing_Element (Element);
@@ -23,8 +21,8 @@ package body Properties.Definitions.Tagged_Record_Type is
    begin
       Result.Append ("_ec.");
 
-      Name_Image := League.Holders.Element
-        (Engine.Get_Property (Asis.Declarations.Names (Decl) (1), Name));
+      Name_Image := Engine.Text.Get_Property
+        (Asis.Declarations.Names (Decl) (1), Name);
 
       Result.Append (Name_Image);
       Result.Append (" =  function (){");
@@ -41,16 +39,14 @@ package body Properties.Definitions.Tagged_Record_Type is
                for N in Names'Range loop
                   Result.Append ("this.");
                   Result.Append
-                    (League.Holders.Element
-                       (Engine.Get_Property
-                            (Names (N), Name)));
+                    (Engine.Text.Get_Property
+                            (Names (N), Name));
                   Result.Append (" = ");
                end loop;
 
                Result.Append
-                 (League.Holders.Element
-                    (Engine.Get_Property
-                         (List (J), Engines.Property_Names.Initialize)));
+                 (Engine.Text.Get_Property
+                         (List (J), Engines.Initialize));
 
                Result.Append (";");
             end;
@@ -76,15 +72,14 @@ package body Properties.Definitions.Tagged_Record_Type is
                Result.Append (Name_Image);
                Result.Append (".prototype.");
                Result.Append
-                 (League.Holders.Element
-                    (Engine.Get_Property
-                         (Asis.Declarations.Names (List (J)) (1), Name)));
+                 (Engine.Text.Get_Property
+                         (Asis.Declarations.Names (List (J)) (1), Name));
                Result.Append (" = _ec._abstract;");
             end if;
          end loop;
       end;
 
-      return League.Holders.To_Holder (Result);
+      return Result;
    end Code;
 
 end Properties.Definitions.Tagged_Record_Type;

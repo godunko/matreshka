@@ -7,15 +7,14 @@ package body Properties.Definitions.Component_Definition is
    ----------------
 
    function Initialize
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Subtipe : constant Asis.Definition :=
         Asis.Definitions.Component_Subtype_Indication (Element);
    begin
-      return Engine.Get_Property (Subtipe, Name);
+      return Engine.Text.Get_Property (Subtipe, Name);
    end Initialize;
 
 end Properties.Definitions.Component_Definition;

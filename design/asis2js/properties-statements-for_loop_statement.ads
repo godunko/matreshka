@@ -1,15 +1,14 @@
 with Asis;
 
-with Engines;
+with Engines.Contexts;
 
-with League.Holders;
 with League.Strings;
 
 package Properties.Statements.For_Loop_Statement is
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
 end Properties.Statements.For_Loop_Statement;

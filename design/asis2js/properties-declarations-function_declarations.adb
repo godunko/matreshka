@@ -1,12 +1,9 @@
 with Ada.Wide_Text_IO;
 
-with League.Holders.Booleans;
-
 with Asis.Compilation_Units;
 with Asis.Declarations;
 with Asis.Elements;
 
-with Engines.Property_Types;
 with Properties.Tools;
 
 package body Properties.Declarations.Function_Declarations is
@@ -16,10 +13,10 @@ package body Properties.Declarations.Function_Declarations is
    ---------------------
 
    function Call_Convention
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder is
+      Name    : Engines.Call_Convention_Property)
+      return Engines.Call_Convention_Kind is
    begin
       if Asis.Elements.Is_Part_Of_Inherited (Element) then
          return Call_Convention
@@ -29,16 +26,14 @@ package body Properties.Declarations.Function_Declarations is
       end if;
 
       if Asis.Elements.Is_Part_Of_Implicit (Element) then
-         return Engines.Property_Types.Call_Convention_Holders
-           .To_Holder (Engines.Property_Types.Intrinsic);
+         return Engines.Intrinsic;
       end if;
 
       if Asis.Compilation_Units.Unit_Full_Name
         (Asis.Elements.Enclosing_Compilation_Unit (Element))
           = "League.Strings"
       then
-         return Engines.Property_Types.Call_Convention_Holders
-           .To_Holder (Engines.Property_Types.Intrinsic);
+         return Engines.Intrinsic;
       end if;
 
       declare
@@ -48,15 +43,11 @@ package body Properties.Declarations.Function_Declarations is
          if Result = "" then
             null;
          elsif Result = "JavaScript_Property_Getter" then
-            return Engines.Property_Types.Call_Convention_Holders
-              .To_Holder
-                (Engines.Property_Types.JavaScript_Property_Getter);
+            return Engines.JavaScript_Property_Getter;
          elsif Result = "JavaScript_Getter" then
-            return Engines.Property_Types.Call_Convention_Holders
-              .To_Holder (Engines.Property_Types.JavaScript_Getter);
+            return Engines.JavaScript_Getter;
          elsif Result = "JavaScript_Function" then
-            return Engines.Property_Types.Call_Convention_Holders
-              .To_Holder (Engines.Property_Types.JavaScript_Function);
+            return Engines.JavaScript_Function;
          else
             Ada.Wide_Text_IO.Put ("Unknown call conv: ");
             Ada.Wide_Text_IO.Put_Line (Result);
@@ -64,8 +55,7 @@ package body Properties.Declarations.Function_Declarations is
          end if;
       end;
 
-      return Engines.Property_Types.Call_Convention_Holders
-        .To_Holder (Engines.Property_Types.Unspecified);
+      return Engines.Unspecified;
    end Call_Convention;
 
    ----------
@@ -73,13 +63,13 @@ package body Properties.Declarations.Function_Declarations is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Engine, Element, Name);
    begin
-      return League.Holders.To_Holder (League.Strings.Empty_Universal_String);
+      return League.Strings.Empty_Universal_String;
    end Code;
 
    ------------
@@ -87,15 +77,15 @@ package body Properties.Declarations.Function_Declarations is
    ------------
 
    function Export
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Boolean_Property) return Boolean
    is
       pragma Unreferenced (Engine, Name);
       Result : constant Wide_String :=
         Properties.Tools.Get_Aspect (Element, "Export");
    begin
-      return League.Holders.Booleans.To_Holder (Result = "True");
+      return Result = "True";
    end Export;
 
    --------------------
@@ -103,9 +93,9 @@ package body Properties.Declarations.Function_Declarations is
    --------------------
 
    function Intrinsic_Name
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Engine, Name);
       Result : League.Strings.Universal_String;
@@ -121,7 +111,7 @@ package body Properties.Declarations.Function_Declarations is
       Result.Append (".");
       Result.Append (League.Strings.From_UTF_16_Wide_String (Func));
 
-      return League.Holders.To_Holder (Result);
+      return Result;
    end Intrinsic_Name;
 
 end Properties.Declarations.Function_Declarations;

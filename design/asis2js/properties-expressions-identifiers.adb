@@ -2,8 +2,6 @@ with Asis.Declarations;
 with Asis.Elements;
 with Asis.Expressions;
 
-with Engines.Property_Types;
-
 package body Properties.Expressions.Identifiers is
 
    ---------------------
@@ -11,9 +9,10 @@ package body Properties.Expressions.Identifiers is
    ---------------------
 
    function Call_Convention
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Call_Convention_Property)
+      return Engines.Call_Convention_Kind
    is
       use type Asis.Expression_Kinds;
 
@@ -24,15 +23,13 @@ package body Properties.Expressions.Identifiers is
          if Asis.Elements.Expression_Kind (Element) =
            Asis.An_Operator_Symbol
          then
-            return Engines.Property_Types.Call_Convention_Holders.To_Holder
-              (Engines.Property_Types.Intrinsic);
+            return Engines.Intrinsic;
          end if;
 
-         return Engines.Property_Types.Call_Convention_Holders.To_Holder
-           (Engines.Property_Types.Unspecified);
+         return Engines.Unspecified;
       end if;
 
-      return Engine.Get_Property
+      return Engine.Call_Convention.Get_Property
         (Asis.Elements.Enclosing_Element (Def), Name);
    end Call_Convention;
 
@@ -41,9 +38,9 @@ package body Properties.Expressions.Identifiers is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Decl : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Name_Declaration (Element);
@@ -51,13 +48,11 @@ package body Properties.Expressions.Identifiers is
         Asis.Expressions.Name_Image (Element);
       Text : constant League.Strings.Universal_String :=
         League.Strings.From_UTF_16_Wide_String (Image);
-      Value : constant League.Holders.Holder :=
-        League.Holders.To_Holder (Text.To_Lowercase);
    begin
       if Asis.Elements.Is_Nil (Decl) then
-         return Value;
+         return Text.To_Lowercase;
       else
-         return Engine.Get_Property
+         return Engine.Text.Get_Property
            (Asis.Declarations.Names (Decl) (1), Name);
       end if;
    end Code;
@@ -67,18 +62,17 @@ package body Properties.Expressions.Identifiers is
    ----------------
 
    function Initialize
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Decl : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Name_Declaration (Element);
    begin
       if Asis.Elements.Is_Nil (Decl) then
-         return League.Holders.To_Holder
-           (League.Strings.To_Universal_String ("undefined"));
+         return League.Strings.To_Universal_String ("undefined");
       else
-         return Engine.Get_Property (Decl, Name);
+         return Engine.Text.Get_Property (Decl, Name);
       end if;
    end Initialize;
 
@@ -87,9 +81,9 @@ package body Properties.Expressions.Identifiers is
    --------------------
 
    function Intrinsic_Name
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       use type Asis.Expression_Kinds;
 
@@ -105,15 +99,14 @@ package body Properties.Expressions.Identifiers is
                  League.Strings.From_UTF_16_Wide_String
                    (Asis.Expressions.Name_Image (Element));
             begin
-               return League.Holders.To_Holder (Text);
+               return Text;
             end;
          end if;
 
-         return League.Holders.To_Holder
-           (League.Strings.Empty_Universal_String);
+         return League.Strings.Empty_Universal_String;
       end if;
 
-      return Engine.Get_Property
+      return Engine.Text.Get_Property
         (Asis.Elements.Enclosing_Element (Def), Name);
    end Intrinsic_Name;
 

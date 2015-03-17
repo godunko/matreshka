@@ -7,17 +7,16 @@ package body Properties.Expressions.Integer_Literal is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Engine, Name);
       Image : constant Wide_String := Asis.Expressions.Value_Image (Element);
       Result : constant League.Strings.Universal_String :=
         League.Strings.From_UTF_16_Wide_String (Image);
    begin
-      return League.Holders.To_Holder (Result);
+      return Result;
    end Code;
 
 end Properties.Expressions.Integer_Literal;

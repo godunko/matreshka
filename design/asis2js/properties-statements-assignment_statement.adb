@@ -7,10 +7,9 @@ package body Properties.Statements.Assignment_Statement is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Left  : constant Asis.Expression :=
         Asis.Statements.Assignment_Variable_Name (Element);
@@ -19,13 +18,13 @@ package body Properties.Statements.Assignment_Statement is
       Text  : League.Strings.Universal_String;
       Down  : League.Strings.Universal_String;
    begin
-      Text := League.Holders.Element (Engine.Get_Property (Left, Name));
+      Text := Engine.Text.Get_Property (Left, Name);
       Text.Append (" = ");
-      Down := League.Holders.Element (Engine.Get_Property (Right, Name));
+      Down := Engine.Text.Get_Property (Right, Name);
       Text.Append (Down);
       Text.Append (";");
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
 end Properties.Statements.Assignment_Statement;

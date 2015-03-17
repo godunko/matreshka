@@ -26,9 +26,9 @@ package body Properties.Declarations.Defining_Names is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Engine, Name);
       L_Name : constant League.Strings.Universal_String := Link_Name (Element);
@@ -36,19 +36,16 @@ package body Properties.Declarations.Defining_Names is
         Asis.Declarations.Defining_Name_Image (Element);
       Text : League.Strings.Universal_String :=
         League.Strings.From_UTF_16_Wide_String (Image).To_Lowercase;
-      Value : League.Holders.Holder;
    begin
       if L_Name.Is_Empty then
          if Reserved.Contains (Text) then
             Text.Prepend ("_");
          end if;
-
-         Value := League.Holders.To_Holder (Text);
       else
-         Value := League.Holders.To_Holder (L_Name);
+         Text := L_Name;
       end if;
 
-      return Value;
+      return Text;
    end Code;
 
    ---------------

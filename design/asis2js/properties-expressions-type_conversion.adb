@@ -7,13 +7,12 @@ package body Properties.Expressions.Type_Conversion is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
    begin
-      return Engine.Get_Property
+      return Engine.Text.Get_Property
         (Asis.Expressions.Converted_Or_Qualified_Expression (Element), Name);
    end Code;
 

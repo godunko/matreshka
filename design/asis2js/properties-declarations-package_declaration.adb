@@ -12,9 +12,9 @@ package body Properties.Declarations.Package_Declaration is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       use type Asis.Element_List;
 
@@ -48,8 +48,8 @@ package body Properties.Declarations.Package_Declaration is
         Asis.Declarations.Private_Part_Declarative_Items (Element) &
         Body_Declarative_Items (Element);
    begin
-      Down := League.Holders.Element
-        (Engine.Get_Property (Asis.Declarations.Names (Element) (1), Name));
+      Down := Engine.Text.Get_Property
+        (Asis.Declarations.Names (Element) (1), Name);
 
       if Is_Library_Level then
          Text.Append
@@ -70,7 +70,7 @@ package body Properties.Declarations.Package_Declaration is
       Text.Append ("_ec._nested.prototype = _ec;");
 
       for J in List'Range loop
-         Down := League.Holders.Element (Engine.Get_Property (List (J), Name));
+         Down := Engine.Text.Get_Property (List (J), Name);
          Text.Append (Down);
       end loop;
 
@@ -81,7 +81,7 @@ package body Properties.Declarations.Package_Declaration is
          Text.Append (");");
       end if;
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
    ------------------------
@@ -89,16 +89,16 @@ package body Properties.Declarations.Package_Declaration is
    ------------------------
 
    function Declaration_Prefix
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Name, Engine, Element);
       Text : League.Strings.Universal_String;
    begin
       Text.Append ("_ec.");
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Declaration_Prefix;
 
 end Properties.Declarations.Package_Declaration;

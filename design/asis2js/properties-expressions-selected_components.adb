@@ -8,13 +8,13 @@ package body Properties.Expressions.Selected_Components is
    ---------------------
 
    function Call_Convention
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
-   is
+      Name    : Engines.Call_Convention_Property)
+      return Engines.Call_Convention_Kind is
    begin
-      return Engine.Get_Property (Asis.Expressions.Selector (Element), Name);
+      return Engine.Call_Convention.Get_Property
+        (Asis.Expressions.Selector (Element), Name);
    end Call_Convention;
 
    ----------
@@ -22,10 +22,9 @@ package body Properties.Expressions.Selected_Components is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Prefix   : constant Asis.Expression := Asis.Expressions.Prefix (Element);
       Selector : constant Asis.Expression :=
@@ -45,15 +44,13 @@ package body Properties.Expressions.Selected_Components is
                   Left  : League.Strings.Universal_String;
                   Right : League.Strings.Universal_String;
                begin
-                  Left := League.Holders.Element
-                    (Engine.Get_Property (Prefix, Name));
+                  Left := Engine.Text.Get_Property (Prefix, Name);
 
-                  Right := League.Holders.Element
-                    (Engine.Get_Property (Def_Name, Name));
+                  Right := Engine.Text.Get_Property (Def_Name, Name);
                   Left.Append (".");
                   Left.Append (Right);
 
-                  return League.Holders.To_Holder (Left);
+                  return Left;
                end;
             when Asis.A_Function_Declaration | Asis.A_Procedure_Declaration =>
                null;
@@ -63,19 +60,23 @@ package body Properties.Expressions.Selected_Components is
          end case;
       end if;
 
-      return Engine.Get_Property (Selector, Name);
+      return Engine.Text.Get_Property (Selector, Name);
    end Code;
 
    function Intrinsic_Name
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
-     renames Call_Convention;
+      Name    : Engines.Text_Property)
+      return League.Strings.Universal_String is
+   begin
+      return Engine.Text.Get_Property
+        (Asis.Expressions.Selector (Element), Name);
+   end Intrinsic_Name;
 
    function Initialize
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder
-     renames Call_Convention;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+     renames Intrinsic_Name;
 
 end Properties.Expressions.Selected_Components;

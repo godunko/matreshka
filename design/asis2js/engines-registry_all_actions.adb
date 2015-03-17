@@ -1,4 +1,6 @@
-with Engines.Property_Names;
+with League.Strings;
+
+with Asis.Extensions.Flat_Kinds;
 
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
@@ -33,25 +35,32 @@ with Properties.Statements.Null_Statement;
 with Properties.Statements.Procedure_Call_Statement;
 with Properties.Statements.Return_Statement;
 
-procedure Engines.Registry_All_Actions (Self : in out Engine) is
+procedure Engines.Registry_All_Actions
+  (Self : in out Engines.Contexts.Context)
+is
+   type Text_Callback is access function
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Element;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
+
    type Action_Item is record
-      Name   : League.Strings.Universal_String;
+      Name   : Engines.Text_Property;
       Kind   : Asis.Extensions.Flat_Kinds.Flat_Element_Kinds;
-      Action : Action_Callback;
+      Action : Text_Callback;
    end record;
 
    type Action_Array is array (Positive range <>) of Action_Item;
 
    type Action_Range is record
-      Name     : League.Strings.Universal_String;
+      Name     : Engines.Text_Property;
       From, To : Asis.Extensions.Flat_Kinds.Flat_Element_Kinds;
-      Action   : Action_Callback;
+      Action   : Text_Callback;
    end record;
 
    type Range_Array is array (Positive range <>) of Action_Range;
 
    package F renames Asis.Extensions.Flat_Kinds;
-   package N renames Engines.Property_Names;
+   package N renames Engines;
    package P renames Properties;
 
    Action_List : constant Action_Array :=
@@ -186,27 +195,6 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
        Kind   => F.A_With_Clause,
        Action => P.Statements.Null_Statement.Code'Access),
 
-      --  Call_Convention
-      (Name   => N.Call_Convention,
-       Kind   => F.A_Function_Call,
-       Action => P.Expressions.Function_Calls.Call_Convention'Access),
-      (Name   => N.Call_Convention,
-       Kind   => F.An_Identifier,
-       Action => P.Expressions.Identifiers.Call_Convention'Access),
-      (Name   => N.Call_Convention,
-       Kind   => F.A_Function_Declaration,
-       Action => P.Declarations.Function_Declarations.Call_Convention'Access),
-      (Name   => N.Call_Convention,
-       Kind   => F.A_Function_Renaming_Declaration,
-       Action => P.Declarations.Function_Renaming_Declaration
-                   .Call_Convention'Access),
-      (Name   => N.Call_Convention,
-       Kind   => F.A_Procedure_Declaration,
-       Action => P.Declarations.Procedure_Declaration.Call_Convention'Access),
-      (Name   => N.Call_Convention,
-       Kind   => F.A_Selected_Component,
-       Action => P.Expressions.Selected_Components.Call_Convention'Access),
-
       --  Declaration_Prefix
       (Name   => N.Declaration_Prefix,
        Kind   => F.A_Procedure_Body_Declaration,
@@ -218,20 +206,6 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Declaration_Prefix,
        Kind   => F.A_Package_Body_Declaration,
        Action => P.Declarations.Package_Declaration.Declaration_Prefix'Access),
-
-      --  Export
-      (Name   => N.Export,
-       Kind   => F.A_Function_Body_Declaration,
-       Action => P.Declarations.Procedure_Body_Declarations.Export'Access),
-      (Name   => N.Export,
-       Kind   => F.A_Function_Declaration,
-       Action => P.Declarations.Function_Declarations.Export'Access),
-      (Name   => N.Export,
-       Kind   => F.A_Procedure_Body_Declaration,
-       Action => P.Declarations.Procedure_Body_Declarations.Export'Access),
-      (Name   => N.Export,
-       Kind   => F.A_Procedure_Declaration,
-       Action => P.Declarations.Function_Declarations.Export'Access),
 
       --  Initialize
       (Name   => N.Initialize,
@@ -282,7 +256,7 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (Name   => N.Intrinsic_Name,
        Kind   => F.A_Selected_Component,
        Action => P.Expressions.Selected_Components
-                   .Call_Convention'Access)
+                   .Intrinsic_Name'Access)
      );
 
    Range_List : constant Range_Array :=
@@ -292,20 +266,70 @@ procedure Engines.Registry_All_Actions (Self : in out Engine) is
       (N.Code,
        F.An_Access_Attribute, F.An_Implementation_Defined_Attribute,
        P.Expressions.Attribute_Reference.Code'Access),
-      (N.Call_Convention,
-       F.An_And_Operator, F.A_Not_Operator,
-       P.Expressions.Identifiers.Call_Convention'Access),
       (N.Intrinsic_Name,
        F.An_And_Operator, F.A_Not_Operator,
        P.Expressions.Identifiers.Intrinsic_Name'Access));
 begin
    for X of Action_List loop
-      Self.Register_Calculator (X.Kind, X.Name, X.Action);
+      Self.Text.Register_Calculator (X.Kind, X.Name, X.Action);
    end loop;
 
    for X of Range_List loop
       for J in X.From .. X.To loop
-         Self.Register_Calculator (J, X.Name, X.Action);
+         Self.Text.Register_Calculator (J, X.Name, X.Action);
       end loop;
    end loop;
+
+   --  Call_Convention
+   Self.Call_Convention.Register_Calculator
+     (Name   => N.Call_Convention,
+      Kind   => F.A_Function_Call,
+      Action => P.Expressions.Function_Calls.Call_Convention'Access);
+   Self.Call_Convention.Register_Calculator
+     (Name   => N.Call_Convention,
+      Kind   => F.An_Identifier,
+      Action => P.Expressions.Identifiers.Call_Convention'Access);
+   Self.Call_Convention.Register_Calculator
+     (Name   => N.Call_Convention,
+      Kind   => F.A_Function_Declaration,
+      Action => P.Declarations.Function_Declarations.Call_Convention'Access);
+   Self.Call_Convention.Register_Calculator
+     (Name   => N.Call_Convention,
+      Kind   => F.A_Function_Renaming_Declaration,
+      Action => P.Declarations.Function_Renaming_Declaration
+      .Call_Convention'Access);
+   Self.Call_Convention.Register_Calculator
+     (Name   => N.Call_Convention,
+      Kind   => F.A_Procedure_Declaration,
+      Action => P.Declarations.Procedure_Declaration.Call_Convention'Access);
+   Self.Call_Convention.Register_Calculator
+     (Name   => N.Call_Convention,
+      Kind   => F.A_Selected_Component,
+      Action => P.Expressions.Selected_Components.Call_Convention'Access);
+
+   for X in F.An_And_Operator .. F.A_Not_Operator loop
+      Self.Call_Convention.Register_Calculator
+        (Kind    => X,
+         Name    => N.Call_Convention,
+         Action  => P.Expressions.Identifiers.Call_Convention'Access);
+   end loop;
+
+   --  Export
+   Self.Boolean.Register_Calculator
+     (Name   => N.Export,
+      Kind   => F.A_Function_Body_Declaration,
+      Action => P.Declarations.Procedure_Body_Declarations.Export'Access);
+   Self.Boolean.Register_Calculator
+     (Name   => N.Export,
+      Kind   => F.A_Function_Declaration,
+      Action => P.Declarations.Function_Declarations.Export'Access);
+   Self.Boolean.Register_Calculator
+     (Name   => N.Export,
+      Kind   => F.A_Procedure_Body_Declaration,
+      Action => P.Declarations.Procedure_Body_Declarations.Export'Access);
+   Self.Boolean.Register_Calculator
+     (Name   => N.Export,
+      Kind   => F.A_Procedure_Declaration,
+      Action => P.Declarations.Function_Declarations.Export'Access);
+
 end Engines.Registry_All_Actions;

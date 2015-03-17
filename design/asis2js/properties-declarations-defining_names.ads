@@ -1,15 +1,14 @@
 with Asis;
 
-with Engines;
+with Engines.Contexts;
 
-with League.Holders;
 with League.Strings;
 
 package Properties.Declarations.Defining_Names is
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String) return League.Holders.Holder;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
 end Properties.Declarations.Defining_Names;

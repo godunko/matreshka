@@ -8,10 +8,9 @@ package body Properties.Statements.Case_Statement is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       use type Asis.Path_Kinds;
       use type Asis.Definition_Kinds;
@@ -23,9 +22,8 @@ package body Properties.Statements.Case_Statement is
       Down  : League.Strings.Universal_String;
    begin
       Text.Append ("switch (");
-      Down := League.Holders.Element
-        (Engine.Get_Property
-           (Asis.Statements.Case_Expression (Element), Name));
+      Down := Engine.Text.Get_Property
+        (Asis.Statements.Case_Expression (Element), Name);
 
       Text.Append (Down);
       Text.Append (") {");
@@ -44,8 +42,7 @@ package body Properties.Statements.Case_Statement is
                if Asis.Elements.Element_Kind (Alt (K)) =
                  Asis.An_Expression
                then
-                  Down := League.Holders.Element
-                    (Engine.Get_Property (Alt (K), Name));
+                  Down := Engine.Text.Get_Property (Alt (K), Name);
 
                   Text.Append ("case ");
                   Text.Append (Down);
@@ -59,8 +56,7 @@ package body Properties.Statements.Case_Statement is
                end if;
 
                for N in Nested'Range loop
-                  Down := League.Holders.Element
-                    (Engine.Get_Property (Nested (N), Name));
+                  Down := Engine.Text.Get_Property (Nested (N), Name);
 
                   Text.Append (Down);
                end loop;
@@ -72,7 +68,7 @@ package body Properties.Statements.Case_Statement is
 
       Text.Append ("};");
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
 end Properties.Statements.Case_Statement;

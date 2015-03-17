@@ -8,10 +8,9 @@ package body Properties.Statements.Return_Statement is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Down   : League.Strings.Universal_String;
       Result : League.Strings.Universal_String;
@@ -21,13 +20,13 @@ package body Properties.Statements.Return_Statement is
       Result.Append ("return");
 
       if not Asis.Elements.Is_Nil (Value) then
-         Down := League.Holders.Element (Engine.Get_Property (Value, Name));
+         Down := Engine.Text.Get_Property (Value, Name);
          Result.Append (" ");
          Result.Append (Down);
       end if;
 
       Result.Append (";");
-      return League.Holders.To_Holder (Result);
+      return Result;
    end Code;
 
 end Properties.Statements.Return_Statement;

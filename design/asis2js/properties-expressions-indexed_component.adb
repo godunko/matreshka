@@ -7,24 +7,23 @@ package body Properties.Expressions.Indexed_Component is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
-      Element : Asis.Declaration;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Text  : League.Strings.Universal_String;
       Down  : League.Strings.Universal_String;
    begin
-      Text := League.Holders.Element
-        (Engine.Get_Property (Asis.Expressions.Prefix (Element), Name));
+      Text := Engine.Text.Get_Property
+        (Asis.Expressions.Prefix (Element), Name);
       Text.Append (" [");
-      Down := League.Holders.Element
-        (Engine.Get_Property (Asis.Expressions.Index_Expressions (Element) (1),
-         Name));
+      Down := Engine.Text.Get_Property
+        (Asis.Expressions.Index_Expressions (Element) (1),
+         Name);
       Text.Append (Down);
       Text.Append (" -1]");
 
-      return League.Holders.To_Holder (Text);
+      return Text;
    end Code;
 
 end Properties.Expressions.Indexed_Component;

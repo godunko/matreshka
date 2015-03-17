@@ -5,16 +5,15 @@ package body Properties.Expressions.Null_Literal is
    ----------
 
    function Code
-     (Engine  : access Engines.Engine;
+     (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
-      Name    : League.Strings.Universal_String)
-      return League.Holders.Holder
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       pragma Unreferenced (Engine, Name, Element);
       Result : constant League.Strings.Universal_String :=
         League.Strings.To_Universal_String ("null");
    begin
-      return League.Holders.To_Holder (Result);
+      return Result;
    end Code;
 
 end Properties.Expressions.Null_Literal;
