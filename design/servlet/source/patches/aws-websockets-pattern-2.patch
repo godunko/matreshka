@@ -1,0 +1,200 @@
+diff --git a/makefile.conf b/makefile.conf
+index 5f3de31..cd893e7 100644
+--- a/makefile.conf
++++ b/makefile.conf
+@@ -49,11 +49,11 @@ DEFAULT_LIBRARY_TYPE = static
+ #
+ # XMLADA = [true/false]
+ #
+-ifeq ($(shell gnat ls -Pxmlada 2>&1 | grep 'project file .* not found'),)
+-XMLADA = true
+-else
++#ifeq ($(shell gnat ls -Pxmlada 2>&1 | grep 'project file .* not found'),)
++#XMLADA = true
++#else
+ XMLADA = false
+-endif
++#endif
+ 
+ ##############################################################################
+ # ASIS optional, needed if you want to build ada2wsdl tool. This tool can be
+@@ -65,11 +65,11 @@ endif
+ #
+ # ASIS = [true|false]
+ #
+-ifeq ($(shell gnat ls -Pasis 2>&1 | grep 'project file .* not found'),)
+-ASIS = true
+-else
++#ifeq ($(shell gnat ls -Pasis 2>&1 | grep 'project file .* not found'),)
++#ASIS = true
++#else
+ ASIS = false
+-endif
++#endif
+ 
+ ##############################################################################
+ # Zlib mandatory, check if zlib is already installed and recent enought,
+diff --git a/src/core/aws-net-websocket-registry.adb b/src/core/aws-net-websocket-registry.adb
+index 6c90f32..40a334f 100644
+--- a/src/core/aws-net-websocket-registry.adb
++++ b/src/core/aws-net-websocket-registry.adb
+@@ -1,7 +1,7 @@
+ ------------------------------------------------------------------------------
+ --                              Ada Web Server                              --
+ --                                                                          --
+---                     Copyright (C) 2012-2014, AdaCore                     --
++--                     Copyright (C) 2012-2015, AdaCore                     --
+ --                                                                          --
+ --  This library is free software;  you can redistribute it and/or modify   --
+ --  it under terms of the  GNU General Public License  as published by the  --
+@@ -29,9 +29,10 @@
+ 
+ pragma Ada_2012;
+ 
+-with Ada.Containers.Indefinite_Ordered_Maps;
+ with Ada.Containers.Ordered_Maps;
++with Ada.Containers.Vectors;
+ with Ada.Unchecked_Deallocation;
++with GNAT.Regpat;
+ 
+ with AWS.Config;
+ with AWS.Net.Generic_Sets;
+@@ -42,12 +43,26 @@ with AWS.Utils;
+ package body AWS.Net.WebSocket.Registry is
+ 
+    use GNAT;
++   use GNAT.Regpat;
+ 
+    --  Containers for all registered constructors
+ 
+-   package Constructors is
+-     new Containers.Indefinite_Ordered_Maps (String, Factory);
+-   Factories : Constructors.Map;
++   type Pattern_Matcher_Access is access all GNAT.Regpat.Pattern_Matcher;
++
++   type URL_Pattern (With_Matcher : Boolean := False) is record
++      Prefix  : Unbounded_String;
++      Factory : Registry.Factory;
++      case With_Matcher is
++         when True =>
++            Matcher : Pattern_Matcher_Access;
++         when False =>
++            null;
++      end case;
++   end record;
++
++   package Constructors is new Ada.Containers.Vectors (Positive, URL_Pattern);
++
++   Factories : Constructors.Vector;
+ 
+    --  A queue for WebSocket with pending messages to be read
+ 
+@@ -829,13 +844,41 @@ package body AWS.Net.WebSocket.Registry is
+    -----------------
+ 
+    function Constructor (URI : String) return Registry.Factory is
+-      Position : constant Constructors.Cursor := Factories.Find (URI);
++      Prefix_Length : Natural;
++
+    begin
+-      if Constructors.Has_Element (Position) then
+-         return Constructors.Element (Position);
+-      else
+-         return Create'Access;
+-      end if;
++      for Pattern of Factories loop
++         if Pattern.With_Matcher then
++            Prefix_Length := Length (Pattern.Prefix);
++            if URI'Length >= Prefix_Length
++              and then URI (URI'First .. URI'First + Prefix_Length - 1)
++                          = Pattern.Prefix
++            then
++               declare
++                  Count   : constant Natural :=
++                                       Paren_Count (Pattern.Matcher.all);
++                  Matches : Match_Array (0 .. Count);
++               begin
++                  Match
++                    (Pattern.Matcher.all,
++                     URI (URI'First + Prefix_Length .. URI'Last),
++                     Matches);
++
++                  if Matches (0) /= No_Match then
++                     return Pattern.Factory;
++                  end if;
++               end;
++            end if;
++
++         else
++            if URI = Pattern.Prefix then
++               return Pattern.Factory;
++            end if;
++         end if;
++      end loop;
++
++      raise Constraint_Error
++        with "No WebSocket factory registered for '" & URI & ''';
+    end Constructor;
+ 
+    ------------
+@@ -880,7 +923,10 @@ package body AWS.Net.WebSocket.Registry is
+ 
+    procedure Register (URI : String; Factory : Registry.Factory) is
+    begin
+-      Factories.Insert (URI, Factory);
++      Factories.Append
++        ((With_Matcher => False,
++          Prefix       => To_Unbounded_String (URI),
++          Factory      => Factory));
+    end Register;
+ 
+    function Register (WebSocket : Object'Class) return Object_Class is
+@@ -896,6 +942,25 @@ package body AWS.Net.WebSocket.Registry is
+       return WS;
+    end Register;
+ 
++   --------------------------
++   -- Register_Pattern_URL --
++   --------------------------
++
++   procedure Register_Pattern_URL
++     (URI     : String;
++      Pattern : String;
++      Factory : Registry.Factory) is
++   begin
++      Factories.Append
++        ((With_Matcher => True,
++          Prefix       => To_Unbounded_String (URI),
++          Factory      => Factory,
++          Matcher      =>
++            new Regpat.Pattern_Matcher'
++                  (GNAT.Regpat.Compile
++                     (Pattern, GNAT.Regpat.Case_Insensitive))));
++   end Register_Pattern_URL;
++
+    ----------
+    -- Send --
+    ----------
+diff --git a/src/core/aws-net-websocket-registry.ads b/src/core/aws-net-websocket-registry.ads
+index 10f4c1b..91d65a6 100644
+--- a/src/core/aws-net-websocket-registry.ads
++++ b/src/core/aws-net-websocket-registry.ads
+@@ -52,6 +52,12 @@ package AWS.Net.WebSocket.Registry is
+      Pre => URI'Length > 0;
+    --  Register a WebObject's constructor for a specific URI
+ 
++   procedure Register_Pattern_URL
++     (URI     : String;
++      Pattern : String;
++      Factory : Registry.Factory) with Pre => URI'Length > 0;
++   --  Register a WebObject's constructor for a specific URI and pattern.
++
+    --  Sending messages
+ 
+    type Recipient is private;
+diff --git a/templates_parser b/templates_parser
+--- a/templates_parser
++++ b/templates_parser
+@@ -1 +1 @@
+-Subproject commit 9123e049e7e8e5097048f69a4f9ffed438b62cfe
++Subproject commit 9123e049e7e8e5097048f69a4f9ffed438b62cfe-dirty
