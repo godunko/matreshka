@@ -1,3 +1,4 @@
+with Asis.Clauses;
 with Asis.Compilation_Units;
 with Asis.Declarations;
 with Asis.Definitions;
@@ -38,6 +39,10 @@ package body Properties.Tools is
         Asis.Elements.Type_Kind (Definition);
    begin
       case Def_Kind is
+         when Asis.A_Null_Record_Definition =>
+
+            return Asis.Nil_Element_List;
+
          when Asis.A_Record_Definition =>
 
             return Asis.Definitions.Record_Components (Definition);
@@ -243,7 +248,26 @@ package body Properties.Tools is
    function Library_Level_Header
      (Unit : Asis.Compilation_Unit) return League.Strings.Universal_String
    is
+      procedure Append (Name : Asis.Name);
+
       Text : League.Strings.Universal_String;
+
+      procedure Append (Name : Asis.Name) is
+         Image : League.Strings.Universal_String;
+      begin
+         case Asis.Elements.Expression_Kind (Name) is
+            when Asis.An_Identifier =>
+               Image := League.Strings.From_UTF_16_Wide_String
+                 (Asis.Expressions.Name_Image (Name));
+               Text.Append (Image.To_Lowercase);
+            when Asis.A_Selected_Component =>
+               Append (Asis.Expressions.Prefix (Name));
+               Text.Append ('.');
+               Append (Asis.Expressions.Selector (Name));
+            when others =>
+               raise Program_Error;
+         end case;
+      end Append;
 
       Parent : constant Asis.Compilation_Unit :=
         Asis.Compilation_Units.Corresponding_Parent_Declaration (Unit);
@@ -258,6 +282,10 @@ package body Properties.Tools is
       Parent_Name : constant League.Strings.Universal_String :=
         League.Strings.From_UTF_16_Wide_String
           (Asis.Compilation_Units.Unit_Full_Name (Parent)).To_Lowercase;
+
+      List : constant Asis.Context_Clause_List :=
+        Asis.Elements.Context_Clause_Elements (Unit);
+
    begin
       Text.Append ("define('standard.");
       Text.Append (Full_Name);
@@ -268,6 +296,23 @@ package body Properties.Tools is
          Text.Append (".");
          Text.Append (Parent_Name);
       end if;
+
+      for Clause of List loop
+         case Asis.Elements.Clause_Kind (Clause) is
+            when Asis.A_With_Clause =>
+               declare
+                  Names : constant Asis.Name_List :=
+                    Asis.Clauses.Clause_Names (Clause);
+               begin
+                  for Name of Names loop
+                     Text.Append ("', 'standard.");
+                     Append (Name);
+                  end loop;
+               end;
+            when others =>
+               null;
+         end case;
+      end loop;
 
       Text.Append ("'], ");
 
