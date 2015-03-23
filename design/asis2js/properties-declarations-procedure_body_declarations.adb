@@ -21,6 +21,12 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       Is_Library_Level : constant Boolean := Asis.Elements.Is_Nil
         (Asis.Elements.Enclosing_Element (Element));
 
+      Inside_Package : constant Boolean := Engine.Boolean.Get_Property
+        (Element, Engines.Inside_Package);
+
+      Is_Dispatching : constant Boolean := Engine.Boolean.Get_Property
+        (Element, Engines.Is_Dispatching);
+
       Subprogram_Name : constant League.Strings.Universal_String :=
         Engine.Text.Get_Property
           (Element => Asis.Declarations.Names (Element) (1),
@@ -32,8 +38,10 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          Text.Append
            (Properties.Tools.Library_Level_Header
               (Asis.Elements.Enclosing_Compilation_Unit (Element)));
-         Text.Append ("function(_ec){return ");
-      elsif Asis.Declarations.Is_Dispatching_Operation (Spec) then
+         Text.Append ("return _ec.");
+         Text.Append (Subprogram_Name);
+         Text.Append ("=");
+      elsif Is_Dispatching then
          declare
             Tipe     : constant Asis.Declaration :=
               Tools.Corresponding_Type (Spec);
@@ -42,23 +50,19 @@ package body Properties.Declarations.Procedure_Body_Declarations is
             Image : constant League.Strings.Universal_String :=
               Engine.Text.Get_Property (Type_Name, Name);
          begin
-            Text.Append ("_ec.");
+            if Inside_Package then
+               Text.Append ("_ec.");
+            end if;
+
             Text.Append (Image);
             Text.Append (".prototype.");
             Text.Append (Subprogram_Name);
             Text.Append (" = ");
          end;
-      else
-         declare
-            Prefix : constant League.Strings.Universal_String :=
-              Engine.Text.Get_Property
-                (Asis.Elements.Enclosing_Element (Element),
-                 Engines.Declaration_Prefix);
-         begin
-            Text.Append (Prefix);
-            Text.Append (Subprogram_Name);
-            Text.Append (" = ");
-         end;
+      elsif Inside_Package then
+         Text.Append ("_ec.");
+         Text.Append (Subprogram_Name);
+         Text.Append ("=");
       end if;
 
       Text.Append ("function ");
@@ -75,10 +79,12 @@ package body Properties.Declarations.Procedure_Body_Declarations is
                  Engine.Text.Get_Property
                    (Asis.Declarations.Names (List (J)) (1), Name);
             begin
-               Text.Append (Arg_Code);
+               if not Is_Dispatching or J /= List'First then
+                  Text.Append (Arg_Code);
 
-               if J /= List'Last then
-                  Text.Append (",");
+                  if J /= List'Last then
+                     Text.Append (",");
+                  end if;
                end if;
             end;
          end loop;
@@ -123,22 +129,6 @@ package body Properties.Declarations.Procedure_Body_Declarations is
       return Text;
    end Code;
 
-   ------------------------
-   -- Declaration_Prefix --
-   ------------------------
-
-   function Declaration_Prefix
-     (Engine  : access Engines.Contexts.Context;
-      Element : Asis.Declaration;
-      Name    : Engines.Text_Property) return League.Strings.Universal_String
-   is
-      pragma Unreferenced (Name, Engine, Element);
-      Text : constant League.Strings.Universal_String :=
-        League.Strings.To_Universal_String ("var ");
-   begin
-      return Text;
-   end Declaration_Prefix;
-
    ------------
    -- Export --
    ------------
@@ -162,5 +152,24 @@ package body Properties.Declarations.Procedure_Body_Declarations is
          return Engine.Boolean.Get_Property (Spec, Name);
       end if;
    end Export;
+
+   --------------------
+   -- Is_Dispatching --
+   --------------------
+
+   function Is_Dispatching
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Boolean_Property) return Boolean
+   is
+      Spec : constant Asis.Declaration :=
+        Asis.Declarations.Corresponding_Declaration (Element);
+   begin
+      if Asis.Elements.Is_Nil (Spec) then
+         return False;
+      else
+         return Engine.Boolean.Get_Property (Spec, Name);
+      end if;
+   end Is_Dispatching;
 
 end Properties.Declarations.Procedure_Body_Declarations;

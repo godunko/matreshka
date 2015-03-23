@@ -3,13 +3,14 @@ package Engines is
    type Text_Property is
      (Code,
       Intrinsic_Name,
-      Declaration_Prefix,
       Initialize
       --  Code to initialize an object of given type
      );
 
    type Boolean_Property is
-     (Export);
+     (Export,
+      Inside_Package,   --  Enclosing Element is a package
+      Is_Dispatching);  --  Declaration/call is a dispatching subprogram
 
    type Call_Convention_Property is
      (Call_Convention);

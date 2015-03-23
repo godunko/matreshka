@@ -2,6 +2,12 @@ with Asis.Definitions;
 
 package body Properties.Definitions.Subtype_Indication is
 
+   function Code
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Definition;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+      renames Initialize;
+
    ----------------
    -- Initialize --
    ----------------

@@ -114,4 +114,20 @@ package body Properties.Declarations.Function_Declarations is
       return Result;
    end Intrinsic_Name;
 
+   --------------------
+   -- Is_Dispatching --
+   --------------------
+
+   function Is_Dispatching
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Boolean_Property) return Boolean
+   is
+      pragma Unreferenced (Engine, Name);
+      Spec : constant Asis.Declaration :=
+        Asis.Declarations.Corresponding_Declaration (Element);
+   begin
+      return Asis.Declarations.Is_Dispatching_Operation (Spec);
+   end Is_Dispatching;
+
 end Properties.Declarations.Function_Declarations;

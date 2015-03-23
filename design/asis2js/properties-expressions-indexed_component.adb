@@ -21,7 +21,9 @@ package body Properties.Expressions.Indexed_Component is
         (Asis.Expressions.Index_Expressions (Element) (1),
          Name);
       Text.Append (Down);
-      Text.Append (" -1]");
+      --  FIXME: if type is string then
+      --  Text.Append (" -1]");
+      Text.Append ("]");
 
       return Text;
    end Code;

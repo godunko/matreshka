@@ -90,6 +90,9 @@ is
        Kind   => F.A_Private_Type_Declaration,
        Action => P.Statements.Null_Statement.Code'Access),
       (Name   => N.Code,
+       Kind   => F.An_Incomplete_Type_Declaration,
+       Action => P.Statements.Null_Statement.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Procedure_Body_Declaration,
        Action => P.Declarations.Procedure_Body_Declarations.Code'Access),
       (Name   => N.Code,
@@ -119,6 +122,9 @@ is
       (Name   => N.Code,
        Kind   => F.An_Enumeration_Type_Definition,
        Action => P.Definitions.Enumeration_Type.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Subtype_Indication,
+       Action => P.Definitions.Subtype_Indication.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Constrained_Array_Definition,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
@@ -195,18 +201,6 @@ is
        Kind   => F.A_With_Clause,
        Action => P.Statements.Null_Statement.Code'Access),
 
-      --  Declaration_Prefix
-      (Name   => N.Declaration_Prefix,
-       Kind   => F.A_Procedure_Body_Declaration,
-       Action => P.Declarations.Procedure_Body_Declarations
-                    .Declaration_Prefix'Access),
-      (Name   => N.Declaration_Prefix,
-       Kind   => F.A_Package_Declaration,
-       Action => P.Declarations.Package_Declaration.Declaration_Prefix'Access),
-      (Name   => N.Declaration_Prefix,
-       Kind   => F.A_Package_Body_Declaration,
-       Action => P.Declarations.Package_Declaration.Declaration_Prefix'Access),
-
       --  Initialize
       (Name   => N.Initialize,
        Kind   => F.A_Constant_Declaration,
@@ -220,6 +214,12 @@ is
       (Name   => N.Initialize,
        Kind   => F.An_Ordinary_Type_Declaration,
        Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Private_Extension_Declaration,
+       Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Private_Extension_Definition,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Initialize,
        Kind   => F.A_Component_Definition,
        Action => P.Definitions.Component_Definition.Initialize'Access),
@@ -331,5 +331,39 @@ begin
      (Name   => N.Export,
       Kind   => F.A_Procedure_Declaration,
       Action => P.Declarations.Function_Declarations.Export'Access);
+
+   for X in F.Flat_Declaration_Kinds loop
+      Self.Boolean.Register_Calculator
+        (Kind    => X,
+         Name    => N.Inside_Package,
+         Action  => P.Declarations.Inside_Package'Access);
+   end loop;
+
+   Self.Boolean.Register_Calculator
+     (Kind    => F.A_Function_Declaration,
+      Name    => N.Is_Dispatching,
+      Action  => P.Declarations.Function_Declarations.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.A_Procedure_Declaration,
+      Name    => N.Is_Dispatching,
+      Action  => P.Declarations.Function_Declarations.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.A_Function_Body_Declaration,
+      Name    => N.Is_Dispatching,
+      Action  =>
+        P.Declarations.Procedure_Body_Declarations.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.A_Procedure_Body_Declaration,
+      Name    => N.Is_Dispatching,
+      Action  =>
+        P.Declarations.Procedure_Body_Declarations.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.A_Selected_Component,
+      Name    => N.Is_Dispatching,
+      Action  => P.Expressions.Selected_Components.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.An_Identifier,
+      Name    => N.Is_Dispatching,
+      Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
 
 end Engines.Registry_All_Actions;

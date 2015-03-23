@@ -314,7 +314,7 @@ package body Properties.Tools is
          end case;
       end loop;
 
-      Text.Append ("'], ");
+      Text.Append ("'], function(_ec) {");
 
       return Text;
    end Library_Level_Header;

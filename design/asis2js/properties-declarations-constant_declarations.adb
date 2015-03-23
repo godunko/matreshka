@@ -15,8 +15,10 @@ package body Properties.Declarations.Constant_Declarations is
       List : constant Asis.Defining_Name_List :=
         Asis.Declarations.Names (Element);
 
+      Inside_Package : constant Boolean := Engine.Boolean.Get_Property
+        (Element, Engines.Inside_Package);
+
       Init_Code : League.Strings.Universal_String;
-      Prefix    : League.Strings.Universal_String;
 
       Constant_Name : League.Strings.Universal_String;
       Text  : League.Strings.Universal_String;
@@ -24,11 +26,11 @@ package body Properties.Declarations.Constant_Declarations is
       Init_Code := Engine.Text.Get_Property (Element, Engines.Initialize);
 
       for J in List'Range loop
-         Prefix := Engine.Text.Get_Property
-              (Asis.Elements.Enclosing_Element (Element),
-               Engines.Declaration_Prefix);
-
-         Text.Append (Prefix);
+         if Inside_Package then
+            Text.Append ("_ec.");
+         else
+            Text.Append ("var ");
+         end if;
 
          Constant_Name := Engine.Text.Get_Property (List (J), Name);
          Text.Append (Constant_Name);

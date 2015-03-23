@@ -110,4 +110,23 @@ package body Properties.Expressions.Identifiers is
         (Asis.Elements.Enclosing_Element (Def), Name);
    end Intrinsic_Name;
 
+   --------------------
+   -- Is_Dispatching --
+   --------------------
+
+   function Is_Dispatching
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Boolean_Property) return Boolean
+   is
+      Decl : constant Asis.Declaration :=
+        Asis.Expressions.Corresponding_Name_Declaration (Element);
+   begin
+      if Asis.Elements.Is_Nil (Decl) then
+         return False;
+      else
+         return Engine.Boolean.Get_Property (Decl, Name);
+      end if;
+   end Is_Dispatching;
+
 end Properties.Expressions.Identifiers;

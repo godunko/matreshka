@@ -79,4 +79,17 @@ package body Properties.Expressions.Selected_Components is
       Name    : Engines.Text_Property) return League.Strings.Universal_String
      renames Intrinsic_Name;
 
+   --------------------
+   -- Is_Dispatching --
+   --------------------
+
+   function Is_Dispatching
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Boolean_Property) return Boolean is
+   begin
+      return Engine.Boolean.Get_Property
+        (Asis.Expressions.Selector (Element), Name);
+   end Is_Dispatching;
+
 end Properties.Expressions.Selected_Components;

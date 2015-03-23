@@ -1,4 +1,5 @@
 with Asis.Declarations;
+with Asis.Definitions;
 with Asis.Elements;
 
 with Properties.Tools;
@@ -14,18 +15,33 @@ package body Properties.Definitions.Tagged_Record_Type is
       Element : Asis.Definition;
       Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
+      use type Asis.Type_Kinds;
+
       Decl : constant Asis.Declaration :=
         Asis.Elements.Enclosing_Element (Element);
+      Parent : Asis.Subtype_Indication := Asis.Nil_Element;
       Result : League.Strings.Universal_String;
       Name_Image : League.Strings.Universal_String;
    begin
-      Result.Append ("_ec.");
+      if Asis.Elements.Type_Kind (Element) =
+        Asis.A_Derived_Record_Extension_Definition
+      then
+         Parent := Asis.Definitions.Parent_Subtype_Indication (Element);
+      end if;
 
       Name_Image := Engine.Text.Get_Property
         (Asis.Declarations.Names (Decl) (1), Name);
 
+      Result.Append ("_ec.");
       Result.Append (Name_Image);
       Result.Append (" =  function (){");
+
+      if not Asis.Elements.Is_Nil (Parent) then
+         Result.Append ("_ec.");  --  FIXME
+         Result.Append
+           (Engine.Text.Get_Property (Parent, Name));
+         Result.Append (".call (this);");
+      end if;
 
       declare
          List : constant Asis.Declaration_List :=

@@ -41,31 +41,34 @@ package body Properties.Declarations.Package_Declaration is
       Is_Library_Level : constant Boolean := Asis.Elements.Is_Nil
         (Asis.Elements.Enclosing_Element (Element));
 
-      Down : League.Strings.Universal_String;
-      Text : League.Strings.Universal_String;
-      List : constant Asis.Element_List :=
+      Inside_Package : constant Boolean := Engine.Boolean.Get_Property
+        (Element, Engines.Inside_Package);
+
+      Named : League.Strings.Universal_String;
+      Down  : League.Strings.Universal_String;
+      Text  : League.Strings.Universal_String;
+      List  : constant Asis.Element_List :=
         Asis.Declarations.Visible_Part_Declarative_Items (Element) &
         Asis.Declarations.Private_Part_Declarative_Items (Element) &
         Body_Declarative_Items (Element);
    begin
-      Down := Engine.Text.Get_Property
+      Named := Engine.Text.Get_Property
         (Asis.Declarations.Names (Element) (1), Name);
 
       if Is_Library_Level then
          Text.Append
            (Properties.Tools.Library_Level_Header
               (Asis.Elements.Enclosing_Compilation_Unit (Element)));
+         Text.Append ("return ");
       end if;
 
-      Text.Append ("function (_parent){");
-      Text.Append ("var _ec = new _parent._nested();");
-
-      if Is_Library_Level then
-         Text.Append ("_parent.standard.");
-         Text.Append (Down);
-         Text.Append (" = _ec;");
+      if not Inside_Package then
+         Text.Append ("var ");
+         Text.Append (Named);
+         Text.Append ("=");
       end if;
 
+      Text.Append ("(function (_ec){");
       Text.Append ("_ec._nested = function (){};");
       Text.Append ("_ec._nested.prototype = _ec;");
 
@@ -75,30 +78,21 @@ package body Properties.Declarations.Package_Declaration is
       end loop;
 
       Text.Append ("return _ec;");
-      Text.Append ("}");
+      Text.Append ("})(");
+
+      if Inside_Package then
+         Text.Append ("_ec.");
+         Text.Append (Named);
+         Text.Append ("=");
+      end if;
+
+      Text.Append ("new _ec._nested());");
 
       if Is_Library_Level then
-         Text.Append (");");
+         Text.Append ("});");
       end if;
 
       return Text;
    end Code;
-
-   ------------------------
-   -- Declaration_Prefix --
-   ------------------------
-
-   function Declaration_Prefix
-     (Engine  : access Engines.Contexts.Context;
-      Element : Asis.Declaration;
-      Name    : Engines.Text_Property) return League.Strings.Universal_String
-   is
-      pragma Unreferenced (Name, Engine, Element);
-      Text : League.Strings.Universal_String;
-   begin
-      Text.Append ("_ec.");
-
-      return Text;
-   end Declaration_Prefix;
 
 end Properties.Declarations.Package_Declaration;
