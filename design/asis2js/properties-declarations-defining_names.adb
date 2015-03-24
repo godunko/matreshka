@@ -10,7 +10,8 @@ with Properties.Tools;
 package body Properties.Declarations.Defining_Names is
 
    function Link_Name
-     (Element : Asis.Defining_Name)
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Defining_Name)
       return League.Strings.Universal_String;
 
    package String_Maps is new Ada.Containers.Hashed_Sets
@@ -30,8 +31,9 @@ package body Properties.Declarations.Defining_Names is
       Element : Asis.Declaration;
       Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
-      pragma Unreferenced (Engine, Name);
-      L_Name : constant League.Strings.Universal_String := Link_Name (Element);
+      pragma Unreferenced (Name);
+      L_Name : constant League.Strings.Universal_String :=
+        Link_Name (Engine, Element);
       Image : constant Wide_String :=
         Asis.Declarations.Defining_Name_Image (Element);
       Text : League.Strings.Universal_String :=
@@ -53,13 +55,32 @@ package body Properties.Declarations.Defining_Names is
    ---------------
 
    function Link_Name
-     (Element : Asis.Defining_Name)
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Defining_Name)
       return League.Strings.Universal_String
    is
+      use type Asis.Declaration_Kinds;
+
+      Proc : Asis.Declaration;
+      Decl : constant Asis.Declaration :=
+        Asis.Elements.Enclosing_Element (Element);
+      Kind  : constant Asis.Declaration_Kinds :=
+        Asis.Elements.Declaration_Kind (Decl);
       Value : constant Wide_String :=
-        Properties.Tools.Get_Aspect
-          (Asis.Elements.Enclosing_Element (Element), "Link_Name");
+        Properties.Tools.Get_Aspect (Decl, "Link_Name");
    begin
+      if Kind = Asis.A_Parameter_Specification then
+         Proc := Asis.Elements.Enclosing_Element (Decl);
+
+         if Value = ""
+           and then Engine.Boolean.Get_Property (Proc, Engines.Is_Dispatching)
+           and then Asis.Elements.Is_Equal
+             (Decl, Asis.Declarations.Parameter_Profile (Proc) (1))
+         then
+            return League.Strings.To_Universal_String ("this");
+         end if;
+      end if;
+
       return League.Strings.From_UTF_16_Wide_String (Value);
    end Link_Name;
 

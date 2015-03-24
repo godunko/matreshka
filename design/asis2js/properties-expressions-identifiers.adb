@@ -2,7 +2,16 @@ with Asis.Declarations;
 with Asis.Elements;
 with Asis.Expressions;
 
+with League.String_Vectors;
+
+with Properties.Tools;
+
 package body Properties.Expressions.Identifiers is
+
+   function Name_Prefix
+     (Engine : access Engines.Contexts.Context;
+      Name   : Asis.Identifier;
+      Decl   : Asis.Declaration) return League.Strings.Universal_String;
 
    ---------------------
    -- Call_Convention --
@@ -42,6 +51,8 @@ package body Properties.Expressions.Identifiers is
       Element : Asis.Declaration;
       Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
+      use type League.Strings.Universal_String;
+
       Decl : constant Asis.Declaration :=
         Asis.Expressions.Corresponding_Name_Declaration (Element);
       Image : constant Wide_String :=
@@ -52,8 +63,8 @@ package body Properties.Expressions.Identifiers is
       if Asis.Elements.Is_Nil (Decl) then
          return Text.To_Lowercase;
       else
-         return Engine.Text.Get_Property
-           (Asis.Declarations.Names (Decl) (1), Name);
+         return Name_Prefix (Engine, Element, Decl) &
+           Engine.Text.Get_Property (Asis.Declarations.Names (Decl) (1), Name);
       end if;
    end Code;
 
@@ -128,5 +139,104 @@ package body Properties.Expressions.Identifiers is
          return Engine.Boolean.Get_Property (Decl, Name);
       end if;
    end Is_Dispatching;
+
+   -----------------
+   -- Name_Prefix --
+   -----------------
+
+   function Name_Prefix
+     (Engine : access Engines.Contexts.Context;
+      Name   : Asis.Identifier;
+      Decl   : Asis.Declaration) return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Name);
+      Top_Item   : Boolean := True;
+      Is_Package : Boolean := False;
+      Item       : Asis.Element := Decl;
+      Decl_List  : League.String_Vectors.Universal_String_Vector;
+      Result     : League.Strings.Universal_String;
+      Kind       : Asis.Declaration_Kinds;
+   begin
+      while not Asis.Elements.Is_Nil (Item) loop
+         Kind := Asis.Elements.Declaration_Kind (Item);
+
+         case Kind is
+            when Asis.A_Package_Instantiation =>
+               null;
+
+            when Asis.An_Ordinary_Type_Declaration |
+                 Asis.A_Private_Type_Declaration |
+                 Asis.A_Private_Extension_Declaration =>
+               null;
+
+            when Asis.A_Deferred_Constant_Declaration |
+                 Asis.A_Constant_Declaration |
+                 Asis.A_Variable_Declaration =>
+               declare
+                  Import : constant Wide_String :=
+                    Properties.Tools.Get_Aspect (Item, "Import");
+               begin
+                  if Import = "True" then
+                     exit;
+                  end if;
+               end;
+
+            when Asis.A_Parameter_Specification =>
+               exit;
+
+            when Asis.A_Procedure_Declaration |
+                 Asis.A_Function_Declaration |
+                 Asis.A_Procedure_Body_Declaration |
+                 Asis.A_Function_Body_Declaration =>
+
+               if not Top_Item then
+                  --  Some declaration inside subprogram
+                  Is_Package := False;
+                  exit;
+               elsif Engine.Boolean.Get_Property
+                 (Item, Engines.Is_Dispatching)
+               then
+                  --  Dispatching operation has no prefix
+                  exit;
+               end if;
+
+            when Asis.A_Package_Declaration |
+                 Asis.A_Package_Body_Declaration =>
+
+               declare
+                  Tmp   : League.String_Vectors.Universal_String_Vector;
+                  Names : constant Asis.Defining_Name_List :=
+                    Asis.Declarations.Names (Item);
+               begin
+                  if not Top_Item then
+                     Tmp.Append
+                       (Engine.Text.Get_Property (Names (1), Engines.Code));
+
+                     Decl_List.Prepend (Tmp);
+                     Is_Package := True;
+                  end if;
+               end;
+            when others =>
+               raise Program_Error;
+         end case;
+
+         Item := Asis.Elements.Enclosing_Element (Item);
+         Top_Item := False;
+      end loop;
+
+      if Decl_List.Is_Empty then
+         return League.Strings.Empty_Universal_String;
+      end if;
+
+      Result := Decl_List.Join ('.');
+
+      if Is_Package then
+         Result.Prepend ("_ec.");
+      end if;
+
+      Result.Append (".");
+
+      return Result;
+   end Name_Prefix;
 
 end Properties.Expressions.Identifiers;

@@ -52,7 +52,9 @@ package body Properties.Expressions.Selected_Components is
 
                   return Left;
                end;
-            when Asis.A_Function_Declaration | Asis.A_Procedure_Declaration =>
+            when Asis.A_Function_Declaration |
+                 Asis.A_Procedure_Declaration |
+                 Asis.A_Private_Extension_Declaration =>
                null;
             when others =>
                raise Program_Error with

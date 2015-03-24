@@ -37,7 +37,6 @@ package body Properties.Definitions.Tagged_Record_Type is
       Result.Append (" =  function (){");
 
       if not Asis.Elements.Is_Nil (Parent) then
-         Result.Append ("_ec.");  --  FIXME
          Result.Append
            (Engine.Text.Get_Property (Parent, Name));
          Result.Append (".call (this);");

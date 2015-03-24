@@ -8,6 +8,7 @@ with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
 with Properties.Declarations.Ordinary_Type;
 with Properties.Declarations.Package_Declaration;
+with Properties.Declarations.Private_Type;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
 with Properties.Definitions.Access_To_Object;
@@ -17,12 +18,14 @@ with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Tagged_Record_Type;
 with Properties.Definitions.Subtype_Indication;
+with Properties.Expressions.Array_Component_Association;
 with Properties.Expressions.Attribute_Reference;
 with Properties.Expressions.Enumeration_Literal;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
 with Properties.Expressions.Indexed_Component;
 with Properties.Expressions.Integer_Literal;
+with Properties.Expressions.Named_Array_Aggregate;
 with Properties.Expressions.Null_Literal;
 with Properties.Expressions.Selected_Components;
 with Properties.Expressions.String_Literal;
@@ -162,6 +165,12 @@ is
        Kind   => F.An_Integer_Literal,
        Action => P.Expressions.Integer_Literal.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Named_Array_Aggregate,
+       Action => P.Expressions.Named_Array_Aggregate.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.An_Array_Component_Association,
+       Action => P.Expressions.Array_Component_Association.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Null_Literal,
        Action => P.Expressions.Null_Literal.Code'Access),
       (Name   => N.Code,
@@ -216,13 +225,13 @@ is
        Action => P.Declarations.Ordinary_Type.Code'Access),
       (Name   => N.Initialize,
        Kind   => F.A_Private_Extension_Declaration,
-       Action => P.Declarations.Ordinary_Type.Code'Access),
-      (Name   => N.Initialize,
-       Kind   => F.A_Private_Extension_Definition,
-       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+       Action => P.Declarations.Private_Type.Initialize'Access),
       (Name   => N.Initialize,
        Kind   => F.A_Component_Definition,
        Action => P.Definitions.Component_Definition.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Derived_Record_Extension_Definition,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Initialize,
        Kind   => F.An_Access_To_Variable,
        Action => P.Definitions.Access_To_Object.Initialize'Access),
