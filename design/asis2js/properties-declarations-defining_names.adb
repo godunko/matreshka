@@ -85,5 +85,6 @@ package body Properties.Declarations.Defining_Names is
    end Link_Name;
 
 begin
+   Reserved.Insert (League.Strings.To_Universal_String ("default"));
    Reserved.Insert (League.Strings.To_Universal_String ("self"));
 end Properties.Declarations.Defining_Names;

@@ -169,6 +169,12 @@ package body Properties.Expressions.Identifiers is
                  Asis.A_Private_Extension_Declaration =>
                null;
 
+            when Asis.A_Discriminant_Specification |
+                 Asis.A_Loop_Parameter_Specification |
+                 Asis.A_Parameter_Specification =>
+
+               exit;
+
             when Asis.A_Deferred_Constant_Declaration |
                  Asis.A_Constant_Declaration |
                  Asis.A_Variable_Declaration =>
@@ -180,9 +186,6 @@ package body Properties.Expressions.Identifiers is
                      exit;
                   end if;
                end;
-
-            when Asis.A_Parameter_Specification =>
-               exit;
 
             when Asis.A_Procedure_Declaration |
                  Asis.A_Function_Declaration |
@@ -216,6 +219,10 @@ package body Properties.Expressions.Identifiers is
                      Is_Package := True;
                   end if;
                end;
+
+            when Asis.Not_A_Declaration =>
+               null;
+
             when others =>
                raise Program_Error;
          end case;

@@ -21,6 +21,7 @@ with Properties.Definitions.Subtype_Indication;
 with Properties.Expressions.Array_Component_Association;
 with Properties.Expressions.Attribute_Reference;
 with Properties.Expressions.Enumeration_Literal;
+with Properties.Expressions.Explicit_Dereference;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
 with Properties.Expressions.Indexed_Component;
@@ -153,6 +154,9 @@ is
        Kind   => F.An_Enumeration_Literal,
        Action => P.Expressions.Enumeration_Literal.Code'Access),
       (Name   => N.Code,
+       Kind   => F.An_Explicit_Dereference,
+       Action => P.Expressions.Explicit_Dereference.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Function_Call,
        Action => P.Expressions.Function_Calls.Code'Access),
       (Name   => N.Code,
@@ -163,6 +167,9 @@ is
        Action => P.Expressions.Indexed_Component.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_Integer_Literal,
+       Action => P.Expressions.Integer_Literal.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Real_Literal,
        Action => P.Expressions.Integer_Literal.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Named_Array_Aggregate,
@@ -374,5 +381,17 @@ begin
      (Kind    => F.An_Identifier,
       Name    => N.Is_Dispatching,
       Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind   => F.A_Function_Renaming_Declaration,
+      Name   => N.Is_Dispatching,
+      Action => P.Declarations.Function_Renaming_Declaration
+                   .Is_Dispatching'Access);
+
+   for X in F.An_And_Operator .. F.A_Not_Operator loop
+      Self.Boolean.Register_Calculator
+        (Kind    => X,
+         Name    => N.Is_Dispatching,
+         Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
+   end loop;
 
 end Engines.Registry_All_Actions;

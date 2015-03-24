@@ -68,6 +68,38 @@ package body Properties.Tools is
       end case;
    end Corresponding_Type_Components;
 
+   --------------------------------------
+   -- Corresponding_Type_Discriminants --
+   --------------------------------------
+
+   function Corresponding_Type_Discriminants
+     (Definition : Asis.Definition) return Asis.Declaration_List
+   is
+      Decl : constant Asis.Declaration :=
+        Asis.Elements.Enclosing_Element (Definition);
+      Kind : constant Asis.Declaration_Kinds :=
+        Asis.Elements.Declaration_Kind (Decl);
+   begin
+      case Kind is
+         when Asis.A_Full_Type_Declaration =>
+            declare
+               Part : constant Asis.Element :=
+                 Asis.Declarations.Discriminant_Part (Decl);
+            begin
+               case Asis.Elements.Definition_Kind (Part) is
+                  when Asis.A_Known_Discriminant_Part =>
+                     return Asis.Definitions.Discriminants (Part);
+                  when others =>
+                     null;
+               end case;
+            end;
+         when others =>
+            null;
+      end case;
+
+      return Asis.Nil_Element_List;
+   end Corresponding_Type_Discriminants;
+
    ------------------------------------
    -- Corresponding_Type_Subprograms --
    ------------------------------------

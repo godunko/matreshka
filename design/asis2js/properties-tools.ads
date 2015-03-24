@@ -18,6 +18,10 @@ package Properties.Tools is
      (Definition : Asis.Definition) return Asis.Declaration_List;
    --  For given (non-array complex) type definition return list of component
 
+   function Corresponding_Type_Discriminants
+     (Definition : Asis.Definition) return Asis.Declaration_List;
+   --  For given (non-array complex) type definition return list of discr-s.
+
    function Is_Primitive_Subprogram
      (Definition : Asis.Definition;
       Subprogram : Asis.Declaration) return Boolean;

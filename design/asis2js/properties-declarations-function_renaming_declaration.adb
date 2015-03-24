@@ -31,4 +31,17 @@ package body Properties.Declarations.Function_Renaming_Declaration is
         (Asis.Declarations.Renamed_Entity (Element), Name);
    end Intrinsic_Name;
 
+   --------------------
+   -- Is_Dispatching --
+   --------------------
+
+   function Is_Dispatching
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Boolean_Property) return Boolean is
+   begin
+      return Engine.Boolean.Get_Property
+        (Asis.Declarations.Renamed_Entity (Element), Name);
+   end Is_Dispatching;
+
 end Properties.Declarations.Function_Renaming_Declaration;
