@@ -46,30 +46,25 @@ package AMF3.Slots.Long_Floats is
 
    pragma Preelaborate;
 
-   type Long_Float_Slot is new Abstract_Slot with private;
+   Default_Value : aliased constant Long_Float := 0.0;
 
-   type Long_Float_Slot_With_Default
-         (Default : not null access constant Long_Float) is
+   type Long_Float_Slot
+         (Default : not null access constant Long_Float
+            := Default_Value'Access) is
      new Abstract_Slot with private;
 
 private
 
    type Long_Float_Value is array (Boolean) of Long_Float;
 
-   type Long_Float_Slot is new Abstract_Slot with record
-      Value : Long_Float_Value;
-   end record;
-
-   overriding function Get
-    (Self : Long_Float_Slot) return League.Holders.Holder;
-
-   type Long_Float_Slot_With_Default
-         (Default : not null access constant Long_Float) is
+   type Long_Float_Slot
+         (Default : not null access constant Long_Float
+            := Default_Value'Access) is
      new Abstract_Slot with record
       Value : Long_Float_Value := (others => Default.all);
    end record;
 
    overriding function Get
-    (Self : Long_Float_Slot_With_Default) return League.Holders.Holder;
+    (Self : Long_Float_Slot) return League.Holders.Holder;
 
 end AMF3.Slots.Long_Floats;
