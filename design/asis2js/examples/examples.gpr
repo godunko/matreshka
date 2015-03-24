@@ -1,4 +1,4 @@
-with "../../../gnat/matreshka_league.gpr";
+with "matreshka/league.gpr";
 
 project Examples is
 
