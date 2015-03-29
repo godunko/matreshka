@@ -1,5 +1,5 @@
 with "asis";
-with "../../gnat/matreshka_league.gpr";
+with "matreshka/league.gpr";
 
 project ASIS2JS is
 

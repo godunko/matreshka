@@ -41,4 +41,15 @@ package body Properties.Definitions.Subtype_Indication is
       end if;
    end Initialize;
 
+   function Is_Simple_Type
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Boolean_Property) return Boolean
+   is
+      Mark : constant Asis.Definition :=
+        Asis.Definitions.Subtype_Mark (Element);
+   begin
+      return Engine.Boolean.Get_Property (Mark, Name);
+   end Is_Simple_Type;
+
 end Properties.Definitions.Subtype_Indication;

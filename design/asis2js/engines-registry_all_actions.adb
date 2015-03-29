@@ -28,6 +28,8 @@ with Properties.Expressions.Indexed_Component;
 with Properties.Expressions.Integer_Literal;
 with Properties.Expressions.Named_Array_Aggregate;
 with Properties.Expressions.Null_Literal;
+with Properties.Expressions.Record_Aggregate;
+with Properties.Expressions.Record_Component_Association;
 with Properties.Expressions.Selected_Components;
 with Properties.Expressions.String_Literal;
 with Properties.Expressions.Type_Conversion;
@@ -133,6 +135,9 @@ is
        Kind   => F.A_Constrained_Array_Definition,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
+       Kind   => F.An_Unconstrained_Array_Definition,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
        Kind   => F.A_Derived_Record_Extension_Definition,
        Action => P.Definitions.Tagged_Record_Type.Code'Access),
       (Name   => N.Code,
@@ -175,8 +180,14 @@ is
        Kind   => F.A_Named_Array_Aggregate,
        Action => P.Expressions.Named_Array_Aggregate.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Record_Aggregate,
+       Action => P.Expressions.Record_Aggregate.Code'Access),
+      (Name   => N.Code,
        Kind   => F.An_Array_Component_Association,
        Action => P.Expressions.Array_Component_Association.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Record_Component_Association,
+       Action => P.Expressions.Record_Component_Association.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Null_Literal,
        Action => P.Expressions.Null_Literal.Code'Access),
@@ -393,5 +404,39 @@ begin
          Name    => N.Is_Dispatching,
          Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
    end loop;
+
+   Self.Boolean.Register_Calculator
+      (Kind   => F.A_Constant_Declaration,
+       Name   => N.Is_Simple_Ref,
+       Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access);
+   Self.Boolean.Register_Calculator
+      (Kind   => F.A_Variable_Declaration,
+       Name   => N.Is_Simple_Ref,
+       Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access);
+
+   Self.Boolean.Register_Calculator
+      (Kind   => F.A_Subtype_Indication,
+       Name   => N.Is_Simple_Type,
+       Action => P.Definitions.Subtype_Indication.Is_Simple_Type'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.A_Selected_Component,
+      Name    => N.Is_Simple_Type,
+      Action  => P.Expressions.Selected_Components.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.An_Identifier,
+      Name    => N.Is_Simple_Type,
+      Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.An_Ordinary_Type_Declaration,
+      Name    => N.Is_Simple_Type,
+      Action  => P.Declarations.Ordinary_Type.Is_Simple_Type'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.A_Constrained_Array_Definition,
+      Name    => N.Is_Simple_Type,
+      Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access);
+   Self.Boolean.Register_Calculator
+     (Kind    => F.An_Unconstrained_Array_Definition,
+      Name    => N.Is_Simple_Type,
+      Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access);
 
 end Engines.Registry_All_Actions;

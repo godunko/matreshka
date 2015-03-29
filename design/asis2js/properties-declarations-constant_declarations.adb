@@ -55,16 +55,46 @@ package body Properties.Declarations.Constant_Declarations is
       Element : Asis.Declaration;
       Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
+      Is_Simple_Ref : constant Boolean :=
+        Engine.Boolean.Get_Property (Element, Engines.Is_Simple_Ref);
       Tipe : constant Asis.Definition :=
         Asis.Declarations.Object_Declaration_View (Element);
       Init : constant Asis.Expression :=
         Asis.Declarations.Initialization_Expression (Element);
+      Result : League.Strings.Universal_String;
    begin
-      if not Asis.Elements.Is_Nil (Init) then
-         return Engine.Text.Get_Property (Init, Engines.Code);
-      else
-         return Engine.Text.Get_Property (Tipe, Name);
+      if Is_Simple_Ref then
+         Result.Append ("{all: ");
       end if;
+
+      if not Asis.Elements.Is_Nil (Init) then
+         Result.Append (Engine.Text.Get_Property (Init, Engines.Code));
+      else
+         Result.Append (Engine.Text.Get_Property (Tipe, Name));
+      end if;
+
+      if Is_Simple_Ref then
+         Result.Append ("}");
+      end if;
+
+      return Result;
    end Initialize;
+
+   -------------------
+   -- Is_Simple_Ref --
+   -------------------
+
+   function Is_Simple_Ref
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Boolean_Property) return Boolean
+   is
+      pragma Unreferenced (Name);
+      Tipe : constant Asis.Definition :=
+        Asis.Declarations.Object_Declaration_View (Element);
+   begin
+      return Asis.Elements.Has_Aliased (Element) and then
+        Engine.Boolean.Get_Property (Tipe, Engines.Is_Simple_Type);
+   end Is_Simple_Ref;
 
 end Properties.Declarations.Constant_Declarations;

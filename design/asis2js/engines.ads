@@ -9,6 +9,8 @@ package Engines is
 
    type Boolean_Property is
      (Export,
+      Is_Simple_Type,   --  Is non-object type (Number, Boolean, etc)
+      Is_Simple_Ref,    --  Wrapper for non-object type (Number, Boolean, etc)
       Inside_Package,   --  Enclosing Element is a package
       Is_Dispatching);  --  Declaration/call is a dispatching subprogram
 

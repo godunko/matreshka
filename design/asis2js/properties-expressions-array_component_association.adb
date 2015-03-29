@@ -32,6 +32,9 @@ package body Properties.Expressions.Array_Component_Association is
                Result.Append (Down);
                Result.Append (", true:");
                Result.Append (Down);
+            when Asis.A_Discrete_Range =>
+               --  FIXME: Only empty range is supported
+               null;
             when others =>
                Result.Append (Engine.Text.Get_Property (List (J), Name));
                Result.Append (":");
