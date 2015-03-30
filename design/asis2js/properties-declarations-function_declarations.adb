@@ -29,12 +29,17 @@ package body Properties.Declarations.Function_Declarations is
          return Engines.Intrinsic;
       end if;
 
-      if Asis.Compilation_Units.Unit_Full_Name
-        (Asis.Elements.Enclosing_Compilation_Unit (Element))
-          = "League.Strings"
-      then
-         return Engines.Intrinsic;
-      end if;
+      declare
+         Unit : constant Asis.Program_Text :=
+           Asis.Compilation_Units.Unit_Full_Name
+             (Asis.Elements.Enclosing_Compilation_Unit (Element));
+      begin
+         if Unit = "League.Strings" or else
+           Unit = "System.Address_To_Access_Conversions"
+         then
+            return Engines.Intrinsic;
+         end if;
+      end;
 
       declare
          Result : constant Wide_String :=
@@ -104,7 +109,9 @@ package body Properties.Declarations.Function_Declarations is
       Func : constant Wide_String := Asis.Declarations.Defining_Name_Image
         (Asis.Declarations.Names (Element) (1));
    begin
-      if Unit = "League.Strings" then
+      if Unit = "League.Strings" or else
+        Unit = "System.Address_To_Access_Conversions"
+      then
          Result := League.Strings.From_UTF_16_Wide_String (Unit);
       end if;
 

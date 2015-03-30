@@ -55,7 +55,8 @@ package body Properties.Expressions.Selected_Components is
             when Asis.A_Function_Declaration |
                  Asis.A_Procedure_Declaration |
                  Asis.A_Private_Extension_Declaration |
-                 Asis.An_Enumeration_Literal_Specification =>
+                 Asis.An_Enumeration_Literal_Specification |
+                 Asis.A_Deferred_Constant_Declaration =>
                null;
             when others =>
                raise Program_Error with

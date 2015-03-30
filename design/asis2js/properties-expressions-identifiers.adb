@@ -25,7 +25,7 @@ package body Properties.Expressions.Identifiers is
    is
       use type Asis.Expression_Kinds;
 
-      Def : constant Asis.Declaration :=
+      Def : Asis.Defining_Name :=
         Asis.Expressions.Corresponding_Name_Definition (Element);
    begin
       if Asis.Elements.Is_Nil (Def) then
@@ -36,6 +36,8 @@ package body Properties.Expressions.Identifiers is
          end if;
 
          return Engines.Unspecified;
+      elsif Asis.Elements.Is_Part_Of_Instance (Def) then
+         Def := Asis.Declarations.Corresponding_Generic_Element (Def);
       end if;
 
       return Engine.Call_Convention.Get_Property
@@ -98,7 +100,7 @@ package body Properties.Expressions.Identifiers is
    is
       use type Asis.Expression_Kinds;
 
-      Def : constant Asis.Declaration :=
+      Def : Asis.Defining_Name :=
         Asis.Expressions.Corresponding_Name_Definition (Element);
    begin
       if Asis.Elements.Is_Nil (Def) then
@@ -115,6 +117,8 @@ package body Properties.Expressions.Identifiers is
          end if;
 
          return League.Strings.Empty_Universal_String;
+      elsif Asis.Elements.Is_Part_Of_Instance (Def) then
+         Def := Asis.Declarations.Corresponding_Generic_Element (Def);
       end if;
 
       return Engine.Text.Get_Property
