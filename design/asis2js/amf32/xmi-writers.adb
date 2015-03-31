@@ -55,7 +55,7 @@ package body XMI.Writers is
    --------------
 
    procedure Dump_XMI (Object : AMF3.Objects.Abstract_Object'Class) is
-      H : League.Holders.Holder;
+      H : League.Holders.Holder := League.Holders.Empty_Holder;
 
    begin
       Put ("<xmi");

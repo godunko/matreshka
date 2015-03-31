@@ -27,20 +27,20 @@ package body Properties.Expressions.Array_Component_Association is
 
          case Kind is
             when Asis.An_Others_Choice =>
-               --  FIXME: Only Boolean supported for 'others' choice
-               Result.Append ("false:");
-               Result.Append (Down);
-               Result.Append (", true:");
-               Result.Append (Down);
+               Result.Append ("default:");
             when Asis.A_Discrete_Range =>
                --  FIXME: Only empty range is supported
-               null;
+               return League.Strings.Empty_Universal_String;
             when others =>
+               Result.Append ("case ");
                Result.Append (Engine.Text.Get_Property (List (J), Name));
                Result.Append (":");
-               Result.Append (Down);
          end case;
       end loop;
+
+      Result.Append ("_result[_j]=");
+      Result.Append (Down);
+      Result.Append (";break;");
 
       return Result;
    end Code;

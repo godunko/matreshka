@@ -66,6 +66,6 @@ package AMF3.Objects is
 private
 
    Object_Descriptor : aliased constant AMF3.Metadata.Descriptor (1 .. 0)
-     := (others => <>);
+     := (1 .. 0 => (AMF3.Metadata.Superclass, null));
 
 end AMF3.Objects;

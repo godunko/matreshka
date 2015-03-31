@@ -153,9 +153,6 @@ is
        Kind   => F.A_Pool_Specific_Access_To_Variable,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
-       Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
-       Action => P.Definitions.Simple_Expression_Range.Code'Access),
-      (Name   => N.Code,
        Kind   => F.An_Enumeration_Literal,
        Action => P.Expressions.Enumeration_Literal.Code'Access),
       (Name   => N.Code,
@@ -265,6 +262,13 @@ is
       (Name   => N.Initialize,
        Kind   => F.A_Selected_Component,
        Action => P.Expressions.Selected_Components.Initialize'Access),
+
+      (Name   => N.Lower,
+       Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
+       Action => P.Definitions.Simple_Expression_Range.Lower'Access),
+      (Name   => N.Upper,
+       Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
+       Action => P.Definitions.Simple_Expression_Range.Upper'Access),
 
       --  Intrinsic_Name
       (Name   => N.Intrinsic_Name,

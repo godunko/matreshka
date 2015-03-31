@@ -10,13 +10,31 @@ define('standard', [], function(){
         var error = new Error();
         error.message = "Call of abstract function";
         throw error;
-    }
+    };
 
     //  Constructor for tags
     standard._tag = function (tag_name, parent_name){
         this._external_tag = tag_name;
-    }
-    standard._tag.prototype = {}
+    };
+    standard._tag.prototype = {};
+
+    //  T'Pos(x) for discrete type T
+    standard._pos = function (x){
+        switch(typeof(x)){
+            case 'boolean': return +x;
+            case 'string': return x.charCodeAt(0);
+            default: return x;
+        }
+    };
+
+    //  T'Succ(x) for discrete type T
+    standard._succ = function (x){
+        switch(typeof(x)){
+            case 'boolean': return !x;
+            case 'string': return String.fromCharCode (x.charCodeAt(0)+1);
+            default: return x+1;
+        }
+    };
 
     return standard;
 });

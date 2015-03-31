@@ -2,26 +2,34 @@ with Asis.Definitions;
 
 package body Properties.Definitions.Simple_Expression_Range is
 
-   ----------
-   -- Code --
-   ----------
+   -----------
+   -- Lower --
+   -----------
 
-   function Code
+   function Lower
      (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
       Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
-      Text  : League.Strings.Universal_String;
-      Down  : League.Strings.Universal_String;
+      pragma Unreferenced (Name);
    begin
-      Text := Engine.Text.Get_Property
-        (Asis.Definitions.Lower_Bound (Element), Name);
-      Text.Append (";");
-      Down := Engine.Text.Get_Property
-        (Asis.Definitions.Upper_Bound (Element), Name);
-      Text.Append (Down);
+      return Engine.Text.Get_Property
+        (Asis.Definitions.Lower_Bound (Element), Engines.Code);
+   end Lower;
 
-      return Text;
-   end Code;
+   -----------
+   -- Upper --
+   -----------
+
+   function Upper
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Name);
+   begin
+      return Engine.Text.Get_Property
+        (Asis.Definitions.Upper_Bound (Element), Engines.Code);
+   end Upper;
 
 end Properties.Definitions.Simple_Expression_Range;

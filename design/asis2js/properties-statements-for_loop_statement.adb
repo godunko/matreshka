@@ -16,6 +16,8 @@ package body Properties.Statements.For_Loop_Statement is
         Asis.Statements.For_Loop_Parameter_Specification (Element);
       List  : constant Asis.Statement_List :=
         Asis.Statements.Loop_Statements (Element);
+      Bounds : constant Asis.Discrete_Subtype_Definition :=
+        Asis.Declarations.Specification_Subtype_Definition (Iter);
       Text  : League.Strings.Universal_String;
       Down  : League.Strings.Universal_String;
       Index : League.Strings.Universal_String;
@@ -26,12 +28,13 @@ package body Properties.Statements.For_Loop_Statement is
 
       Text.Append (Index);
       Text.Append (" = ");
-      Down := Engine.Text.Get_Property
-           (Asis.Declarations.Specification_Subtype_Definition (Iter), Name);
-
+      Down := Engine.Text.Get_Property (Bounds, Engines.Lower);
       Text.Append (Down);
-      Text.Append (" >= ");
+      Text.Append (";");
       Text.Append (Index);
+      Text.Append ("<=");
+      Down := Engine.Text.Get_Property (Bounds, Engines.Upper);
+      Text.Append (Down);
       Text.Append ("; ");
       Text.Append (Index);
       Text.Append ("++){");

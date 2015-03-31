@@ -14,16 +14,16 @@ package body Properties.Expressions.Indexed_Component is
       Text  : League.Strings.Universal_String;
       Down  : League.Strings.Universal_String;
    begin
-      Text := Engine.Text.Get_Property
-        (Asis.Expressions.Prefix (Element), Name);
-      Text.Append (" [");
       Down := Engine.Text.Get_Property
-        (Asis.Expressions.Index_Expressions (Element) (1),
-         Name);
+        (Asis.Expressions.Prefix (Element), Name);
       Text.Append (Down);
-      --  FIXME: if type is string then
-      --  Text.Append (" -1]");
-      Text.Append ("]");
+      Text.Append (" [_ec._pos(");
+      Text.Append (Engine.Text.Get_Property
+        (Asis.Expressions.Index_Expressions (Element) (1),
+         Name));
+      Text.Append (")-_ec._pos(");
+      Text.Append (Down);
+      Text.Append ("._first)]");
 
       return Text;
    end Code;

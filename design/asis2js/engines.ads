@@ -2,6 +2,7 @@ package Engines is
 
    type Text_Property is
      (Code,
+      Lower, Upper,    --  Code for range return X'First X'Last
       Intrinsic_Name,
       Initialize
       --  Code to initialize an object of given type
