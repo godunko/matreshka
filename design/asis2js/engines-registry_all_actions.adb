@@ -6,6 +6,7 @@ with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
+with Properties.Declarations.Loop_Parameter_Specification;
 with Properties.Declarations.Ordinary_Type;
 with Properties.Declarations.Package_Declaration;
 with Properties.Declarations.Private_Type;
@@ -53,6 +54,17 @@ is
       Name   : Engines.Text_Property;
       Kind   : Asis.Extensions.Flat_Kinds.Flat_Element_Kinds;
       Action : Text_Callback;
+   end record;
+
+   type Boolean_Callback is access function
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Element;
+      Name    : Engines.Boolean_Property) return Boolean;
+
+   type Boolean_Action_Item is record
+      Name   : Engines.Boolean_Property;
+      Kind   : Asis.Extensions.Flat_Kinds.Flat_Element_Kinds;
+      Action : Boolean_Callback;
    end record;
 
    type Action_Array is array (Positive range <>) of Action_Item;
@@ -107,6 +119,10 @@ is
       (Name   => N.Code,
        Kind   => F.A_Procedure_Declaration,
        Action => P.Declarations.Function_Declarations.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Loop_Parameter_Specification,
+       Action =>
+         P.Declarations.Loop_Parameter_Specification.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Subtype_Declaration,
        Action => P.Statements.Null_Statement.Code'Access),
@@ -225,6 +241,11 @@ is
        Kind   => F.A_With_Clause,
        Action => P.Statements.Null_Statement.Code'Access),
 
+      (Name   => N.Condition,
+       Kind   => F.A_Loop_Parameter_Specification,
+       Action =>
+         P.Declarations.Loop_Parameter_Specification.Condition'Access),
+
       --  Initialize
       (Name   => N.Initialize,
        Kind   => F.A_Constant_Declaration,
@@ -241,6 +262,10 @@ is
       (Name   => N.Initialize,
        Kind   => F.A_Private_Extension_Declaration,
        Action => P.Declarations.Private_Type.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Loop_Parameter_Specification,
+       Action =>
+         P.Declarations.Loop_Parameter_Specification.Initialize'Access),
       (Name   => N.Initialize,
        Kind   => F.A_Component_Definition,
        Action => P.Definitions.Component_Definition.Initialize'Access),
@@ -300,6 +325,76 @@ is
       (N.Intrinsic_Name,
        F.An_And_Operator, F.A_Not_Operator,
        P.Expressions.Identifiers.Intrinsic_Name'Access));
+
+   Boolean_Actions : constant array (Positive range <>) of Boolean_Action_Item
+     :=
+     ((Name   => N.Export,
+       Kind   => F.A_Function_Body_Declaration,
+       Action => P.Declarations.Procedure_Body_Declarations.Export'Access),
+      (Name   => N.Export,
+       Kind   => F.A_Function_Declaration,
+       Action => P.Declarations.Function_Declarations.Export'Access),
+      (Name   => N.Export,
+       Kind   => F.A_Procedure_Body_Declaration,
+       Action => P.Declarations.Procedure_Body_Declarations.Export'Access),
+      (Name   => N.Export,
+       Kind   => F.A_Procedure_Declaration,
+       Action => P.Declarations.Function_Declarations.Export'Access),
+      (Kind    => F.A_Function_Declaration,
+       Name    => N.Is_Dispatching,
+       Action  => P.Declarations.Function_Declarations.Is_Dispatching'Access),
+      (Kind    => F.A_Procedure_Declaration,
+       Name    => N.Is_Dispatching,
+       Action  => P.Declarations.Function_Declarations.Is_Dispatching'Access),
+      (Kind    => F.A_Function_Body_Declaration,
+       Name    => N.Is_Dispatching,
+       Action  =>
+         P.Declarations.Procedure_Body_Declarations.Is_Dispatching'Access),
+      (Kind    => F.A_Procedure_Body_Declaration,
+       Name    => N.Is_Dispatching,
+       Action  =>
+         P.Declarations.Procedure_Body_Declarations.Is_Dispatching'Access),
+      (Kind    => F.A_Selected_Component,
+       Name    => N.Is_Dispatching,
+       Action  => P.Expressions.Selected_Components.Is_Dispatching'Access),
+      (Kind    => F.An_Identifier,
+       Name    => N.Is_Dispatching,
+       Action  => P.Expressions.Identifiers.Is_Dispatching'Access),
+      (Kind   => F.A_Function_Renaming_Declaration,
+       Name   => N.Is_Dispatching,
+       Action => P.Declarations.Function_Renaming_Declaration
+       .Is_Dispatching'Access),
+      (Kind   => F.A_Constant_Declaration,
+       Name   => N.Is_Simple_Ref,
+       Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access),
+      (Kind   => F.A_Variable_Declaration,
+       Name   => N.Is_Simple_Ref,
+       Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access),
+      (Kind   => F.A_Subtype_Indication,
+       Name   => N.Is_Simple_Type,
+       Action => P.Definitions.Subtype_Indication.Is_Simple_Type'Access),
+      (Kind    => F.A_Selected_Component,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Expressions.Selected_Components.Is_Dispatching'Access),
+      (Kind    => F.An_Identifier,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Expressions.Identifiers.Is_Dispatching'Access),
+      (Kind    => F.An_Ordinary_Type_Declaration,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Declarations.Ordinary_Type.Is_Simple_Type'Access),
+      (Kind    => F.An_Enumeration_Type_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Floating_Point_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Constrained_Array_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access),
+      (Kind    => F.An_Unconstrained_Array_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access));
+
 begin
    for X of Action_List loop
       Self.Text.Register_Calculator (X.Kind, X.Name, X.Action);
@@ -345,62 +440,12 @@ begin
          Action  => P.Expressions.Identifiers.Call_Convention'Access);
    end loop;
 
-   --  Export
-   Self.Boolean.Register_Calculator
-     (Name   => N.Export,
-      Kind   => F.A_Function_Body_Declaration,
-      Action => P.Declarations.Procedure_Body_Declarations.Export'Access);
-   Self.Boolean.Register_Calculator
-     (Name   => N.Export,
-      Kind   => F.A_Function_Declaration,
-      Action => P.Declarations.Function_Declarations.Export'Access);
-   Self.Boolean.Register_Calculator
-     (Name   => N.Export,
-      Kind   => F.A_Procedure_Body_Declaration,
-      Action => P.Declarations.Procedure_Body_Declarations.Export'Access);
-   Self.Boolean.Register_Calculator
-     (Name   => N.Export,
-      Kind   => F.A_Procedure_Declaration,
-      Action => P.Declarations.Function_Declarations.Export'Access);
-
    for X in F.Flat_Declaration_Kinds loop
       Self.Boolean.Register_Calculator
         (Kind    => X,
          Name    => N.Inside_Package,
          Action  => P.Declarations.Inside_Package'Access);
    end loop;
-
-   Self.Boolean.Register_Calculator
-     (Kind    => F.A_Function_Declaration,
-      Name    => N.Is_Dispatching,
-      Action  => P.Declarations.Function_Declarations.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.A_Procedure_Declaration,
-      Name    => N.Is_Dispatching,
-      Action  => P.Declarations.Function_Declarations.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.A_Function_Body_Declaration,
-      Name    => N.Is_Dispatching,
-      Action  =>
-        P.Declarations.Procedure_Body_Declarations.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.A_Procedure_Body_Declaration,
-      Name    => N.Is_Dispatching,
-      Action  =>
-        P.Declarations.Procedure_Body_Declarations.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.A_Selected_Component,
-      Name    => N.Is_Dispatching,
-      Action  => P.Expressions.Selected_Components.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.An_Identifier,
-      Name    => N.Is_Dispatching,
-      Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind   => F.A_Function_Renaming_Declaration,
-      Name   => N.Is_Dispatching,
-      Action => P.Declarations.Function_Renaming_Declaration
-                   .Is_Dispatching'Access);
 
    for X in F.An_And_Operator .. F.A_Not_Operator loop
       Self.Boolean.Register_Calculator
@@ -409,38 +454,10 @@ begin
          Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
    end loop;
 
-   Self.Boolean.Register_Calculator
-      (Kind   => F.A_Constant_Declaration,
-       Name   => N.Is_Simple_Ref,
-       Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access);
-   Self.Boolean.Register_Calculator
-      (Kind   => F.A_Variable_Declaration,
-       Name   => N.Is_Simple_Ref,
-       Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access);
-
-   Self.Boolean.Register_Calculator
-      (Kind   => F.A_Subtype_Indication,
-       Name   => N.Is_Simple_Type,
-       Action => P.Definitions.Subtype_Indication.Is_Simple_Type'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.A_Selected_Component,
-      Name    => N.Is_Simple_Type,
-      Action  => P.Expressions.Selected_Components.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.An_Identifier,
-      Name    => N.Is_Simple_Type,
-      Action  => P.Expressions.Identifiers.Is_Dispatching'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.An_Ordinary_Type_Declaration,
-      Name    => N.Is_Simple_Type,
-      Action  => P.Declarations.Ordinary_Type.Is_Simple_Type'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.A_Constrained_Array_Definition,
-      Name    => N.Is_Simple_Type,
-      Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access);
-   Self.Boolean.Register_Calculator
-     (Kind    => F.An_Unconstrained_Array_Definition,
-      Name    => N.Is_Simple_Type,
-      Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access);
-
+   for X of Boolean_Actions loop
+      Self.Boolean.Register_Calculator
+        (Kind    => X.Kind,
+         Name    => X.Name,
+         Action  => X.Action);
+   end loop;
 end Engines.Registry_All_Actions;

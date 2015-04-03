@@ -1,4 +1,3 @@
-with Asis.Declarations;
 with Asis.Statements;
 
 package body Properties.Statements.For_Loop_Statement is
@@ -16,28 +15,19 @@ package body Properties.Statements.For_Loop_Statement is
         Asis.Statements.For_Loop_Parameter_Specification (Element);
       List  : constant Asis.Statement_List :=
         Asis.Statements.Loop_Statements (Element);
-      Bounds : constant Asis.Discrete_Subtype_Definition :=
-        Asis.Declarations.Specification_Subtype_Definition (Iter);
       Text  : League.Strings.Universal_String;
       Down  : League.Strings.Universal_String;
-      Index : League.Strings.Universal_String;
    begin
-      Text.Append ("for (var ");
-      Index := Engine.Text.Get_Property
-           (Asis.Declarations.Names (Iter) (1), Name);
-
-      Text.Append (Index);
-      Text.Append (" = ");
-      Down := Engine.Text.Get_Property (Bounds, Engines.Lower);
+      Text.Append ("for (");
+      Down := Engine.Text.Get_Property (Iter, Engines.Initialize);
       Text.Append (Down);
       Text.Append (";");
-      Text.Append (Index);
-      Text.Append ("<=");
-      Down := Engine.Text.Get_Property (Bounds, Engines.Upper);
+      Down := Engine.Text.Get_Property (Iter, Engines.Condition);
       Text.Append (Down);
-      Text.Append ("; ");
-      Text.Append (Index);
-      Text.Append ("++){");
+      Text.Append (";");
+      Down := Engine.Text.Get_Property (Iter, Engines.Code);
+      Text.Append (Down);
+      Text.Append ("){");
 
       for N in List'Range loop
          Down := Engine.Text.Get_Property (List (N), Name);

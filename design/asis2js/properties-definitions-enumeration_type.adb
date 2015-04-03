@@ -57,4 +57,13 @@ package body Properties.Definitions.Enumeration_Type is
       return Text;
    end Code;
 
+   function Is_Simple_Type
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Definition;
+      Name    : Engines.Boolean_Property) return Boolean is
+      pragma Unreferenced (Engine, Element, Name);
+   begin
+      return True;
+   end Is_Simple_Type;
+
 end Properties.Definitions.Enumeration_Type;
