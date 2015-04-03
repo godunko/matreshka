@@ -35,7 +35,8 @@ package body Properties.Declarations.Function_Declarations is
              (Asis.Elements.Enclosing_Compilation_Unit (Element));
       begin
          if Unit = "League.Strings" or else
-           Unit = "System.Address_To_Access_Conversions"
+           Unit = "System.Address_To_Access_Conversions" or else
+           Unit = "System.Storage_Elements"
          then
             return Engines.Intrinsic;
          end if;
@@ -110,7 +111,8 @@ package body Properties.Declarations.Function_Declarations is
         (Asis.Declarations.Names (Element) (1));
    begin
       if Unit = "League.Strings" or else
-        Unit = "System.Address_To_Access_Conversions"
+        Unit = "System.Address_To_Access_Conversions" or else
+        Unit = "System.Storage_Elements"
       then
          Result := League.Strings.From_UTF_16_Wide_String (Unit);
       end if;

@@ -4,6 +4,7 @@ with Asis.Extensions.Flat_Kinds;
 
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Names;
+with Properties.Declarations.Element_Iterator_Specification;
 with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
 with Properties.Declarations.Loop_Parameter_Specification;
@@ -124,6 +125,10 @@ is
        Action =>
          P.Declarations.Loop_Parameter_Specification.Code'Access),
       (Name   => N.Code,
+       Kind   => F.An_Element_Iterator_Specification,
+       Action =>
+         P.Declarations.Element_Iterator_Specification.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Subtype_Declaration,
        Action => P.Statements.Null_Statement.Code'Access),
       (Name   => N.Code,
@@ -242,6 +247,10 @@ is
        Action => P.Statements.Null_Statement.Code'Access),
 
       (Name   => N.Condition,
+       Kind   => F.An_Element_Iterator_Specification,
+       Action =>
+         P.Declarations.Element_Iterator_Specification.Condition'Access),
+      (Name   => N.Condition,
        Kind   => F.A_Loop_Parameter_Specification,
        Action =>
          P.Declarations.Loop_Parameter_Specification.Condition'Access),
@@ -266,6 +275,10 @@ is
        Kind   => F.A_Loop_Parameter_Specification,
        Action =>
          P.Declarations.Loop_Parameter_Specification.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.An_Element_Iterator_Specification,
+       Action =>
+         P.Declarations.Element_Iterator_Specification.Initialize'Access),
       (Name   => N.Initialize,
        Kind   => F.A_Component_Definition,
        Action => P.Definitions.Component_Definition.Initialize'Access),
@@ -322,6 +335,9 @@ is
       (N.Code,
        F.An_Access_Attribute, F.An_Implementation_Defined_Attribute,
        P.Expressions.Attribute_Reference.Code'Access),
+      (N.Intrinsic_Name,
+       F.An_Access_Attribute, F.An_Unknown_Attribute,
+       P.Expressions.Attribute_Reference.Intrinsic_Name'Access),
       (N.Intrinsic_Name,
        F.An_And_Operator, F.A_Not_Operator,
        P.Expressions.Identifiers.Intrinsic_Name'Access));
@@ -438,6 +454,13 @@ begin
         (Kind    => X,
          Name    => N.Call_Convention,
          Action  => P.Expressions.Identifiers.Call_Convention'Access);
+   end loop;
+
+   for X in F.An_Access_Attribute .. F.An_Unknown_Attribute loop
+      Self.Call_Convention.Register_Calculator
+        (Kind    => X,
+         Name    => N.Call_Convention,
+         Action  => P.Expressions.Attribute_Reference.Call_Convention'Access);
    end loop;
 
    for X in F.Flat_Declaration_Kinds loop

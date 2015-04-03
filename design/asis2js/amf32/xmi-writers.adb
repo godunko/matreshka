@@ -73,7 +73,7 @@ package body XMI.Writers is
                      (League.Holders.Element (H)));
                end if;
 
-               Put (''');
+               Put ("'");
 
             when AMF3.Metadata.Superclass =>
                null;

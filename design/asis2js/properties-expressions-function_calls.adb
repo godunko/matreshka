@@ -39,12 +39,14 @@ package body Properties.Expressions.Function_Calls is
       Conv   : constant Engines.Call_Convention_Kind :=
         Engine.Call_Convention.Get_Property
           (Element, Engines.Call_Convention);
-      Is_Dispatching : constant Boolean :=
-        Engine.Boolean.Get_Property (Prefix, Engines.Is_Dispatching);
+      Is_Dispatching : Boolean;
    begin
       if Conv = Engines.Intrinsic then
          return Intrinsic (Engine, Element, Name);
       end if;
+
+      Is_Dispatching := Engine.Boolean.Get_Property
+        (Prefix, Engines.Is_Dispatching);
 
       if Is_Dispatching then
          declare
@@ -129,6 +131,7 @@ package body Properties.Expressions.Function_Calls is
       end loop;
 
       if Func.To_Wide_Wide_String = "League.Strings.To_Universal_String"
+        or else Func.To_Wide_Wide_String = "League.Strings.To_UTF_8_String"
         or else Func.Starts_With ("System.Address_To_Access_Conversions.")
       then
          return Args (1);
@@ -149,6 +152,27 @@ package body Properties.Expressions.Function_Calls is
             Text.Append (Args (1));
             Text.Append (" + ");
             Text.Append (Args (2));
+
+            return Text;
+         end;
+      elsif Func.To_Wide_Wide_String = "System.Storage_Elements.""+""" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append (Args (1));
+            Text.Append ("[");
+            Text.Append (Args (2));
+            Text.Append ("]");
+
+            return Text;
+         end;
+      elsif Func.To_Wide_Wide_String = "AN_IMAGE_ATTRIBUTE" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append ("_ec._image(");
+            Text.Append (Args (1));
+            Text.Append (")");
 
             return Text;
          end;

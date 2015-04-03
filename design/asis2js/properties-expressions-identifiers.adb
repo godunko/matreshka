@@ -175,6 +175,7 @@ package body Properties.Expressions.Identifiers is
 
             when Asis.A_Discriminant_Specification |
                  Asis.A_Loop_Parameter_Specification |
+                 Asis.An_Element_Iterator_Specification |
                  Asis.A_Parameter_Specification =>
 
                exit;
