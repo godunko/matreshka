@@ -36,5 +36,9 @@ define('standard', [], function(){
         }
     };
 
+    standard._image = function (x){
+        return x.toString();
+    };
+
     return standard;
 });

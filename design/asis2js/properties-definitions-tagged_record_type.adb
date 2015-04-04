@@ -88,13 +88,29 @@ package body Properties.Definitions.Tagged_Record_Type is
                end loop;
             end;
          end loop;
-      end;
 
-      if not Asis.Elements.Is_Nil (Parent) then
-         Result.Append
-           (Engine.Text.Get_Property (Parent, Name));
-         Result.Append (".call (this);");
-      end if;
+         if not Asis.Elements.Is_Nil (Parent) then
+            Result.Append
+              (Engine.Text.Get_Property (Parent, Name));
+            Result.Append (".call (this");
+
+            for J in List'Range loop
+               declare
+                  Id    : League.Strings.Universal_String;
+                  Names : constant Asis.Defining_Name_List :=
+                    Asis.Declarations.Names (List (J));
+               begin
+                  for N in Names'Range loop
+                     Result.Append (",");
+                     Id := Engine.Text.Get_Property (Names (N), Name);
+                     Result.Append (Id);
+                  end loop;
+               end;
+            end loop;
+
+            Result.Append (");");
+         end if;
+      end;
 
       declare
          List : constant Asis.Declaration_List :=

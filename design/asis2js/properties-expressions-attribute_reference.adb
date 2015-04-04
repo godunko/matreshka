@@ -45,12 +45,17 @@ package body Properties.Expressions.Attribute_Reference is
 
          when Asis.A_Position_Attribute =>
             declare
+               Text     : League.Strings.Universal_String;
                Selector : constant Asis.Identifier :=
                  Asis.Expressions.Selector (Prefix);
                Def : constant Asis.Defining_Name :=
                  Asis.Expressions.Corresponding_Name_Definition (Selector);
             begin
-               return Engine.Text.Get_Property (Def, Name);
+               Text := Engine.Text.Get_Property (Def, Name);
+               Text.Prepend ("'");
+               Text.Append ("'");
+
+               return Text;
             end;
          when others =>
             raise Program_Error with "Unimplemented attribute: " &
