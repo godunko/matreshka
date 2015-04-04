@@ -35,4 +35,6 @@ package Properties.Tools is
      (Left  : Asis.Declaration;
       Right : Asis.Declaration) return Boolean;
 
+   function Enclosing_Declaration (X : Asis.Element) return Asis.Declaration;
+
 end Properties.Tools;

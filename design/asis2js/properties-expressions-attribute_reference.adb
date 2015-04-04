@@ -42,6 +42,16 @@ package body Properties.Expressions.Attribute_Reference is
               Asis.An_Address_Attribute |
             Asis.An_Unchecked_Access_Attribute =>
             return Engine.Text.Get_Property (Prefix, Name);
+
+         when Asis.A_Position_Attribute =>
+            declare
+               Selector : constant Asis.Identifier :=
+                 Asis.Expressions.Selector (Prefix);
+               Def : constant Asis.Defining_Name :=
+                 Asis.Expressions.Corresponding_Name_Definition (Selector);
+            begin
+               return Engine.Text.Get_Property (Def, Name);
+            end;
          when others =>
             raise Program_Error with "Unimplemented attribute: " &
               Asis.Attribute_Kinds'Image (Kind);

@@ -22,13 +22,13 @@ private
           Convention => Ada;
 
    Wall_Descriptor : aliased constant AMF3.Metadata.Descriptor
-     := ((AMF3.Metadata.Slot,
-          League.Strings.To_Universal_String ("x1"),
-          Dummy_Wall.X1'Position),
-         (AMF3.Metadata.Slot,
-          League.Strings.To_Universal_String ("x2"),
-          Dummy_Wall.Y1'Position),
-         (AMF3.Metadata.Superclass,
-          AMF3.Objects.Object_Descriptor'Access));
+     := (1 => (AMF3.Metadata.Slot,
+               League.Strings.To_Universal_String ("x1"),
+               Dummy_Wall.X1'Position),
+         2 => (AMF3.Metadata.Slot,
+               League.Strings.To_Universal_String ("x2"),
+               Dummy_Wall.Y1'Position),
+         3 => (AMF3.Metadata.Superclass,
+               AMF3.Objects.Object_Descriptor'Access));
 
 end Demo.Walls;

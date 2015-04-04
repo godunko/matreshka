@@ -3,6 +3,7 @@ with League.Strings;
 with Asis.Extensions.Flat_Kinds;
 
 with Properties.Declarations.Constant_Declarations;
+with Properties.Declarations.Defining_Expanded_Name;
 with Properties.Declarations.Defining_Names;
 with Properties.Declarations.Element_Iterator_Specification;
 with Properties.Declarations.Function_Declarations;
@@ -142,7 +143,7 @@ is
        Action => P.Declarations.Defining_Names.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Defining_Expanded_Name,
-       Action => P.Declarations.Defining_Names.Code'Access),
+       Action => P.Declarations.Defining_Expanded_Name.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Package_Instantiation,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
@@ -382,6 +383,9 @@ is
        .Is_Dispatching'Access),
       (Kind   => F.A_Constant_Declaration,
        Name   => N.Is_Simple_Ref,
+       Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access),
+      (Kind   => F.A_Component_Declaration,
+       Name   => N.Is_Simple_Ref,  --  The same as constant
        Action => P.Declarations.Constant_Declarations.Is_Simple_Ref'Access),
       (Kind   => F.A_Variable_Declaration,
        Name   => N.Is_Simple_Ref,

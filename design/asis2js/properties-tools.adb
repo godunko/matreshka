@@ -138,6 +138,21 @@ package body Properties.Tools is
       end if;
    end Corresponding_Type_Subprograms;
 
+   ---------------------------
+   -- Enclosing_Declaration --
+   ---------------------------
+
+   function Enclosing_Declaration (X : Asis.Element) return Asis.Declaration is
+      use type Asis.Element_Kinds;
+      Parent : Asis.Element := Asis.Elements.Enclosing_Element (X);
+   begin
+      while Asis.Elements.Element_Kind (Parent) /= Asis.A_Declaration loop
+         Parent := Asis.Elements.Enclosing_Element (Parent);
+      end loop;
+
+      return Parent;
+   end Enclosing_Declaration;
+
    ----------------
    -- Get_Aspect --
    ----------------

@@ -63,7 +63,7 @@ package body Properties.Declarations.Defining_Names is
 
       Proc : Asis.Declaration;
       Decl : constant Asis.Declaration :=
-        Asis.Elements.Enclosing_Element (Element);
+        Properties.Tools.Enclosing_Declaration (Element);
       Kind  : constant Asis.Declaration_Kinds :=
         Asis.Elements.Declaration_Kind (Decl);
       Value : constant Wide_String :=

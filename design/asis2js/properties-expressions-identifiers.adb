@@ -1,3 +1,4 @@
+with Asis.Compilation_Units;
 with Asis.Declarations;
 with Asis.Elements;
 with Asis.Expressions;
@@ -154,6 +155,34 @@ package body Properties.Expressions.Identifiers is
       Decl   : Asis.Declaration) return League.Strings.Universal_String
    is
       pragma Unreferenced (Name);
+
+      procedure Add_Parent_Name
+        (Result : in out League.Strings.Universal_String);
+
+      ----------------
+      -- Add_Prefix --
+      ----------------
+
+      procedure Add_Parent_Name
+        (Result : in out League.Strings.Universal_String)
+      is
+
+         Unit : constant Asis.Compilation_Unit :=
+           Asis.Elements.Enclosing_Compilation_Unit (Decl);
+
+         Parent : constant Asis.Compilation_Unit :=
+           Asis.Compilation_Units.Corresponding_Parent_Declaration (Unit);
+
+         Parent_Name : constant League.Strings.Universal_String :=
+           League.Strings.From_UTF_16_Wide_String
+             (Asis.Compilation_Units.Unit_Full_Name (Parent)).To_Lowercase;
+
+      begin
+         Result.Prepend (".");
+         Result.Prepend (Parent_Name);
+         Result.Prepend ("_ec.");
+      end Add_Parent_Name;
+
       Top_Item   : Boolean := True;
       Is_Package : Boolean := False;
       Item       : Asis.Element := Decl;
@@ -222,6 +251,7 @@ package body Properties.Expressions.Identifiers is
 
                      Decl_List.Prepend (Tmp);
                      Is_Package := True;
+
                   end if;
                end;
 
@@ -243,7 +273,7 @@ package body Properties.Expressions.Identifiers is
       Result := Decl_List.Join ('.');
 
       if Is_Package then
-         Result.Prepend ("_ec.");
+         Add_Parent_Name (Result);
       end if;
 
       Result.Append (".");
