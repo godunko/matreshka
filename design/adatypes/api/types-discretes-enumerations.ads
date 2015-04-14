@@ -8,12 +8,6 @@ package Types.Discretes.Enumerations is
    type Enumeration_Type_Access is access all Enumeration_Type'Class
      with Storage_Size => 0;
 
-   not overriding function Is_Boolean
-    (Self : Enumeration_Type) return Boolean is abstract;
-
-   not overriding function Is_Character
-    (Self : Enumeration_Type) return Boolean is abstract;
-
    not overriding function Is_Predefined_Character
     (Self : Enumeration_Type) return Boolean is abstract;
    --  One of predefined Character, Wide_Character, Wide_Wide_Character types.

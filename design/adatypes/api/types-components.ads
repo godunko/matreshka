@@ -1,3 +1,4 @@
+with League.Strings;
 
 package Types.Components is
 
@@ -11,7 +12,8 @@ package Types.Components is
    type Component_Access_Array is
      array (Positive range <>) of Component_Access;
 
-   not overriding function Name (Self : Component) return Wide_String
+   not overriding function Name
+     (Self : Component) return League.Strings.Universal_String
       is abstract;
 
    not overriding function Component_Type

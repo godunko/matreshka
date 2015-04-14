@@ -4,7 +4,7 @@ package Types.Discriminanteds is
 
    pragma Preelaborate;
 
-   type Discriminanted_Type is limited interface and Ada_Type;
+   type Discriminanted_Type is limited interface;
 
    type Discriminanted_Type_Access is access all Discriminanted_Type'Class
      with Storage_Size => 0;

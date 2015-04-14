@@ -1,3 +1,4 @@
+with Types.Conventions;
 with Types.Parameter_Specifications;
 
 package Types.Profiles is
@@ -17,13 +18,16 @@ package Types.Profiles is
    not overriding function Return_Type
     (Self : Profile) return Types.Type_Access is abstract;
 
+   not overriding function Calling_Convention
+    (Self : Profile) return Types.Conventions.Convention_Access is abstract;
+
    not overriding function Are_Type_Conformant
     (Self  : Profile;
-     Value : Profile'Class) return Boolean is abstract;
+     Value : access Profile'Class) return Boolean is abstract;
 
    not overriding function Are_Mode_Conformant
     (Self  : Profile;
-     Value : Profile'Class) return Boolean is abstract;
+     Value : access Profile'Class) return Boolean is abstract;
 
 --     not overriding function Are_Subtype_Conformant
 --       (Self  : Profile;

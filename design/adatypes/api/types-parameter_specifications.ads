@@ -1,3 +1,4 @@
+with League.Strings;
 
 package Types.Parameter_Specifications is
 
@@ -13,7 +14,7 @@ package Types.Parameter_Specifications is
      array (Positive range <>) of Parameter_Specification_Access;
 
    not overriding function Name
-    (Self : Parameter_Specification) return Wide_String
+    (Self : Parameter_Specification) return League.Strings.Universal_String
       is abstract;
 
    not overriding function Is_Aliased

@@ -1,4 +1,4 @@
-with Types.Discrites;
+with Types.Discretes;
 
 package Types.Arrays is
 
@@ -14,13 +14,13 @@ package Types.Arrays is
    --  Returns number of dimensions.
 
    not overriding function Dimension_Types
-    (Self : Array_Type) return Types.Discrites.Discrite_Type_Array
+    (Self : Array_Type) return Types.Discretes.Discrete_Type_Array
       is abstract;
 
-   not overriding function Element_Type
+   not overriding function Component_Type
     (Self : Array_Type) return Types.Type_Access is abstract;
 
-   not overriding function Is_String
+   not overriding function Has_Aliased_Component
     (Self : Array_Type) return Boolean is abstract;
 
 end Types.Arrays;

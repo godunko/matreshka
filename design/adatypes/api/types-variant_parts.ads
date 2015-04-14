@@ -1,3 +1,5 @@
+with League.Strings;
+
 limited with Types.Variants;
 
 package Types.Variant_Parts is
@@ -10,7 +12,7 @@ package Types.Variant_Parts is
      with Storage_Size => 0;
 
    not overriding function Discriminant_Name
-    (Self : Variant_Part) return Wide_String
+    (Self : Variant_Part) return League.Strings.Universal_String
       is abstract;
 
    not overriding function Variants
