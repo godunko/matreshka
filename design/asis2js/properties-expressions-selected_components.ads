@@ -32,4 +32,10 @@ package Properties.Expressions.Selected_Components is
       Element : Asis.Declaration;
       Name    : Engines.Boolean_Property) return Boolean;
 
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+      renames Intrinsic_Name;
+
 end Properties.Expressions.Selected_Components;

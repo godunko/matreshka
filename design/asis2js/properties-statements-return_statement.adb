@@ -1,7 +1,27 @@
+with Asis.Declarations;
 with Asis.Elements;
 with Asis.Statements;
 
+with Properties.Tools;
+
 package body Properties.Statements.Return_Statement is
+
+   ------------
+   -- Bounds --
+   ------------
+
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      Func : constant Asis.Declaration :=
+        Properties.Tools.Enclosing_Declaration (Element);
+      Return_Type : constant Asis.Element :=
+        Asis.Declarations.Result_Profile (Func);
+   begin
+      return Engine.Text.Get_Property (Return_Type, Name);
+   end Bounds;
 
    ----------
    -- Code --

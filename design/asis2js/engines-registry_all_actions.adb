@@ -21,6 +21,7 @@ with Properties.Definitions.Component_Definition;
 with Properties.Definitions.Constrained_Array_Type;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Index_Constraint;
+with Properties.Definitions.Derived_Type;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Tagged_Record_Type;
 with Properties.Definitions.Subtype_Indication;
@@ -291,11 +292,20 @@ is
        Kind   => F.An_Identifier,
        Action => P.Expressions.Identifiers.Bounds'Access),
       (Name   => N.Bounds,
+       Kind   => F.A_Selected_Component,
+       Action => P.Expressions.Selected_Components.Bounds'Access),
+      (Name   => N.Bounds,
        Kind   => F.An_Ordinary_Type_Declaration,
        Action => P.Declarations.Ordinary_Type.Code'Access),
       (Name   => N.Bounds,
        Kind   => F.A_Constrained_Array_Definition,
        Action => P.Definitions.Constrained_Array_Type.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Return_Statement,
+       Action => P.Statements.Return_Statement.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Derived_Type_Definition,
+       Action => P.Definitions.Derived_Type.Bounds'Access),
 
       --  Initialize
       (Name   => N.Initialize,
@@ -354,6 +364,12 @@ is
        Action => P.Definitions.Simple_Expression_Range.Lower'Access),
       (Name   => N.Upper,
        Kind   => F.A_Discrete_Simple_Expression_Range,
+       Action => P.Definitions.Simple_Expression_Range.Upper'Access),
+      (Name   => N.Lower,
+       Kind   => F.A_Simple_Expression_Range,
+       Action => P.Definitions.Simple_Expression_Range.Lower'Access),
+      (Name   => N.Upper,
+       Kind   => F.A_Simple_Expression_Range,
        Action => P.Definitions.Simple_Expression_Range.Upper'Access),
       (Name   => N.Upper,
        Kind   => F.A_Discrete_Subtype_Indication_As_Subtype_Definition,
