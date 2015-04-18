@@ -14,6 +14,22 @@ package body Properties.Expressions.Identifiers is
       Name   : Asis.Identifier;
       Decl   : Asis.Declaration) return League.Strings.Universal_String;
 
+   ------------
+   -- Bounds --
+   ------------
+
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      --  Expecting identifier as subtype name of subtype_mark
+      Decl : constant Asis.Declaration :=
+        Asis.Expressions.Corresponding_Name_Declaration (Element);
+   begin
+      return Engine.Text.Get_Property (Decl, Name);
+   end Bounds;
+
    ---------------------
    -- Call_Convention --
    ---------------------

@@ -11,6 +11,11 @@ package Properties.Definitions.Subtype_Indication is
       Element : Asis.Definition;
       Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Definition;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
+
    function Initialize
      (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;

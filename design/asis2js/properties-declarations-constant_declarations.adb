@@ -3,6 +3,21 @@ with Asis.Elements;
 
 package body Properties.Declarations.Constant_Declarations is
 
+   ------------
+   -- Bounds --
+   ------------
+
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      Tipe : constant Asis.Definition :=
+        Asis.Declarations.Object_Declaration_View (Element);
+   begin
+      return Engine.Text.Get_Property (Tipe, Name);
+   end Bounds;
+
    ----------
    -- Code --
    ----------

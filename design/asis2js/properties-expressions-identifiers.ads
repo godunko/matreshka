@@ -11,6 +11,11 @@ package Properties.Expressions.Identifiers is
       Element : Asis.Expression;
       Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
+
    function Call_Convention
      (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;

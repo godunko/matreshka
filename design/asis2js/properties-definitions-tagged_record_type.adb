@@ -152,7 +152,7 @@ package body Properties.Definitions.Tagged_Record_Type is
       Result.Append ("};");
       Result.Append ("_ec.");
       Result.Append (Name_Image);
-      Result.Append (".prototype = new _ec._tag('");
+      Result.Append (".prototype = _ec._tag('");
       Result.Append (Name_Image);
       Result.Append ("', '');");
 

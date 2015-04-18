@@ -5,8 +5,9 @@ package Engines is
       Condition,
       Lower, Upper,    --  Code for range return X'First X'Last
       Intrinsic_Name,
-      Initialize
+      Initialize,
       --  Code to initialize an object of given type
+      Bounds  --  "First,Last" bounds for nested named array aggregate
      );
 
    type Boolean_Property is

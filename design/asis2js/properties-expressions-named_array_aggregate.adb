@@ -1,3 +1,4 @@
+with Asis.Elements;
 with Asis.Expressions;
 
 package body Properties.Expressions.Named_Array_Aggregate is
@@ -31,7 +32,14 @@ package body Properties.Expressions.Named_Array_Aggregate is
          Result.Append (Engine.Text.Get_Property (List (J), Name));
       end loop;
 
-      Result.Append ("}}return _result;}(false,true)");
+      Result.Append ("}}return _result;}(");
+
+      Result.Append
+        (Engine.Text.Get_Property
+           (Asis.Elements.Enclosing_Element (Element),
+            Engines.Bounds));
+
+      Result.Append (")");
 
       return Result;
    end Code;

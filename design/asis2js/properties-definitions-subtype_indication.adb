@@ -1,6 +1,28 @@
 with Asis.Definitions;
+with Asis.Elements;
 
 package body Properties.Definitions.Subtype_Indication is
+
+   ------------
+   -- Bounds --
+   ------------
+
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Definition;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      Mark : constant Asis.Definition :=
+        Asis.Definitions.Subtype_Mark (Element);
+      Constr : constant Asis.Definition :=
+        Asis.Definitions.Subtype_Constraint (Element);
+   begin
+      if Asis.Elements.Is_Nil (Constr) then
+         return Engine.Text.Get_Property (Mark, Name);
+      else
+         return Engine.Text.Get_Property (Constr, Name);
+      end if;
+   end Bounds;
 
    ----------
    -- Code --

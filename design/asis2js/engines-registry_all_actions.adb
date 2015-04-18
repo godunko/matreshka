@@ -20,6 +20,7 @@ with Properties.Definitions.Access_To_Object;
 with Properties.Definitions.Component_Definition;
 with Properties.Definitions.Constrained_Array_Type;
 with Properties.Definitions.Enumeration_Type;
+with Properties.Definitions.Index_Constraint;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Tagged_Record_Type;
 with Properties.Definitions.Subtype_Indication;
@@ -147,6 +148,9 @@ is
        Kind   => F.A_Defining_Identifier,
        Action => P.Declarations.Defining_Names.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Defining_Enumeration_Literal,
+       Action => P.Declarations.Defining_Names.Code'Access),
+      (Name   => N.Code,
        Kind   => F.A_Defining_Expanded_Name,
        Action => P.Declarations.Defining_Expanded_Name.Code'Access),
       (Name   => N.Code,
@@ -264,6 +268,35 @@ is
        Action =>
          P.Declarations.Loop_Parameter_Specification.Condition'Access),
 
+      --  Bounds
+      (Name   => N.Bounds,
+       Kind   => F.A_Constant_Declaration,
+       Action => P.Declarations.Constant_Declarations.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Variable_Declaration,
+       Action => P.Declarations.Constant_Declarations.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Component_Declaration,
+       Action => P.Declarations.Constant_Declarations.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Component_Definition,
+       Action => P.Definitions.Component_Definition.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Subtype_Indication,
+       Action => P.Definitions.Subtype_Indication.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.An_Index_Constraint,
+       Action => P.Definitions.Index_Constraint.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.An_Identifier,
+       Action => P.Expressions.Identifiers.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.An_Ordinary_Type_Declaration,
+       Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Constrained_Array_Definition,
+       Action => P.Definitions.Constrained_Array_Type.Bounds'Access),
+
       --  Initialize
       (Name   => N.Initialize,
        Kind   => F.A_Constant_Declaration,
@@ -316,6 +349,36 @@ is
       (Name   => N.Upper,
        Kind   => F.A_Discrete_Simple_Expression_Range_As_Subtype_Definition,
        Action => P.Definitions.Simple_Expression_Range.Upper'Access),
+      (Name   => N.Lower,
+       Kind   => F.A_Discrete_Simple_Expression_Range,
+       Action => P.Definitions.Simple_Expression_Range.Lower'Access),
+      (Name   => N.Upper,
+       Kind   => F.A_Discrete_Simple_Expression_Range,
+       Action => P.Definitions.Simple_Expression_Range.Upper'Access),
+      (Name   => N.Upper,
+       Kind   => F.A_Discrete_Subtype_Indication_As_Subtype_Definition,
+       Action => P.Definitions.Subtype_Indication.Bounds'Access),
+      (Name   => N.Lower,
+       Kind   => F.A_Discrete_Subtype_Indication_As_Subtype_Definition,
+       Action => P.Definitions.Subtype_Indication.Bounds'Access),
+      (Name   => N.Upper,
+       Kind   => F.An_Identifier,
+       Action => P.Expressions.Identifiers.Bounds'Access),
+      (Name   => N.Lower,
+       Kind   => F.An_Identifier,
+       Action => P.Expressions.Identifiers.Bounds'Access),
+      (Name   => N.Upper,
+       Kind   => F.An_Ordinary_Type_Declaration,
+       Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Lower,
+       Kind   => F.An_Ordinary_Type_Declaration,
+       Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Lower,
+       Kind   => F.An_Enumeration_Type_Definition,
+       Action => P.Definitions.Enumeration_Type.Lower'Access),
+      (Name   => N.Upper,
+       Kind   => F.An_Enumeration_Type_Definition,
+       Action => P.Definitions.Enumeration_Type.Upper'Access),
 
       --  Intrinsic_Name
       (Name   => N.Intrinsic_Name,

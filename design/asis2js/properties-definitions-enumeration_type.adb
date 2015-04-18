@@ -57,6 +57,10 @@ package body Properties.Definitions.Enumeration_Type is
       return Text;
    end Code;
 
+   --------------------
+   -- Is_Simple_Type --
+   --------------------
+
    function Is_Simple_Type
      (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;
@@ -65,5 +69,39 @@ package body Properties.Definitions.Enumeration_Type is
    begin
       return True;
    end Is_Simple_Type;
+
+   -----------
+   -- Lower --
+   -----------
+
+   function Lower
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Name);
+      List : constant Asis.Declaration_List :=
+        Asis.Definitions.Enumeration_Literal_Declarations (Element);
+   begin
+      return Engine.Text.Get_Property
+        (Asis.Declarations.Names (List (List'First)) (1), Engines.Code);
+   end Lower;
+
+   -----------
+   -- Upper --
+   -----------
+
+   function Upper
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Name);
+      List : constant Asis.Declaration_List :=
+        Asis.Definitions.Enumeration_Literal_Declarations (Element);
+   begin
+      return Engine.Text.Get_Property
+        (Asis.Declarations.Names (List (List'Last)) (1), Engines.Code);
+   end Upper;
 
 end Properties.Definitions.Enumeration_Type;

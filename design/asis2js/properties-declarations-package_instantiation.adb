@@ -55,7 +55,8 @@ package body Properties.Declarations.Package_Instantiation is
       Image : constant Asis.Program_Text :=
         Asis.Expressions.Name_Image (Selector);
    begin
-      return Image = "Generic_Elementary_Functions";
+      return Image = "Generic_Elementary_Functions" or else
+        Image = "Address_To_Access_Conversions";
    end Is_Predefined;
 
 end Properties.Declarations.Package_Instantiation;

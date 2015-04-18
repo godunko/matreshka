@@ -11,6 +11,16 @@ package Properties.Definitions.Enumeration_Type is
       Element : Asis.Expression;
       Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
+   function Upper
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
+
+   function Lower
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
+
    function Is_Simple_Type
      (Engine  : access Engines.Contexts.Context;
       Element : Asis.Definition;

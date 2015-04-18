@@ -11,4 +11,10 @@ package Properties.Definitions.Component_Definition is
       Element : Asis.Definition;
       Name    : Engines.Text_Property) return League.Strings.Universal_String;
 
+   function Bounds
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Definition;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+        renames Initialize;
+
 end Properties.Definitions.Component_Definition;

@@ -1,6 +1,7 @@
 //  This code is placeholder for Standard Ada package
 define('standard', [], function(){
     var standard = {};
+    var all_types = {};  //  Map from external_tag to tag(prototype)
     standard._nested = function (){};
     standard._nested.prototype = standard;
     standard.standard = standard;
@@ -14,9 +15,12 @@ define('standard', [], function(){
 
     //  Constructor for tags
     standard._tag = function (tag_name, parent_name){
-        this._external_tag = tag_name;
+        var result = Object.create (all_types[parent_name]);
+        result._external_tag = tag_name;
+        all_types [tag_name] = result;
+        return result;
     };
-    standard._tag.prototype = {};
+    all_types [''] = {};  //  prototype from root tags
 
     //  T'Pos(x) for discrete type T
     standard._pos = function (x){
