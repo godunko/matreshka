@@ -145,12 +145,44 @@ package body Properties.Expressions.Function_Calls is
 
             return Text;
          end;
-      elsif Func.To_Wide_Wide_String = """&""" then
+      elsif Func.To_Wide_Wide_String = """&"""
+        or else Func.To_Wide_Wide_String = """+"""
+      then
          declare
             Text : League.Strings.Universal_String;
          begin
             Text.Append (Args (1));
             Text.Append (" + ");
+            Text.Append (Args (2));
+
+            return Text;
+         end;
+      elsif Func.To_Wide_Wide_String = """-""" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append (Args (1));
+            Text.Append (" - ");
+            Text.Append (Args (2));
+
+            return Text;
+         end;
+      elsif Func.To_Wide_Wide_String = """*""" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append (Args (1));
+            Text.Append (" * ");
+            Text.Append (Args (2));
+
+            return Text;
+         end;
+      elsif Func.To_Wide_Wide_String = """/""" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append (Args (1));
+            Text.Append (" / ");
             Text.Append (Args (2));
 
             return Text;

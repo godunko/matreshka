@@ -5,12 +5,14 @@ with Asis.Extensions.Flat_Kinds;
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Expanded_Name;
 with Properties.Declarations.Defining_Names;
+with Properties.Declarations.Defining_Operators;
 with Properties.Declarations.Element_Iterator_Specification;
 with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
 with Properties.Declarations.Loop_Parameter_Specification;
 with Properties.Declarations.Ordinary_Type;
 with Properties.Declarations.Package_Declaration;
+with Properties.Declarations.Package_Instantiation;
 with Properties.Declarations.Private_Type;
 with Properties.Declarations.Procedure_Body_Declarations;
 with Properties.Declarations.Procedure_Declaration;
@@ -104,6 +106,9 @@ is
        Kind   => F.A_Package_Declaration,
        Action => P.Declarations.Package_Declaration.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Package_Renaming_Declaration,  --  FIXME
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
        Kind   => F.A_Private_Extension_Declaration,
        Action => P.Statements.Null_Statement.Code'Access),
       (Name   => N.Code,
@@ -146,7 +151,7 @@ is
        Action => P.Declarations.Defining_Expanded_Name.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Package_Instantiation,
-       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+       Action => P.Declarations.Package_Instantiation.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_Enumeration_Type_Definition,
        Action => P.Definitions.Enumeration_Type.Code'Access),
@@ -158,6 +163,9 @@ is
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
        Kind   => F.An_Unconstrained_Array_Definition,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
+       Kind   => F.A_Derived_Type_Definition,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
        Kind   => F.A_Derived_Record_Extension_Definition,
@@ -332,7 +340,10 @@ is
    Range_List : constant Range_Array :=
      ((N.Code,
        F.An_And_Operator, F.A_Not_Operator,
-      P.Expressions.Identifiers.Code'Access),
+       P.Expressions.Identifiers.Code'Access),
+      (N.Code,
+       F.A_Defining_And_Operator, F.A_Defining_Not_Operator,
+       Action => P.Declarations.Defining_Operators.Code'Access),
       (N.Code,
        F.An_Access_Attribute, F.An_Implementation_Defined_Attribute,
        P.Expressions.Attribute_Reference.Code'Access),
