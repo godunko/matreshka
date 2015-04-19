@@ -44,5 +44,10 @@ define('standard', [], function(){
         return x.toString();
     };
 
+    standard._generic_elementary_functions = {
+        arccos : Math.acos,
+        sqrt : Math.Math.sqrt,
+    };
+    
     return standard;
 });
