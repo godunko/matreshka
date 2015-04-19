@@ -57,6 +57,20 @@ package body Properties.Definitions.Enumeration_Type is
       return Text;
    end Code;
 
+   ----------------
+   -- Initialize --
+   ----------------
+
+   function Initialize
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Expression;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String
+   is
+      pragma Unreferenced (Engine, Element, Name);
+   begin
+      return League.Strings.To_Universal_String ("undefined");
+   end Initialize;
+
    --------------------
    -- Is_Simple_Type --
    --------------------

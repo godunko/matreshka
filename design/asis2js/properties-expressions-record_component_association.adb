@@ -1,3 +1,4 @@
+with Asis.Elements;
 with Asis.Expressions;
 
 package body Properties.Expressions.Record_Component_Association is
@@ -17,9 +18,15 @@ package body Properties.Expressions.Record_Component_Association is
         Asis.Expressions.Record_Component_Choices (Element);
       Value  : constant Asis.Expression :=
         Asis.Expressions.Component_Expression (Element);
-      Down   : constant League.Strings.Universal_String :=
-        Engine.Text.Get_Property (Value, Name);
+      Down   : League.Strings.Universal_String;
    begin
+      if Asis.Elements.Is_Nil (Value) then
+         Down := Engine.Text.Get_Property
+           (Asis.Elements.Enclosing_Element (List (1)), Engines.Initialize);
+      else
+         Down := Engine.Text.Get_Property (Value, Name);
+      end if;
+
       for J in List'Range loop
          Result.Append (Engine.Text.Get_Property (List (J), Name));
          Result.Append (":");

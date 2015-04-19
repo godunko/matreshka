@@ -2,12 +2,17 @@ with Ada.Wide_Wide_Text_IO;
 
 with Asis.Expressions;
 
+with League.String_Vectors;
+
 package body Properties.Expressions.Function_Calls is
 
    function Intrinsic
      (Engine  : access Engines.Contexts.Context;
       Element : Asis.Expression;
       Name    : Engines.Text_Property) return League.Strings.Universal_String;
+
+   From : League.String_Vectors.Universal_String_Vector;
+   To   : League.String_Vectors.Universal_String_Vector;
 
    ---------------------
    -- Call_Convention --
@@ -120,6 +125,7 @@ package body Properties.Expressions.Function_Calls is
           (Asis.Expressions.Prefix (Element),
            Engines.Intrinsic_Name);
 
+      Index  : Natural;
       List   : constant Asis.Association_List :=
         Asis.Expressions.Function_Call_Parameters
           (Element, Normalized => False);
@@ -130,59 +136,19 @@ package body Properties.Expressions.Function_Calls is
            (Asis.Expressions.Actual_Parameter (List (J)), Name);
       end loop;
 
+      Index := From.Index (Func);
+
       if Func.To_Wide_Wide_String = "League.Strings.To_Universal_String"
         or else Func.To_Wide_Wide_String = "League.Strings.To_UTF_8_String"
         or else Func.Starts_With ("System.Address_To_Access_Conversions.")
       then
          return Args (1);
-      elsif Func.To_Wide_Wide_String = """=""" then
+      elsif Index > 0 then
          declare
             Text : League.Strings.Universal_String;
          begin
             Text.Append (Args (1));
-            Text.Append (" === ");
-            Text.Append (Args (2));
-
-            return Text;
-         end;
-      elsif Func.To_Wide_Wide_String = """&"""
-        or else Func.To_Wide_Wide_String = """+"""
-      then
-         declare
-            Text : League.Strings.Universal_String;
-         begin
-            Text.Append (Args (1));
-            Text.Append (" + ");
-            Text.Append (Args (2));
-
-            return Text;
-         end;
-      elsif Func.To_Wide_Wide_String = """-""" then
-         declare
-            Text : League.Strings.Universal_String;
-         begin
-            Text.Append (Args (1));
-            Text.Append (" - ");
-            Text.Append (Args (2));
-
-            return Text;
-         end;
-      elsif Func.To_Wide_Wide_String = """*""" then
-         declare
-            Text : League.Strings.Universal_String;
-         begin
-            Text.Append (Args (1));
-            Text.Append (" * ");
-            Text.Append (Args (2));
-
-            return Text;
-         end;
-      elsif Func.To_Wide_Wide_String = """/""" then
-         declare
-            Text : League.Strings.Universal_String;
-         begin
-            Text.Append (Args (1));
-            Text.Append (" / ");
+            Text.Append (To.Element (Index));
             Text.Append (Args (2));
 
             return Text;
@@ -215,4 +181,21 @@ package body Properties.Expressions.Function_Calls is
       end if;
    end Intrinsic;
 
+begin
+   From.Append (League.Strings.To_Universal_String ("""="""));
+   To.Append (League.Strings.To_Universal_String ("==="));
+   From.Append (League.Strings.To_Universal_String ("""/="""));
+   To.Append (League.Strings.To_Universal_String ("!=="));
+   From.Append (League.Strings.To_Universal_String ("""&"""));
+   To.Append (League.Strings.To_Universal_String ("+"));
+   From.Append (League.Strings.To_Universal_String ("""+"""));
+   To.Append (League.Strings.To_Universal_String ("+"));
+   From.Append (League.Strings.To_Universal_String ("""-"""));
+   To.Append (League.Strings.To_Universal_String ("-"));
+   From.Append (League.Strings.To_Universal_String ("""*"""));
+   To.Append (League.Strings.To_Universal_String ("*"));
+   From.Append (League.Strings.To_Universal_String ("""/"""));
+   To.Append (League.Strings.To_Universal_String ("/"));
+   From.Append (League.Strings.To_Universal_String (""">"""));
+   To.Append (League.Strings.To_Universal_String (">"));
 end Properties.Expressions.Function_Calls;
