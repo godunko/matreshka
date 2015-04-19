@@ -37,6 +37,7 @@ with Properties.Expressions.Indexed_Component;
 with Properties.Expressions.Integer_Literal;
 with Properties.Expressions.Named_Array_Aggregate;
 with Properties.Expressions.Null_Literal;
+with Properties.Expressions.Parenthesized;
 with Properties.Expressions.Record_Aggregate;
 with Properties.Expressions.Record_Component_Association;
 with Properties.Expressions.Selected_Components;
@@ -243,6 +244,9 @@ is
       (Name   => N.Code,
        Kind   => F.A_Qualified_Expression,
        Action => P.Expressions.Type_Conversion.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Parenthesized_Expression,
+       Action => P.Expressions.Parenthesized.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_Assignment_Statement,
        Action => P.Statements.Assignment_Statement.Code'Access),

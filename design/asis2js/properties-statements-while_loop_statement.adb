@@ -21,6 +21,7 @@ package body Properties.Statements.While_Loop_Statement is
    begin
       Text.Append ("while (");
       Down := Engine.Text.Get_Property (Cond, Name);
+      Text.Append (Down);
       Text.Append ("){");
 
       for N in List'Range loop

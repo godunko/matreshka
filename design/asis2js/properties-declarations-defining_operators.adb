@@ -29,7 +29,8 @@ package body Properties.Declarations.Defining_Operators is
 --          Asis.A_Mod_Operator,                    -- mod
 --          Asis.A_Rem_Operator,                    -- rem
 --          Asis.An_Exponentiate_Operator,          -- **
---          Asis.An_Abs_Operator,                   -- abs
+        Asis.An_Abs_Operator =>
+          League.Strings.To_Universal_String ("_abs"),
 --          Asis.A_Not_Operator);                   -- not
         others => League.Strings.Empty_Universal_String);
 

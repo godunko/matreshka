@@ -12,7 +12,6 @@ package body Properties.Declarations is
       Name    : Engines.Boolean_Property)
       return Boolean
    is
-      pragma Unreferenced (Engine, Name);
       Up : constant Asis.Element := Asis.Elements.Enclosing_Element (Element);
       Kind : constant Asis.Declaration_Kinds :=
         Asis.Elements.Declaration_Kind (Up);
@@ -25,6 +24,8 @@ package body Properties.Declarations is
          when Asis.A_Package_Declaration |
               Asis.A_Package_Body_Declaration =>
             return True;
+         when Asis.A_Package_Instantiation =>
+            return Engine.Boolean.Get_Property (Up, Name);
          when others =>
             return False;
       end case;
