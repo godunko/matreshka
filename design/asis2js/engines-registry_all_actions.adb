@@ -22,6 +22,7 @@ with Properties.Definitions.Constrained_Array_Type;
 with Properties.Definitions.Derived_Type;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Index_Constraint;
+with Properties.Definitions.Record_Type;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Subtype_Indication;
 with Properties.Definitions.Tagged_Record_Type;
@@ -343,6 +344,9 @@ is
        Kind   => F.A_Private_Extension_Declaration,
        Action => P.Declarations.Private_Type.Initialize'Access),
       (Name   => N.Initialize,
+       Kind   => F.A_Private_Type_Declaration,
+       Action => P.Declarations.Private_Type.Initialize'Access),
+      (Name   => N.Initialize,
        Kind   => F.A_Loop_Parameter_Specification,
        Action =>
          P.Declarations.Loop_Parameter_Specification.Initialize'Access),
@@ -374,6 +378,9 @@ is
       (Name   => N.Initialize,
        Kind   => F.A_Derived_Type_Definition,
        Action => P.Definitions.Derived_Type.Initialize'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Record_Type_Definition,
+       Action => P.Definitions.Record_Type.Initialize'Access),
       (Name    => N.Initialize,
        Kind    => F.An_Enumeration_Type_Definition,
        Action  => P.Definitions.Enumeration_Type.Initialize'Access),
@@ -520,12 +527,18 @@ is
       (Kind    => F.An_Ordinary_Type_Declaration,
        Name    => N.Is_Simple_Type,
        Action  => P.Declarations.Ordinary_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Private_Type_Declaration,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Declarations.Private_Type.Is_Simple_Type'Access),
       (Kind    => F.An_Enumeration_Type_Definition,
        Name    => N.Is_Simple_Type,
        Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
       (Kind    => F.A_Floating_Point_Definition,
        Name    => N.Is_Simple_Type,
        Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Record_Type_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access),
       (Kind    => F.A_Constrained_Array_Definition,
        Name    => N.Is_Simple_Type,
        Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access),

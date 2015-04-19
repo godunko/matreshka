@@ -143,13 +143,22 @@ package body Properties.Expressions.Function_Calls is
         or else Func.Starts_With ("System.Address_To_Access_Conversions.")
       then
          return Args (1);
-      elsif Index > 0 then
+      elsif Args'Length = 2 and Index > 0 then
          declare
             Text : League.Strings.Universal_String;
          begin
             Text.Append (Args (1));
             Text.Append (To.Element (Index));
             Text.Append (Args (2));
+
+            return Text;
+         end;
+      elsif Index > 0 then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append (To.Element (Index));
+            Text.Append (Args (1));
 
             return Text;
          end;
