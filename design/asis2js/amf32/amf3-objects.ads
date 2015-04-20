@@ -46,10 +46,14 @@ private with System;
 
 with League.Strings;
 
+private with AMF3.Object_References;
 with AMF3.Slots;
+private with AMF3.Slots.Collections;
 with AMF3.Metadata;
 
 package AMF3.Objects is
+
+--   pragma Preelaborate;
 
    function To_Slot (Address : System.Address) return AMF3.Slots.Slot_Access;
 
@@ -61,11 +65,26 @@ package AMF3.Objects is
 
    type Abstract_Object
          (Metadata : access constant AMF3.Metadata.Descriptor
-            := Object_Descriptor'Access) is tagged limited null record;
+            := Object_Descriptor'Access) is abstract tagged limited private;
+
+   not overriding procedure On_Property_Changed
+    (Self : in out Abstract_Object) is null;
 
 private
 
-   Object_Descriptor : aliased constant AMF3.Metadata.Descriptor (1 .. 0)
-     := (1 .. 0 => (AMF3.Metadata.Superclass, null));
+   Object_Descriptor : aliased constant AMF3.Metadata.Descriptor
+     := (Name             => League.Strings.Empty_Universal_String,
+         Superclass_Count => 0,
+         Superclasses     => (others => <>),
+         Slot_Count       => 0,
+         Slots            => (others => <>));
+
+   type Abstract_Object
+         (Metadata : access constant AMF3.Metadata.Descriptor
+            := Object_Descriptor'Access) is abstract tagged limited
+   record
+      Default : aliased
+        AMF3.Slots.Collections.Collection_Slot (Abstract_Object'Access);
+   end record;
 
 end AMF3.Objects;

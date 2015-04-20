@@ -44,23 +44,23 @@
 
 package AMF3.Slots.Long_Floats is
 
-   pragma Preelaborate;
-
-   Default_Value : aliased constant Long_Float := 0.0;
+--   pragma Preelaborate;
 
    type Long_Float_Slot
-         (Default : not null access constant Long_Float
-            := Default_Value'Access) is
+         (Object  : not null access AMF3.Objects.Abstract_Object'Class;
+          Default : not null access constant Long_Float) is
      new Abstract_Slot with private;
+
+   procedure Set (Self : in out Long_Float_Slot; To : Long_Float);
 
 private
 
    type Long_Float_Value is array (Boolean) of Long_Float;
 
    type Long_Float_Slot
-         (Default : not null access constant Long_Float
-            := Default_Value'Access) is
-     new Abstract_Slot with record
+         (Object  : not null access AMF3.Objects.Abstract_Object'Class;
+          Default : not null access constant Long_Float) is
+     new Abstract_Slot (Object) with record
       Value : Long_Float_Value := (others => Default.all);
    end record;
 

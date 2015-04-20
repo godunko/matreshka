@@ -41,33 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Slot is container to store value of object's property.
-------------------------------------------------------------------------------
-with League.Holders;
 
-limited with AMF3.Objects;
+package AMF3.Links is
 
-package AMF3.Slots is
+   pragma Pure;
 
---   pragma Preelaborate;
+   type Link is tagged;
+   type Link_Access is access all Link'Class;
 
-   type Abstract_Slot
-    (Object : not null access AMF3.Objects.Abstract_Object'Class)
-       is abstract tagged limited private;
-
-   type Slot_Access is access all Abstract_Slot'Class with Storage_Size => 0;
-
-   not overriding function Get
-    (Self : Abstract_Slot) return League.Holders.Holder is abstract;
-
-private
-
-   type Abstract_Slot
-    (Object : not null access AMF3.Objects.Abstract_Object'Class)
-       is abstract tagged limited
-   record
-      Initial_Value : Boolean := False;
-      Current_Value : Boolean := False;
+   type Link is tagged limited record
+      Next     : Link_Access;
+      Previous : Link_Access;
    end record;
 
-end AMF3.Slots;
+end AMF3.Links;

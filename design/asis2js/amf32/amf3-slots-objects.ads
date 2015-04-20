@@ -41,33 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  Slot is container to store value of object's property.
+--  This package defines slots to store objects.
+--
+--  XXX This slot need to known property of opposite object to establish link.
 ------------------------------------------------------------------------------
-with League.Holders;
 
-limited with AMF3.Objects;
+package AMF3.Slots.Objects is
 
-package AMF3.Slots is
-
---   pragma Preelaborate;
-
-   type Abstract_Slot
-    (Object : not null access AMF3.Objects.Abstract_Object'Class)
-       is abstract tagged limited private;
-
-   type Slot_Access is access all Abstract_Slot'Class with Storage_Size => 0;
-
-   not overriding function Get
-    (Self : Abstract_Slot) return League.Holders.Holder is abstract;
+   type Object_Slot is new Abstract_Slot with private;
 
 private
 
-   type Abstract_Slot
-    (Object : not null access AMF3.Objects.Abstract_Object'Class)
-       is abstract tagged limited
-   record
-      Initial_Value : Boolean := False;
-      Current_Value : Boolean := False;
-   end record;
+   type Object_Slot is new Abstract_Slot with null record;
 
-end AMF3.Slots;
+   overriding function Get
+    (Self : Object_Slot) return League.Holders.Holder;
+
+end AMF3.Slots.Objects;

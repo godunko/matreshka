@@ -58,26 +58,20 @@ package body XMI.Writers is
       H : League.Holders.Holder := League.Holders.Empty_Holder;
 
    begin
-      Put ("<xmi");
+      Put ("<xmi:XMI xmi:type='" & Object.Metadata.Name.To_UTF_8_String & "'");
 
-      for Item of Object.Metadata.all loop
-         case Item.Kind is
-            when AMF3.Metadata.Slot =>
-               H := AMF3.Objects.To_Slot (Object'Address + Item.Position).Get;
+      for Slot of Object.Metadata.Slots loop
+         H := AMF3.Objects.To_Slot (Object'Address + Slot.Position).Get;
 
-               Put (" " & Item.Name.To_UTF_8_String & "='");
+         Put (" " & Slot.Name.To_UTF_8_String & "='");
 
-               if League.Holders.Is_Abstract_Float (H) then
-                  Put
-                   (League.Holders.Universal_Float'Image
-                     (League.Holders.Element (H)));
-               end if;
+         if League.Holders.Is_Abstract_Float (H) then
+            Put
+             (League.Holders.Universal_Float'Image
+               (League.Holders.Element (H)));
+         end if;
 
-               Put ("'");
-
-            when AMF3.Metadata.Superclass =>
-               null;
-         end case;
+         Put (''');
       end loop;
 
       Put_Line ("/>");

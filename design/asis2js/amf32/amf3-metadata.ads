@@ -51,19 +51,26 @@ package AMF3.Metadata is
 
    type Descriptor;
 
-   type Item_Kinds is (Slot, Superclass);
-
-   type Item (Kind : Item_Kinds := Superclass) is record
-      case Kind is
-         when Slot =>
-            Name     : League.Strings.Universal_String;
-            Position : System.Storage_Elements.Storage_Offset;
-
-         when Superclass =>
-            Metadata : access constant Descriptor;
-      end case;
+   type Slot_Descriptor is record
+      Name     : League.Strings.Universal_String;
+      Position : System.Storage_Elements.Storage_Offset;
    end record;
 
-   type Descriptor is array (Positive range <>) of Item;
+   type Slot_Descriptor_Array is array (Positive range <>) of Slot_Descriptor;
+
+   type Superclass_Descriptor is record
+      Metadata : access constant Descriptor;
+   end record;
+
+   type Superclass_Descriptor_Array is
+     array (Positive range <>) of Superclass_Descriptor;
+
+   type Descriptor (Superclass_Count : Natural;
+                    Slot_Count       : Natural) is
+   record
+      Name         : League.Strings.Universal_String;
+      Superclasses : Superclass_Descriptor_Array (1 .. Superclass_Count);
+      Slots        : Slot_Descriptor_Array (1 .. Slot_Count);
+   end record;
 
 end AMF3.Metadata;

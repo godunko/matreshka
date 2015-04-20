@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with League.Holders.Long_Floats;
 
+with AMF3.Objects;
+
 package body AMF3.Slots.Long_Floats is
 
    ---------
@@ -55,5 +57,20 @@ package body AMF3.Slots.Long_Floats is
       return
         League.Holders.Long_Floats.To_Holder (Self.Value (Self.Current_Value));
    end Get;
+
+   ---------
+   -- Set --
+   ---------
+
+   procedure Set (Self : in out Long_Float_Slot; To : Long_Float) is
+   begin
+      if Self.Current_Value = Self.Initial_Value then
+         Self.Current_Value := not Self.Current_Value;
+      end if;
+
+      Self.Value (Self.Current_Value) := To;
+
+      Self.Object.On_Property_Changed;
+   end Set;
 
 end AMF3.Slots.Long_Floats;
