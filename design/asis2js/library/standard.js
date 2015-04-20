@@ -46,7 +46,7 @@ define('standard', [], function(){
 
     standard._generic_elementary_functions = {
         arccos : Math.acos,
-        sqrt : Math.Math.sqrt,
+        sqrt : Math.sqrt,
     };
     
     return standard;

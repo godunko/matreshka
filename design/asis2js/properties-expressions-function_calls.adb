@@ -162,16 +162,16 @@ package body Properties.Expressions.Function_Calls is
 
             return Text;
          end;
---        elsif Func.To_Wide_Wide_String = """abs""" then
---           declare
---              Text : League.Strings.Universal_String;
---           begin
---              Text.Append ("Math.abs(");
---              Text.Append (Args (1));
---              Text.Append (")");
---
---              return Text;
---           end;
+      elsif Func.To_Wide_Wide_String = """abs""" then
+         declare
+            Text : League.Strings.Universal_String;
+         begin
+            Text.Append ("Math.abs(");
+            Text.Append (Args (1));
+            Text.Append (")");
+
+            return Text;
+         end;
       elsif Func.To_Wide_Wide_String = "System.Storage_Elements.""+""" then
          declare
             Text : League.Strings.Universal_String;
@@ -217,4 +217,14 @@ begin
    To.Append (League.Strings.To_Universal_String ("/"));
    From.Append (League.Strings.To_Universal_String (""">"""));
    To.Append (League.Strings.To_Universal_String (">"));
+   From.Append (League.Strings.To_Universal_String ("""<"""));
+   To.Append (League.Strings.To_Universal_String ("<"));
+   From.Append (League.Strings.To_Universal_String ("""<="""));
+   To.Append (League.Strings.To_Universal_String ("<="));
+   From.Append (League.Strings.To_Universal_String ("""and"""));
+   To.Append (League.Strings.To_Universal_String ("&"));
+   From.Append (League.Strings.To_Universal_String ("""or"""));
+   To.Append (League.Strings.To_Universal_String ("|"));
+   From.Append (League.Strings.To_Universal_String ("""not"""));
+   To.Append (League.Strings.To_Universal_String ("!"));
 end Properties.Expressions.Function_Calls;

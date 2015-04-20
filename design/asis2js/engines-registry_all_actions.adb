@@ -22,6 +22,7 @@ with Properties.Definitions.Constrained_Array_Type;
 with Properties.Definitions.Derived_Type;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Index_Constraint;
+with Properties.Definitions.Range_Attribute;
 with Properties.Definitions.Record_Type;
 with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Subtype_Indication;
@@ -33,10 +34,12 @@ with Properties.Expressions.Enumeration_Literal;
 with Properties.Expressions.Explicit_Dereference;
 with Properties.Expressions.Function_Calls;
 with Properties.Expressions.Identifiers;
+with Properties.Expressions.If_Expression;
 with Properties.Expressions.Indexed_Component;
 with Properties.Expressions.Integer_Literal;
 with Properties.Expressions.Named_Array_Aggregate;
 with Properties.Expressions.Null_Literal;
+with Properties.Expressions.Parameter_Association;
 with Properties.Expressions.Parenthesized;
 with Properties.Expressions.Record_Aggregate;
 with Properties.Expressions.Record_Component_Association;
@@ -51,6 +54,7 @@ with Properties.Statements.If_Statement;
 with Properties.Statements.Loop_Statement;
 with Properties.Statements.Null_Statement;
 with Properties.Statements.Procedure_Call_Statement;
+with Properties.Statements.Raise_Statement;
 with Properties.Statements.Return_Statement;
 with Properties.Statements.While_Loop_Statement;
 
@@ -248,6 +252,9 @@ is
        Kind   => F.A_Parenthesized_Expression,
        Action => P.Expressions.Parenthesized.Code'Access),
       (Name   => N.Code,
+       Kind   => F.An_If_Expression,
+       Action => P.Expressions.If_Expression.Code'Access),
+      (Name   => N.Code,
        Kind   => F.An_Assignment_Statement,
        Action => P.Statements.Assignment_Statement.Code'Access),
       (Name   => N.Code,
@@ -280,6 +287,9 @@ is
       (Name   => N.Code,
        Kind   => F.A_While_Loop_Statement,
        Action => P.Statements.While_Loop_Statement.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Raise_Statement,
+       Action => P.Statements.Raise_Statement.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_With_Clause,
        Action => P.Statements.Null_Statement.Code'Access),
@@ -330,6 +340,9 @@ is
       (Name   => N.Bounds,
        Kind   => F.A_Derived_Type_Definition,
        Action => P.Definitions.Derived_Type.Bounds'Access),
+      (Name   => N.Bounds,
+       Kind   => F.A_Parameter_Association,
+       Action => P.Expressions.Parameter_Association.Bounds'Access),
 
       --  Initialize
       (Name   => N.Initialize,
@@ -343,6 +356,9 @@ is
        Action => P.Declarations.Constant_Declarations.Initialize'Access),
       (Name   => N.Initialize,
        Kind   => F.An_Ordinary_Type_Declaration,
+       Action => P.Declarations.Ordinary_Type.Code'Access),
+      (Name   => N.Initialize,
+       Kind   => F.A_Subtype_Declaration,
        Action => P.Declarations.Ordinary_Type.Code'Access),
       (Name   => N.Initialize,
        Kind   => F.A_Private_Extension_Declaration,
@@ -416,6 +432,12 @@ is
       (Name   => N.Lower,
        Kind   => F.A_Discrete_Subtype_Indication_As_Subtype_Definition,
        Action => P.Definitions.Subtype_Indication.Bounds'Access),
+      (Name   => N.Upper,
+       Kind   => F.A_Discrete_Range_Attribute_Reference_As_Subtype_Definition,
+       Action => P.Definitions.Range_Attribute.Upper'Access),
+      (Name   => N.Lower,
+       Kind   => F.A_Discrete_Range_Attribute_Reference_As_Subtype_Definition,
+       Action => P.Definitions.Range_Attribute.Lower'Access),
       (Name   => N.Upper,
        Kind   => F.An_Identifier,
        Action => P.Expressions.Identifiers.Bounds'Access),
