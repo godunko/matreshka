@@ -5,7 +5,6 @@ with Asis.Extensions.Flat_Kinds;
 with Properties.Declarations.Constant_Declarations;
 with Properties.Declarations.Defining_Expanded_Name;
 with Properties.Declarations.Defining_Names;
-with Properties.Declarations.Defining_Operators;
 with Properties.Declarations.Element_Iterator_Specification;
 with Properties.Declarations.Function_Declarations;
 with Properties.Declarations.Function_Renaming_Declaration;
@@ -483,7 +482,7 @@ is
        P.Expressions.Identifiers.Code'Access),
       (N.Code,
        F.A_Defining_And_Operator, F.A_Defining_Not_Operator,
-       Action => P.Declarations.Defining_Operators.Code'Access),
+       Action => P.Declarations.Defining_Names.Code'Access),
       (N.Code,
        F.An_Access_Attribute, F.An_Implementation_Defined_Attribute,
        P.Expressions.Attribute_Reference.Code'Access),

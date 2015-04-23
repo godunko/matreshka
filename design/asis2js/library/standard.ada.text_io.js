@@ -3,10 +3,10 @@ define('standard.ada.text_io', ['standard.ada'], function(_ec) {
         var buffer = "";
         _ec._nested = function() {};
         _ec._nested.prototype = _ec;
-        _ec.put = function put(item) {
+        _ec.put$3 = function put(item) {
             buffer = buffer + item;
         };
-        _ec.put_line = function put_line(item) {
+        _ec.put_line$1 = function put_line(item) {
             buffer = buffer + item;
             console.log(buffer);
             buffer = "";
