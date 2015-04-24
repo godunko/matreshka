@@ -4,4 +4,5 @@ all:
 	./run.sh amf3.test
 	./run.sh xmi_writer.test
 	./run.sh aga.test
+	./run.sh aga2.test
 	@echo Tests succeed!

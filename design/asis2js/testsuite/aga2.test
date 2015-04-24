@@ -1,5 +1,4 @@
 --  EXPECTED OUTPUT:
---  DONE
 --  END OF EXPECTED OUTPUT
 --
 --  BIND LIST:
@@ -1249,7 +1248,7 @@ procedure Test_28 is
    V32 : Wall_Vertex_Access;
    V33 : Wall_Vertex_Access;
 
-   W : Wall_Array;
+   W : Wall_Array := (1 .. 12 => null);
 
    X10_0  : constant Real := -10.0;
    X10_05 : constant Real := -10.05;

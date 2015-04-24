@@ -11,9 +11,15 @@ package body Properties.Expressions.Type_Conversion is
       Element : Asis.Expression;
       Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
+      Text : League.Strings.Universal_String;
    begin
-      return Engine.Text.Get_Property
-        (Asis.Expressions.Converted_Or_Qualified_Expression (Element), Name);
+      Text.Append ("(");
+      Text.Append
+        (Engine.Text.Get_Property
+           (Asis.Expressions.Converted_Or_Qualified_Expression
+                (Element), Name));
+      Text.Append (")");
+      return Text;
    end Code;
 
 end Properties.Expressions.Type_Conversion;
