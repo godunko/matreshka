@@ -153,7 +153,7 @@ is
        Action => P.Declarations.Constant_Declarations.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Function_Renaming_Declaration,
-       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+       Action => P.Declarations.Function_Renaming_Declaration.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Defining_Identifier,
        Action => P.Declarations.Defining_Names.Code'Access),

@@ -6,6 +6,11 @@ with League.Strings;
 
 package Properties.Declarations.Function_Renaming_Declaration is
 
+   function Code
+     (Engine  : access Engines.Contexts.Context;
+      Element : Asis.Declaration;
+      Name    : Engines.Text_Property) return League.Strings.Universal_String;
+
    function Call_Convention
      (Engine  : access Engines.Contexts.Context;
       Element : Asis.Declaration;
