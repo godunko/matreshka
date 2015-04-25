@@ -19,6 +19,7 @@ with Properties.Definitions.Access_To_Object;
 with Properties.Definitions.Component_Definition;
 with Properties.Definitions.Constrained_Array_Type;
 with Properties.Definitions.Derived_Type;
+with Properties.Definitions.Discriminant_Constraint;
 with Properties.Definitions.Enumeration_Type;
 with Properties.Definitions.Index_Constraint;
 with Properties.Definitions.Range_Attribute;
@@ -27,6 +28,7 @@ with Properties.Definitions.Simple_Expression_Range;
 with Properties.Definitions.Subtype_Indication;
 with Properties.Definitions.Tagged_Record_Type;
 with Properties.Expressions.Allocation;
+with Properties.Expressions.Allocation_From_Subtype;
 with Properties.Expressions.Array_Component_Association;
 with Properties.Expressions.Attribute_Reference;
 with Properties.Expressions.Enumeration_Literal;
@@ -174,13 +176,13 @@ is
        Action => P.Definitions.Subtype_Indication.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Constrained_Array_Definition,
-       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+       Action => P.Definitions.Constrained_Array_Type.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_Unconstrained_Array_Definition,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,
        Kind   => F.A_Derived_Type_Definition,
-       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+       Action => P.Definitions.Derived_Type.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Derived_Record_Extension_Definition,
        Action => P.Definitions.Tagged_Record_Type.Code'Access),
@@ -189,7 +191,10 @@ is
        Action => P.Definitions.Tagged_Record_Type.Code'Access),
       (Name   => N.Code,
        Kind   => F.A_Record_Type_Definition,
-       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+       Action => P.Definitions.Record_Type.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.A_Discriminant_Constraint,
+       Action => P.Definitions.Discriminant_Constraint.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_Access_To_Variable,
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
@@ -199,6 +204,9 @@ is
       (Name   => N.Code,
        Kind   => F.An_Allocation_From_Qualified_Expression,
        Action => P.Expressions.Allocation.Code'Access),
+      (Name   => N.Code,
+       Kind   => F.An_Allocation_From_Subtype,
+       Action => P.Expressions.Allocation_From_Subtype.Code'Access),
       (Name   => N.Code,
        Kind   => F.An_Enumeration_Literal,
        Action => P.Expressions.Enumeration_Literal.Code'Access),
@@ -383,6 +391,9 @@ is
        Kind   => F.An_Access_To_Variable,
        Action => P.Definitions.Access_To_Object.Initialize'Access),
       (Name   => N.Initialize,
+       Kind   => F.An_Anonymous_Access_To_Constant,
+       Action => P.Definitions.Access_To_Object.Initialize'Access),
+      (Name   => N.Initialize,
        Kind   => F.A_Constrained_Array_Definition,
        Action => P.Definitions.Constrained_Array_Type.Initialize'Access),
       (Name   => N.Initialize,
@@ -402,6 +413,9 @@ is
        Action => P.Definitions.Record_Type.Initialize'Access),
       (Name    => N.Initialize,
        Kind    => F.An_Enumeration_Type_Definition,
+       Action  => P.Definitions.Enumeration_Type.Initialize'Access),
+      (Name    => N.Initialize,
+       Kind    => F.A_Signed_Integer_Type_Definition,
        Action  => P.Definitions.Enumeration_Type.Initialize'Access),
       (Name    => N.Initialize,
        Kind    => F.A_Floating_Point_Definition,
@@ -552,16 +566,34 @@ is
       (Kind    => F.An_Ordinary_Type_Declaration,
        Name    => N.Is_Simple_Type,
        Action  => P.Declarations.Ordinary_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Subtype_Declaration,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Declarations.Ordinary_Type.Is_Simple_Type'Access),
       (Kind    => F.A_Private_Type_Declaration,
        Name    => N.Is_Simple_Type,
        Action  => P.Declarations.Private_Type.Is_Simple_Type'Access),
       (Kind    => F.An_Enumeration_Type_Definition,
        Name    => N.Is_Simple_Type,
        Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Signed_Integer_Type_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
       (Kind    => F.A_Floating_Point_Definition,
        Name    => N.Is_Simple_Type,
        Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
+      (Kind    => F.An_Access_To_Variable,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Enumeration_Type.Is_Simple_Type'Access),
       (Kind    => F.A_Record_Type_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Private_Extension_Declaration,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Derived_Type_Definition,
+       Name    => N.Is_Simple_Type,
+       Action  => P.Definitions.Derived_Type.Is_Simple_Type'Access),
+      (Kind    => F.A_Derived_Record_Extension_Definition,
        Name    => N.Is_Simple_Type,
        Action  => P.Definitions.Constrained_Array_Type.Is_Simple_Type'Access),
       (Kind    => F.A_Constrained_Array_Definition,

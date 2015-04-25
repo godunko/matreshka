@@ -12,7 +12,7 @@ package body Properties.Definitions.Component_Definition is
       Name    : Engines.Text_Property) return League.Strings.Universal_String
    is
       Subtipe : constant Asis.Definition :=
-        Asis.Definitions.Component_Subtype_Indication (Element);
+        Asis.Definitions.Component_Definition_View (Element);
    begin
       return Engine.Text.Get_Property (Subtipe, Name);
    end Initialize;

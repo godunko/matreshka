@@ -14,6 +14,10 @@ package body Properties.Expressions.Identifiers is
       Name   : Asis.Identifier;
       Decl   : Asis.Declaration) return League.Strings.Universal_String;
 
+   function Is_Current_Instance_Of_Type
+     (Id   : Asis.Identifier;
+      Decl : Asis.Declaration) return Boolean;
+
    ------------
    -- Bounds --
    ------------
@@ -81,6 +85,8 @@ package body Properties.Expressions.Identifiers is
    begin
       if Asis.Elements.Is_Nil (Decl) then
          return Text.To_Lowercase;
+      elsif Is_Current_Instance_Of_Type (Element, Decl) then
+         return League.Strings.To_Universal_String ("this");
       else
          return Name_Prefix (Engine, Element, Decl) &
            Engine.Text.Get_Property (Asis.Declarations.Names (Decl) (1), Name);
@@ -141,6 +147,27 @@ package body Properties.Expressions.Identifiers is
       return Engine.Text.Get_Property
         (Asis.Elements.Enclosing_Element (Def), Name);
    end Intrinsic_Name;
+
+   ---------------------------------
+   -- Is_Current_Instance_Of_Type --
+   ---------------------------------
+
+   function Is_Current_Instance_Of_Type
+     (Id   : Asis.Identifier;
+      Decl : Asis.Declaration) return Boolean
+   is
+      Node : Asis.Declaration := Properties.Tools.Enclosing_Declaration (Id);
+   begin
+      while not Asis.Elements.Is_Nil (Node) loop
+         if Properties.Tools.Is_Equal_Type (Decl, Node) then
+            return True;
+         end if;
+
+         Node := Properties.Tools.Enclosing_Declaration (Node);
+      end loop;
+
+      return False;
+   end Is_Current_Instance_Of_Type;
 
    --------------------
    -- Is_Dispatching --

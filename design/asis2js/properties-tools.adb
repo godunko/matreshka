@@ -33,6 +33,88 @@ package body Properties.Tools is
    function Corresponding_Type_Components
      (Definition : Asis.Definition) return Asis.Declaration_List
    is
+      function Filter
+        (List : Asis.Record_Component_List)
+         return Asis.Declaration_List;
+      --  Filter out anything except component declaration, flatten variants.
+
+      function Flatten_Variant_List
+        (List : Asis.Variant_List)
+         return Asis.Declaration_List;
+      --  The same for given Variant_List
+
+      ------------
+      -- Filter --
+      ------------
+
+      function Filter
+        (List : Asis.Record_Component_List)
+         return Asis.Declaration_List
+      is
+         use type Asis.Record_Component_List;
+      begin
+         for J in List'Range loop
+            case Asis.Elements.Element_Kind (List (J)) is
+               when Asis.A_Declaration =>
+                  null;
+               when Asis.A_Clause =>
+                  return List (List'First .. J - 1) &
+                    Filter (List (J + 1 .. List'Last));
+               when Asis.A_Definition =>
+                  case Asis.Elements.Definition_Kind (List (J)) is
+                     when Asis.A_Variant_Part =>
+                        return List (List'First .. J - 1) &
+                          Corresponding_Type_Components (List (J)) &
+                          Filter (List (J + 1 .. List'Last));
+                     when others =>
+                        return List (List'First .. J - 1) &
+                          Filter (List (J + 1 .. List'Last));
+                  end case;
+               when others =>
+                  raise Constraint_Error;
+            end case;
+         end loop;
+
+         return List;
+      end Filter;
+
+      --------------------------
+      -- Flatten_Variant_List --
+      --------------------------
+
+      function Flatten_Variant_List
+        (List : Asis.Variant_List)
+         return Asis.Declaration_List
+      is
+         Length : Natural := 0;
+      begin
+         for J in List'Range loop
+            declare
+               X : constant Asis.Declaration_List :=
+                 Asis.Definitions.Record_Components (List (J));
+            begin
+               Length := Length + X'Length;
+            end;
+         end loop;
+
+         declare
+            Result : Asis.Declaration_List (1 .. Length);
+         begin
+            Length := 0;
+            for J in List'Range loop
+               declare
+                  X : constant Asis.Declaration_List :=
+                    Asis.Definitions.Record_Components (List (J));
+               begin
+                  Result (Length + 1 .. Length + X'Length) := X;
+                  Length := Length + X'Length;
+               end;
+            end loop;
+
+            return Filter (Result);
+         end;
+      end Flatten_Variant_List;
+
       Def_Kind : constant Asis.Definition_Kinds :=
         Asis.Elements.Definition_Kind (Definition);
       Type_Kind : constant Asis.Type_Kinds :=
@@ -45,7 +127,7 @@ package body Properties.Tools is
 
          when Asis.A_Record_Definition =>
 
-            return Asis.Definitions.Record_Components (Definition);
+            return Filter (Asis.Definitions.Record_Components (Definition));
 
          when Asis.A_Type_Definition =>
 
@@ -61,6 +143,10 @@ package body Properties.Tools is
 
                   raise Program_Error;
             end case;
+
+         when Asis.A_Variant_Part =>
+            return Flatten_Variant_List
+              (Asis.Definitions.Variants (Definition));
 
          when others =>
 
@@ -146,7 +232,9 @@ package body Properties.Tools is
       use type Asis.Element_Kinds;
       Parent : Asis.Element := Asis.Elements.Enclosing_Element (X);
    begin
-      while Asis.Elements.Element_Kind (Parent) /= Asis.A_Declaration loop
+      while not Asis.Elements.Is_Nil (Parent) and then
+        Asis.Elements.Element_Kind (Parent) /= Asis.A_Declaration
+      loop
          Parent := Asis.Elements.Enclosing_Element (Parent);
       end loop;
 

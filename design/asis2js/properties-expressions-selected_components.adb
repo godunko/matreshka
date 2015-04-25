@@ -58,6 +58,7 @@ package body Properties.Expressions.Selected_Components is
                  Asis.A_Private_Extension_Declaration |
                  Asis.An_Enumeration_Literal_Specification |
                  Asis.An_Ordinary_Type_Declaration |
+                 Asis.A_Private_Type_Declaration |
                  Asis.A_Deferred_Constant_Declaration =>
                null;
             when others =>
