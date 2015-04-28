@@ -14,7 +14,7 @@ package body Properties.Definitions.Discriminant_Constraint is
       return League.Strings.Universal_String
    is
       List : constant Asis.Discriminant_Association_List :=
-        Asis.Definitions.Discriminant_Associations (Element, True);
+        Asis.Definitions.Discriminant_Associations (Element);
       Text : League.Strings.Universal_String;
       Expr : Asis.Expression;
    begin

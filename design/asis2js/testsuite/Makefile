@@ -6,4 +6,5 @@ all:
 	./run.sh aga.test
 	./run.sh aga2.test
 	./run.sh aga3.test
+	./run.sh aga4.test
 	@echo Tests succeed!
