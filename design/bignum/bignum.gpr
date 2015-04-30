@@ -1,0 +1,18 @@
+with "matreshka/league.gpr";
+
+project Bignum is
+
+   Default_Ada_Switches :=
+     ("-gnat12", "-gnatW8", "-g", "-O2");
+
+   Check_Ada_Switches := Default_Ada_Switches &
+     ("-gnatVa", "-gnatwea", "-gnaty", "-gnata");
+
+   for Main use ("big_num_test");
+
+   package Compiler is
+      for Default_Switches ("ada") use Check_Ada_Switches;
+   end Compiler;
+
+end Bignum;
+
