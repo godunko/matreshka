@@ -1,8 +1,51 @@
-with Matreshka.Internals.Finite_Automatons;
-with Ada.Wide_Wide_Text_IO;
-with Nodes;
+------------------------------------------------------------------------------
+--                                                                          --
+--                            Matreshka Project                             --
+--                                                                          --
+--         Localization, Internationalization, Globalization for Ada        --
+--                                                                          --
+--                              Tools Component                             --
+--                                                                          --
+------------------------------------------------------------------------------
+--                                                                          --
+-- Copyright © 2012-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- All rights reserved.                                                     --
+--                                                                          --
+-- Redistribution and use in source and binary forms, with or without       --
+-- modification, are permitted provided that the following conditions       --
+-- are met:                                                                 --
+--                                                                          --
+--  * Redistributions of source code must retain the above copyright        --
+--    notice, this list of conditions and the following disclaimer.         --
+--                                                                          --
+--  * Redistributions in binary form must reproduce the above copyright     --
+--    notice, this list of conditions and the following disclaimer in the   --
+--    documentation and/or other materials provided with the distribution.  --
+--                                                                          --
+--  * Neither the name of the Vadim Godunko, IE nor the names of its        --
+--    contributors may be used to endorse or promote products derived from  --
+--    this software without specific prior written permission.              --
+--                                                                          --
+-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      --
+-- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        --
+-- LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    --
+-- A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     --
+-- HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,   --
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED --
+-- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR   --
+-- PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF   --
+-- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     --
+-- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS       --
+-- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
+--                                                                          --
+------------------------------------------------------------------------------
+--  $Revision$ $Date$
+------------------------------------------------------------------------------
 
-package body Generator.OOP_Handler is
+with Ada.Wide_Wide_Text_IO;
+with UAFLEX.Nodes;
+
+package body UAFLEX.Generator.OOP_Handler is
 
    --------
    -- Go --
@@ -17,14 +60,8 @@ package body Generator.OOP_Handler is
       Tokens  : League.Strings.Universal_String)
    is
       procedure P (Text : Wide_Wide_String);
-      procedure N (Text : Wide_Wide_String);
 
       Output  : Ada.Wide_Wide_Text_IO.File_Type;
-
-      procedure N (Text : Wide_Wide_String) is
-      begin
-         Ada.Wide_Wide_Text_IO.Put (Output, Text);
-      end N;
 
       procedure P (Text : Wide_Wide_String) is
       begin
@@ -43,6 +80,7 @@ package body Generator.OOP_Handler is
 
       P ("");
       P ("package " & Unit.To_Wide_Wide_String & " is");
+      P ("   pragma Preelaborate;");
       P ("");
       P ("   type Handler is abstract tagged limited null record;");
       P ("");
@@ -53,7 +91,8 @@ package body Generator.OOP_Handler is
          P ("      Scanner : not null access " &
               Scanner.To_Wide_Wide_String & ".Scanner'Class;");
          P ("      Rule    : " & Types.To_Wide_Wide_String & ".Rule_Index;");
-         P ("      Token   : out " & Tokens.To_Wide_Wide_String & ".Token;");
+         P ("      Token   : out " & Tokens.To_Wide_Wide_String &
+             ".Token_Kind;");
          P ("      Skip    : in out Boolean) is abstract;");
          P ("");
       end loop;
@@ -103,7 +142,7 @@ package body Generator.OOP_Handler is
       P ("   Scanner : not null access " &
            Scanner.To_Wide_Wide_String & ".Scanner'Class;");
       P ("   Rule    : " & Types.To_Wide_Wide_String & ".Rule_Index;");
-      P ("   Token   : out " & Tokens.To_Wide_Wide_String & ".Token;");
+      P ("   Token   : out " & Tokens.To_Wide_Wide_String & ".Token_Kind;");
       P ("   Skip    : in out Boolean) is");
       P ("begin");
       P ("   case Rule is");
@@ -119,6 +158,11 @@ package body Generator.OOP_Handler is
                First := False;
             else
                N (" | " & Image (R));
+
+               if R mod 10 = 0 then
+                  P ("");
+                  N ("        ");
+               end if;
             end if;
          end loop;
 
@@ -135,4 +179,4 @@ package body Generator.OOP_Handler is
 
       Ada.Wide_Wide_Text_IO.Close (Output);
    end On_Accept;
-end Generator.OOP_Handler;
+end UAFLEX.Generator.OOP_Handler;

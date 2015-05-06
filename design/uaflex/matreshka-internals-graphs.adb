@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -93,6 +93,8 @@ package body Matreshka.Internals.Graphs is
       --------------
 
       function New_Node (Self : Graph'Class) return Node is
+         procedure Resize;
+
          procedure Resize is
          begin
             if Self.Nodes = null or else
@@ -132,6 +134,7 @@ package body Matreshka.Internals.Graphs is
 
       procedure New_Edge (From, To : Node) is
          Ignore : constant Edge_Identifier := New_Edge (From, To);
+         pragma Unreferenced (Ignore);
       begin
          null;
       end New_Edge;
@@ -141,6 +144,8 @@ package body Matreshka.Internals.Graphs is
       --------------
 
       function New_Edge (From, To : Node) return Edge_Identifier is
+         procedure Resize;
+
          Self : constant Graph_Access := From.Graph;
 
          procedure Resize is

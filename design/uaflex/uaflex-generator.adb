@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright (C) 2011, Vadim Godunko <vgodunko@gmail.com>                   --
+-- Copyright © 2012-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,41 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-%x INRULE SECT2 DEF NAMELIST
+package body UAFLEX.Generator is
 
-NAME           [a-zA-Z][a-zA-Z0-9_]*
-SPACE          [\t ]+
-OPTSPACE       [\t ]*
-NO_SPACE       [^\n\t ]+
-CLASS          "["[^\n\]]+"]"
-STRING         \"[^"\n]*\"
-MASKED_SPACE   "\\ "
-ADA_STRING     \"([^"]+|\"\")*\"
+   function Image (X : Natural) return Wide_Wide_String is
+      Text : constant Wide_Wide_String := Natural'Wide_Wide_Image (X);
+   begin
+      return Text (2 .. Text'Last);
+   end Image;
 
-%%
-
-{OPTSPACE}"--"[^\n]*\n					{Skip_Line}
-"%"[Ss](tart)?						{On_Start}
-"%"[Xx]							{On_Exclusive}
-{NAME}							{On_Name}
-"%%"[^\n]*\n						{On_Section_End}
-{OPTSPACE}\n						{Skip_Line}
-
-<DEF>{SPACE}						{Skip}
-<DEF>[^ \t\n][^\n]*					{On_Regexp}
-<DEF>\n							{End_Of_Macro}
-
-<NAMELIST>\n						{End_Of_Name_List}
-<NAMELIST>{NAME}					{On_Name_2}
-<NAMELIST>{SPACE}					{Skip}
-
-<SECT2>{OPTSPACE}"--"[^\n]*\n				{Skip_Line}
-<SECT2>({NO_SPACE}|{CLASS}|{STRING}|{MASKED_SPACE})+	{On_Regexp_2}
-<SECT2>{OPTSPACE}\n					{Skip_Line}
-<SECT2>"%%"[^\n]*\n					{On_Section_End_2}
-
-<INRULE>\{([^}"]+|{ADA_STRING})*\}			{On_Action}
-<INRULE>{SPACE}						{Skip}
-<INRULE>{OPTSPACE}\n					{On_End_Of_Rule}
-
-%%
+end UAFLEX.Generator;

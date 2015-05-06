@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,12 +42,10 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Generator is
+package UAFLEX.Generator is
 
-   function Image (X : Natural) return Wide_Wide_String is
-      Text : constant Wide_Wide_String := Natural'Wide_Wide_Image (X);
-   begin
-      return Text (2 .. Text'Last);
-   end Image;
+   pragma Pure;
 
-end Generator;
+   function Image (X : Natural) return Wide_Wide_String;
+
+end UAFLEX.Generator;

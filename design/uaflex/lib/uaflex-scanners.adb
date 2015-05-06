@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,10 +39,11 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision: 2374 $ $Date: 2012-01-05 09:18:57 +0200 (Чтв, 05 Янв 2012) $
+--  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Matreshka.Internals.Unicode;
 
-package body Aaa.Scanners is
+package body UAFLEX.Scanners is
 
    package Tables is
       function To_Class (Value : Matreshka.Internals.Unicode.Code_Point)
@@ -56,13 +57,20 @@ package body Aaa.Scanners is
       pragma Inline (Rule);
    end Tables;
 
+   procedure On_Accept
+     (Self    : not null access UAFLEX.Handlers.Handler'Class;
+      Scanner : not null access UAFLEX.Scanners.Scanner'Class;
+      Rule    : Rule_Index;
+      Token   : out Parser_Tokens.Token;
+      Skip    : in out Boolean);
+
    package body Tables is separate;
 
    use Tables;
 
    procedure On_Accept
-     (Self    : not null access Aaa.Handlers.Handler'Class;
-      Scanner : not null access Aaa.Scanners.Scanner'Class;
+     (Self    : not null access UAFLEX.Handlers.Handler'Class;
+      Scanner : not null access UAFLEX.Scanners.Scanner'Class;
       Rule    : Rule_Index;
       Token   : out Parser_Tokens.Token;
       Skip    : in out Boolean) is separate;
@@ -108,6 +116,8 @@ package body Aaa.Scanners is
    ---------------
 
    procedure Get_Token (Self : access Scanner'Class; Result : out Token) is
+      procedure Next;
+
       procedure Next is
       begin
          if Self.Next = Self.Buffer'Last then
@@ -240,9 +250,9 @@ package body Aaa.Scanners is
             end if;
 
             if Pos = Buffer_Half_Size or Pos = Self.Buffer'Last then
-              Self.Classes (Pos) := Error_Character;
-              Self.Buffer (Pos) := End_Of_Buffer;
-              return;
+               Self.Classes (Pos) := Error_Character;
+               Self.Buffer (Pos) := End_Of_Buffer;
+               return;
             end if;
          end if;
       end loop;
@@ -254,7 +264,7 @@ package body Aaa.Scanners is
 
    procedure Set_Handler
      (Self    : in out Scanner'Class;
-      Handler : not null Aaa.Handlers.Handler_Access) is
+      Handler : not null UAFLEX.Handlers.Handler_Access) is
    begin
       Self.Handler := Handler;
    end Set_Handler;
@@ -283,4 +293,4 @@ package body Aaa.Scanners is
       Self.Start := Condition;
    end Set_Start_Condition;
 
-end Aaa.Scanners;
+end UAFLEX.Scanners;

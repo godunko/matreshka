@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,11 +42,9 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-with League.Text_Codecs;
-with Ada.Streams;
 with Ada.Wide_Wide_Text_IO;
 
-package body Nodes is
+package body UAFLEX.Nodes is
 
    --------------
    -- Add_Rule --
@@ -81,7 +79,9 @@ package body Nodes is
 
       procedure Add
         (Name      : League.Strings.Universal_String;
-         Condition : in out Start_Condition) is
+         Condition : in out Start_Condition)
+      is
+         pragma Unreferenced (Name);
       begin
          Condition.Rules.Append (Index);
       end Add;
@@ -189,4 +189,4 @@ package body Nodes is
       return To_Node (Value.Slice (2, Value.Length - 1));
    end To_Action;
 
-end Nodes;
+end UAFLEX.Nodes;

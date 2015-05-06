@@ -1,5 +1,48 @@
+------------------------------------------------------------------------------
+--                                                                          --
+--                            Matreshka Project                             --
+--                                                                          --
+--         Localization, Internationalization, Globalization for Ada        --
+--                                                                          --
+--                              Tools Component                             --
+--                                                                          --
+------------------------------------------------------------------------------
+--                                                                          --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- All rights reserved.                                                     --
+--                                                                          --
+-- Redistribution and use in source and binary forms, with or without       --
+-- modification, are permitted provided that the following conditions       --
+-- are met:                                                                 --
+--                                                                          --
+--  * Redistributions of source code must retain the above copyright        --
+--    notice, this list of conditions and the following disclaimer.         --
+--                                                                          --
+--  * Redistributions in binary form must reproduce the above copyright     --
+--    notice, this list of conditions and the following disclaimer in the   --
+--    documentation and/or other materials provided with the distribution.  --
+--                                                                          --
+--  * Neither the name of the Vadim Godunko, IE nor the names of its        --
+--    contributors may be used to endorse or promote products derived from  --
+--    this software without specific prior written permission.              --
+--                                                                          --
+-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      --
+-- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        --
+-- LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    --
+-- A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     --
+-- HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,   --
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED --
+-- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR   --
+-- PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF   --
+-- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     --
+-- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS       --
+-- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
+--                                                                          --
+------------------------------------------------------------------------------
+--  $Revision$ $Date$
+------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO;
-with Nodes;
+with UAFLEX.Nodes;
 with Parser.Goto_Table;
 use  Parser.Goto_Table;
 with Parser_Tokens;
@@ -288,25 +331,25 @@ begin
 when 5 =>
 --# line 64 "../parser.y"
 
-  Nodes.Macros.Insert (YY.Value_Stack (YY.TOS -  1).Value, YY.Value_Stack (YY.TOS).Value);
+  UAFLEX.Nodes.Macros.Insert (YY.Value_Stack (YY.TOS -  1).Value, YY.Value_Stack (YY.TOS).Value);
 
 
 when 6 =>
 --# line 68 "../parser.y"
 
-  Nodes.Add_Start_Conditions (YY.Value_Stack (YY.TOS -  1).List, False);
+  UAFLEX.Nodes.Add_Start_Conditions (YY.Value_Stack (YY.TOS -  1).List, False);
 
 
 when 7 =>
 --# line 72 "../parser.y"
 
-  Nodes.Add_Start_Conditions (YY.Value_Stack (YY.TOS -  1).List, True);
+  UAFLEX.Nodes.Add_Start_Conditions (YY.Value_Stack (YY.TOS -  1).List, True);
 
 
 when 8 =>
 --# line 78 "../parser.y"
 
-  YYVal := Nodes.Empty_Name_List;
+  YYVal := UAFLEX.Nodes.Empty_Name_List;
   YYVal.List.Append (YY.Value_Stack (YY.TOS).Value);
 
 
@@ -320,24 +363,24 @@ when 9 =>
 when 12 =>
 --# line 96 "../parser.y"
 
-  Nodes.Add_Rule (YY.Value_Stack (YY.TOS).Regexp, YY.Value_Stack (YY.TOS).Action, Line);
+  UAFLEX.Nodes.Add_Rule (YY.Value_Stack (YY.TOS).Regexp, YY.Value_Stack (YY.TOS).Action, Line);
 
 
 when 13 =>
 --# line 103 "../parser.y"
- YYVal := (Nodes.Rule, YY.Value_Stack (YY.TOS -  1).Value, YY.Value_Stack (YY.TOS).Value); 
+ YYVal := (UAFLEX.Nodes.Rule, YY.Value_Stack (YY.TOS -  1).Value, YY.Value_Stack (YY.TOS).Value); 
 
 when 14 =>
 --# line 107 "../parser.y"
- YYVal := Nodes.To_Node (Scanner.Get_Text); 
+ YYVal := UAFLEX.Nodes.To_Node (Scanner.Get_Text); 
 
 when 15 =>
 --# line 111 "../parser.y"
- YYVal := Nodes.To_Node (Scanner.Get_Text); Line := Handler.Get_Line; 
+ YYVal := UAFLEX.Nodes.To_Node (Scanner.Get_Text); Line := Handler.Get_Line; 
 
 when 16 =>
 --# line 115 "../parser.y"
- YYVal := Nodes.To_Action (Scanner.Get_Text); 
+ YYVal := UAFLEX.Nodes.To_Action (Scanner.Get_Text); 
 
                     when others => null;
                 end case;

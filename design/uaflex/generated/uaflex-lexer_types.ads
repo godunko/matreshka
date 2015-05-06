@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,11 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+package UAFLEX.Lexer_Types is
+   pragma Preelaborate;
 
-package Generator is
+   type State is mod +85;
+   subtype Valid_State is State range 0 .. State'Last - 1;
 
-   pragma Pure;
+   DEF : constant State := 0;
+   INITIAL : constant State := 4;
+   INRULE : constant State := 19;
+   NAMELIST : constant State := 25;
+   SECT2 : constant State := 29;
 
-   function Image (X : Natural) return Wide_Wide_String;
+   type Character_Class is mod +20;
 
-end Generator;
+   type Rule_Index is range 0 .. 19;
+
+end UAFLEX.Lexer_Types;

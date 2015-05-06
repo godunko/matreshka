@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -43,9 +43,9 @@
 ------------------------------------------------------------------------------
 
 %token Name Name_List_End Start Excl_Start Section_End Regexp Action
-%with Nodes;
+%with UAFLEX.Nodes;
 {
-   subtype YYSType is Nodes.Node;
+   subtype YYSType is UAFLEX.Nodes.Node;
 }
 
 %%
@@ -62,21 +62,21 @@ macro_list:
 
 macro: Name_Token Regexp_Token
 {
-  Nodes.Macros.Insert ($1.Value, $2.Value);
+  UAFLEX.Nodes.Macros.Insert ($1.Value, $2.Value);
 }
   | Start name_list Name_List_End
 {
-  Nodes.Add_Start_Conditions ($2.List, False);
+  UAFLEX.Nodes.Add_Start_Conditions ($2.List, False);
 }
   | Excl_Start name_list Name_List_End
 {
-  Nodes.Add_Start_Conditions ($2.List, True);
+  UAFLEX.Nodes.Add_Start_Conditions ($2.List, True);
 }
 ;
 
 name_list: Name_Token
 {
-  $$ := Nodes.Empty_Name_List;
+  $$ := UAFLEX.Nodes.Empty_Name_List;
   $$.List.Append ($1.Value);
 }
 
@@ -94,37 +94,37 @@ rule_list:
   |
   rule_list rule
 {
-  Nodes.Add_Rule ($2.Regexp, $2.Action, Line);
+  UAFLEX.Nodes.Add_Rule ($2.Regexp, $2.Action, Line);
 }
 
 ;
 
 rule: Regexp_Token Action_Token
-  { $$ := (Nodes.Rule, $1.Value, $2.Value); }
+  { $$ := (UAFLEX.Nodes.Rule, $1.Value, $2.Value); }
 ;
 
 Name_Token: Name
-  { $$ := Nodes.To_Node (Scanner.Get_Text); }
+  { $$ := UAFLEX.Nodes.To_Node (Scanner.Get_Text); }
 ;
 
 Regexp_Token: Regexp
-  { $$ := Nodes.To_Node (Scanner.Get_Text); Line := Handler.Get_Line; }
+  { $$ := UAFLEX.Nodes.To_Node (Scanner.Get_Text); Line := Handler.Get_Line; }
 ;
 
 Action_Token: Action
-  { $$ := Nodes.To_Action (Scanner.Get_Text); }
+  { $$ := UAFLEX.Nodes.To_Action (Scanner.Get_Text); }
 ;
 
 %%
-with Aaa.Scanners;
-with UAFLEX_Handler;
+with UAFLEX.Scanners;
+with UAFLEX.Handler;
 ##
-   Scanner : aliased Aaa.Scanners.Scanner;
-   Handler : aliased UAFLEX_Handler.Handler;
+   Scanner : aliased UAFLEX.Scanners.Scanner;
+   Handler : aliased UAFLEX.Handler.Handler;
    procedure YYParse;
 ##
 with Ada.Wide_Wide_Text_IO;
-with Nodes;
+with UAFLEX.Nodes;
 ##
 procedure yyerror (X : Wide_Wide_String) is
 begin

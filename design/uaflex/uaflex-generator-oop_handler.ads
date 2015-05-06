@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2012-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,85 +41,26 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.String_Vectors;
+
 with League.Strings;
-with Ada.Containers.Ordered_Maps;
-with Ada.Containers.Vectors;
-with Matreshka.Internals.Finite_Automatons;
+with League.String_Vectors;
 
-package Nodes is
+package UAFLEX.Generator.OOP_Handler is
 
-   type Node_Kind is (Text, Rule, Macro, Name_List);
+   procedure Go
+     (Actions : League.String_Vectors.Universal_String_Vector;
+      File    : String;
+      Types   : League.Strings.Universal_String;
+      Unit    : League.Strings.Universal_String;
+      Scanner : League.Strings.Universal_String;
+      Tokens  : League.Strings.Universal_String);
 
-   type Node (Kind : Node_Kind := Node_Kind'First) is record
-      case Kind is
-         when Text =>
-            Value : League.Strings.Universal_String;
-         when Rule =>
-            Regexp : League.Strings.Universal_String;
-            Action : League.Strings.Universal_String;
-         when Macro =>
-            Name : League.Strings.Universal_String;
-            Text : League.Strings.Universal_String;
-         when Name_List =>
-            List : League.String_Vectors.Universal_String_Vector;
-      end case;
-   end record;
+   procedure On_Accept
+     (Actions : League.String_Vectors.Universal_String_Vector;
+      File    : String;
+      Types   : League.Strings.Universal_String;
+      Handler : League.Strings.Universal_String;
+      Scanner : League.Strings.Universal_String;
+      Tokens  : League.Strings.Universal_String);
 
-   subtype Rule_Node is Node (Rule);
-
-   function To_Node (Value : League.Strings.Universal_String) return Node;
-   function To_Action (Value : League.Strings.Universal_String) return Node;
-
-   Empty_Name_List : constant Node (Name_List) :=
-     (Kind => Name_List, List => <>);
-
-   use type League.Strings.Universal_String;
-
-   package Macro_Maps is new Ada.Containers.Ordered_Maps
-     (League.Strings.Universal_String,   --  Macro name
-      League.Strings.Universal_String);  --  Macro value
-
-   package Positive_Vectors is new Ada.Containers.Vectors
-     (Index_Type   => Positive,
-      Element_Type => Positive);
-
-   type Start_Condition is record
-      Exclusive : Boolean;
-      Rules     : Positive_Vectors.Vector;
-   end record;
-
-   package Start_Condition_Maps is new Ada.Containers.Ordered_Maps
-     (League.Strings.Universal_String,   --  Condition name
-      Start_Condition);
-
-   type Shared_Pattern_Array_Access is access all
-     Matreshka.Internals.Finite_Automatons.Shared_Pattern_Array;
-
-   --  List of regexp from input file
-   Rules      : League.String_Vectors.Universal_String_Vector;
-   --  List of DISTINCT action from input file
-   Actions    : League.String_Vectors.Universal_String_Vector;
-   --  Map rule index to action index
-   Indexes    : Positive_Vectors.Vector;
-   --  Map rule index to input file line number
-   Lines      : Positive_Vectors.Vector;
-   --  Map condition name to Start_Condition
-   Conditions : Start_Condition_Maps.Map;
-   --  Map macros name to macros value
-   Macros     : Macro_Maps.Map;
-   --  Array of compiled regexps
-   Regexp     : Shared_Pattern_Array_Access;
-
-   Success : Boolean := True;
-
-   procedure Add_Start_Conditions
-     (List      : League.String_Vectors.Universal_String_Vector;
-      Exclusive : Boolean);
-
-   procedure Add_Rule
-     (RegExp : League.Strings.Universal_String;
-      Action : League.Strings.Universal_String;
-      Line   : Positive);
-
-end Nodes;
+end UAFLEX.Generator.OOP_Handler;

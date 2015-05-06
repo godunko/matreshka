@@ -4,11 +4,11 @@
 --                                                                          --
 --         Localization, Internationalization, Globalization for Ada        --
 --                                                                          --
---                              Tools Component                             --
+--                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2012-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,94 +41,74 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-package Parser.Goto_Table is
 
-    type Small_Integer is range -32_000 .. 32_000;
+with Abstract_Sources;
+with League.Strings;
+with UAFLEX.Handlers;
+with UAFLEX.Lexer_Types;
+with Parser_Tokens;
 
-    type Goto_Entry is record
-        Nonterm  : Small_Integer;
-        Newstate : Small_Integer;
-    end record;
+package UAFLEX.Scanners is
+   use UAFLEX.Lexer_Types;
 
-  --pragma suppress(index_check);
+   subtype Token is Parser_Tokens.Token;
+   type Scanner is tagged limited private;
 
-    subtype Row is Integer range -1 .. Integer'Last;
+   procedure Set_Source
+     (Self : in out Scanner'Class;
+      Source : not null Abstract_Sources.Source_Access);
 
-    type Goto_Parse_Table is array (Row range <>) of Goto_Entry;
+   procedure Set_Handler
+     (Self    : in out Scanner'Class;
+      Handler : not null UAFLEX.Handlers.Handler_Access);
 
-    Goto_Matrix : constant Goto_Parse_Table :=
-       ((-1,-1)  -- Dummy Entry.
--- State  0
-,(-5, 2),(-3, 1),(-2, 3)
--- State  1
-,(-10, 4)
-,(-4, 5)
--- State  2
-,(-7, 6),(-6, 11)
--- State  3
+   subtype Start_Condition is State;
 
--- State  4
-,(-11, 16)
-,(-8, 13)
--- State  5
+   procedure Set_Start_Condition
+    (Self : in out Scanner'Class; Condition : Start_Condition);
 
--- State  6
-,(-8, 17)
--- State  7
-,(-9, 19),(-7, 18)
+   function Get_Start_Condition
+     (Self : Scanner'Class) return Start_Condition;
 
--- State  8
-,(-9, 20),(-7, 18)
--- State  9
+   procedure Get_Token (Self : access Scanner'Class; Result : out Token);
 
--- State  10
+   procedure Move_Back (Self : in out Scanner'Class; Count : Positive) is null;
 
--- State  11
+   function Get_Text
+     (Self : Scanner'Class) return League.Strings.Universal_String;
 
--- State  12
+   function Get_Token_Length (Self : Scanner'Class) return Positive;
+   function Get_Token_Position (Self : Scanner'Class) return Positive;
+private
 
--- State  13
-,(-12, 22)
--- State  14
+   Buffer_Half_Size : constant := 1024;
 
--- State  15
+   subtype Buffer_Index is Positive range 1 .. 2 * Buffer_Half_Size;
 
--- State  16
+   type Character_Class_Array is array (Buffer_Index) of Character_Class;
 
--- State  17
+   Error_Character : constant Character_Class := 0;
+   Error_State : constant State := State'Last;
 
--- State  18
+   type Buffer_Half is (Low, High);
 
--- State  19
-,(-7, 24)
+   type Buffer_Offset is array (Buffer_Half) of Natural;
 
--- State  20
-,(-7, 24)
--- State  21
+   type Scanner is tagged limited record
+      Handler : Handlers.Handler_Access;
+      Source  : Abstract_Sources.Source_Access;
+      Start   : State := INITIAL;
+      Next    : Buffer_Index := 1;
+      From    : Buffer_Index := 1;
+      To      : Natural := 0;
+      Rule    : Rule_Index;
+      Offset  : Buffer_Offset := (0, 0);
+      Buffer  : Wide_Wide_String (Buffer_Index) :=
+        (1 => Wide_Wide_Character'Val (Abstract_Sources.End_Of_Buffer),
+         others => <>);
+      Classes : Character_Class_Array := (1 => Error_Character, others => <>);
+   end record;
 
--- State  22
+   procedure Read_Buffer (Self : in out Scanner'Class);
 
--- State  23
-
--- State  24
-
--- State  25
-
-);
---  The offset vector
-GOTO_OFFSET : constant array (0.. 25) of Integer :=
-( 0,
- 3, 5, 7, 7, 9, 9, 10, 12, 14, 14,
- 14, 14, 14, 15, 15, 15, 15, 15, 15, 16,
- 17, 17, 17, 17, 17);
-
-subtype Rule        is Natural;
-subtype Nonterminal is Integer;
-
-   Rule_Length : constant array (Rule range  0 ..  16) of Natural := ( 2,
- 2, 2, 0, 2, 2, 3, 3, 1,
- 2, 2, 0, 2, 2, 1, 1, 1);
-   Get_LHS_Rule : constant array (Rule range  0 ..  16) of Nonterminal := (-1,
--2,-3,-5,-5,-6,-6,-6,-9,
--9,-4,-10,-10,-11,-7,-8,-12);
-end Parser.Goto_Table;
+end UAFLEX.Scanners;

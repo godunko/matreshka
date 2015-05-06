@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Wide_Wide_Text_IO;
-with Nodes;
+with UAFLEX.Nodes;
 with Matreshka.Internals.Unicode.Ucd;
 with League.Character_Sets.Internals;
 with League.Characters;
@@ -50,7 +50,7 @@ with League.Regexps;
 with League.Strings;
 with League.String_Vectors;
 
-package body Expand is
+package body UAFLEX.Expand is
 
    procedure Expand_Macro
      (Text : in out League.Strings.Universal_String;
@@ -79,7 +79,7 @@ package body Expand is
        (Matreshka.Internals.Unicode.Ucd.Pattern_Syntax)
      or
      League.Character_Sets.Internals.To_Set
-       (Matreshka.Internals.Unicode.Ucd.Pattern_White_Space );
+       (Matreshka.Internals.Unicode.Ucd.Pattern_White_Space);
 
    Operations : constant League.Character_Sets.Universal_Character_Set :=
      League.Character_Sets.To_Set ("\{}[]^$?.*+|()");
@@ -274,4 +274,4 @@ package body Expand is
       Text := Result;
    end To_Regexp;
 
-end Expand;
+end UAFLEX.Expand;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,7 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Nodes;
+with UAFLEX.Nodes;
 with Ada.Containers;
 with Ada.Containers.Ordered_Maps;
 with Ada.Strings.Wide_Wide_Fixed;
@@ -52,7 +52,7 @@ with Matreshka.Internals.Unicode.Ucd;
 with Matreshka.Internals.Graphs;
 --  with Debug;
 
-package body Generator.Tables is
+package body UAFLEX.Generator.Tables is
 
    package Char_Set_Vectors renames
      Matreshka.Internals.Finite_Automatons.Vectors;
@@ -138,7 +138,7 @@ package body Generator.Tables is
               (Text & ".");
          end if;
 
-         if Length + Text'Length > 75 then
+         if Length + Text'Length > 74 then
             Ada.Wide_Wide_Text_IO.Put_Line
               (Output, Trim (Text, Ada.Strings.Right));
             Ada.Wide_Wide_Text_IO.Put (Output, Indent * ' ');
@@ -179,7 +179,7 @@ package body Generator.Tables is
                First (F) := Natural (Known.Length);
                Known.Insert (Second, First (F));
 
-               P ("   Second_" & Image (First (F)) &
+               P ("   S_" & Image (First (F)) &
                     " : aliased constant Second_Stage_Array :=");
 
                for J in Second_Stage_Index'Range loop
@@ -216,7 +216,7 @@ package body Generator.Tables is
                N (" ");
             end if;
 
-            N ("Second_" & Image (First (F)) & "'Access");
+            N ("S_" & Image (First (F)) & "'Access");
 
             if F = First_Stage_Index'Last then
                P (");");
@@ -250,6 +250,8 @@ package body Generator.Tables is
       end Print_Classes;
 
       procedure Print_Rules is
+         procedure Each_Rule (Cursor : State_Maps.Cursor);
+
          Count : Natural := 0;
 
          procedure Each_Rule (Cursor : State_Maps.Cursor) is
@@ -369,18 +371,6 @@ package body Generator.Tables is
       Print_Char_Classes;
       Print_Switch;
       Print_Rules;
-      P ("   function To_Class (Value : " &
-           "Matreshka.Internals.Unicode.Code_Point)");
-      P ("     return Character_Class");
-      P ("   is");
-      P ("      function Element is new " &
-           "Matreshka.Internals.Unicode.Ucd.Generic_Element");
-      P ("        (Character_Class, Second_Stage_Array,");
-      P ("         Second_Stage_Array_Access, First_Stage_Array);");
-      P ("   begin");
-      P ("      return Element (First, Value);");
-      P ("   end To_Class;");
-      P ("");
       P ("   function Rule (S : State) return " & Types.To_Wide_Wide_String &
            ".Rule_Index is");
       P ("   begin");
@@ -392,6 +382,18 @@ package body Generator.Tables is
       P ("   begin");
       P ("      return Switch_Table (S, Class);");
       P ("   end Switch;");
+      P ("");
+      P ("   function To_Class (Value : " &
+           "Matreshka.Internals.Unicode.Code_Point)");
+      P ("     return Character_Class");
+      P ("   is");
+      P ("      function Element is new " &
+           "Matreshka.Internals.Unicode.Ucd.Generic_Element");
+      P ("        (Character_Class, Second_Stage_Array,");
+      P ("         Second_Stage_Array_Access, First_Stage_Array);");
+      P ("   begin");
+      P ("      return Element (First, Value);");
+      P ("   end To_Class;");
       P ("");
       P ("end " & Unit.To_Wide_Wide_String & ";");
    end Go;
@@ -454,16 +456,10 @@ package body Generator.Tables is
       use type Ada.Containers.Count_Type;
 
       procedure P (Text : Wide_Wide_String);
-      procedure N (Text : Wide_Wide_String);
       procedure Print_Start (Cursor : Start_Maps.Cursor);
 
       Output  : Ada.Wide_Wide_Text_IO.File_Type;
 
-      procedure N (Text : Wide_Wide_String) is
-      begin
-         --  Ada.Wide_Wide_Text_IO.Put (Text);
-         Ada.Wide_Wide_Text_IO.Put (Output, Text);
-      end N;
 
       procedure P (Text : Wide_Wide_String) is
       begin
@@ -486,9 +482,10 @@ package body Generator.Tables is
       --  Debug.Print_Character_Classes (Classes);
 
       P ("package " & Unit.To_Wide_Wide_String & " is");
+      P ("   pragma Preelaborate;");
       P ("");
-      P ("   type State is mod" &
-           State'Wide_Wide_Image (DFA.Graph.Node_Count + 1) &
+      P ("   type State is mod +" &
+           Image (Positive (DFA.Graph.Node_Count + 1)) &
            ";");
 
       P ("   subtype Valid_State is State range 0 .. State'Last - 1;");
@@ -496,8 +493,8 @@ package body Generator.Tables is
       DFA.Start.Iterate (Print_Start'Access);
 
       P ("");
-      P ("   type Character_Class is mod" &
-           Ada.Containers.Count_Type'Wide_Wide_Image (Classes.Length + 1) &
+      P ("   type Character_Class is mod +" &
+           Image (Positive (Classes.Length + 1)) &
            ";");
 
       P ("");
@@ -508,4 +505,4 @@ package body Generator.Tables is
       P ("end " & Unit.To_Wide_Wide_String & ";");
    end Types;
 
-end Generator.Tables;
+end UAFLEX.Generator.Tables;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,61 +41,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Parser;
 
 with Ada.Command_Line;
-with Ada.Directories;
-with Ada.Exceptions;
-with Ada.Streams.Stream_IO;
-with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
-with Debug;
-with Expand;
-with Generator.Tables;
-with Generator.OOP_Handler;
-with Nodes;
 with League.Application;
-with League.String_Vectors;
 with League.Strings;
-with League.Strings.Internals;
-with League.Text_Codecs;
-with Matreshka.Internals.Finite_Automatons;
-with Matreshka.Internals.Regexps.Compiler;
 
-with UAFLEX_Handler;
-with Aaa.Scanners;
-with String_Sources;
+with UAFLEX.Run;
 
-procedure UAFLEX is
-   procedure Each_Condition (Cursor : Nodes.Start_Condition_Maps.Cursor);
-   procedure Each
-     (Name : League.Strings.Universal_String;
-      Condition : Nodes.Start_Condition);
-
-   function Read_File
-     (File_Name : String)
-     return League.Strings.Universal_String;
+procedure UAFLEX.Driver is
 
    procedure Read_Arguments;
 
    procedure Print_Usage;
 
-   function To_String
-     (Item : League.Strings.Universal_String)
-     return String
-     renames League.Text_Codecs.To_Exception_Message;
-
-   function To_File_Name
-     (Item      : League.Strings.Universal_String;
-      Extension : String)
-     return String;
-
    function "+"
      (Item : Wide_Wide_String)
      return League.Strings.Universal_String
        renames League.Strings.To_Universal_String;
-
-   DFA : Matreshka.Internals.Finite_Automatons.DFA_Constructor;
 
    Handler : League.Strings.Universal_String;
    Input   : League.Strings.Universal_String;
@@ -103,37 +66,9 @@ procedure UAFLEX is
    Types   : League.Strings.Universal_String;
    Scanner : League.Strings.Universal_String;
 
-   ----------
-   -- Each --
-   ----------
-
-   procedure Each
-     (Name : League.Strings.Universal_String;
-      Condition : Nodes.Start_Condition)
-   is
-      Rule    : Positive;
-      Actions : Matreshka.Internals.Finite_Automatons.Rule_Index_Array
-        (1 .. Condition.Rules.Last_Index);
-      Reg_Exp_List : Matreshka.Internals.Finite_Automatons.Shared_Pattern_Array
-        (1 .. Condition.Rules.Last_Index);
-   begin
-      for J in Actions'Range loop
-         Rule := Condition.Rules.Element (J);
-         Actions (J) := Rule;
-         Reg_Exp_List (J) := Nodes.Regexp (Rule);
-      end loop;
-
-      DFA.Compile (Name, Reg_Exp_List, Actions);
-   end Each;
-
-   --------------------
-   -- Each_Condition --
-   --------------------
-
-   procedure Each_Condition (Cursor : Nodes.Start_Condition_Maps.Cursor) is
-   begin
-      Nodes.Start_Condition_Maps.Query_Element (Cursor, Each'Access);
-   end Each_Condition;
+   -----------------
+   -- Print_Usage --
+   -----------------
 
    procedure Print_Usage is
       use Ada.Wide_Wide_Text_IO;
@@ -198,49 +133,7 @@ procedure UAFLEX is
       end loop;
    end Read_Arguments;
 
-   function Read_File
-     (File_Name : String)
-     return League.Strings.Universal_String
-   is
-      Decoder : League.Text_Codecs.Text_Codec :=
-        League.Text_Codecs.Codec_For_Application_Locale;
-
-      Size : constant Ada.Directories.File_Size :=
-        Ada.Directories.Size (File_Name);
-
-      Length : constant Ada.Streams.Stream_Element_Offset :=
-        Ada.Streams.Stream_Element_Count (Size);
-
-      File   : Ada.Streams.Stream_IO.File_Type;
-      Data   : Ada.Streams.Stream_Element_Array (1 .. Length);
-      Last   : Ada.Streams.Stream_Element_Offset;
-   begin
-      Ada.Streams.Stream_IO.Open
-        (File, Ada.Streams.Stream_IO.In_File, File_Name);
-      Ada.Streams.Stream_IO.Read (File, Data, Last);
-      Ada.Streams.Stream_IO.Close (File);
-
-      return Decoder.Decode (Data (1 .. Last));
-   end Read_File;
-
-   ------------------
-   -- To_File_Name --
-   ------------------
-
-   function To_File_Name
-     (Item      : League.Strings.Universal_String;
-      Extension : String)
-     return String
-   is
-      List : constant League.String_Vectors.Universal_String_Vector :=
-        Item.To_Lowercase.Split ('.');
-   begin
-      return To_String (List.Join ("-")) & Extension;
-   end To_File_Name;
-
-   Initial  : League.String_Vectors.Universal_String_Vector;
-   Source   : aliased String_Sources.String_Source;
-   Classes  : Matreshka.Internals.Finite_Automatons.Vectors.Vector;
+   Success : Boolean;
 begin
    Read_Arguments;
 
@@ -254,88 +147,16 @@ begin
       return;
    end if;
 
-   Source.Create (Read_File (To_String (Input)));
-   Parser.Scanner.Set_Source (Source'Unchecked_Access);
-   Parser.Scanner.Set_Handler (Parser.Handler'Unchecked_Access);
-
-   Initial.Append (League.Strings.To_Universal_String ("INITIAL"));
-   Nodes.Add_Start_Conditions (Initial, False);
-
-   Parser.YYParse;
-
-   if not Nodes.Success then
-      Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
-      return;
-   end if;
-
-   Expand.RegExps;
-
-   if not Nodes.Success then
-      Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
-      return;
-   end if;
-
-   Nodes.Regexp := new
-     Matreshka.Internals.Finite_Automatons.Shared_Pattern_Array
-       (1 .. Nodes.Rules.Length);
-
-   for J in 1 .. Nodes.Rules.Length loop
-      begin
-         Nodes.Regexp (J) := Matreshka.Internals.Regexps.Compiler.Compile
-           (League.Strings.Internals.Internal (Nodes.Rules.Element (J)));
-      exception
-         when E : Constraint_Error | Program_Error =>
-            Ada.Wide_Wide_Text_IO.Put_Line
-              ("Line " & Natural'Wide_Wide_Image (Nodes.Lines.Element (J)) &
-                 " error on compile regexp '" &
-                 Nodes.Rules.Element (J).To_Wide_Wide_String & "'");
-            Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Message (E));
-            Nodes.Success := False;
-      end;
-   end loop;
-
-   if not Nodes.Success then
-      Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
-      return;
-   end if;
-
-   Nodes.Conditions.Iterate (Each_Condition'Access);
-
-   declare
-      X : Matreshka.Internals.Finite_Automatons.DFA;
-   begin
-      DFA.Complete (Output => X);
-      Matreshka.Internals.Finite_Automatons.Minimize (X);
-
-      Generator.Tables.Types
-        (X,
-         Types,
-         To_File_Name (Types, ".ads"),
-         Classes);
-
-      Generator.Tables.Go
-        (X,
-         +"Tables",
-         To_File_Name (Scanner & ".Tables", ".adb"),
-         Types,
-         Scanner,
-         Classes);
-   end;
-
-   Generator.OOP_Handler.Go
-     (Nodes.Actions,
-      To_File_Name (Handler, ".ads"),
+   UAFLEX.Run
+     (Handler,
+      Input,
+      Tokens,
       Types,
-      Handler,
       Scanner,
-      Tokens);
+      Success);
 
-   Generator.OOP_Handler.On_Accept
-     (Nodes.Actions,
-      To_File_Name (Scanner & ".On_Accept", ".adb"),
-      Types,
-      Handler,
-      Scanner,
-      Tokens);
+   if not Success then
+      Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+   end if;
 
-end UAFLEX;
+end UAFLEX.Driver;

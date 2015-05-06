@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Ordered_Maps;
 with League.Character_Sets.Internals;
 with League.Strings.Internals;
 with Matreshka.Internals.Regexps.Compiler;
@@ -57,10 +56,6 @@ package body Matreshka.Internals.Finite_Automatons is
 
    --  Map each literal to corresponding character set
    type Character_Set_Map is array (Position range <>) of
-     League.Character_Sets.Universal_Character_Set;
-
-   --  Just list of character sets
-   type Character_Set_Array is array (Positive range <>) of
      League.Character_Sets.Universal_Character_Set;
 
    function To_Character_Set
@@ -119,7 +114,7 @@ package body Matreshka.Internals.Finite_Automatons is
                raise Constraint_Error with "'None' unsupported";
 
             when Matreshka.Internals.Regexps.N_Subexpression =>
-               Walk (Compiler.Get_Expression (AST, Root));
+               Walk_List (Compiler.Get_Expression (AST, Root));
 
             when Matreshka.Internals.Regexps.N_Match_Any |
               Matreshka.Internals.Regexps.N_Match_Code |
@@ -136,7 +131,7 @@ package body Matreshka.Internals.Finite_Automatons is
             when Matreshka.Internals.Regexps.N_Multiplicity =>
                if not Node.Greedy then
                   raise Constraint_Error with "'Lazy' unsupported";
-               elsif Node.Lower not in 0 .. 1 then
+               elsif Node.Lower > 1 then
                   raise Constraint_Error with
                     "'Lower not 0 or 1' unsupported";
                elsif not (Node.Upper = Natural'Last or
@@ -145,6 +140,8 @@ package body Matreshka.Internals.Finite_Automatons is
                   raise Constraint_Error with
                     "'Upper not *' unsupported";
                end if;
+
+               Walk_List (Compiler.Get_Expression (AST, Root));
 
             when Matreshka.Internals.Regexps.N_Alternation =>
                Walk_List (Compiler.Get_Preferred (AST, Root));
@@ -215,8 +212,8 @@ package body Matreshka.Internals.Finite_Automatons is
       --  Return Head for List (Index)
 
       procedure Add_To_Follow
-        (First : in out Position_Set;
-         Last  : in out Position_Set);
+        (First : Position_Set;
+         Last  : Position_Set);
       --  Update Follow array according to First and Last position sets
 
       procedure Walk
@@ -267,8 +264,8 @@ package body Matreshka.Internals.Finite_Automatons is
       -------------------
 
       procedure Add_To_Follow
-        (First : in out Position_Set;
-         Last  : in out Position_Set) is
+        (First : Position_Set;
+         Last  : Position_Set) is
       begin
          for J in Last'Range loop
             if Last (J) then
@@ -360,8 +357,8 @@ package body Matreshka.Internals.Finite_Automatons is
 
          while not Not_Marked.Is_Empty loop
             declare
-               Source : Node := Not_Marked.First_Element;
-               Set    : Position_Set := Not_Marked.First_Key;
+               Source : constant Node := Not_Marked.First_Element;
+               Set    : constant Position_Set := Not_Marked.First_Key;
                List   : Vectors.Vector;
             begin
                Not_Marked.Delete_First;
@@ -472,7 +469,7 @@ package body Matreshka.Internals.Finite_Automatons is
                raise Constraint_Error;
 
             when Matreshka.Internals.Regexps.N_Subexpression =>
-               Walk
+               Walk_List
                  (AST, Compiler.Get_Expression (AST, Root), Pos, First, Last);
 
             when Matreshka.Internals.Regexps.N_Match_Any |
@@ -481,7 +478,7 @@ package body Matreshka.Internals.Finite_Automatons is
               Matreshka.Internals.Regexps.N_Character_Class |
               Matreshka.Internals.Regexps.N_Anchor =>
 
-               Chars (Pos) := To_Character_Set (Ast, Root);
+               Chars (Pos) := To_Character_Set (AST, Root);
                First (Pos) := True;
                Last (Pos) := True;
                Pos := Pos + 1;
@@ -497,11 +494,12 @@ package body Matreshka.Internals.Finite_Automatons is
                   Result_First : Position_Set := Empty;
                   Result_Last  : Position_Set := Empty;
                begin
-                  Walk (AST,
-                        Compiler.Get_Expression (AST, Root),
-                        Pos,
-                        Result_First,
-                        Result_Last);
+                  Walk_List
+                    (AST,
+                     Compiler.Get_Expression (AST, Root),
+                     Pos,
+                     Result_First,
+                     Result_Last);
 
                   Add_To_Follow (Result_First, Result_Last);
                   First := First or Result_First;
@@ -536,7 +534,7 @@ package body Matreshka.Internals.Finite_Automatons is
          First : in out Position_Set;
          Last  : in out Position_Set)
       is
-         Next : Natural := Compiler.Get_Next_Sibling (AST, Head);
+         Next : constant Natural := Compiler.Get_Next_Sibling (AST, Head);
       begin
          if Next = 0 then
             Walk (AST, Head, Pos, First, Last);
@@ -594,7 +592,6 @@ package body Matreshka.Internals.Finite_Automatons is
       end Walk_Array;
 
       First  : Position_Set := Empty;
-      Last   : Position_Set := Empty;
       Result : State;
    begin
       Walk_Array (List, First);
@@ -640,7 +637,8 @@ package body Matreshka.Internals.Finite_Automatons is
             raise Constraint_Error;
 
          when Matreshka.Internals.Regexps.N_Subexpression =>
-            return Count_Positions (AST, Compiler.Get_Expression (AST, Root));
+            return Count_Positions_In_List
+              (AST, Compiler.Get_Expression (AST, Root));
 
          when Matreshka.Internals.Regexps.N_Match_Any |
           Matreshka.Internals.Regexps.N_Match_Code |
@@ -654,7 +652,8 @@ package body Matreshka.Internals.Finite_Automatons is
          when Matreshka.Internals.Regexps.N_Member_Range =>
             raise Constraint_Error;
          when Matreshka.Internals.Regexps.N_Multiplicity =>
-            return Count_Positions (AST, Compiler.Get_Expression (AST, Root));
+            return Count_Positions_In_List
+              (AST, Compiler.Get_Expression (AST, Root));
 
          when Matreshka.Internals.Regexps.N_Alternation =>
             return
@@ -746,8 +745,9 @@ package body Matreshka.Internals.Finite_Automatons is
                for J in Node_Y.First_Edge_Index .. Node_Y.Last_Edge_Index loop
                   declare
                      Edge_Y : constant Graphs.Edge := Self.Graph.Get_Edge (J);
-                     Sym_Y  : League.Character_Sets.Universal_Character_Set :=
-                       Self.Edge_Char_Set.Element (Edge_Y.Edge_Id);
+                     Sym_Y  : constant League.Character_Sets
+                       .Universal_Character_Set :=
+                         Self.Edge_Char_Set.Element (Edge_Y.Edge_Id);
                      Jump_Y : constant State := Edge_Y.Target_Node.Index;
                   begin
                      if not
@@ -875,7 +875,7 @@ package body Matreshka.Internals.Finite_Automatons is
                   X := X or Self.Edge_Char_Set.Element (Edge_J.Edge_Id);
                end Append_Chars;
 
-               Node_X : Graphs.Node := Self.Graph.Get_Node (I);
+               Node_X : constant Graphs.Node := Self.Graph.Get_Node (I);
                Edge   : Graphs.Edge_Identifier;
                Pair   : State_Pair;
                Cursor : State_Pair_Maps.Cursor;
@@ -933,7 +933,7 @@ package body Matreshka.Internals.Finite_Automatons is
             raise Constraint_Error;
 
          when Matreshka.Internals.Regexps.N_Subexpression =>
-            return Nullable (AST, Compiler.Get_Expression (AST, Root));
+            return Nullable_List (AST, Compiler.Get_Expression (AST, Root));
 
          when Matreshka.Internals.Regexps.N_Match_Any |
            Matreshka.Internals.Regexps.N_Match_Code |
@@ -951,7 +951,7 @@ package body Matreshka.Internals.Finite_Automatons is
 
          when Matreshka.Internals.Regexps.N_Multiplicity =>
             return Node.Lower = 0 or else
-              Nullable (AST, Compiler.Get_Expression (AST, Root));
+              Nullable_List (AST, Compiler.Get_Expression (AST, Root));
 
          when Matreshka.Internals.Regexps.N_Alternation =>
             return Nullable_List (AST, Compiler.Get_Preferred (AST, Root))
@@ -1035,12 +1035,9 @@ package body Matreshka.Internals.Finite_Automatons is
 
          when Matreshka.Internals.Regexps.N_Character_Class =>
             declare
-               use type League.Character_Sets.Universal_Character_Set;
 
                Index  : Natural :=
                  AST.List (AST.AST (Node).Members).Head;
-               Tail   : Positive :=
-                 AST.List (AST.AST (Node).Members).Tail;
                Result : League.Character_Sets.Universal_Character_Set;
             begin
                while Index > 0 loop
