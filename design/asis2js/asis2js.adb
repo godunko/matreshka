@@ -2,6 +2,8 @@ with Ada.Directories;
 with Ada.Wide_Text_IO;
 with Ada.Wide_Wide_Text_IO;
 
+with GNAT.Strings;
+
 with Asis;
 with Asis.Ada_Environments;
 with Asis.Compilation_Units;
@@ -14,6 +16,7 @@ with Asis.Implementation;
 with League.Application;
 with League.Characters.Latin;
 with League.Strings;
+with League.String_Vectors;
 
 with Engines.Contexts;
 with Engines.Registry_All_Actions;
@@ -33,11 +36,12 @@ procedure Asis2JS is
    procedure Create_ADT_File (Source_File : League.Strings.Universal_String);
    --  Runs GNAT compiler to generate ADT file.
 
-   Engine      : aliased Engines.Contexts.Context;
-   Context     : Asis.Context;
-   Source_File : League.Strings.Universal_String;
-   ADT_File    : League.Strings.Universal_String;
-   Output_File : League.Strings.Universal_String;
+   Engine        : aliased Engines.Contexts.Context;
+   Context       : Asis.Context;
+   Source_File   : League.Strings.Universal_String;
+   Include_Paths : League.String_Vectors.Universal_String_Vector;
+   ADT_File      : League.Strings.Universal_String;
+   Output_File   : League.Strings.Universal_String;
 
    ------------------
    -- Compile_File --
@@ -146,13 +150,24 @@ procedure Asis2JS is
    ---------------------
 
    procedure Create_ADT_File (Source_File : League.Strings.Universal_String) is
-      Success : Boolean;
+      Success   : Boolean;
+      Source    : GNAT.Strings.String_Access
+        := new String'(Source_File.To_UTF_8_String);
+      Arguments : GNAT.Strings.String_List (1 .. Include_Paths.Length);
 
    begin
-      Asis.Extensions.Compile
-       (new String'(Source_File.To_UTF_8_String),
-        (1 .. 0 => null),
-        Success);
+      for J in 1 .. Include_Paths.Length loop
+         Arguments (J) :=
+           new String'("-I" & Include_Paths (J).To_UTF_8_String);
+      end loop;
+
+      Asis.Extensions.Compile (Source, Arguments, Success);
+
+      GNAT.Strings.Free (Source);
+
+      for J in Arguments'Range loop
+         GNAT.Strings.Free (Arguments (J));
+      end loop;
 
       if not Success then
          raise Program_Error;
@@ -162,7 +177,24 @@ procedure Asis2JS is
 begin
    --  Process command line parameters.
 
-   Source_File := League.Application.Arguments.Element (1);
+   declare
+      Arguments : constant League.String_Vectors.Universal_String_Vector
+        := League.Application.Arguments;
+
+   begin
+      for J in 1 .. Arguments.Length loop
+         if Arguments (J).Starts_With ("-I") then
+            Include_Paths.Append (Arguments (J).Tail_From (3));
+
+         elsif Source_File.Is_Empty then
+            Source_File := Arguments (J);
+
+         else
+            raise Program_Error;
+         end if;
+      end loop;
+   end;
+
    ADT_File := Source_File.Head (Source_File.Length - 1) & 't';
    ADT_File :=
      League.Strings.From_UTF_8_String
