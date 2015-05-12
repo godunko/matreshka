@@ -5,6 +5,8 @@ with Asis.Definitions;
 with Asis.Elements;
 with Asis.Expressions;
 
+with League.String_Vectors;
+
 package body Properties.Tools is
 
    ------------------------
@@ -386,6 +388,8 @@ package body Properties.Tools is
       procedure Append (Name : Asis.Name);
       procedure Check_And_Append (Name : Asis.Name);
       function Body_Context_Clause_Elements return Asis.Context_Clause_List;
+      function To_Module_Name (Unit : League.Strings.Universal_String)
+        return League.Strings.Universal_String;
 
       Text : League.Strings.Universal_String;
 
@@ -458,6 +462,20 @@ package body Properties.Tools is
          Append (Name);
       end Check_And_Append;
 
+      --------------------
+      -- To_Module_Name --
+      --------------------
+
+      function To_Module_Name
+        (Unit : League.Strings.Universal_String)
+         return League.Strings.Universal_String
+      is
+         List : constant League.String_Vectors.Universal_String_Vector :=
+           Unit.Split ('.');
+      begin
+         return List.Join ('-');
+      end To_Module_Name;
+
       Parent : constant Asis.Compilation_Unit :=
         Asis.Compilation_Units.Corresponding_Parent_Declaration (Unit);
 
@@ -480,14 +498,14 @@ package body Properties.Tools is
 
    begin
       Text.Append ("define('");
-      Text.Append (Full_Name);
+      Text.Append (To_Module_Name (Full_Name));
       Text.Append ("', ['");
 
       if Asis.Compilation_Units.Is_Nil (Grand_Parent) then
          Text.Append ("standard");
       else
          --  if Parent is not standard
-         Text.Append (Parent_Name);
+         Text.Append (To_Module_Name (Parent_Name));
       end if;
 
       for Clause of List loop

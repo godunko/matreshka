@@ -15,7 +15,7 @@
 --  demo-driver.adb
 --  END OF BIND LIST
 --
---  MAIN: demo.driver
+--  MAIN: demo-driver
 
 package Demo is
 end Demo;
