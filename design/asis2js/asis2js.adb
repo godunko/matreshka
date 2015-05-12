@@ -1,3 +1,4 @@
+with Ada.Directories;
 with Ada.Wide_Text_IO;
 with Ada.Wide_Wide_Text_IO;
 
@@ -7,6 +8,7 @@ with Asis.Compilation_Units;
 with Asis.Elements;
 with Asis.Errors;
 with Asis.Exceptions;
+with Asis.Extensions;
 with Asis.Implementation;
 
 with League.Application;
@@ -16,27 +18,44 @@ with Engines.Contexts;
 with Engines.Registry_All_Actions;
 
 procedure Asis2JS is
+
+   use type League.Strings.Universal_String;
+
    procedure Compile_Unit (Unit : Asis.Compilation_Unit);
    procedure Compile_File (File : League.Strings.Universal_String);
 
+   procedure Create_ADT_File (Source_File : League.Strings.Universal_String);
+
    Engine      : aliased Engines.Contexts.Context;
    Context     : Asis.Context;
-
-   ASIS_Params : constant League.Strings.Universal_String :=
-     League.Application.Arguments.Element (1);
+   Source_File : League.Strings.Universal_String;
+   ADT_File    : League.Strings.Universal_String;
 
    ------------------
    -- Compile_File --
    ------------------
 
    procedure Compile_File (File : League.Strings.Universal_String) is
-      File_Name   : constant Wide_String := File.To_UTF_16_Wide_String;
-      Units : constant Asis.Compilation_Unit_List :=
+      File_Name : constant Wide_String := File.To_UTF_16_Wide_String;
+      Units     : constant Asis.Compilation_Unit_List :=
         Asis.Compilation_Units.Compilation_Units (Context);
+      Success   : Boolean := False;
+
    begin
       for J in Units'Range loop
          if Asis.Compilation_Units.Text_Name (Units (J)) = File_Name then
-            Compile_Unit (Units (J));
+            case Asis.Compilation_Units.Unit_Kind (Units (J)) is
+               when Asis.A_Package_Body =>
+                  Compile_Unit
+                   (Asis.Compilation_Units.Corresponding_Declaration
+                     (Units (J)));
+
+               when others =>
+                  Ada.Wide_Text_IO.Put
+                   (Asis.Compilation_Units.Debug_Image (Units (J)));
+
+                  raise Program_Error;
+            end case;
          end if;
       end loop;
    end Compile_File;
@@ -66,25 +85,62 @@ procedure Asis2JS is
       Ada.Wide_Wide_Text_IO.Put_Line (Code.To_Wide_Wide_String);
    end Compile_Unit;
 
+   ---------------------
+   -- Create_ADT_File --
+   ---------------------
+
+   procedure Create_ADT_File (Source_File : League.Strings.Universal_String) is
+      Success : Boolean;
+
+   begin
+      Asis.Extensions.Compile
+       (new String'(Source_File.To_UTF_8_String),
+        (1 .. 0 => null),
+        Success,
+        Display_Call => True);
+
+      if not Success then
+         raise Program_Error;
+      end if;
+   end Create_ADT_File;
+
 begin
+   --  Process command line parameters.
+
+   Source_File := League.Application.Arguments.Element (1);
+   ADT_File := Source_File.Head (Source_File.Length - 1) & 't';
+   ADT_File :=
+     League.Strings.From_UTF_8_String
+      (Ada.Directories.Simple_Name (ADT_File.To_UTF_8_String));
+
+   --  Execute GNAT to generate ADT files.
+
+   Create_ADT_File (Source_File);
+
+   --  Initialize ASIS-for-GNAT and load ADT file.
+
    Asis.Implementation.Initialize ("-ws");
 
    Asis.Ada_Environments.Associate
      (The_Context => Context,
       Name        => Asis.Ada_Environments.Default_Name,
-      Parameters  => ASIS_Params.To_UTF_16_Wide_String);
+      Parameters  => "-C1 " & ADT_File.To_UTF_16_Wide_String);
 
    Asis.Ada_Environments.Open (Context);
 
+   --  Register processing actions.
+
    Engines.Registry_All_Actions (Engine);
 
-   for J in 2 .. League.Application.Arguments.Length loop
-      Compile_File (League.Application.Arguments.Element (J));
-   end loop;
+   --  Process file.
+
+   Compile_File (Source_File);
+
+   --  Finalize ASIS.
 
    Asis.Ada_Environments.Close (Context);
    Asis.Ada_Environments.Dissociate (Context);
-   Asis.Implementation.Finalize ("");
+   Asis.Implementation.Finalize;
 
 exception
    when Asis.Exceptions.ASIS_Inappropriate_Context          |
