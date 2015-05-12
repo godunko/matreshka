@@ -65,6 +65,12 @@ procedure Asis2JS is
 
                   exit;
 
+               when Asis.A_Package =>
+                  Success := True;
+                  Compile_Unit (Units (J), Output_File);
+
+                  exit;
+
                when others =>
                   Ada.Wide_Text_IO.Put
                    (Asis.Compilation_Units.Debug_Image (Units (J)));
