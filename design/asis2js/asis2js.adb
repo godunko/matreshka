@@ -14,7 +14,6 @@ with Asis.Extensions;
 with Asis.Implementation;
 
 with League.Application;
-with League.Characters.Latin;
 with League.Strings;
 with League.String_Vectors;
 
@@ -23,7 +22,6 @@ with Engines.Registry_All_Actions;
 
 procedure Asis2JS is
 
-   use type League.Characters.Universal_Character;
    use type League.Strings.Universal_String;
 
    procedure Compile_Unit
@@ -200,12 +198,6 @@ begin
      League.Strings.From_UTF_8_String
       (Ada.Directories.Simple_Name (ADT_File.To_UTF_8_String));
    Output_File := ADT_File.Head (ADT_File.Length - 4) & ".js";
-
-   for J in 1 .. Output_File.Length loop
-      if Output_File (J) = League.Characters.Latin.Hyphen_Minus then
-         Output_File.Replace (J, J, ".");
-      end if;
-   end loop;
 
    --  Execute GNAT to generate ADT files.
 

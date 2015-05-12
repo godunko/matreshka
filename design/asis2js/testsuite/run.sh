@@ -8,8 +8,7 @@ PATH=$PATH:$HOME/node_modules/.bin/
 
 compile()
 {
-    NAME=${1//-/.}
-    NAME=${NAME%.*}.js
+    NAME=${1%.*}.js
     js-beautify $WORK_DIR/.objs/$NAME > $WORK_DIR/$NAME
 }
 
