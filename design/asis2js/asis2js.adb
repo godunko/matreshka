@@ -65,7 +65,7 @@ procedure Asis2JS is
 
                   exit;
 
-               when Asis.A_Package =>
+               when Asis.A_Package | Asis.A_Procedure_Body =>
                   Success := True;
                   Compile_Unit (Units (J), Output_File);
 
@@ -168,7 +168,6 @@ begin
      League.Strings.From_UTF_8_String
       (Ada.Directories.Simple_Name (ADT_File.To_UTF_8_String));
    Output_File := ADT_File.Head (ADT_File.Length - 4) & ".js";
-   Output_File := "standard-" & ADT_File.Head (ADT_File.Length - 4) & ".js";
 
    for J in 1 .. Output_File.Length loop
       if Output_File (J) = League.Characters.Latin.Hyphen_Minus then

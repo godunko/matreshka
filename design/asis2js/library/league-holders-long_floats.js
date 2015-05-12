@@ -1,4 +1,4 @@
-define('standard.league.holders.long_floats', ['standard.league.holders'], function(_parent) {
+define('league-holders-long_floats', ['league-holders'], function(_parent) {
     var _ec = new _parent._nested();
     _parent.standard.league.holders.long_floats = _ec;
     _ec._nested = function() {};

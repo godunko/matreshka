@@ -119,6 +119,9 @@ is
        Kind   => F.A_Package_Declaration,
        Action => P.Declarations.Package_Declaration.Code'Access),
       (Name   => N.Code,
+       Kind   => F.A_Generic_Package_Declaration,
+       Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
+      (Name   => N.Code,
        Kind   => F.A_Package_Renaming_Declaration,  --  FIXME
        Action => P.Statements.Null_Statement.Code'Access),  --  Ignore
       (Name   => N.Code,

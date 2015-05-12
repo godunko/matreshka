@@ -1,4 +1,4 @@
-define('standard.system.storage_elements', ['standard.system'], function(_ec) {
+define('system-storage_elements', ['system'], function(_ec) {
     return (function(_ec) {
         _ec._nested = function() {};
         _ec._nested.prototype = _ec;

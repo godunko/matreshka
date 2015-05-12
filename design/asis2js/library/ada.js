@@ -1,4 +1,4 @@
-define('standard.ada', ['standard'], function(_ec) {
+define('ada', ['standard'], function(_ec) {
     return (function(_ec) {
         _ec._nested = function() {};
         _ec._nested.prototype = _ec;

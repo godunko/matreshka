@@ -403,7 +403,7 @@ package body Properties.Tools is
                Text.Append (Image.To_Lowercase);
             when Asis.A_Selected_Component =>
                Append (Asis.Expressions.Prefix (Name));
-               Text.Append ('.');
+               Text.Append ('-');
                Append (Asis.Expressions.Selector (Name));
             when others =>
                raise Program_Error;
@@ -453,7 +453,7 @@ package body Properties.Tools is
                null;
          end case;
 
-         Text.Append ("', 'standard.");
+         Text.Append ("', '");
 
          Append (Name);
       end Check_And_Append;
@@ -479,13 +479,14 @@ package body Properties.Tools is
        Body_Context_Clause_Elements;
 
    begin
-      Text.Append ("define('standard.");
+      Text.Append ("define('");
       Text.Append (Full_Name);
-      Text.Append ("', ['standard");
+      Text.Append ("', ['");
 
-      if not Asis.Compilation_Units.Is_Nil (Grand_Parent) then
+      if Asis.Compilation_Units.Is_Nil (Grand_Parent) then
+         Text.Append ("standard");
+      else
          --  if Parent is not standard
-         Text.Append (".");
          Text.Append (Parent_Name);
       end if;
 

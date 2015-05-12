@@ -1,4 +1,4 @@
-define('standard.ada.text_io', ['standard.ada'], function(_ec) {
+define('ada.text_io', ['ada'], function(_ec) {
     return (function(_ec) {
         var buffer = "";
         _ec._nested = function() {};
