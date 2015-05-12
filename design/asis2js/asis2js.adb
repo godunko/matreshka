@@ -133,8 +133,7 @@ procedure Asis2JS is
       Asis.Extensions.Compile
        (new String'(Source_File.To_UTF_8_String),
         (1 .. 0 => null),
-        Success,
-        Display_Call => True);
+        Success);
 
       if not Success then
          raise Program_Error;
