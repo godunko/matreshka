@@ -12,6 +12,7 @@ with Asis.Extensions;
 with Asis.Implementation;
 
 with League.Application;
+with League.Characters.Latin;
 with League.Strings;
 
 with Engines.Contexts;
@@ -19,24 +20,34 @@ with Engines.Registry_All_Actions;
 
 procedure Asis2JS is
 
+   use type League.Characters.Universal_Character;
    use type League.Strings.Universal_String;
 
-   procedure Compile_Unit (Unit : Asis.Compilation_Unit);
-   procedure Compile_File (File : League.Strings.Universal_String);
+   procedure Compile_Unit
+    (Unit        : Asis.Compilation_Unit;
+     Output_File : League.Strings.Universal_String);
+   procedure Compile_File
+    (Source_File : League.Strings.Universal_String;
+     Output_File : League.Strings.Universal_String);
 
    procedure Create_ADT_File (Source_File : League.Strings.Universal_String);
+   --  Runs GNAT compiler to generate ADT file.
 
    Engine      : aliased Engines.Contexts.Context;
    Context     : Asis.Context;
    Source_File : League.Strings.Universal_String;
    ADT_File    : League.Strings.Universal_String;
+   Output_File : League.Strings.Universal_String;
 
    ------------------
    -- Compile_File --
    ------------------
 
-   procedure Compile_File (File : League.Strings.Universal_String) is
-      File_Name : constant Wide_String := File.To_UTF_16_Wide_String;
+   procedure Compile_File
+    (Source_File : League.Strings.Universal_String;
+     Output_File : League.Strings.Universal_String)
+   is
+      File_Name : constant Wide_String := Source_File.To_UTF_16_Wide_String;
       Units     : constant Asis.Compilation_Unit_List :=
         Asis.Compilation_Units.Compilation_Units (Context);
       Success   : Boolean := False;
@@ -46,9 +57,13 @@ procedure Asis2JS is
          if Asis.Compilation_Units.Text_Name (Units (J)) = File_Name then
             case Asis.Compilation_Units.Unit_Kind (Units (J)) is
                when Asis.A_Package_Body =>
+                  Success := True;
                   Compile_Unit
                    (Asis.Compilation_Units.Corresponding_Declaration
-                     (Units (J)));
+                     (Units (J)),
+                    Output_File);
+
+                  exit;
 
                when others =>
                   Ada.Wide_Text_IO.Put
@@ -58,17 +73,26 @@ procedure Asis2JS is
             end case;
          end if;
       end loop;
+
+      if not Success then
+         raise Program_Error;
+      end if;
    end Compile_File;
 
    ------------------
    -- Compile_Unit --
    ------------------
 
-   procedure Compile_Unit (Unit : Asis.Compilation_Unit) is
+   procedure Compile_Unit
+    (Unit        : Asis.Compilation_Unit;
+     Output_File : League.Strings.Universal_String)
+   is
       List   : constant Asis.Context_Clause_List :=
         Asis.Elements.Context_Clause_Elements (Unit);
       Result : League.Strings.Universal_String;
       Code   : League.Strings.Universal_String;
+      File   : Ada.Wide_Wide_Text_IO.File_Type;
+
    begin
       for J in List'Range loop
          Result := Engine.Text.Get_Property
@@ -76,13 +100,20 @@ procedure Asis2JS is
          Code.Append (Result);
       end loop;
 
-      Result := Engine.Text.Get_Property
-        (Element => Asis.Elements.Unit_Declaration (Unit),
-         Name    => Engines.Code);
+      Result :=
+        Engine.Text.Get_Property
+         (Element => Asis.Elements.Unit_Declaration (Unit),
+          Name    => Engines.Code);
 
       Code.Append (Result);
 
-      Ada.Wide_Wide_Text_IO.Put_Line (Code.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Create
+       (File,
+        Ada.Wide_Wide_Text_IO.Out_File,
+        Output_File.To_UTF_8_String,
+        "wcem=8");
+      Ada.Wide_Wide_Text_IO.Put_Line (File, Code.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (File);
    end Compile_Unit;
 
    ---------------------
@@ -112,6 +143,14 @@ begin
    ADT_File :=
      League.Strings.From_UTF_8_String
       (Ada.Directories.Simple_Name (ADT_File.To_UTF_8_String));
+   Output_File := ADT_File.Head (ADT_File.Length - 4) & ".js";
+   Output_File := "standard-" & ADT_File.Head (ADT_File.Length - 4) & ".js";
+
+   for J in 1 .. Output_File.Length loop
+      if Output_File (J) = League.Characters.Latin.Hyphen_Minus then
+         Output_File.Replace (J, J, ".");
+      end if;
+   end loop;
 
    --  Execute GNAT to generate ADT files.
 
@@ -134,7 +173,7 @@ begin
 
    --  Process file.
 
-   Compile_File (Source_File);
+   Compile_File (Source_File, Output_File);
 
    --  Finalize ASIS.
 
