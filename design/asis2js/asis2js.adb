@@ -65,7 +65,7 @@ procedure Asis2JS is
 
                   exit;
 
-               when Asis.A_Package | Asis.A_Procedure_Body =>
+               when Asis.A_Package =>
                   Success := True;
                   Compile_Unit (Units (J), Output_File);
 
