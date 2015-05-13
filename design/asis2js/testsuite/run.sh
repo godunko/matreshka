@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-A2JS=../asis2js
 TEST=$1
 WORK_DIR=/tmp/$$.test
-PATH=$PATH:$HOME/node_modules/.bin/
+PATH=$PATH:$HOME/node_modules/.bin/:`pwd`/../../../.objs/a2js
+export LD_LIBRARY_PATH=`pwd`/../../../.libs:$LD_LIBRARY_PATH
 
 compile()
 {
@@ -15,8 +15,9 @@ compile()
 mkdir $WORK_DIR
 export PATH=`pwd`/..:$PATH
 gnatchop $TEST $WORK_DIR
-gprbuild -p -P test.gpr -XWORK_DIR=$WORK_DIR --db ../gprconfig
+gprbuild -p -P test.gpr -XWORK_DIR=$WORK_DIR --db ../../../source/web/tools/a2js/gprconfig
 cp ../library/*.js $WORK_DIR
+cp ../../../source/web/tools/a2js/rtl/*.js $WORK_DIR
 sed --quiet -e '/EXPECTED OUTPUT:/,/END OF EXPECTED OUTPUT/p' $TEST \
     | sed -e '1d' -e '$d' -e 's/^--  //' \
           > $WORK_DIR/expected
