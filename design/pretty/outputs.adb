@@ -1,8 +1,29 @@
+with League.Strings.Hash;
+
 package body Outputs is
 
-   ----------
-   -- Best --
-   ----------
+   Space : constant Output_Item :=
+     (Kind => Text_Output, Text => League.Strings.To_Universal_String (" "));
+
+   ------------
+   -- Append --
+   ------------
+
+   procedure Append
+     (Self  : in out Printer;
+      Item  : Output_Item;
+      Index : out Document)
+   is
+      Cursor : constant Maps.Cursor := Self.Back.Find (Item);
+   begin
+      if Maps.Has_Element (Cursor) then
+         Index := Maps.Element (Cursor);
+      else
+         Self.Store.Append (Item);
+         Index := Self.Store.Last_Index;
+         Self.Back.Insert (Item, Index);
+      end if;
+   end Append;
 
    ------------
    -- Concat --
@@ -14,8 +35,7 @@ package body Outputs is
       Right  : Document;
       Result : out Document) is
    begin
-      Self.Store.Append ((Concat_Output, Left, Right));
-      Result := Self.Store.Last_Index;
+      Self.Append ((Concat_Output, Left, Right), Result);
    end Concat;
 
    -------------
@@ -38,14 +58,17 @@ package body Outputs is
          when Concat_Output =>
             Self.Flatten (Item.Left, Down);
             Self.Flatten (Item.Right, Temp);
-            Self.Store.Append ((Concat_Output, Down, Temp));
-            Result := Self.Store.Last_Index;
+            Self.Append ((Concat_Output, Down, Temp), Result);
 
          when Nest_Output =>
-            Self.Flatten (Item.Nest_Right, Result);
+            Self.Flatten (Item.Down, Result);
 
          when New_Line_Output =>
-            Result := 3;  --  Text ' '
+            if Item.Force then
+               Result := Input;
+            else
+               Self.Append (Space, Result);
+            end if;
 
          when Union_Output =>
             Self.Flatten (Item.Left, Result);
@@ -65,9 +88,45 @@ package body Outputs is
       Down : Document;
    begin
       Self.Flatten (Input, Down);
-      Self.Store.Append ((Union_Output, Down, Input));
-      Result := Self.Store.Last_Index;
+
+      if Input = Down  then
+         Result := Input;
+      else
+         Self.Append ((Union_Output, Down, Input), Result);
+      end if;
    end Group;
+
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Item : Output_Item) return Ada.Containers.Hash_Type is
+      use type Ada.Containers.Hash_Type;
+
+   begin
+      case Item.Kind is
+         when Empty_Output =>
+            return 1;
+
+         when New_Line_Output =>
+            return 2 + Boolean'Pos (Item.Force);
+
+         when Text_Output =>
+            return League.Strings.Hash (Item.Text);
+
+         when Nest_Output =>
+            return Ada.Containers.Hash_Type (Item.Indent) * 1046527 +
+              Ada.Containers.Hash_Type (Item.Down);
+
+         when Union_Output =>
+            return Ada.Containers.Hash_Type (Item.Left) * 1046527 +
+              16127 * Ada.Containers.Hash_Type (Item.Right);
+
+         when Concat_Output =>
+            return Ada.Containers.Hash_Type (Item.Left) * 1046527 -
+              16127 * Ada.Containers.Hash_Type (Item.Right);
+      end case;
+   end Hash;
 
    ----------------
    -- Initialize --
@@ -75,15 +134,8 @@ package body Outputs is
 
    procedure Initialize (Self : in out Printer) is
    begin
-      Self.Store.Append ((Kind => Empty_Output));   --  1
-      Self.Store.Append ((Kind => New_Line_Output));  --  2
-      Self.Store.Append  --  3
-        ((Text_Output, League.Strings.To_Universal_String (" ")));
+      null;
    end Initialize;
-
-   ------------
-   -- Layout --
-   ------------
 
    ----------
    -- Nest --
@@ -93,11 +145,9 @@ package body Outputs is
      (Self   : in out Printer;
       Indent : Natural;
       Input  : Document;
-      Result : out Document)
-   is
+      Result : out Document) is
    begin
-      Self.Store.Append ((Nest_Output, Indent, Input));
-      Result := Self.Store.Last_Index;
+      Self.Append ((Nest_Output, Indent, Input), Result);
    end Nest;
 
    --------------
@@ -106,11 +156,10 @@ package body Outputs is
 
    procedure New_Line
      (Self   : in out Printer;
-      Result : out Document)
-   is
-      pragma Unreferenced (Self);
+      Result : out Document;
+      Force  : Boolean := False) is
    begin
-      Result := 2;
+      Self.Append ((New_Line_Output, Force), Result);
    end New_Line;
 
    ---------
@@ -120,9 +169,8 @@ package body Outputs is
    procedure Nil
      (Self   : in out Printer;
       Result : out Document) is
-      pragma Unreferenced (Self);
    begin
-      Result := 1;
+      Self.Append ((Kind => Empty_Output), Result);
    end Nil;
 
    ------------
@@ -163,16 +211,17 @@ package body Outputs is
 
          Store : Output_Item_Vectors.Vector;
 
+         type Pair;
+         type Pair_Access is access all Pair;
          type Pair is record
             Indent : Natural;
             Doc    : Outputs.Document;
+            Next   : Pair_Access;
          end record;
-
-         type Pair_Array is array (Positive range <>) of Pair;
 
          procedure Best
            (Placed : Natural;
-            List   : Pair_Array;
+            List   : Pair_Access;
             Result : out Document);
 
          function Layout
@@ -188,7 +237,7 @@ package body Outputs is
 
          procedure Best
            (Placed : Natural;
-            List   : Pair_Array;
+            List   : Pair_Access;
             Result : out Document)
          is
             function Fits
@@ -222,15 +271,15 @@ package body Outputs is
                end case;
             end Fits;
 
-            Input  : constant Outputs.Document := List (List'First).Doc;
-            Indent : constant Natural := List (List'First).Indent;
+            Input  : constant Outputs.Document := List.Doc;
+            Indent : constant Natural := List.Indent;
+            Tail   : constant Pair_Access := List.Next;
             Item   : constant Outputs.Output_Item := Self.Store.Element (Input);
             Down   : Document;
-            Tail   : Pair_Array renames List (List'First + 1 .. List'Last);
          begin
             case Item.Kind is
                when Empty_Output =>
-                  if Tail'Length = 0 then
+                  if Tail = null then
                      Result := 1;  --  Nil
                   else
                      Best
@@ -240,22 +289,30 @@ package body Outputs is
                   end if;
 
                when Concat_Output =>
-                  Best
-                    (Placed => Placed,
-                     List   => Pair'(Indent, Item.Left) &
-                               Pair'(Indent, Item.Right) &
-                               Tail,
-                     Result => Result);
+                  declare
+                     Right : aliased Pair := (Indent, Item.Right, Tail);
+                     Left  : aliased Pair :=
+                       (Indent, Item.Left, Right'Unchecked_Access);
+                  begin
+                     Best
+                       (Placed => Placed,
+                        List   => Left'Unchecked_Access,
+                        Result => Result);
+                  end;
 
                when Nest_Output =>
-                  Best
-                    (Placed => Placed,
-                     List   => Pair'(Indent + Item.Indent, Item.Nest_Right) &
-                               Tail,
-                     Result => Result);
+                  declare
+                     Down : aliased Pair :=
+                       (Indent + Item.Indent, Item.Down, Tail);
+                  begin
+                     Best
+                       (Placed => Placed,
+                        List   => Down'Unchecked_Access,
+                        Result => Result);
+                  end;
 
                when Text_Output =>
-                  if Tail'Length = 0 then
+                  if Tail = null then
                      Down := 1;  --  Nil
                   else
                      Best
@@ -268,7 +325,7 @@ package body Outputs is
                   Result := Store.Last_Index;
 
                when New_Line_Output =>
-                  if Tail'Length = 0 then
+                  if Tail = null then
                      Down := 1;  --  Nil
                   else
                      Best
@@ -281,26 +338,31 @@ package body Outputs is
                   Result := Store.Last_Index;
 
                when Union_Output =>
-                  if Width >= Placed then
-                     Best
-                       (Placed => Placed,
-                        List   => Pair'(Indent, Item.Left) & Tail,
-                        Result => Down);
-
-                     if not Fits (Down, Width - Placed) then
+                  declare
+                     Left  : aliased Pair := (Indent, Item.Left, Tail);
+                     Right : aliased Pair := (Indent, Item.Right, Tail);
+                  begin
+                     if Width >= Placed then
                         Best
                           (Placed => Placed,
-                           List   => Pair'(Indent, Item.Right) & Tail,
+                           List   => Left'Unchecked_Access,
+                           Result => Down);
+
+                        if not Fits (Down, Width - Placed) then
+                           Best
+                             (Placed => Placed,
+                              List   => Right'Unchecked_Access,
+                              Result => Down);
+                        end if;
+                     else
+                        Best
+                          (Placed => Placed,
+                           List   => Right'Unchecked_Access,
                            Result => Down);
                      end if;
-                  else
-                     Best
-                       (Placed => Placed,
-                        List   => Pair'(Indent, Item.Right) & Tail,
-                        Result => Down);
-                  end if;
 
-                  Result := Down;
+                     Result := Down;
+                  end;
             end case;
          end Best;
 
@@ -344,10 +406,11 @@ package body Outputs is
       end Formatted_Documents;
 
       Temp : Formatted_Documents.Document;
+      Head : aliased Formatted_Documents.Pair := (0, Input, null);
    begin
       Formatted_Documents.Best
         (Placed => 0,
-         List   => (1 => (0, Input)),
+         List   => Head'Access,
          Result => Temp);
 
       return Formatted_Documents.Layout (Temp);
@@ -362,8 +425,7 @@ package body Outputs is
       Line   : League.Strings.Universal_String;
       Result : out Document) is
    begin
-      Self.Store.Append ((Text_Output, Line));
-      Result := Self.Store.Last_Index;
+      Self.Append ((Text_Output, Line), Result);
    end Text;
 
 end Outputs;

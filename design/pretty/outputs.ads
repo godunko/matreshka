@@ -1,5 +1,6 @@
 with League.Strings;
 with Ada.Containers.Vectors;
+with Ada.Containers.Hashed_Maps;
 
 package Outputs is
 
@@ -22,7 +23,8 @@ package Outputs is
 
    procedure New_Line
      (Self   : in out Printer;
-      Result : out Document);
+      Result : out Document;
+      Force  : Boolean := False);
    --  Create document with single new line character
 
    procedure Nest
@@ -65,19 +67,30 @@ private
 
    type Output_Item (Kind : Output_Kinds := Empty_Output) is record
       case Kind is
-         when Empty_Output | New_Line_Output =>
+         when Empty_Output =>
             null;
+         when New_Line_Output =>
+            Force : Boolean;
          when Text_Output =>
             Text : League.Strings.Universal_String;
          when Nest_Output =>
             Indent : Natural := 0;
-            Nest_Right : Document;
+            Down   : Document;
          when Union_Output | Concat_Output =>
             Left, Right : Document;
             --  For union there is next invariant:
             --  Length (First_Line (left)) >= Max (Length (First_Line (right)))
       end case;
    end record;
+
+   function Hash (Item : Output_Item) return Ada.Containers.Hash_Type;
+
+   package Maps is new Ada.Containers.Hashed_Maps
+     (Key_Type        => Output_Item,
+      Element_Type    => Document,
+      Hash            => Hash,
+      Equivalent_Keys => "=",
+      "="             => "=");
 
    package Output_Item_Vectors is new Ada.Containers.Vectors
      (Index_Type   => Document,
@@ -86,7 +99,13 @@ private
 
    type Printer is tagged limited record
       Store : Output_Item_Vectors.Vector;
+      Back  : Maps.Map;
    end record;
+
+   procedure Append
+     (Self  : in out Printer;
+      Item  : Output_Item;
+      Index : out Document);
 
    procedure Flatten
      (Self   : in out Printer;
