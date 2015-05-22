@@ -12,7 +12,7 @@ package body Outputs is
    procedure Append
      (Self  : in out Printer;
       Item  : Output_Item;
-      Index : out Document)
+      Index : out Document_Index)
    is
       Cursor : constant Maps.Cursor := Self.Back.Find (Item);
    begin
@@ -26,17 +26,118 @@ package body Outputs is
    end Append;
 
    ------------
+   -- Append --
+   ------------
+
+   not overriding function Append
+     (Self  : Document'Class;
+      Right : Document'Class) return Document
+   is
+      Index : Document_Index;
+   begin
+      Self.Printer.Concat (Self.Index, Right.Index, Index);
+      return (Self.Printer, Index);
+   end Append;
+
+   ------------
+   -- Append --
+   ------------
+
+   not overriding function Put
+     (Self  : Document'Class;
+      Right : League.Strings.Universal_String) return Document
+   is
+      Index : Document_Index;
+   begin
+      Self.Printer.Text (Right, Index);
+      Self.Printer.Concat (Self.Index, Index, Index);
+      return (Self.Printer, Index);
+   end Put;
+
+   ------------
+   -- Append --
+   ------------
+
+   not overriding function Put
+     (Self  : Document'Class;
+      Right : Wide_Wide_String) return Document is
+   begin
+      return Self.Put (League.Strings.To_Universal_String (Right));
+   end Put;
+
+   ------------
+   -- Append --
+   ------------
+
+   not overriding procedure Append
+     (Self   : in out Document;
+      Right  : Document'Class) is
+   begin
+      Self.Printer.Concat (Self.Index, Right.Index, Self.Index);
+   end Append;
+
+   ------------
+   -- Append --
+   ------------
+
+   not overriding procedure Put
+     (Self   : in out Document;
+      Right  : League.Strings.Universal_String)
+   is
+      Index : Document_Index;
+   begin
+      Self.Printer.Text (Right, Index);
+      Self.Printer.Concat (Self.Index, Index, Self.Index);
+   end Put;
+
+   ------------
+   -- Append --
+   ------------
+
+   not overriding procedure Put
+     (Self   : in out Document;
+      Right  : Wide_Wide_String) is
+   begin
+      Self.Put (League.Strings.To_Universal_String (Right));
+   end Put;
+
+   -----------------
+   -- Append_Line --
+   -----------------
+
+   not overriding procedure Put_Line
+     (Self   : in out Document;
+      Right : Wide_Wide_String) is
+   begin
+      Self.Put (Right);
+      Self.New_Line;
+   end Put_Line;
+
+   ------------
    -- Concat --
    ------------
 
    procedure Concat
      (Self   : in out Printer;
-      Left   : Document;
-      Right  : Document;
-      Result : out Document) is
+      Left   : Document_Index;
+      Right  : Document_Index;
+      Result : out Document_Index) is
    begin
       Self.Append ((Concat_Output, Left, Right), Result);
    end Concat;
+
+   -----------
+   -- Empty --
+   -----------
+
+   not overriding function Empty
+     (Self : access Printer'Class) return Document
+   is
+      Index : Document_Index;
+   begin
+      Self.Nil (Index);
+      return (Self.all'Unchecked_Access, Index);
+   end Empty;
 
    -------------
    -- Flatten --
@@ -44,12 +145,12 @@ package body Outputs is
 
    procedure Flatten
      (Self   : in out Printer;
-      Input  : Document;
-      Result : out Document)
+      Input  : Document_Index;
+      Result : out Document_Index)
    is
       Item : constant Output_Item := Self.Store.Element (Input);
-      Temp : Document;
-      Down : Document;
+      Temp : Document_Index;
+      Down : Document_Index;
    begin
       case Item.Kind is
          when Empty_Output | Text_Output =>
@@ -82,10 +183,10 @@ package body Outputs is
 
    procedure Group
      (Self   : in out Printer;
-      Input  : Document;
-      Result : out Document)
+      Input  : Document_Index;
+      Result : out Document_Index)
    is
-      Down : Document;
+      Down : Document_Index;
    begin
       Self.Flatten (Input, Down);
 
@@ -96,6 +197,25 @@ package body Outputs is
       end if;
    end Group;
 
+   -----------
+   -- Group --
+   -----------
+
+   not overriding function Group (Self : Document'Class) return Document is
+      Index : Document_Index;
+   begin
+      Self.Printer.Group (Self.Index, Index);
+      return (Self.Printer, Index);
+   end Group;
+
+   -----------
+   -- Group --
+   -----------
+
+   not overriding procedure Group (Self : in out Document) is
+   begin
+      Self.Printer.Group (Self.Index, Self.Index);
+   end Group;
    ----------
    -- Hash --
    ----------
@@ -128,15 +248,6 @@ package body Outputs is
       end case;
    end Hash;
 
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize (Self : in out Printer) is
-   begin
-      null;
-   end Initialize;
-
    ----------
    -- Nest --
    ----------
@@ -144,10 +255,35 @@ package body Outputs is
    procedure Nest
      (Self   : in out Printer;
       Indent : Natural;
-      Input  : Document;
-      Result : out Document) is
+      Input  : Document_Index;
+      Result : out Document_Index) is
    begin
       Self.Append ((Nest_Output, Indent, Input), Result);
+   end Nest;
+
+   ----------
+   -- Nest --
+   ----------
+
+   not overriding function Nest
+     (Self   : Document'Class;
+      Indent : Natural) return Document
+   is
+      Index : Document_Index;
+   begin
+      Self.Printer.Nest (Indent, Self.Index, Index);
+      return (Self.Printer, Index);
+   end Nest;
+
+   ----------
+   -- Nest --
+   ----------
+
+   not overriding procedure Nest
+     (Self   : in out Document;
+      Indent : Natural) is
+   begin
+      Self.Printer.Nest (Indent, Self.Index, Self.Index);
    end Nest;
 
    --------------
@@ -156,10 +292,47 @@ package body Outputs is
 
    procedure New_Line
      (Self   : in out Printer;
-      Result : out Document;
+      Result : out Document_Index;
       Force  : Boolean := False) is
    begin
       Self.Append ((New_Line_Output, Force), Result);
+   end New_Line;
+
+   --------------
+   -- New_Line --
+   --------------
+
+   not overriding function New_Line
+     (Self : access Printer'Class;
+      Gap  : Wide_Wide_String := " ") return Document
+   is
+      pragma Unreferenced (Gap);
+      Index : Document_Index;
+   begin
+      Self.New_Line (Index);
+      return (Self.all'Unchecked_Access, Index);
+   end New_Line;
+
+   --------------
+   -- New_Line --
+   --------------
+
+   not overriding function New_Line
+     (Self : Document'Class;
+      Gap  : Wide_Wide_String := " ") return Document is
+   begin
+      return Self.Append (Self.Printer.New_Line (Gap));
+   end New_Line;
+
+   --------------
+   -- New_Line --
+   --------------
+
+   not overriding procedure New_Line
+     (Self : in out Document;
+      Gap  : Wide_Wide_String := " ") is
+   begin
+      Self.Append (Self.Printer.New_Line (Gap));
    end New_Line;
 
    ---------
@@ -168,7 +341,7 @@ package body Outputs is
 
    procedure Nil
      (Self   : in out Printer;
-      Result : out Document) is
+      Result : out Document_Index) is
    begin
       Self.Append ((Kind => Empty_Output), Result);
    end Nil;
@@ -180,7 +353,7 @@ package body Outputs is
    function Pretty
      (Self   : in out Printer;
       Width  : Positive;
-      Input  : Document) return League.Strings.Universal_String
+      Input  : Document'Class) return League.Strings.Universal_String
    is
       package Formatted_Documents is
 
@@ -215,7 +388,7 @@ package body Outputs is
          type Pair_Access is access all Pair;
          type Pair is record
             Indent : Natural;
-            Doc    : Outputs.Document;
+            Doc    : Outputs.Document_Index;
             Next   : Pair_Access;
          end record;
 
@@ -231,6 +404,10 @@ package body Outputs is
 
       package body Formatted_Documents is
 
+         function Fits
+           (Index : Document;
+            Width : Natural) return Boolean;
+
          ----------
          -- Best --
          ----------
@@ -240,38 +417,7 @@ package body Outputs is
             List   : Pair_Access;
             Result : out Document)
          is
-            function Fits
-              (Index : Document;
-               Width : Natural) return Boolean;
-
-            ----------
-            -- Fits --
-            ----------
-
-            function Fits
-              (Index : Document;
-               Width : Natural) return Boolean
-            is
-               Item : constant Output_Item := Store.Element (Index);
-            begin
-               case Item.Kind is
-                  when Empty_Output =>
-                     return True;
-
-                  when Text_Output =>
-                     if Width >= Item.Text.Length then
-                        return Fits (Item.Text_Right, Width - Item.Text.Length);
-                     else
-                        return False;
-                     end if;
-
-                  when New_Line_Output =>
-                     return True;
-
-               end case;
-            end Fits;
-
-            Input  : constant Outputs.Document := List.Doc;
+            Input  : constant Outputs.Document_Index := List.Doc;
             Indent : constant Natural := List.Indent;
             Tail   : constant Pair_Access := List.Next;
             Item   : constant Outputs.Output_Item := Self.Store.Element (Input);
@@ -366,6 +512,33 @@ package body Outputs is
             end case;
          end Best;
 
+         ----------
+         -- Fits --
+         ----------
+
+         function Fits
+           (Index : Document;
+            Width : Natural) return Boolean
+         is
+            Item : constant Output_Item := Store.Element (Index);
+         begin
+            case Item.Kind is
+               when Empty_Output =>
+                  return True;
+
+               when Text_Output =>
+                  if Width >= Item.Text.Length then
+                     return Fits (Item.Text_Right, Width - Item.Text.Length);
+                  else
+                     return False;
+                  end if;
+
+               when New_Line_Output =>
+                  return True;
+
+            end case;
+         end Fits;
+
          ------------
          -- Layout --
          ------------
@@ -406,7 +579,7 @@ package body Outputs is
       end Formatted_Documents;
 
       Temp : Formatted_Documents.Document;
-      Head : aliased Formatted_Documents.Pair := (0, Input, null);
+      Head : aliased Formatted_Documents.Pair := (0, Input.Index, null);
    begin
       Formatted_Documents.Best
         (Placed => 0,
@@ -423,9 +596,34 @@ package body Outputs is
    procedure Text
      (Self   : in out Printer;
       Line   : League.Strings.Universal_String;
-      Result : out Document) is
+      Result : out Document_Index) is
    begin
       Self.Append ((Text_Output, Line), Result);
+   end Text;
+
+   ----------
+   -- Text --
+   ----------
+
+   not overriding function Text
+     (Self  : access Printer'Class;
+      Value : League.Strings.Universal_String) return Document
+   is
+      Index : Document_Index;
+   begin
+      Self.Text (Value, Index);
+      return (Self.all'Unchecked_Access, Index);
+   end Text;
+
+   ----------
+   -- Text --
+   ----------
+
+   not overriding function Text
+     (Self  : access Printer'Class;
+      Value : Wide_Wide_String) return Document is
+   begin
+      return Self.Text (League.Strings.To_Universal_String (Value));
    end Text;
 
 end Outputs;
