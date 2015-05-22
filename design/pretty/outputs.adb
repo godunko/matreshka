@@ -4,88 +4,6 @@ package body Outputs is
    -- Best --
    ----------
 
-   procedure Best
-     (Self   : in out Printer;
-      Width  : Positive;
-      Placed : Natural;
-      Input  : Document;
-      Result : out Document)
-   is
-      function Fits
-        (Index : Document;
-         Width : Natural) return Boolean;
-
-      function Fits
-        (Index : Document;
-         Width : Natural) return Boolean
-      is
-         Item : constant Output_Item := Self.Store.Element (Index);
-      begin
-         case Item.Kind is
-            when Empty_Output =>
-               return True;
-
-            when Text_Output =>
-               if Width >= Item.Text.Length then
-                  return Fits (Item.Text_Right, Width - Item.Text.Length);
-               else
-                  return False;
-               end if;
-
-            when New_Line_Output =>
-               return True;
-
-            when others =>
-               raise Constraint_Error;
-         end case;
-      end Fits;
-
-      Item : constant Output_Item := Self.Store.Element (Input);
-      Down : Document;
-   begin
-      case Item.Kind is
-         when Empty_Output =>
-            Result := Input;
-
-         when Text_Output =>
-            Self.Best
-              (Width,
-               Placed + Item.Text.Length,
-               Item.Text_Right,
-               Down);
-
-            if Down = Item.Text_Right then
-               Result := Input;
-            else
-               Self.Store.Append ((Text_Output, Item.Text, Down));
-               Result := Self.Store.Last_Index;
-            end if;
-
-         when New_Line_Output =>
-            Self.Best (Width, Item.Indent, Item.New_Line_Right, Down);
-
-            if Down = Item.New_Line_Right then
-               Result := Input;
-            else
-               Self.Store.Append ((New_Line_Output, Item.Indent, Down));
-               Result := Self.Store.Last_Index;
-            end if;
-
-         when Union_Output =>
-            if Width >= Placed then
-               Self.Best (Width, Placed, Item.Left, Down);
-
-               if not Fits (Down, Width - Placed) then
-                  Self.Best (Width, Placed, Item.Right, Down);
-               end if;
-            else
-               Self.Best (Width, Placed, Item.Right, Down);
-            end if;
-
-            Result := Down;
-      end case;
-   end Best;
-
    ------------
    -- Concat --
    ------------
@@ -94,48 +12,10 @@ package body Outputs is
      (Self   : in out Printer;
       Left   : Document;
       Right  : Document;
-      Result : out Document)
-   is
-      Item : constant Output_Item := Self.Store.Element (Left);
-      Down : Document;
-      Temp : Document;
+      Result : out Document) is
    begin
-      case Item.Kind is
-         when Empty_Output =>
-            Result := Right;
-
-         when Text_Output =>
-            Self.Concat (Item.Text_Right, Right, Down);
-
-            if Down = Item.Text_Right then
-               Result := Left;
-            else
-               Self.Store.Append ((Text_Output, Item.Text, Down));
-               Result := Self.Store.Last_Index;
-            end if;
-
-         when New_Line_Output =>
-            Self.Concat (Item.New_Line_Right, Right, Down);
-
-            if Down = Item.New_Line_Right then
-               Result := Left;
-            else
-               Self.Store.Append ((New_Line_Output, Item.Indent, Down));
-               Result := Self.Store.Last_Index;
-            end if;
-
-         when Union_Output =>
-            Self.Concat (Item.Left, Right, Down);
-            Self.Concat (Item.Right, Right, Temp);
-
-            if Item.Left = Down and Item.Right = Temp then
-               Result := Left;
-            else
-               Self.Store.Append ((Union_Output, Down, Temp));
-               Result := Self.Store.Last_Index;
-            end if;
-
-      end case;
+      Self.Store.Append ((Concat_Output, Left, Right));
+      Result := Self.Store.Last_Index;
    end Concat;
 
    -------------
@@ -148,27 +28,24 @@ package body Outputs is
       Result : out Document)
    is
       Item : constant Output_Item := Self.Store.Element (Input);
+      Temp : Document;
       Down : Document;
    begin
       case Item.Kind is
-         when Empty_Output =>
+         when Empty_Output | Text_Output =>
             Result := Input;
 
-         when Text_Output =>
-            Self.Flatten (Item.Text_Right, Down);
+         when Concat_Output =>
+            Self.Flatten (Item.Left, Down);
+            Self.Flatten (Item.Right, Temp);
+            Self.Store.Append ((Concat_Output, Down, Temp));
+            Result := Self.Store.Last_Index;
 
-            if Down = Item.Text_Right then
-               Result := Input;
-            else
-               Self.Store.Append ((Text_Output, Item.Text, Down));
-               Result := Self.Store.Last_Index;
-            end if;
+         when Nest_Output =>
+            Self.Flatten (Item.Nest_Right, Result);
 
          when New_Line_Output =>
-            Self.Flatten (Item.New_Line_Right, Down);
-            Self.Store.Append
-              ((Text_Output, League.Strings.To_Universal_String (" "), Down));
-            Result := Self.Store.Last_Index;
+            Result := 3;  --  Text ' '
 
          when Union_Output =>
             Self.Flatten (Item.Left, Result);
@@ -185,40 +62,11 @@ package body Outputs is
       Input  : Document;
       Result : out Document)
    is
-      Item : constant Output_Item := Self.Store.Element (Input);
       Down : Document;
    begin
-      case Item.Kind is
-         when Empty_Output =>
-            Result := Input;
-
-         when Text_Output =>
-            Self.Group (Item.Text_Right, Down);
-
-            if Down = Item.Text_Right then
-               Result := Input;
-            else
-               Self.Store.Append ((Text_Output, Item.Text, Down));
-               Result := Self.Store.Last_Index;
-            end if;
-
-         when New_Line_Output =>
-            Self.Flatten (Input, Down);
-            Self.Store.Append ((Union_Output, Down, Input));
-            Result := Self.Store.Last_Index;
-
-         when Union_Output =>
-            Self.Group (Item.Left, Down);
-
-            if Down = Item.Left then
-               Result := Input;
-            else
-               Self.Store.Append ((Union_Output, Down, Item.Right));
-               Result := Self.Store.Last_Index;
-            end if;
-
-      end case;
-
+      Self.Flatten (Input, Down);
+      Self.Store.Append ((Union_Output, Down, Input));
+      Result := Self.Store.Last_Index;
    end Group;
 
    ----------------
@@ -228,46 +76,14 @@ package body Outputs is
    procedure Initialize (Self : in out Printer) is
    begin
       Self.Store.Append ((Kind => Empty_Output));   --  1
-      Self.Store.Append ((New_Line_Output, 0, 1));  --  2
+      Self.Store.Append ((Kind => New_Line_Output));  --  2
+      Self.Store.Append  --  3
+        ((Text_Output, League.Strings.To_Universal_String (" ")));
    end Initialize;
 
    ------------
    -- Layout --
    ------------
-
-   function Layout
-     (Self   : Printer;
-      Input  : Document) return League.Strings.Universal_String
-   is
-      use type League.Strings.Universal_String;
-
-      Item : constant Output_Item := Self.Store.Element (Input);
-      Temp : League.Strings.Universal_String;
-   begin
-      case Item.Kind is
-         when Empty_Output =>
-            return League.Strings.Empty_Universal_String;
-
-         when Text_Output =>
-            Temp := Self.Layout (Item.Text_Right);
-
-            return Item.Text & Temp;
-
-         when New_Line_Output =>
-            declare
-               NL    : constant Wide_Wide_Character :=
-                 Wide_Wide_Character'Val (10);
-               Space : constant Wide_Wide_String := (1 .. Item.Indent => ' ');
-            begin
-               Temp := Self.Layout (Item.New_Line_Right);
-
-               return NL & Space & Temp;
-            end;
-
-         when Union_Output =>
-            raise Constraint_Error;
-      end case;
-   end Layout;
 
    ----------
    -- Nest --
@@ -279,38 +95,9 @@ package body Outputs is
       Input  : Document;
       Result : out Document)
    is
-      Item : constant Output_Item := Self.Store.Element (Input);
-      Temp : Document;
-      Down : Document;
    begin
-      case Item.Kind is
-         when Empty_Output =>
-            Result := Input;
-
-         when Text_Output =>
-            Self.Nest (Indent, Item.Text_Right, Down);
-
-            if Down = Item.Text_Right then
-               Result := Input;
-            else
-               Self.Store.Append ((Text_Output, Item.Text, Down));
-               Result := Self.Store.Last_Index;
-            end if;
-
-         when New_Line_Output =>
-            Self.Nest (Indent, Item.New_Line_Right, Temp);
-
-            Self.Store.Append
-              ((New_Line_Output, Indent + Item.Indent, Temp));
-            Result := Self.Store.Last_Index;
-
-         when Union_Output =>
-            Self.Nest (Indent, Item.Left, Down);
-            Self.Nest (Indent, Item.Right, Temp);
-            Self.Store.Append ((Union_Output, Down, Temp));
-            Result := Self.Store.Last_Index;
-
-      end case;
+      Self.Store.Append ((Nest_Output, Indent, Input));
+      Result := Self.Store.Last_Index;
    end Nest;
 
    --------------
@@ -347,15 +134,223 @@ package body Outputs is
       Width  : Positive;
       Input  : Document) return League.Strings.Universal_String
    is
-      Temp : Document;
+      package Formatted_Documents is
+
+         type Document is new Positive;
+
+         type Output_Kinds is
+           (Empty_Output,
+            Text_Output,
+            New_Line_Output);
+
+         type Output_Item (Kind : Output_Kinds := Empty_Output) is record
+            case Kind is
+               when Empty_Output =>
+                  null;
+               when Text_Output =>
+                  Text       : League.Strings.Universal_String;
+                  Text_Right : Document;
+               when New_Line_Output =>
+                  Indent         : Natural := 0;
+                  New_Line_Right : Document;
+            end case;
+         end record;
+
+         package Output_Item_Vectors is new Ada.Containers.Vectors
+           (Index_Type   => Document,
+            Element_Type => Output_Item,
+            "="          => "=");
+
+         Store : Output_Item_Vectors.Vector;
+
+         type Pair is record
+            Indent : Natural;
+            Doc    : Outputs.Document;
+         end record;
+
+         type Pair_Array is array (Positive range <>) of Pair;
+
+         procedure Best
+           (Placed : Natural;
+            List   : Pair_Array;
+            Result : out Document);
+
+         function Layout
+           (Input  : Document) return League.Strings.Universal_String;
+
+      end Formatted_Documents;
+
+      package body Formatted_Documents is
+
+         ----------
+         -- Best --
+         ----------
+
+         procedure Best
+           (Placed : Natural;
+            List   : Pair_Array;
+            Result : out Document)
+         is
+            function Fits
+              (Index : Document;
+               Width : Natural) return Boolean;
+
+            ----------
+            -- Fits --
+            ----------
+
+            function Fits
+              (Index : Document;
+               Width : Natural) return Boolean
+            is
+               Item : constant Output_Item := Store.Element (Index);
+            begin
+               case Item.Kind is
+                  when Empty_Output =>
+                     return True;
+
+                  when Text_Output =>
+                     if Width >= Item.Text.Length then
+                        return Fits (Item.Text_Right, Width - Item.Text.Length);
+                     else
+                        return False;
+                     end if;
+
+                  when New_Line_Output =>
+                     return True;
+
+               end case;
+            end Fits;
+
+            Input  : constant Outputs.Document := List (List'First).Doc;
+            Indent : constant Natural := List (List'First).Indent;
+            Item   : constant Outputs.Output_Item := Self.Store.Element (Input);
+            Down   : Document;
+            Tail   : Pair_Array renames List (List'First + 1 .. List'Last);
+         begin
+            case Item.Kind is
+               when Empty_Output =>
+                  if Tail'Length = 0 then
+                     Result := 1;  --  Nil
+                  else
+                     Best
+                       (Placed => Placed,
+                        List   => Tail,
+                        Result => Result);
+                  end if;
+
+               when Concat_Output =>
+                  Best
+                    (Placed => Placed,
+                     List   => Pair'(Indent, Item.Left) &
+                               Pair'(Indent, Item.Right) &
+                               Tail,
+                     Result => Result);
+
+               when Nest_Output =>
+                  Best
+                    (Placed => Placed,
+                     List   => Pair'(Indent + Item.Indent, Item.Nest_Right) &
+                               Tail,
+                     Result => Result);
+
+               when Text_Output =>
+                  if Tail'Length = 0 then
+                     Down := 1;  --  Nil
+                  else
+                     Best
+                       (Placed => Placed + Item.Text.Length,
+                        List   => Tail,
+                        Result => Down);
+                  end if;
+
+                  Store.Append ((Text_Output, Item.Text, Down));
+                  Result := Store.Last_Index;
+
+               when New_Line_Output =>
+                  if Tail'Length = 0 then
+                     Down := 1;  --  Nil
+                  else
+                     Best
+                       (Placed => Indent,
+                        List   => Tail,
+                        Result => Down);
+                  end if;
+
+                  Store.Append ((New_Line_Output, Indent, Down));
+                  Result := Store.Last_Index;
+
+               when Union_Output =>
+                  if Width >= Placed then
+                     Best
+                       (Placed => Placed,
+                        List   => Pair'(Indent, Item.Left) & Tail,
+                        Result => Down);
+
+                     if not Fits (Down, Width - Placed) then
+                        Best
+                          (Placed => Placed,
+                           List   => Pair'(Indent, Item.Right) & Tail,
+                           Result => Down);
+                     end if;
+                  else
+                     Best
+                       (Placed => Placed,
+                        List   => Pair'(Indent, Item.Right) & Tail,
+                        Result => Down);
+                  end if;
+
+                  Result := Down;
+            end case;
+         end Best;
+
+         ------------
+         -- Layout --
+         ------------
+
+         function Layout
+           (Input  : Document) return League.Strings.Universal_String
+         is
+            use type League.Strings.Universal_String;
+
+            Item : constant Output_Item := Store.Element (Input);
+            Temp : League.Strings.Universal_String;
+         begin
+            case Item.Kind is
+               when Empty_Output =>
+                  return League.Strings.Empty_Universal_String;
+
+               when Text_Output =>
+                  Temp := Layout (Item.Text_Right);
+
+                  return Item.Text & Temp;
+
+               when New_Line_Output =>
+                  declare
+                     NL    : constant Wide_Wide_Character :=
+                       Wide_Wide_Character'Val (10);
+                     Space : constant Wide_Wide_String := (1 .. Item.Indent => ' ');
+                  begin
+                     Temp := Layout (Item.New_Line_Right);
+
+                     return NL & Space & Temp;
+                  end;
+
+            end case;
+         end Layout;
+
+      begin
+         Store.Append ((Kind => Empty_Output));   --  1
+      end Formatted_Documents;
+
+      Temp : Formatted_Documents.Document;
    begin
-      Self.Best
-        (Width  => Width,
-         Placed => 0,
-         Input  => Input,
+      Formatted_Documents.Best
+        (Placed => 0,
+         List   => (1 => (0, Input)),
          Result => Temp);
 
-      return Self.Layout (Temp);
+      return Formatted_Documents.Layout (Temp);
    end Pretty;
 
    ----------
@@ -367,7 +362,7 @@ package body Outputs is
       Line   : League.Strings.Universal_String;
       Result : out Document) is
    begin
-      Self.Store.Append ((Text_Output, Line, 1));
+      Self.Store.Append ((Text_Output, Line));
       Result := Self.Store.Last_Index;
    end Text;
 

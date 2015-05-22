@@ -59,20 +59,22 @@ private
      (Empty_Output,
       Text_Output,
       New_Line_Output,
+      Nest_Output,
+      Concat_Output,
       Union_Output);
 
    type Output_Item (Kind : Output_Kinds := Empty_Output) is record
       case Kind is
-         when Empty_Output =>
+         when Empty_Output | New_Line_Output =>
             null;
          when Text_Output =>
-            Text       : League.Strings.Universal_String;
-            Text_Right : Document;
-         when New_Line_Output =>
-            Indent         : Natural := 0;
-            New_Line_Right : Document;
-         when Union_Output =>
+            Text : League.Strings.Universal_String;
+         when Nest_Output =>
+            Indent : Natural := 0;
+            Nest_Right : Document;
+         when Union_Output | Concat_Output =>
             Left, Right : Document;
+            --  For union there is next invariant:
             --  Length (First_Line (left)) >= Max (Length (First_Line (right)))
       end case;
    end record;
@@ -90,16 +92,5 @@ private
      (Self   : in out Printer;
       Input  : Document;
       Result : out Document);
-
-   procedure Best
-     (Self   : in out Printer;
-      Width  : Positive;
-      Placed : Natural;
-      Input  : Document;
-      Result : out Document);
-
-   function Layout
-     (Self   : Printer;
-      Input  : Document) return League.Strings.Universal_String;
 
 end Outputs;
