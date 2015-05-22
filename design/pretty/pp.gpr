@@ -1,0 +1,15 @@
+with "matreshka/league.gpr";
+
+project Pp is
+
+   package Compiler is
+      for Default_Switches ("ada") use
+       ("-gnatwea", "-g", "-gnat12", "-fstack-check");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+end Pp;
+

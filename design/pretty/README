@@ -1,0 +1,14 @@
+This package provides text pretty printer inspired by article
+"A prettier printer. Philip Wadler"
+
+http://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf
+
+User creates a document to be printed by calling a few subprogram
+ * Nil - empty document
+ * Text - document of given text without new line
+ * New_Line - document with single new line inside
+ * Concat - two documents joined together
+ * Group - mark subdocument to fold all new lines in it if doent fit on a line
+
+Them document could be printed with desired text width.
+
