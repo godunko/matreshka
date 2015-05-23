@@ -5,7 +5,7 @@ with Ada.Wide_Wide_Text_IO;
 with League.Strings;
 
 procedure Main_PP is
-   X : Printer;
+   X : aliased Printer;
 
    function "+"
      (Left : Wide_Wide_String) return League.Strings.Universal_String
@@ -40,34 +40,20 @@ procedure Main_PP is
 
       function Show_Bracket (List : Node_Array) return Document is
          Down : Document;
-         Temp : Document;
       begin
          if List'Length = 0 then
-            X.Nil (Down);
-            return Down;
+            return X.Empty;
          end if;
 
-         Down := Show_Trees (List);
+         Down := Show_Trees (List).Nest (1);
 
-         X.Nest (1, Down, Down);
-         X.Text (+"[", Temp);
-         X.Concat (Temp, Down, Down);
-         X.Text (+"]", Temp);
-         X.Concat (Down, Temp, Down);
-
-         return Down;
+         return X.Text ("[").Append (Down).Put ("]");
       end Show_Bracket;
 
       function Show_Tree (T : access Node) return Document is
-         Down : Document := Show_Bracket (T.TS);
-         Temp : Document;
+         Down : constant Document := Show_Bracket (T.TS).Nest (T.S.Length);
       begin
-         X.Nest (T.S.Length, Down, Down);
-         X.Text (T.S, Temp);
-         X.Concat (Temp, Down, Temp);
-         X.Group (Temp, Temp);
-
-         return Temp;
+         return X.Text (T.S).Append (Down).Group;
       end Show_Tree;
 
       function Show_Trees (List : Node_Array) return Document is
@@ -75,12 +61,9 @@ procedure Main_PP is
          Temp : Document;
       begin
          if List'Length > 1 then
-            X.Text (+",", Temp);
-            X.Concat (Down, Temp, Down);
-            X.New_Line (Temp);
-            X.Concat (Down, Temp, Down);
+            Down.Put_Line (",");
             Temp := Show_Trees (List (List'First + 1 .. List'Last));
-            X.Concat (Down, Temp, Down);
+            Down.Append (Temp);
 
          end if;
 
@@ -90,7 +73,6 @@ procedure Main_PP is
 
    W : Document;
 begin
-   X.Initialize;
    W := Trees.Show_Tree (Trees.A'Access);
 
    Ada.Wide_Wide_Text_IO.Put_Line

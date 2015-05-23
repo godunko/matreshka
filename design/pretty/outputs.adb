@@ -357,187 +357,225 @@ package body Outputs is
    is
       package Formatted_Documents is
 
-         type Document is new Positive;
+         --  Formatted document is represented as sequence of Items.
+         --  Item is either text (without new line) or
+         --  new line together with indent spaces.
 
-         type Output_Kinds is
-           (Empty_Output,
-            Text_Output,
-            New_Line_Output);
+         type Item;
+         type Document is access all Item'Class;
 
-         type Output_Item (Kind : Output_Kinds := Empty_Output) is record
-            case Kind is
-               when Empty_Output =>
-                  null;
-               when Text_Output =>
-                  Text       : League.Strings.Universal_String;
-                  Text_Right : Document;
-               when New_Line_Output =>
-                  Indent         : Natural := 0;
-                  New_Line_Right : Document;
-            end case;
+         type Item is abstract tagged limited record
+            Next : aliased Document;
          end record;
 
-         package Output_Item_Vectors is new Ada.Containers.Vectors
-           (Index_Type   => Document,
-            Element_Type => Output_Item,
-            "="          => "=");
+         not overriding function Fits
+           (Self  : Item;
+            Width : Natural) return Boolean is abstract;
+         --  Check if line started from given item fits given Width
 
-         Store : Output_Item_Vectors.Vector;
+         not overriding procedure Append
+           (Self   : Item;
+            Result : in out League.Strings.Universal_String) is abstract;
+         --  Append text representation of given item to Result
+
+         type Text_Item is new Item with record
+            Text : League.Strings.Universal_String;
+         end record;
+
+         overriding function Fits
+           (Self  : Text_Item;
+            Width : Natural) return Boolean;
+
+         overriding procedure Append
+           (Self   : Text_Item;
+            Result : in out League.Strings.Universal_String);
+
+         type Line_Item is new Item with record
+            Indent : Natural;
+         end record;
+
+         overriding function Fits
+           (Self  : Line_Item;
+            Width : Natural) return Boolean;
+
+         overriding procedure Append
+           (Self   : Line_Item;
+            Result : in out League.Strings.Universal_String);
 
          type Pair;
          type Pair_Access is access all Pair;
+
          type Pair is record
-            Indent : Natural;
-            Doc    : Outputs.Document_Index;
-            Next   : Pair_Access;
+            Indent   : Natural;
+            Document : Outputs.Document_Index;
+            Next     : Pair_Access;
          end record;
 
-         procedure Best
-           (Placed : Natural;
-            List   : Pair_Access;
-            Result : out Document);
+         function New_Pair
+           (Indent : Natural;
+            Doc    : Outputs.Document_Index;
+            Next   : Pair_Access) return not null Pair_Access;
+
+         function Best
+           (Offset : Natural;
+            List   : not null Pair_Access) return Document;
 
          function Layout
-           (Input  : Document) return League.Strings.Universal_String;
+           (Input : Document) return League.Strings.Universal_String;
 
       end Formatted_Documents;
 
       package body Formatted_Documents is
 
-         function Fits
-           (Index : Document;
-            Width : Natural) return Boolean;
+         Free_List : Pair_Access;
+
+         procedure Free_Pair (Value : Pair_Access);
+
+         ------------
+         -- Append --
+         ------------
+
+         overriding procedure Append
+           (Self   : Text_Item;
+            Result : in out League.Strings.Universal_String) is
+         begin
+            Result.Append (Self.Text);
+         end Append;
+
+         ------------
+         -- Append --
+         ------------
+
+         overriding procedure Append
+           (Self   : Line_Item;
+            Result : in out League.Strings.Universal_String)
+         is
+            NL    : constant Wide_Wide_Character :=
+              Wide_Wide_Character'Val (10);
+            Space : constant Wide_Wide_String := (1 .. Self.Indent => ' ');
+         begin
+            Result.Append (NL);
+            Result.Append (Space);
+         end Append;
 
          ----------
          -- Best --
          ----------
 
-         procedure Best
-           (Placed : Natural;
-            List   : Pair_Access;
-            Result : out Document)
+         function Best
+           (Offset : Natural;
+            List   : not null Pair_Access) return Document
          is
-            Input  : constant Outputs.Document_Index := List.Doc;
-            Indent : constant Natural := List.Indent;
-            Tail   : constant Pair_Access := List.Next;
-            Item   : constant Outputs.Output_Item := Self.Store.Element (Input);
-            Down   : Document;
+            Placed : Natural := Offset;
+            Head   : not null Pair_Access := List;
+            Tail   : Pair_Access;  --  Shortcut for Head.Next
+            Result : aliased Document;
+            Hook   : access Document := Result'Access;
+            Indent : Natural;
+            Item   : Outputs.Output_Item;
          begin
-            case Item.Kind is
-               when Empty_Output =>
-                  if Tail = null then
-                     Result := 1;  --  Nil
-                  else
-                     Best
-                       (Placed => Placed,
-                        List   => Tail,
-                        Result => Result);
-                  end if;
+            loop
+               Indent := Head.Indent;
+               Tail := Head.Next;
+               Item := Self.Store.Element (Head.Document);
 
-               when Concat_Output =>
-                  declare
-                     Right : aliased Pair := (Indent, Item.Right, Tail);
-                     Left  : aliased Pair :=
-                       (Indent, Item.Left, Right'Unchecked_Access);
-                  begin
-                     Best
-                       (Placed => Placed,
-                        List   => Left'Unchecked_Access,
-                        Result => Result);
-                  end;
+               case Item.Kind is
+                  when Empty_Output =>
+                     exit when Tail = null;
 
-               when Nest_Output =>
-                  declare
-                     Down : aliased Pair :=
-                       (Indent + Item.Indent, Item.Down, Tail);
-                  begin
-                     Best
-                       (Placed => Placed,
-                        List   => Down'Unchecked_Access,
-                        Result => Result);
-                  end;
+                     Head := Tail;
 
-               when Text_Output =>
-                  if Tail = null then
-                     Down := 1;  --  Nil
-                  else
-                     Best
-                       (Placed => Placed + Item.Text.Length,
-                        List   => Tail,
-                        Result => Down);
-                  end if;
+                  when Concat_Output =>
+                     Head := New_Pair
+                       (Indent,
+                        Item.Left,
+                        New_Pair (Indent, Item.Right, Tail));
 
-                  Store.Append ((Text_Output, Item.Text, Down));
-                  Result := Store.Last_Index;
+                  when Nest_Output =>
+                     Head := New_Pair (Indent + Item.Indent, Item.Down, Tail);
 
-               when New_Line_Output =>
-                  if Tail = null then
-                     Down := 1;  --  Nil
-                  else
-                     Best
-                       (Placed => Indent,
-                        List   => Tail,
-                        Result => Down);
-                  end if;
+                  when Text_Output =>
+                     Hook.all := new Text_Item'(null, Item.Text);
 
-                  Store.Append ((New_Line_Output, Indent, Down));
-                  Result := Store.Last_Index;
+                     exit when Tail = null;
 
-               when Union_Output =>
-                  declare
-                     Left  : aliased Pair := (Indent, Item.Left, Tail);
-                     Right : aliased Pair := (Indent, Item.Right, Tail);
-                  begin
+                     Hook   := Hook.all.Next'Access;
+                     Placed := Placed + Item.Text.Length;
+                     Head   := Tail;
+
+                  when New_Line_Output =>
+                     Hook.all := new Line_Item'(null, Indent);
+
+                     exit when Tail = null;
+
+                     Hook   := Hook.all.Next'Access;
+                     Placed := Indent;
+                     Head   := Tail;
+
+                  when Union_Output =>
                      if Width >= Placed then
-                        Best
-                          (Placed => Placed,
-                           List   => Left'Unchecked_Access,
-                           Result => Down);
+                        Head := New_Pair (Indent, Item.Left, Tail);
 
-                        if not Fits (Down, Width - Placed) then
-                           Best
-                             (Placed => Placed,
-                              List   => Right'Unchecked_Access,
-                              Result => Down);
-                        end if;
-                     else
-                        Best
-                          (Placed => Placed,
-                           List   => Right'Unchecked_Access,
-                           Result => Down);
+                        Hook.all := Best (Placed, Head);
+                        Free_Pair (Head);
+
+                        exit when Hook.all = null  --  Empty always fits
+                          or else Hook.all.Fits (Width - Placed);
+
                      end if;
 
-                     Result := Down;
-                  end;
-            end case;
+                     Head := New_Pair (Indent, Item.Right, Tail);
+
+                     Hook.all := Best (Placed, Head);
+                     Free_Pair (Head);
+
+                     exit;
+               end case;
+            end loop;
+
+            --  XXX Here we can free any Pair allocated in this call
+            return Result;
          end Best;
 
          ----------
          -- Fits --
          ----------
 
-         function Fits
-           (Index : Document;
+         overriding function Fits
+           (Self  : Text_Item;
+            Width : Natural) return Boolean is
+         begin
+            if Width < Self.Text.Length then
+               return False;
+            elsif Self.Next = null then
+               return True;
+            else
+               return Self.Next.Fits (Width - Self.Text.Length);
+            end if;
+         end Fits;
+
+         ----------
+         -- Fits --
+         ----------
+
+         overriding function Fits
+           (Self  : Line_Item;
             Width : Natural) return Boolean
          is
-            Item : constant Output_Item := Store.Element (Index);
+            pragma Unreferenced (Self, Width);
          begin
-            case Item.Kind is
-               when Empty_Output =>
-                  return True;
-
-               when Text_Output =>
-                  if Width >= Item.Text.Length then
-                     return Fits (Item.Text_Right, Width - Item.Text.Length);
-                  else
-                     return False;
-                  end if;
-
-               when New_Line_Output =>
-                  return True;
-
-            end case;
+            return True;  --  New line fits any width
          end Fits;
+
+         ---------------
+         -- Free_Pair --
+         ---------------
+
+         procedure Free_Pair (Value : Pair_Access) is
+         begin
+            Value.Next := Free_List;
+            Free_List := Value;
+         end Free_Pair;
 
          ------------
          -- Layout --
@@ -546,45 +584,43 @@ package body Outputs is
          function Layout
            (Input  : Document) return League.Strings.Universal_String
          is
-            use type League.Strings.Universal_String;
-
-            Item : constant Output_Item := Store.Element (Input);
-            Temp : League.Strings.Universal_String;
+            Next   : Document := Input;
+            Result : League.Strings.Universal_String;
          begin
-            case Item.Kind is
-               when Empty_Output =>
-                  return League.Strings.Empty_Universal_String;
+            while Next /= null loop
+               Next.Append (Result);
+               Next := Next.Next;
+            end loop;
 
-               when Text_Output =>
-                  Temp := Layout (Item.Text_Right);
-
-                  return Item.Text & Temp;
-
-               when New_Line_Output =>
-                  declare
-                     NL    : constant Wide_Wide_Character :=
-                       Wide_Wide_Character'Val (10);
-                     Space : constant Wide_Wide_String := (1 .. Item.Indent => ' ');
-                  begin
-                     Temp := Layout (Item.New_Line_Right);
-
-                     return NL & Space & Temp;
-                  end;
-
-            end case;
+            return Result;
          end Layout;
 
-      begin
-         Store.Append ((Kind => Empty_Output));   --  1
+         --------------
+         -- New_Pair --
+         --------------
+
+         function New_Pair
+           (Indent : Natural;
+            Doc    : Outputs.Document_Index;
+            Next   : Pair_Access) return not null Pair_Access is
+         begin
+            if Free_List = null then
+               return new Pair'(Indent, Doc, Next);
+            else
+               return Value : constant not null Pair_Access := Free_List do
+                  Free_List := Value.Next;
+                  Value.all := (Indent, Doc, Next);
+               end return;
+            end if;
+         end New_Pair;
+
       end Formatted_Documents;
 
       Temp : Formatted_Documents.Document;
-      Head : aliased Formatted_Documents.Pair := (0, Input.Index, null);
    begin
-      Formatted_Documents.Best
-        (Placed => 0,
-         List   => Head'Access,
-         Result => Temp);
+      Temp := Formatted_Documents.Best
+        (Offset => 0,
+         List   => Formatted_Documents.New_Pair (0, Input.Index, null));
 
       return Formatted_Documents.Layout (Temp);
    end Pretty;

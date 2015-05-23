@@ -2,6 +2,8 @@ with "matreshka/league.gpr";
 
 project Pp is
 
+   for Main use ("main_pp.adb");
+
    package Compiler is
       for Default_Switches ("ada") use
        ("-gnatwea", "-g", "-gnat12", "-fstack-check");
