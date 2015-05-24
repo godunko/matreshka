@@ -368,11 +368,6 @@ package body Outputs is
             Next : aliased Document;
          end record;
 
-         not overriding function Fits
-           (Self  : Item;
-            Width : Natural) return Boolean is abstract;
-         --  Check if line started from given item fits given Width
-
          not overriding procedure Append
            (Self   : Item;
             Result : in out League.Strings.Universal_String) is abstract;
@@ -382,10 +377,6 @@ package body Outputs is
             Text : League.Strings.Universal_String;
          end record;
 
-         overriding function Fits
-           (Self  : Text_Item;
-            Width : Natural) return Boolean;
-
          overriding procedure Append
            (Self   : Text_Item;
             Result : in out League.Strings.Universal_String);
@@ -393,10 +384,6 @@ package body Outputs is
          type Line_Item is new Item with record
             Indent : Natural;
          end record;
-
-         overriding function Fits
-           (Self  : Line_Item;
-            Width : Natural) return Boolean;
 
          overriding procedure Append
            (Self   : Line_Item;
@@ -428,6 +415,10 @@ package body Outputs is
       package body Formatted_Documents is
 
          Free_List : Pair_Access;
+
+         function Fits
+           (Offset : Natural;
+            List   : not null Pair_Access) return Boolean;
 
          procedure Free_Pair (Value : Pair_Access);
 
@@ -473,11 +464,18 @@ package body Outputs is
             Hook   : access Document := Result'Access;
             Indent : Natural;
             Item   : Outputs.Output_Item;
+            Pairs  : Natural := 0; --  Count of pair at the top of Tail
+            --  allocated in this call of Fits
          begin
             loop
                Indent := Head.Indent;
                Tail := Head.Next;
                Item := Self.Store.Element (Head.Document);
+
+               if Pairs > 0 then
+                  Pairs := Pairs - 1;
+                  Free_Pair (Head);
+               end if;
 
                case Item.Kind is
                   when Empty_Output =>
@@ -486,13 +484,14 @@ package body Outputs is
                      Head := Tail;
 
                   when Concat_Output =>
-                     Head := New_Pair
-                       (Indent,
-                        Item.Left,
-                        New_Pair (Indent, Item.Right, Tail));
+                     Head := New_Pair (Indent, Item.Right, Tail);
+                     Head := New_Pair (Indent, Item.Left, Head);
+
+                     Pairs := Pairs + 2;
 
                   when Nest_Output =>
                      Head := New_Pair (Indent + Item.Indent, Item.Down, Tail);
+                     Pairs := Pairs + 1;
 
                   when Text_Output =>
                      Hook.all := new Text_Item'(null, Item.Text);
@@ -516,12 +515,12 @@ package body Outputs is
                      if Width >= Placed then
                         Head := New_Pair (Indent, Item.Left, Tail);
 
-                        Hook.all := Best (Placed, Head);
-                        Free_Pair (Head);
+                        if Fits (Placed, Head) then
+                           Hook.all := Best (Placed, Head);
+                           Free_Pair (Head);
 
-                        exit when Hook.all = null  --  Empty always fits
-                          or else Hook.all.Fits (Width - Placed);
-
+                           exit;
+                        end if;
                      end if;
 
                      Head := New_Pair (Indent, Item.Right, Tail);
@@ -533,38 +532,105 @@ package body Outputs is
                end case;
             end loop;
 
-            --  XXX Here we can free any Pair allocated in this call
+            --  Here we can free any Pair allocated in this call
+            for J in 1 .. Pairs loop
+               Head := Tail;
+               Tail := Tail.Next;
+               Free_Pair (Head);
+            end loop;
+
             return Result;
          end Best;
 
-         ----------
-         -- Fits --
-         ----------
-
-         overriding function Fits
-           (Self  : Text_Item;
-            Width : Natural) return Boolean is
-         begin
-            if Width < Self.Text.Length then
-               return False;
-            elsif Self.Next = null then
-               return True;
-            else
-               return Self.Next.Fits (Width - Self.Text.Length);
-            end if;
-         end Fits;
-
-         ----------
-         -- Fits --
-         ----------
-
-         overriding function Fits
-           (Self  : Line_Item;
-            Width : Natural) return Boolean
+         function Fits
+           (Offset : Natural;
+            List   : not null Pair_Access) return Boolean
          is
-            pragma Unreferenced (Self, Width);
+            --  This is simplified version of Best that check if result of
+            --  corresponding Best call fits into Width or not without
+            --  actual constructing of formated document
+            Placed : Natural := Offset;
+            Head   : not null Pair_Access := List;
+            Tail   : Pair_Access;  --  Shortcut for Head.Next
+            Result : Boolean := False;
+            Indent : Natural;
+            Item   : Outputs.Output_Item;
+            Pairs  : Natural := 0; --  Count of pair at the top of Tail
+            --  allocated in this call of Fits
          begin
-            return True;  --  New line fits any width
+            loop
+               Indent := Head.Indent;
+               Tail := Head.Next;
+               Item := Self.Store.Element (Head.Document);
+
+               if Pairs > 0 then
+                  Pairs := Pairs - 1;
+                  Free_Pair (Head);
+               end if;
+
+               case Item.Kind is
+                  when Empty_Output =>
+                     exit when Tail = null;
+
+                     Head := Tail;
+
+                  when Concat_Output =>
+                     Head := New_Pair (Indent, Item.Right, Tail);
+                     Head := New_Pair (Indent, Item.Left, Head);
+
+                     Pairs := Pairs + 2;
+
+                  when Nest_Output =>
+                     Head := New_Pair (Indent + Item.Indent, Item.Down, Tail);
+                     Pairs := Pairs + 1;
+
+                  when Text_Output =>
+                     Placed := Placed + Item.Text.Length;
+
+                     if Tail = null then
+                        Result := Placed <= Width;
+                        exit;
+                     end if;
+
+                     Head   := Tail;
+
+                  when New_Line_Output =>
+                     if Tail = null then
+                        Result := True;
+                        exit;
+                     end if;
+
+                     Placed := Indent;
+                     Head   := Tail;
+
+                  when Union_Output =>
+                     if Width >= Placed then
+                        Head := New_Pair (Indent, Item.Left, Tail);
+
+                        Result := Fits (Placed, Head);
+                        Free_Pair (Head);
+
+                        exit when Result;
+
+                     end if;
+
+                     Head := New_Pair (Indent, Item.Right, Tail);
+
+                     Result := Fits (Placed, Head);
+                     Free_Pair (Head);
+
+                     exit;
+               end case;
+            end loop;
+
+            --  Here we can free any Pair allocated in this call
+            for J in 1 .. Pairs loop
+               Head := Tail;
+               Tail := Tail.Next;
+               Free_Pair (Head);
+            end loop;
+
+            return Result;
          end Fits;
 
          ---------------
