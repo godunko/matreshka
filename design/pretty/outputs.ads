@@ -9,22 +9,8 @@ package Outputs is
 
    type Document is tagged private;
 
-   not overriding function Empty (Self : access Printer'Class) return Document;
+   not overriding function New_Document (Self : access Printer'Class) return Document;
    --  Create empty document
-
-   not overriding function Text
-     (Self  : access Printer'Class;
-      Value : League.Strings.Universal_String) return Document;
-   --  Create document from given string Value
-
-   not overriding function Text
-     (Self  : access Printer'Class;
-      Value : Wide_Wide_String) return Document;
-
-   not overriding function New_Line
-     (Self : access Printer'Class;
-      Gap  : Wide_Wide_String := " ") return Document;
-   --  Create document with single new line character
 
    not overriding function Nest
      (Self   : Document'Class;

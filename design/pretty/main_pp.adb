@@ -42,18 +42,18 @@ procedure Main_PP is
          Down : Document;
       begin
          if List'Length = 0 then
-            return X.Empty;
+            return X.New_Document;
          end if;
 
          Down := Show_Trees (List).Nest (1);
 
-         return X.Text ("[").Append (Down).Put ("]");
+         return X.New_Document.Put ("[").Append (Down).Put ("]");
       end Show_Bracket;
 
       function Show_Tree (T : access Node) return Document is
          Down : constant Document := Show_Bracket (T.TS).Nest (T.S.Length);
       begin
-         return X.Text (T.S).Append (Down).Group;
+         return X.New_Document.Put (T.S).Append (Down).Group;
       end Show_Tree;
 
       function Show_Trees (List : Node_Array) return Document is
@@ -77,4 +77,43 @@ begin
 
    Ada.Wide_Wide_Text_IO.Put_Line
      (X.Pretty (30, W).To_Wide_Wide_String);
+
+   declare
+      Aggr : Document;
+   begin
+      W := X.New_Document;
+      Aggr := X.New_Document;
+
+      for J in 1 .. 256 loop
+         Aggr.Append
+           (X.New_Document
+            .New_Line
+            .Put (Integer'Wide_Wide_Image (-J))
+            .Put (",")
+            .Group);
+      end loop;
+
+      W.Put
+        ("S_1 : aliased constant Second_Stage_Array :=");
+
+      W.Append
+        (X.New_Document
+         .New_Line
+         .Put ("(")
+         .Append (Aggr.Group.Nest (1))
+         .Put (");")
+         .Nest (2)
+         .New_Line);
+
+      W.New_Line;
+
+      W.New_Line;
+      W.Put_Line ("(Wery_Long_Line, Wery_Long_Line," &
+                        " Wery_Long_Line, Wery_Long_Line);");
+   end;
+
+   Ada.Wide_Wide_Text_IO.Put_Line
+        (X.Pretty (56, W).To_Wide_Wide_String);
+
 end Main_PP;
+

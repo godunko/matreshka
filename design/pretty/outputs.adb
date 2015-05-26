@@ -130,14 +130,14 @@ package body Outputs is
    -- Empty --
    -----------
 
-   not overriding function Empty
+   not overriding function New_Document
      (Self : access Printer'Class) return Document
    is
       Index : Document_Index;
    begin
       Self.Nil (Index);
       return (Self.all'Unchecked_Access, Index);
-   end Empty;
+   end New_Document;
 
    -------------
    -- Flatten --
@@ -303,25 +303,15 @@ package body Outputs is
    --------------
 
    not overriding function New_Line
-     (Self : access Printer'Class;
+     (Self : Document'Class;
       Gap  : Wide_Wide_String := " ") return Document
    is
       pragma Unreferenced (Gap);
       Index : Document_Index;
    begin
-      Self.New_Line (Index);
-      return (Self.all'Unchecked_Access, Index);
-   end New_Line;
-
-   --------------
-   -- New_Line --
-   --------------
-
-   not overriding function New_Line
-     (Self : Document'Class;
-      Gap  : Wide_Wide_String := " ") return Document is
-   begin
-      return Self.Append (Self.Printer.New_Line (Gap));
+      Self.Printer.New_Line (Index);
+      Self.Printer.Concat (Self.Index, Index, Index);
+      return (Self.Printer, Index);
    end New_Line;
 
    --------------
@@ -330,9 +320,13 @@ package body Outputs is
 
    not overriding procedure New_Line
      (Self : in out Document;
-      Gap  : Wide_Wide_String := " ") is
+      Gap  : Wide_Wide_String := " ")
+   is
+      pragma Unreferenced (Gap);
+      Index : Document_Index;
    begin
-      Self.Append (Self.Printer.New_Line (Gap));
+      Self.Printer.New_Line (Index);
+      Self.Printer.Concat (Self.Index, Index, Self.Index);
    end New_Line;
 
    ---------
@@ -587,7 +581,7 @@ package body Outputs is
                   when Text_Output =>
                      Placed := Placed + Item.Text.Length;
 
-                     if Tail = null then
+                     if Tail = null or Placed > Width then
                         Result := Placed <= Width;
                         exit;
                      end if;
@@ -595,13 +589,8 @@ package body Outputs is
                      Head   := Tail;
 
                   when New_Line_Output =>
-                     if Tail = null then
-                        Result := True;
-                        exit;
-                     end if;
-
-                     Placed := Indent;
-                     Head   := Tail;
+                     Result := True;
+                     exit;
 
                   when Union_Output =>
                      if Width >= Placed then
@@ -701,31 +690,6 @@ package body Outputs is
       Result : out Document_Index) is
    begin
       Self.Append ((Text_Output, Line), Result);
-   end Text;
-
-   ----------
-   -- Text --
-   ----------
-
-   not overriding function Text
-     (Self  : access Printer'Class;
-      Value : League.Strings.Universal_String) return Document
-   is
-      Index : Document_Index;
-   begin
-      Self.Text (Value, Index);
-      return (Self.all'Unchecked_Access, Index);
-   end Text;
-
-   ----------
-   -- Text --
-   ----------
-
-   not overriding function Text
-     (Self  : access Printer'Class;
-      Value : Wide_Wide_String) return Document is
-   begin
-      return Self.Text (League.Strings.To_Universal_String (Value));
    end Text;
 
 end Outputs;
