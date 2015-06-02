@@ -42,15 +42,12 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-project Forum is
+package Forum.Topics is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+   type Topic is tagged limited private;
 
-   package Compiler is
+private
 
-      for Default_Switches ("Ada") use ("-g");
+   type Topic is tagged limited null record;
 
-   end Compiler;
-
-end Forum;
+end Forum.Topics;

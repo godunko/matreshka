@@ -42,15 +42,13 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-project Forum is
+package Forum.Posts is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+   type Post is tagged limited private;
 
-   package Compiler is
+private
 
-      for Default_Switches ("Ada") use ("-g");
+   type Post is tagged limited null record;
 
-   end Compiler;
+end Forum.Posts;
 
-end Forum;

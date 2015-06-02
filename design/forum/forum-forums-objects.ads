@@ -42,15 +42,18 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-project Forum is
+package Forum.Forums.Objects is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+--   pragma Preelaborate;
 
-   package Compiler is
+   type Forum is tagged limited private;
 
-      for Default_Switches ("Ada") use ("-g");
+   not overriding procedure Check (Self : Forum);
 
-   end Compiler;
+private
 
-end Forum;
+   type Forum is tagged limited record
+      Identifier : Forum_Identifier;
+   end record;
+
+end Forum.Forums.Objects;

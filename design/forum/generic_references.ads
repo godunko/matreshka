@@ -41,16 +41,58 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Finalization;
 
-project Forum is
+generic
+   type Element_Identifier is private;
+   type Element is abstract tagged limited private;
+   type Element_Access is access all Element'Class;
+   type Element_Store is abstract tagged limited private;
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+   with function Get
+    (Self       : in out Element_Store;
+     Identifier : Element_Identifier) return Element_Access is abstract;
+   with procedure Release
+    (Self   : in out Element_Store;
+     Object : not null Element_Access) is abstract;
 
-   package Compiler is
+package Generic_References is
 
-      for Default_Switches ("Ada") use ("-g");
+   pragma Preelaborate;
 
-   end Compiler;
+   type Reference is tagged private;
 
-end Forum;
+   procedure Initialize
+    (Self       : in out Reference;
+     Store      : not null access Element_Store'Class;
+     Identifier : Element_identifier);
+
+   type Variable_Reference_Type
+         (Object : not null access Element'Class) is limited private
+     with Implicit_Dereference => Object;
+
+   function Object (Self : Reference'Class) return Variable_Reference_Type;
+
+private
+
+   type Reference_Access is access all Reference'Class with Storage_Size => 0;
+
+   type Reference is new Ada.Finalization.Controlled with record
+      Store      : access Element_Store'Class;
+      Identifier : Element_Identifier;
+      Self       : Reference_Access;
+   end record;
+
+   overriding procedure Adjust (Self : in out Reference);
+
+   overriding procedure Initialize (Self : in out Reference);
+
+   type Variable_Reference_Type
+         (Object : not null access Element'Class) is
+     new Ada.Finalization.Limited_Controlled with record
+      Reference : Reference_Access;
+   end record;
+
+   overriding procedure Finalize (Self : in out Variable_Reference_Type);
+
+end Generic_References;

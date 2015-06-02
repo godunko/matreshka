@@ -42,15 +42,14 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-project Forum is
+package Forum.Forums is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+   pragma Pure;
 
-   package Compiler is
+--   type Forum_Identifier is private;
+--
+--private
 
-      for Default_Switches ("Ada") use ("-g");
+   type Forum_Identifier is range 0 .. 2*63 - 1;
 
-   end Compiler;
-
-end Forum;
+end Forum.Forums;

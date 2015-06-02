@@ -41,16 +41,22 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Generic_References;
+with Forum.Forums.Objects.Stores;
 
-project Forum is
+package Forum.Forums.References is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+--   pragma Preelaborate;
 
-   package Compiler is
+   package Forum_References is
+     new Generic_References
+          (Forum_Identifier,
+           Forum.Forums.Objects.Forum,
+           Forum.Forums.Objects.Stores.Forum_Access,
+           Forum.Forums.Objects.Stores.Forum_Store,
+           Forum.Forums.Objects.Stores.Get,
+           Forum.Forums.Objects.Stores.Release);
 
-      for Default_Switches ("Ada") use ("-g");
+   type Forum_Reference is new Forum_References.Reference with null record;
 
-   end Compiler;
-
-end Forum;
+end Forum.Forums.References;

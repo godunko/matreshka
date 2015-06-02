@@ -41,16 +41,40 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Text_IO;
+with Ada.Unchecked_Deallocation;
 
-project Forum is
+package body Forum.Forums.Objects.Stores is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+--   type Forum_Access is access all Forum'Class;
 
-   package Compiler is
+   procedure Free is new Ada.Unchecked_Deallocation (Forum'Class, Forum_Access);
 
-      for Default_Switches ("Ada") use ("-g");
+   ---------
+   -- Get --
+   ---------
 
-   end Compiler;
+   not overriding function Get
+    (Self       : in out Forum_Store;
+     Identifier : Forum_Identifier) return Forum_Access is
+   begin
+      Ada.Text_IO.Put_Line ("Get object" & Forum_Identifier'Image (Identifier));
 
-end Forum;
+      return new Forum'(Identifier => Identifier);
+   end Get;
+
+   -------------
+   -- Release --
+   -------------
+
+   not overriding procedure Release
+    (Self   : in out Forum_Store;
+     Object : not null Forum_Access)
+   is
+      X : Forum_Access := Object; -- Forum_Access'(Object.all'Unchecked_Access);
+   begin
+      Ada.Text_IO.Put_Line ("Release object" & Forum_Identifier'Image (Object.Identifier));
+      Free (X);
+   end Release;
+
+end Forum.Forums.Objects.Stores;

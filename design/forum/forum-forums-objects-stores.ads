@@ -42,15 +42,24 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-project Forum is
+package Forum.Forums.Objects.Stores is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+--   pragma Preelaborate;
 
-   package Compiler is
+   type Forum_Access is access all Forum'Class; --  with Storage_Size => 0;
 
-      for Default_Switches ("Ada") use ("-g");
+   type Forum_Store is tagged limited private;
 
-   end Compiler;
+   not overriding function Get
+    (Self       : in out Forum_Store;
+     Identifier : Forum_Identifier) return Forum_Access;
 
-end Forum;
+   not overriding procedure Release
+    (Self   : in out Forum_Store;
+     Object : not null Forum_Access);
+
+private
+
+   type Forum_Store is tagged limited null record;
+
+end Forum.Forums.Objects.Stores;

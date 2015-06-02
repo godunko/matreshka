@@ -42,15 +42,58 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-project Forum is
+package body Generic_References is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+   ------------
+   -- Adjust --
+   ------------
 
-   package Compiler is
+   overriding procedure Adjust (Self : in out Reference) is
+   begin
+      Self.Self := Self'Unchecked_Access;
+   end Adjust;
 
-      for Default_Switches ("Ada") use ("-g");
+   --------------
+   -- Finalize --
+   --------------
 
-   end Compiler;
+   overriding procedure Finalize (Self : in out Variable_Reference_Type) is
+   begin
+      Self.Reference.Store.Release (Self.Object);
+   end Finalize;
 
-end Forum;
+   ----------------
+   -- Initialize --
+   ----------------
+
+   overriding procedure Initialize (Self : in out Reference) is
+   begin
+      Self.Self := Self'Unchecked_Access;
+   end Initialize;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self       : in out Reference;
+     Store      : not null access Element_Store'Class;
+     Identifier : Element_Identifier) is
+   begin
+      Self.Store      := Store;
+      Self.Identifier := Identifier;
+   end Initialize;
+
+   ------------
+   -- Object --
+   ------------
+
+   function Object (Self : Reference'Class) return Variable_Reference_Type is
+   begin
+      return
+       (Ada.Finalization.Limited_Controlled with
+          Object    => Self.Store.Get (Self.Identifier),
+          Reference => Self.Self);
+   end Object;
+
+end Generic_References;

@@ -41,16 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Text_IO;
 
-project Forum is
+package body Forum.Forums.Objects is
 
-   for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+   not overriding procedure Check (Self : Forum) is
+   begin
+      Ada.Text_IO.Put_Line ("Check!!!");
+   end Check;
 
-   package Compiler is
-
-      for Default_Switches ("Ada") use ("-g");
-
-   end Compiler;
-
-end Forum;
+end Forum.Forums.Objects;
