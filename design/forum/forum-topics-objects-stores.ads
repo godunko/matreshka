@@ -41,11 +41,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with SQL.Databases;
 
-package Forum.Topics is
+package Forum.Topics.Objects.Stores is
 
-   pragma Pure;
+--   pragma Preelaborate;
 
-   type Topic_Identifier is range 0 .. 2*63 - 1;
+   type Topic_Access is access all Topic'Class; --  with Storage_Size => 0;
 
-end Forum.Topics;
+   type Topic_Store is tagged limited private;
+
+   procedure Initialize
+    (Self     : in out Topic_Store;
+     Database : not null access SQL.Databases.SQL_Database'Class);
+
+   not overriding function Get
+    (Self       : in out Topic_Store;
+     Identifier : Topic_Identifier) return Topic_Access;
+
+   not overriding procedure Release
+    (Self   : in out Topic_Store;
+     Object : not null Topic_Access);
+
+private
+
+   type Topic_Store is tagged limited record
+      Database : access SQL.Databases.SQL_Database'Class;
+   end record;
+
+end Forum.Topics.Objects.Stores;

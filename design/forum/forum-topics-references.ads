@@ -41,11 +41,22 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Generic_References;
+with Forum.Topics.Objects.Stores;
 
-package Forum.Topics is
+package Forum.Topics.References is
 
-   pragma Pure;
+--   pragma Preelaborate;
 
-   type Topic_Identifier is range 0 .. 2*63 - 1;
+   package Topic_References is
+     new Generic_References
+          (Topic_Identifier,
+           Forum.Topics.Objects.Topic,
+           Forum.Topics.Objects.Stores.Topic_Access,
+           Forum.Topics.Objects.Stores.Topic_Store,
+           Forum.Topics.Objects.Stores.Get,
+           Forum.Topics.Objects.Stores.Release);
 
-end Forum.Topics;
+   type Topic_Reference is new Topic_References.Reference with null record;
+
+end Forum.Topics.References;

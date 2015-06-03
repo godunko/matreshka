@@ -42,10 +42,26 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package Forum.Topics is
+package body Forum.Topics.Objects is
 
-   pragma Pure;
+   ---------------------
+   -- Get_Description --
+   ---------------------
 
-   type Topic_Identifier is range 0 .. 2*63 - 1;
+   function Get_Description
+    (Self : Topic'Class) return League.Strings.Universal_String is
+   begin
+      return Self.Description;
+   end Get_Description;
 
-end Forum.Topics;
+   ---------------
+   -- Get_Title --
+   ---------------
+
+   function Get_Title
+    (Self : Topic'Class) return League.Strings.Universal_String is
+   begin
+      return Self.Title;
+   end Get_Title;
+
+end Forum.Topics.Objects;

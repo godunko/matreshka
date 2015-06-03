@@ -41,11 +41,77 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Unchecked_Deallocation;
 
-package Forum.Topics is
+with League.Holders.Generic_Integers;
+with SQL.Queries;
 
-   pragma Pure;
+package body Forum.Topics.Objects.Stores is
 
-   type Topic_Identifier is range 0 .. 2*63 - 1;
+   procedure Free is new Ada.Unchecked_Deallocation (Topic'Class, Topic_Access);
 
-end Forum.Topics;
+   package Topic_Identifier_Holders is
+     new League.Holders.Generic_Integers (Topic_Identifier);
+
+   ---------
+   -- Get --
+   ---------
+
+   not overriding function Get
+    (Self       : in out Topic_Store;
+     Identifier : Topic_Identifier) return Topic_Access
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT title, description FROM topics"
+                 & " WHERE topic_identifier = :forum_identifier"));
+
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":topic_identifier"),
+        Topic_Identifier_Holders.To_Holder (Identifier));
+      Q.Execute;
+
+      if not Q.Next then
+         return null;
+
+      else
+         return
+           new Topic'
+                (Store       => Self'Unchecked_Access,
+                 Identifier  => Identifier,
+                 Title       => League.Holders.Element (Q.Value (1)),
+                 Description => League.Holders.Element (Q.Value (2)));
+      end if;
+   end Get;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self     : in out Topic_Store;
+     Database : not null access SQL.Databases.SQL_Database'Class) is
+   begin
+      Self.Database := Database;
+   end Initialize;
+
+   -------------
+   -- Release --
+   -------------
+
+   not overriding procedure Release
+    (Self   : in out Topic_Store;
+     Object : not null Topic_Access)
+   is
+      Aux : Topic_Access;
+
+   begin
+      if Object /= null then
+         Aux := Object;
+         Free (Aux);
+      end if;
+   end Release;
+
+end Forum.Topics.Objects.Stores;

@@ -41,11 +41,31 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 
-package Forum.Topics is
+limited with Forum.Topics.Objects.Stores;
 
-   pragma Pure;
+package Forum.Topics.Objects is
 
-   type Topic_Identifier is range 0 .. 2*63 - 1;
+--   pragma Preelaborate;
 
-end Forum.Topics;
+   type Topic (<>) is tagged limited private;
+
+   function Get_Title
+    (Self : Topic'Class) return League.Strings.Universal_String;
+
+   function Get_Description
+    (Self : Topic'Class) return League.Strings.Universal_String;
+
+private
+
+   type Topic
+         (Store :
+            not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
+     tagged limited record
+      Identifier  : Topic_Identifier;
+      Title       : League.Strings.Universal_String;
+      Description : League.Strings.Universal_String;
+   end record;
+
+end Forum.Topics.Objects;
