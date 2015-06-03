@@ -217,7 +217,7 @@ package body Matreshka.Servlet_AWS_Responses is
           (Self.Data, Self.Content_Type.To_UTF_8_String);
 
       else
-         AWS.Response.Set.Content_TYpe
+         AWS.Response.Set.Content_Type
           (Self.Data,
            Self.Content_Type.To_UTF_8_String
              & ";charset="
