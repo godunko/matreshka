@@ -9,6 +9,8 @@ with Server.Globals;
 with Server.Servlets.Static;
 with Server.Servlets.Forum_Servlets;
 
+with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
+
 package body Server.Initializers is
 
    type Servlet_Access is access all Servlet.Servlets.Servlet'Class;

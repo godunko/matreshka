@@ -2,6 +2,7 @@ with "../../gnat/matreshka_sql.gpr";
 with "../../gnat/matreshka_sql_postgresql.gpr";
 with "../../gnat/matreshka_servlet";
 with "../../gnat/matreshka_spikedog_api.gpr";
+with "../../gnat/matreshka_xml.gpr";
 
 library project Forum_Web is
 
