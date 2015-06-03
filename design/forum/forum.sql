@@ -74,7 +74,7 @@ CREATE TABLE categories
  (category_identifier category_identifier NOT NULL PRIMARY KEY DEFAULT nextval('category_identifier_sequence'),
   title               CHARACTER VARYING NOT NULL,
   description         CHARACTER VARYING NOT NULL,
-  creation_time       TIMESTAMP NOT NULL);
+  creation_time       TIMESTAMP NOT NULL DEFAULT now());
 
 CREATE DOMAIN topic_identifier AS INTEGER NOT NULL;
 CREATE SEQUENCE topic_identifier_sequence;
@@ -83,7 +83,7 @@ CREATE TABLE topics
   category_identifier category_identifier NOT NULL REFERENCES categories,
   title               CHARACTER VARYING NOT NULL,
   description         CHARACTER VARYING NOT NULL,
-  creation_time       TIMESTAMP NOT NULL,
+  creation_time       TIMESTAMP NOT NULL DEFAULT now(),
   created_by          user_identifier NOT NULL REFERENCES users);
 
 CREATE DOMAIN post_identifier AS INTEGER NOT NULL;

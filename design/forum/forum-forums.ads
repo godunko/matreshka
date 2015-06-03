@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 with SQL.Databases;
 
 with Forum.Categories.References;
@@ -57,6 +58,12 @@ package Forum.Forums is
    function Get_Categories
     (Self : in out Forum'Class)
        return Standard.Forum.Categories.References.Category_Vector;
+
+   function Create_Category
+    (Self        : in out Forum'Class;
+     Title       : League.Strings.Universal_String;
+     Description : League.Strings.Universal_String)
+       return Standard.Forum.Categories.References.Category;
 
 private
 

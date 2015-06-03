@@ -41,10 +41,22 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
 with SQL.Queries;
 
 package body Forum.Forums is
+
+   ---------------------
+   -- Create_Category --
+   ---------------------
+
+   function Create_Category
+    (Self        : in out Forum'Class;
+     Title       : League.Strings.Universal_String;
+     Description : League.Strings.Universal_String)
+       return Standard.Forum.Categories.References.Category is
+   begin
+      return Self.Category_Store.Create (Title, Description);
+   end Create_Category;
 
    --------------------
    -- Get_Categories --

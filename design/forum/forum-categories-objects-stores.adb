@@ -45,10 +45,49 @@ with Ada.Unchecked_Deallocation;
 
 with SQL.Queries;
 
+with Forum.Categories.References;
+
 package body Forum.Categories.Objects.Stores is
 
    procedure Free is
      new Ada.Unchecked_Deallocation (Category_Object'Class, Category_Access);
+
+   ------------
+   -- Create --
+   ------------
+
+   not overriding function Create
+    (Self        : in out Category_Store;
+     Title       : League.Strings.Universal_String;
+     Description : League.Strings.Universal_String)
+       return Forum.Categories.References.Category
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Database.Query
+            (League.Strings.To_Universal_String
+              ("INSERT INTO categories (title, description)"
+                 & " VALUES (:title, :description)"
+                 & " RETURNING category_identifier"));
+      R : Forum.Categories.References.Category;
+
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":title"),
+        League.Holders.To_Holder (Title));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":description"),
+        League.Holders.To_Holder (Description));
+      Q.Execute;
+
+      if Q.Next then
+         R.Initialize
+          (Self'Unchecked_Access,
+           Forum.Categories.Category_Identifier_Holders.Element
+            (Q.Value (1)));
+      end if;
+
+      return R;
+   end Create;
 
    ---------
    -- Get --

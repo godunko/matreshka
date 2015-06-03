@@ -33,6 +33,16 @@ begin
 
       F.Initialize (D'Unchecked_Access);
 
+      declare
+         C : Forum.Categories.References.Category
+           := F.Create_Category
+               (League.Strings.To_Universal_String ("категория"),
+                League.Strings.To_Universal_String ("пробная категория для тестирования"));
+
+      begin
+         null;
+      end;
+
       for C of F.Get_Categories loop
          Ada.Wide_Wide_Text_IO.Put_Line
           (C.Object.Get_Title.To_Wide_Wide_String);

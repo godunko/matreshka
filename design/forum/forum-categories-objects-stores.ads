@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------
 with SQL.Databases;
 
+limited with Forum.Categories.References;
+
 package Forum.Categories.Objects.Stores is
 
    type Category_Access is access all Category_Object'Class;
@@ -60,6 +62,12 @@ package Forum.Categories.Objects.Stores is
    not overriding procedure Release
     (Self   : in out Category_Store;
      Object : not null Category_Access);
+
+   not overriding function Create
+    (Self        : in out Category_Store;
+     Title       : League.Strings.Universal_String;
+     Description : League.Strings.Universal_String)
+       return Forum.Categories.References.Category;
 
 private
 
