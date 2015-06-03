@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
+
 with Generic_References;
 with Forum.Categories.Objects.Stores;
 
@@ -56,5 +58,9 @@ package Forum.Categories.References is
            Forum.Categories.Objects.Stores.Release);
 
    type Category is new Category_References.Reference with null record;
+
+   package Category_Vectors is new Ada.Containers.Vectors (Positive, Category);
+
+   type Category_Vector is new Category_Vectors.Vector with null record;
 
 end Forum.Categories.References;

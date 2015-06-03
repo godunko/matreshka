@@ -41,74 +41,29 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Unchecked_Deallocation;
+with SQL.Databases;
 
-with SQL.Queries;
+with Forum.Categories.References;
+private with Forum.Categories.Objects.Stores;
 
-package body Forum.Categories.Objects.Stores is
+package Forum.Forums is
 
-   procedure Free is
-     new Ada.Unchecked_Deallocation (Category_Object'Class, Category_Access);
-
-   ---------
-   -- Get --
-   ---------
-
-   not overriding function Get
-    (Self       : in out Category_Store;
-     Identifier : Category_Identifier) return Category_Access
-   is
-      Q : SQL.Queries.SQL_Query
-        := Self.Database.Query
-            (League.Strings.To_Universal_String
-              ("SELECT title, description FROM forums"
-                 & " WHERE forum_identifier = :forum_identifier"));
-
-   begin
-      Q.Bind_Value
-       (League.Strings.To_Universal_String (":forum_identifier"),
-        Category_Identifier_Holders.To_Holder (Identifier));
-      Q.Execute;
-
-      if not Q.Next then
-         return null;
-
-      else
-         return
-           new Category_Object'
-                (Store       => Self'Unchecked_Access,
-                 Identifier  => Identifier,
-                 Title       => League.Holders.Element (Q.Value (1)),
-                 Description => League.Holders.Element (Q.Value (2)));
-      end if;
-   end Get;
-
-   ----------------
-   -- Initialize --
-   ----------------
+   type Forum is tagged limited private;
 
    procedure Initialize
-    (Self     : in out Category_Store;
-     Database : not null access SQL.Databases.SQL_Database'Class) is
-   begin
-      Self.Database := Database;
-   end Initialize;
+    (Self     : in out Forum'Class;
+     Database : not null access SQL.Databases.SQL_Database'Class);
 
-   -------------
-   -- Release --
-   -------------
+   function Get_Categories
+    (Self : in out Forum'Class)
+       return Standard.Forum.Categories.References.Category_Vector;
 
-   not overriding procedure Release
-    (Self   : in out Category_Store;
-     Object : not null Category_Access)
-   is
-      Aux : Category_Access;
+private
 
-   begin
-      if Object /= null then
-         Aux := Object;
-         Free (Aux);
-      end if;
-   end Release;
+   type Forum is tagged limited record
+      Database       : access SQL.Databases.SQL_Database'Class;
+      Category_Store :
+        aliased Standard.Forum.Categories.Objects.Stores.Category_Store;
+   end record;
 
-end Forum.Categories.Objects.Stores;
+end Forum.Forums;

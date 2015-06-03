@@ -53,7 +53,7 @@ package Forum.Categories is
 
    type Category_Identifier is range 0 .. 2*63 - 1;
 
-   package Forum_Identifier_Holders is
+   package Category_Identifier_Holders is
      new League.Holders.Generic_Integers (Category_Identifier);
 
 end Forum.Categories;

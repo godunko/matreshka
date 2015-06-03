@@ -41,74 +41,49 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Unchecked_Deallocation;
-
+with League.Strings;
 with SQL.Queries;
 
-package body Forum.Categories.Objects.Stores is
+package body Forum.Forums is
 
-   procedure Free is
-     new Ada.Unchecked_Deallocation (Category_Object'Class, Category_Access);
+   --------------------
+   -- Get_Categories --
+   --------------------
 
-   ---------
-   -- Get --
-   ---------
-
-   not overriding function Get
-    (Self       : in out Category_Store;
-     Identifier : Category_Identifier) return Category_Access
+   function Get_Categories
+    (Self : in out Forum'Class)
+       return Standard.Forum.Categories.References.Category_Vector
    is
       Q : SQL.Queries.SQL_Query
         := Self.Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT title, description FROM forums"
-                 & " WHERE forum_identifier = :forum_identifier"));
+              ("SELECT forum_identifier FROM forums"));
+      X : Standard.Forum.Categories.References.Category;
+      R : Standard.Forum.Categories.References.Category_Vector;
 
    begin
-      Q.Bind_Value
-       (League.Strings.To_Universal_String (":forum_identifier"),
-        Category_Identifier_Holders.To_Holder (Identifier));
       Q.Execute;
 
-      if not Q.Next then
-         return null;
+      while Q.Next loop
+         X.Initialize
+          (Self.Category_Store'Unchecked_Access,
+           Categories.Category_Identifier_Holders.Element (Q.Value (1)));
+         R.Append (X);
+      end loop;
 
-      else
-         return
-           new Category_Object'
-                (Store       => Self'Unchecked_Access,
-                 Identifier  => Identifier,
-                 Title       => League.Holders.Element (Q.Value (1)),
-                 Description => League.Holders.Element (Q.Value (2)));
-      end if;
-   end Get;
+      return R;
+   end Get_Categories;
 
    ----------------
    -- Initialize --
    ----------------
 
    procedure Initialize
-    (Self     : in out Category_Store;
+    (Self     : in out Forum'Class;
      Database : not null access SQL.Databases.SQL_Database'Class) is
    begin
       Self.Database := Database;
+      Self.Category_Store.Initialize (Database);
    end Initialize;
 
-   -------------
-   -- Release --
-   -------------
-
-   not overriding procedure Release
-    (Self   : in out Category_Store;
-     Object : not null Category_Access)
-   is
-      Aux : Category_Access;
-
-   begin
-      if Object /= null then
-         Aux := Object;
-         Free (Aux);
-      end if;
-   end Release;
-
-end Forum.Categories.Objects.Stores;
+end Forum.Forums;
