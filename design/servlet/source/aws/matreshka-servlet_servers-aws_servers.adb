@@ -99,8 +99,8 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
       AWS.Server.Log.Start_Error (Server);
       AWS.Server.Start (Server, Request_Callback'Access, Config);
 
-      AWS.Net.WebSocket.Registry.Register_Pattern_URL
-        ("/", ".*", WebSocket_Callback'Access);
+      AWS.Net.WebSocket.Registry.Register_Pattern
+        ("/.*", WebSocket_Callback'Access);
       AWS.Net.WebSocket.Registry.Control.Start;
 
       Shutdown_Controller.Start;
