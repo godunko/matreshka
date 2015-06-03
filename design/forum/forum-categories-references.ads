@@ -41,27 +41,20 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Generic_References;
+with Forum.Categories.Objects.Stores;
 
-package body Forum.Forums.Objects is
+package Forum.Categories.References is
 
-   ---------------------
-   -- Get_Description --
-   ---------------------
+   package Category_References is
+     new Generic_References
+          (Category_Identifier,
+           Forum.Categories.Objects.Category_Object,
+           Forum.Categories.Objects.Stores.Category_Access,
+           Forum.Categories.Objects.Stores.Category_Store,
+           Forum.Categories.Objects.Stores.Get,
+           Forum.Categories.Objects.Stores.Release);
 
-   function Get_Description
-    (Self : Forum'Class) return League.Strings.Universal_String is
-   begin
-      return Self.Description;
-   end Get_Description;
+   type Category is new Category_References.Reference with null record;
 
-   ---------------
-   -- Get_Title --
-   ---------------
-
-   function Get_Title
-    (Self : Forum'Class) return League.Strings.Universal_String is
-   begin
-      return Self.Title;
-   end Get_Title;
-
-end Forum.Forums.Objects;
+end Forum.Categories.References;

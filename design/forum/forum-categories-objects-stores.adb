@@ -41,31 +41,74 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with Ada.Unchecked_Deallocation;
 
-limited with Forum.Forums.Objects.Stores;
+with SQL.Queries;
 
-package Forum.Forums.Objects is
+package body Forum.Categories.Objects.Stores is
 
---   pragma Preelaborate;
+   procedure Free is
+     new Ada.Unchecked_Deallocation (Category_Object'Class, Category_Access);
 
-   type Forum (<>) is tagged limited private;
+   ---------
+   -- Get --
+   ---------
 
-   function Get_Title
-    (Self : Forum'Class) return League.Strings.Universal_String;
+   not overriding function Get
+    (Self       : in out Category_Store;
+     Identifier : Category_Identifier) return Category_Access
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT title, description FROM forums"
+                 & " WHERE forum_identifier = :forum_identifier"));
 
-   function Get_Description
-    (Self : Forum'Class) return League.Strings.Universal_String;
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":forum_identifier"),
+        Forum_Identifier_Holders.To_Holder (Identifier));
+      Q.Execute;
 
-private
+      if not Q.Next then
+         return null;
 
-   type Forum
-         (Store :
-            not null access Standard.Forum.Forums.Objects.Stores.Forum_Store'Class) is
-     tagged limited record
-      Identifier  : Forum_Identifier;
-      Title       : League.Strings.Universal_String;
-      Description : League.Strings.Universal_String;
-   end record;
+      else
+         return
+           new Category_Object'
+                (Store       => Self'Unchecked_Access,
+                 Identifier  => Identifier,
+                 Title       => League.Holders.Element (Q.Value (1)),
+                 Description => League.Holders.Element (Q.Value (2)));
+      end if;
+   end Get;
 
-end Forum.Forums.Objects;
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self     : in out Category_Store;
+     Database : not null access SQL.Databases.SQL_Database'Class) is
+   begin
+      Self.Database := Database;
+   end Initialize;
+
+   -------------
+   -- Release --
+   -------------
+
+   not overriding procedure Release
+    (Self   : in out Category_Store;
+     Object : not null Category_Access)
+   is
+      Aux : Category_Access;
+
+   begin
+      if Object /= null then
+         Aux := Object;
+         Free (Aux);
+      end if;
+   end Release;
+
+end Forum.Categories.Objects.Stores;

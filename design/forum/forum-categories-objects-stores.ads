@@ -41,22 +41,30 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Generic_References;
-with Forum.Forums.Objects.Stores;
+with SQL.Databases;
 
-package Forum.Forums.References is
+package Forum.Categories.Objects.Stores is
 
---   pragma Preelaborate;
+   type Category_Access is access all Category_Object'Class;
 
-   package Forum_References is
-     new Generic_References
-          (Forum_Identifier,
-           Forum.Forums.Objects.Forum,
-           Forum.Forums.Objects.Stores.Forum_Access,
-           Forum.Forums.Objects.Stores.Forum_Store,
-           Forum.Forums.Objects.Stores.Get,
-           Forum.Forums.Objects.Stores.Release);
+   type Category_Store is tagged limited private;
 
-   type Forum_Reference is new Forum_References.Reference with null record;
+   procedure Initialize
+    (Self     : in out Category_Store;
+     Database : not null access SQL.Databases.SQL_Database'Class);
 
-end Forum.Forums.References;
+   not overriding function Get
+    (Self       : in out Category_Store;
+     Identifier : Category_Identifier) return Category_Access;
+
+   not overriding procedure Release
+    (Self   : in out Category_Store;
+     Object : not null Category_Access);
+
+private
+
+   type Category_Store is tagged limited record
+      Database : access SQL.Databases.SQL_Database'Class;
+   end record;
+
+end Forum.Categories.Objects.Stores;
