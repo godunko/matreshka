@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with SQL.Databases;
 
 package Forum.Forums.Objects.Stores is
 
@@ -49,6 +50,10 @@ package Forum.Forums.Objects.Stores is
    type Forum_Access is access all Forum'Class; --  with Storage_Size => 0;
 
    type Forum_Store is tagged limited private;
+
+   procedure Initialize
+    (Self     : in out Forum_Store;
+     Database : not null access SQL.Databases.SQL_Database'Class);
 
    not overriding function Get
     (Self       : in out Forum_Store;
@@ -60,6 +65,8 @@ package Forum.Forums.Objects.Stores is
 
 private
 
-   type Forum_Store is tagged limited null record;
+   type Forum_Store is tagged limited record
+      Database : access SQL.Databases.SQL_Database'Class;
+   end record;
 
 end Forum.Forums.Objects.Stores;

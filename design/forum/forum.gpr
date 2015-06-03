@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with "../../gnat/matreshka_sql.gpr";
+with "../../gnat/matreshka_sql_postgresql.gpr";
 
 project Forum is
 
@@ -49,7 +51,7 @@ project Forum is
 
    package Compiler is
 
-      for Default_Switches ("Ada") use ("-g");
+      for Default_Switches ("Ada") use ("-g", "-gnatW8");
 
    end Compiler;
 

@@ -41,13 +41,27 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Text_IO;
 
 package body Forum.Forums.Objects is
 
-   not overriding procedure Check (Self : Forum) is
+   ---------------------
+   -- Get_Description --
+   ---------------------
+
+   function Get_Description
+    (Self : Forum'Class) return League.Strings.Universal_String is
    begin
-      Ada.Text_IO.Put_Line ("Check!!!");
-   end Check;
+      return Self.Description;
+   end Get_Description;
+
+   ---------------
+   -- Get_Title --
+   ---------------
+
+   function Get_Title
+    (Self : Forum'Class) return League.Strings.Universal_String is
+   begin
+      return Self.Title;
+   end Get_Title;
 
 end Forum.Forums.Objects;

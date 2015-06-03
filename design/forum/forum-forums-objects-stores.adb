@@ -41,14 +41,17 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Text_IO;
 with Ada.Unchecked_Deallocation;
+
+with League.Holders.Generic_Integers;
+with SQL.Queries;
 
 package body Forum.Forums.Objects.Stores is
 
---   type Forum_Access is access all Forum'Class;
-
    procedure Free is new Ada.Unchecked_Deallocation (Forum'Class, Forum_Access);
+
+   package Forum_Identifier_Holders is
+     new League.Holders.Generic_Integers (Forum_Identifier);
 
    ---------
    -- Get --
@@ -56,12 +59,43 @@ package body Forum.Forums.Objects.Stores is
 
    not overriding function Get
     (Self       : in out Forum_Store;
-     Identifier : Forum_Identifier) return Forum_Access is
-   begin
-      Ada.Text_IO.Put_Line ("Get object" & Forum_Identifier'Image (Identifier));
+     Identifier : Forum_Identifier) return Forum_Access
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT title, description FROM forums"
+                 & " WHERE forum_identifier = :forum_identifier"));
 
-      return new Forum'(Identifier => Identifier);
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":forum_identifier"),
+        Forum_Identifier_Holders.To_Holder (Identifier));
+      Q.Execute;
+
+      if not Q.Next then
+         return null;
+
+      else
+         return
+           new Forum'
+                (Store       => Self'Unchecked_Access,
+                 Identifier  => Identifier,
+                 Title       => League.Holders.Element (Q.Value (1)),
+                 Description => League.Holders.Element (Q.Value (2)));
+      end if;
    end Get;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize
+    (Self     : in out Forum_Store;
+     Database : not null access SQL.Databases.SQL_Database'Class) is
+   begin
+      Self.Database := Database;
+   end Initialize;
 
    -------------
    -- Release --
@@ -71,10 +105,13 @@ package body Forum.Forums.Objects.Stores is
     (Self   : in out Forum_Store;
      Object : not null Forum_Access)
    is
-      X : Forum_Access := Object; -- Forum_Access'(Object.all'Unchecked_Access);
+      Aux : Forum_Access;
+
    begin
-      Ada.Text_IO.Put_Line ("Release object" & Forum_Identifier'Image (Object.Identifier));
-      Free (X);
+      if Object /= null then
+         Aux := Object;
+         Free (Aux);
+      end if;
    end Release;
 
 end Forum.Forums.Objects.Stores;

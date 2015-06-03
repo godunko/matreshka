@@ -41,19 +41,31 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+
+limited with Forum.Forums.Objects.Stores;
 
 package Forum.Forums.Objects is
 
 --   pragma Preelaborate;
 
-   type Forum is tagged limited private;
+   type Forum (<>) is tagged limited private;
 
-   not overriding procedure Check (Self : Forum);
+   function Get_Title
+    (Self : Forum'Class) return League.Strings.Universal_String;
+
+   function Get_Description
+    (Self : Forum'Class) return League.Strings.Universal_String;
 
 private
 
-   type Forum is tagged limited record
-      Identifier : Forum_Identifier;
+   type Forum
+         (Store :
+            not null access Standard.Forum.Forums.Objects.Stores.Forum_Store'Class) is
+     tagged limited record
+      Identifier  : Forum_Identifier;
+      Title       : League.Strings.Universal_String;
+      Description : League.Strings.Universal_String;
    end record;
 
 end Forum.Forums.Objects;
