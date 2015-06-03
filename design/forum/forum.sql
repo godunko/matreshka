@@ -68,23 +68,23 @@ CREATE TABLE sessions
   last_accessed_time TIMESTAMP NOT NULL);
 
 
-CREATE DOMAIN forum_identifier AS INTEGER NOT NULL;
-CREATE SEQUENCE forum_identifier_sequence;
-CREATE TABLE forums
- (forum_identifier forum_identifier NOT NULL PRIMARY KEY DEFAULT nextval('forum_identifier_sequence'),
-  title            CHARACTER VARYING NOT NULL,
-  description      CHARACTER VARYING NOT NULL,
-  creation_time    TIMESTAMP NOT NULL);
+CREATE DOMAIN category_identifier AS INTEGER NOT NULL;
+CREATE SEQUENCE category_identifier_sequence;
+CREATE TABLE categories
+ (category_identifier category_identifier NOT NULL PRIMARY KEY DEFAULT nextval('category_identifier_sequence'),
+  title               CHARACTER VARYING NOT NULL,
+  description         CHARACTER VARYING NOT NULL,
+  creation_time       TIMESTAMP NOT NULL);
 
 CREATE DOMAIN topic_identifier AS INTEGER NOT NULL;
 CREATE SEQUENCE topic_identifier_sequence;
 CREATE TABLE topics
- (topic_identifier topic_identifier NOT NULL PRIMARY KEY DEFAULT nextval('topic_identifier_sequence'),
-  forum_identifier forum_identifier NOT NULL REFERENCES forums,
-  title            CHARACTER VARYING NOT NULL,
-  description      CHARACTER VARYING NOT NULL,
-  creation_time    TIMESTAMP NOT NULL,
-  created_by       user_identifier NOT NULL REFERENCES users);
+ (topic_identifier    topic_identifier NOT NULL PRIMARY KEY DEFAULT nextval('topic_identifier_sequence'),
+  category_identifier category_identifier NOT NULL REFERENCES categories,
+  title               CHARACTER VARYING NOT NULL,
+  description         CHARACTER VARYING NOT NULL,
+  creation_time       TIMESTAMP NOT NULL,
+  created_by          user_identifier NOT NULL REFERENCES users);
 
 CREATE DOMAIN post_identifier AS INTEGER NOT NULL;
 CREATE SEQUENCE post_identifier_sequence;

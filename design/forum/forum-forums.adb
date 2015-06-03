@@ -57,7 +57,7 @@ package body Forum.Forums is
       Q : SQL.Queries.SQL_Query
         := Self.Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT forum_identifier FROM forums"));
+              ("SELECT category_identifier FROM categories"));
       X : Standard.Forum.Categories.References.Category;
       R : Standard.Forum.Categories.References.Category_Vector;
 

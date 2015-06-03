@@ -61,12 +61,12 @@ package body Forum.Categories.Objects.Stores is
       Q : SQL.Queries.SQL_Query
         := Self.Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT title, description FROM forums"
-                 & " WHERE forum_identifier = :forum_identifier"));
+              ("SELECT title, description FROM categories"
+                 & " WHERE category_identifier = :category_identifier"));
 
    begin
       Q.Bind_Value
-       (League.Strings.To_Universal_String (":forum_identifier"),
+       (League.Strings.To_Universal_String (":category_identifier"),
         Category_Identifier_Holders.To_Holder (Identifier));
       Q.Execute;
 
