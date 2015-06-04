@@ -65,7 +65,7 @@ package Generic_References is
    procedure Initialize
     (Self       : in out Reference;
      Store      : not null access Element_Store'Class;
-     Identifier : Element_identifier);
+     Identifier : Element_Identifier);
 
    type Variable_Reference_Type
          (Object : not null access Element'Class) is limited private
