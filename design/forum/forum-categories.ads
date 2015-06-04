@@ -49,9 +49,9 @@ package Forum.Categories is
 
 --   type Forum_Identifier is private;
 --
---private
+--  private
 
-   type Category_Identifier is range 0 .. 2*63 - 1;
+   type Category_Identifier is range 0 .. 2 * 63 - 1;
 
    package Category_Identifier_Holders is
      new League.Holders.Generic_Integers (Category_Identifier);
