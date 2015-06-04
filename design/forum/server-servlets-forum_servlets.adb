@@ -99,7 +99,7 @@ package body Server.Servlets.Forum_Servlets is
       Response.Get_Output_Stream.Write (Output.Get_Text);
    end Do_Get;
 
-      ------------------
+   ------------------
    -- Error_String --
    ------------------
 
