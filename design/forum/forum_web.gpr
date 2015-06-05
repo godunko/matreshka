@@ -4,9 +4,13 @@ with "../../gnat/matreshka_servlet";
 with "../../gnat/matreshka_spikedog_api.gpr";
 with "../../gnat/matreshka_xml.gpr";
 
+with "forum/forum.gpr";
+
 library project Forum_Web is
 
    for Object_Dir use ".objs";
+
+   for Source_Dirs use (".", "../servlet/source/esapi/");
 
    for Library_Name use "forumServer";
    for Library_Kind use "dynamic";

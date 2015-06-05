@@ -1,0 +1,343 @@
+------------------------------------------------------------------------------
+--                                                                          --
+--                      House Designer's Smart Studio                       --
+--                                                                          --
+------------------------------------------------------------------------------
+--                                                                          --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- All rights reserved.                                                     --
+--                                                                          --
+------------------------------------------------------------------------------
+--  $Revision$ $Date$
+------------------------------------------------------------------------------
+with Ada.Containers.Hashed_Maps;
+with Ada.Streams;
+
+with League.Base_Codecs;
+with League.Holders;
+with League.Stream_Element_Vectors;
+with League.Strings.Hash;
+with SQL.Queries;
+
+with ESAPI.Users.User_Identifier_Holders;
+with Security.Users.Stores;
+with Server.Globals;
+
+package body Server.Sessions.Controller is
+
+   use type Ada.Streams.Stream_Element_Offset;
+
+   function "+"
+    (Item : Wide_Wide_String) return League.Strings.Universal_String
+       renames League.Strings.To_Universal_String;
+
+   function To_Session_Identifier
+    (Item : League.Strings.Universal_String) return Session_Identifier;
+   --  Converts string into session identifier. Raises Constraint_Error when
+   --  conversion is impossible for some reason.
+
+   procedure To_Session_Identifier
+    (Item       : League.Strings.Universal_String;
+     Identifier : out Session_Identifier;
+     Success    : out Boolean);
+   --  Converts string into session identifier. Sets Success to False when
+   --  conversion is impossible for some reason.
+
+   function Hash (Item : Session_Identifier) return Ada.Containers.Hash_Type;
+
+   package Session_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Session_Identifier, Session_Access, Hash, "=");
+
+   Session_Map : Session_Maps.Map;
+   Store       : access Session_Manager'Class;
+
+   --------------------
+   -- Create_Session --
+   --------------------
+
+   function Create_Session return not null Session_Access is
+      Query : SQL.Queries.SQL_Query       := Store.Engine.Get_Database.Query;
+      SID   : constant Session_Identifier := Generate_Session_Identifier;
+
+   begin
+      Query.Prepare
+       (+("INSERT INTO sessions (session_identifier, user_identifier,"
+            & " creation_time, last_accessed_time)"
+            & " VALUES (:session_identifier, :user_identifier, :creation_time,"
+            & " :last_accessed_time)"));
+      Query.Bind_Value
+       (+":session_identifier",
+        League.Holders.To_Holder (To_Universal_String (SID)));
+      Query.Bind_Value
+       (+":user_identifier",
+        ESAPI.Users.User_Identifier_Holders.To_Holder
+         (ESAPI.Users.Anonymous_User_Identifier));
+      Query.Bind_Value
+       (+":creation_time",
+        League.Holders.To_Holder (League.Calendars.Clock));
+      Query.Bind_Value
+       (+":last_accessed_time",
+        League.Holders.To_Holder (League.Calendars.Clock));
+      Query.Execute;
+      Store.Engine.Get_Database.Commit;
+
+      return Get_Session (SID);
+   end Create_Session;
+
+   -----------------
+   -- Get_Session --
+   -----------------
+
+   function Get_Session (SID : Session_Identifier) return Session_Access is
+      use type Session_Maps.Cursor;
+
+      Position : constant Session_Maps.Cursor := Session_Map.Find (SID);
+
+   begin
+      if Position /= Session_Maps.No_Element then
+         return Session_Maps.Element (Position);
+
+      else
+         declare
+            Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
+            User  : Security.Users.User_Access;
+
+         begin
+            Query.Prepare
+             (+("SELECT session_identifier, user_identifier, creation_time,"
+                  & " last_accessed_time FROM sessions"
+                  & " WHERE session_identifier = :session_identifier"));
+            Query.Bind_Value
+             (+":session_identifier",
+              League.Holders.To_Holder (To_Universal_String (SID)));
+            Query.Execute;
+
+            if not Query.Next then
+               return null;
+            end if;
+
+            User :=
+              Security.Users.Stores.User_Store'Class
+               (Store.Engine.Get_Store (Security.Users.User'Tag).all).Incarnate
+               (ESAPI.Users.User_Identifier_Holders.Element
+                 (Query.Value (2)));
+
+            return Result : constant Session_Access
+              := new Session'
+                  (To_Session_Identifier
+                    (League.Holders.Element (Query.Value (1))),
+                   User,
+                   League.Holders.Element (Query.Value (3)),
+                   League.Holders.Element (Query.Value (4)))
+            do
+               Session_Map.Insert (Result.Get_Session_Identifier, Result);
+            end return;
+         end;
+      end if;
+   end Get_Session;
+
+   -----------------
+   -- Get_Session --
+   -----------------
+
+   overriding function Get_Session
+    (Self       : Session_Manager;
+     Identifier : League.Strings.Universal_String)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class
+   is
+      SID     : Session_Identifier;
+      Success : Boolean;
+
+   begin
+      To_Session_Identifier (Identifier, SID, Success);
+
+      if Success then
+         return Get_Session (SID);
+
+      else
+         return null;
+      end if;
+   end Get_Session;
+
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Item : Session_Identifier) return Ada.Containers.Hash_Type is
+   begin
+      return League.Strings.Hash (To_Universal_String (Item));
+   end Hash;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   overriding procedure Initialize (Self : in out Session_Manager) is
+   begin
+      Self.Engine.Register_Store
+       (Server.Sessions.Session'Tag,
+        Self'Unchecked_Access);
+      Store := Self'Unchecked_Access;
+   end Initialize;
+
+   ---------------------------------
+   -- Is_Session_Identifier_Valid --
+   ---------------------------------
+
+   overriding function Is_Session_Identifier_Valid
+    (Self       : Session_Manager;
+     Identifier : League.Strings.Universal_String) return Boolean
+   is
+      SID     : Session_Identifier;
+      Success : Boolean;
+
+   begin
+      To_Session_Identifier (Identifier, SID, Success);
+
+      return Success;
+   end Is_Session_Identifier_Valid;
+
+   -----------------
+   -- New_Session --
+   -----------------
+
+   overriding function New_Session
+    (Self : Session_Manager)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class is
+   begin
+      return Create_Session;
+   end New_Session;
+
+   ---------------------------
+   -- To_Session_Identifier --
+   ---------------------------
+
+   procedure To_Session_Identifier
+    (Item       : League.Strings.Universal_String;
+     Identifier : out Session_Identifier;
+     Success    : out Boolean)
+   is
+      Raw     : Ada.Streams.Stream_Element_Array
+                 (1 .. Session_Identifier'Max_Size_In_Storage_Elements)
+                    with Import     => True,
+                         Convention => Ada,
+                         Address    => Identifier'Address;
+      Decoded : League.Stream_Element_Vectors.Stream_Element_Vector;
+
+   begin
+      League.Base_Codecs.From_Base_64_URL (Item, Decoded, Success);
+
+      if not Success then
+         return;
+      end if;
+
+      if Decoded.Length /= Session_Identifier'Max_Size_In_Storage_Elements then
+         Success := False;
+
+         return;
+      end if;
+
+      Raw := Decoded.To_Stream_Element_Array;
+      Success := True;
+   end To_Session_Identifier;
+
+   ---------------------------
+   -- To_Session_Identifier --
+   ---------------------------
+
+   function To_Session_Identifier
+    (Item : League.Strings.Universal_String) return Session_Identifier
+   is
+      Decoded : constant League.Stream_Element_Vectors.Stream_Element_Vector
+        := League.Base_Codecs.From_Base_64_URL (Item);
+
+   begin
+      if Decoded.Length /= Session_Identifier'Max_Size_In_Storage_Elements then
+         raise Constraint_Error with "Mailformed SID";
+      end if;
+
+      declare
+         Raw    : constant Ada.Streams.Stream_Element_Array
+           := Decoded.To_Stream_Element_Array;
+         for Raw'Alignment use Interfaces.Unsigned_64'Alignment;
+         Result : constant Session_Identifier
+           with Import     => True,
+                Convention => Ada,
+                Address    => Raw'Address;
+
+      begin
+         return Result;
+      end;
+   end To_Session_Identifier;
+
+   -------------------------------
+   -- Update_Last_Accessed_Time --
+   -------------------------------
+
+   procedure Update_Last_Accessed_Time (Session : not null Session_Access) is
+      Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
+
+   begin
+      Session.Last_Accessed_Time := League.Calendars.Clock;
+
+      Query.Prepare
+       (+("UPDATE sessions SET last_accessed_time = :last_accessed_time"
+            & " WHERE session_identifier = :session_identifier"));
+      Query.Bind_Value
+       (+":session_identifier",
+        League.Holders.To_Holder (To_Universal_String (Session.SID)));
+      Query.Bind_Value
+       (+":last_accessed_time",
+        League.Holders.To_Holder (Session.Last_Accessed_Time));
+      Query.Execute;
+      Store.Engine.Get_Database.Commit;
+   end Update_Last_Accessed_Time;
+
+   -------------------------------
+   -- Update_Session_Identifier --
+   -------------------------------
+
+   procedure Update_Session_Identifier
+    (Session : not null Session_Access;
+     Old     : Session_Identifier)
+   is
+      Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
+
+   begin
+      Query.Prepare
+       (+("UPDATE sessions SET session_identifier = :session_identifier"
+            & " WHERE session_identifier = :old_session_identifier"));
+      Query.Bind_Value
+       (+":session_identifier",
+        League.Holders.To_Holder (To_Universal_String (Session.SID)));
+      Query.Bind_Value
+       (+":old_session_identifier",
+        League.Holders.To_Holder (To_Universal_String (Old)));
+      Query.Execute;
+      Store.Engine.Get_Database.Commit;
+   end Update_Session_Identifier;
+
+   -----------------
+   -- Update_User --
+   -----------------
+
+   procedure Update_User (Session : not null Session_Access) is
+      Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
+
+   begin
+      Query.Prepare
+       (+("UPDATE sessions SET user_identifier = :user_identifier"
+            & " WHERE session_identifier = :session_identifier"));
+      Query.Bind_Value
+       (+":user_identifier",
+        ESAPI.Users.User_Identifier_Holders.To_Holder
+         (Session.User.Get_User_Identifier));
+      Query.Bind_Value
+       (+":session_identifier",
+        League.Holders.To_Holder (To_Universal_String (Session.SID)));
+      Query.Execute;
+      Store.Engine.Get_Database.Commit;
+   end Update_User;
+
+end Server.Sessions.Controller;
