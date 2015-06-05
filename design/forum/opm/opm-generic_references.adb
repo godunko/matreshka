@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Generic_References is
+package body OPM.Generic_References is
 
    ------------
    -- Adjust --
@@ -96,4 +96,4 @@ package body Generic_References is
           Reference => Self.Self);
    end Object;
 
-end Generic_References;
+end OPM.Generic_References;

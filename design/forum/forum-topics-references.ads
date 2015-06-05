@@ -41,7 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Generic_References;
+with OPM.Generic_References;
+
 with Forum.Topics.Objects.Stores;
 
 package Forum.Topics.References is
@@ -49,7 +50,7 @@ package Forum.Topics.References is
 --   pragma Preelaborate;
 
    package Topic_References is
-     new Generic_References
+     new OPM.Generic_References
           (Topic_Identifier,
            Forum.Topics.Objects.Topic,
            Forum.Topics.Objects.Stores.Topic_Access,

@@ -43,13 +43,14 @@
 ------------------------------------------------------------------------------
 with Ada.Containers.Vectors;
 
-with Generic_References;
+with OPM.Generic_References;
+
 with Forum.Categories.Objects.Stores;
 
 package Forum.Categories.References is
 
    package Category_References is
-     new Generic_References
+     new OPM.Generic_References
           (Category_Identifier,
            Forum.Categories.Objects.Category_Object,
            Forum.Categories.Objects.Stores.Category_Access,

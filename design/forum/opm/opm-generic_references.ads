@@ -56,7 +56,7 @@ generic
     (Self   : in out Element_Store;
      Object : not null Element_Access) is abstract;
 
-package Generic_References is
+package OPM.Generic_References is
 
    pragma Preelaborate;
 
@@ -95,4 +95,4 @@ private
 
    overriding procedure Finalize (Self : in out Variable_Reference_Type);
 
-end Generic_References;
+end OPM.Generic_References;
