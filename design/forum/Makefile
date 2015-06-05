@@ -3,7 +3,7 @@ INSTALL_libs = $(INSTALL) -m 0555
 INSTALL_data = $(INSTALL) -m 0444
 
 all:
-	gprbuild -p -P forum.gpr
+	gprbuild -p -P test.gpr
 
 initdb:
 	dropdb forum || true
@@ -12,7 +12,7 @@ initdb:
 
 
 clean:
-	rm -rf .objs opm/.objs
+	rm -rf opm/.objs forum/.objs .objs
 
 deploy:
 	rm -rf install
