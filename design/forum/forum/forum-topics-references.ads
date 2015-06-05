@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers.Vectors;
+
 with OPM.Generic_References;
 
 with Forum.Topics.Objects.Stores;
@@ -52,12 +54,16 @@ package Forum.Topics.References is
    package Topic_References is
      new OPM.Generic_References
           (Topic_Identifier,
-           Forum.Topics.Objects.Topic,
+           Forum.Topics.Objects.Topic_Object,
            Forum.Topics.Objects.Stores.Topic_Access,
            Forum.Topics.Objects.Stores.Topic_Store,
            Forum.Topics.Objects.Stores.Get,
            Forum.Topics.Objects.Stores.Release);
 
-   type Topic_Reference is new Topic_References.Reference with null record;
+   type Topic is new Topic_References.Reference with null record;
+
+   package Topic_Vectors is new Ada.Containers.Vectors (Positive, Topic);
+
+   type Topic_Vector is new Topic_Vectors.Vector with null record;
 
 end Forum.Topics.References;

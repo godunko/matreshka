@@ -40,6 +40,12 @@ package body Server.Servlets.Forum_Servlets is
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception);
    --  Process fatal error in XML data. Outputs message to standard error.
 
+   procedure Get_Categories
+     (Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
+      Path     : League.String_Vectors.Universal_String_Vector;
+      Filter   : in out XML.Templates.Processors.Template_Processor;
+      Template : out League.Strings.Universal_String);
+
    ------------
    -- Do_Get --
    ------------
@@ -53,6 +59,8 @@ package body Server.Servlets.Forum_Servlets is
         := Request.Get_Servlet_Context;
       Path      : League.String_Vectors.Universal_String_Vector
         := Request.Get_Servlet_Path;
+      Path_Info : constant League.String_Vectors.Universal_String_Vector
+        := Request.Get_Path_Info;
 
       Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
       Reader : XML.SAX.Simple_Readers.Simple_Reader;
@@ -61,8 +69,7 @@ package body Server.Servlets.Forum_Servlets is
       Output :
         aliased XML.SAX.Output_Destinations.Strings.String_Output_Destination;
       Error  : aliased Error_Handler;
-      Arr    : League.JSON.Arrays.JSON_Array;
-
+      Template : League.Strings.Universal_String;
    begin
       --  Link components.
 
@@ -74,35 +81,18 @@ package body Server.Servlets.Forum_Servlets is
       Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
       Writer.Set_Output_Destination (Output'Unchecked_Access);
 
-      Path.Append
+      Path.Prepend
         (League.String_Vectors.Universal_String_Vector'
            (Request.Get_Context_Path));
 
       --  Set parameters
-      for J of Server.Globals.My_Forum.Get_Categories loop
-         declare
-            JSON : League.JSON.Objects.JSON_Object;
-            IRI  : League.IRIs.IRI;
-         begin
-            IRI.Set_Absolute_Path (Path);
-            IRI.Append_Segment
-              (Forum.Categories.Encode (J.Object.Get_Identifier));
-
-            JSON.Insert
-              (+"id",
-               League.JSON.Values.To_JSON_Value (IRI.To_Universal_String));
-            JSON.Insert
-              (+"title",
-               League.JSON.Values.To_JSON_Value (J.Object.Get_Title));
-            JSON.Insert
-              (+"description",
-               League.JSON.Values.To_JSON_Value (J.Object.Get_Description));
-            Arr.Append (JSON.To_JSON_Value);
-         end;
-      end loop;
+--      if Path_Info.Length = 0 then
+         Get_Categories (Response, Path, Filter, Template);
+---      end if;
 
       Filter.Set_Parameter
-        (+"list", League.Holders.JSON_Arrays.To_Holder (Arr));
+        (+"aaa", League.Holders.To_Holder
+           (+Natural'Wide_Wide_Image (Path_Info.Length)));
 
       Response.Set_Status (Servlet.HTTP_Responses.OK);
       Response.Set_Content_Type (+"text/html");
@@ -110,8 +100,7 @@ package body Server.Servlets.Forum_Servlets is
 
       --  Process template file.
 
-      Input.Open_By_File_Name
-       (Context.Get_Real_Path (+"/WEB-INF/templates/page.xhtml.tmpl"));
+      Input.Open_By_File_Name (Context.Get_Real_Path (Template));
       Reader.Parse;
 
       Response.Get_Output_Stream.Write (Output.Get_Text);
@@ -151,6 +140,46 @@ package body Server.Servlets.Forum_Servlets is
           & ": "
           & Occurrence.Message.To_Wide_Wide_String);
    end Fatal_Error;
+
+   --------------------
+   -- Get_Categories --
+   --------------------
+
+   procedure Get_Categories
+     (Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
+      Path     : League.String_Vectors.Universal_String_Vector;
+      Filter   : in out XML.Templates.Processors.Template_Processor;
+      Template : out League.Strings.Universal_String)
+   is
+      Arr    : League.JSON.Arrays.JSON_Array;
+   begin
+      for J of Server.Globals.My_Forum.Get_Categories loop
+         declare
+            JSON : League.JSON.Objects.JSON_Object;
+            IRI  : League.IRIs.IRI;
+         begin
+            IRI.Set_Absolute_Path (Path);
+            IRI.Append_Segment
+              (Forum.Categories.Encode (J.Object.Get_Identifier));
+
+            JSON.Insert
+              (+"id",
+               League.JSON.Values.To_JSON_Value (IRI.To_Universal_String));
+            JSON.Insert
+              (+"title",
+               League.JSON.Values.To_JSON_Value (J.Object.Get_Title));
+            JSON.Insert
+              (+"description",
+               League.JSON.Values.To_JSON_Value (J.Object.Get_Description));
+            Arr.Append (JSON.To_JSON_Value);
+         end;
+      end loop;
+
+      Filter.Set_Parameter
+        (+"list", League.Holders.JSON_Arrays.To_Holder (Arr));
+
+      Template := +"/WEB-INF/templates/page.xhtml.tmpl";
+   end Get_Categories;
 
    ----------------------
    -- Get_Servlet_Info --

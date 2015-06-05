@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Forum.Categories.Objects.Stores;
+with Forum.Topics.References;
 
 package body Forum.Categories.Objects is
 
@@ -73,5 +75,27 @@ package body Forum.Categories.Objects is
    begin
       return Self.Title;
    end Get_Title;
+
+   ---------------------
+   -- Get_Topic_Count --
+   ---------------------
+
+   function Get_Topic_Count
+    (Self : Category_Object'Class) return Natural is
+   begin
+      return Self.Store.Get_Topic_Count (Self.Identifier);
+   end Get_Topic_Count;
+
+   ----------------
+   -- Get_Topics --
+   ----------------
+
+   function Get_Topics
+    (Self : Category_Object'Class;
+     From : Positive;
+     To   : Positive) return Forum.Topics.References.Topic_Vector is
+   begin
+      return Self.Store.Get_Topics (Self.Identifier, From, To);
+   end Get_Topics;
 
 end Forum.Categories.Objects;

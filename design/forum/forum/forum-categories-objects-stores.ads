@@ -56,6 +56,16 @@ package Forum.Categories.Objects.Stores is
     (Self       : in out Category_Store;
      Identifier : Category_Identifier) return Category_Access;
 
+   function Get_Topic_Count
+    (Self       : in out Category_Store;
+     Identifier : Category_Identifier) return Natural;
+
+   function Get_Topics
+     (Self       : in out Category_Store;
+      Identifier : Category_Identifier;
+      From       : Positive;
+      To         : Positive) return Forum.Topics.References.Topic_Vector;
+
    not overriding procedure Release
     (Self   : in out Category_Store;
      Object : not null Category_Access);

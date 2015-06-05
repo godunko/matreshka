@@ -42,11 +42,13 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Strings;
+with League.Holders.Generic_Integers;
 
 package Forum.Topics is
    pragma Preelaborate;
 
-   type Topic_Identifier is private;
+--   type Topic_Identifier is private;
+   type Topic_Identifier is range 0 .. 2 * 63 - 1;
 
    function Encode
     (Item : Topic_Identifier) return League.Strings.Universal_String;
@@ -57,9 +59,12 @@ package Forum.Topics is
    --  representsation. Decode function returns True when category identifier
    --  was decoded successfully.
 
-private
+   package Topic_Identifier_Holders is
+     new League.Holders.Generic_Integers (Topic_Identifier);
 
-
-   type Topic_Identifier is range 0 .. 2 * 63 - 1;
+--  private
+--
+--
+--     type Topic_Identifier is range 0 .. 2 * 63 - 1;
 
 end Forum.Topics;

@@ -44,6 +44,7 @@
 with League.Strings;
 
 limited with Forum.Categories.Objects.Stores;
+limited with Forum.Topics.References;
 
 package Forum.Categories.Objects is
 
@@ -57,6 +58,14 @@ package Forum.Categories.Objects is
 
    function Get_Description
     (Self : Category_Object'Class) return League.Strings.Universal_String;
+
+   function Get_Topic_Count
+    (Self : Category_Object'Class) return Natural;
+
+   function Get_Topics
+    (Self : Category_Object'Class;
+     From : Positive;
+     To   : Positive) return Forum.Topics.References.Topic_Vector;
 
 private
 

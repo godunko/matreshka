@@ -50,6 +50,8 @@ with OPM.Engines;
 
 with Forum.Categories.Category_Identifier_Holders;
 with Forum.Categories.References;
+with Forum.Topics.References;
+with Forum.Topics.Objects.Stores;
 
 package body Forum.Categories.Objects.Stores is
 
@@ -136,6 +138,96 @@ package body Forum.Categories.Objects.Stores is
        (Forum.Categories.Objects.Category_Object'Tag,
         Self'Unchecked_Access);
    end Initialize;
+
+   ---------------------
+   -- Get_Topic_Count --
+   ---------------------
+
+   function Get_Topic_Count
+    (Self       : in out Category_Store;
+     Identifier : Category_Identifier) return Natural
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT count(*) FROM topics"
+                 & " WHERE category_identifier = :category_identifier"));
+
+      Result : League.Holders.Universal_Integer;
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":category_identifier"),
+        Category_Identifier_Holders.To_Holder (Identifier));
+      Q.Execute;
+
+      if not Q.Next then
+         Result := 0;
+
+      else
+         Result := League.Holders.Element (Q.Value (1));
+      end if;
+
+      return Natural (Result);
+   end Get_Topic_Count;
+
+   function Get_Topic_Store
+    (Self : OPM.Engines.Engine'Class)
+      return not null access
+        Forum.Topics.Objects.Stores.Topic_Store'Class is
+   begin
+      return
+        Standard.Forum.Topics.Objects.Stores.Topic_Store'Class
+         (Self.Get_Store
+           (Standard.Forum.Topics.Objects.Topic_Object'Tag).all)
+              'Unchecked_Access;
+   end Get_Topic_Store;
+
+   ----------------
+   -- Get_Topics --
+   ----------------
+
+   function Get_Topics
+     (Self       : in out Category_Store;
+      Identifier : Category_Identifier;
+      From       : Positive;
+      To         : Positive) return Forum.Topics.References.Topic_Vector
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT topic_identifier FROM topics"
+                 & " WHERE category_identifier = :category_identifier"));
+
+      Result : Forum.Topics.References.Topic_Vector;
+      X : OPM.Stores.Store_Access :=
+        Self.Engine.Get_Store (Forum.Topics.Objects.Topic_Object'Tag);
+
+      Store  : not null access Forum.Topics.Objects.Stores.Topic_Store'Class :=
+          Forum.Topics.Objects.Stores.Topic_Store'Class
+            (X.all)
+              'Unchecked_Access;
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":category_identifier"),
+        Category_Identifier_Holders.To_Holder (Identifier));
+      Q.Execute;
+
+      for J in From .. To loop
+         if Q.Next then
+            declare
+               Ref : Forum.Topics.References.Topic;
+            begin
+               Ref.Initialize
+                 (Get_Topic_Store (Self.Engine.all),
+                  Topics.Topic_Identifier_Holders.Element (Q.Value (1)));
+
+               Result.Append (Ref);
+            end;
+         end if;
+      end loop;
+
+      return Result;
+   end Get_Topics;
 
    -------------
    -- Release --

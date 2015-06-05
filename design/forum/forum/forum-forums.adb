@@ -47,6 +47,7 @@ with OPM.Stores;
 
 with Forum.Categories.Objects.Stores;
 with Forum.Categories.Category_Identifier_Holders;
+with Forum.Topics.Objects.Stores;
 
 package body Forum.Forums is
 
@@ -126,6 +127,8 @@ package body Forum.Forums is
    begin
       Self.Engine.Initialize (Driver, Options);
       Aux := new Standard.Forum.Categories.Objects.Stores.Category_Store (Self.Engine'Unchecked_Access);
+      Aux.Initialize;
+      Aux := new Standard.Forum.Topics.Objects.Stores.Topic_Store (Self.Engine'Unchecked_Access);
       Aux.Initialize;
    end Initialize;
 

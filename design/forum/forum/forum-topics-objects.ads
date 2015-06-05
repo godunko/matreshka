@@ -49,17 +49,17 @@ package Forum.Topics.Objects is
 
 --   pragma Preelaborate;
 
-   type Topic (<>) is tagged limited private;
+   type Topic_Object (<>) is tagged limited private;
 
    function Get_Title
-    (Self : Topic'Class) return League.Strings.Universal_String;
+    (Self : Topic_Object'Class) return League.Strings.Universal_String;
 
    function Get_Description
-    (Self : Topic'Class) return League.Strings.Universal_String;
+    (Self : Topic_Object'Class) return League.Strings.Universal_String;
 
 private
 
-   type Topic
+   type Topic_Object
          (Store :
             not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
      tagged limited record

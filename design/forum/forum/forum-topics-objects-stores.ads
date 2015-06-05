@@ -42,18 +42,14 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with SQL.Databases;
+with OPM.Stores;
 
+limited with Forum.Categories.References;
 package Forum.Topics.Objects.Stores is
 
---   pragma Preelaborate;
+   type Topic_Access is access all Topic_Object'Class; --  with Storage_Size => 0;
 
-   type Topic_Access is access all Topic'Class; --  with Storage_Size => 0;
-
-   type Topic_Store is tagged limited private;
-
-   procedure Initialize
-    (Self     : in out Topic_Store;
-     Database : not null access SQL.Databases.SQL_Database'Class);
+   type Topic_Store is new OPM.Stores.Abstract_Store with private;
 
    not overriding function Get
     (Self       : in out Topic_Store;
@@ -63,10 +59,10 @@ package Forum.Topics.Objects.Stores is
     (Self   : in out Topic_Store;
      Object : not null Topic_Access);
 
+   overriding procedure Initialize (Self : in out Topic_Store);
+
 private
 
-   type Topic_Store is tagged limited record
-      Database : access SQL.Databases.SQL_Database'Class;
-   end record;
+   type Topic_Store is new OPM.Stores.Abstract_Store with null record;
 
 end Forum.Topics.Objects.Stores;

@@ -46,12 +46,13 @@ with Ada.Unchecked_Deallocation;
 with League.Holders.Generic_Integers;
 with SQL.Queries;
 
+with OPM.Engines;
+
+with Forum.Categories.Objects;
+
 package body Forum.Topics.Objects.Stores is
 
-   procedure Free is new Ada.Unchecked_Deallocation (Topic'Class, Topic_Access);
-
-   package Topic_Identifier_Holders is
-     new League.Holders.Generic_Integers (Topic_Identifier);
+   procedure Free is new Ada.Unchecked_Deallocation (Topic_Object'Class, Topic_Access);
 
    ---------
    -- Get --
@@ -62,7 +63,7 @@ package body Forum.Topics.Objects.Stores is
      Identifier : Topic_Identifier) return Topic_Access
    is
       Q : SQL.Queries.SQL_Query
-        := Self.Database.Query
+        := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
               ("SELECT title, description FROM topics"
                  & " WHERE topic_identifier = :forum_identifier"));
@@ -78,7 +79,7 @@ package body Forum.Topics.Objects.Stores is
 
       else
          return
-           new Topic'
+           new Topic_Object'
                 (Store       => Self'Unchecked_Access,
                  Identifier  => Identifier,
                  Title       => League.Holders.Element (Q.Value (1)),
@@ -90,11 +91,11 @@ package body Forum.Topics.Objects.Stores is
    -- Initialize --
    ----------------
 
-   procedure Initialize
-    (Self     : in out Topic_Store;
-     Database : not null access SQL.Databases.SQL_Database'Class) is
+   overriding procedure Initialize (Self : in out Topic_Store) is
    begin
-      Self.Database := Database;
+      Self.Engine.Register_Store
+       (Forum.Topics.Objects.Topic_Object'Tag,
+        Self'Unchecked_Access);
    end Initialize;
 
    -------------
