@@ -10,11 +10,12 @@ with XML.SAX.Simple_Readers;
 with XML.Templates.Processors;
 with XML.Templates.Streams.Holders;
 with Servlet.Contexts;
-with League.String_Vectors;
+with League.Holders.JSON_Arrays;
+with League.IRIs;
 with League.JSON.Arrays;
 with League.JSON.Objects;
-with League.Holders.JSON_Arrays;
 with League.JSON.Values;
+with League.String_Vectors;
 
 with Server.Globals;
 with Forum.Categories;
@@ -50,7 +51,7 @@ package body Server.Servlets.Forum_Servlets is
    is
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      Path      : constant League.String_Vectors.Universal_String_Vector
+      Path      : League.String_Vectors.Universal_String_Vector
         := Request.Get_Servlet_Path;
 
       Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
@@ -61,6 +62,7 @@ package body Server.Servlets.Forum_Servlets is
         aliased XML.SAX.Output_Destinations.Strings.String_Output_Destination;
       Error  : aliased Error_Handler;
       Arr    : League.JSON.Arrays.JSON_Array;
+
    begin
       --  Link components.
 
@@ -72,15 +74,23 @@ package body Server.Servlets.Forum_Servlets is
       Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
       Writer.Set_Output_Destination (Output'Unchecked_Access);
 
+      Path.Append
+        (League.String_Vectors.Universal_String_Vector'
+           (Request.Get_Context_Path));
+
       --  Set parameters
       for J of Server.Globals.My_Forum.Get_Categories loop
          declare
-            JSON   : League.JSON.Objects.JSON_Object;
+            JSON : League.JSON.Objects.JSON_Object;
+            IRI  : League.IRIs.IRI;
          begin
+            IRI.Set_Absolute_Path (Path);
+            IRI.Append_Segment
+              (Forum.Categories.Encode (J.Object.Get_Identifier));
+
             JSON.Insert
               (+"id",
-               League.JSON.Values.To_JSON_Value
-                 (Forum.Categories.Encode (J.Object.Get_Identifier)));
+               League.JSON.Values.To_JSON_Value (IRI.To_Universal_String));
             JSON.Insert
               (+"title",
                League.JSON.Values.To_JSON_Value (J.Object.Get_Title));
