@@ -41,11 +41,25 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 
 package Forum.Topics is
+   pragma Preelaborate;
 
-   pragma Pure;
+   type Topic_Identifier is private;
 
-   type Topic_Identifier is range 0 .. 2*63 - 1;
+   function Encode
+    (Item : Topic_Identifier) return League.Strings.Universal_String;
+   function Decode
+    (Image : League.Strings.Universal_String;
+     Value : out Topic_Identifier) return Boolean;
+   --  Functions to 'encode' and 'decode' topic identifiers to string
+   --  representsation. Decode function returns True when category identifier
+   --  was decoded successfully.
+
+private
+
+
+   type Topic_Identifier is range 0 .. 2 * 63 - 1;
 
 end Forum.Topics;
