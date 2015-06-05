@@ -95,8 +95,8 @@ package body Server.Servlets.Forum_Servlets is
         (+"list", League.Holders.JSON_Arrays.To_Holder (Arr));
 
       Response.Set_Status (Servlet.HTTP_Responses.OK);
+      Response.Set_Content_Type (+"text/html");
       Response.Set_Character_Encoding (+"UTF-8");
-      Response.Set_Content_Type (Context.Get_MIME_Type (Path (Path.Length)));
 
       --  Process template file.
 
