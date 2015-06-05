@@ -60,7 +60,7 @@ package body Server.Initializers is
 
       Servlet := new Server.Servlets.Forum_Servlets.Forum_Servlet;
       Registry := Context.Add_Servlet (+"ForumManager", Servlet);
-      Registry.Add_Mapping (+"/account/*");
+      Registry.Add_Mapping (+"/forum/*");
 
    end On_Startup;
 

@@ -54,6 +54,16 @@ package body Forum.Categories.Objects is
       return Self.Description;
    end Get_Description;
 
+   --------------------
+   -- Get_Identifier --
+   --------------------
+
+   function Get_Identifier
+    (Self : Category_Object'Class) return Category_Identifier is
+   begin
+      return Self.Identifier;
+   end Get_Identifier;
+
    ---------------
    -- Get_Title --
    ---------------

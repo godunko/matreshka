@@ -49,6 +49,9 @@ package Forum.Categories.Objects is
 
    type Category_Object (<>) is tagged limited private;
 
+   function Get_Identifier
+    (Self : Category_Object'Class) return Category_Identifier;
+
    function Get_Title
     (Self : Category_Object'Class) return League.Strings.Universal_String;
 

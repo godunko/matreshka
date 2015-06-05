@@ -17,6 +17,7 @@ with League.Holders.JSON_Arrays;
 with League.JSON.Values;
 
 with Server.Globals;
+with Forum.Categories;
 
 package body Server.Servlets.Forum_Servlets is
 
@@ -77,8 +78,15 @@ package body Server.Servlets.Forum_Servlets is
             JSON   : League.JSON.Objects.JSON_Object;
          begin
             JSON.Insert
-              (+"user",
+              (+"id",
+               League.JSON.Values.To_JSON_Value
+                 (Forum.Categories.Encode (J.Object.Get_Identifier)));
+            JSON.Insert
+              (+"title",
                League.JSON.Values.To_JSON_Value (J.Object.Get_Title));
+            JSON.Insert
+              (+"description",
+               League.JSON.Values.To_JSON_Value (J.Object.Get_Description));
             Arr.Append (JSON.To_JSON_Value);
          end;
       end loop;
