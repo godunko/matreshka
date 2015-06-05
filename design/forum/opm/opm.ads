@@ -2,7 +2,7 @@
 --                                                                          --
 --                            Matreshka Project                             --
 --                                                                          --
---                               Web Framework                              --
+--                      Orthogonal Persistence Manager                      --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
@@ -41,36 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with SQL.Options;
 
-private with OPM.Engines;
+package OPM is
 
-with Forum.Categories.References;
+   pragma Pure;
 
-package Forum.Forums is
-
-   type Forum is tagged limited private;
-
-   procedure Initialize
-    (Self    : in out Forum'Class;
-     Driver  : League.Strings.Universal_String;
-     Options : SQL.Options.SQL_Options);
-
-   function Get_Categories
-    (Self : in out Forum'Class)
-       return Standard.Forum.Categories.References.Category_Vector;
-
-   function Create_Category
-    (Self        : in out Forum'Class;
-     Title       : League.Strings.Universal_String;
-     Description : League.Strings.Universal_String)
-       return Standard.Forum.Categories.References.Category;
-
-private
-
-   type Forum is tagged limited record
-      Engine : aliased OPM.Engines.Engine;
-   end record;
-
-end Forum.Forums;
+end OPM;

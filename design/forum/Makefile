@@ -12,7 +12,7 @@ initdb:
 
 
 clean:
-	rm -rf .objs
+	rm -rf .objs opm/.objs
 
 deploy:
 	rm -rf install

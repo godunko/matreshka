@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with SQL.Databases;
+with OPM.Stores;
 
 limited with Forum.Categories.References;
 
@@ -49,11 +50,7 @@ package Forum.Categories.Objects.Stores is
 
    type Category_Access is access all Category_Object'Class;
 
-   type Category_Store is tagged limited private;
-
-   procedure Initialize
-    (Self     : in out Category_Store;
-     Database : not null access SQL.Databases.SQL_Database'Class);
+   type Category_Store is new OPM.Stores.Abstract_Store with private;
 
    not overriding function Get
     (Self       : in out Category_Store;
@@ -69,10 +66,10 @@ package Forum.Categories.Objects.Stores is
      Description : League.Strings.Universal_String)
        return Forum.Categories.References.Category;
 
+   overriding procedure Initialize (Self : in out Category_Store);
+
 private
 
-   type Category_Store is tagged limited record
-      Database : access SQL.Databases.SQL_Database'Class;
-   end record;
+   type Category_Store is new OPM.Stores.Abstract_Store with null record;
 
 end Forum.Categories.Objects.Stores;

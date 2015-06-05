@@ -45,6 +45,8 @@ with Ada.Unchecked_Deallocation;
 
 with SQL.Queries;
 
+with OPM.Engines;
+
 with Forum.Categories.References;
 
 package body Forum.Categories.Objects.Stores is
@@ -63,7 +65,7 @@ package body Forum.Categories.Objects.Stores is
        return Forum.Categories.References.Category
    is
       Q : SQL.Queries.SQL_Query
-        := Self.Database.Query
+        := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
               ("INSERT INTO categories (title, description)"
                  & " VALUES (:title, :description)"
@@ -98,7 +100,7 @@ package body Forum.Categories.Objects.Stores is
      Identifier : Category_Identifier) return Category_Access
    is
       Q : SQL.Queries.SQL_Query
-        := Self.Database.Query
+        := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
               ("SELECT title, description FROM categories"
                  & " WHERE category_identifier = :category_identifier"));
@@ -126,11 +128,11 @@ package body Forum.Categories.Objects.Stores is
    -- Initialize --
    ----------------
 
-   procedure Initialize
-    (Self     : in out Category_Store;
-     Database : not null access SQL.Databases.SQL_Database'Class) is
+   overriding procedure Initialize (Self : in out Category_Store) is
    begin
-      Self.Database := Database;
+      Self.Engine.Register_Store
+       (Forum.Categories.Objects.Category_Object'Tag,
+        Self'Unchecked_Access);
    end Initialize;
 
    -------------

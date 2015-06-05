@@ -2,7 +2,7 @@
 --                                                                          --
 --                            Matreshka Project                             --
 --                                                                          --
---                               Web Framework                              --
+--                      Orthogonal Persistence Manager                      --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
@@ -41,36 +41,57 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Engine is entry point of persistance manager. It manages stores that
+--  manages instances of object classes.
+------------------------------------------------------------------------------
+private with Ada.Containers.Hashed_Maps;
+with Ada.Tags;
+
 with League.Strings;
+with SQL.Databases;
 with SQL.Options;
 
-private with OPM.Engines;
+with OPM.Stores;
 
-with Forum.Categories.References;
+package OPM.Engines is
 
-package Forum.Forums is
+   type Engine is tagged limited private;
 
-   type Forum is tagged limited private;
+   procedure Register_Store
+    (Self  : in out Engine;
+     Tag   : Ada.Tags.Tag;
+     Store : not null OPM.Stores.Store_Access);
+
+   function Get_Store
+    (Self : Engine; Tag : Ada.Tags.Tag) return OPM.Stores.Store_Access;
+
+   function Get_Database
+    (Self : Engine) return not null access SQL.Databases.SQL_Database;
+   --  Returns access to database connection object.
 
    procedure Initialize
-    (Self    : in out Forum'Class;
+    (Self    : in out Engine;
      Driver  : League.Strings.Universal_String;
      Options : SQL.Options.SQL_Options);
-
-   function Get_Categories
-    (Self : in out Forum'Class)
-       return Standard.Forum.Categories.References.Category_Vector;
-
-   function Create_Category
-    (Self        : in out Forum'Class;
-     Title       : League.Strings.Universal_String;
-     Description : League.Strings.Universal_String)
-       return Standard.Forum.Categories.References.Category;
+   --  Initialize engine.
 
 private
 
-   type Forum is tagged limited record
-      Engine : aliased OPM.Engines.Engine;
+   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type;
+
+   package Tag_Store_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Ada.Tags.Tag,
+           OPM.Stores.Store_Access,
+           Hash,
+           Ada.Tags."=",
+           OPM.Stores."=");
+
+   type Database_Access is access all SQL.Databases.SQL_Database;
+
+   type Engine is tagged limited record
+      Registry : Tag_Store_Maps.Map;
+      Database : Database_Access;
    end record;
 
-end Forum.Forums;
+end OPM.Engines;

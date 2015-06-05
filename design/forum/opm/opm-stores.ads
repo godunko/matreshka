@@ -2,7 +2,7 @@
 --                                                                          --
 --                            Matreshka Project                             --
 --                                                                          --
---                               Web Framework                              --
+--                      Orthogonal Persistence Manager                      --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
@@ -41,36 +41,23 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with SQL.Options;
+--  Store is base tagged type to construct stores of concrete objects. Abstract
+--  store is responsible for object refenence management.
+------------------------------------------------------------------------------
+limited with OPM.Engines;
 
-private with OPM.Engines;
+package OPM.Stores is
 
-with Forum.Categories.References;
+   type Abstract_Store (Engine : not null access OPM.Engines.Engine'Class) is
+     abstract tagged limited private;
 
-package Forum.Forums is
+   type Store_Access is access all Abstract_Store'Class;
 
-   type Forum is tagged limited private;
-
-   procedure Initialize
-    (Self    : in out Forum'Class;
-     Driver  : League.Strings.Universal_String;
-     Options : SQL.Options.SQL_Options);
-
-   function Get_Categories
-    (Self : in out Forum'Class)
-       return Standard.Forum.Categories.References.Category_Vector;
-
-   function Create_Category
-    (Self        : in out Forum'Class;
-     Title       : League.Strings.Universal_String;
-     Description : League.Strings.Universal_String)
-       return Standard.Forum.Categories.References.Category;
+   not overriding procedure Initialize (Self : in out Abstract_Store) is null;
 
 private
 
-   type Forum is tagged limited record
-      Engine : aliased OPM.Engines.Engine;
-   end record;
+   type Abstract_Store (Engine : not null access OPM.Engines.Engine'Class) is
+     abstract tagged limited null record;
 
-end Forum.Forums;
+end OPM.Stores;

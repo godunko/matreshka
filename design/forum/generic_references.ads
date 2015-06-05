@@ -47,7 +47,7 @@ generic
    type Element_Identifier is private;
    type Element (<>) is abstract tagged limited private;
    type Element_Access is access all Element'Class;
-   type Element_Store is abstract tagged limited private;
+   type Element_Store (<>) is abstract tagged limited private;
 
    with function Get
     (Self       : in out Element_Store;

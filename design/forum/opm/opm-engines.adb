@@ -2,7 +2,7 @@
 --                                                                          --
 --                            Matreshka Project                             --
 --                                                                          --
---                               Web Framework                              --
+--                      Orthogonal Persistence Manager                      --
 --                                                                          --
 --                        Runtime Library Component                         --
 --                                                                          --
@@ -41,36 +41,64 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with SQL.Options;
+with Ada.Strings.Hash;
 
-private with OPM.Engines;
+package body OPM.Engines is
 
-with Forum.Categories.References;
+   ------------------
+   -- Get_Database --
+   ------------------
 
-package Forum.Forums is
+   function Get_Database
+    (Self : Engine) return not null access SQL.Databases.SQL_Database is
+   begin
+      return Self.Database;
+   end Get_Database;
 
-   type Forum is tagged limited private;
+   ---------------
+   -- Get_Store --
+   ---------------
+
+   function Get_Store
+    (Self : Engine; Tag : Ada.Tags.Tag) return OPM.Stores.Store_Access is
+   begin
+      return Self.Registry (Tag);
+   end Get_Store;
+
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type is
+   begin
+      return Ada.Strings.Hash (Ada.Tags.External_Tag (Item));
+   end Hash;
+
+   ----------------
+   -- Initialize --
+   ----------------
 
    procedure Initialize
-    (Self    : in out Forum'Class;
+    (Self    : in out Engine;
      Driver  : League.Strings.Universal_String;
-     Options : SQL.Options.SQL_Options);
+     Options : SQL.Options.SQL_Options) is
+   begin
+      Self.Database :=
+        new SQL.Databases.SQL_Database'
+             (SQL.Databases.Create (Driver, Options));
+      Self.Database.Open;
+   end Initialize;
 
-   function Get_Categories
-    (Self : in out Forum'Class)
-       return Standard.Forum.Categories.References.Category_Vector;
+   --------------------
+   -- Register_Store --
+   --------------------
 
-   function Create_Category
-    (Self        : in out Forum'Class;
-     Title       : League.Strings.Universal_String;
-     Description : League.Strings.Universal_String)
-       return Standard.Forum.Categories.References.Category;
+   procedure Register_Store
+    (Self  : in out Engine;
+     Tag   : Ada.Tags.Tag;
+     Store : not null OPM.Stores.Store_Access) is
+   begin
+      Self.Registry.Insert (Tag, Store);
+   end Register_Store;
 
-private
-
-   type Forum is tagged limited record
-      Engine : aliased OPM.Engines.Engine;
-   end record;
-
-end Forum.Forums;
+end OPM.Engines;

@@ -1,0 +1,13 @@
+with "../../../gnat/matreshka_sql.gpr";
+
+project OPM is
+
+   for Object_Dir use ".objs";
+
+   package Compiler is
+
+      for Default_Switches ("Ada") use ("-g", "-gnatW8");
+
+   end Compiler;
+
+end OPM;

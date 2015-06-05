@@ -43,7 +43,16 @@
 ------------------------------------------------------------------------------
 with SQL.Queries;
 
+with OPM.Stores;
+
+with Forum.Categories.Objects.Stores;
+
 package body Forum.Forums is
+
+   function Get_Category_Store
+    (Self : OPM.Engines.Engine'Class)
+      return not null access
+        Standard.Forum.Categories.Objects.Stores.Category_Store'Class;
 
    ---------------------
    -- Create_Category --
@@ -55,7 +64,7 @@ package body Forum.Forums is
      Description : League.Strings.Universal_String)
        return Standard.Forum.Categories.References.Category is
    begin
-      return Self.Category_Store.Create (Title, Description);
+      return Get_Category_Store (Self.Engine).Create (Title, Description);
    end Create_Category;
 
    --------------------
@@ -67,7 +76,7 @@ package body Forum.Forums is
        return Standard.Forum.Categories.References.Category_Vector
    is
       Q : SQL.Queries.SQL_Query
-        := Self.Database.Query
+        := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
               ("SELECT category_identifier FROM categories"));
       X : Standard.Forum.Categories.References.Category;
@@ -78,7 +87,7 @@ package body Forum.Forums is
 
       while Q.Next loop
          X.Initialize
-          (Self.Category_Store'Unchecked_Access,
+          (Get_Category_Store (Self.Engine),
            Categories.Category_Identifier_Holders.Element (Q.Value (1)));
          R.Append (X);
       end loop;
@@ -86,16 +95,37 @@ package body Forum.Forums is
       return R;
    end Get_Categories;
 
+   ------------------------
+   -- Get_Category_Store --
+   ------------------------
+
+   function Get_Category_Store
+    (Self : OPM.Engines.Engine'Class)
+      return not null access
+        Standard.Forum.Categories.Objects.Stores.Category_Store'Class is
+   begin
+      return
+        Standard.Forum.Categories.Objects.Stores.Category_Store'Class
+         (Self.Get_Store
+           (Standard.Forum.Categories.Objects.Category_Object'Tag).all)
+              'Unchecked_Access;
+   end Get_Category_Store;
+
    ----------------
    -- Initialize --
    ----------------
 
    procedure Initialize
-    (Self     : in out Forum'Class;
-     Database : not null access SQL.Databases.SQL_Database'Class) is
+    (Self    : in out Forum'Class;
+     Driver  : League.Strings.Universal_String;
+     Options : SQL.Options.SQL_Options)
+   is
+      Aux : OPM.Stores.Store_Access;
+
    begin
-      Self.Database := Database;
-      Self.Category_Store.Initialize (Database);
+      Self.Engine.Initialize (Driver, Options);
+      Aux := new Standard.Forum.Categories.Objects.Stores.Category_Store (Self.Engine'Unchecked_Access);
+      Aux.Initialize;
    end Initialize;
 
 end Forum.Forums;
