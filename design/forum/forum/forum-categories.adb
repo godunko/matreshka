@@ -41,28 +41,38 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Holders.Generic_Integers;
 
-package Forum.Categories is
+package body Forum.Categories is
 
-   pragma Preelaborate;
+   ------------
+   -- Decode --
+   ------------
 
---   type Forum_Identifier is private;
---
---  private
-
-   type Category_Identifier is range 0 .. 2 * 63 - 1;
-
-   function Encode
-    (Item : Category_Identifier) return League.Strings.Universal_String;
    function Decode
     (Image : League.Strings.Universal_String;
-     Value : out Category_Identifier) return Boolean;
-   --  Functions to 'encode' and 'decode' category identifiers to string
-   --  representsation. Decode function returns True when category identifier
-   --  was decoded successfully.
+     Value : out Category_Identifier) return Boolean is
+   begin
+      --  XXX This subprogram must be rewritter without use of exceptions.
 
-   package Category_Identifier_Holders is
-     new League.Holders.Generic_Integers (Category_Identifier);
+      Value := Category_Identifier'Wide_Wide_Value (Image.To_Wide_Wide_String);
+
+      return True;
+
+   exception
+      when Constraint_Error =>
+         return False;
+   end Decode;
+
+   ------------
+   -- Encode --
+   ------------
+
+   function Encode
+    (Item : Category_Identifier) return League.Strings.Universal_String is
+   begin
+      return
+        League.Strings.To_Universal_String
+         (Category_Identifier'Wide_Wide_Image (Item));
+   end Encode;
 
 end Forum.Categories;
