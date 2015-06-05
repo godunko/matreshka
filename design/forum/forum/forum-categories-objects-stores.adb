@@ -43,10 +43,12 @@
 ------------------------------------------------------------------------------
 with Ada.Unchecked_Deallocation;
 
+with League.Holders;
 with SQL.Queries;
 
 with OPM.Engines;
 
+with Forum.Categories.Category_Identifier_Holders;
 with Forum.Categories.References;
 
 package body Forum.Categories.Objects.Stores is

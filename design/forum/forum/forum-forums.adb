@@ -46,6 +46,7 @@ with SQL.Queries;
 with OPM.Stores;
 
 with Forum.Categories.Objects.Stores;
+with Forum.Categories.Category_Identifier_Holders;
 
 package body Forum.Forums is
 

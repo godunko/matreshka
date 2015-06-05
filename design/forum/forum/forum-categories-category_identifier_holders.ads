@@ -41,25 +41,36 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+with League.Holders;
+private with League.Holders.Generic_Integers;
 
-package Forum.Categories is
+package Forum.Categories.Category_Identifier_Holders is
 
-   pragma Preelaborate;
+   Value_Tag : constant League.Holders.Tag;
 
-   type Category_Identifier is private;
+   function Element (Self : League.Holders.Holder) return Category_Identifier;
 
-   function Encode
-    (Item : Category_Identifier) return League.Strings.Universal_String;
-   function Decode
-    (Image : League.Strings.Universal_String;
-     Value : out Category_Identifier) return Boolean;
-   --  Functions to 'encode' and 'decode' category identifiers to string
-   --  representsation. Decode function returns True when category identifier
-   --  was decoded successfully.
+   procedure Replace_Element
+    (Self : in out League.Holders.Holder; To : Category_Identifier);
+
+   function To_Holder
+    (Item : Category_Identifier) return League.Holders.Holder;
 
 private
 
-   type Category_Identifier is range 0 .. 2 * 63 - 1;
+   package Holders is
+     new League.Holders.Generic_Integers (Category_Identifier);
 
-end Forum.Categories;
+   Value_Tag : constant League.Holders.Tag := Holders.Value_Tag;
+
+   function Element (Self : League.Holders.Holder) return Category_Identifier
+     renames Holders.Element;
+
+   procedure Replace_Element
+    (Self : in out League.Holders.Holder; To : Category_Identifier)
+       renames Holders.Replace_Element;
+
+   function To_Holder (Item : Category_Identifier) return League.Holders.Holder
+     renames Holders.To_Holder;
+
+end Forum.Categories.Category_Identifier_Holders;
