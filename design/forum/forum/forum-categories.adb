@@ -68,11 +68,14 @@ package body Forum.Categories is
    ------------
 
    function Encode
-    (Item : Category_Identifier) return League.Strings.Universal_String is
+    (Item : Category_Identifier) return League.Strings.Universal_String
+   is
+      Aux : constant Wide_Wide_String
+        := Category_Identifier'Wide_Wide_Image (Item);
+
    begin
       return
-        League.Strings.To_Universal_String
-         (Category_Identifier'Wide_Wide_Image (Item));
+        League.Strings.To_Universal_String (Aux (Aux'First + 1 .. Aux'Last));
    end Encode;
 
 end Forum.Categories;
