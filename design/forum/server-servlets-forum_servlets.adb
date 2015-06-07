@@ -17,7 +17,6 @@ with League.JSON.Objects;
 with League.JSON.Values;
 with League.String_Vectors;
 
-with Server.Globals;
 with Forum.Categories;
 
 package body Server.Servlets.Forum_Servlets is
@@ -41,7 +40,8 @@ package body Server.Servlets.Forum_Servlets is
    --  Process fatal error in XML data. Outputs message to standard error.
 
    procedure Get_Categories
-     (Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
+     (Server   : in out Forum.Forums.Servers.Server_Forum;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
       Path     : League.String_Vectors.Universal_String_Vector;
       Filter   : in out XML.Templates.Processors.Template_Processor;
       Template : out League.Strings.Universal_String);
@@ -87,7 +87,8 @@ package body Server.Servlets.Forum_Servlets is
 
       --  Set parameters
 --      if Path_Info.Length = 0 then
-         Get_Categories (Response, Path, Filter, Template);
+      Get_Categories
+        (Self.Server, Response, Path, Filter, Template);
 ---      end if;
 
       Filter.Set_Parameter
@@ -146,14 +147,15 @@ package body Server.Servlets.Forum_Servlets is
    --------------------
 
    procedure Get_Categories
-     (Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
+     (Server   : in out Forum.Forums.Servers.Server_Forum;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class;
       Path     : League.String_Vectors.Universal_String_Vector;
       Filter   : in out XML.Templates.Processors.Template_Processor;
       Template : out League.Strings.Universal_String)
    is
       Arr    : League.JSON.Arrays.JSON_Array;
    begin
-      for J of Server.Globals.My_Forum.Get_Categories loop
+      for J of Server.Get_Categories loop
          declare
             JSON : League.JSON.Objects.JSON_Object;
             IRI  : League.IRIs.IRI;

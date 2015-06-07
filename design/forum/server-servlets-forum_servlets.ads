@@ -4,10 +4,16 @@ with Servlet.HTTP_Requests;
 with Servlet.HTTP_Responses;
 with Servlet.HTTP_Servlets;
 
+with Forum.Forums.Servers;
+
 package Server.Servlets.Forum_Servlets is
 
    type Forum_Servlet is
-     new Servlet.HTTP_Servlets.HTTP_Servlet with null record;
+     new Servlet.HTTP_Servlets.HTTP_Servlet with record
+      Server : Forum.Forums.Servers.Server_Forum;
+   end record;
+
+   type Forum_Servlet_Access is access all Forum_Servlet'Class;
 
    overriding procedure Do_Get
     (Self     : in out Forum_Servlet;

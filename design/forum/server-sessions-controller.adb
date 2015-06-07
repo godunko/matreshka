@@ -21,7 +21,7 @@ with SQL.Queries;
 
 with ESAPI.Users.User_Identifier_Holders;
 with Security.Users.Stores;
-with Server.Globals;
+with OPM.Engines;
 
 package body Server.Sessions.Controller is
 

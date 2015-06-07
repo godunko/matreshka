@@ -7,7 +7,6 @@ with Servlet.Servlet_Registrations;
 with Spikedog.Servlet_Contexts;
 
 with Forum.Forums.Servers;
-with Server.Globals;
 with Server.Servlets.Static;
 with Server.Servlets.Forum_Servlets;
 with Server.Sessions.Controller;
@@ -31,7 +30,8 @@ package body Server.Initializers is
       Context : in out Servlet.Contexts.Servlet_Context'Class)
    is
       Options  : SQL.Options.SQL_Options;
-      Servlet  : Servlet_Access;
+      Servlet  : constant Server.Servlets.Forum_Servlets.Forum_Servlet_Access
+        :=  new Server.Servlets.Forum_Servlets.Forum_Servlet;
       Registry : access
         Standard.Servlet.Servlet_Registrations.Servlet_Registration'Class;
 
@@ -42,7 +42,7 @@ package body Server.Initializers is
         (League.Strings.To_Universal_String ("dbname"),
          League.Strings.To_Universal_String ("forum"));
       Forum.Forums.Servers.Initialize
-       (Server.Globals.My_Forum,
+       (Servlet.Server,
         League.Strings.To_Universal_String ("POSTGRESQL"),
         Options);
 
@@ -50,15 +50,16 @@ package body Server.Initializers is
 
       Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
        (Context).Set_Session_Manager
-         (Server.Globals.My_Forum.Get_HTTP_Session_Manager);
+         (Servlet.Server.Get_HTTP_Session_Manager);
 
       --  Create and register servlets.
 
-      Servlet := new Server.Servlets.Static.Resource_Servlet;
-      Registry := Context.Add_Servlet (+"StaticResources", Servlet);
+      Registry := Context.Add_Servlet
+        (+"StaticResources",
+         Servlet_Access'(new Server.Servlets.Static.Resource_Servlet));
+
       Registry.Add_Mapping (+"/forum.css");
 
-      Servlet := new Server.Servlets.Forum_Servlets.Forum_Servlet;
       Registry := Context.Add_Servlet (+"ForumManager", Servlet);
       Registry.Add_Mapping (+"/forum/*");
 
