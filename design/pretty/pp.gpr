@@ -1,8 +1,9 @@
 with "matreshka/league.gpr";
+with "asis";
 
 project Pp is
 
-   for Main use ("main_pp.adb");
+   for Main use ("main_pp.adb", "print_ada");
 
    package Compiler is
       for Default_Switches ("ada") use

@@ -1,4 +1,4 @@
-with Outputs; use Outputs;
+with League.Pretty_Printers; use League.Pretty_Printers;
 
 with Ada.Wide_Wide_Text_IO;
 
