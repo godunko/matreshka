@@ -76,7 +76,7 @@ package body Server.Sessions is
    overriding function Get_Id
     (Self : Session) return League.Strings.Universal_String is
    begin
-      return To_Universal_String (Self.SID);
+      return To_Universal_String (Self.Identifier);
    end Get_Id;
 
    ----------------------------
@@ -87,7 +87,7 @@ package body Server.Sessions is
     (Self : not null access constant Session'Class)
        return Session_Identifier is
    begin
-      return Self.SID;
+      return Self.Identifier;
    end Get_Session_Identifier;
 
    --------------
@@ -109,13 +109,13 @@ package body Server.Sessions is
     (Self : not null access Session'Class;
      User : not null AWFC.Accounts.Users.User_Access)
    is
-      Old_SID : constant Session_Identifier := Self.SID;
+      Old_SID : constant Session_Identifier := Self.Identifier;
 
    begin
       Self.User := User;
-      Self.SID := Generate_Session_Identifier;
-      Server.Sessions.Controller.Update_Session_Identifier (Self, Old_SID);
-      Server.Sessions.Controller.Update_User (Self);
+      Self.Identifier := Generate_Session_Identifier;
+      Self.Store.Update_Session_Identifier (Self, Old_SID);
+      Self.Store.Update_User (Self);
    end Set_User;
 
    -------------------------

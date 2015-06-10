@@ -48,6 +48,7 @@ with League.Strings;
 with Servlet.HTTP_Sessions;
 
 with AWFC.Accounts.Users;
+limited private with Server.Sessions.Controller;
 
 package Server.Sessions is
 
@@ -78,7 +79,9 @@ private
        with Size => 128;
 
    type Session is limited new Servlet.HTTP_Sessions.HTTP_Session with record
-      SID                : Session_Identifier;
+      Store              :
+        access Server.Sessions.Controller.Session_Manager'Class;
+      Identifier         : Session_Identifier;
       User               : AWFC.Accounts.Users.User_Access;
       Creation_Time      : League.Calendars.Date_Time;
       Last_Accessed_Time : League.Calendars.Date_Time;

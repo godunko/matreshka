@@ -80,101 +80,19 @@ package body Server.Sessions.Controller is
      new Ada.Containers.Hashed_Maps
           (Session_Identifier, Session_Access, Hash, "=");
 
+   function Get_Session
+    (Self       : in out Session_Manager'Class;
+     Identifier : Session_Identifier)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class;
+
    Session_Map : Session_Maps.Map;
-   Store       : access Session_Manager'Class;
-
-   --------------------
-   -- Create_Session --
-   --------------------
-
-   function Create_Session return not null Session_Access is
-      Query : SQL.Queries.SQL_Query       := Store.Engine.Get_Database.Query;
-      SID   : constant Session_Identifier := Generate_Session_Identifier;
-
-   begin
-      Query.Prepare
-       (+("INSERT INTO sessions (session_identifier, user_identifier,"
-            & " creation_time, last_accessed_time)"
-            & " VALUES (:session_identifier, :user_identifier, :creation_time,"
-            & " :last_accessed_time)"));
-      Query.Bind_Value
-       (+":session_identifier",
-        League.Holders.To_Holder (To_Universal_String (SID)));
-      Query.Bind_Value
-       (+":user_identifier",
-        AWFC.Accounts.Users.User_Identifier_Holders.To_Holder
-         (AWFC.Accounts.Users.Anonymous_User_Identifier));
-      Query.Bind_Value
-       (+":creation_time",
-        League.Holders.To_Holder (League.Calendars.Clock));
-      Query.Bind_Value
-       (+":last_accessed_time",
-        League.Holders.To_Holder (League.Calendars.Clock));
-      Query.Execute;
-      Store.Engine.Get_Database.Commit;
-
-      return Get_Session (SID);
-   end Create_Session;
-
-   -----------------
-   -- Get_Session --
-   -----------------
-
-   function Get_Session (SID : Session_Identifier) return Session_Access is
-      use type Session_Maps.Cursor;
-
-      Position : constant Session_Maps.Cursor := Session_Map.Find (SID);
-
-   begin
-      if Position /= Session_Maps.No_Element then
-         return Session_Maps.Element (Position);
-
-      else
-         declare
-            Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
-            User  : AWFC.Accounts.Users.User_Access;
-
-         begin
-            Query.Prepare
-             (+("SELECT session_identifier, user_identifier, creation_time,"
-                  & " last_accessed_time FROM sessions"
-                  & " WHERE session_identifier = :session_identifier"));
-            Query.Bind_Value
-             (+":session_identifier",
-              League.Holders.To_Holder (To_Universal_String (SID)));
-            Query.Execute;
-
-            if not Query.Next then
-               return null;
-            end if;
-
-            User :=
-              AWFC.Accounts.Users.Stores.User_Store'Class
-               (Store.Engine.Get_Store
-                 (AWFC.Accounts.Users.User'Tag).all).Incarnate
-                   (AWFC.Accounts.Users.User_Identifier_Holders.Element
-                     (Query.Value (2)));
-
-            return Result : constant Session_Access
-              := new Session'
-                  (To_Session_Identifier
-                    (League.Holders.Element (Query.Value (1))),
-                   User,
-                   League.Holders.Element (Query.Value (3)),
-                   League.Holders.Element (Query.Value (4)))
-            do
-               Session_Map.Insert (Result.Get_Session_Identifier, Result);
-            end return;
-         end;
-      end if;
-   end Get_Session;
 
    -----------------
    -- Get_Session --
    -----------------
 
    overriding function Get_Session
-    (Self       : Session_Manager;
+    (Self       : in out Session_Manager;
      Identifier : League.Strings.Universal_String)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class
    is
@@ -184,11 +102,72 @@ package body Server.Sessions.Controller is
    begin
       To_Session_Identifier (Identifier, SID, Success);
 
-      if Success then
-         return Get_Session (SID);
+      if not Success then
+         return null;
+      end if;
+
+      return Self.Get_Session (SID);
+   end Get_Session;
+
+   -----------------
+   -- Get_Session --
+   -----------------
+
+   function Get_Session
+    (Self       : in out Session_Manager'Class;
+     Identifier : Session_Identifier)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class
+   is
+      use type Session_Maps.Cursor;
+
+      Position : constant Session_Maps.Cursor := Session_Map.Find (Identifier);
+
+   begin
+      if Position /= Session_Maps.No_Element then
+         return Session_Maps.Element (Position);
 
       else
-         return null;
+         declare
+            Query  : SQL.Queries.SQL_Query
+              := Self.Engine.Get_Database.Query;
+            User   : AWFC.Accounts.Users.User_Access;
+            Result : Session_Access;
+
+         begin
+            Query.Prepare
+             (+("SELECT session_identifier, user_identifier, creation_time,"
+                  & " last_accessed_time FROM sessions"
+                  & " WHERE session_identifier = :session_identifier"));
+            Query.Bind_Value
+             (+":session_identifier",
+              League.Holders.To_Holder (To_Universal_String (Identifier)));
+            Query.Execute;
+
+            if not Query.Next then
+               return null;
+            end if;
+
+            User :=
+              AWFC.Accounts.Users.Stores.User_Store'Class
+               (Self.Engine.Get_Store
+                 (AWFC.Accounts.Users.User'Tag).all).Incarnate
+                   (AWFC.Accounts.Users.User_Identifier_Holders.Element
+                     (Query.Value (2)));
+
+            Result :=
+              new Session'
+                   (Store         => Self'Unchecked_Access,
+                    Identifier    =>
+                      To_Session_Identifier
+                       (League.Holders.Element (Query.Value (1))),
+                    User          => User,
+                    Creation_Time => League.Holders.Element (Query.Value (3)),
+                    Last_Accessed_Time =>
+                      League.Holders.Element (Query.Value (4)));
+            Session_Map.Insert (Result.Get_Session_Identifier, Result);
+
+            return Result;
+         end;
       end if;
    end Get_Session;
 
@@ -210,7 +189,6 @@ package body Server.Sessions.Controller is
       Self.Engine.Register_Store
        (Server.Sessions.Session'Tag,
         Self'Unchecked_Access);
-      Store := Self'Unchecked_Access;
    end Initialize;
 
    ---------------------------------
@@ -235,10 +213,35 @@ package body Server.Sessions.Controller is
    -----------------
 
    overriding function New_Session
-    (Self : Session_Manager)
-       return access Servlet.HTTP_Sessions.HTTP_Session'Class is
+    (Self : in out Session_Manager)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class
+   is
+      Query : SQL.Queries.SQL_Query       := Self.Engine.Get_Database.Query;
+      SID   : constant Session_Identifier := Generate_Session_Identifier;
+
    begin
-      return Create_Session;
+      Query.Prepare
+       (+("INSERT INTO sessions (session_identifier, user_identifier,"
+            & " creation_time, last_accessed_time)"
+            & " VALUES (:session_identifier, :user_identifier, :creation_time,"
+            & " :last_accessed_time)"));
+      Query.Bind_Value
+       (+":session_identifier",
+        League.Holders.To_Holder (To_Universal_String (SID)));
+      Query.Bind_Value
+       (+":user_identifier",
+        AWFC.Accounts.Users.User_Identifier_Holders.To_Holder
+         (AWFC.Accounts.Users.Anonymous_User_Identifier));
+      Query.Bind_Value
+       (+":creation_time",
+        League.Holders.To_Holder (League.Calendars.Clock));
+      Query.Bind_Value
+       (+":last_accessed_time",
+        League.Holders.To_Holder (League.Calendars.Clock));
+      Query.Execute;
+      Self.Engine.Get_Database.Commit;
+
+      return Self.Get_Session (SID);
    end New_Session;
 
    ---------------------------
@@ -307,34 +310,35 @@ package body Server.Sessions.Controller is
    -- Update_Last_Accessed_Time --
    -------------------------------
 
-   procedure Update_Last_Accessed_Time (Session : not null Session_Access) is
-      Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
-
-   begin
-      Session.Last_Accessed_Time := League.Calendars.Clock;
-
-      Query.Prepare
-       (+("UPDATE sessions SET last_accessed_time = :last_accessed_time"
-            & " WHERE session_identifier = :session_identifier"));
-      Query.Bind_Value
-       (+":session_identifier",
-        League.Holders.To_Holder (To_Universal_String (Session.SID)));
-      Query.Bind_Value
-       (+":last_accessed_time",
-        League.Holders.To_Holder (Session.Last_Accessed_Time));
-      Query.Execute;
-      Store.Engine.Get_Database.Commit;
-   end Update_Last_Accessed_Time;
+--   procedure Update_Last_Accessed_Time (Session : not null Session_Access) is
+--      Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
+--
+--   begin
+--      Session.Last_Accessed_Time := League.Calendars.Clock;
+--
+--      Query.Prepare
+--       (+("UPDATE sessions SET last_accessed_time = :last_accessed_time"
+--            & " WHERE session_identifier = :session_identifier"));
+--      Query.Bind_Value
+--       (+":session_identifier",
+--        League.Holders.To_Holder (To_Universal_String (Session.SID)));
+--      Query.Bind_Value
+--       (+":last_accessed_time",
+--        League.Holders.To_Holder (Session.Last_Accessed_Time));
+--      Query.Execute;
+--      Store.Engine.Get_Database.Commit;
+--   end Update_Last_Accessed_Time;
 
    -------------------------------
    -- Update_Session_Identifier --
    -------------------------------
 
    procedure Update_Session_Identifier
-    (Session : not null Session_Access;
+    (Self    : in out Session_Manager'Class;
+     Session : not null Session_Access;
      Old     : Session_Identifier)
    is
-      Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
+      Query : SQL.Queries.SQL_Query := Self.Engine.Get_Database.Query;
 
    begin
       Query.Prepare
@@ -342,20 +346,23 @@ package body Server.Sessions.Controller is
             & " WHERE session_identifier = :old_session_identifier"));
       Query.Bind_Value
        (+":session_identifier",
-        League.Holders.To_Holder (To_Universal_String (Session.SID)));
+        League.Holders.To_Holder (To_Universal_String (Session.Identifier)));
       Query.Bind_Value
        (+":old_session_identifier",
         League.Holders.To_Holder (To_Universal_String (Old)));
       Query.Execute;
-      Store.Engine.Get_Database.Commit;
+      Self.Engine.Get_Database.Commit;
    end Update_Session_Identifier;
 
    -----------------
    -- Update_User --
    -----------------
 
-   procedure Update_User (Session : not null Session_Access) is
-      Query : SQL.Queries.SQL_Query := Store.Engine.Get_Database.Query;
+   procedure Update_User
+    (Self    : in out Session_Manager'Class;
+     Session : not null Session_Access)
+   is
+      Query : SQL.Queries.SQL_Query := Self.Engine.Get_Database.Query;
 
    begin
       Query.Prepare
@@ -367,9 +374,9 @@ package body Server.Sessions.Controller is
          (Session.User.Get_User_Identifier));
       Query.Bind_Value
        (+":session_identifier",
-        League.Holders.To_Holder (To_Universal_String (Session.SID)));
+        League.Holders.To_Holder (To_Universal_String (Session.Identifier)));
       Query.Execute;
-      Store.Engine.Get_Database.Commit;
+      Self.Engine.Get_Database.Commit;
    end Update_User;
 
 end Server.Sessions.Controller;

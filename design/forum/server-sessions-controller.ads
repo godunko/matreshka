@@ -47,21 +47,9 @@ with OPM.Stores;
 
 package Server.Sessions.Controller is
 
-   function Create_Session return not null Session_Access;
-
-   function Get_Session (SID : Session_Identifier) return Session_Access;
-
-   procedure Update_Last_Accessed_Time (Session : not null Session_Access);
+--   procedure Update_Last_Accessed_Time (Session : not null Session_Access);
    --  Updates last_accessed_time to current time and update corresponding
    --  field in database.
-
-   procedure Update_User (Session : not null Session_Access);
-   --  Update user identifer in database.
-
-   procedure Update_Session_Identifier
-    (Session : not null Session_Access;
-     Old     : Session_Identifier);
-   --  Updates session identifier in database.
 
    type Session_Manager is
      new OPM.Stores.Abstract_Store
@@ -77,7 +65,7 @@ package Server.Sessions.Controller is
    overriding procedure Initialize (Self : in out Session_Manager);
 
    overriding function Get_Session
-    (Self       : Session_Manager;
+    (Self       : in out Session_Manager;
      Identifier : League.Strings.Universal_String)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class;
    --  Returns session this specified identifier, or null when session with
@@ -85,7 +73,18 @@ package Server.Sessions.Controller is
    --  time attribute is updated to current time.
 
    overriding function New_Session
-    (Self : Session_Manager)
+    (Self : in out Session_Manager)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class;
+
+   procedure Update_User
+    (Self    : in out Session_Manager'Class;
+     Session : not null Session_Access);
+   --  Update user identifer in database.
+
+   procedure Update_Session_Identifier
+    (Self    : in out Session_Manager'Class;
+     Session : not null Session_Access;
+     Old     : Session_Identifier);
+   --  Updates session identifier in database.
 
 end Server.Sessions.Controller;
