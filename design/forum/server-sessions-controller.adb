@@ -41,7 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
 with Ada.Streams;
 
 with League.Base_Codecs;
@@ -74,18 +73,10 @@ package body Server.Sessions.Controller is
    --  Converts string into session identifier. Sets Success to False when
    --  conversion is impossible for some reason.
 
-   function Hash (Item : Session_Identifier) return Ada.Containers.Hash_Type;
-
-   package Session_Maps is
-     new Ada.Containers.Hashed_Maps
-          (Session_Identifier, Session_Access, Hash, "=");
-
    function Get_Session
     (Self       : in out Session_Manager'Class;
      Identifier : Session_Identifier)
        return access Servlet.HTTP_Sessions.HTTP_Session'Class;
-
-   Session_Map : Session_Maps.Map;
 
    -----------------
    -- Get_Session --
@@ -120,7 +111,8 @@ package body Server.Sessions.Controller is
    is
       use type Session_Maps.Cursor;
 
-      Position : constant Session_Maps.Cursor := Session_Map.Find (Identifier);
+      Position : constant Session_Maps.Cursor
+        := Self.Sessions.Find (Identifier);
 
    begin
       if Position /= Session_Maps.No_Element then
@@ -164,7 +156,7 @@ package body Server.Sessions.Controller is
                     Creation_Time => League.Holders.Element (Query.Value (3)),
                     Last_Accessed_Time =>
                       League.Holders.Element (Query.Value (4)));
-            Session_Map.Insert (Result.Get_Session_Identifier, Result);
+            Self.Sessions.Insert (Result.Get_Session_Identifier, Result);
 
             return Result;
          end;

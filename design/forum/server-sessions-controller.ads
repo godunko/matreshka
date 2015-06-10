@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Containers.Hashed_Maps;
+
 with Spikedog.HTTP_Session_Managers;
 
 with OPM.Stores;
@@ -54,7 +56,7 @@ package Server.Sessions.Controller is
    type Session_Manager is
      new OPM.Stores.Abstract_Store
        and Spikedog.HTTP_Session_Managers.HTTP_Session_Manager
-         with null record;
+         with private;
 
    overriding function Is_Session_Identifier_Valid
     (Self       : Session_Manager;
@@ -86,5 +88,20 @@ package Server.Sessions.Controller is
      Session : not null Session_Access;
      Old     : Session_Identifier);
    --  Updates session identifier in database.
+
+private
+
+   function Hash (Item : Session_Identifier) return Ada.Containers.Hash_Type;
+
+   package Session_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Session_Identifier, Session_Access, Hash, "=");
+
+   type Session_Manager is
+     new OPM.Stores.Abstract_Store
+       and Spikedog.HTTP_Session_Managers.HTTP_Session_Manager with
+   record
+      Sessions : Session_Maps.Map;
+   end record;
 
 end Server.Sessions.Controller;
