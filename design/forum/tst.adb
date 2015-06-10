@@ -15,8 +15,8 @@ with Forum.Topics.Objects.Stores;
 procedure Tst is
    O  : SQL.Options.SQL_Options;
    F  : Forum.Forums.Forum;
-   ST : aliased Forum.Topics.Objects.Stores.Topic_Store;
-   T  : Forum.Topics.References.Topic_Reference;
+--   ST : aliased Forum.Topics.Objects.Stores.Topic_Store;
+--   T  : Forum.Topics.References.Topic_Reference;
 
 begin
    O.Set
