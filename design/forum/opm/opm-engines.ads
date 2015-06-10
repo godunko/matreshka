@@ -51,6 +51,7 @@ with League.Strings;
 with SQL.Databases;
 with SQL.Options;
 
+with OPM.Factories;
 with OPM.Stores;
 
 package OPM.Engines is
@@ -64,6 +65,14 @@ package OPM.Engines is
 
    function Get_Store
     (Self : Engine; Tag : Ada.Tags.Tag) return OPM.Stores.Store_Access;
+
+   procedure Register_Factory
+    (Self    : in out Engine;
+     Tag     : Ada.Tags.Tag;
+     Factory : not null OPM.Factories.Factory_Access);
+
+   function Get_Factory
+    (Self : Engine; Tag : Ada.Tags.Tag) return OPM.Factories.Factory_Access;
 
    function Get_Database
     (Self : Engine) return not null access SQL.Databases.SQL_Database;
@@ -87,11 +96,20 @@ private
            Ada.Tags."=",
            OPM.Stores."=");
 
+   package Tag_Factory_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Ada.Tags.Tag,
+           OPM.Factories.Factory_Access,
+           Hash,
+           Ada.Tags."=",
+           OPM.Factories."=");
+
    type Database_Access is access all SQL.Databases.SQL_Database;
 
    type Engine is tagged limited record
-      Registry : Tag_Store_Maps.Map;
-      Database : Database_Access;
+      Stores    : Tag_Store_Maps.Map;
+      Factories : Tag_Factory_Maps.Map;
+      Database  : Database_Access;
    end record;
 
 end OPM.Engines;

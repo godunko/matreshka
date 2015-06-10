@@ -55,6 +55,16 @@ package body OPM.Engines is
       return Self.Database;
    end Get_Database;
 
+   -----------------
+   -- Get_Factory --
+   -----------------
+
+   function Get_Factory
+    (Self : Engine; Tag : Ada.Tags.Tag) return OPM.Factories.Factory_Access is
+   begin
+      return Self.Factories (Tag);
+   end Get_Factory;
+
    ---------------
    -- Get_Store --
    ---------------
@@ -62,7 +72,7 @@ package body OPM.Engines is
    function Get_Store
     (Self : Engine; Tag : Ada.Tags.Tag) return OPM.Stores.Store_Access is
    begin
-      return Self.Registry (Tag);
+      return Self.Stores (Tag);
    end Get_Store;
 
    ----------
@@ -89,6 +99,18 @@ package body OPM.Engines is
       Self.Database.Open;
    end Initialize;
 
+   ----------------------
+   -- Register_Factory --
+   ----------------------
+
+   procedure Register_Factory
+    (Self    : in out Engine;
+     Tag     : Ada.Tags.Tag;
+     Factory : not null OPM.Factories.Factory_Access) is
+   begin
+      Self.Factories.Insert (Tag, Factory);
+   end Register_Factory;
+
    --------------------
    -- Register_Store --
    --------------------
@@ -98,7 +120,7 @@ package body OPM.Engines is
      Tag   : Ada.Tags.Tag;
      Store : not null OPM.Stores.Store_Access) is
    begin
-      Self.Registry.Insert (Tag, Store);
+      Self.Stores.Insert (Tag, Store);
    end Register_Store;
 
 end OPM.Engines;

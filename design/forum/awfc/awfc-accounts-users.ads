@@ -54,12 +54,12 @@ package AWFC.Accounts.Users is
    type User_Identifier is private;
 
    Anonymous_User_Identifier : constant User_Identifier;
+   --  XXX It can be reasonable to remove this constant to enforce use of
+   --  User_Factory.Get_Anonymous_User subprogram.
 
    type User is limited interface;
 
    type User_Access is access all User'Class;
-
-   Anonymous_User : constant User_Access;
 
    not overriding function Get_User_Identifier
     (Self : not null access constant User) return User_Identifier is abstract;
@@ -113,10 +113,6 @@ private
 
    overriding function Is_Enabled
     (Self : not null access constant Anonymous_User_Type) return Boolean;
-
-   Anonymous_User_Object : aliased Anonymous_User_Type;
-
-   Anonymous_User : constant User_Access := Anonymous_User_Object'Access;
 
    -----------------------------
    -- Non_Anonymous_User_Type --

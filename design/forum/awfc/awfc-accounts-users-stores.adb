@@ -41,10 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Ada.Containers.Hashed_Maps;
-
 with League.Holders.Generic_Integers;
-with League.Strings.Hash;
 with SQL.Queries;
 
 with OPM.Engines;
@@ -70,25 +67,6 @@ package body AWFC.Accounts.Users.Stores is
 
    function From_Boolean_Integer_Holder
     (Value : League.Holders.Holder) return Boolean;
-
-   package Email_Mappings is
-     new Ada.Containers.Hashed_Maps
-          (League.Strings.Universal_String,
-           AWFC.Accounts.Users.User_Access,
-           League.Strings.Hash,
-           League.Strings."=",
-           AWFC.Accounts.Users."=");
-
-   package Identifier_Mappings is
-     new Ada.Containers.Hashed_Maps
-          (AWFC.Accounts.Users.User_Identifier,
-           AWFC.Accounts.Users.User_Access,
-           AWFC.Accounts.Users.Hash,
-           AWFC.Accounts.Users."=",
-           AWFC.Accounts.Users."=");
-
-   Email_Cache      : Email_Mappings.Map;
-   Identifier_Cache : Identifier_Mappings.Map;
 
    ------------
    -- Create --
@@ -133,8 +111,8 @@ package body AWFC.Accounts.Users.Stores is
               (new Non_Anonymous_User_Type'
                     (AWFC.Accounts.Users.Initialize (Self))))
       do
-         Email_Cache.Insert (Self.Get_Email, Result);
-         Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
+         Self.Email_Cache.Insert (Self.Get_Email, Result);
+         Self.Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
       end return;
    end Create;
 
@@ -151,6 +129,17 @@ package body AWFC.Accounts.Users.Stores is
    begin
       return Image.To_Wide_Wide_String = "t";
    end From_Boolean_Integer_Holder;
+
+   ------------------------
+   -- Get_Anonymous_User --
+   ------------------------
+
+   overriding function Get_Anonymous_User
+    (Self : in out User_Store) return not null AWFC.Accounts.Users.User_Access is
+   begin
+      return
+        Self.Identifier_Cache (AWFC.Accounts.Users.Anonymous_User_Identifier);
+   end Get_Anonymous_User;
 
    ---------------
    -- Get_Email --
@@ -193,7 +182,8 @@ package body AWFC.Accounts.Users.Stores is
      Email : League.Strings.Universal_String)
        return AWFC.Accounts.Users.User_Access
    is
-      Position : constant Email_Mappings.Cursor := Email_Cache.Find (Email);
+      Position : constant Email_Mappings.Cursor
+        := Self.Email_Cache.Find (Email);
 
    begin
       if Email_Mappings.Has_Element (Position) then
@@ -229,8 +219,8 @@ package body AWFC.Accounts.Users.Stores is
                  (new Non_Anonymous_User_Type'
                        (AWFC.Accounts.Users.Initialize (Self))))
          do
-            Email_Cache.Insert (Self.Get_Email, Result);
-            Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
+            Self.Email_Cache.Insert (Self.Get_Email, Result);
+            Self.Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
          end return;
       end;
    end Incarnate;
@@ -245,7 +235,7 @@ package body AWFC.Accounts.Users.Stores is
        return AWFC.Accounts.Users.User_Access
    is
       Position : constant Identifier_Mappings.Cursor
-        := Identifier_Cache.Find (Identifier);
+        := Self.Identifier_Cache.Find (Identifier);
 
    begin
       if Identifier_Mappings.Has_Element (Position) then
@@ -283,8 +273,8 @@ package body AWFC.Accounts.Users.Stores is
                  (new Non_Anonymous_User_Type'
                        (AWFC.Accounts.Users.Initialize (Self))))
          do
-            Email_Cache.Insert (Self.Email, Result);
-            Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
+            Self.Email_Cache.Insert (Self.Email, Result);
+            Self.Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
          end return;
       end;
    end Incarnate;
@@ -295,6 +285,11 @@ package body AWFC.Accounts.Users.Stores is
 
    overriding procedure Initialize (Self : in out User_Store) is
    begin
+      Self.Identifier_Cache.Insert
+       (AWFC.Accounts.Users.Anonymous_User_Identifier,
+        new AWFC.Accounts.Users.Anonymous_User_Type);
+      Self.Engine.Register_Factory
+       (AWFC.Accounts.Users.User'Tag, Self'Unchecked_Access);
       Self.Engine.Register_Store
        (AWFC.Accounts.Users.User'Tag, Self'Unchecked_Access);
    end Initialize;
@@ -339,8 +334,4 @@ package body AWFC.Accounts.Users.Stores is
       Self.Engine.Get_Database.Commit;
    end Update_Enabled;
 
-begin
-   Identifier_Cache.Insert
-    (AWFC.Accounts.Users.Anonymous_User_Identifier,
-     AWFC.Accounts.Users.Anonymous_User);
 end AWFC.Accounts.Users.Stores;
