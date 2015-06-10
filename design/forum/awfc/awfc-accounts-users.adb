@@ -45,6 +45,49 @@ with AWFC.Accounts.Users.Stores;
 
 package body AWFC.Accounts.Users is
 
+   -------------
+   -- Disable --
+   -------------
+
+   overriding procedure Disable (Self : not null access Anonymous_User_Type) is
+   begin
+      raise Program_Error with "Anonymous user can't be disabled";
+   end Disable;
+
+   -------------
+   -- Disable --
+   -------------
+
+   overriding procedure Disable (Self : not null access Non_Anonymous_User_Type) is
+   begin
+      if Self.Enabled then
+         Self.Enabled := False;
+         Self.Store.Update_Enabled (Self);
+      end if;
+   end Disable;
+
+   ------------
+   -- Enable --
+   ------------
+
+   overriding procedure Enable (Self : not null access Anonymous_User_Type) is
+   begin
+      raise Program_Error with "Anonymous user is enabled always";
+   end Enable;
+
+   ------------
+   -- Enable --
+   ------------
+
+   overriding procedure Enable
+    (Self : not null access Non_Anonymous_User_Type) is
+   begin
+      if not Self.Enabled then
+         Self.Enabled := True;
+         Self.Store.Update_Enabled (Self);
+      end if;
+   end Enable;
+
    ---------------
    -- Get_Email --
    ---------------
@@ -67,22 +110,82 @@ package body AWFC.Accounts.Users is
       return Self.Email;
    end Get_Email;
 
+   -------------------------
+   -- Get_User_Identifier --
+   -------------------------
+
+   overriding function Get_User_Identifier
+    (Self : not null access constant Anonymous_User_Type)
+       return ESAPI.Users.User_Identifier is
+   begin
+      return ESAPI.Users.Anonymous_User_Identifier;
+   end Get_User_Identifier;
+
+   -------------------------
+   -- Get_User_Identifier --
+   -------------------------
+
+   overriding function Get_User_Identifier
+    (Self : not null access constant Non_Anonymous_User_Type)
+       return ESAPI.Users.User_Identifier is
+   begin
+      return Self.Identifier;
+   end Get_User_Identifier;
+
    ----------------
    -- Initialize --
    ----------------
 
-   overriding function Initialize
-    (Store : not null access ESAPI.Users.Stores.User_Store'Class)
-       return Non_Anonymous_User_Type
-   is
-      S : AWFC.Accounts.Users.Stores.User_Store'Class
-        renames AWFC.Accounts.Users.Stores.User_Store'Class (Store.all);
-
+   not overriding function Initialize
+    (Store : not null access AWFC.Accounts.Users.Stores.User_Store'Class)
+       return Non_Anonymous_User_Type is
    begin
       return
         Non_Anonymous_User_Type'
-         (ESAPI.Users.Non_Anonymous.Initialize (Store) with
-            Email => S.Get_Email);
+         (Store      => Store,
+          Identifier => Store.Get_User_Identifier,
+          Email      => Store.Get_Email,
+          Enabled    => Store.Get_Enabled);
    end Initialize;
+
+   ------------------
+   -- Is_Anonymous --
+   ------------------
+
+   overriding function Is_Anonymous
+    (Self : not null access constant Anonymous_User_Type) return Boolean is
+   begin
+      return True;
+   end Is_Anonymous;
+
+   ------------------
+   -- Is_Anonymous --
+   ------------------
+
+   overriding function Is_Anonymous
+    (Self : not null access constant Non_Anonymous_User_Type) return Boolean is
+   begin
+      return False;
+   end Is_Anonymous;
+
+   ----------------
+   -- Is_Enabled --
+   ----------------
+
+   overriding function Is_Enabled
+    (Self : not null access constant Anonymous_User_Type) return Boolean is
+   begin
+      return True;
+   end Is_Enabled;
+
+   ----------------
+   -- Is_Enabled --
+   ----------------
+
+   overriding function Is_Enabled
+    (Self : not null access constant Non_Anonymous_User_Type) return Boolean is
+   begin
+      return Self.Enabled;
+   end Is_Enabled;
 
 end AWFC.Accounts.Users;

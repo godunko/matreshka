@@ -43,13 +43,10 @@
 ------------------------------------------------------------------------------
 with OPM.Stores;
 
-with ESAPI.Users.Stores;
-
 package AWFC.Accounts.Users.Stores is
 
    type User_Store is
-     new OPM.Stores.Abstract_Store
-       and ESAPI.Users.Stores.User_Store with private;
+     limited new OPM.Stores.Abstract_Store with private;
 
    type User_Store_Access is access all User_Store'Class;
 
@@ -68,34 +65,28 @@ package AWFC.Accounts.Users.Stores is
      Email : League.Strings.Universal_String)
        return AWFC.Accounts.Users.User_Access;
 
+   function Get_User_Identifier
+    (Self : not null access User_Store'Class)
+       return ESAPI.Users.User_Identifier;
+
+   function Get_Enabled
+    (Self : not null access User_Store'Class) return Boolean;
+
+   procedure Update_Enabled
+    (Self : not null access User_Store'Class;
+     User : not null access constant AWFC.Accounts.Users.User'Class);
+
    not overriding function Get_Email
     (Self : not null access User_Store) return League.Strings.Universal_String;
 
-   not overriding function Get_Show_Advertisement
-    (Self : not null access User_Store) return Boolean;
-
 private
 
-   type User_Store is
-     new OPM.Stores.Abstract_Store
-       and ESAPI.Users.Stores.User_Store with
-   record
-      Identifier         : ESAPI.Users.User_Identifier;
-      Enabled            : Boolean;
-      Email              : League.Strings.Universal_String;
-      Show_Advertisement : Boolean;
+   type User_Store is limited new OPM.Stores.Abstract_Store with record
+      Identifier : ESAPI.Users.User_Identifier;
+      Enabled    : Boolean;
+      Email      : League.Strings.Universal_String;
    end record;
 
    overriding procedure Initialize (Self : in out User_Store);
-
-   overriding function Get_User_Identifier
-    (Self : not null access User_Store) return ESAPI.Users.User_Identifier;
-
-   overriding function Get_Enabled
-    (Self : not null access User_Store) return Boolean;
-
-   overriding procedure Update_Enabled
-    (Self : not null access User_Store;
-     User : not null access constant ESAPI.Users.User'Class);
 
 end AWFC.Accounts.Users.Stores;

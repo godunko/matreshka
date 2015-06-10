@@ -43,18 +43,35 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 
-private with ESAPI.Users.Anonymous;
-private with ESAPI.Users.Non_Anonymous;
-private with ESAPI.Users.Stores;
+private with OPM.Stores;
+
 with ESAPI.Users;
+
+limited private with AWFC.Accounts.Users.Stores;
 
 package AWFC.Accounts.Users is
 
-   type User is limited interface and ESAPI.Users.User;
+   type User is limited interface;
 
    type User_Access is access all User'Class;
 
    Anonymous_User : constant User_Access;
+
+   not overriding function Get_User_Identifier
+    (Self : not null access constant User)
+       return ESAPI.Users.User_Identifier is abstract;
+
+   not overriding function Is_Anonymous
+    (Self : not null access constant User) return Boolean is abstract;
+
+   not overriding function Is_Enabled
+    (Self : not null access constant User) return Boolean is abstract;
+
+   not overriding procedure Enable (Self : not null access User) is abstract;
+   --  Enable user's account.
+
+   not overriding procedure Disable (Self : not null access User) is abstract;
+   --  Disable user's account.
 
    not overriding function Get_Email
     (Self : not null access constant User)
@@ -68,12 +85,25 @@ private
    -------------------------
 
    type Anonymous_User_Type is
-     new ESAPI.Users.Anonymous.Anonymous_User
-       and AWFC.Accounts.Users.User with null record;
+     limited new AWFC.Accounts.Users.User with null record;
+
+   overriding procedure Disable (Self : not null access Anonymous_User_Type);
+
+   overriding procedure Enable (Self : not null access Anonymous_User_Type);
 
    overriding function Get_Email
     (Self : not null access constant Anonymous_User_Type)
        return League.Strings.Universal_String;
+
+   overriding function Get_User_Identifier
+    (Self : not null access constant Anonymous_User_Type)
+       return ESAPI.Users.User_Identifier;
+
+   overriding function Is_Anonymous
+    (Self : not null access constant Anonymous_User_Type) return Boolean;
+
+   overriding function Is_Enabled
+    (Self : not null access constant Anonymous_User_Type) return Boolean;
 
    Anonymous_User_Object : aliased Anonymous_User_Type;
 
@@ -83,19 +113,37 @@ private
    -- Non_Anonymous_User_Type --
    -----------------------------
 
-   type Non_Anonymous_User_Type is
-     new ESAPI.Users.Non_Anonymous.Non_Anonymous_User
-       and AWFC.Accounts.Users.User with
+   type Non_Anonymous_User_Type
+    (Store : not null access AWFC.Accounts.Users.Stores.User_Store'Class)
+       is limited new AWFC.Accounts.Users.User with
    record
-      Email : League.Strings.Universal_String;
+      Identifier : ESAPI.Users.User_Identifier;
+      Email      : League.Strings.Universal_String;
+      Enabled    : Boolean;
    end record;
+
+   overriding procedure Disable
+    (Self : not null access Non_Anonymous_User_Type);
+
+   overriding procedure Enable
+    (Self : not null access Non_Anonymous_User_Type);
 
    overriding function Get_Email
     (Self : not null access constant Non_Anonymous_User_Type)
        return League.Strings.Universal_String;
 
-   overriding function Initialize
-    (Store : not null access ESAPI.Users.Stores.User_Store'Class)
+   overriding function Get_User_Identifier
+    (Self : not null access constant Non_Anonymous_User_Type)
+       return ESAPI.Users.User_Identifier;
+
+   overriding function Is_Anonymous
+    (Self : not null access constant Non_Anonymous_User_Type) return Boolean;
+
+   overriding function Is_Enabled
+    (Self : not null access constant Non_Anonymous_User_Type) return Boolean;
+
+   not overriding function Initialize
+    (Store : not null access AWFC.Accounts.Users.Stores.User_Store'Class)
        return Non_Anonymous_User_Type;
 
 end AWFC.Accounts.Users;

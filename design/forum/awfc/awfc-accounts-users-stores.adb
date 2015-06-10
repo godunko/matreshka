@@ -104,16 +104,14 @@ package body AWFC.Accounts.Users.Stores is
 
    begin
       Insert_Query.Prepare
-       (+("INSERT INTO users (enabled, email, show_advertisement)"
-            & " VALUES (:enabled, :email, :show_advertisement)"));
+       (+("INSERT INTO users (enabled, email)"
+            & " VALUES (:enabled, :email)"));
       Insert_Query.Bind_Value (+":email", League.Holders.To_Holder (Email));
       Insert_Query.Bind_Value (+":enabled", To_Boolean_Integer_Holder (False));
-      Insert_Query.Bind_Value
-       (+":show_advertisement", To_Boolean_Integer_Holder (True));
       Insert_Query.Execute;
 
       Select_Query.Prepare
-       (+("SELECT user_identifier, email, enabled, show_advertisement"
+       (+("SELECT user_identifier, email, enabled"
             & " FROM users"
             & " WHERE email = :email"));
       Select_Query.Bind_Value (+":email", League.Holders.To_Holder (Email));
@@ -127,8 +125,6 @@ package body AWFC.Accounts.Users.Stores is
         ESAPI.Users.User_Identifier_Holders.Element (Select_Query.Value (1));
       Self.Email      := League.Holders.Element (Select_Query.Value (2));
       Self.Enabled    := From_Boolean_Integer_Holder (Select_Query.Value (3));
-      Self.Show_Advertisement :=
-        From_Boolean_Integer_Holder (Select_Query.Value (4));
 
       return Result : constant not null AWFC.Accounts.Users.User_Access
         := AWFC.Accounts.Users.User_Access
@@ -170,28 +166,18 @@ package body AWFC.Accounts.Users.Stores is
    -- Get_Enabled --
    -----------------
 
-   overriding function Get_Enabled
-    (Self : not null access User_Store) return Boolean is
+   function Get_Enabled
+    (Self : not null access User_Store'Class) return Boolean is
    begin
       return Self.Enabled;
    end Get_Enabled;
-
-   ----------------------------
-   -- Get_Show_Advertisement --
-   ----------------------------
-
-   not overriding function Get_Show_Advertisement
-    (Self : not null access User_Store) return Boolean is
-   begin
-      return Self.Show_Advertisement;
-   end Get_Show_Advertisement;
 
    -------------------------
    -- Get_User_Identifier --
    -------------------------
 
-   overriding function Get_User_Identifier
-    (Self : not null access User_Store) return ESAPI.Users.User_Identifier is
+   function Get_User_Identifier
+    (Self : not null access User_Store'Class) return ESAPI.Users.User_Identifier is
    begin
       return Self.Identifier;
    end Get_User_Identifier;
@@ -218,7 +204,7 @@ package body AWFC.Accounts.Users.Stores is
 
       begin
          Select_Query.Prepare
-          (+("SELECT user_identifier, email, enabled, show_advertisement"
+          (+("SELECT user_identifier, email, enabled"
                & " FROM users"
                & " WHERE email = :email"));
          Select_Query.Bind_Value (+":email", League.Holders.To_Holder (Email));
@@ -234,8 +220,6 @@ package body AWFC.Accounts.Users.Stores is
          Self.Email      := League.Holders.Element (Select_Query.Value (2));
          Self.Enabled    :=
            From_Boolean_Integer_Holder (Select_Query.Value (3));
-         Self.Show_Advertisement :=
-           From_Boolean_Integer_Holder (Select_Query.Value (4));
 
          return Result : constant AWFC.Accounts.Users.User_Access
            := AWFC.Accounts.Users.User_Access
@@ -272,7 +256,7 @@ package body AWFC.Accounts.Users.Stores is
 
       begin
          Select_Query.Prepare
-          (+("SELECT user_identifier, email, enabled, show_advertisement"
+          (+("SELECT user_identifier, email, enabled"
                & " FROM users"
                & " WHERE user_identifier = :user_identifier"));
          Select_Query.Bind_Value
@@ -290,8 +274,6 @@ package body AWFC.Accounts.Users.Stores is
          Self.Email      := League.Holders.Element (Select_Query.Value (2));
          Self.Enabled    :=
            From_Boolean_Integer_Holder (Select_Query.Value (3));
-         Self.Show_Advertisement :=
-           From_Boolean_Integer_Holder (Select_Query.Value (4));
 
          return Result : constant AWFC.Accounts.Users.User_Access
            := AWFC.Accounts.Users.User_Access
@@ -335,9 +317,9 @@ package body AWFC.Accounts.Users.Stores is
    -- Update_Enabled --
    --------------------
 
-   overriding procedure Update_Enabled
-    (Self : not null access User_Store;
-     User : not null access constant ESAPI.Users.User'Class)
+   procedure Update_Enabled
+    (Self : not null access User_Store'Class;
+     User : not null access constant AWFC.Accounts.Users.User'Class)
    is
       Query : SQL.Queries.SQL_Query := Self.Engine.Get_Database.Query;
 
