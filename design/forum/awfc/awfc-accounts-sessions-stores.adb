@@ -53,7 +53,7 @@ with AWFC.Accounts.Users.Stores;
 with AWFC.Accounts.Users.User_Identifier_Holders;
 with OPM.Engines;
 
-package body Server.Sessions.Controller is
+package body AWFC.Accounts.Sessions.Stores is
 
    use type Ada.Streams.Stream_Element_Offset;
 
@@ -179,8 +179,7 @@ package body Server.Sessions.Controller is
    overriding procedure Initialize (Self : in out Session_Manager) is
    begin
       Self.Engine.Register_Store
-       (Server.Sessions.Session'Tag,
-        Self'Unchecked_Access);
+       (AWFC.Accounts.Sessions.Session'Tag, Self'Unchecked_Access);
    end Initialize;
 
    ---------------------------------
@@ -371,4 +370,4 @@ package body Server.Sessions.Controller is
       Self.Engine.Get_Database.Commit;
    end Update_User;
 
-end Server.Sessions.Controller;
+end AWFC.Accounts.Sessions.Stores;

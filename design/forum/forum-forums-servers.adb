@@ -43,8 +43,8 @@
 ------------------------------------------------------------------------------
 with OPM.Stores;
 
+with AWFC.Accounts.Sessions.Stores;
 with AWFC.Accounts.Users.Stores;
-with Server.Sessions.Controller;
 
 package body Forum.Forums.Servers is
 
@@ -59,7 +59,7 @@ package body Forum.Forums.Servers is
    begin
       return
         Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access
-         (Self.Engine.Get_Store (Server.Sessions.Session'Tag));
+         (Self.Engine.Get_Store (AWFC.Accounts.Sessions.Session'Tag));
    end Get_HTTP_Session_Manager;
 
    ----------------
@@ -77,7 +77,7 @@ package body Forum.Forums.Servers is
       Standard.Forum.Forums.Initialize (Self, Driver, Options);
 
       Aux :=
-        new Server.Sessions.Controller.Session_Manager
+        new AWFC.Accounts.Sessions.Stores.Session_Manager
              (Self.Engine'Unchecked_Access);
       Aux.Initialize;
 

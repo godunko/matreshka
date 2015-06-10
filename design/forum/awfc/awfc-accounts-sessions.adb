@@ -47,9 +47,9 @@ with Ada.Streams;
 with League.Base_Codecs;
 with League.Stream_Element_Vectors;
 
-with Server.Sessions.Controller;
+with AWFC.Accounts.Sessions.Stores;
 
-package body Server.Sessions is
+package body AWFC.Accounts.Sessions is
 
    package Unsigned_64_Random is
      new Ada.Numerics.Discrete_Random (Interfaces.Unsigned_64);
@@ -139,4 +139,4 @@ package body Server.Sessions is
 
 begin
    Unsigned_64_Random.Reset (Generator);
-end Server.Sessions;
+end AWFC.Accounts.Sessions;

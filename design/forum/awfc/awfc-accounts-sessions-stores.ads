@@ -41,64 +41,67 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Interfaces;
+private with Ada.Containers.Hashed_Maps;
 
-with League.Calendars;
-with League.Strings;
-with Servlet.HTTP_Sessions;
+with Spikedog.HTTP_Session_Managers;
 
-with AWFC.Accounts.Users;
-limited private with Server.Sessions.Controller;
+with OPM.Stores;
 
-package Server.Sessions is
+package AWFC.Accounts.Sessions.Stores is
 
-   type Session_Identifier is private;
+--   procedure Update_Last_Accessed_Time (Session : not null Session_Access);
+   --  Updates last_accessed_time to current time and update corresponding
+   --  field in database.
 
-   type Session is limited new Servlet.HTTP_Sessions.HTTP_Session with private;
+   type Session_Manager is
+     new OPM.Stores.Abstract_Store
+       and Spikedog.HTTP_Session_Managers.HTTP_Session_Manager
+         with private;
 
-   type Session_Access is access all Session'Class;
+   overriding function Is_Session_Identifier_Valid
+    (Self       : Session_Manager;
+     Identifier : League.Strings.Universal_String) return Boolean;
+   --  Returns True when given session identifier is valid (it can be processed
+   --  by session manager, but not necessary points to any active session).
 
-   function Get_Session_Identifier
-    (Self : not null access constant Session'Class) return Session_Identifier;
-   --  Returns session identifier of specified session.
+   overriding procedure Initialize (Self : in out Session_Manager);
 
-   function Get_User
-    (Self : not null access constant Session'Class)
-       return AWFC.Accounts.Users.User_Access;
-   --  Returns user.
+   overriding function Get_Session
+    (Self       : in out Session_Manager;
+     Identifier : League.Strings.Universal_String)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class;
+   --  Returns session this specified identifier, or null when session with
+   --  given identifier is not known. When session is found its last access
+   --  time attribute is updated to current time.
 
-   procedure Set_User
-    (Self : not null access Session'Class;
-     User : not null AWFC.Accounts.Users.User_Access);
-   --  Sets session's user. New session identifier is generated for session.
+   overriding function New_Session
+    (Self : in out Session_Manager)
+       return access Servlet.HTTP_Sessions.HTTP_Session'Class;
+
+   procedure Update_User
+    (Self    : in out Session_Manager'Class;
+     Session : not null Session_Access);
+   --  Update user identifer in database.
+
+   procedure Update_Session_Identifier
+    (Self    : in out Session_Manager'Class;
+     Session : not null Session_Access;
+     Old     : Session_Identifier);
+   --  Updates session identifier in database.
 
 private
 
-   type Session_Identifier is
-     array (Positive range 1 .. 2) of Interfaces.Unsigned_64
-       with Size => 128;
+   function Hash (Item : Session_Identifier) return Ada.Containers.Hash_Type;
 
-   type Session is limited new Servlet.HTTP_Sessions.HTTP_Session with record
-      Store              :
-        access Server.Sessions.Controller.Session_Manager'Class;
-      Identifier         : Session_Identifier;
-      User               : AWFC.Accounts.Users.User_Access;
-      Creation_Time      : League.Calendars.Date_Time;
-      Last_Accessed_Time : League.Calendars.Date_Time;
+   package Session_Maps is
+     new Ada.Containers.Hashed_Maps
+          (Session_Identifier, Session_Access, Hash, "=");
+
+   type Session_Manager is
+     new OPM.Stores.Abstract_Store
+       and Spikedog.HTTP_Session_Managers.HTTP_Session_Manager with
+   record
+      Sessions : Session_Maps.Map;
    end record;
 
-   overriding function Get_Id
-    (Self : Session) return League.Strings.Universal_String;
-   --  Returns a string containing the unique identifier assigned to this
-   --  session. The identifier is assigned by the servlet container and is
-   --  implementation dependent.
-
-   function Generate_Session_Identifier return Session_Identifier;
-   --  Generates session identifer.
-
-   function To_Universal_String
-    (Item : Session_Identifier) return League.Strings.Universal_String;
-   --  Converts session identifier from internal representation into textual
-   --  representation.
-
-end Server.Sessions;
+end AWFC.Accounts.Sessions.Stores;
