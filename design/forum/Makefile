@@ -16,7 +16,7 @@ initdb:
 
 
 clean:
-	rm -rf opm/.objs forum/.objs .objs
+	rm -rf awfc/.objs opm/.objs forum/.objs .objs
 
 deploy:
 	rm -rf install
