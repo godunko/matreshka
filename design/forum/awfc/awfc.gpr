@@ -45,6 +45,8 @@ with "../opm/opm.gpr";
 
 library project AWFC is
 
+   for Source_Dirs use (".", "../../servlet/source/esapi/");
+
    for Object_Dir use ".objs";
    for Library_Dir use "../.libs";
    for Library_Name use "matreshka-awfc";

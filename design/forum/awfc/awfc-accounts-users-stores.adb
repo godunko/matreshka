@@ -1,11 +1,42 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                      House Designer's Smart Studio                       --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
+--                                                                          --
+--                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
+--                                                                          --
+-- Redistribution and use in source and binary forms, with or without       --
+-- modification, are permitted provided that the following conditions       --
+-- are met:                                                                 --
+--                                                                          --
+--  * Redistributions of source code must retain the above copyright        --
+--    notice, this list of conditions and the following disclaimer.         --
+--                                                                          --
+--  * Redistributions in binary form must reproduce the above copyright     --
+--    notice, this list of conditions and the following disclaimer in the   --
+--    documentation and/or other materials provided with the distribution.  --
+--                                                                          --
+--  * Neither the name of the Vadim Godunko, IE nor the names of its        --
+--    contributors may be used to endorse or promote products derived from  --
+--    this software without specific prior written permission.              --
+--                                                                          --
+-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      --
+-- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        --
+-- LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    --
+-- A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     --
+-- HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,   --
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED --
+-- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR   --
+-- PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF   --
+-- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     --
+-- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS       --
+-- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
@@ -20,7 +51,7 @@ with OPM.Engines;
 
 with ESAPI.Users.User_Identifier_Holders;
 
-package body Security.Users.Stores is
+package body AWFC.Accounts.Users.Stores is
 
    type Pool_User_Access is access all User'Class;
    --  Internal type to allocate and deallocate instances of User object.
@@ -43,18 +74,18 @@ package body Security.Users.Stores is
    package Email_Mappings is
      new Ada.Containers.Hashed_Maps
           (League.Strings.Universal_String,
-           Security.Users.User_Access,
+           AWFC.Accounts.Users.User_Access,
            League.Strings.Hash,
            League.Strings."=",
-           Security.Users."=");
+           AWFC.Accounts.Users."=");
 
    package Identifier_Mappings is
      new Ada.Containers.Hashed_Maps
           (ESAPI.Users.User_Identifier,
-           Security.Users.User_Access,
+           AWFC.Accounts.Users.User_Access,
            ESAPI.Users.Hash,
            ESAPI.Users."=",
-           Security.Users."=");
+           AWFC.Accounts.Users."=");
 
    Email_Cache      : Email_Mappings.Map;
    Identifier_Cache : Identifier_Mappings.Map;
@@ -66,7 +97,7 @@ package body Security.Users.Stores is
    function Create
     (Self  : not null access User_Store'Class;
      Email : League.Strings.Universal_String)
-       return not null Security.Users.User_Access
+       return not null AWFC.Accounts.Users.User_Access
    is
       Insert_Query : SQL.Queries.SQL_Query := Self.Engine.Get_Database.Query;
       Select_Query : SQL.Queries.SQL_Query := Self.Engine.Get_Database.Query;
@@ -99,10 +130,11 @@ package body Security.Users.Stores is
       Self.Show_Advertisement :=
         From_Boolean_Integer_Holder (Select_Query.Value (4));
 
-      return Result : constant not null Security.Users.User_Access
-        := Security.Users.User_Access
+      return Result : constant not null AWFC.Accounts.Users.User_Access
+        := AWFC.Accounts.Users.User_Access
             (Pool_User_Access'
-              (new Non_Anonymous_User_Type'(Security.Users.Initialize (Self))))
+              (new Non_Anonymous_User_Type'
+                    (AWFC.Accounts.Users.Initialize (Self))))
       do
          Email_Cache.Insert (Self.Get_Email, Result);
          Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
@@ -170,7 +202,8 @@ package body Security.Users.Stores is
 
    function Incarnate
     (Self  : not null access User_Store'Class;
-     Email : League.Strings.Universal_String) return Security.Users.User_Access
+     Email : League.Strings.Universal_String)
+       return AWFC.Accounts.Users.User_Access
    is
       Position : constant Email_Mappings.Cursor := Email_Cache.Find (Email);
 
@@ -204,11 +237,11 @@ package body Security.Users.Stores is
          Self.Show_Advertisement :=
            From_Boolean_Integer_Holder (Select_Query.Value (4));
 
-         return Result : constant Security.Users.User_Access
-           := Security.Users.User_Access
+         return Result : constant AWFC.Accounts.Users.User_Access
+           := AWFC.Accounts.Users.User_Access
                (Pool_User_Access'
                  (new Non_Anonymous_User_Type'
-                       (Security.Users.Initialize (Self))))
+                       (AWFC.Accounts.Users.Initialize (Self))))
          do
             Email_Cache.Insert (Self.Get_Email, Result);
             Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
@@ -223,7 +256,7 @@ package body Security.Users.Stores is
    function Incarnate
     (Self       : not null access User_Store'Class;
      Identifier : ESAPI.Users.User_Identifier)
-       return Security.Users.User_Access
+       return AWFC.Accounts.Users.User_Access
    is
       Position : constant Identifier_Mappings.Cursor
         := Identifier_Cache.Find (Identifier);
@@ -260,11 +293,11 @@ package body Security.Users.Stores is
          Self.Show_Advertisement :=
            From_Boolean_Integer_Holder (Select_Query.Value (4));
 
-         return Result : constant Security.Users.User_Access
-           := Security.Users.User_Access
+         return Result : constant AWFC.Accounts.Users.User_Access
+           := AWFC.Accounts.Users.User_Access
                (Pool_User_Access'
                  (new Non_Anonymous_User_Type'
-                       (Security.Users.Initialize (Self))))
+                       (AWFC.Accounts.Users.Initialize (Self))))
          do
             Email_Cache.Insert (Self.Email, Result);
             Identifier_Cache.Insert (Self.Get_User_Identifier, Result);
@@ -279,7 +312,7 @@ package body Security.Users.Stores is
    overriding procedure Initialize (Self : in out User_Store) is
    begin
       Self.Engine.Register_Store
-       (Security.Users.User'Tag, Self'Unchecked_Access);
+       (AWFC.Accounts.Users.User'Tag, Self'Unchecked_Access);
    end Initialize;
 
    -------------------------------
@@ -324,5 +357,6 @@ package body Security.Users.Stores is
 
 begin
    Identifier_Cache.Insert
-    (ESAPI.Users.Anonymous_User_Identifier, Security.Users.Anonymous_User);
-end Security.Users.Stores;
+    (ESAPI.Users.Anonymous_User_Identifier,
+     AWFC.Accounts.Users.Anonymous_User);
+end AWFC.Accounts.Users.Stores;

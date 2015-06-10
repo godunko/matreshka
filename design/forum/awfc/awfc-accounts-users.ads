@@ -41,50 +41,61 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with OPM.Stores;
+with League.Strings;
 
-with AWFC.Accounts.Users.Stores;
-with Server.Sessions.Controller;
+private with ESAPI.Users.Anonymous;
+private with ESAPI.Users.Non_Anonymous;
+private with ESAPI.Users.Stores;
+with ESAPI.Users;
 
-package body Forum.Forums.Servers is
+package AWFC.Accounts.Users is
 
-   ------------------------------
-   -- Get_HTTP_Session_Manager --
-   ------------------------------
+   type User is limited interface and ESAPI.Users.User;
 
-   function Get_HTTP_Session_Manager
-    (Self : Server_Forum'Class)
-       return
-         not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access is
-   begin
-      return
-        Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access
-         (Self.Engine.Get_Store (Server.Sessions.Session'Tag));
-   end Get_HTTP_Session_Manager;
+   type User_Access is access all User'Class;
 
-   ----------------
-   -- Initialize --
-   ----------------
+   Anonymous_User : constant User_Access;
 
-   procedure Initialize
-    (Self    : in out Server_Forum'Class;
-     Driver  : League.Strings.Universal_String;
-     Options : SQL.Options.SQL_Options)
-   is
-      Aux : OPM.Stores.Store_Access;
+   not overriding function Get_Email
+    (Self : not null access constant User)
+       return League.Strings.Universal_String is abstract;
+   --  Returns user's email address.
 
-   begin
-      Standard.Forum.Forums.Initialize (Self, Driver, Options);
+private
 
-      Aux :=
-        new Server.Sessions.Controller.Session_Manager
-             (Self.Engine'Unchecked_Access);
-      Aux.Initialize;
+   -------------------------
+   -- Anonymous_User_Type --
+   -------------------------
 
-      Aux :=
-        new AWFC.Accounts.Users.Stores.User_Store
-             (Self.Engine'Unchecked_Access);
-      Aux.Initialize;
-   end Initialize;
+   type Anonymous_User_Type is
+     new ESAPI.Users.Anonymous.Anonymous_User
+       and AWFC.Accounts.Users.User with null record;
 
-end Forum.Forums.Servers;
+   overriding function Get_Email
+    (Self : not null access constant Anonymous_User_Type)
+       return League.Strings.Universal_String;
+
+   Anonymous_User_Object : aliased Anonymous_User_Type;
+
+   Anonymous_User : constant User_Access := Anonymous_User_Object'Access;
+
+   -----------------------------
+   -- Non_Anonymous_User_Type --
+   -----------------------------
+
+   type Non_Anonymous_User_Type is
+     new ESAPI.Users.Non_Anonymous.Non_Anonymous_User
+       and AWFC.Accounts.Users.User with
+   record
+      Email : League.Strings.Universal_String;
+   end record;
+
+   overriding function Get_Email
+    (Self : not null access constant Non_Anonymous_User_Type)
+       return League.Strings.Universal_String;
+
+   overriding function Initialize
+    (Store : not null access ESAPI.Users.Stores.User_Store'Class)
+       return Non_Anonymous_User_Type;
+
+end AWFC.Accounts.Users;

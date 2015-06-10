@@ -1,11 +1,42 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                      House Designer's Smart Studio                       --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
+--                                                                          --
+--                        Runtime Library Component                         --
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
+--                                                                          --
+-- Redistribution and use in source and binary forms, with or without       --
+-- modification, are permitted provided that the following conditions       --
+-- are met:                                                                 --
+--                                                                          --
+--  * Redistributions of source code must retain the above copyright        --
+--    notice, this list of conditions and the following disclaimer.         --
+--                                                                          --
+--  * Redistributions in binary form must reproduce the above copyright     --
+--    notice, this list of conditions and the following disclaimer in the   --
+--    documentation and/or other materials provided with the distribution.  --
+--                                                                          --
+--  * Neither the name of the Vadim Godunko, IE nor the names of its        --
+--    contributors may be used to endorse or promote products derived from  --
+--    this software without specific prior written permission.              --
+--                                                                          --
+-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      --
+-- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        --
+-- LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    --
+-- A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     --
+-- HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,   --
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED --
+-- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR   --
+-- PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF   --
+-- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     --
+-- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS       --
+-- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
@@ -16,7 +47,7 @@ with League.Calendars;
 with League.Strings;
 with Servlet.HTTP_Sessions;
 
-with Security.Users;
+with AWFC.Accounts.Users;
 
 package Server.Sessions is
 
@@ -32,12 +63,12 @@ package Server.Sessions is
 
    function Get_User
     (Self : not null access constant Session'Class)
-       return Security.Users.User_Access;
+       return AWFC.Accounts.Users.User_Access;
    --  Returns user.
 
    procedure Set_User
     (Self : not null access Session'Class;
-     User : not null Security.Users.User_Access);
+     User : not null AWFC.Accounts.Users.User_Access);
    --  Sets session's user. New session identifier is generated for session.
 
 private
@@ -48,7 +79,7 @@ private
 
    type Session is limited new Servlet.HTTP_Sessions.HTTP_Session with record
       SID                : Session_Identifier;
-      User               : Security.Users.User_Access;
+      User               : AWFC.Accounts.Users.User_Access;
       Creation_Time      : League.Calendars.Date_Time;
       Last_Accessed_Time : League.Calendars.Date_Time;
    end record;

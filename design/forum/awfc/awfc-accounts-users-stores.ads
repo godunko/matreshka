@@ -43,48 +43,59 @@
 ------------------------------------------------------------------------------
 with OPM.Stores;
 
-with AWFC.Accounts.Users.Stores;
-with Server.Sessions.Controller;
+with ESAPI.Users.Stores;
 
-package body Forum.Forums.Servers is
+package AWFC.Accounts.Users.Stores is
 
-   ------------------------------
-   -- Get_HTTP_Session_Manager --
-   ------------------------------
+   type User_Store is
+     new OPM.Stores.Abstract_Store
+       and ESAPI.Users.Stores.User_Store with private;
 
-   function Get_HTTP_Session_Manager
-    (Self : Server_Forum'Class)
-       return
-         not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access is
-   begin
-      return
-        Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access
-         (Self.Engine.Get_Store (Server.Sessions.Session'Tag));
-   end Get_HTTP_Session_Manager;
+   type User_Store_Access is access all User_Store'Class;
 
-   ----------------
-   -- Initialize --
-   ----------------
+   function Create
+    (Self  : not null access User_Store'Class;
+     Email : League.Strings.Universal_String)
+       return not null AWFC.Accounts.Users.User_Access;
 
-   procedure Initialize
-    (Self    : in out Server_Forum'Class;
-     Driver  : League.Strings.Universal_String;
-     Options : SQL.Options.SQL_Options)
-   is
-      Aux : OPM.Stores.Store_Access;
+   function Incarnate
+    (Self       : not null access User_Store'Class;
+     Identifier : ESAPI.Users.User_Identifier)
+       return AWFC.Accounts.Users.User_Access;
 
-   begin
-      Standard.Forum.Forums.Initialize (Self, Driver, Options);
+   function Incarnate
+    (Self  : not null access User_Store'Class;
+     Email : League.Strings.Universal_String)
+       return AWFC.Accounts.Users.User_Access;
 
-      Aux :=
-        new Server.Sessions.Controller.Session_Manager
-             (Self.Engine'Unchecked_Access);
-      Aux.Initialize;
+   not overriding function Get_Email
+    (Self : not null access User_Store) return League.Strings.Universal_String;
 
-      Aux :=
-        new AWFC.Accounts.Users.Stores.User_Store
-             (Self.Engine'Unchecked_Access);
-      Aux.Initialize;
-   end Initialize;
+   not overriding function Get_Show_Advertisement
+    (Self : not null access User_Store) return Boolean;
 
-end Forum.Forums.Servers;
+private
+
+   type User_Store is
+     new OPM.Stores.Abstract_Store
+       and ESAPI.Users.Stores.User_Store with
+   record
+      Identifier         : ESAPI.Users.User_Identifier;
+      Enabled            : Boolean;
+      Email              : League.Strings.Universal_String;
+      Show_Advertisement : Boolean;
+   end record;
+
+   overriding procedure Initialize (Self : in out User_Store);
+
+   overriding function Get_User_Identifier
+    (Self : not null access User_Store) return ESAPI.Users.User_Identifier;
+
+   overriding function Get_Enabled
+    (Self : not null access User_Store) return Boolean;
+
+   overriding procedure Update_Enabled
+    (Self : not null access User_Store;
+     User : not null access constant ESAPI.Users.User'Class);
+
+end AWFC.Accounts.Users.Stores;

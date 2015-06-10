@@ -41,50 +41,48 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with OPM.Stores;
-
 with AWFC.Accounts.Users.Stores;
-with Server.Sessions.Controller;
 
-package body Forum.Forums.Servers is
+package body AWFC.Accounts.Users is
 
-   ------------------------------
-   -- Get_HTTP_Session_Manager --
-   ------------------------------
+   ---------------
+   -- Get_Email --
+   ---------------
 
-   function Get_HTTP_Session_Manager
-    (Self : Server_Forum'Class)
-       return
-         not null Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access is
+   overriding function Get_Email
+    (Self : not null access constant Anonymous_User_Type)
+       return League.Strings.Universal_String is
    begin
-      return
-        Spikedog.HTTP_Session_Managers.HTTP_Session_Manager_Access
-         (Self.Engine.Get_Store (Server.Sessions.Session'Tag));
-   end Get_HTTP_Session_Manager;
+      return League.Strings.Empty_Universal_String;
+   end Get_Email;
+
+   ---------------
+   -- Get_Email --
+   ---------------
+
+   overriding function Get_Email
+    (Self : not null access constant Non_Anonymous_User_Type)
+       return League.Strings.Universal_String is
+   begin
+      return Self.Email;
+   end Get_Email;
 
    ----------------
    -- Initialize --
    ----------------
 
-   procedure Initialize
-    (Self    : in out Server_Forum'Class;
-     Driver  : League.Strings.Universal_String;
-     Options : SQL.Options.SQL_Options)
+   overriding function Initialize
+    (Store : not null access ESAPI.Users.Stores.User_Store'Class)
+       return Non_Anonymous_User_Type
    is
-      Aux : OPM.Stores.Store_Access;
+      S : AWFC.Accounts.Users.Stores.User_Store'Class
+        renames AWFC.Accounts.Users.Stores.User_Store'Class (Store.all);
 
    begin
-      Standard.Forum.Forums.Initialize (Self, Driver, Options);
-
-      Aux :=
-        new Server.Sessions.Controller.Session_Manager
-             (Self.Engine'Unchecked_Access);
-      Aux.Initialize;
-
-      Aux :=
-        new AWFC.Accounts.Users.Stores.User_Store
-             (Self.Engine'Unchecked_Access);
-      Aux.Initialize;
+      return
+        Non_Anonymous_User_Type'
+         (ESAPI.Users.Non_Anonymous.Initialize (Store) with
+            Email => S.Get_Email);
    end Initialize;
 
-end Forum.Forums.Servers;
+end AWFC.Accounts.Users;
