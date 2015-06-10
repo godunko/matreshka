@@ -41,15 +41,19 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Containers;
+
 with League.Strings;
 
 private with OPM.Stores;
 
-with ESAPI.Users;
-
 limited private with AWFC.Accounts.Users.Stores;
 
 package AWFC.Accounts.Users is
+
+   type User_Identifier is private;
+
+   Anonymous_User_Identifier : constant User_Identifier;
 
    type User is limited interface;
 
@@ -58,8 +62,7 @@ package AWFC.Accounts.Users is
    Anonymous_User : constant User_Access;
 
    not overriding function Get_User_Identifier
-    (Self : not null access constant User)
-       return ESAPI.Users.User_Identifier is abstract;
+    (Self : not null access constant User) return User_Identifier is abstract;
 
    not overriding function Is_Anonymous
     (Self : not null access constant User) return Boolean is abstract;
@@ -78,7 +81,13 @@ package AWFC.Accounts.Users is
        return League.Strings.Universal_String is abstract;
    --  Returns user's email address.
 
+   function Hash (Item : User_Identifier) return Ada.Containers.Hash_Type;
+
 private
+
+   type User_Identifier is range 0 .. 2**63 - 1;
+
+   Anonymous_User_Identifier : constant User_Identifier := 0;
 
    -------------------------
    -- Anonymous_User_Type --
@@ -97,7 +106,7 @@ private
 
    overriding function Get_User_Identifier
     (Self : not null access constant Anonymous_User_Type)
-       return ESAPI.Users.User_Identifier;
+       return User_Identifier;
 
    overriding function Is_Anonymous
     (Self : not null access constant Anonymous_User_Type) return Boolean;
@@ -117,7 +126,7 @@ private
     (Store : not null access AWFC.Accounts.Users.Stores.User_Store'Class)
        is limited new AWFC.Accounts.Users.User with
    record
-      Identifier : ESAPI.Users.User_Identifier;
+      Identifier : User_Identifier;
       Email      : League.Strings.Universal_String;
       Enabled    : Boolean;
    end record;
@@ -134,7 +143,7 @@ private
 
    overriding function Get_User_Identifier
     (Self : not null access constant Non_Anonymous_User_Type)
-       return ESAPI.Users.User_Identifier;
+       return User_Identifier;
 
    overriding function Is_Anonymous
     (Self : not null access constant Non_Anonymous_User_Type) return Boolean;

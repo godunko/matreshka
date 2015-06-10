@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,19 +41,49 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with "../opm/opm.gpr";
+--  User_Identifier is private type, thus Holders.Generic_Integers can't be
+--  instantiated with this type. This package provides equivalent
+--  implementation.
+------------------------------------------------------------------------------
+with League.Holders;
+private with League.Holders.Generic_Integers;
 
-library project AWFC is
+package AWFC.Accounts.Users.User_Identifier_Holders is
 
-   for Object_Dir use ".objs";
-   for Library_Dir use "../.libs";
-   for Library_Name use "matreshka-awfc";
-   for Library_Kind use "relocatable";
+   Value_Tag : constant League.Holders.Tag;
 
-   package Compiler is
+   function Element
+    (Self : League.Holders.Holder) return AWFC.Accounts.Users.User_Identifier;
+   --  Returns internal value.
 
-      for Default_Switches ("Ada") use ("-g", "-gnatW8");
+   procedure Replace_Element
+    (Self : in out League.Holders.Holder;
+     To   : AWFC.Accounts.Users.User_Identifier);
+   --  Set value. Tag of the value must be set before this call.
 
-   end Compiler;
+   function To_Holder
+    (Item : AWFC.Accounts.Users.User_Identifier) return League.Holders.Holder;
+   --  Creates new Value from specified value.
 
-end AWFC;
+private
+
+   package User_Identifier_Holders is
+     new League.Holders.Generic_Integers (AWFC.Accounts.Users.User_Identifier);
+
+   Value_Tag : constant League.Holders.Tag
+     := User_Identifier_Holders.Value_Tag;
+
+   function Element
+    (Self : League.Holders.Holder) return AWFC.Accounts.Users.User_Identifier
+       renames User_Identifier_Holders.Element;
+
+   procedure Replace_Element
+    (Self : in out League.Holders.Holder;
+     To   : AWFC.Accounts.Users.User_Identifier)
+       renames User_Identifier_Holders.Replace_Element;
+
+   function To_Holder
+    (Item : AWFC.Accounts.Users.User_Identifier) return League.Holders.Holder
+       renames User_Identifier_Holders.To_Holder;
+
+end AWFC.Accounts.Users.User_Identifier_Holders;

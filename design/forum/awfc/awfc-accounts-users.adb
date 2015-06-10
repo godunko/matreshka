@@ -116,9 +116,9 @@ package body AWFC.Accounts.Users is
 
    overriding function Get_User_Identifier
     (Self : not null access constant Anonymous_User_Type)
-       return ESAPI.Users.User_Identifier is
+       return User_Identifier is
    begin
-      return ESAPI.Users.Anonymous_User_Identifier;
+      return Anonymous_User_Identifier;
    end Get_User_Identifier;
 
    -------------------------
@@ -127,10 +127,20 @@ package body AWFC.Accounts.Users is
 
    overriding function Get_User_Identifier
     (Self : not null access constant Non_Anonymous_User_Type)
-       return ESAPI.Users.User_Identifier is
+       return User_Identifier is
    begin
       return Self.Identifier;
    end Get_User_Identifier;
+
+   ----------
+   -- Hash --
+   ----------
+
+   function Hash (Item : User_Identifier) return Ada.Containers.Hash_Type is
+   begin
+      return
+        Ada.Containers.Hash_Type (Item mod Ada.Containers.Hash_Type'Modulus);
+   end Hash;
 
    ----------------
    -- Initialize --

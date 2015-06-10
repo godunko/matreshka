@@ -50,8 +50,8 @@ with League.Stream_Element_Vectors;
 with League.Strings.Hash;
 with SQL.Queries;
 
-with ESAPI.Users.User_Identifier_Holders;
 with AWFC.Accounts.Users.Stores;
+with AWFC.Accounts.Users.User_Identifier_Holders;
 with OPM.Engines;
 
 package body Server.Sessions.Controller is
@@ -102,8 +102,8 @@ package body Server.Sessions.Controller is
         League.Holders.To_Holder (To_Universal_String (SID)));
       Query.Bind_Value
        (+":user_identifier",
-        ESAPI.Users.User_Identifier_Holders.To_Holder
-         (ESAPI.Users.Anonymous_User_Identifier));
+        AWFC.Accounts.Users.User_Identifier_Holders.To_Holder
+         (AWFC.Accounts.Users.Anonymous_User_Identifier));
       Query.Bind_Value
        (+":creation_time",
         League.Holders.To_Holder (League.Calendars.Clock));
@@ -152,7 +152,7 @@ package body Server.Sessions.Controller is
               AWFC.Accounts.Users.Stores.User_Store'Class
                (Store.Engine.Get_Store
                  (AWFC.Accounts.Users.User'Tag).all).Incarnate
-                   (ESAPI.Users.User_Identifier_Holders.Element
+                   (AWFC.Accounts.Users.User_Identifier_Holders.Element
                      (Query.Value (2)));
 
             return Result : constant Session_Access
@@ -363,7 +363,7 @@ package body Server.Sessions.Controller is
             & " WHERE session_identifier = :session_identifier"));
       Query.Bind_Value
        (+":user_identifier",
-        ESAPI.Users.User_Identifier_Holders.To_Holder
+        AWFC.Accounts.Users.User_Identifier_Holders.To_Holder
          (Session.User.Get_User_Identifier));
       Query.Bind_Value
        (+":session_identifier",

@@ -49,7 +49,7 @@ with SQL.Queries;
 
 with OPM.Engines;
 
-with ESAPI.Users.User_Identifier_Holders;
+with AWFC.Accounts.Users.User_Identifier_Holders;
 
 package body AWFC.Accounts.Users.Stores is
 
@@ -81,10 +81,10 @@ package body AWFC.Accounts.Users.Stores is
 
    package Identifier_Mappings is
      new Ada.Containers.Hashed_Maps
-          (ESAPI.Users.User_Identifier,
+          (AWFC.Accounts.Users.User_Identifier,
            AWFC.Accounts.Users.User_Access,
-           ESAPI.Users.Hash,
-           ESAPI.Users."=",
+           AWFC.Accounts.Users.Hash,
+           AWFC.Accounts.Users."=",
            AWFC.Accounts.Users."=");
 
    Email_Cache      : Email_Mappings.Map;
@@ -122,7 +122,8 @@ package body AWFC.Accounts.Users.Stores is
       end if;
 
       Self.Identifier :=
-        ESAPI.Users.User_Identifier_Holders.Element (Select_Query.Value (1));
+        AWFC.Accounts.Users.User_Identifier_Holders.Element
+         (Select_Query.Value (1));
       Self.Email      := League.Holders.Element (Select_Query.Value (2));
       Self.Enabled    := From_Boolean_Integer_Holder (Select_Query.Value (3));
 
@@ -177,7 +178,8 @@ package body AWFC.Accounts.Users.Stores is
    -------------------------
 
    function Get_User_Identifier
-    (Self : not null access User_Store'Class) return ESAPI.Users.User_Identifier is
+    (Self : not null access User_Store'Class)
+       return AWFC.Accounts.Users.User_Identifier is
    begin
       return Self.Identifier;
    end Get_User_Identifier;
@@ -215,7 +217,7 @@ package body AWFC.Accounts.Users.Stores is
          end if;
 
          Self.Identifier :=
-           ESAPI.Users.User_Identifier_Holders.Element
+           AWFC.Accounts.Users.User_Identifier_Holders.Element
             (Select_Query.Value (1));
          Self.Email      := League.Holders.Element (Select_Query.Value (2));
          Self.Enabled    :=
@@ -239,7 +241,7 @@ package body AWFC.Accounts.Users.Stores is
 
    function Incarnate
     (Self       : not null access User_Store'Class;
-     Identifier : ESAPI.Users.User_Identifier)
+     Identifier : AWFC.Accounts.Users.User_Identifier)
        return AWFC.Accounts.Users.User_Access
    is
       Position : constant Identifier_Mappings.Cursor
@@ -261,7 +263,7 @@ package body AWFC.Accounts.Users.Stores is
                & " WHERE user_identifier = :user_identifier"));
          Select_Query.Bind_Value
           (+":user_identifier",
-           ESAPI.Users.User_Identifier_Holders.To_Holder (Identifier));
+           AWFC.Accounts.Users.User_Identifier_Holders.To_Holder (Identifier));
          Select_Query.Execute;
 
          if not Select_Query.Next then
@@ -269,7 +271,7 @@ package body AWFC.Accounts.Users.Stores is
          end if;
 
          Self.Identifier :=
-           ESAPI.Users.User_Identifier_Holders.Element
+           AWFC.Accounts.Users.User_Identifier_Holders.Element
             (Select_Query.Value (1));
          Self.Email      := League.Holders.Element (Select_Query.Value (2));
          Self.Enabled    :=
@@ -329,7 +331,7 @@ package body AWFC.Accounts.Users.Stores is
             & " WHERE user_identifier = :user_identifier"));
       Query.Bind_Value
        (+":user_identifier",
-        ESAPI.Users.User_Identifier_Holders.To_Holder
+        AWFC.Accounts.Users.User_Identifier_Holders.To_Holder
          (User.Get_User_Identifier));
       Query.Bind_Value
        (+":enabled", To_Boolean_Integer_Holder (User.Is_Enabled));
@@ -339,6 +341,6 @@ package body AWFC.Accounts.Users.Stores is
 
 begin
    Identifier_Cache.Insert
-    (ESAPI.Users.Anonymous_User_Identifier,
+    (AWFC.Accounts.Users.Anonymous_User_Identifier,
      AWFC.Accounts.Users.Anonymous_User);
 end AWFC.Accounts.Users.Stores;

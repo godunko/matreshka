@@ -57,7 +57,7 @@ package AWFC.Accounts.Users.Stores is
 
    function Incarnate
     (Self       : not null access User_Store'Class;
-     Identifier : ESAPI.Users.User_Identifier)
+     Identifier : AWFC.Accounts.Users.User_Identifier)
        return AWFC.Accounts.Users.User_Access;
 
    function Incarnate
@@ -67,7 +67,7 @@ package AWFC.Accounts.Users.Stores is
 
    function Get_User_Identifier
     (Self : not null access User_Store'Class)
-       return ESAPI.Users.User_Identifier;
+       return AWFC.Accounts.Users.User_Identifier;
 
    function Get_Enabled
     (Self : not null access User_Store'Class) return Boolean;
@@ -82,7 +82,7 @@ package AWFC.Accounts.Users.Stores is
 private
 
    type User_Store is limited new OPM.Stores.Abstract_Store with record
-      Identifier : ESAPI.Users.User_Identifier;
+      Identifier : AWFC.Accounts.Users.User_Identifier;
       Enabled    : Boolean;
       Email      : League.Strings.Universal_String;
    end record;
