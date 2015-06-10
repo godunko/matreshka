@@ -41,11 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
---  This is root package of Ada Web Framework and Components.
+--  This is root package of Components of Ada Web Framework.
 ------------------------------------------------------------------------------
 
-package AWF is
+package AWFC.Components is
 
    pragma Pure;
 
-end AWF;
+end AWFC.Components;

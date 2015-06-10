@@ -43,11 +43,11 @@
 ------------------------------------------------------------------------------
 with "../opm/opm.gpr";
 
-library project AWF is
+library project AWFC is
 
    for Object_Dir use ".objs";
    for Library_Dir use "../.libs";
-   for Library_Name use "matreshka-awf";
+   for Library_Name use "matreshka-awfc";
    for Library_Kind use "relocatable";
 
    package Compiler is
@@ -56,4 +56,4 @@ library project AWF is
 
    end Compiler;
 
-end AWF;
+end AWFC;
