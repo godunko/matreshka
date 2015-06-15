@@ -1,0 +1,12 @@
+<div class="category-list" xmlns='http://www.w3.org/1999/xhtml' xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
+<mtl:for expression="category of list">
+ <div class="category">
+  <div class="category-title">
+  <a href="${category.id}">${category.title}</a>
+  </div>
+  <div class="category-descr">
+  ${category.description}
+  </div>
+ </div>
+</mtl:for>
+</div>

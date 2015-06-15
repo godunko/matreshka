@@ -32,4 +32,5 @@ deploy:
 	$(INSTALL_libs) .libs/libmatreshka-forum$(SOEXT) install/WEB-INF/lib/x86_64-linux/libmatreshka-forum$(SOEXT)
 	$(INSTALL_libs) .libs/libmatreshka-opm$(SOEXT) install/WEB-INF/lib/x86_64-linux/libmatreshka-opm$(SOEXT)
 	$(INSTALL_data) page.xhtml.tmpl install/WEB-INF/templates/
+	$(INSTALL_data) forum_list.xhtml.tmpl install/WEB-INF/templates/
 	$(INSTALL_data) forum.css install/

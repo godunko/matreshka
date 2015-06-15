@@ -6,18 +6,6 @@
     <link rel='icon' type='image/png' href='/favicon.png'/>
   </head>
   <body>
-<div class="category-list">
-Available forums: ${aaa}
-<mtl:for expression="category of list">
- <div class="category">
-  <div class="category-title">
-  <a href="${category.id}">${category.title}</a>
-  </div>
-  <div class="category-descr">
-  ${category.description}
-  </div>
- </div>
-</mtl:for>
-</div>
-</body>
+    ${pageContent}
+  </body>
 </html>
