@@ -41,22 +41,43 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with "../../../gnat/matreshka_spikedog_api.gpr";
-with "../../../gnat/matreshka_xml.gpr";
+--  Base type to generate HTML page using two templates: page template and
+--  content template.
+------------------------------------------------------------------------------
+with League.Strings;
+with Servlet.Contexts;
+with Servlet.HTTP_Sessions;
+with XML.Templates.Processors;
+private with XML.Templates.Streams;
 
-with "../opm/opm.gpr";
+package AWFC.Page_Generators is
 
-library project AWFC is
+   type Abstract_Page_Generator is abstract tagged limited private;
 
-   for Object_Dir use ".objs";
-   for Library_Dir use "../.libs";
-   for Library_Name use "matreshka-awfc";
-   for Library_Kind use "relocatable";
+   procedure Initialize
+    (Self             : in out Abstract_Page_Generator'Class;
+     Context          :
+       not null access constant Servlet.Contexts.Servlet_Context'Class;
+     Page_Template    : League.Strings.Universal_String;
+     Content_Template : League.Strings.Universal_String);
 
-   package Compiler is
+   function Render
+    (Self    : in out Abstract_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+       return League.Strings.Universal_String;
 
-      for Default_Switches ("Ada") use ("-g", "-gnatW8");
+   not overriding procedure Bind_Parameters
+    (Self   : in out Abstract_Page_Generator;
+     Writer : in out XML.Templates.Processors.Template_Processor'Class)
+       is null;
+   --  Derived type can override this subprogram to bind own parameters for
+   --  template parser.
 
-   end Compiler;
+private
 
-end AWFC;
+   type Abstract_Page_Generator is abstract tagged limited record
+      Page    : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+      Content : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+   end record;
+
+end AWFC.Page_Generators;
