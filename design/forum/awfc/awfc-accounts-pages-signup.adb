@@ -64,10 +64,34 @@ package body AWFC.Accounts.Pages.Signup is
     (Self      : in out Signup_Page_Generator;
      Processor : in out XML.Templates.Processors.Template_Processor'Class)
    is
-      Object : League.JSON.Objects.JSON_Object;
+      use type AWFC.Accounts.Users.User_Access;
+
+      Object      : League.JSON.Objects.JSON_Object;
+      User_Object : League.JSON.Objects.JSON_Object;
 
    begin
-      Object.Insert (+"email", League.JSON.Values.To_JSON_Value (Self.Email));
+      if Self.User /= null then
+         Object.Insert (+"hasUser", League.JSON.Values.To_JSON_Value (True));
+         User_Object.Insert
+          (+"email", League.JSON.Values.To_JSON_Value (Self.User.Get_Email));
+         User_Object.Insert
+          (+"exists", League.JSON.Values.To_JSON_Value (True));
+         User_Object.Insert
+          (+"enabled",
+           League.JSON.Values.To_JSON_Value (Self.User.Is_Enabled));
+
+      elsif not Self.Email.Is_Empty then
+         Object.Insert (+"hasUser", League.JSON.Values.To_JSON_Value (True));
+         User_Object.Insert
+          (+"email", League.JSON.Values.To_JSON_Value (Self.Email));
+         User_Object.Insert
+          (+"exists", League.JSON.Values.To_JSON_Value (False));
+
+      else
+         Object.Insert (+"hasUser", League.JSON.Values.To_JSON_Value (False));
+      end if;
+
+      Object.Insert (+"user", User_Object.To_JSON_Value);
       Object.Insert
        (+"hasErrors",
         League.JSON.Values.To_JSON_Value (Self.Errors /= No_Signup_Errors));
@@ -94,6 +118,25 @@ package body AWFC.Accounts.Pages.Signup is
        return League.Strings.Universal_String is
    begin
       Self.Email  := Email;
+      Self.User   := null;
+      Self.Errors := Errors;
+
+      return Self.Render (Session);
+   end Render_Error;
+
+   ------------------
+   -- Render_Error --
+   ------------------
+
+   function Render_Error
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     User    : not null AWFC.Accounts.Users.User_Access;
+     Errors  : Signup_Errors)
+       return League.Strings.Universal_String is
+   begin
+      Self.Email  := League.Strings.Empty_Universal_String;
+      Self.User   := User;
       Self.Errors := Errors;
 
       return Self.Render (Session);
@@ -109,6 +152,7 @@ package body AWFC.Accounts.Pages.Signup is
        return League.Strings.Universal_String is
    begin
       Self.Email  := League.Strings.Empty_Universal_String;
+      Self.User   := null;
       Self.Errors := No_Signup_Errors;
 
       return Self.Render (Session);

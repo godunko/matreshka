@@ -46,12 +46,14 @@ with League.String_Vectors;
 --
 --with Servlet.Contexts;
 --
+with Servlet.HTTP_Sessions;
 ----  with Server.Pages.Account;
 ----  with Server.Sessions;
 ----  with Server.Users.Passwords;
 ----  with Security.Users;
 --with AWFC.Accounts.Password_Managers;
 --with AWFC.Accounts.Sessions;
+with AWFC.Accounts.Users.Stores;
 
 package body AWFC.Accounts.Account_Servlets is
 
@@ -89,6 +91,14 @@ package body AWFC.Accounts.Account_Servlets is
 ----     Agree        : Boolean)
 ----       return League.Strings.Universal_String;
 ----   --  Activate user's account.
+
+   function Signup
+    (Self    : in out Account_Servlet;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     Email   : League.Strings.Universal_String)
+       return League.Strings.Universal_String;
+   --  Creates new user account (if not exists) or redirects user to
+   --  activation, logon or restore password page.
 
    ------------
    -- Do_Get --
@@ -294,9 +304,8 @@ package body AWFC.Accounts.Account_Servlets is
          Response.Set_Status (Servlet.HTTP_Responses.OK);
          Response.Set_Content_Type (+"text/html");
          Response.Set_Character_Encoding (+"UTF-8");
---         Response.Get_Output_Stream.Write
---          (Server.Pages.Account.Signup
---            (Request.Get_Servlet_Context, Request.Get_Session, Emails (1)));
+         Response.Get_Output_Stream.Write
+          (Self.Signup (Request.Get_Session.all, Emails (1)));
 
          return;
       end if;
@@ -332,6 +341,55 @@ package body AWFC.Accounts.Account_Servlets is
        (Config.Get_Servlet_Context, Page_Template_File, Signup_Template_File);
    end Initialize;
 
+   ------------
+   -- Signup --
+   ------------
+
+   function Signup
+    (Self    : in out Account_Servlet;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     Email   : League.Strings.Universal_String)
+       return League.Strings.Universal_String
+   is
+      use type AWFC.Accounts.Users.User_Access;
+      use AWFC.Accounts.Pages.Signup;
+
+      User_Store : AWFC.Accounts.Users.Stores.User_Store'Class
+        renames AWFC.Accounts.Users.Stores.User_Store'Class
+                 (Self.Password_Manager.Engine.Get_Store
+                   (AWFC.Accounts.Users.User'Tag).all);
+      Errors     : Signup_Errors := No_Signup_Errors;
+      User       : AWFC.Accounts.Users.User_Access;
+
+   begin
+      if Email.Is_Empty then
+         Errors (Email_Empty) := True;
+
+      else
+         User := User_Store.Incarnate (Email);
+
+         if User /= null then
+            --  User exists, suggest to activate account or to logon depending
+            --  of whether account was enabled or not.
+
+            Errors (Email_Used) := True;
+
+            return Self.Signup_Page.Render_Error (Session, User, Errors);
+         end if;
+      end if;
+
+      if Errors /= No_Signup_Errors then
+         return Self.Signup_Page.Render_Error (Session, Email, Errors);
+      end if;
+
+      --  Create new account and assign confirmation code to it.
+
+      User := User_Store.Create (Email);
+
+--      return Activate (Context, Session, User, True);
+      return League.Strings.Empty_Universal_String;
+   end Signup;
+
 --   -----------------------
 --   -- Send_Account_Page --
 --   -----------------------
@@ -363,20 +421,6 @@ package body AWFC.Accounts.Account_Servlets is
 --      end if;
 --   end Send_Account_Page;
 
---   function Signup
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
---     Session : not null Server.Sessions.Session_Access)
---       return League.Strings.Universal_String;
---   --  Returns content of signup page.
---
---   function Signup
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
---     Session : not null Server.Sessions.Session_Access;
---     Email   : League.Strings.Universal_String)
---       return League.Strings.Universal_String;
---   --  Creates new user account (if not exists) or redirects user to
---   --  activation, logon or restore password page.
---
 --   function Activate
 --    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;

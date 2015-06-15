@@ -47,14 +47,22 @@
 --
 --  It binds parameters to be used by templates:
 --   - account (object)
---      - email (string)        e-mail address used to create account
 --      - hasErrors (boolean)   errors has been detected
 --      - emailEmpty (boolean)  provided e-mail is empty
+--      - emailUsed (boolean)   provided e-mail is empty
+--      - hasUser (boolean)     user object is not null XXX will be removed
+--                                when templates language will allow to check
+--                                null of object
+--      - user (object)
+--         - email (string)     e-mail address used to create account
+--         - exists (boolean)   account exits
+--         - active (boolean)   account is activated
 ------------------------------------------------------------------------------
 with League.Strings;
 with Servlet.HTTP_Sessions;
 private with XML.Templates.Processors;
 
+with AWFC.Accounts.Users;
 with AWFC.Page_Generators;
 
 package AWFC.Accounts.Pages.Signup is
@@ -78,11 +86,19 @@ package AWFC.Accounts.Pages.Signup is
      Errors  : Signup_Errors)
        return League.Strings.Universal_String;
 
+   function Render_Error
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     User    : not null AWFC.Accounts.Users.User_Access;
+     Errors  : Signup_Errors)
+       return League.Strings.Universal_String;
+
 private
 
    type Signup_Page_Generator is
      new AWFC.Page_Generators.Abstract_Page_Generator with record
       Email  : League.Strings.Universal_String;
+      User   : AWFC.Accounts.Users.User_Access;
       Errors : Signup_Errors;
    end record;
 

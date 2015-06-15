@@ -2,24 +2,51 @@
   <form method='post'>
     <table>
       <tbody>
-        <mtl:if expression='account.hasErrors'>
-          <tr><td colspan='2'>
-            В форме регистрации допущены следующие ошибки:
-            <ul>
-              <mtl:if expression='account.emailEmpty'><li>не указан e-mail пользователя</li></mtl:if>
-            </ul>
-          </td></tr>
+        <mtl:if expression='not account.emailUsed'>
+          <mtl:if expression='account.hasErrors'>
+            <tr><td colspan='2'>
+              В форме регистрации допущены следующие ошибки:
+              <ul>
+                <mtl:if expression='account.emailEmpty'><li>не указан e-mail пользователя</li></mtl:if>
+              </ul>
+            </td></tr>
+          </mtl:if>
+          <tr>
+	    <td colspan='2'>Для выполнения регистрации необходимо указать Ваш адрес электронной почты. Он будет использоваться для входа систему.</td>
+          </tr>
+          <tr>
+            <td>Ваш e-mail</td>
+            <td>
+              <mtl:if expression='account.hasUser'>
+                <input type='email' name='email' value='${account.user.email}'/>
+              </mtl:if>
+              <mtl:if expression='not account.hasUser'>
+                <input type='email' name='email'/>
+              </mtl:if>
+            </td>
+          </tr>
+          <tr>
+            <td colspan='2'><input type='submit' class='button' value='Зарегистрироваться'/></td>
+          </tr>
         </mtl:if>
-        <tr>
-	  <td colspan='2'>Для выполнения регистрации необходимо указать Ваш адрес электронной почты. Он будет использоваться для входа систему.</td>
-        </tr>
-        <tr>
-          <td>Ваш e-mail</td>
-          <td><input type='email' name='email' value='${account.email}'/></td>
-        </tr>
-        <tr>
-          <td colspan='2'><input type='submit' class='button' value='Зарегистрироваться'/></td>
-        </tr>
+        <mtl:if expression='account.emailUsed'>
+          <tr>
+            <td colspan='2'>Учётная запись связанная с адресом ${account.user.email} уже существует.
+              <mtl:if expression='not account.user.enabled'>Вам достаточно активировать учётную запись.</mtl:if>
+              <mtl:if expression='account.user.enabled'>Вы можете выполнить вход в систему или восстановить забытый пароль.</mtl:if>
+              <input type='hidden' name='email' value='${account.user.email}'/>
+            </td>
+          </tr>
+          <tr>
+            <mtl:if expression='not account.user.enabled'>
+              <td colspan='2'><input type='submit' class='button' formaction='/account/activate' value='Активировать учётную запись'/></td>
+            </mtl:if>
+            <mtl:if expression='account.user.enabled'>
+              <td><input type='submit' class='button' formaction='/account/logon' value='Войти'/></td>
+              <td><input type='submit' class='button' formaction='/account/recovery' value='Восстановить пароль'/></td>
+            </mtl:if>
+          </tr>
+        </mtl:if>
       </tbody>
     </table>
   </form>
