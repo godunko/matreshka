@@ -44,6 +44,12 @@
 --  Account signup page provides form to be filled to signup in system using
 --  e-mail address. It can contains list of errors found during signup
 --  procedure.
+--
+--  It binds parameters to be used by templates:
+--   - account (object)
+--      - email (string)        e-mail address used to create account
+--      - hasErrors (boolean)   errors has been detected
+--      - emailEmpty (boolean)  provided e-mail is empty
 ------------------------------------------------------------------------------
 with League.Strings;
 with Servlet.HTTP_Sessions;
@@ -53,19 +59,19 @@ with AWFC.Page_Generators;
 
 package AWFC.Accounts.Pages.Signup is
 
-   type Signup_Error is (Email_Empty);
+   type Signup_Error is (Email_Empty, Email_Used);
    type Signup_Errors is array (Signup_Error) of Boolean;
    No_Signup_Errors : constant Signup_Errors := (others => False);
 
    type Signup_Page_Generator is
      new AWFC.Page_Generators.Abstract_Page_Generator with private;
 
-   function Render
+   function Render_Form
     (Self    : in out Signup_Page_Generator'Class;
      Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
        return League.Strings.Universal_String;
 
-   function Render
+   function Render_Error
     (Self    : in out Signup_Page_Generator'Class;
      Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      Email   : League.Strings.Universal_String;

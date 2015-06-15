@@ -53,7 +53,8 @@ package body AWFC.Accounts.Pages.Signup is
 
    Signup_Template_Parameters :
      constant array (Signup_Error) of League.Strings.Universal_String
-       := (Email_Empty => +"emailEmpty");
+       := (Email_Empty => +"emailEmpty",
+           Email_Used  => +"emailUsed");
 
    ---------------------
    -- Bind_Parameters --
@@ -81,27 +82,11 @@ package body AWFC.Accounts.Pages.Signup is
         (+"account", League.Holders.JSON_Objects.To_Holder (Object));
    end Bind_Parameters;
 
-   ------------
-   -- Render --
-   ------------
+   ------------------
+   -- Render_Error --
+   ------------------
 
-   function Render
-    (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
-       return League.Strings.Universal_String is
-   begin
-      return
-        Self.Render
-         (Session,
-          League.Strings.Empty_Universal_String,
-          No_Signup_Errors);
-   end Render;
-
-   ------------
-   -- Render --
-   ------------
-
-   function Render
+   function Render_Error
     (Self    : in out Signup_Page_Generator'Class;
      Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      Email   : League.Strings.Universal_String;
@@ -111,7 +96,22 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Email  := Email;
       Self.Errors := Errors;
 
-      return AWFC.Page_Generators.Render (Self, Session);
-   end Render;
+      return Self.Render (Session);
+   end Render_Error;
+
+   -----------------
+   -- Render_Form --
+   -----------------
+
+   function Render_Form
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+       return League.Strings.Universal_String is
+   begin
+      Self.Email  := League.Strings.Empty_Universal_String;
+      Self.Errors := No_Signup_Errors;
+
+      return Self.Render (Session);
+   end Render_Form;
 
 end AWFC.Accounts.Pages.Signup;

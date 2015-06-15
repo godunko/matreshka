@@ -160,9 +160,7 @@ package body AWFC.Accounts.Account_Servlets is
          Response.Set_Content_Type (+"text/html");
          Response.Set_Character_Encoding (+"UTF-8");
          Response.Get_Output_Stream.Write
-          (AWFC.Accounts.Pages.Signup.Render
-            (Self.Signup_Page, Request.Get_Session.all));
---          (Self.Signup_Page.Render (Request.Get_Session.all));
+          (Self.Signup_Page.Render_Form (Request.Get_Session.all));
 
          return;
       end if;
@@ -177,12 +175,12 @@ package body AWFC.Accounts.Account_Servlets is
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
---      Path        : constant League.String_Vectors.Universal_String_Vector
---        := Request.Get_Path_Info;
+      Path        : constant League.String_Vectors.Universal_String_Vector
+        := Request.Get_Path_Info;
 --      Agrees      : constant League.String_Vectors.Universal_String_Vector
 --        := Request.Get_Parameter_Values (+"agree");
---      Emails      : constant League.String_Vectors.Universal_String_Vector
---        := Request.Get_Parameter_Values (+"email");
+      Emails      : constant League.String_Vectors.Universal_String_Vector
+        := Request.Get_Parameter_Values (+"email");
 --      Passwords   : constant League.String_Vectors.Universal_String_Vector
 --        := Request.Get_Parameter_Values (+"password");
 --      Passwords_1 : constant League.String_Vectors.Universal_String_Vector
@@ -286,24 +284,22 @@ package body AWFC.Accounts.Account_Servlets is
 ----                    (HTML_Mime_Type, Result.To_UTF_8_String);
 ----               end if;
 ----            end;
---
---      elsif Path.Length = 1 and then Path (1) = +"signup"
---        and then Emails.Length = 1
---      then
---         --  POST requests can be sent from
---         --   - 'signup' button of logon bar of any page
---         --   - 'signup' button on signup page
---
---         Response.Set_Status (Servlet.HTTP_Responses.OK);
---         Response.Set_Content_Type (+"text/html");
---         Response.Set_Character_Encoding (+"UTF-8");
+
+      if Path.Length = 1 and then Path (1) = +"signup"
+        and then Emails.Length = 1
+      then
+         --  POST form of this means request to signup user with provided
+         --  e-mail.
+
+         Response.Set_Status (Servlet.HTTP_Responses.OK);
+         Response.Set_Content_Type (+"text/html");
+         Response.Set_Character_Encoding (+"UTF-8");
 --         Response.Get_Output_Stream.Write
 --          (Server.Pages.Account.Signup
 --            (Request.Get_Servlet_Context, Request.Get_Session, Emails (1)));
---
---         return;
---      end if;
-      null;
+
+         return;
+      end if;
    end Do_Post;
 
    ----------------------
