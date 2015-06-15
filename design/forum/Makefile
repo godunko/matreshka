@@ -31,5 +31,5 @@ deploy:
 	$(INSTALL_libs) .libs/libmatreshka-opm$(SOEXT) install/WEB-INF/lib/x86_64-linux/libmatreshka-opm$(SOEXT)
 	$(INSTALL_data) templates/page.xhtml.tmpl install/WEB-INF/templates/
 	$(INSTALL_data) templates/forum_list.xhtml.tmpl install/WEB-INF/templates/
-	$(INSTALL_data) templates/account/signup.xhtml.tmpl install/WEB-INF/templates/account/
+	$(INSTALL_data) awfc/templates/account/signup.xhtml.tmpl install/WEB-INF/templates/account/
 	$(INSTALL_data) forum.css install/
