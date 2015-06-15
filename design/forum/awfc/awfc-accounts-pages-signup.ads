@@ -41,77 +41,47 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Account signup page provides form to be filled to signup in system using
+--  e-mail address. It can contains list of errors found during signup
+--  procedure.
+------------------------------------------------------------------------------
 with League.Strings;
-with SQL.Options;
+with Servlet.HTTP_Sessions;
+private with XML.Templates.Processors;
 
-with Servlet.Servlets;
-with Servlet.Servlet_Registrations;
-with Spikedog.Servlet_Contexts;
+with AWFC.Page_Generators;
 
-with AWFC.Accounts.Account_Servlets;
-with Forum.Forums.Servers;
-with Server.Servlets.Static;
-with Server.Servlets.Forum_Servlets;
+package AWFC.Accounts.Pages.Signup is
 
-with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
+   type Signup_Error is (Email_Empty);
+   type Signup_Errors is array (Signup_Error) of Boolean;
+   No_Signup_Errors : constant Signup_Errors := (others => False);
 
-package body Server.Initializers is
+   type Signup_Page_Generator is
+     new AWFC.Page_Generators.Abstract_Page_Generator with private;
 
-   type Servlet_Access is access all Servlet.Servlets.Servlet'Class;
+   function Render
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+       return League.Strings.Universal_String;
 
-   function "+"
-    (Item : Wide_Wide_String) return League.Strings.Universal_String
-       renames League.Strings.To_Universal_String;
+   function Render
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     Email   : League.Strings.Universal_String;
+     Errors  : Signup_Errors)
+       return League.Strings.Universal_String;
 
-   ----------------
-   -- On_Startup --
-   ----------------
+private
 
-   overriding procedure On_Startup
-     (Self    : in out Server_Initializer;
-      Context : in out Servlet.Contexts.Servlet_Context'Class)
-   is
-      Options       : SQL.Options.SQL_Options;
-      Forum_Servlet : constant
-        Server.Servlets.Forum_Servlets.Forum_Servlet_Access
-          := new Server.Servlets.Forum_Servlets.Forum_Servlet;
-      Registry      : access
-        Standard.Servlet.Servlet_Registrations.Servlet_Registration'Class;
-      Aux           : Servlet_Access;
+   type Signup_Page_Generator is
+     new AWFC.Page_Generators.Abstract_Page_Generator with record
+      Email  : League.Strings.Universal_String;
+      Errors : Signup_Errors;
+   end record;
 
-   begin
-      --  Initialize persistance manager.
+   overriding procedure Bind_Parameters
+    (Self      : in out Signup_Page_Generator;
+     Processor : in out XML.Templates.Processors.Template_Processor'Class);
 
-      Options.Set
-        (League.Strings.To_Universal_String ("dbname"),
-         League.Strings.To_Universal_String ("forum"));
-      Forum.Forums.Servers.Initialize
-       (Forum_Servlet.Server,
-        League.Strings.To_Universal_String ("POSTGRESQL"),
-        Options);
-
-      --  Replace default session manager.
-
-      Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
-       (Context).Set_Session_Manager
-         (Forum_Servlet.Server.Get_HTTP_Session_Manager);
-
-      --  Create and register servlets.
-
-      Registry := Context.Add_Servlet
-        (+"StaticResources",
-         Servlet_Access'(new Server.Servlets.Static.Resource_Servlet));
-      Registry.Add_Mapping (+"/forum.css");
-
-      Aux :=
-        new AWFC.Accounts.Account_Servlets.Account_Servlet
-             (Forum_Servlet.Server.Password_Manager);
-      Registry := Context.Add_Servlet (+"AccountManager", Aux);
-      Registry.Add_Mapping (+"/account/*");
-
-      Registry := Context.Add_Servlet (+"ForumManager", Forum_Servlet);
-      Registry.Add_Mapping (+"/forum/*");
-
-   end On_Startup;
-
-end Server.Initializers;
+end AWFC.Accounts.Pages.Signup;

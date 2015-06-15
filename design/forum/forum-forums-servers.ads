@@ -1,8 +1,15 @@
 with Spikedog.HTTP_Session_Managers;
 
+with AWFC.Accounts.Password_Managers;
+
 package Forum.Forums.Servers is
 
-   type Server_Forum is new Forum with null record;
+   type Password_Manager_Access is
+     access all AWFC.Accounts.Password_Managers.Password_Manager'Class;
+
+   type Server_Forum is new Forum with record
+      Password_Manager : Password_Manager_Access;
+   end record;
 
    procedure Initialize
     (Self    : in out Server_Forum'Class;

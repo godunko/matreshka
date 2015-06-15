@@ -76,6 +76,10 @@ package body Forum.Forums.Servers is
    begin
       Standard.Forum.Forums.Initialize (Self, Driver, Options);
 
+      Self.Password_Manager :=
+        new AWFC.Accounts.Password_Managers.Password_Manager
+             (Self.Engine'Unchecked_Access);
+
       Aux :=
         new AWFC.Accounts.Sessions.Stores.Session_Manager
              (Self.Engine'Unchecked_Access);

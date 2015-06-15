@@ -44,13 +44,15 @@
 with League.Strings;
 with SQL.Options;
 
-private with OPM.Engines;
+with OPM.Engines;
 
 with Forum.Categories.References;
 
 package Forum.Forums is
 
-   type Forum is tagged limited private;
+   type Forum is tagged limited record
+      Engine : aliased OPM.Engines.Engine;
+   end record;
 
    procedure Initialize
     (Self    : in out Forum'Class;
@@ -66,11 +68,5 @@ package Forum.Forums is
      Title       : League.Strings.Universal_String;
      Description : League.Strings.Universal_String)
        return Standard.Forum.Categories.References.Category;
-
-private
-
-   type Forum is tagged limited record
-      Engine : aliased OPM.Engines.Engine;
-   end record;
 
 end Forum.Forums;

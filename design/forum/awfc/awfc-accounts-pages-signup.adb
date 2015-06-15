@@ -41,77 +41,77 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with SQL.Options;
+with League.Holders.JSON_Objects;
+with League.JSON.Objects;
+with League.JSON.Values;
 
-with Servlet.Servlets;
-with Servlet.Servlet_Registrations;
-with Spikedog.Servlet_Contexts;
-
-with AWFC.Accounts.Account_Servlets;
-with Forum.Forums.Servers;
-with Server.Servlets.Static;
-with Server.Servlets.Forum_Servlets;
-
-with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
-
-package body Server.Initializers is
-
-   type Servlet_Access is access all Servlet.Servlets.Servlet'Class;
+package body AWFC.Accounts.Pages.Signup is
 
    function "+"
     (Item : Wide_Wide_String) return League.Strings.Universal_String
        renames League.Strings.To_Universal_String;
 
-   ----------------
-   -- On_Startup --
-   ----------------
+   Signup_Template_Parameters :
+     constant array (Signup_Error) of League.Strings.Universal_String
+       := (Email_Empty => +"emailEmpty");
 
-   overriding procedure On_Startup
-     (Self    : in out Server_Initializer;
-      Context : in out Servlet.Contexts.Servlet_Context'Class)
+   ---------------------
+   -- Bind_Parameters --
+   ---------------------
+
+   overriding procedure Bind_Parameters
+    (Self      : in out Signup_Page_Generator;
+     Processor : in out XML.Templates.Processors.Template_Processor'Class)
    is
-      Options       : SQL.Options.SQL_Options;
-      Forum_Servlet : constant
-        Server.Servlets.Forum_Servlets.Forum_Servlet_Access
-          := new Server.Servlets.Forum_Servlets.Forum_Servlet;
-      Registry      : access
-        Standard.Servlet.Servlet_Registrations.Servlet_Registration'Class;
-      Aux           : Servlet_Access;
+      Object : League.JSON.Objects.JSON_Object;
 
    begin
-      --  Initialize persistance manager.
+      Object.Insert (+"email", League.JSON.Values.To_JSON_Value (Self.Email));
+      Object.Insert
+       (+"hasErrors",
+        League.JSON.Values.To_JSON_Value (Self.Errors /= No_Signup_Errors));
 
-      Options.Set
-        (League.Strings.To_Universal_String ("dbname"),
-         League.Strings.To_Universal_String ("forum"));
-      Forum.Forums.Servers.Initialize
-       (Forum_Servlet.Server,
-        League.Strings.To_Universal_String ("POSTGRESQL"),
-        Options);
+      for Error in Signup_Errors'Range loop
+         Object.Insert
+          (Signup_Template_Parameters (Error),
+           League.JSON.Values.To_JSON_Value (Self.Errors (Error)));
+      end loop;
 
-      --  Replace default session manager.
+      Processor.Set_Parameter
+        (+"account", League.Holders.JSON_Objects.To_Holder (Object));
+   end Bind_Parameters;
 
-      Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
-       (Context).Set_Session_Manager
-         (Forum_Servlet.Server.Get_HTTP_Session_Manager);
+   ------------
+   -- Render --
+   ------------
 
-      --  Create and register servlets.
+   function Render
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+       return League.Strings.Universal_String is
+   begin
+      return
+        Self.Render
+         (Session,
+          League.Strings.Empty_Universal_String,
+          No_Signup_Errors);
+   end Render;
 
-      Registry := Context.Add_Servlet
-        (+"StaticResources",
-         Servlet_Access'(new Server.Servlets.Static.Resource_Servlet));
-      Registry.Add_Mapping (+"/forum.css");
+   ------------
+   -- Render --
+   ------------
 
-      Aux :=
-        new AWFC.Accounts.Account_Servlets.Account_Servlet
-             (Forum_Servlet.Server.Password_Manager);
-      Registry := Context.Add_Servlet (+"AccountManager", Aux);
-      Registry.Add_Mapping (+"/account/*");
+   function Render
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     Email   : League.Strings.Universal_String;
+     Errors  : Signup_Errors)
+       return League.Strings.Universal_String is
+   begin
+      Self.Email  := Email;
+      Self.Errors := Errors;
 
-      Registry := Context.Add_Servlet (+"ForumManager", Forum_Servlet);
-      Registry.Add_Mapping (+"/forum/*");
+      return AWFC.Page_Generators.Render (Self, Session);
+   end Render;
 
-   end On_Startup;
-
-end Server.Initializers;
+end AWFC.Accounts.Pages.Signup;

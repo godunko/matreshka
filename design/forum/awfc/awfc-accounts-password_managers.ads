@@ -41,77 +41,62 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with SQL.Options;
+--  This package provides management of user's password.
+------------------------------------------------------------------------------
+private with Interfaces;
 
-with Servlet.Servlets;
-with Servlet.Servlet_Registrations;
-with Spikedog.Servlet_Contexts;
+--with League.Strings;
+with OPM.Engines;
 
-with AWFC.Accounts.Account_Servlets;
-with Forum.Forums.Servers;
-with Server.Servlets.Static;
-with Server.Servlets.Forum_Servlets;
+--with AWFC.Accounts.Users;
 
-with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
+package AWFC.Accounts.Password_Managers is
 
-package body Server.Initializers is
+   pragma Elaborate_Body;
 
-   type Servlet_Access is access all Servlet.Servlets.Servlet'Class;
+   type Confirmation_Code is private;
 
-   function "+"
-    (Item : Wide_Wide_String) return League.Strings.Universal_String
-       renames League.Strings.To_Universal_String;
+--   function To_Universal_String
+--    (Item : Confirmation_Code) return League.Strings.Universal_String;
+--   --  Converts confirmation code from internal representation into string.
+--
+--   function From_Universal_String
+--    (Image : League.Strings.Universal_String) return Confirmation_Code;
+--   --  Converts confirmation code from string into internal representation.
 
-   ----------------
-   -- On_Startup --
-   ----------------
+   type Password_Manager (Engine : not null access OPM.Engines.Engine'Class) is
+     tagged limited private;
 
-   overriding procedure On_Startup
-     (Self    : in out Server_Initializer;
-      Context : in out Servlet.Contexts.Servlet_Context'Class)
-   is
-      Options       : SQL.Options.SQL_Options;
-      Forum_Servlet : constant
-        Server.Servlets.Forum_Servlets.Forum_Servlet_Access
-          := new Server.Servlets.Forum_Servlets.Forum_Servlet;
-      Registry      : access
-        Standard.Servlet.Servlet_Registrations.Servlet_Registration'Class;
-      Aux           : Servlet_Access;
+--   function Assign_Confirmation_Code
+--    (User : not null AWFC.Accounts.Users.User_Access) return Confirmation_Code;
+--   --  Generates random confirmation code for user and assign it. Removes
+--   --  previous confirmation code assigned for user.
+--
+--   function Get_User
+--    (Code : Confirmation_Code) return AWFC.Accounts.Users.User_Access;
+--   --  Returns user to which specified confirmation code was assigned.
+--
+--   procedure Set_Password
+--    (User     : not null access AWFC.Accounts.Users.User'Class;
+--     Password : League.Strings.Universal_String);
+--   --  Sets user's password.
+--
+--   function Password_Match
+--    (User     : not null access AWFC.Accounts.Users.User'Class;
+--     Password : League.Strings.Universal_String) return Boolean;
+--   --  Verify user's password.
+--
+--   procedure Remove_Confirmation_Code
+--    (User : not null access AWFC.Accounts.Users.User'Class);
+--   --  Removes user's confirmation code.
 
-   begin
-      --  Initialize persistance manager.
+private
 
-      Options.Set
-        (League.Strings.To_Universal_String ("dbname"),
-         League.Strings.To_Universal_String ("forum"));
-      Forum.Forums.Servers.Initialize
-       (Forum_Servlet.Server,
-        League.Strings.To_Universal_String ("POSTGRESQL"),
-        Options);
+   type Confirmation_Code is
+     array (Natural range 0 .. 1) of Interfaces.Unsigned_64;
+   for Confirmation_Code'Size use 128;
 
-      --  Replace default session manager.
+   type Password_Manager (Engine : not null access OPM.Engines.Engine'Class) is
+     tagged limited null record;
 
-      Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
-       (Context).Set_Session_Manager
-         (Forum_Servlet.Server.Get_HTTP_Session_Manager);
-
-      --  Create and register servlets.
-
-      Registry := Context.Add_Servlet
-        (+"StaticResources",
-         Servlet_Access'(new Server.Servlets.Static.Resource_Servlet));
-      Registry.Add_Mapping (+"/forum.css");
-
-      Aux :=
-        new AWFC.Accounts.Account_Servlets.Account_Servlet
-             (Forum_Servlet.Server.Password_Manager);
-      Registry := Context.Add_Servlet (+"AccountManager", Aux);
-      Registry.Add_Mapping (+"/account/*");
-
-      Registry := Context.Add_Servlet (+"ForumManager", Forum_Servlet);
-      Registry.Add_Mapping (+"/forum/*");
-
-   end On_Startup;
-
-end Server.Initializers;
+end AWFC.Accounts.Password_Managers;

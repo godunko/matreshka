@@ -1,0 +1,26 @@
+<div xmlns='http://www.w3.org/1999/xhtml' xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
+  <form method='post'>
+    <table>
+      <tbody>
+        <mtl:if expression='account.hasErrors'>
+          <tr><td colspan='2'>
+            В форме регистрации допущены следующие ошибки:
+            <ul>
+              <mtl:if expression='account.emailEmpty'><li>не указан e-mail пользователя</li></mtl:if>
+            </ul>
+          </td></tr>
+        </mtl:if>
+        <tr>
+	  <td colspan='2'>Для выполнения регистрации необходимо указать Ваш адрес электронной почты. Он будет использоваться для входа систему.</td>
+        </tr>
+        <tr>
+          <td>Ваш e-mail</td>
+          <td><input type='email' name='email' value='${account.email}'/></td>
+        </tr>
+        <tr>
+          <td colspan='2'><input type='submit' class='button' value='Зарегистрироваться'/></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>

@@ -1,0 +1,288 @@
+------------------------------------------------------------------------------
+--                                                                          --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
+--                                                                          --
+--                        Runtime Library Component                         --
+--                                                                          --
+------------------------------------------------------------------------------
+--                                                                          --
+-- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
+-- All rights reserved.                                                     --
+--                                                                          --
+-- Redistribution and use in source and binary forms, with or without       --
+-- modification, are permitted provided that the following conditions       --
+-- are met:                                                                 --
+--                                                                          --
+--  * Redistributions of source code must retain the above copyright        --
+--    notice, this list of conditions and the following disclaimer.         --
+--                                                                          --
+--  * Redistributions in binary form must reproduce the above copyright     --
+--    notice, this list of conditions and the following disclaimer in the   --
+--    documentation and/or other materials provided with the distribution.  --
+--                                                                          --
+--  * Neither the name of the Vadim Godunko, IE nor the names of its        --
+--    contributors may be used to endorse or promote products derived from  --
+--    this software without specific prior written permission.              --
+--                                                                          --
+-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      --
+-- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        --
+-- LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    --
+-- A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     --
+-- HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,   --
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED --
+-- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR   --
+-- PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF   --
+-- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     --
+-- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS       --
+-- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
+--                                                                          --
+------------------------------------------------------------------------------
+--  $Revision$ $Date$
+------------------------------------------------------------------------------
+--with Ada.Numerics.Discrete_Random;
+--with Ada.Streams;
+--
+--with League.Base_Codecs;
+--with League.Holders.Generic_Integers;
+--with League.Stream_Element_Vectors;
+--with SQL.Queries;
+--
+--with Database.Pool;
+--with ESAPI.Users.User_Identifier_Holders;
+--with Server.Globals;
+
+package body AWFC.Accounts.Password_Managers is
+
+--   package Unsigned_64_Random is
+--     new Ada.Numerics.Discrete_Random (Interfaces.Unsigned_64);
+--
+--   Generator : Unsigned_64_Random.Generator;
+--
+--   ------------------------------
+--   -- Assign_Confirmation_Code --
+--   ------------------------------
+--
+--   function Assign_Confirmation_Code
+--    (User : not null Security.Users.User_Access) return Confirmation_Code
+--   is
+--      DB     : Database.Pool.Database_Wrapper := Database.Pool.Get_Database;
+--      Query1 : SQL.Queries.SQL_Query := DB.Query;
+--      Query2 : SQL.Queries.SQL_Query := DB.Query;
+--      Code   : Confirmation_Code;
+--
+--   begin
+--      for J in Code'Range loop
+--         Code (J) := Unsigned_64_Random.Random (Generator);
+--      end loop;
+--
+--      Query1.Prepare
+--       (+("SELECT code FROM confirmations"
+--            & " WHERE user_identifier = :user_identifier"));
+--      Query1.Bind_Value
+--       (+":user_identifier",
+--        ESAPI.Users.User_Identifier_Holders.To_Holder
+--         (User.Get_User_Identifier));
+--      Query1.Execute;
+--
+--      if Query1.Next then
+--         --  User's account has assigned confirmation code, replace it.
+--
+--         Query2.Prepare
+--          (+("UPDATE confirmations SET code = :code"
+--               & " WHERE user_identifier = :user_identifier"));
+--         Query2.Bind_Value
+--          (+":user_identifier",
+--           ESAPI.Users.User_Identifier_Holders.To_Holder
+--            (User.Get_User_Identifier));
+--         Query2.Bind_Value
+--          (+":code", League.Holders.To_Holder (To_Universal_String (Code)));
+--         Query2.Execute;
+--
+--      else
+--         --  User's account has assigned confirmation code, replace it.
+--
+--         Query2.Prepare
+--          (+("INSERT INTO confirmations (user_identifier, code)"
+--               & " VALUES (:user_identifier, :code)"));
+--         Query2.Bind_Value
+--          (+":user_identifier",
+--           ESAPI.Users.User_Identifier_Holders.To_Holder
+--            (User.Get_User_Identifier));
+--         Query2.Bind_Value
+--          (+":code", League.Holders.To_Holder (To_Universal_String (Code)));
+--         Query2.Execute;
+--      end if;
+--
+--      return Code;
+--   end Assign_Confirmation_Code;
+--
+--   ---------------------------
+--   -- From_Universal_String --
+--   ---------------------------
+--
+--   function From_Universal_String
+--    (Image : League.Strings.Universal_String) return Confirmation_Code
+--   is
+--      use type Ada.Streams.Stream_Element_Offset;
+--
+--      Decoded : constant League.Stream_Element_Vectors.Stream_Element_Vector
+--        := League.Base_Codecs.From_Base_64_URL (Image);
+--
+--   begin
+--      if Decoded.Length /= Confirmation_Code'Max_Size_In_Storage_Elements then
+--         raise Constraint_Error with "Mailformed SID";
+--      end if;
+--
+--      declare
+--         Raw    : constant Ada.Streams.Stream_Element_Array
+--           := Decoded.To_Stream_Element_Array;
+--         for Raw'Alignment use Interfaces.Unsigned_64'Alignment;
+--         Result : constant Confirmation_Code
+--           with Import     => True,
+--                Convention => Ada,
+--                Address    => Raw'Address;
+--
+--      begin
+--         return Result;
+--      end;
+--   end From_Universal_String;
+--
+--   --------------
+--   -- Get_User --
+--   --------------
+--
+--   function Get_User
+--    (Code : Confirmation_Code) return Security.Users.User_Access
+--   is
+--      DB    : Database.Pool.Database_Wrapper := Database.Pool.Get_Database;
+--      Query : SQL.Queries.SQL_Query := DB.Query;
+--
+--   begin
+--      Query.Prepare
+--       (+"SELECT user_identifier FROM confirmations WHERE code = :code");
+--      Query.Bind_Value
+--       (+":code", League.Holders.To_Holder (To_Universal_String (Code)));
+--      Query.Execute;
+--
+--      if Query.Next then
+--         return
+--           Server.Globals.User_Store.Incarnate
+--            (ESAPI.Users.User_Identifier_Holders.Element (Query.Value (1)));
+--
+--      else
+--         return null;
+--      end if;
+--   end Get_User;
+--
+--   --------------------
+--   -- Password_Match --
+--   --------------------
+--
+--   function Password_Match
+--    (User     : not null access Security.Users.User'Class;
+--     Password : League.Strings.Universal_String) return Boolean
+--   is
+--      DB     : Database.Pool.Database_Wrapper := Database.Pool.Get_Database;
+--      Query1 : SQL.Queries.SQL_Query := DB.Query;
+--
+--   begin
+--      Query1.Prepare
+--        (+("SELECT user_identifier FROM passwords"
+--             & " WHERE user_identifier = :user_identifier"
+--             & " AND password = :password"));
+--      Query1.Bind_Value
+--       (+":user_identifier",
+--        ESAPI.Users.User_Identifier_Holders.To_Holder
+--         (User.Get_User_Identifier));
+--      Query1.Bind_Value (+":password", League.Holders.To_Holder (Password));
+--      Query1.Execute;
+--
+--      return Query1.Next;
+--   end Password_Match;
+--
+--   ------------------------------
+--   -- Remove_Confirmation_Code --
+--   ------------------------------
+--
+--   procedure Remove_Confirmation_Code
+--    (User : not null access Security.Users.User'Class)
+--   is
+--      DB    : Database.Pool.Database_Wrapper := Database.Pool.Get_Database;
+--      Query : SQL.Queries.SQL_Query := DB.Query;
+--
+--   begin
+--      Query.Prepare
+--       (+"DELETE FROM confirmations WHERE user_identifier = :user_identifier");
+--      Query.Bind_Value
+--       (+":user_identifier",
+--        ESAPI.Users.User_Identifier_Holders.To_Holder
+--         (User.Get_User_Identifier));
+--      Query.Execute;
+--      DB.Commit;
+--   end Remove_Confirmation_Code;
+--
+--   ------------------
+--   -- Set_Password --
+--   ------------------
+--
+--   procedure Set_Password
+--    (User     : not null access Security.Users.User'Class;
+--     Password : League.Strings.Universal_String)
+--   is
+--      DB     : Database.Pool.Database_Wrapper := Database.Pool.Get_Database;
+--      Query1 : SQL.Queries.SQL_Query := DB.Query;
+--      Query2 : SQL.Queries.SQL_Query := DB.Query;
+--
+--   begin
+--      Query1.Prepare
+--       (+("SELECT user_identifier FROM passwords"
+--            & " WHERE user_identifier = :user_identifier"));
+--      Query1.Bind_Value
+--       (+":user_identifier",
+--        ESAPI.Users.User_Identifier_Holders.To_Holder
+--         (User.Get_User_Identifier));
+--      Query1.Execute;
+--
+--      if Query1.Next then
+--         Query2.Prepare
+--          (+("UPDATE passwords SET password = :password"
+--               & " WHERE user_identifier = :user_identifier"));
+--
+--      else
+--         Query2.Prepare
+--          (+("INSERT INTO passwords (user_identifier, password)"
+--               & " VALUES (:user_identifier, :password)"));
+--      end if;
+--
+--      Query2.Bind_Value (+":password", League.Holders.To_Holder (Password));
+--      Query2.Bind_Value
+--       (+":user_identifier",
+--        ESAPI.Users.User_Identifier_Holders.To_Holder
+--         (User.Get_User_Identifier));
+--      Query2.Execute;
+--      DB.Commit;
+--   end Set_Password;
+--
+--   -------------------------
+--   -- To_Universal_String --
+--   -------------------------
+--
+--   function To_Universal_String
+--    (Item : Confirmation_Code) return League.Strings.Universal_String is
+--      Aux : constant Ada.Streams.Stream_Element_Array
+--                      (1 .. Confirmation_Code'Max_Size_In_Storage_Elements)
+--        with Import     => True,
+--             Convention => Ada,
+--             Address    => Item'Address;
+--
+--   begin
+--      return
+--        League.Base_Codecs.To_Base_64_URL
+--         (League.Stream_Element_Vectors.To_Stream_Element_Vector (Aux));
+--   end To_Universal_String;
+--
+--begin
+--   Unsigned_64_Random.Reset (Generator);
+end AWFC.Accounts.Password_Managers;

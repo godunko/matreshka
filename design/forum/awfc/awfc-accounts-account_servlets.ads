@@ -41,77 +41,47 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
-with SQL.Options;
+private with League.Strings;
+private with Servlet.Configs;
+private with Servlet.HTTP_Requests;
+private with Servlet.HTTP_Responses;
+with Servlet.HTTP_Servlets;
 
-with Servlet.Servlets;
-with Servlet.Servlet_Registrations;
-with Spikedog.Servlet_Contexts;
+with AWFC.Accounts.Password_Managers;
+private with AWFC.Accounts.Pages.Signup;
 
-with AWFC.Accounts.Account_Servlets;
-with Forum.Forums.Servers;
-with Server.Servlets.Static;
-with Server.Servlets.Forum_Servlets;
+package AWFC.Accounts.Account_Servlets is
 
-with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
+   type Account_Servlet
+    (Password_Manager :
+       not null access AWFC.Accounts.Password_Managers.Password_Manager'Class)
+         is new Servlet.HTTP_Servlets.HTTP_Servlet with private;
 
-package body Server.Initializers is
+private
 
-   type Servlet_Access is access all Servlet.Servlets.Servlet'Class;
+   type Account_Servlet
+    (Password_Manager :
+       not null access AWFC.Accounts.Password_Managers.Password_Manager'Class)
+         is new Servlet.HTTP_Servlets.HTTP_Servlet with
+   record
+      Signup_Page : AWFC.Accounts.Pages.Signup.Signup_Page_Generator;
+   end record;
 
-   function "+"
-    (Item : Wide_Wide_String) return League.Strings.Universal_String
-       renames League.Strings.To_Universal_String;
+   overriding procedure Do_Get
+    (Self     : in out Account_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
 
-   ----------------
-   -- On_Startup --
-   ----------------
+   overriding procedure Do_Post
+    (Self     : in out Account_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
 
-   overriding procedure On_Startup
-     (Self    : in out Server_Initializer;
-      Context : in out Servlet.Contexts.Servlet_Context'Class)
-   is
-      Options       : SQL.Options.SQL_Options;
-      Forum_Servlet : constant
-        Server.Servlets.Forum_Servlets.Forum_Servlet_Access
-          := new Server.Servlets.Forum_Servlets.Forum_Servlet;
-      Registry      : access
-        Standard.Servlet.Servlet_Registrations.Servlet_Registration'Class;
-      Aux           : Servlet_Access;
+   overriding function Get_Servlet_Info
+    (Self : Account_Servlet) return League.Strings.Universal_String;
 
-   begin
-      --  Initialize persistance manager.
+   overriding procedure Initialize
+    (Self   : in out Account_Servlet;
+     Config : not null access Servlet.Configs.Servlet_Config'Class);
 
-      Options.Set
-        (League.Strings.To_Universal_String ("dbname"),
-         League.Strings.To_Universal_String ("forum"));
-      Forum.Forums.Servers.Initialize
-       (Forum_Servlet.Server,
-        League.Strings.To_Universal_String ("POSTGRESQL"),
-        Options);
-
-      --  Replace default session manager.
-
-      Spikedog.Servlet_Contexts.Spikedog_Servlet_Context'Class
-       (Context).Set_Session_Manager
-         (Forum_Servlet.Server.Get_HTTP_Session_Manager);
-
-      --  Create and register servlets.
-
-      Registry := Context.Add_Servlet
-        (+"StaticResources",
-         Servlet_Access'(new Server.Servlets.Static.Resource_Servlet));
-      Registry.Add_Mapping (+"/forum.css");
-
-      Aux :=
-        new AWFC.Accounts.Account_Servlets.Account_Servlet
-             (Forum_Servlet.Server.Password_Manager);
-      Registry := Context.Add_Servlet (+"AccountManager", Aux);
-      Registry.Add_Mapping (+"/account/*");
-
-      Registry := Context.Add_Servlet (+"ForumManager", Forum_Servlet);
-      Registry.Add_Mapping (+"/forum/*");
-
-   end On_Startup;
-
-end Server.Initializers;
+end AWFC.Accounts.Account_Servlets;
