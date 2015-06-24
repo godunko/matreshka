@@ -387,7 +387,7 @@ package body AWFC.Accounts.Account_Servlets is
       User := User_Store.Create (Email);
 
 --      return Activate (Context, Session, User, True);
-      return League.Strings.Empty_Universal_String;
+      return Self.Signup_Page.Render_Done (Session, User);
    end Signup;
 
 --   -----------------------

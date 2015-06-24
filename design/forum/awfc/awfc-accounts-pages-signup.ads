@@ -50,9 +50,10 @@
 --      - hasErrors (boolean)   errors has been detected
 --      - emailEmpty (boolean)  provided e-mail is empty
 --      - emailUsed (boolean)   provided e-mail is empty
+--      - done (boolean)        user's account has been created successfully
 --      - hasUser (boolean)     user object is not null XXX will be removed
 --                                when templates language will allow to check
---                                null of object
+--                                for null object
 --      - user (object)
 --         - email (string)     e-mail address used to create account
 --         - exists (boolean)   account exits
@@ -93,6 +94,12 @@ package AWFC.Accounts.Pages.Signup is
      Errors  : Signup_Errors)
        return League.Strings.Universal_String;
 
+   function Render_Done
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     User    : not null AWFC.Accounts.Users.User_Access)
+       return League.Strings.Universal_String;
+
 private
 
    type Signup_Page_Generator is
@@ -100,6 +107,7 @@ private
       Email  : League.Strings.Universal_String;
       User   : AWFC.Accounts.Users.User_Access;
       Errors : Signup_Errors;
+      Done   : Boolean;
    end record;
 
    overriding procedure Bind_Parameters

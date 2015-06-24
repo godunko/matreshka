@@ -92,6 +92,7 @@ package body AWFC.Accounts.Pages.Signup is
       end if;
 
       Object.Insert (+"user", User_Object.To_JSON_Value);
+      Object.Insert (+"done", League.JSON.Values.To_JSON_Value (Self.Done));
       Object.Insert
        (+"hasErrors",
         League.JSON.Values.To_JSON_Value (Self.Errors /= No_Signup_Errors));
@@ -105,6 +106,24 @@ package body AWFC.Accounts.Pages.Signup is
       Processor.Set_Parameter
         (+"account", League.Holders.JSON_Objects.To_Holder (Object));
    end Bind_Parameters;
+
+   -----------------
+   -- Render_Done --
+   -----------------
+
+   function Render_Done
+    (Self    : in out Signup_Page_Generator'Class;
+     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
+     User    : not null AWFC.Accounts.Users.User_Access)
+       return League.Strings.Universal_String is
+   begin
+      Self.Email  := League.Strings.Empty_Universal_String;
+      Self.User   := User;
+      Self.Errors := No_Signup_Errors;
+      Self.Done   := True;
+
+      return Self.Render (Session);
+   end Render_Done;
 
    ------------------
    -- Render_Error --
@@ -120,6 +139,7 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Email  := Email;
       Self.User   := null;
       Self.Errors := Errors;
+      Self.Done   := False;
 
       return Self.Render (Session);
    end Render_Error;
@@ -138,6 +158,7 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Email  := League.Strings.Empty_Universal_String;
       Self.User   := User;
       Self.Errors := Errors;
+      Self.Done   := False;
 
       return Self.Render (Session);
    end Render_Error;
@@ -154,6 +175,7 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Email  := League.Strings.Empty_Universal_String;
       Self.User   := null;
       Self.Errors := No_Signup_Errors;
+      Self.Done   := False;
 
       return Self.Render (Session);
    end Render_Form;
