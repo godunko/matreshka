@@ -42,10 +42,13 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.Holders.JSON_Arrays;
+with League.Holders.JSON_Objects;
 with League.IRIs;
 with League.JSON.Arrays;
 with League.JSON.Objects;
 with League.JSON.Values;
+
+with Forum.Topics.References;
 
 package body Server.Servlets.Forum_Servlets is
 
@@ -70,9 +73,76 @@ package body Server.Servlets.Forum_Servlets is
             IRI    : League.IRIs.IRI;
 
          begin
+            --  Category URL has form <forum>/category/page
             IRI.Set_Absolute_Path (Self.Path);
             IRI.Append_Segment
               (Forum.Categories.Encode (J.Object.Get_Identifier));
+            --  First page
+            IRI.Append_Segment (+"1");
+
+            Object.Insert
+              (+"id",
+               League.JSON.Values.To_JSON_Value (IRI.To_Universal_String));
+            Object.Insert
+              (+"title",
+               League.JSON.Values.To_JSON_Value (J.Object.Get_Title));
+            Object.Insert
+              (+"description",
+               League.JSON.Values.To_JSON_Value (J.Object.Get_Description));
+            List.Append (Object.To_JSON_Value);
+         end;
+      end loop;
+
+      Processor.Set_Parameter
+        (+"list", League.Holders.JSON_Arrays.To_Holder (List));
+   end Bind_Parameters;
+
+   ---------------------
+   -- Bind_Parameters --
+   ---------------------
+
+   overriding procedure Bind_Parameters
+    (Self      : in out Topic_List_Page;
+     Processor : in out XML.Templates.Processors.Template_Processor'Class)
+   is
+      List : League.JSON.Arrays.JSON_Array;
+      Last : constant Integer :=
+        Self.Category.Object.Get_Topic_Count;
+      Topics : constant Forum.Topics.References.Topic_Vector :=
+        Self.Category.Object.Get_Topics (1, Last);
+   begin
+      declare
+         Object : League.JSON.Objects.JSON_Object;
+      begin
+         Object.Insert
+           (+"title",
+            League.JSON.Values.To_JSON_Value (Self.Category.Object.Get_Title));
+
+         Object.Insert
+           (+"description",
+            League.JSON.Values.To_JSON_Value
+              (Self.Category.Object.Get_Description));
+
+         Processor.Set_Parameter
+           (+"category", League.Holders.JSON_Objects.To_Holder (Object));
+      end;
+
+      for J of Topics loop
+         declare
+            Object : League.JSON.Objects.JSON_Object;
+            IRI    : League.IRIs.IRI;
+
+         begin
+            --  Topic URL has form <forum>/category/topic/page
+            IRI.Set_Absolute_Path (Self.Path);
+            IRI.Append_Segment
+              (Forum.Categories.Encode (Self.Category.Object.Get_Identifier));
+
+            IRI.Append_Segment
+              (Forum.Topics.Encode (J.Object.Get_Identifier));
+
+            --  First page
+            IRI.Append_Segment (+"1");
 
             Object.Insert
               (+"id",
@@ -96,10 +166,68 @@ package body Server.Servlets.Forum_Servlets is
    ------------
 
    overriding procedure Do_Get
+    (Self     : in out Forum_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+     Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
+   is
+
+      function Get_Page_Number
+        (Image : League.Strings.Universal_String;
+         Page  : out Positive) return Boolean;
+
+      ---------------------
+      -- Get_Page_Number --
+      ---------------------
+
+      function Get_Page_Number
+        (Image : League.Strings.Universal_String;
+         Page  : out Positive) return Boolean
+      is
+      begin
+         Page := Positive'Wide_Wide_Value (Image.To_Wide_Wide_String);
+         return True;
+      exception
+         when Constraint_Error =>
+            return False;
+      end Get_Page_Number;
+
+      Path : constant League.String_Vectors.Universal_String_Vector
+        := Request.Get_Path_Info;
+      Category : Forum.Categories.Category_Identifier;
+      Page     : Positive := 1;
+   begin
+      if Path.Length = 0 then
+         Self.Get_Categories (Request, Response);
+
+         return;
+      elsif Path.Length in 1 .. 2 then
+         if Forum.Categories.Decode (Path (1), Category) then
+
+            if Path.Length = 1 or else Get_Page_Number (Path (2), Page) then
+               Self.Get_Topics (Category, Page, Request, Response);
+
+               return;
+            end if;
+         end if;
+      end if;
+
+      --  Report error when decoding of URL fails
+      Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
+      Response.Set_Content_Type (+"text/plain");
+
+   end Do_Get;
+
+   --------------------
+   -- Get_Categories --
+   --------------------
+
+   not overriding procedure Get_Categories
      (Self     : in out Forum_Servlet;
       Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
       Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
    is
+      Forum_List : Forum_List_Page;
+
       Path : League.String_Vectors.Universal_String_Vector
         := Request.Get_Servlet_Path;
 
@@ -114,7 +242,7 @@ package body Server.Servlets.Forum_Servlets is
       Response.Get_Output_Stream.Write
        (Self.Forum_List.Render
          (Request.Get_Session.all, Path, Self.Server.Get_Categories));
-   end Do_Get;
+   end Get_Categories;
 
    ----------------------
    -- Get_Servlet_Info --
@@ -125,6 +253,46 @@ package body Server.Servlets.Forum_Servlets is
    begin
       return League.Strings.To_Universal_String ("Forum Servlet");
    end Get_Servlet_Info;
+
+   ----------------
+   -- Get_Topics --
+   ----------------
+
+   not overriding procedure Get_Topics
+     (Self     : in out Forum_Servlet;
+      Category : Forum.Categories.Category_Identifier;
+      Page     : Positive;
+      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
+   is
+      Found : Boolean;
+      Path  : League.String_Vectors.Universal_String_Vector
+        := Request.Get_Servlet_Path;
+
+   begin
+      Path.Prepend
+        (League.String_Vectors.Universal_String_Vector'
+           (Request.Get_Context_Path));
+
+      Self.Topic_List.Path := Path;
+
+      Self.Server.Get_Category
+        (Identifier => Category,
+         Category   => Self.Topic_List.Category,
+         Found      => Found);
+
+      if not Found then
+         Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
+         Response.Set_Content_Type (+"text/plain");
+         return;
+      end if;
+
+      Response.Set_Status (Servlet.HTTP_Responses.OK);
+      Response.Set_Content_Type (+"text/html");
+      Response.Set_Character_Encoding (+"UTF-8");
+      Response.Get_Output_Stream.Write
+       (Self.Topic_List.Render (Request.Get_Session.all));
+   end Get_Topics;
 
    ----------------
    -- Initialize --
@@ -139,6 +307,10 @@ package body Server.Servlets.Forum_Servlets is
        (Config.Get_Servlet_Context,
         +"/WEB-INF/templates/page.xhtml.tmpl",
         +"/WEB-INF/templates/forum_list.xhtml.tmpl");
+      Self.Topic_List.Initialize
+       (Config.Get_Servlet_Context,
+        +"/WEB-INF/templates/page.xhtml.tmpl",
+        +"/WEB-INF/templates/topic_list.xhtml.tmpl");
    end Initialize;
 
    ------------

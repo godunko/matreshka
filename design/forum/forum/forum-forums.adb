@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Holders;
 with SQL.Queries;
 
 with OPM.Stores;
@@ -96,6 +97,37 @@ package body Forum.Forums is
 
       return R;
    end Get_Categories;
+
+   ------------------
+   -- Get_Category --
+   ------------------
+
+   procedure Get_Category
+    (Self        : in out Forum'Class;
+     Identifier  : Standard.Forum.Categories.Category_Identifier;
+     Category    : out Standard.Forum.Categories.References.Category;
+     Found       : out Boolean)
+   is
+      H : constant League.Holders.Holder :=
+        Standard.Forum.Categories.Category_Identifier_Holders.To_Holder
+          (Identifier);
+
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT 1 FROM categories where category_identifier=:id"));
+
+   begin
+      Q.Bind_Value (League.Strings.To_Universal_String (":id"), H);
+      Q.Execute;
+
+      if Q.Next then
+         Category.Initialize (Get_Category_Store (Self.Engine), Identifier);
+         Found := True;
+      else
+         Found := False;
+      end if;
+   end Get_Category;
 
    ------------------------
    -- Get_Category_Store --

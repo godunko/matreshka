@@ -51,6 +51,9 @@ package Forum.Topics.Objects is
 
    type Topic_Object (<>) is tagged limited private;
 
+   function Get_Identifier
+    (Self : Topic_Object'Class) return Topic_Identifier;
+
    function Get_Title
     (Self : Topic_Object'Class) return League.Strings.Universal_String;
 

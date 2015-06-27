@@ -164,7 +164,10 @@ package body Forum.Categories.Objects.Stores is
          Result := 0;
 
       else
-         Result := League.Holders.Element (Q.Value (1));
+         --         Result := League.Holders.Element (Q.Value (1));
+         Result := League.Holders.Universal_Integer'Wide_Wide_Value
+           (League.Strings.To_Wide_Wide_String
+              (League.Holders.Element (Q.Value (1))));
       end if;
 
       return Natural (Result);

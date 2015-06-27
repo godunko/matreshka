@@ -75,10 +75,21 @@ package Server.Servlets.Forum_Servlets is
     (Self      : in out Forum_List_Page;
      Processor : in out XML.Templates.Processors.Template_Processor'Class);
 
+   type Topic_List_Page is
+     new AWFC.Page_Generators.Abstract_Page_Generator with record
+      Path     : League.String_Vectors.Universal_String_Vector;
+      Category : Forum.Categories.References.Category;
+   end record;
+
+   overriding procedure Bind_Parameters
+    (Self      : in out Topic_List_Page;
+     Processor : in out XML.Templates.Processors.Template_Processor'Class);
+
    type Forum_Servlet is
      new Servlet.HTTP_Servlets.HTTP_Servlet with record
       Server     : Forum.Forums.Servers.Server_Forum;
       Forum_List : Forum_List_Page;
+      Topic_List : Topic_List_Page;
    end record;
 
    type Forum_Servlet_Access is access all Forum_Servlet'Class;
@@ -94,5 +105,17 @@ package Server.Servlets.Forum_Servlets is
    overriding procedure Initialize
     (Self   : in out Forum_Servlet;
      Config : not null access Servlet.Configs.Servlet_Config'Class);
+
+   not overriding procedure Get_Categories
+     (Self     : in out Forum_Servlet;
+      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
+
+   not overriding procedure Get_Topics
+     (Self     : in out Forum_Servlet;
+      Category : Forum.Categories.Category_Identifier;
+      Page     : Positive;
+      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
 
 end Server.Servlets.Forum_Servlets;

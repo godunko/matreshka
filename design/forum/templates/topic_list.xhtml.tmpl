@@ -1,0 +1,22 @@
+<div class="topic-list" xmlns='http://www.w3.org/1999/xhtml' xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
+
+ <div class="category">
+  <div class="category-title">
+  ${category.title}
+  </div>
+  <div class="category-descr">
+  ${category.description}
+  </div>
+ </div>
+
+<mtl:for expression="topic of list">
+ <div class="topic">
+  <div class="topic-title">
+  <a href="${topic.id}">${topic.title}</a>
+  </div>
+  <div class="topic-descr">
+  ${topic.description}
+  </div>
+ </div>
+</mtl:for>
+</div>

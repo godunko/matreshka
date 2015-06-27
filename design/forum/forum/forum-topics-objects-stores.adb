@@ -66,11 +66,11 @@ package body Forum.Topics.Objects.Stores is
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
               ("SELECT title, description FROM topics"
-                 & " WHERE topic_identifier = :forum_identifier"));
+                 & " WHERE topic_identifier = :id"));
 
    begin
       Q.Bind_Value
-       (League.Strings.To_Universal_String (":topic_identifier"),
+       (League.Strings.To_Universal_String (":id"),
         Topic_Identifier_Holders.To_Holder (Identifier));
       Q.Execute;
 

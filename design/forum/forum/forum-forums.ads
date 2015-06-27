@@ -63,6 +63,12 @@ package Forum.Forums is
     (Self : in out Forum'Class)
        return Standard.Forum.Categories.References.Category_Vector;
 
+   procedure Get_Category
+    (Self        : in out Forum'Class;
+     Identifier  : Standard.Forum.Categories.Category_Identifier;
+     Category    : out Standard.Forum.Categories.References.Category;
+     Found       : out Boolean);
+
    function Create_Category
     (Self        : in out Forum'Class;
      Title       : League.Strings.Universal_String;
