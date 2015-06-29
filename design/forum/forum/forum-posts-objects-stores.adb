@@ -41,53 +41,78 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Calendars;
-with League.Strings;
+with Ada.Unchecked_Deallocation;
 
-limited with Forum.Topics.Objects.Stores;
-limited with Forum.Posts.References;
+with League.Holders.Generic_Integers;
+with SQL.Queries;
 
-package Forum.Topics.Objects is
+with OPM.Engines;
 
---   pragma Preelaborate;
+with Forum.Categories.Objects;
 
-   type Topic_Object (<>) is tagged limited private;
+package body Forum.Posts.Objects.Stores is
 
-   function Get_Identifier
-    (Self : Topic_Object'Class) return Topic_Identifier;
+   procedure Free is new Ada.Unchecked_Deallocation (Post_Object'Class, Post_Access);
 
-   function Get_Title
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
+   ---------
+   -- Get --
+   ---------
 
-   function Get_Description
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
+   not overriding function Get
+    (Self       : in out Post_Store;
+     Identifier : Post_Identifier) return Post_Access
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT text, creation_time"
+                 & " FROM posts WHERE post_identifier = :id"));
 
-   function Get_Creation_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":id"),
+        Post_Identifier_Holders.To_Holder (Identifier));
+      Q.Execute;
 
-   function Get_Last_Post_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
+      if not Q.Next then
+         return null;
 
-   function Get_Post_Count
-    (Self : Topic_Object'Class) return Natural;
+      else
+         return
+           new Post_Object'
+                (Store         => Self'Unchecked_Access,
+                 Identifier    => Identifier,
+                 Text          => League.Holders.Element (Q.Value (1)),
+                 Creation_Time => League.Holders.Element (Q.Value (3)));
+      end if;
+   end Get;
 
-   function Get_Posts
-    (Self : Topic_Object'Class;
-     From : Positive;
-     To   : Positive) return Forum.Posts.References.Post_Vector;
+   ----------------
+   -- Initialize --
+   ----------------
 
-private
+   overriding procedure Initialize (Self : in out Post_Store) is
+   begin
+      Self.Engine.Register_Store
+       (Forum.Posts.Objects.Post_Object'Tag,
+        Self'Unchecked_Access);
+   end Initialize;
 
-   type Topic_Object
-         (Store :
-            not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
-     tagged limited record
-      Identifier     : Topic_Identifier;
-      Title          : League.Strings.Universal_String;
-      Description    : League.Strings.Universal_String;
-      Creation_Time  : League.Calendars.Date_Time;
-      Last_Post_Time : League.Calendars.Date_Time;
-      Post_Count     : Natural;
-   end record;
+   -------------
+   -- Release --
+   -------------
 
-end Forum.Topics.Objects;
+   not overriding procedure Release
+    (Self   : in out Post_Store;
+     Object : not null Post_Access)
+   is
+      Aux : Post_Access;
+
+   begin
+      if Object /= null then
+         Aux := Object;
+         Free (Aux);
+      end if;
+   end Release;
+
+end Forum.Posts.Objects.Stores;

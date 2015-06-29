@@ -45,6 +45,7 @@ with SQL.Databases;
 with OPM.Stores;
 
 limited with Forum.Categories.References;
+
 package Forum.Topics.Objects.Stores is
 
    type Topic_Access is access all Topic_Object'Class; --  with Storage_Size => 0;
@@ -54,6 +55,12 @@ package Forum.Topics.Objects.Stores is
    not overriding function Get
     (Self       : in out Topic_Store;
      Identifier : Topic_Identifier) return Topic_Access;
+
+   function Get_Posts
+     (Self       : in out Topic_Store;
+      Identifier : Topic_Identifier;
+      From       : Positive;
+      To         : Positive) return Forum.Posts.References.Post_Vector;
 
    not overriding procedure Release
     (Self   : in out Topic_Store;

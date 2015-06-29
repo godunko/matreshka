@@ -44,50 +44,32 @@
 with League.Calendars;
 with League.Strings;
 
-limited with Forum.Topics.Objects.Stores;
-limited with Forum.Posts.References;
+limited with Forum.Posts.Objects.Stores;
 
-package Forum.Topics.Objects is
+package Forum.Posts.Objects is
 
 --   pragma Preelaborate;
 
-   type Topic_Object (<>) is tagged limited private;
+   type Post_Object (<>) is tagged limited private;
 
    function Get_Identifier
-    (Self : Topic_Object'Class) return Topic_Identifier;
+    (Self : Post_Object'Class) return Post_Identifier;
 
-   function Get_Title
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
-
-   function Get_Description
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
+   function Get_Text
+    (Self : Post_Object'Class) return League.Strings.Universal_String;
 
    function Get_Creation_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
-
-   function Get_Last_Post_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
-
-   function Get_Post_Count
-    (Self : Topic_Object'Class) return Natural;
-
-   function Get_Posts
-    (Self : Topic_Object'Class;
-     From : Positive;
-     To   : Positive) return Forum.Posts.References.Post_Vector;
+    (Self : Post_Object'Class) return League.Calendars.Date_Time;
 
 private
 
-   type Topic_Object
+   type Post_Object
          (Store :
-            not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
+            not null access Standard.Forum.Posts.Objects.Stores.Post_Store'Class) is
      tagged limited record
-      Identifier     : Topic_Identifier;
-      Title          : League.Strings.Universal_String;
-      Description    : League.Strings.Universal_String;
+      Identifier     : Post_Identifier;
+      Text           : League.Strings.Universal_String;
       Creation_Time  : League.Calendars.Date_Time;
-      Last_Post_Time : League.Calendars.Date_Time;
-      Post_Count     : Natural;
    end record;
 
-end Forum.Topics.Objects;
+end Forum.Posts.Objects;

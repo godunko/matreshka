@@ -41,53 +41,30 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Calendars;
 with League.Strings;
+with League.Holders.Generic_Integers;
 
-limited with Forum.Topics.Objects.Stores;
-limited with Forum.Posts.References;
+package Forum.Posts is
+   pragma Preelaborate;
 
-package Forum.Topics.Objects is
+--   type Post_Identifier is private;
+   type Post_Identifier is range 0 .. 2 * 63 - 1;
 
---   pragma Preelaborate;
+   function Encode
+    (Item : Post_Identifier) return League.Strings.Universal_String;
+   function Decode
+    (Image : League.Strings.Universal_String;
+     Value : out Post_Identifier) return Boolean;
+   --  Functions to 'encode' and 'decode' post identifiers to string
+   --  representsation. Decode function returns True when category identifier
+   --  was decoded successfully.
 
-   type Topic_Object (<>) is tagged limited private;
+   package Post_Identifier_Holders is
+     new League.Holders.Generic_Integers (Post_Identifier);
 
-   function Get_Identifier
-    (Self : Topic_Object'Class) return Topic_Identifier;
+--  private
+--
+--
+--     type Post_Identifier is range 0 .. 2 * 63 - 1;
 
-   function Get_Title
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
-
-   function Get_Description
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
-
-   function Get_Creation_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
-
-   function Get_Last_Post_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
-
-   function Get_Post_Count
-    (Self : Topic_Object'Class) return Natural;
-
-   function Get_Posts
-    (Self : Topic_Object'Class;
-     From : Positive;
-     To   : Positive) return Forum.Posts.References.Post_Vector;
-
-private
-
-   type Topic_Object
-         (Store :
-            not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
-     tagged limited record
-      Identifier     : Topic_Identifier;
-      Title          : League.Strings.Universal_String;
-      Description    : League.Strings.Universal_String;
-      Creation_Time  : League.Calendars.Date_Time;
-      Last_Post_Time : League.Calendars.Date_Time;
-      Post_Count     : Natural;
-   end record;
-
-end Forum.Topics.Objects;
+end Forum.Posts;

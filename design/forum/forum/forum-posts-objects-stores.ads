@@ -41,53 +41,28 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Calendars;
-with League.Strings;
+with SQL.Databases;
+with OPM.Stores;
 
-limited with Forum.Topics.Objects.Stores;
-limited with Forum.Posts.References;
+limited with Forum.Categories.References;
+package Forum.Posts.Objects.Stores is
 
-package Forum.Topics.Objects is
+   type Post_Access is access all Post_Object'Class; --  with Storage_Size => 0;
 
---   pragma Preelaborate;
+   type Post_Store is new OPM.Stores.Abstract_Store with private;
 
-   type Topic_Object (<>) is tagged limited private;
+   not overriding function Get
+    (Self       : in out Post_Store;
+     Identifier : Post_Identifier) return Post_Access;
 
-   function Get_Identifier
-    (Self : Topic_Object'Class) return Topic_Identifier;
+   not overriding procedure Release
+    (Self   : in out Post_Store;
+     Object : not null Post_Access);
 
-   function Get_Title
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
-
-   function Get_Description
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
-
-   function Get_Creation_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
-
-   function Get_Last_Post_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
-
-   function Get_Post_Count
-    (Self : Topic_Object'Class) return Natural;
-
-   function Get_Posts
-    (Self : Topic_Object'Class;
-     From : Positive;
-     To   : Positive) return Forum.Posts.References.Post_Vector;
+   overriding procedure Initialize (Self : in out Post_Store);
 
 private
 
-   type Topic_Object
-         (Store :
-            not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
-     tagged limited record
-      Identifier     : Topic_Identifier;
-      Title          : League.Strings.Universal_String;
-      Description    : League.Strings.Universal_String;
-      Creation_Time  : League.Calendars.Date_Time;
-      Last_Post_Time : League.Calendars.Date_Time;
-      Post_Count     : Natural;
-   end record;
+   type Post_Store is new OPM.Stores.Abstract_Store with null record;
 
-end Forum.Topics.Objects;
+end Forum.Posts.Objects.Stores;

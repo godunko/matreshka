@@ -41,53 +41,37 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Calendars;
-with League.Strings;
 
-limited with Forum.Topics.Objects.Stores;
-limited with Forum.Posts.References;
+package body Forum.Posts.Objects is
 
-package Forum.Topics.Objects is
-
---   pragma Preelaborate;
-
-   type Topic_Object (<>) is tagged limited private;
-
-   function Get_Identifier
-    (Self : Topic_Object'Class) return Topic_Identifier;
-
-   function Get_Title
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
-
-   function Get_Description
-    (Self : Topic_Object'Class) return League.Strings.Universal_String;
+   -----------------------
+   -- Get_Creation_Time --
+   -----------------------
 
    function Get_Creation_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
+    (Self : Post_Object'Class) return League.Calendars.Date_Time is
+   begin
+      return Self.Creation_Time;
+   end Get_Creation_Time;
 
-   function Get_Last_Post_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
+   --------------------
+   -- Get_Identifier --
+   --------------------
 
-   function Get_Post_Count
-    (Self : Topic_Object'Class) return Natural;
+   function Get_Identifier
+    (Self : Post_Object'Class) return Post_Identifier is
+   begin
+      return Self.Identifier;
+   end Get_Identifier;
 
-   function Get_Posts
-    (Self : Topic_Object'Class;
-     From : Positive;
-     To   : Positive) return Forum.Posts.References.Post_Vector;
+   ---------------
+   -- Get_Title --
+   ---------------
 
-private
+   function Get_Text
+     (Self : Post_Object'Class) return League.Strings.Universal_String is
+   begin
+      return Self.Text;
+   end Get_Text;
 
-   type Topic_Object
-         (Store :
-            not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
-     tagged limited record
-      Identifier     : Topic_Identifier;
-      Title          : League.Strings.Universal_String;
-      Description    : League.Strings.Universal_String;
-      Creation_Time  : League.Calendars.Date_Time;
-      Last_Post_Time : League.Calendars.Date_Time;
-      Post_Count     : Natural;
-   end record;
-
-end Forum.Topics.Objects;
+end Forum.Posts.Objects;

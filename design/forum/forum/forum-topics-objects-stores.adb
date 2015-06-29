@@ -44,11 +44,14 @@
 with Ada.Unchecked_Deallocation;
 
 with League.Holders.Generic_Integers;
+with League.Holders.Integers;
 with SQL.Queries;
 
 with OPM.Engines;
 
 with Forum.Categories.Objects;
+with Forum.Posts.References;
+with Forum.Posts.Objects.Stores;
 
 package body Forum.Topics.Objects.Stores is
 
@@ -94,6 +97,64 @@ package body Forum.Topics.Objects.Stores is
                  Last_Post_Time => League.Holders.Element (Q.Value (5)));
       end if;
    end Get;
+
+   ---------------
+   -- Get_Posts --
+   ---------------
+
+   function Get_Posts
+     (Self       : in out Topic_Store;
+      Identifier : Topic_Identifier;
+      From       : Positive;
+      To         : Positive) return Forum.Posts.References.Post_Vector
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT post_identifier FROM posts"
+                 & " WHERE topic_identifier = :topic_identifier"
+                 & " ORDER BY creation_time DESC"
+                 & " LIMIT :limit OFFSET :offset"));
+
+      Result : Forum.Posts.References.Post_Vector;
+      Limit  : Positive := To - From + 1;
+      Offset : Natural := From - 1;
+
+      X : OPM.Stores.Store_Access :=
+        Self.Engine.Get_Store (Forum.Posts.Objects.Post_Object'Tag);
+
+      Store  : not null access Forum.Posts.Objects.Stores.Post_Store'Class :=
+          Forum.Posts.Objects.Stores.Post_Store'Class
+            (X.all)
+              'Unchecked_Access;
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":topic_identifier"),
+        Topic_Identifier_Holders.To_Holder (Identifier));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":limit"),
+        League.Holders.Integers.To_Holder (Limit));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":offset"),
+        League.Holders.Integers.To_Holder (Offset));
+      Q.Execute;
+
+      for J in From .. To loop
+         if Q.Next then
+            declare
+               Ref : Forum.Posts.References.Post;
+            begin
+               Ref.Initialize
+                 (Store,
+                  Posts.Post_Identifier_Holders.Element (Q.Value (1)));
+
+               Result.Append (Ref);
+            end;
+         end if;
+      end loop;
+
+      return Result;
+   end Get_Posts;
 
    ----------------
    -- Initialize --

@@ -179,18 +179,6 @@ package body Forum.Categories.Objects.Stores is
       return Natural (Result);
    end Get_Topic_Count;
 
-   function Get_Topic_Store
-    (Self : OPM.Engines.Engine'Class)
-      return not null access
-        Forum.Topics.Objects.Stores.Topic_Store'Class is
-   begin
-      return
-        Standard.Forum.Topics.Objects.Stores.Topic_Store'Class
-         (Self.Get_Store
-           (Standard.Forum.Topics.Objects.Topic_Object'Tag).all)
-              'Unchecked_Access;
-   end Get_Topic_Store;
-
    ----------------
    -- Get_Topics --
    ----------------
@@ -240,7 +228,7 @@ package body Forum.Categories.Objects.Stores is
                Ref : Forum.Topics.References.Topic;
             begin
                Ref.Initialize
-                 (Get_Topic_Store (Self.Engine.all),
+                 (Store,
                   Topics.Topic_Identifier_Holders.Element (Q.Value (1)));
 
                Result.Append (Ref);

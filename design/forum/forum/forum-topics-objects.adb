@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Forum.Topics.Objects.Stores;
+with Forum.Posts.References;
 
 package body Forum.Topics.Objects is
 
@@ -93,6 +95,18 @@ package body Forum.Topics.Objects is
    begin
       return Self.Post_Count;
    end Get_Post_Count;
+
+   ---------------
+   -- Get_Posts --
+   ---------------
+
+   function Get_Posts
+    (Self : Topic_Object'Class;
+     From : Positive;
+     To   : Positive) return Forum.Posts.References.Post_Vector is
+   begin
+      return Self.Store.Get_Posts (Self.Identifier, From, To);
+   end Get_Posts;
 
    ---------------
    -- Get_Title --
