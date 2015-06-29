@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Calendars;
 with League.Strings;
 
 limited with Forum.Topics.Objects.Stores;
@@ -60,15 +61,27 @@ package Forum.Topics.Objects is
    function Get_Description
     (Self : Topic_Object'Class) return League.Strings.Universal_String;
 
+   function Get_Creation_Time
+    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
+
+   function Get_Last_Post_Time
+    (Self : Topic_Object'Class) return League.Calendars.Date_Time;
+
+   function Get_Post_Count
+    (Self : Topic_Object'Class) return Natural;
+
 private
 
    type Topic_Object
          (Store :
             not null access Standard.Forum.Topics.Objects.Stores.Topic_Store'Class) is
      tagged limited record
-      Identifier  : Topic_Identifier;
-      Title       : League.Strings.Universal_String;
-      Description : League.Strings.Universal_String;
+      Identifier     : Topic_Identifier;
+      Title          : League.Strings.Universal_String;
+      Description    : League.Strings.Universal_String;
+      Creation_Time  : League.Calendars.Date_Time;
+      Last_Post_Time : League.Calendars.Date_Time;
+      Post_Count     : Natural;
    end record;
 
 end Forum.Topics.Objects;

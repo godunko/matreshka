@@ -44,6 +44,7 @@
 with Ada.Unchecked_Deallocation;
 
 with League.Holders;
+with League.Holders.Integers;
 with SQL.Queries;
 
 with OPM.Engines;
@@ -106,7 +107,9 @@ package body Forum.Categories.Objects.Stores is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT title, description FROM categories"
+               ("SELECT title, description, topic_count FROM categories c,"
+                 & " (select count(*) topic_count FROM topics t"
+                 & " WHERE t.category_identifier = :category_identifier) s"
                  & " WHERE category_identifier = :category_identifier"));
 
    begin
@@ -124,7 +127,9 @@ package body Forum.Categories.Objects.Stores is
                 (Store       => Self'Unchecked_Access,
                  Identifier  => Identifier,
                  Title       => League.Holders.Element (Q.Value (1)),
-                 Description => League.Holders.Element (Q.Value (2)));
+                 Description => League.Holders.Element (Q.Value (2)),
+                 Topic_Count => Natural'Wide_Wide_Value  --  FIXME after #425
+                   (League.Holders.Element (Q.Value (3)).To_Wide_Wide_String));
       end if;
    end Get;
 
@@ -164,6 +169,7 @@ package body Forum.Categories.Objects.Stores is
          Result := 0;
 
       else
+         --  FIXME after #425
          --         Result := League.Holders.Element (Q.Value (1));
          Result := League.Holders.Universal_Integer'Wide_Wide_Value
            (League.Strings.To_Wide_Wide_String
@@ -198,10 +204,17 @@ package body Forum.Categories.Objects.Stores is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT topic_identifier FROM topics"
-                 & " WHERE category_identifier = :category_identifier"));
+              ("SELECT t.topic_identifier FROM topics t LEFT JOIN posts p"
+                 & " ON t.topic_identifier = p.topic_identifier"
+                 & " WHERE category_identifier = :category_identifier"
+                 & " GROUP BY t.topic_identifier"
+                 & " ORDER BY max (p.creation_time) DESC"
+                 & " LIMIT :limit OFFSET :offset"));
 
       Result : Forum.Topics.References.Topic_Vector;
+      Limit  : Positive := To - From + 1;
+      Offset : Natural := From - 1;
+
       X : OPM.Stores.Store_Access :=
         Self.Engine.Get_Store (Forum.Topics.Objects.Topic_Object'Tag);
 
@@ -213,6 +226,12 @@ package body Forum.Categories.Objects.Stores is
       Q.Bind_Value
        (League.Strings.To_Universal_String (":category_identifier"),
         Category_Identifier_Holders.To_Holder (Identifier));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":limit"),
+        League.Holders.Integers.To_Holder (Limit));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":offset"),
+        League.Holders.Integers.To_Holder (Offset));
       Q.Execute;
 
       for J in From .. To loop

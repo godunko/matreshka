@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.IRIs;
 with League.String_Vectors;
 with League.Strings;
 with XML.Templates.Processors;
@@ -60,7 +61,7 @@ package Server.Servlets.Forum_Servlets is
 
    type Forum_List_Page is
      new AWFC.Page_Generators.Abstract_Page_Generator with record
-      Path       : League.String_Vectors.Universal_String_Vector;
+      Base       : League.IRIs.IRI;
       Categories : Forum.Categories.References.Category_Vector;
    end record;
 
@@ -79,6 +80,7 @@ package Server.Servlets.Forum_Servlets is
      new AWFC.Page_Generators.Abstract_Page_Generator with record
       Path     : League.String_Vectors.Universal_String_Vector;
       Category : Forum.Categories.References.Category;
+      Page     : Positive;
    end record;
 
    overriding procedure Bind_Parameters

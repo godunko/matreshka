@@ -76,6 +76,7 @@ private
       Identifier  : Category_Identifier;
       Title       : League.Strings.Universal_String;
       Description : League.Strings.Universal_String;
+      Topic_Count : Natural;
    end record;
 
 end Forum.Categories.Objects;

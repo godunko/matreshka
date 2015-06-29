@@ -83,7 +83,7 @@ package body Forum.Categories.Objects is
    function Get_Topic_Count
     (Self : Category_Object'Class) return Natural is
    begin
-      return Self.Store.Get_Topic_Count (Self.Identifier);
+      return Self.Topic_Count;
    end Get_Topic_Count;
 
    ----------------

@@ -7,6 +7,19 @@
   <div class="category-descr">
   ${category.description}
   </div>
+  ${category.topic_count} topics.
+  Page: ${page.current} of ${page.total}
+  <mtl:if expression="page.single">
+    Go: <a href="1">[1]</a>
+    <mtl:if expression="page.has_prev">
+      <a href="${page.prev}">[${page.prev}]</a>
+    </mtl:if>
+    ... 
+    <mtl:if expression="page.has_next">
+      <a href="${page.next}">[${page.next}]</a>
+    </mtl:if>
+    <a href="${page.total}">[${page.total}]</a>
+  </mtl:if>
  </div>
 
 <mtl:for expression="topic of list">
@@ -16,6 +29,9 @@
   </div>
   <div class="topic-descr">
   ${topic.description}
+  Created: ${topic.creation_time}
+  Posts: ${topic.post_count}
+  Last: ${topic.last_post_time}
   </div>
  </div>
 </mtl:for>

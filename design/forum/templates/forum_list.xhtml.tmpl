@@ -2,10 +2,13 @@
 <mtl:for expression="category of list">
  <div class="category">
   <div class="category-title">
-  <a href="${category.id}">${category.title}</a>
+  <a href="${base}/${category.id}">${category.title}</a>
   </div>
   <div class="category-descr">
   ${category.description}
+  </div>
+  <div class="category-stat">
+  Topics: ${category.topic_count}
   </div>
  </div>
 </mtl:for>

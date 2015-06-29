@@ -65,7 +65,11 @@ package body Forum.Topics.Objects.Stores is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT title, description FROM topics"
+              ("SELECT title, description, creation_time, post_count, lastpost"
+                 & " FROM topics t, "
+                 & " (select count(*) post_count,"
+                 & " max(creation_time) lastpost FROM posts p"
+                 & " WHERE p.topic_identifier = :id) s"
                  & " WHERE topic_identifier = :id"));
 
    begin
@@ -80,10 +84,14 @@ package body Forum.Topics.Objects.Stores is
       else
          return
            new Topic_Object'
-                (Store       => Self'Unchecked_Access,
-                 Identifier  => Identifier,
-                 Title       => League.Holders.Element (Q.Value (1)),
-                 Description => League.Holders.Element (Q.Value (2)));
+                (Store         => Self'Unchecked_Access,
+                 Identifier    => Identifier,
+                 Title         => League.Holders.Element (Q.Value (1)),
+                 Description   => League.Holders.Element (Q.Value (2)),
+                 Creation_Time => League.Holders.Element (Q.Value (3)),
+                 Post_Count    => Natural'Wide_Wide_Value  --  FIXME after #425
+                   (League.Holders.Element (Q.Value (4)).To_Wide_Wide_String),
+                 Last_Post_Time => League.Holders.Element (Q.Value (5)));
       end if;
    end Get;
 

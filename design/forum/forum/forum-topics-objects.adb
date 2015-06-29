@@ -44,6 +44,16 @@
 
 package body Forum.Topics.Objects is
 
+   -----------------------
+   -- Get_Creation_Time --
+   -----------------------
+
+   function Get_Creation_Time
+    (Self : Topic_Object'Class) return League.Calendars.Date_Time is
+   begin
+      return Self.Creation_Time;
+   end Get_Creation_Time;
+
    ---------------------
    -- Get_Description --
    ---------------------
@@ -63,6 +73,26 @@ package body Forum.Topics.Objects is
    begin
       return Self.Identifier;
    end Get_Identifier;
+
+   ------------------------
+   -- Get_Last_Post_Time --
+   ------------------------
+
+   function Get_Last_Post_Time
+    (Self : Topic_Object'Class) return League.Calendars.Date_Time is
+   begin
+      return Self.Last_Post_Time;
+   end Get_Last_Post_Time;
+
+   --------------------
+   -- Get_Post_Count --
+   --------------------
+
+   function Get_Post_Count
+    (Self : Topic_Object'Class) return Natural is
+   begin
+      return Self.Post_Count;
+   end Get_Post_Count;
 
    ---------------
    -- Get_Title --
