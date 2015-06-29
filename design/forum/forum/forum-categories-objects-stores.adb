@@ -59,6 +59,10 @@ package body Forum.Categories.Objects.Stores is
    procedure Free is
      new Ada.Unchecked_Deallocation (Category_Object'Class, Category_Access);
 
+   function Get_Topic_Store is new OPM.Engines.Generic_Get_Store
+     (Object => Standard.Forum.Topics.Objects.Topic_Object,
+      Store  => Standard.Forum.Topics.Objects.Stores.Topic_Store);
+
    ------------
    -- Create --
    ------------
@@ -203,13 +207,6 @@ package body Forum.Categories.Objects.Stores is
       Limit  : Positive := To - From + 1;
       Offset : Natural := From - 1;
 
-      X : OPM.Stores.Store_Access :=
-        Self.Engine.Get_Store (Forum.Topics.Objects.Topic_Object'Tag);
-
-      Store  : not null access Forum.Topics.Objects.Stores.Topic_Store'Class :=
-          Forum.Topics.Objects.Stores.Topic_Store'Class
-            (X.all)
-              'Unchecked_Access;
    begin
       Q.Bind_Value
        (League.Strings.To_Universal_String (":category_identifier"),
@@ -228,7 +225,7 @@ package body Forum.Categories.Objects.Stores is
                Ref : Forum.Topics.References.Topic;
             begin
                Ref.Initialize
-                 (Store,
+                 (Get_Topic_Store (Self.Engine.all),
                   Topics.Topic_Identifier_Holders.Element (Q.Value (1)));
 
                Result.Append (Ref);

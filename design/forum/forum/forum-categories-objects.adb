@@ -76,6 +76,19 @@ package body Forum.Categories.Objects is
       return Self.Title;
    end Get_Title;
 
+   ---------------
+   -- Get_Topic --
+   ---------------
+
+   procedure Get_Topic
+    (Self        : Category_Object'Class;
+     Identifier  : Forum.Topics.Topic_Identifier;
+     Category    : out Forum.Topics.References.Topic;
+     Found       : out Boolean) is
+   begin
+      null;
+   end Get_Topic;
+
    ---------------------
    -- Get_Topic_Count --
    ---------------------

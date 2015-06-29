@@ -45,6 +45,16 @@ with Ada.Strings.Hash;
 
 package body OPM.Engines is
 
+   -----------------------
+   -- Generic_Get_Store --
+   -----------------------
+
+   function Generic_Get_Store
+     (Self : Engine'Class) return not null access Store'Class is
+   begin
+      return Store'Class (Self.Get_Store (Object'Tag).all)'Unchecked_Access;
+   end Generic_Get_Store;
+
    ------------------
    -- Get_Database --
    ------------------

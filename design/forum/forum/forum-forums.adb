@@ -49,13 +49,17 @@ with OPM.Stores;
 with Forum.Categories.Objects.Stores;
 with Forum.Categories.Category_Identifier_Holders;
 with Forum.Topics.Objects.Stores;
+with Forum.Posts.Objects.Stores;
 
 package body Forum.Forums is
 
-   function Get_Category_Store
-    (Self : OPM.Engines.Engine'Class)
-      return not null access
-        Standard.Forum.Categories.Objects.Stores.Category_Store'Class;
+   function Get_Category_Store is new OPM.Engines.Generic_Get_Store
+     (Object => Standard.Forum.Categories.Objects.Category_Object,
+      Store  => Standard.Forum.Categories.Objects.Stores.Category_Store);
+
+   function Get_Topic_Store is new OPM.Engines.Generic_Get_Store
+     (Object => Standard.Forum.Topics.Objects.Topic_Object,
+      Store  => Standard.Forum.Topics.Objects.Stores.Topic_Store);
 
    ---------------------
    -- Create_Category --
@@ -103,10 +107,10 @@ package body Forum.Forums is
    ------------------
 
    procedure Get_Category
-    (Self        : in out Forum'Class;
-     Identifier  : Standard.Forum.Categories.Category_Identifier;
-     Category    : out Standard.Forum.Categories.References.Category;
-     Found       : out Boolean)
+    (Self       : in out Forum'Class;
+     Identifier : Standard.Forum.Categories.Category_Identifier;
+     Value      : out Standard.Forum.Categories.References.Category;
+     Found      : out Boolean)
    is
       H : constant League.Holders.Holder :=
         Standard.Forum.Categories.Category_Identifier_Holders.To_Holder
@@ -115,36 +119,62 @@ package body Forum.Forums is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT 1 FROM categories where category_identifier=:id"));
+              ("SELECT 1 FROM categories WHERE"
+                 & " category_identifier=:category_identifier"));
 
    begin
-      Q.Bind_Value (League.Strings.To_Universal_String (":id"), H);
+      Q.Bind_Value
+        (League.Strings.To_Universal_String (":category_identifier"), H);
       Q.Execute;
 
       if Q.Next then
-         Category.Initialize (Get_Category_Store (Self.Engine), Identifier);
+         Value.Initialize (Get_Category_Store (Self.Engine), Identifier);
          Found := True;
       else
          Found := False;
       end if;
    end Get_Category;
 
-   ------------------------
-   -- Get_Category_Store --
-   ------------------------
+   ---------------
+   -- Get_Topic --
+   ---------------
 
-   function Get_Category_Store
-    (Self : OPM.Engines.Engine'Class)
-      return not null access
-        Standard.Forum.Categories.Objects.Stores.Category_Store'Class is
+   procedure Get_Topic
+    (Self        : in out Forum'Class;
+     Category    : Standard.Forum.Categories.Category_Identifier;
+     Identifier  : Standard.Forum.Topics.Topic_Identifier;
+     Value       : out Standard.Forum.Topics.References.Topic;
+     Found       : out Boolean)
+   is
+      C : constant League.Holders.Holder :=
+        Standard.Forum.Categories.Category_Identifier_Holders.To_Holder
+          (Category);
+
+      T : constant League.Holders.Holder :=
+        Standard.Forum.Topics.Topic_Identifier_Holders.To_Holder
+          (Identifier);
+
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("SELECT 1 FROM topics WHERE"
+                 & " category_identifier=:category_identifier"
+                 & " and topic_identifier=:topic_identifier"));
+
    begin
-      return
-        Standard.Forum.Categories.Objects.Stores.Category_Store'Class
-         (Self.Get_Store
-           (Standard.Forum.Categories.Objects.Category_Object'Tag).all)
-              'Unchecked_Access;
-   end Get_Category_Store;
+      Q.Bind_Value
+        (League.Strings.To_Universal_String (":category_identifier"), C);
+      Q.Bind_Value
+        (League.Strings.To_Universal_String (":topic_identifier"), T);
+      Q.Execute;
 
+      if Q.Next then
+         Value.Initialize (Get_Topic_Store (Self.Engine), Identifier);
+         Found := True;
+      else
+         Found := False;
+      end if;
+   end Get_Topic;
    ----------------
    -- Initialize --
    ----------------
@@ -161,6 +191,8 @@ package body Forum.Forums is
       Aux := new Standard.Forum.Categories.Objects.Stores.Category_Store (Self.Engine'Unchecked_Access);
       Aux.Initialize;
       Aux := new Standard.Forum.Topics.Objects.Stores.Topic_Store (Self.Engine'Unchecked_Access);
+      Aux.Initialize;
+      Aux := new Standard.Forum.Posts.Objects.Stores.Post_Store (Self.Engine'Unchecked_Access);
       Aux.Initialize;
    end Initialize;
 

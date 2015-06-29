@@ -84,6 +84,12 @@ package OPM.Engines is
      Options : SQL.Options.SQL_Options);
    --  Initialize engine.
 
+   generic
+      type Object (<>) is tagged limited private;
+      type Store is new OPM.Stores.Abstract_Store with private;
+   function Generic_Get_Store
+     (Self : Engine'Class) return not null access Store'Class;
+
 private
 
    function Hash (Item : Ada.Tags.Tag) return Ada.Containers.Hash_Type;

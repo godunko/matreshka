@@ -83,7 +83,7 @@ package body Forum.Posts.Objects.Stores is
                 (Store         => Self'Unchecked_Access,
                  Identifier    => Identifier,
                  Text          => League.Holders.Element (Q.Value (1)),
-                 Creation_Time => League.Holders.Element (Q.Value (3)));
+                 Creation_Time => League.Holders.Element (Q.Value (2)));
       end if;
    end Get;
 

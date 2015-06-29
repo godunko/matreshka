@@ -47,6 +47,7 @@ with SQL.Options;
 with OPM.Engines;
 
 with Forum.Categories.References;
+with Forum.Topics.References;
 
 package Forum.Forums is
 
@@ -64,15 +65,22 @@ package Forum.Forums is
        return Standard.Forum.Categories.References.Category_Vector;
 
    procedure Get_Category
-    (Self        : in out Forum'Class;
-     Identifier  : Standard.Forum.Categories.Category_Identifier;
-     Category    : out Standard.Forum.Categories.References.Category;
-     Found       : out Boolean);
+    (Self       : in out Forum'Class;
+     Identifier : Standard.Forum.Categories.Category_Identifier;
+     Value      : out Standard.Forum.Categories.References.Category;
+     Found      : out Boolean);
 
    function Create_Category
     (Self        : in out Forum'Class;
      Title       : League.Strings.Universal_String;
      Description : League.Strings.Universal_String)
        return Standard.Forum.Categories.References.Category;
+
+   procedure Get_Topic
+    (Self        : in out Forum'Class;
+     Category    : Standard.Forum.Categories.Category_Identifier;
+     Identifier  : Standard.Forum.Topics.Topic_Identifier;
+     Value       : out Standard.Forum.Topics.References.Topic;
+     Found       : out Boolean);
 
 end Forum.Forums;

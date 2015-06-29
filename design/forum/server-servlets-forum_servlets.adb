@@ -49,8 +49,8 @@ with League.JSON.Arrays;
 with League.JSON.Objects;
 with League.JSON.Values;
 
-with Forum.Topics.References;
 with Forum.Categories.Objects;
+with Forum.Posts.References;
 
 package body Server.Servlets.Forum_Servlets is
 
@@ -64,10 +64,17 @@ package body Server.Servlets.Forum_Servlets is
      (Self : Forum.Categories.References.Category)
       return League.JSON.Objects.JSON_Object;
 
+   function Topic_To_JSON
+     (Self : Forum.Topics.References.Topic)
+      return League.JSON.Objects.JSON_Object;
+
    function Page_To_JSON
      (Page  : Positive;
       Total : Positive)
       return League.JSON.Objects.JSON_Object;
+
+   Format : constant League.Strings.Universal_String :=
+     +"yyyy-MM-dd HH:mm:ss";
 
    ---------------------
    -- Bind_Parameters --
@@ -81,14 +88,7 @@ package body Server.Servlets.Forum_Servlets is
 
    begin
       for J of Self.Categories loop
-         declare
-            Object : League.JSON.Objects.JSON_Object;
-
-         begin
-            Object := Category_To_JSON (J);
-
-            List.Append (Object.To_JSON_Value);
-         end;
+         List.Append (Category_To_JSON (J).To_JSON_Value);
       end loop;
 
       Processor.Set_Parameter
@@ -111,17 +111,11 @@ package body Server.Servlets.Forum_Servlets is
         Self.Category.Object.Get_Topics
           (From => (Self.Page - 1) * Page_Size + 1,
            To   => Self.Page * Page_Size);
-      Format : constant League.Strings.Universal_String :=
-        +"yyyy-MM-dd HH:mm:ss";
    begin
-      declare
-         Object : League.JSON.Objects.JSON_Object;
-      begin
-         Object := Category_To_JSON (Self.Category);
-
-         Processor.Set_Parameter
-           (+"category", League.Holders.JSON_Objects.To_Holder (Object));
-      end;
+      Processor.Set_Parameter
+        (+"category",
+         League.Holders.JSON_Objects.To_Holder
+           (Category_To_JSON (Self.Category)));
 
       Processor.Set_Parameter
         (+"page",
@@ -129,48 +123,67 @@ package body Server.Servlets.Forum_Servlets is
            (Page_To_JSON (Self.Page, Self.Category.Object.Get_Topic_Count)));
 
       for J of Topics loop
+         List.Append (Topic_To_JSON (J).To_JSON_Value);
+      end loop;
+
+      Processor.Set_Parameter
+        (+"base", League.Holders.To_Holder (Self.Base.To_Universal_String));
+
+      Processor.Set_Parameter
+        (+"list", League.Holders.JSON_Arrays.To_Holder (List));
+   end Bind_Parameters;
+
+   ---------------------
+   -- Bind_Parameters --
+   ---------------------
+
+   overriding procedure Bind_Parameters
+    (Self      : in out Post_List_Page;
+     Processor : in out XML.Templates.Processors.Template_Processor'Class)
+   is
+      List  : League.JSON.Arrays.JSON_Array;
+      Posts : constant Forum.Posts.References.Post_Vector :=
+        Self.Topic.Object.Get_Posts
+          (From => (Self.Page - 1) * Page_Size + 1,
+           To   => Self.Page * Page_Size);
+   begin
+      Processor.Set_Parameter
+        (+"category",
+         League.Holders.JSON_Objects.To_Holder
+           (Category_To_JSON (Self.Category)));
+
+      Processor.Set_Parameter
+        (+"topic",
+         League.Holders.JSON_Objects.To_Holder
+           (Topic_To_JSON (Self.Topic)));
+
+      Processor.Set_Parameter
+        (+"page",
+         League.Holders.JSON_Objects.To_Holder
+           (Page_To_JSON (Self.Page, Self.Topic.Object.Get_Post_Count)));
+
+      for J of Posts loop
          declare
-            Object : League.JSON.Objects.JSON_Object;
-            IRI    : League.IRIs.IRI;
-
+            Result : League.JSON.Objects.JSON_Object;
          begin
-            --  Topic URL has form <forum>/category/topic/page
-            IRI.Set_Absolute_Path (Self.Path);
-            IRI.Append_Segment
-              (Forum.Categories.Encode (Self.Category.Object.Get_Identifier));
-
-            IRI.Append_Segment
-              (Forum.Topics.Encode (J.Object.Get_Identifier));
-
-            --  First page
-            IRI.Append_Segment (+"1");
-
-            Object.Insert
+            Result.Insert
               (+"id",
-               League.JSON.Values.To_JSON_Value (IRI.To_Universal_String));
-            Object.Insert
-              (+"title",
-               League.JSON.Values.To_JSON_Value (J.Object.Get_Title));
-            Object.Insert
-              (+"description",
-               League.JSON.Values.To_JSON_Value (J.Object.Get_Description));
-            Object.Insert
+               League.JSON.Values.To_JSON_Value
+                 (Forum.Posts.Encode (J.Object.Get_Identifier)));
+            Result.Insert
+              (+"text",
+               League.JSON.Values.To_JSON_Value (J.Object.Get_Text));
+            Result.Insert
               (+"creation_time",
                League.JSON.Values.To_JSON_Value
                  (League.Calendars.ISO_8601.Image
-                    (Format, J.Object.Get_Creation_Time)));
-            Object.Insert
-              (+"last_post_time",
-               League.JSON.Values.To_JSON_Value
-                 (League.Calendars.ISO_8601.Image
-                    (Format, J.Object.Get_Last_Post_Time)));
-            Object.Insert
-              (+"post_count",
-               League.JSON.Values.To_JSON_Value
-                 (+Natural'Wide_Wide_Image (J.Object.Get_Post_Count)));
-            List.Append (Object.To_JSON_Value);
+                      (Format, J.Object.Get_Creation_Time)));
+            List.Append (Result.To_JSON_Value);
          end;
       end loop;
+
+      Processor.Set_Parameter
+        (+"base", League.Holders.To_Holder (Self.Base.To_Universal_String));
 
       Processor.Set_Parameter
         (+"list", League.Holders.JSON_Arrays.To_Holder (List));
@@ -239,20 +252,29 @@ package body Server.Servlets.Forum_Servlets is
       Path : constant League.String_Vectors.Universal_String_Vector
         := Request.Get_Path_Info;
       Category : Forum.Categories.Category_Identifier;
+      Topic    : Forum.Topics.Topic_Identifier;
       Page     : Positive := 1;
    begin
       if Path.Length = 0 then
          Self.Get_Categories (Request, Response);
 
          return;
-      elsif Path.Length in 1 .. 2 then
-         if Forum.Categories.Decode (Path (1), Category) then
+      elsif Path.Length = 2 then
+         if Forum.Categories.Decode (Path (1), Category)
+           and then Get_Page_Number (Path (2), Page)
+         then
+            Self.Get_Topics (Category, Page, Request, Response);
 
-            if Path.Length = 1 or else Get_Page_Number (Path (2), Page) then
-               Self.Get_Topics (Category, Page, Request, Response);
+            return;
+         end if;
+      elsif Path.Length = 3 then
+         if Forum.Categories.Decode (Path (1), Category)
+           and then Forum.Topics.Decode (Path (2), Topic)
+           and then Get_Page_Number (Path (3), Page)
+         then
+            Self.Get_Posts (Category, Topic, Page, Request, Response);
 
-               return;
-            end if;
+            return;
          end if;
       end if;
 
@@ -289,6 +311,60 @@ package body Server.Servlets.Forum_Servlets is
          (Request.Get_Session.all, Path, Self.Server.Get_Categories));
    end Get_Categories;
 
+   ---------------
+   -- Get_Posts --
+   ---------------
+
+   not overriding procedure Get_Posts
+     (Self     : in out Forum_Servlet;
+      Category : Forum.Categories.Category_Identifier;
+      Topic    : Forum.Topics.Topic_Identifier;
+      Page     : Positive;
+      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
+      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class)
+   is
+      Found : Boolean;
+      Path  : League.String_Vectors.Universal_String_Vector
+        := Request.Get_Servlet_Path;
+
+   begin
+      Path.Prepend
+        (League.String_Vectors.Universal_String_Vector'
+           (Request.Get_Context_Path));
+
+      Self.Post_List.Base.Set_Absolute_Path (Path);
+      Self.Post_List.Page := Page;
+
+      Self.Server.Get_Category
+        (Identifier => Category,
+         Value      => Self.Post_List.Category,
+         Found      => Found);
+
+      if not Found then
+         Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
+         Response.Set_Content_Type (+"text/plain");
+         return;
+      end if;
+
+      Self.Server.Get_Topic
+        (Identifier => Topic,
+         Category   => Category,
+         Value      => Self.Post_List.Topic,
+         Found      => Found);
+
+      if not Found then
+         Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
+         Response.Set_Content_Type (+"text/plain");
+         return;
+      end if;
+
+      Response.Set_Status (Servlet.HTTP_Responses.OK);
+      Response.Set_Content_Type (+"text/html");
+      Response.Set_Character_Encoding (+"UTF-8");
+      Response.Get_Output_Stream.Write
+       (Self.Post_List.Render (Request.Get_Session.all));
+   end Get_Posts;
+
    ----------------------
    -- Get_Servlet_Info --
    ----------------------
@@ -319,12 +395,12 @@ package body Server.Servlets.Forum_Servlets is
         (League.String_Vectors.Universal_String_Vector'
            (Request.Get_Context_Path));
 
-      Self.Topic_List.Path := Path;
+      Self.Topic_List.Base.Set_Absolute_Path (Path);
       Self.Topic_List.Page := Page;
 
       Self.Server.Get_Category
         (Identifier => Category,
-         Category   => Self.Topic_List.Category,
+         Value      => Self.Topic_List.Category,
          Found      => Found);
 
       if not Found then
@@ -357,6 +433,10 @@ package body Server.Servlets.Forum_Servlets is
        (Config.Get_Servlet_Context,
         +"/WEB-INF/templates/page.xhtml.tmpl",
         +"/WEB-INF/templates/topic_list.xhtml.tmpl");
+      Self.Post_List.Initialize
+       (Config.Get_Servlet_Context,
+        +"/WEB-INF/templates/page.xhtml.tmpl",
+        +"/WEB-INF/templates/post_list.xhtml.tmpl");
    end Initialize;
 
    ------------------
@@ -419,5 +499,42 @@ package body Server.Servlets.Forum_Servlets is
 
       return Self.Render (Session);
    end Render;
+
+   -------------------
+   -- Topic_To_JSON --
+   -------------------
+
+   function Topic_To_JSON
+     (Self : Forum.Topics.References.Topic)
+      return League.JSON.Objects.JSON_Object
+   is
+   begin
+      return Result : League.JSON.Objects.JSON_Object do
+         Result.Insert
+           (+"id",
+            League.JSON.Values.To_JSON_Value
+              (Forum.Topics.Encode (Self.Object.Get_Identifier)));
+         Result.Insert
+           (+"title",
+            League.JSON.Values.To_JSON_Value (Self.Object.Get_Title));
+         Result.Insert
+           (+"description",
+            League.JSON.Values.To_JSON_Value (Self.Object.Get_Description));
+         Result.Insert
+           (+"creation_time",
+            League.JSON.Values.To_JSON_Value
+              (League.Calendars.ISO_8601.Image
+                   (Format, Self.Object.Get_Creation_Time)));
+         Result.Insert
+           (+"last_post_time",
+            League.JSON.Values.To_JSON_Value
+              (League.Calendars.ISO_8601.Image
+                   (Format, Self.Object.Get_Last_Post_Time)));
+         Result.Insert
+           (+"post_count",
+            League.JSON.Values.To_JSON_Value
+              (+Natural'Wide_Wide_Image (Self.Object.Get_Post_Count)));
+      end return;
+   end Topic_To_JSON;
 
 end Server.Servlets.Forum_Servlets;

@@ -32,5 +32,6 @@ deploy:
 	$(INSTALL_data) templates/page.xhtml.tmpl install/WEB-INF/templates/
 	$(INSTALL_data) templates/forum_list.xhtml.tmpl install/WEB-INF/templates/
 	$(INSTALL_data) templates/topic_list.xhtml.tmpl install/WEB-INF/templates/
+	$(INSTALL_data) templates/post_list.xhtml.tmpl install/WEB-INF/templates/
 	$(INSTALL_data) awfc/templates/account/signup.xhtml.tmpl install/WEB-INF/templates/account/
 	$(INSTALL_data) forum.css install/

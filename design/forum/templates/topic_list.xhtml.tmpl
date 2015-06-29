@@ -9,7 +9,7 @@
   </div>
   ${category.topic_count} topics.
   Page: ${page.current} of ${page.total}
-  <mtl:if expression="page.single">
+  <mtl:if expression="not page.single">
     Go: <a href="1">[1]</a>
     <mtl:if expression="page.has_prev">
       <a href="${page.prev}">[${page.prev}]</a>
@@ -25,7 +25,7 @@
 <mtl:for expression="topic of list">
  <div class="topic">
   <div class="topic-title">
-  <a href="${topic.id}">${topic.title}</a>
+  <a href="${topic.id}/1">${topic.title}</a>
   </div>
   <div class="topic-descr">
   ${topic.description}
