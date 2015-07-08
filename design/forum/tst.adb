@@ -11,12 +11,11 @@ with Forum.Categories.Objects.Stores;
 with Forum.Forums;
 with Forum.Topics.References;
 with Forum.Topics.Objects.Stores;
+with Forum.Posts.References;
 
 procedure Tst is
    O  : SQL.Options.SQL_Options;
    F  : Forum.Forums.Forum;
---   ST : aliased Forum.Topics.Objects.Stores.Topic_Store;
---   T  : Forum.Topics.References.Topic_Reference;
 
 begin
    O.Set
@@ -28,8 +27,21 @@ begin
       C : Forum.Categories.References.Category
         := F.Create_Category
             (League.Strings.To_Universal_String ("категория"),
-             League.Strings.To_Universal_String ("пробная категория для тестирования"));
+             League.Strings.To_Universal_String
+               ("пробная категория для тестирования"));
 
+      T : Forum.Topics.References.Topic
+        := F.Create_Topic
+            (C,
+             League.Strings.To_Universal_String ("тема 1"),
+             League.Strings.To_Universal_String
+               ("пробная тема для тестирования"));
+
+      P : Forum.Posts.References.Post
+        := F.Create_Post
+            (T,
+             League.Strings.To_Universal_String
+               ("ТекСт В пробной теме тестированИя 1"));
    begin
       null;
    end;
