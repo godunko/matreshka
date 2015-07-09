@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Calendars;
 with League.Strings;
 with SQL.Options;
 
@@ -48,6 +49,7 @@ with OPM.Engines;
 
 with Forum.Categories.References;
 with Forum.Topics.References;
+with Forum.Posts.References;
 
 package Forum.Forums is
 
@@ -82,5 +84,20 @@ package Forum.Forums is
      Identifier  : Standard.Forum.Topics.Topic_Identifier;
      Value       : out Standard.Forum.Topics.References.Topic;
      Found       : out Boolean);
+
+   function Create_Topic
+    (Self          : in out Forum'Class;
+     Category      : Standard.Forum.Categories.References.Category;
+     Title         : League.Strings.Universal_String;
+     Description   : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time := League.Calendars.Clock)
+       return Standard.Forum.Topics.References.Topic;
+
+   function Create_Post
+    (Self          : in out Forum'Class;
+     Topic         : Standard.Forum.Topics.References.Topic;
+     Text          : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time := League.Calendars.Clock)
+       return Standard.Forum.Posts.References.Post;
 
 end Forum.Forums;

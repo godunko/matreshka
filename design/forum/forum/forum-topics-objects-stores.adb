@@ -50,12 +50,59 @@ with SQL.Queries;
 with OPM.Engines;
 
 with Forum.Categories.Objects;
+with Forum.Categories.References;
+with Forum.Categories.Category_Identifier_Holders;
 with Forum.Posts.References;
 with Forum.Posts.Objects.Stores;
+with Forum.Topics.References;
 
 package body Forum.Topics.Objects.Stores is
 
    procedure Free is new Ada.Unchecked_Deallocation (Topic_Object'Class, Topic_Access);
+
+   not overriding function Create
+    (Self          : in out Topic_Store;
+     Category      : Forum.Categories.References.Category;
+     Title         : League.Strings.Universal_String;
+     Description   : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time)
+       return Forum.Topics.References.Topic
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("INSERT INTO topics (category_identifier, title, description,"
+                 & " creation_time, created_by)"
+                 & " VALUES (:category, :title, :description, :creation_time,"
+                 & " 0)"  --  created_by
+                 & " RETURNING topic_identifier"));
+      R : Forum.Topics.References.Topic;
+
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":category"),
+        Forum.Categories.Category_Identifier_Holders.To_Holder
+          (Category.Identifier));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":title"),
+        League.Holders.To_Holder (Title));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":description"),
+        League.Holders.To_Holder (Description));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":creation_time"),
+        League.Holders.To_Holder (Creation_Time));
+      Q.Execute;
+
+      if Q.Next then
+         R.Initialize
+          (Self'Unchecked_Access,
+           Forum.Topics.Topic_Identifier_Holders.Element
+            (Q.Value (1)));
+      end if;
+
+      return R;
+   end Create;
 
    ---------
    -- Get --
@@ -113,7 +160,7 @@ package body Forum.Topics.Objects.Stores is
             (League.Strings.To_Universal_String
               ("SELECT post_identifier FROM posts"
                  & " WHERE topic_identifier = :topic_identifier"
-                 & " ORDER BY creation_time DESC"
+                 & " ORDER BY creation_time ASC"
                  & " LIMIT :limit OFFSET :offset"));
 
       Result : Forum.Posts.References.Post_Vector;

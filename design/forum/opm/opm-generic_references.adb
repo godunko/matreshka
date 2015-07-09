@@ -63,6 +63,15 @@ package body OPM.Generic_References is
    end Finalize;
 
    ----------------
+   -- Identifier --
+   ----------------
+
+   function Identifier (Self : Reference'Class) return Element_Identifier is
+   begin
+      return Self.Identifier;
+   end Identifier;
+
+   ----------------
    -- Initialize --
    ----------------
 

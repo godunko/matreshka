@@ -60,6 +60,6 @@ package Forum.Categories is
 
 private
 
-   type Category_Identifier is range 0 .. 2 * 63 - 1;
+   type Category_Identifier is range 0 .. 2 ** 63 - 1;
 
 end Forum.Categories;

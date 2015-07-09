@@ -49,10 +49,55 @@ with SQL.Queries;
 with OPM.Engines;
 
 with Forum.Categories.Objects;
+with Forum.Posts.References;
+with Forum.Topics.References;
 
 package body Forum.Posts.Objects.Stores is
 
    procedure Free is new Ada.Unchecked_Deallocation (Post_Object'Class, Post_Access);
+
+   ------------
+   -- Create --
+   ------------
+
+   not overriding function Create
+    (Self          : in out Post_Store;
+     Topic         : Forum.Topics.References.Topic;
+     Text          : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time)
+       return Forum.Posts.References.Post
+   is
+      Q : SQL.Queries.SQL_Query
+        := Self.Engine.Get_Database.Query
+            (League.Strings.To_Universal_String
+              ("INSERT INTO posts (topic_identifier, text, creation_time,"
+                 & " author)"
+                 & " VALUES (:topic, :text, :creation_time, 0)"  --  author
+                 & " RETURNING post_identifier"));
+      R : Forum.Posts.References.Post;
+
+   begin
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":topic"),
+        Forum.Topics.Topic_Identifier_Holders.To_Holder
+          (Topic.Identifier));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":text"),
+        League.Holders.To_Holder (Text));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":creation_time"),
+        League.Holders.To_Holder (Creation_Time));
+      Q.Execute;
+
+      if Q.Next then
+         R.Initialize
+          (Self'Unchecked_Access,
+           Forum.Posts.Post_Identifier_Holders.Element
+            (Q.Value (1)));
+      end if;
+
+      return R;
+   end Create;
 
    ---------
    -- Get --

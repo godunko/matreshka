@@ -45,6 +45,7 @@ with SQL.Databases;
 with OPM.Stores;
 
 limited with Forum.Categories.References;
+limited with Forum.Topics.References;
 
 package Forum.Topics.Objects.Stores is
 
@@ -65,6 +66,14 @@ package Forum.Topics.Objects.Stores is
    not overriding procedure Release
     (Self   : in out Topic_Store;
      Object : not null Topic_Access);
+
+   not overriding function Create
+    (Self          : in out Topic_Store;
+     Category      : Forum.Categories.References.Category;
+     Title         : League.Strings.Universal_String;
+     Description   : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time)
+       return Forum.Topics.References.Topic;
 
    overriding procedure Initialize (Self : in out Topic_Store);
 

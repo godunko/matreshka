@@ -100,4 +100,8 @@ CREATE TABLE read_topics
   topic_identifier topic_identifier NOT NULL REFERENCES topics,
   read_time        TIMESTAMP NOT NULL);
 
+CREATE TABLE import_topics
+ (message_id          CHARACTER VARYING NOT NULL PRIMARY KEY,
+  topic_identifier    topic_identifier NOT NULL);
+
 COMMIT TRANSACTION;

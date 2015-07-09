@@ -48,7 +48,7 @@ with "forum/forum.gpr";
 project Test is
 
    for Object_Dir use ".objs";
-   for Main use ("tst.adb");
+   for Main use ("tst.adb", "import_mail");
 
    package Compiler is
 

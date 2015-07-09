@@ -48,7 +48,7 @@ package Forum.Topics is
    pragma Preelaborate;
 
 --   type Topic_Identifier is private;
-   type Topic_Identifier is range 0 .. 2 * 63 - 1;
+   type Topic_Identifier is range 0 .. 2 ** 63 - 1;
 
    function Encode
     (Item : Topic_Identifier) return League.Strings.Universal_String;
@@ -65,6 +65,6 @@ package Forum.Topics is
 --  private
 --
 --
---     type Topic_Identifier is range 0 .. 2 * 63 - 1;
+--     type Topic_Identifier is range 0 .. 2 ** 63 - 1;
 
 end Forum.Topics;

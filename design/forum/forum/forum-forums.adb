@@ -61,6 +61,10 @@ package body Forum.Forums is
      (Object => Standard.Forum.Topics.Objects.Topic_Object,
       Store  => Standard.Forum.Topics.Objects.Stores.Topic_Store);
 
+   function Get_Post_Store is new OPM.Engines.Generic_Get_Store
+     (Object => Standard.Forum.Posts.Objects.Post_Object,
+      Store  => Standard.Forum.Posts.Objects.Stores.Post_Store);
+
    ---------------------
    -- Create_Category --
    ---------------------
@@ -73,6 +77,36 @@ package body Forum.Forums is
    begin
       return Get_Category_Store (Self.Engine).Create (Title, Description);
    end Create_Category;
+
+   -----------------
+   -- Create_Post --
+   -----------------
+
+   function Create_Post
+    (Self          : in out Forum'Class;
+     Topic         : Standard.Forum.Topics.References.Topic;
+     Text          : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time := League.Calendars.Clock)
+       return Standard.Forum.Posts.References.Post is
+   begin
+      return Get_Post_Store (Self.Engine).Create (Topic, Text, Creation_Time);
+   end Create_Post;
+
+   ------------------
+   -- Create_Topic --
+   ------------------
+
+   function Create_Topic
+    (Self          : in out Forum'Class;
+     Category      : Standard.Forum.Categories.References.Category;
+     Title         : League.Strings.Universal_String;
+     Description   : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time := League.Calendars.Clock)
+       return Standard.Forum.Topics.References.Topic is
+   begin
+      return Get_Topic_Store (Self.Engine).Create
+        (Category, Title, Description, Creation_Time);
+   end Create_Topic;
 
    --------------------
    -- Get_Categories --

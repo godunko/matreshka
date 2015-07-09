@@ -73,6 +73,8 @@ package OPM.Generic_References is
 
    function Object (Self : Reference'Class) return Variable_Reference_Type;
 
+   function Identifier (Self : Reference'Class) return Element_Identifier;
+
 private
 
    type Reference_Access is access all Reference'Class with Storage_Size => 0;

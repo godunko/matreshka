@@ -44,7 +44,9 @@
 with SQL.Databases;
 with OPM.Stores;
 
-limited with Forum.Categories.References;
+limited with Forum.Posts.References;
+limited with Forum.Topics.References;
+
 package Forum.Posts.Objects.Stores is
 
    type Post_Access is access all Post_Object'Class; --  with Storage_Size => 0;
@@ -58,6 +60,13 @@ package Forum.Posts.Objects.Stores is
    not overriding procedure Release
     (Self   : in out Post_Store;
      Object : not null Post_Access);
+
+   not overriding function Create
+    (Self          : in out Post_Store;
+     Topic         : Forum.Topics.References.Topic;
+     Text          : League.Strings.Universal_String;
+     Creation_Time : League.Calendars.Date_Time)
+       return Forum.Posts.References.Post;
 
    overriding procedure Initialize (Self : in out Post_Store);
 

@@ -48,7 +48,7 @@ package Forum.Posts is
    pragma Preelaborate;
 
 --   type Post_Identifier is private;
-   type Post_Identifier is range 0 .. 2 * 63 - 1;
+   type Post_Identifier is range 0 .. 2 ** 63 - 1;
 
    function Encode
     (Item : Post_Identifier) return League.Strings.Universal_String;
@@ -65,6 +65,6 @@ package Forum.Posts is
 --  private
 --
 --
---     type Post_Identifier is range 0 .. 2 * 63 - 1;
+--     type Post_Identifier is range 0 .. 2 ** 63 - 1;
 
 end Forum.Posts;
