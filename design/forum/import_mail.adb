@@ -40,8 +40,9 @@ procedure Import_Mail is
      (Text : Wide_Wide_String) return League.Strings.Universal_String
       renames League.Strings.To_Universal_String;
 
-   function Eq
+   function "**"
      (Left, Right : League.Strings.Universal_String) return Boolean;
+   --  Case insensetive comparison operator
 
    function Read_File
      (Name : League.Strings.Universal_String)
@@ -49,6 +50,11 @@ procedure Import_Mail is
 
    function Unpack_JSON
      (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+
+   function Unpack_JSON
+     (Text : League.Strings.Universal_String;
+      Key  : Wide_Wide_String)
       return League.Strings.Universal_String;
 
    function Unescape_XML_Entities
@@ -63,6 +69,26 @@ procedure Import_Mail is
      (Encoding : League.Strings.Universal_String;
       Piece    : League.Strings.Universal_String)
             return League.Strings.Universal_String;
+
+   function Replace_Placeholders
+     (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+
+   Placeholder : constant Wide_Wide_Character :=
+     Wide_Wide_Character'Val (16#FFFD#);
+
+
+   ----------
+   -- "**" --
+   ----------
+
+   function "**"
+     (Left, Right : League.Strings.Universal_String) return Boolean
+   is
+      use type League.Strings.Universal_String;
+   begin
+      return Left.To_Lowercase = Right.To_Lowercase;
+   end "**";
 
    -----------------------------
    -- Decode_Quoted_Printable --
@@ -101,7 +127,7 @@ procedure Import_Mail is
                   Index := Index + 3;
                end if;
             when '_' =>
-               Item := 14#20#;
+               Item := 16#20#;
                Bytes.Append (Item);
                Index := Index + 1;
 
@@ -117,18 +143,6 @@ procedure Import_Mail is
 
       return Codec.Decode (Bytes);
    end Decode_Quoted_Printable;
-
-   --------
-   -- Eq --
-   --------
-
-   function Eq
-     (Left, Right : League.Strings.Universal_String) return Boolean
-   is
-      use type League.Strings.Universal_String;
-   begin
-      return Left.To_Lowercase = Right.To_Lowercase;
-   end Eq;
 
    ---------------
    -- Read_File --
@@ -172,6 +186,74 @@ procedure Import_Mail is
       return League.Strings.Internals.Wrap (Data);
    end Read_File;
 
+   --------------------------
+   -- Replace_Placeholders --
+   --------------------------
+
+   function Replace_Placeholders
+     (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String
+   is
+      function Get_Next_Char return Wide_Wide_Character;
+      procedure Open_Input;
+
+      Index : Positive := 1;
+      Input : League.Strings.Universal_String;
+
+      -------------------
+      -- Get_Next_Char --
+      -------------------
+
+      function Get_Next_Char return Wide_Wide_Character is
+         Result : Wide_Wide_Character;
+      begin
+         while Index <= Input.Length loop
+            Result := Input (Index).To_Wide_Wide_Character;
+            Index := Index + 1;
+
+            exit when Wide_Wide_Character'Pos (Result) > 127;
+         end loop;
+
+         return Result;
+      end Get_Next_Char;
+
+      ----------------
+      -- Open_Input --
+      ----------------
+
+      procedure Open_Input is
+         Text : constant League.Strings.Universal_String :=
+           Read_File (League.Application.Arguments.Element (2));
+      begin
+         Input := Unpack_JSON (Text, "messageBody");
+      end Open_Input;
+
+      Result : League.Strings.Universal_String;
+      Char   : Wide_Wide_Character;
+   begin
+      if Text.Index (Placeholder) = 0 then
+         return Text;
+      end if;
+
+      Open_Input;
+
+      for J in 1 .. Text.Length loop
+         Char := Text.Element (J).To_Wide_Wide_Character;
+
+         if Wide_Wide_Character'Pos (Char) <= 127 then
+            Result.Append (Char);
+         elsif Char = Placeholder then
+            Result.Append (Get_Next_Char);
+         else
+            Result.Append (Get_Next_Char);
+            Result.Append (Get_Next_Char);
+         end if;
+
+      end loop;
+
+      return Result;
+   end Replace_Placeholders;
+
    ----------------------------
    -- Strinp_Carriage_Return --
    ----------------------------
@@ -212,6 +294,9 @@ procedure Import_Mail is
             elsif Piece.Starts_With ("quot;") then
                Result.Append ("""");
                Result.Append (Piece.Slice (6, Piece.Length));
+            elsif Piece.Starts_With ("#39;") then
+               Result.Append ("'");
+               Result.Append (Piece.Slice (5, Piece.Length));
             else
                Result.Append ("&");
                Result.Append (Piece);
@@ -227,19 +312,32 @@ procedure Import_Mail is
    -----------------
 
    function Unpack_JSON
-     (Text : League.Strings.Universal_String)
+     (Text : League.Strings.Universal_String;
+      Key  : Wide_Wide_String)
       return League.Strings.Universal_String
    is
-      --  https://groups.yahoo.com/api/v1/groups/ada_ru/messages/7320/raw
       D : constant League.JSON.Documents.JSON_Document :=
         League.JSON.Documents.From_JSON (Text);
       O : constant League.JSON.Objects.JSON_Object := D.To_JSON_Object;
       V : constant League.JSON.Values.JSON_Value := O.Value
         (League.Strings.To_Universal_String ("ygData"));
       V2 : constant League.JSON.Values.JSON_Value := V.To_Object.Value
-        (League.Strings.To_Universal_String ("rawEmail"));
+        (League.Strings.To_Universal_String (Key));
    begin
       return V2.To_String;
+   end Unpack_JSON;
+
+   -----------------
+   -- Unpack_JSON --
+   -----------------
+
+   function Unpack_JSON
+     (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String
+   is
+      --  https://groups.yahoo.com/api/v1/groups/ada_ru/messages/7320/raw
+   begin
+      return Unpack_JSON (Text, "rawEmail");
    end Unpack_JSON;
 
    package Messages is
@@ -363,7 +461,7 @@ procedure Import_Mail is
             end;
          end if;
 
-         if Eq (CT, Text_Plain) then
+         if CT ** Text_Plain or CT.Is_Empty then
             if CTE = Base_64 then
                declare
                   Codec : constant League.Text_Codecs.Text_Codec :=
@@ -374,21 +472,23 @@ procedure Import_Mail is
                begin
                   Result.Text := Codec.Decode (Bytes);
                end;
-            elsif CTE = Quoted_Printable then
+            elsif CTE ** Quoted_Printable then
                Result.Text :=
                  Decode_Quoted_Printable (Charset, Root.Get_Body_As_Text);
 
-            elsif CTE.Is_Empty or else CTE = Seven_Bit then
+            elsif CTE = Seven_Bit then
                Result.Text := Root.Get_Body_As_Text;
-            elsif Eq (CTE, Eight_Bit) then
+
+            elsif CTE.Is_Empty or else CTE ** Eight_Bit then
+               Result.Text := Root.Get_Body_As_Text;
                --  Bogus encoding in yahoo
-               Result.Text := Root.Get_Body_As_Text;
+               Result.Text := Replace_Placeholders (Result.Text);
             else
                raise Constraint_Error
                  with "Unknown CTE " & CTE.To_UTF_8_String;
             end if;
          elsif CT = Multipart_Alternative
-           or else Eq (CT, Multipart_Mixed)
+           or else CT ** Multipart_Mixed
            or else CT = Multipart_Related
          then
             declare
@@ -480,6 +580,11 @@ procedure Import_Mail is
          Second         : Second_Number;
       begin
          --  Text example: Fri, 14 Jun 2002 12:52:22 +0300
+
+         if List.Length = 5 then  -- Absent day of week
+            List.Insert (1, League.Strings.Empty_Universal_String);
+         end if;
+
          Year := Year_Number'Wide_Wide_Value
            (List.Element (4).To_Wide_Wide_String);
 
@@ -646,12 +751,15 @@ procedure Import_Mail is
          function Dequote (Text : League.Strings.Universal_String)
            return League.Strings.Universal_String;
 
+         function Trim (Text : League.Strings.Universal_String)
+           return League.Strings.Universal_String;
+
          -------------
          -- Dequote --
          -------------
 
          function Dequote (Text : League.Strings.Universal_String)
-                           return League.Strings.Universal_String is
+           return League.Strings.Universal_String is
          begin
             if Text.Starts_With ("""") and Text.Ends_With ("""") then
                return Text.Slice (2, Text.Length - 1);
@@ -659,6 +767,22 @@ procedure Import_Mail is
                return Text;
             end if;
          end Dequote;
+
+         ----------
+         -- Trim --
+         ----------
+
+         function Trim (Text : League.Strings.Universal_String)
+           return League.Strings.Universal_String
+         is
+            Result : League.Strings.Universal_String := Text;
+         begin
+            while Result.Ends_With (" ") loop
+               Result := Result.Head (Result.Length - 1);
+            end loop;
+
+            return Result;
+         end Trim;
 
          Key   : League.Strings.Universal_String := Field;
          Value : constant League.Strings.Universal_String
@@ -683,7 +807,7 @@ procedure Import_Mail is
                if Field.Is_Empty and Line.Index ("=") = 0 then
                   return Line;
                elsif not Field.Is_Empty and Line.Starts_With (Key) then
-                  return Dequote (Line.Tail_From (Key.Length + 1));
+                  return Trim (Dequote (Line.Tail_From (Key.Length + 1)));
                end if;
             end;
          end loop;
