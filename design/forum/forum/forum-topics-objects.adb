@@ -41,8 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with OPM.Engines;
+
 with Forum.Topics.Objects.Stores;
 with Forum.Posts.References;
+with Forum.Posts.Objects.Stores;
 
 package body Forum.Topics.Objects is
 
@@ -86,15 +89,22 @@ package body Forum.Topics.Objects is
       return Self.Identifier;
    end Get_Identifier;
 
-   ------------------------
-   -- Get_Last_Post_Time --
-   ------------------------
+   -------------------
+   -- Get_Last_Post --
+   -------------------
 
-   function Get_Last_Post_Time
-    (Self : Topic_Object'Class) return League.Calendars.Date_Time is
+   function Get_Last_Post
+    (Self : Topic_Object'Class) return Forum.Posts.References.Post
+   is
+      Post_Store : Forum.Posts.Objects.Stores.Post_Store'Class
+        renames Forum.Posts.Objects.Stores.Post_Store'Class
+          (Self.Store.Engine.Get_Store
+             (Forum.Posts.Objects.Post_Object'Tag).all);
    begin
-      return Self.Last_Post_Time;
-   end Get_Last_Post_Time;
+      return Result : Forum.Posts.References.Post do
+         Result.Initialize (Post_Store'Unchecked_Access, Self.Last_Post);
+      end return;
+   end Get_Last_Post;
 
    --------------------
    -- Get_Post_Count --

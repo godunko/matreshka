@@ -48,7 +48,8 @@
       </div>
      </div>
      <div class="stats"><p>${topic.post_count} Replies</p></div>
-     <div class="lastpost"><p>${topic.last_post_time}</p></div>
+     <div class="lastpost"><p>${topic.last_post.creation_time}<br/>
+ by ${topic.last_post.author.nick}</p>s</div>
     </div>
 </mtl:for>
    </div>

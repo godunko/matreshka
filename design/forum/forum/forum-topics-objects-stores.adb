@@ -126,7 +126,7 @@ package body Forum.Topics.Objects.Stores is
                  & "lastpost, created_by "
                  & " FROM topics t, "
                  & " (select count(*) post_count,"
-                 & " max(creation_time) lastpost FROM posts p"
+                 & " max(post_identifier) lastpost FROM posts p"
                  & " WHERE p.topic_identifier = :id) s"
                  & " WHERE topic_identifier = :id"));
 
@@ -153,7 +153,8 @@ package body Forum.Topics.Objects.Stores is
                  Creation_Time  => League.Holders.Element (Q.Value (3)),
                  Post_Count     => Natural'Wide_Wide_Value  --  FIXME after #425
                    (League.Holders.Element (Q.Value (4)).To_Wide_Wide_String),
-                 Last_Post_Time => League.Holders.Element (Q.Value (5)),
+                 Last_Post      => Forum.Posts.Post_Identifier_Holders.Element
+                   (Q.Value (5)),
                  Created_By     => User_Store.Incarnate
                    (AWFC.Accounts.Users.User_Identifier_Holders.Element
                         (Q.Value (6))));

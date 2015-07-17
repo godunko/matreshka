@@ -70,6 +70,10 @@ package body Server.Servlets.Forum_Servlets is
      (Self : Forum.Topics.References.Topic)
       return League.JSON.Objects.JSON_Object;
 
+   function Post_To_JSON
+     (Self : Forum.Posts.References.Post)
+      return League.JSON.Objects.JSON_Object;
+
    function Page_To_JSON
      (Page  : Positive;
       Total : Positive)
@@ -169,26 +173,7 @@ package body Server.Servlets.Forum_Servlets is
            (Page_To_JSON (Self.Page, Self.Topic.Object.Get_Post_Count)));
 
       for J of Posts loop
-         declare
-            Result : League.JSON.Objects.JSON_Object;
-         begin
-            Result.Insert
-              (+"id",
-               League.JSON.Values.To_JSON_Value
-                 (Forum.Posts.Encode (J.Object.Get_Identifier)));
-            Result.Insert
-              (+"text",
-               League.JSON.Values.To_JSON_Value (J.Object.Get_Text));
-            Result.Insert
-              (+"creation_time",
-               League.JSON.Values.To_JSON_Value
-                 (League.Calendars.ISO_8601.Image
-                      (Format, J.Object.Get_Creation_Time)));
-            Result.Insert
-              (+"author",
-               User_To_JSON (J.Object.Get_Author).To_JSON_Value);
-            List.Append (Result.To_JSON_Value);
-         end;
+         List.Append (Post_To_JSON (J).To_JSON_Value);
       end loop;
 
       Processor.Set_Parameter
@@ -492,6 +477,33 @@ package body Server.Servlets.Forum_Servlets is
       end return;
    end Page_To_JSON;
 
+   ------------------
+   -- Post_To_JSON --
+   ------------------
+
+   function Post_To_JSON
+     (Self : Forum.Posts.References.Post)
+      return League.JSON.Objects.JSON_Object is
+   begin
+      return Result : League.JSON.Objects.JSON_Object do
+         Result.Insert
+           (+"id",
+            League.JSON.Values.To_JSON_Value
+              (Forum.Posts.Encode (Self.Object.Get_Identifier)));
+         Result.Insert
+           (+"text",
+            League.JSON.Values.To_JSON_Value (Self.Object.Get_Text));
+         Result.Insert
+           (+"creation_time",
+            League.JSON.Values.To_JSON_Value
+              (League.Calendars.ISO_8601.Image
+                   (Format, Self.Object.Get_Creation_Time)));
+         Result.Insert
+           (+"author",
+            User_To_JSON (Self.Object.Get_Author).To_JSON_Value);
+      end return;
+ end Post_To_JSON;
+
    ------------
    -- Render --
    ------------
@@ -538,10 +550,8 @@ package body Server.Servlets.Forum_Servlets is
            (+"created_by",
             User_To_JSON (Self.Object.Get_Created_By).To_JSON_Value);
          Result.Insert
-           (+"last_post_time",
-            League.JSON.Values.To_JSON_Value
-              (League.Calendars.ISO_8601.Image
-                   (Format, Self.Object.Get_Last_Post_Time)));
+           (+"last_post",
+            Post_To_JSON (Self.Object.Get_Last_Post).To_JSON_Value);
          Result.Insert
            (+"post_count",
             League.JSON.Values.To_JSON_Value
