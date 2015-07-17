@@ -101,7 +101,8 @@ package body Server.Initializers is
       Registry := Context.Add_Servlet
         (+"StaticResources",
          Servlet_Access'(new Server.Servlets.Static.Resource_Servlet));
-      Registry.Add_Mapping (+"/forum.css");
+      Registry.Add_Mapping (+"/css/*");
+      Registry.Add_Mapping (+"/images/*");
 
       Aux :=
         new AWFC.Accounts.Account_Servlets.Account_Servlet

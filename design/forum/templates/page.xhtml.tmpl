@@ -2,10 +2,21 @@
 <html xmlns='http://www.w3.org/1999/xhtml' xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
   <head>
     <title>Форум</title>
-    <link rel='stylesheet' type='text/css' href='/forum.css'/>
+    <link rel='stylesheet' type='text/css' href='http://smf21.chelloo.com/Themes/default/css/index.css'/>
     <link rel='icon' type='image/png' href='/favicon.png'/>
   </head>
   <body>
-    ${pageContent}
+    <div id="top_section">
+     <div class="frame"><p>top section</p></div>
+    </div>
+    <div id="header">
+     <div class="frame"><p>header</p></div>
+    </div>
+    <div id="wrapper">
+     <div id="content_section">${pageContent}</div>
+    </div>
+    <div id="footer_section">
+     <div class="frame"><p>footer</p></div>
+    </div>
   </body>
 </html>

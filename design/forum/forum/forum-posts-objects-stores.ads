@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with SQL.Databases;
 with OPM.Stores;
+with AWFC.Accounts.Users;
 
 limited with Forum.Posts.References;
 limited with Forum.Topics.References;
@@ -63,6 +64,7 @@ package Forum.Posts.Objects.Stores is
 
    not overriding function Create
     (Self          : in out Post_Store;
+     User          : AWFC.Accounts.Users.User_Access;
      Topic         : Forum.Topics.References.Topic;
      Text          : League.Strings.Universal_String;
      Creation_Time : League.Calendars.Date_Time)

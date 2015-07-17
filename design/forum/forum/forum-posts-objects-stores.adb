@@ -48,6 +48,9 @@ with SQL.Queries;
 
 with OPM.Engines;
 
+with AWFC.Accounts.Users.User_Identifier_Holders;
+with AWFC.Accounts.Users.Stores;
+
 with Forum.Categories.Objects;
 with Forum.Posts.References;
 with Forum.Topics.References;
@@ -62,17 +65,18 @@ package body Forum.Posts.Objects.Stores is
 
    not overriding function Create
     (Self          : in out Post_Store;
+     User          : AWFC.Accounts.Users.User_Access;
      Topic         : Forum.Topics.References.Topic;
      Text          : League.Strings.Universal_String;
      Creation_Time : League.Calendars.Date_Time)
-       return Forum.Posts.References.Post
+      return Forum.Posts.References.Post
    is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
               ("INSERT INTO posts (topic_identifier, text, creation_time,"
                  & " author)"
-                 & " VALUES (:topic, :text, :creation_time, 0)"  --  author
+                 & " VALUES (:topic, :text, :creation_time, :author)"
                  & " RETURNING post_identifier"));
       R : Forum.Posts.References.Post;
 
@@ -87,6 +91,10 @@ package body Forum.Posts.Objects.Stores is
       Q.Bind_Value
        (League.Strings.To_Universal_String (":creation_time"),
         League.Holders.To_Holder (Creation_Time));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":author"),
+        AWFC.Accounts.Users.User_Identifier_Holders.To_Holder
+          (User.Get_User_Identifier));
       Q.Execute;
 
       if Q.Next then
@@ -110,9 +118,13 @@ package body Forum.Posts.Objects.Stores is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT text, creation_time"
+              ("SELECT text, creation_time, author"
                  & " FROM posts WHERE post_identifier = :id"));
 
+      User_Store : AWFC.Accounts.Users.Stores.User_Store'Class
+        renames AWFC.Accounts.Users.Stores.User_Store'Class
+          (Self.Engine.Get_Store
+             (AWFC.Accounts.Users.User'Tag).all);
    begin
       Q.Bind_Value
        (League.Strings.To_Universal_String (":id"),
@@ -128,7 +140,10 @@ package body Forum.Posts.Objects.Stores is
                 (Store         => Self'Unchecked_Access,
                  Identifier    => Identifier,
                  Text          => League.Holders.Element (Q.Value (1)),
-                 Creation_Time => League.Holders.Element (Q.Value (2)));
+                 Creation_Time => League.Holders.Element (Q.Value (2)),
+                 Author        => User_Store.Incarnate
+                   (AWFC.Accounts.Users.User_Identifier_Holders.Element
+                        (Q.Value (3))));
       end if;
    end Get;
 

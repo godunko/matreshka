@@ -45,6 +45,7 @@ with "../../gnat/matreshka_sql.gpr";
 with "../../gnat/matreshka_sql_postgresql.gpr";
 
 with "opm/opm.gpr";
+with "awfc/awfc.gpr";
 
 library project Forum is
 

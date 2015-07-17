@@ -48,6 +48,8 @@ with League.Holders.Integers;
 with SQL.Queries;
 
 with OPM.Engines;
+with AWFC.Accounts.Users.User_Identifier_Holders;
+with AWFC.Accounts.Users.Stores;
 
 with Forum.Categories.Objects;
 with Forum.Categories.References;
@@ -62,11 +64,12 @@ package body Forum.Topics.Objects.Stores is
 
    not overriding function Create
     (Self          : in out Topic_Store;
+     User          : AWFC.Accounts.Users.User_Access;
      Category      : Forum.Categories.References.Category;
      Title         : League.Strings.Universal_String;
      Description   : League.Strings.Universal_String;
      Creation_Time : League.Calendars.Date_Time)
-       return Forum.Topics.References.Topic
+      return Forum.Topics.References.Topic
    is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
@@ -74,7 +77,7 @@ package body Forum.Topics.Objects.Stores is
               ("INSERT INTO topics (category_identifier, title, description,"
                  & " creation_time, created_by)"
                  & " VALUES (:category, :title, :description, :creation_time,"
-                 & " 0)"  --  created_by
+                 & " :created_by)"
                  & " RETURNING topic_identifier"));
       R : Forum.Topics.References.Topic;
 
@@ -92,6 +95,10 @@ package body Forum.Topics.Objects.Stores is
       Q.Bind_Value
        (League.Strings.To_Universal_String (":creation_time"),
         League.Holders.To_Holder (Creation_Time));
+      Q.Bind_Value
+       (League.Strings.To_Universal_String (":created_by"),
+        AWFC.Accounts.Users.User_Identifier_Holders.To_Holder
+          (User.Get_User_Identifier));
       Q.Execute;
 
       if Q.Next then
@@ -115,13 +122,18 @@ package body Forum.Topics.Objects.Stores is
       Q : SQL.Queries.SQL_Query
         := Self.Engine.Get_Database.Query
             (League.Strings.To_Universal_String
-              ("SELECT title, description, creation_time, post_count, lastpost"
+              ("SELECT title, description, creation_time, post_count, "
+                 & "lastpost, created_by "
                  & " FROM topics t, "
                  & " (select count(*) post_count,"
                  & " max(creation_time) lastpost FROM posts p"
                  & " WHERE p.topic_identifier = :id) s"
                  & " WHERE topic_identifier = :id"));
 
+      User_Store : AWFC.Accounts.Users.Stores.User_Store'Class
+        renames AWFC.Accounts.Users.Stores.User_Store'Class
+          (Self.Engine.Get_Store
+             (AWFC.Accounts.Users.User'Tag).all);
    begin
       Q.Bind_Value
        (League.Strings.To_Universal_String (":id"),
@@ -134,14 +146,17 @@ package body Forum.Topics.Objects.Stores is
       else
          return
            new Topic_Object'
-                (Store         => Self'Unchecked_Access,
-                 Identifier    => Identifier,
-                 Title         => League.Holders.Element (Q.Value (1)),
-                 Description   => League.Holders.Element (Q.Value (2)),
-                 Creation_Time => League.Holders.Element (Q.Value (3)),
-                 Post_Count    => Natural'Wide_Wide_Value  --  FIXME after #425
+                (Store          => Self'Unchecked_Access,
+                 Identifier     => Identifier,
+                 Title          => League.Holders.Element (Q.Value (1)),
+                 Description    => League.Holders.Element (Q.Value (2)),
+                 Creation_Time  => League.Holders.Element (Q.Value (3)),
+                 Post_Count     => Natural'Wide_Wide_Value  --  FIXME after #425
                    (League.Holders.Element (Q.Value (4)).To_Wide_Wide_String),
-                 Last_Post_Time => League.Holders.Element (Q.Value (5)));
+                 Last_Post_Time => League.Holders.Element (Q.Value (5)),
+                 Created_By     => User_Store.Incarnate
+                   (AWFC.Accounts.Users.User_Identifier_Holders.Element
+                        (Q.Value (6))));
       end if;
    end Get;
 

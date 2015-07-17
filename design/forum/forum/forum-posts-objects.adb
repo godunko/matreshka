@@ -44,6 +44,16 @@
 
 package body Forum.Posts.Objects is
 
+   ----------------
+   -- Get_Author --
+   ----------------
+
+   function Get_Author
+    (Self : Post_Object'Class) return AWFC.Accounts.Users.User_Access is
+   begin
+      return Self.Author;
+   end Get_Author;
+
    -----------------------
    -- Get_Creation_Time --
    -----------------------

@@ -46,6 +46,16 @@ with Forum.Posts.References;
 
 package body Forum.Topics.Objects is
 
+   --------------------
+   -- Get_Created_By --
+   --------------------
+
+   function Get_Created_By
+    (Self : Topic_Object'Class) return AWFC.Accounts.Users.User_Access is
+   begin
+      return Self.Created_By;
+   end Get_Created_By;
+
    -----------------------
    -- Get_Creation_Time --
    -----------------------

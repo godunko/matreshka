@@ -44,6 +44,7 @@
 with "../../gnat/matreshka_sql_postgresql.gpr";
 
 with "forum/forum.gpr";
+with "awfc/awfc.gpr";
 
 project Test is
 

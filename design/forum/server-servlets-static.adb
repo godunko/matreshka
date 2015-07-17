@@ -18,10 +18,13 @@ package body Server.Servlets.Static is
    is
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      Path      : constant League.String_Vectors.Universal_String_Vector
+      Prefix    : constant League.String_Vectors.Universal_String_Vector
         := Request.Get_Servlet_Path;
+      Path      : constant League.String_Vectors.Universal_String_Vector
+        := Request.Get_Path_Info;
       File_Name : constant League.Strings.Universal_String
-        := Context.Get_Real_Path ('/' & Path.Join ('/'));
+        := Context.Get_Real_Path
+          ('/' & Prefix.Join ('/') & '/' & Path.Join ('/'));
       File      : Ada.Streams.Stream_IO.File_Type;
       Buffer    : Ada.Streams.Stream_Element_Array (1 .. 512);
       Last      : Ada.Streams.Stream_Element_Offset;

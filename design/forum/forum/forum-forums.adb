@@ -45,6 +45,7 @@ with League.Holders;
 with SQL.Queries;
 
 with OPM.Stores;
+with AWFC.Accounts.Users.Stores;
 
 with Forum.Categories.Objects.Stores;
 with Forum.Categories.Category_Identifier_Holders;
@@ -84,12 +85,14 @@ package body Forum.Forums is
 
    function Create_Post
     (Self          : in out Forum'Class;
+     User          : AWFC.Accounts.Users.User_Access;
      Topic         : Standard.Forum.Topics.References.Topic;
      Text          : League.Strings.Universal_String;
      Creation_Time : League.Calendars.Date_Time := League.Calendars.Clock)
-       return Standard.Forum.Posts.References.Post is
+      return Standard.Forum.Posts.References.Post is
    begin
-      return Get_Post_Store (Self.Engine).Create (Topic, Text, Creation_Time);
+      return Get_Post_Store (Self.Engine).Create
+        (User, Topic, Text, Creation_Time);
    end Create_Post;
 
    ------------------
@@ -98,14 +101,15 @@ package body Forum.Forums is
 
    function Create_Topic
     (Self          : in out Forum'Class;
+     User          : AWFC.Accounts.Users.User_Access;
      Category      : Standard.Forum.Categories.References.Category;
      Title         : League.Strings.Universal_String;
      Description   : League.Strings.Universal_String;
      Creation_Time : League.Calendars.Date_Time := League.Calendars.Clock)
-       return Standard.Forum.Topics.References.Topic is
+      return Standard.Forum.Topics.References.Topic is
    begin
       return Get_Topic_Store (Self.Engine).Create
-        (Category, Title, Description, Creation_Time);
+        (User, Category, Title, Description, Creation_Time);
    end Create_Topic;
 
    --------------------

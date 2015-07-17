@@ -1,38 +1,56 @@
-<div class="topic-list" xmlns='http://www.w3.org/1999/xhtml' xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
-
- <div class="category">
-  <div class="category-title">
-  ${category.title}
-  </div>
-  <div class="category-descr">
-  ${category.description}
-  </div>
-  ${category.topic_count} topics.
-  Page: ${page.current} of ${page.total}
-  <mtl:if expression="not page.single">
-    Go: <a href="1">[1]</a>
+<div id="main_content_section" xmlns='http://www.w3.org/1999/xhtml' xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
+ <div class="pagesection">
+  <div class="pagelinks floatleft">
+   <span class="pages">Pages: </span>
     <mtl:if expression="page.has_prev">
-      <a href="${page.prev}">[${page.prev}]</a>
+      <a class="navPages" href="${page.prev}"><span class="previous_page"/></a>
+      <a class="navPages" href="${page.prev}">${page.prev}</a>
     </mtl:if>
-    ... 
+
+    <span class="current_page">[${page.current}]</span>
+
     <mtl:if expression="page.has_next">
-      <a href="${page.next}">[${page.next}]</a>
+      <a class="navPages" href="${page.next}">${page.next}</a>
+      <a class="navPages" href="${page.next}"><span class="next_page"/></a>
     </mtl:if>
-    <a href="${page.total}">[${page.total}]</a>
-  </mtl:if>
+  </div>
  </div>
 
+  <div id="description_board" class="generic_list_wrapper">
+    <h3 class="floatleft">${category.title} - </h3>
+    <p>${category.description}</p>
+  </div>
+
+  <div id="messageindex">
+   <div id="topic_header" class="title_bar">
+    <div class="icon"/>
+    <div class="info"><span>Subject</span></div>
+    <div class="stats">Replies</div>
+    <div class="lastpost">Last Post</div>
+   </div>
+   <div id="topic_container">
 <mtl:for expression="topic of list">
- <div class="topic">
-  <div class="topic-title">
-  <a href="${topic.id}/1">${topic.title}</a>
-  </div>
-  <div class="topic-descr">
-  ${topic.description}
-  Created: ${topic.creation_time}
-  Posts: ${topic.post_count}
-  Last: ${topic.last_post_time}
-  </div>
- </div>
+    <div class="windowbg">
+     <div class="icon"><img alt="" src="/images/post/xx.png"/></div>
+     <div class="info">
+      <div>
+       <div class="message_index_title">
+        <span class="preview" title="">
+         <span id="msg_4">
+         <a title="${topic.description}" href="${topic.id}/1">${topic.title}</a>
+         </span>
+        </span>
+       </div>
+       <p class="floatleft">Started at ${topic.creation_time}
+ by ${topic.created_by.nick}</p>
+       <small id="pages4"/>
+       <br class="clear"/>
+      </div>
+     </div>
+     <div class="stats"><p>${topic.post_count} Replies</p></div>
+     <div class="lastpost"><p>${topic.last_post_time}</p></div>
+    </div>
 </mtl:for>
+   </div>
+  </div>
 </div>

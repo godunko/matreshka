@@ -1,15 +1,30 @@
-<div class="category-list" xmlns='http://www.w3.org/1999/xhtml' xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
+<div id="main_content_section"
+  xmlns='http://www.w3.org/1999/xhtml'
+  xmlns:mtl='http://forge.ada-ru.org/matreshka/template'>
+ <div id="boardindex_table" class="boardindex_table">
+ <div class="main_container">
+  <div id="category_1" class="cat_bar"><p>Cat bar</p></div>
+  <div id="category_1_boards">
 <mtl:for expression="category of list">
- <div class="category">
-  <div class="category-title">
-  <a href="${base}/${category.id}/1">${category.title}</a>
+  <div id="board_${category.id}" class="up_contain">
+   <div class="icon">
+    <a href="${base}/${category.id}/1">
+     <span class="board_on" title="New Posts"></span>
+    </a>
+   </div>
+   <div class="info">
+    <a class="subject" href="${base}/${category.id}/1">${category.title}</a>
+    <p>${category.description}</p>
+   </div>
+   <div class="stats">
+    <p>${category.topic_count} Topics</p>
+   </div>
+   <div class="lastpost">
+    <p><strong>Last post: </strong></p>
+   </div>
   </div>
-  <div class="category-descr">
-  ${category.description}
-  </div>
-  <div class="category-stat">
-  Topics: ${category.topic_count}
+</mtl:for>
   </div>
  </div>
-</mtl:for>
+ </div>
 </div>

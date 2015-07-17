@@ -44,6 +44,8 @@
 with League.Calendars;
 with League.Strings;
 
+with AWFC.Accounts.Users;
+
 limited with Forum.Topics.Objects.Stores;
 limited with Forum.Posts.References;
 
@@ -64,6 +66,9 @@ package Forum.Topics.Objects is
 
    function Get_Creation_Time
     (Self : Topic_Object'Class) return League.Calendars.Date_Time;
+
+   function Get_Created_By
+    (Self : Topic_Object'Class) return AWFC.Accounts.Users.User_Access;
 
    function Get_Last_Post_Time
     (Self : Topic_Object'Class) return League.Calendars.Date_Time;
@@ -86,6 +91,7 @@ private
       Title          : League.Strings.Universal_String;
       Description    : League.Strings.Universal_String;
       Creation_Time  : League.Calendars.Date_Time;
+      Created_By     : AWFC.Accounts.Users.User_Access;
       Last_Post_Time : League.Calendars.Date_Time;
       Post_Count     : Natural;
    end record;

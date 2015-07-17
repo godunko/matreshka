@@ -4,6 +4,8 @@ with Ada.Wide_Wide_Text_IO;
 
 with Interfaces;
 
+with GNAT.OS_Lib;
+
 with League.Application;
 with League.Base_Codecs;
 with League.Calendars.ISO_8601;
@@ -19,6 +21,11 @@ with League.Strings.Hash;
 with League.String_Vectors;
 with League.Text_Codecs;
 
+with XML.SAX.Attributes;
+with XML.SAX.Content_Handlers;
+with XML.SAX.Input_Sources.Streams.Files;
+with XML.SAX.Simple_Readers;
+
 with SQL.Options;
 with SQL.Databases;
 with SQL.Queries;
@@ -29,10 +36,15 @@ with Matreshka.Internals.Strings;
 with Matreshka.Internals.Text_Codecs;
 with Matreshka.Internals.Unicode;
 
+with OPM.Stores;
+with AWFC.Accounts.Users.Stores;
+
 with Forum.Topics.References;
 with Forum.Forums;
 with Forum.Categories.References;
 with Forum.Posts.References;
+
+with HTML_Handlers;
 
 procedure Import_Mail is
 
@@ -70,13 +82,16 @@ procedure Import_Mail is
       Piece    : League.Strings.Universal_String)
             return League.Strings.Universal_String;
 
+   function Format_HTML
+     (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String;
+
    function Replace_Placeholders
      (Text : League.Strings.Universal_String)
       return League.Strings.Universal_String;
 
    Placeholder : constant Wide_Wide_Character :=
      Wide_Wide_Character'Val (16#FFFD#);
-
 
    ----------
    -- "**" --
@@ -143,6 +158,55 @@ procedure Import_Mail is
 
       return Codec.Decode (Bytes);
    end Decode_Quoted_Printable;
+
+   -----------------
+   -- Format_HTML --
+   -----------------
+
+   function Format_HTML
+     (Text : League.Strings.Universal_String)
+      return League.Strings.Universal_String
+   is
+
+      Output : Ada.Wide_Wide_Text_IO.File_Type;
+      Arg_0  : aliased String := "--dropdtd";
+      Arg_1  : aliased String := "--html";
+      Arg_2  : aliased String := "--xmlout";
+      Arg_3  : aliased String := "--output";
+      Arg_4  : aliased String := "/tmp/msg.xml";
+      Arg_5  : aliased String := "/tmp/msg.html";
+      Args   : constant GNAT.OS_Lib.String_List :=
+        (Arg_0'Unchecked_Access,
+         Arg_1'Unchecked_Access,
+         Arg_2'Unchecked_Access,
+         Arg_3'Unchecked_Access,
+         Arg_4'Unchecked_Access,
+         Arg_5'Unchecked_Access);
+      Ok : Boolean;
+
+      Source  : aliased HTML_Handlers.My_Source;
+      Reader  : aliased XML.SAX.Simple_Readers.Simple_Reader;
+      Handler : aliased HTML_Handlers.HTML_Handler;
+
+   begin
+      Ada.Wide_Wide_Text_IO.Create
+        (File => Output,
+         Name => Arg_5,
+         Form => "WCEM=8");
+      Ada.Wide_Wide_Text_IO.Put_Line (Output, Text.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Close (Output);
+
+      GNAT.OS_Lib.Spawn ("/usr/bin/xmllint", Args, Ok);
+
+      pragma Assert (Ok);
+
+      Reader.Set_Content_Handler (Handler'Unchecked_Access);
+
+      Source.Open_By_File_Name (League.Strings.From_UTF_8_String (Arg_4));
+      Reader.Parse (Source'Access);
+
+      return Handler.Result;
+   end Format_HTML;
 
    ---------------
    -- Read_File --
@@ -417,6 +481,8 @@ procedure Import_Mail is
       is
          use type League.Strings.Universal_String;
 
+         Text_HTML : constant League.Strings.Universal_String :=
+           +"text/html";
          Text_Plain : constant League.Strings.Universal_String :=
            +"text/plain";
          Multipart_Alternative : constant League.Strings.Universal_String :=
@@ -542,6 +608,16 @@ procedure Import_Mail is
                   end if;
                end loop;
             end;
+         elsif CT = Text_HTML then
+            if CTE = Eight_Bit then
+               Result.Text := Root.Get_Body_As_Text;
+               --  Bogus encoding in yahoo
+               Result.Text := Replace_Placeholders (Result.Text);
+               Result.Text := Format_HTML (Result.Text);
+            else
+               raise Constraint_Error
+                 with "Unknown CTE " & CTE.To_UTF_8_String;
+            end if;
          else
             raise Constraint_Error with
               "Unknown Content-Type: " & CT.To_UTF_8_String;
@@ -924,10 +1000,6 @@ procedure Import_Mail is
                   exit;
                end if;
 
-               if Line.Index (':') = 0 then
-                  Ada.Wide_Wide_Text_IO.Put_Line (Line.To_Wide_Wide_String);
-               end if;
-
                Name := Line.Head (Line.Index (':') - 1).To_Lowercase;
                Value := Line.Tail_From (Name.Length + 2);
 
@@ -945,15 +1017,21 @@ procedure Import_Mail is
    end Messages;
 
    package Storage is
+      procedure Get_User
+        (From : League.Strings.Universal_String;
+         User : out AWFC.Accounts.Users.User_Access);
+
       procedure Get_Topic
         (In_Reply_To : League.Strings.Universal_String;
          Message_Id  : League.Strings.Universal_String;
          Date        : League.Calendars.Date_Time;
          Subject     : League.Strings.Universal_String;
+         User        : AWFC.Accounts.Users.User_Access;
          Topic       : out Forum.Topics.References.Topic);
 
       procedure Put_Post
         (Topic : Forum.Topics.References.Topic;
+         User  : AWFC.Accounts.Users.User_Access;
          Date  : League.Calendars.Date_Time;
          Text  : League.Strings.Universal_String);
 
@@ -968,6 +1046,10 @@ procedure Import_Mail is
       F  : Forum.Forums.Forum;
       C  : Forum.Categories.References.Category;
 
+      function Strip_User_Name
+        (Name : League.Strings.Universal_String)
+         return League.Strings.Universal_String;
+
       ---------------
       -- Get_Topic --
       ---------------
@@ -977,11 +1059,13 @@ procedure Import_Mail is
          Message_Id  : League.Strings.Universal_String;
          Date        : League.Calendars.Date_Time;
          Subject     : League.Strings.Universal_String;
+         User        : AWFC.Accounts.Users.User_Access;
          Topic       : out Forum.Topics.References.Topic) is
       begin
          if In_Reply_To.Is_Empty then
             Topic := F.Create_Topic
-              (Category      => C,
+              (User          => User,
+               Category      => C,
                Title         => Subject,
                Description   => League.Strings.Empty_Universal_String,
                Creation_Time => Date);
@@ -1017,7 +1101,8 @@ procedure Import_Mail is
                else
                   --  Fallback to Get_Topic with In_Reply_To = ""
                   Get_Topic
-                    (In_Reply_To => League.Strings.Empty_Universal_String,
+                    (User        => User,
+                     In_Reply_To => League.Strings.Empty_Universal_String,
                      Message_Id  => Message_Id,
                      Date        => Date,
                      Subject     => Subject,
@@ -1049,30 +1134,81 @@ procedure Import_Mail is
       end Get_Topic;
 
       --------------
+      -- Get_User --
+      --------------
+
+      procedure Get_User
+        (From : League.Strings.Universal_String;
+         User : out AWFC.Accounts.Users.User_Access)
+      is
+         use type AWFC.Accounts.Users.User_Access;
+
+         User_Store : AWFC.Accounts.Users.Stores.User_Store'Class
+           renames AWFC.Accounts.Users.Stores.User_Store'Class
+             (F.Engine.Get_Store
+                (AWFC.Accounts.Users.User'Tag).all);
+
+         Email : constant League.Strings.Universal_String :=
+           Strip_User_Name (From);
+      begin
+         User := User_Store.Incarnate (Email);
+
+         if User = null then
+            User := User_Store.Create (Email);
+         end if;
+      end Get_User;
+
+      --------------
       -- Put_Post --
       --------------
 
       procedure Put_Post
         (Topic : Forum.Topics.References.Topic;
+         User  : AWFC.Accounts.Users.User_Access;
          Date  : League.Calendars.Date_Time;
          Text  : League.Strings.Universal_String)
       is
          Post : Forum.Posts.References.Post;
       begin
          Post := F.Create_Post
-           (Topic         => Topic,
+           (User          => User,
+            Topic         => Topic,
             Text          => Text,
             Creation_Time => Date);
       end Put_Post;
 
+      ---------------------
+      -- Strip_User_Name --
+      ---------------------
+
+      function Strip_User_Name
+        (Name : League.Strings.Universal_String)
+         return League.Strings.Universal_String
+      is
+         From : constant Natural := Name.Index ("<");
+         To   : constant Natural := Name.Index (">");
+      begin
+         if From > 0 and To > 0 then
+            return Name.Slice (From + 1, To - 1);
+         else
+            return Name;
+         end if;
+      end Strip_User_Name;
+
       O     : SQL.Options.SQL_Options;
       Found : Boolean;
       Id    : Forum.Categories.Category_Identifier;
+      Aux   : OPM.Stores.Store_Access;
    begin
       O.Set
         (League.Strings.To_Universal_String ("dbname"),
          League.Strings.To_Universal_String ("forum"));
       F.Initialize (League.Strings.To_Universal_String ("POSTGRESQL"), O);
+
+      Aux := new AWFC.Accounts.Users.Stores.User_Store
+        (F.Engine'Unchecked_Access);
+      Aux.Initialize;
+
       Found := Forum.Categories.Decode (+"1", Id);
       F.Get_Category (Id, C, Found);
    end Storage;
@@ -1099,16 +1235,23 @@ begin
    declare
       Msg   : constant Mails.Mail := Mails.Read_Mail (Value);
       Topic : Forum.Topics.References.Topic;
+      User  : AWFC.Accounts.Users.User_Access;
    begin
+      Storage.Get_User
+        (From => Msg.From,
+         User => User);
+
       Storage.Get_Topic
-        (In_Reply_To => Msg.In_Reply_To,
+        (User        => User,
+         In_Reply_To => Msg.In_Reply_To,
          Message_Id  => Msg.Message_Id,
          Date        => Msg.Date,
          Subject     => Msg.Subject,
          Topic       => Topic);
 
       Storage.Put_Post
-        (Topic => Topic,
+        (User  => User,
+         Topic => Topic,
          Date  => Msg.Date,
          Text  => Msg.Text);
 

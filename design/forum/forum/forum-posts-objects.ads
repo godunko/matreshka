@@ -44,6 +44,8 @@
 with League.Calendars;
 with League.Strings;
 
+with AWFC.Accounts.Users;
+
 limited with Forum.Posts.Objects.Stores;
 
 package Forum.Posts.Objects is
@@ -61,6 +63,9 @@ package Forum.Posts.Objects is
    function Get_Creation_Time
     (Self : Post_Object'Class) return League.Calendars.Date_Time;
 
+   function Get_Author
+    (Self : Post_Object'Class) return AWFC.Accounts.Users.User_Access;
+
 private
 
    type Post_Object
@@ -70,6 +75,7 @@ private
       Identifier     : Post_Identifier;
       Text           : League.Strings.Universal_String;
       Creation_Time  : League.Calendars.Date_Time;
+      Author         : AWFC.Accounts.Users.User_Access;
    end record;
 
 end Forum.Posts.Objects;

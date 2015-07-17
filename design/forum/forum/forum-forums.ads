@@ -47,6 +47,8 @@ with SQL.Options;
 
 with OPM.Engines;
 
+with AWFC.Accounts.Users;
+
 with Forum.Categories.References;
 with Forum.Topics.References;
 with Forum.Posts.References;
@@ -87,6 +89,7 @@ package Forum.Forums is
 
    function Create_Topic
     (Self          : in out Forum'Class;
+     User          : AWFC.Accounts.Users.User_Access;
      Category      : Standard.Forum.Categories.References.Category;
      Title         : League.Strings.Universal_String;
      Description   : League.Strings.Universal_String;
@@ -95,6 +98,7 @@ package Forum.Forums is
 
    function Create_Post
     (Self          : in out Forum'Class;
+     User          : AWFC.Accounts.Users.User_Access;
      Topic         : Standard.Forum.Topics.References.Topic;
      Text          : League.Strings.Universal_String;
      Creation_Time : League.Calendars.Date_Time := League.Calendars.Clock)

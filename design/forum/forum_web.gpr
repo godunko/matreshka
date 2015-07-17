@@ -4,7 +4,6 @@ with "../../gnat/matreshka_servlet";
 with "../../gnat/matreshka_spikedog_api.gpr";
 with "../../gnat/matreshka_xml.gpr";
 
-with "awfc/awfc.gpr";
 with "forum/forum.gpr";
 
 library project Forum_Web is

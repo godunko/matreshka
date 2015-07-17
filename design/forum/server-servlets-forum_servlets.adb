@@ -49,6 +49,8 @@ with League.JSON.Arrays;
 with League.JSON.Objects;
 with League.JSON.Values;
 
+with AWFC.Accounts.Users;
+
 with Forum.Categories.Objects;
 with Forum.Posts.References;
 
@@ -71,6 +73,10 @@ package body Server.Servlets.Forum_Servlets is
    function Page_To_JSON
      (Page  : Positive;
       Total : Positive)
+      return League.JSON.Objects.JSON_Object;
+
+   function User_To_JSON
+     (Self : AWFC.Accounts.Users.User_Access)
       return League.JSON.Objects.JSON_Object;
 
    Format : constant League.Strings.Universal_String :=
@@ -178,6 +184,9 @@ package body Server.Servlets.Forum_Servlets is
                League.JSON.Values.To_JSON_Value
                  (League.Calendars.ISO_8601.Image
                       (Format, J.Object.Get_Creation_Time)));
+            Result.Insert
+              (+"author",
+               User_To_JSON (J.Object.Get_Author).To_JSON_Value);
             List.Append (Result.To_JSON_Value);
          end;
       end loop;
@@ -526,6 +535,9 @@ package body Server.Servlets.Forum_Servlets is
               (League.Calendars.ISO_8601.Image
                    (Format, Self.Object.Get_Creation_Time)));
          Result.Insert
+           (+"created_by",
+            User_To_JSON (Self.Object.Get_Created_By).To_JSON_Value);
+         Result.Insert
            (+"last_post_time",
             League.JSON.Values.To_JSON_Value
               (League.Calendars.ISO_8601.Image
@@ -536,5 +548,26 @@ package body Server.Servlets.Forum_Servlets is
               (+Natural'Wide_Wide_Image (Self.Object.Get_Post_Count)));
       end return;
    end Topic_To_JSON;
+
+   ------------------
+   -- User_To_JSON --
+   ------------------
+
+   function User_To_JSON
+     (Self : AWFC.Accounts.Users.User_Access)
+      return League.JSON.Objects.JSON_Object
+   is
+      Email : constant League.Strings.Universal_String := Self.Get_Email;
+   begin
+      return Result : League.JSON.Objects.JSON_Object do
+         Result.Insert
+           (+"email",
+            League.JSON.Values.To_JSON_Value (Email));
+         Result.Insert
+           (+"nick",
+            League.JSON.Values.To_JSON_Value
+              (Email.Head (Email.Index ("@") - 1)));
+      end return;
+   end User_To_JSON;
 
 end Server.Servlets.Forum_Servlets;
