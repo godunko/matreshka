@@ -10,27 +10,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Interfaces;
+with OpenGL.Functions;
 
-package OpenGL is
+package OpenGL.Contexts is
 
-   pragma Pure;
+   pragma Preelaborate;
 
-   type GLclampf is new Interfaces.IEEE_Float_32 range 0.0 .. 1.0;
+   type OpenGL_Context is limited interface;
 
-   type GLint is new Interfaces.Integer_32;
+   type OpenGL_Context_Access is access all OpenGL_Context'Class;
 
-   type GLsizei is
-     new Interfaces.Integer_32 range 0 .. Interfaces.Integer_32'Last;
+   not overriding function Functions
+    (Self : OpenGL_Context)
+       return access OpenGL.Functions.OpenGL_Functions'Class is abstract;
 
-   type GLenum is private;
-
-   GL_DEPTH_TEST : constant GLenum;
-
-private
-
-   type GLenum is new Interfaces.Unsigned_32;
-
-   GL_DEPTH_TEST : constant GLenum := 16#0B71#;
-
-end OpenGL;
+end OpenGL.Contexts;

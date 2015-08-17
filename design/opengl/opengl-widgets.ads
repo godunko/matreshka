@@ -10,27 +10,24 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Interfaces;
+with OpenGL.Contexts;
 
-package OpenGL is
+package OpenGL.Widgets is
 
-   pragma Pure;
+   pragma Preelaborate;
 
-   type GLclampf is new Interfaces.IEEE_Float_32 range 0.0 .. 1.0;
+   type OpenGL_Widget_Interface is limited interface;
 
-   type GLint is new Interfaces.Integer_32;
+   not overriding procedure Initialize_GL
+    (Self    : in out OpenGL_Widget_Interface;
+     Context : not null OpenGL.Contexts.OpenGL_Context_Access) is null;
 
-   type GLsizei is
-     new Interfaces.Integer_32 range 0 .. Interfaces.Integer_32'Last;
+   not overriding procedure Resize_GL
+    (Self   : in out OpenGL_Widget_Interface;
+     Width  : Integer;
+     Height : Integer) is null;
 
-   type GLenum is private;
+   not overriding procedure Paint_GL
+    (Self   : in out OpenGL_Widget_Interface) is null;
 
-   GL_DEPTH_TEST : constant GLenum;
-
-private
-
-   type GLenum is new Interfaces.Unsigned_32;
-
-   GL_DEPTH_TEST : constant GLenum := 16#0B71#;
-
-end OpenGL;
+end OpenGL.Widgets;

@@ -43,6 +43,9 @@ package OpenGL.Functions is
      Green : OpenGL.GLclampf;
      Blue  : OpenGL.GLclampf;
      Alpha : OpenGL.GLclampf) is abstract;
+   --  glClearColor specifies the red, green, blue, and alpha values used by
+   --  glClear to clear the color buffers. Values specified by glClearColor
+   --  are clamped to the range 0.0 .. 1.0.
 
 --                        void    glClearDepthf(GLclampf depth)
 --                        void    glClearStencil(GLint s)
@@ -69,7 +72,12 @@ package OpenGL.Functions is
 --                        void    glDisableVertexAttribArray(GLuint index)
 --                        void    glDrawArrays(GLenum mode, GLint first, GLsizei count)
 --                        void    glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid * indices)
---                        void    glEnable(GLenum cap)
+
+   not overriding procedure gl_Enable
+    (Self : in out OpenGL_Functions;
+     Cap  : OpenGL.GLenum) is abstract;
+   --  glEnable and glDisable enable and disable various capabilities.
+
 --                        void    glEnableVertexAttribArray(GLuint index)
 --                        void    glFinish()
 --                        void    glFlush()
@@ -168,7 +176,16 @@ package OpenGL.Functions is
 --                        void    glVertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 --                        void    glVertexAttrib4fv(GLuint indx, const GLfloat * values)
 --                        void    glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * ptr)
---                        void    glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+
+   not overriding procedure gl_Viewport
+    (Self   : in out OpenGL_Functions;
+     X      : OpenGL.GLint;
+     Y      : OpenGL.GLint;
+     Width  : OpenGL.GLsizei;
+     Height : OpenGL.GLsizei) is abstract;
+   --  glViewport specifies the affine transformation of x and y from
+   --  normalized device coordinates to window coordinates.
+
 --                        bool    hasOpenGLFeature(QOpenGLFunctions::OpenGLFeature feature) const
 --                        void    initializeOpenGLFunctions()
 --                        QOpenGLFunctions::OpenGLFeatures        openGLFeatures() const
