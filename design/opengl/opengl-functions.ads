@@ -37,6 +37,11 @@ package OpenGL.Functions is
 --                        GLenum  glCheckFramebufferStatus(GLenum target)
 --                        void    glClear(GLbitfield mask)
 
+   not overriding procedure gl_Clear
+    (Self : in out OpenGL_Functions;
+     Mask : OpenGL.Clear_Buffer_Mask) is abstract;
+   --  Clear buffers to preset values.
+
    not overriding procedure gl_Clear_Color
     (Self  : in out OpenGL_Functions;
      Red   : OpenGL.GLclampf;
