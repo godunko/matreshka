@@ -16,20 +16,28 @@ package OpenGL is
 
    pragma Pure;
 
-   type GLclampf is new Interfaces.IEEE_Float_32 range 0.0 .. 1.0;
+   type GLfloat is new Interfaces.IEEE_Float_32;
+
+   subtype GLclampf is GLfloat range 0.0 .. 1.0;
 
    type GLint is new Interfaces.Integer_32;
 
+   type GLuint is new Interfaces.Unsigned_32;
+
    type GLsizei is
      new Interfaces.Integer_32 range 0 .. Interfaces.Integer_32'Last;
+
+   type GLuint_Array is array (Positive range <>) of aliased GLuint;
+
+   type GLbitfield is private;
 
    type GLenum is private;
 
    --  AttribMask
 
-   GL_COLOR_BUFFER_BIT   : constant GLenum;
-   GL_DEPTH_BUFFER_BIT   : constant GLenum;
-   GL_STENCIL_BUFFER_BIT : constant GLenum;
+   GL_COLOR_BUFFER_BIT   : constant GLbitfield;
+   GL_DEPTH_BUFFER_BIT   : constant GLbitfield;
+   GL_STENCIL_BUFFER_BIT : constant GLbitfield;
 
    --  Boolean
 
@@ -46,9 +54,11 @@ package OpenGL is
    GL_TRIANGLE_STRIP : constant GLenum;
    GL_TRIANGLE_FAN   : constant GLenum;
 
-   GL_DEPTH_TEST : constant GLenum;
+   GL_ARRAY_BUFFER         : constant GLenum;
+   GL_DEPTH_TEST           : constant GLenum;
+   GL_ELEMENT_ARRAY_BUFFER : constant GLenum;
 
-   subtype Clear_Buffer_Mask_Bits is GLenum
+   subtype Clear_Buffer_Mask_Bits is GLbitfield
      with Static_Predicate =>
             Clear_Buffer_Mask_Bits in GL_COLOR_BUFFER_BIT
                                        | GL_DEPTH_BUFFER_BIT
@@ -101,8 +111,6 @@ package OpenGL is
    --       <enum name="GL_CONSTANT_ALPHA"/>
    --       <enum name="GL_ONE_MINUS_CONSTANT_ALPHA"/>
    --       <enum name="GL_BLEND_COLOR"/>
-   --       <enum name="GL_ARRAY_BUFFER"/>
-   --       <enum name="GL_ELEMENT_ARRAY_BUFFER"/>
    --       <enum name="GL_ARRAY_BUFFER_BINDING"/>
    --       <enum name="GL_ELEMENT_ARRAY_BUFFER_BINDING"/>
    --       <enum name="GL_STREAM_DRAW"/>
@@ -366,7 +374,6 @@ package OpenGL is
    --       <command name="glActiveTexture"/>
    --       <command name="glAttachShader"/>
    --       <command name="glBindAttribLocation"/>
-   --       <command name="glBindBuffer"/>
    --       <command name="glBindFramebuffer"/>
    --       <command name="glBindRenderbuffer"/>
    --       <command name="glBindTexture"/>
@@ -389,7 +396,6 @@ package OpenGL is
    --       <command name="glCreateProgram"/>
    --       <command name="glCreateShader"/>
    --       <command name="glCullFace"/>
-   --       <command name="glDeleteBuffers"/>
    --       <command name="glDeleteFramebuffers"/>
    --       <command name="glDeleteProgram"/>
    --       <command name="glDeleteRenderbuffers"/>
@@ -409,7 +415,6 @@ package OpenGL is
    --       <command name="glFramebufferRenderbuffer"/>
    --       <command name="glFramebufferTexture2D"/>
    --       <command name="glFrontFace"/>
-   --       <command name="glGenBuffers"/>
    --       <command name="glGenerateMipmap"/>
    --       <command name="glGenFramebuffers"/>
    --       <command name="glGenRenderbuffers"/>
@@ -504,13 +509,17 @@ package OpenGL is
    --     </require>
    --   </feature>
 
+   type Buffer_Type is (Vertex_Buffer, Index_Buffer);
+
 private
+
+   type GLbitfield is new Interfaces.Unsigned_32;
 
    type GLenum is new Interfaces.Unsigned_32;
 
-   GL_DEPTH_BUFFER_BIT   : constant GLenum := 16#0000_0100#;
-   GL_STENCIL_BUFFER_BIT : constant GLenum := 16#0000_0400#;
-   GL_COLOR_BUFFER_BIT   : constant GLenum := 16#0000_4000#;
+   GL_DEPTH_BUFFER_BIT   : constant GLbitfield := 16#0000_0100#;
+   GL_STENCIL_BUFFER_BIT : constant GLbitfield := 16#0000_0400#;
+   GL_COLOR_BUFFER_BIT   : constant GLbitfield := 16#0000_4000#;
 
    GL_FALSE : constant GLenum := 0;
    GL_TRUE  : constant GLenum := 1;
@@ -523,8 +532,10 @@ private
    GL_TRIANGLE_STRIP : constant GLenum := 16#0005#;
    GL_TRIANGLE_FAN   : constant GLenum := 16#0006#;
 
-   GL_DEPTH_TEST     : constant GLenum := 16#0B71#;
+   GL_ARRAY_BUFFER         : constant GLenum := 16#8892#;
+   GL_ELEMENT_ARRAY_BUFFER : constant GLenum := 16#8893#;
+   GL_DEPTH_TEST           : constant GLenum := 16#0B71#;
 
-   type Clear_Buffer_Mask is new GLenum;
+   type Clear_Buffer_Mask is new GLbitfield;
 
 end OpenGL;

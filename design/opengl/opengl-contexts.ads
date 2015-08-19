@@ -24,4 +24,10 @@ package OpenGL.Contexts is
     (Self : OpenGL_Context)
        return access OpenGL.Functions.OpenGL_Functions'Class is abstract;
 
+   function Current_Context return OpenGL_Context_Access;
+
+private
+
+   procedure Set_Current_Context (Context : OpenGL_Context_Access);
+
 end OpenGL.Contexts;

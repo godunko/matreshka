@@ -17,13 +17,21 @@ package OpenGL.Functions is
 
    type OpenGL_Functions is limited interface;
 
+   type OpenGL_Functions_Access is access all OpenGL_Functions'Class;
+
 --        QOpenGLFunctions()
 --                QOpenGLFunctions(QOpenGLContext * context)
 --                        ~QOpenGLFunctions()
 --                        void    glActiveTexture(GLenum texture)
 --                        void    glAttachShader(GLuint program, GLuint shader)
 --                        void    glBindAttribLocation(GLuint program, GLuint index, const char * name)
---                        void    glBindBuffer(GLenum target, GLuint buffer)
+
+   not overriding procedure gl_Bind_Buffer
+    (Self   : in out OpenGL_Functions;
+     Target : OpenGL.GLenum;
+     Buffer : OpenGL.GLuint) is abstract;
+   --  Bind a named buffer object.
+
 --                        void    glBindFramebuffer(GLenum target, GLuint framebuffer)
 --                        void    glBindRenderbuffer(GLenum target, GLuint renderbuffer)
 --                        void    glBindTexture(GLenum target, GLuint texture)
@@ -63,7 +71,12 @@ package OpenGL.Functions is
 --                        GLuint  glCreateProgram()
 --                        GLuint  glCreateShader(GLenum type)
 --                        void    glCullFace(GLenum mode)
---                        void    glDeleteBuffers(GLsizei n, const GLuint * buffers)
+
+   not overriding procedure gl_Delete_Buffers
+    (Self    : in out OpenGL_Functions;
+     Buffers : in out OpenGL.GLuint_Array) is abstract;
+   --  Delete named buffer objects.
+
 --                        void    glDeleteFramebuffers(GLsizei n, const GLuint * framebuffers)
 --                        void    glDeleteProgram(GLuint program)
 --                        void    glDeleteRenderbuffers(GLsizei n, const GLuint * renderbuffers)
@@ -89,7 +102,12 @@ package OpenGL.Functions is
 --                        void    glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
 --                        void    glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 --                        void    glFrontFace(GLenum mode)
---                        void    glGenBuffers(GLsizei n, GLuint * buffers)
+
+   not overriding procedure gl_Gen_Buffers
+    (Self    : in out OpenGL_Functions;
+     Buffers : in out OpenGL.GLuint_Array) is abstract;
+   --  Generate buffer object names.
+
 --                        void    glGenFramebuffers(GLsizei n, GLuint * framebuffers)
 --                        void    glGenRenderbuffers(GLsizei n, GLuint * renderbuffers)
 --                        void    glGenTextures(GLsizei n, GLuint * textures)
