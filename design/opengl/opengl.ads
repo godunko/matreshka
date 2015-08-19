@@ -11,6 +11,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Interfaces;
+with System.Storage_Elements;
 
 package OpenGL is
 
@@ -28,6 +29,8 @@ package OpenGL is
      new Interfaces.Integer_32 range 0 .. Interfaces.Integer_32'Last;
 
    type GLuint_Array is array (Positive range <>) of aliased GLuint;
+
+   type GLsizeiptr is new System.Storage_Elements.Storage_Offset;
 
    type GLbitfield is private;
 
@@ -57,6 +60,9 @@ package OpenGL is
    GL_ARRAY_BUFFER         : constant GLenum;
    GL_DEPTH_TEST           : constant GLenum;
    GL_ELEMENT_ARRAY_BUFFER : constant GLenum;
+   GL_STATIC_DRAW          : constant GLenum;
+   GL_STREAM_DRAW          : constant GLenum;
+   GL_DYNAMIC_DRAW         : constant GLenum;
 
    subtype Clear_Buffer_Mask_Bits is GLbitfield
      with Static_Predicate =>
@@ -113,9 +119,6 @@ package OpenGL is
    --       <enum name="GL_BLEND_COLOR"/>
    --       <enum name="GL_ARRAY_BUFFER_BINDING"/>
    --       <enum name="GL_ELEMENT_ARRAY_BUFFER_BINDING"/>
-   --       <enum name="GL_STREAM_DRAW"/>
-   --       <enum name="GL_STATIC_DRAW"/>
-   --       <enum name="GL_DYNAMIC_DRAW"/>
    --       <enum name="GL_BUFFER_SIZE"/>
    --       <enum name="GL_BUFFER_USAGE"/>
    --       <enum name="GL_CURRENT_VERTEX_ATTRIB"/>
@@ -382,7 +385,6 @@ package OpenGL is
    --       <command name="glBlendEquationSeparate"/>
    --       <command name="glBlendFunc"/>
    --       <command name="glBlendFuncSeparate"/>
-   --       <command name="glBufferData"/>
    --       <command name="glBufferSubData"/>
    --       <command name="glCheckFramebufferStatus"/>
    --       <command name="glClearDepthf"/>
@@ -532,9 +534,14 @@ private
    GL_TRIANGLE_STRIP : constant GLenum := 16#0005#;
    GL_TRIANGLE_FAN   : constant GLenum := 16#0006#;
 
+   GL_DEPTH_TEST           : constant GLenum := 16#0B71#;
+
    GL_ARRAY_BUFFER         : constant GLenum := 16#8892#;
    GL_ELEMENT_ARRAY_BUFFER : constant GLenum := 16#8893#;
-   GL_DEPTH_TEST           : constant GLenum := 16#0B71#;
+
+   GL_STREAM_DRAW          : constant GLenum := 16#88E0#;
+   GL_STATIC_DRAW          : constant GLenum := 16#88E4#;
+   GL_DYNAMIC_DRAW         : constant GLenum := 16#88E8#;
 
    type Clear_Buffer_Mask is new GLbitfield;
 

@@ -11,6 +11,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Ada.Unchecked_Deallocation;
+with System;
 
 with Matreshka.Atomics.Counters;
 
@@ -22,10 +23,11 @@ package body OpenGL.Generic_Buffers is
    use type OpenGL.Contexts.OpenGL_Context_Access;
 
    type Buffer_Shared_Data is record
-      Counter     : Matreshka.Atomics.Counters.Counter;
-      Context     : OpenGL.Contexts.OpenGL_Context_Access;
-      Buffer_Type : OpenGL.GLenum;
-      Buffer_Id   : OpenGL.GLuint;
+      Counter      : Matreshka.Atomics.Counters.Counter;
+      Context      : OpenGL.Contexts.OpenGL_Context_Access;
+      Buffer_Type  : OpenGL.GLenum;
+      Buffer_Usage : OpenGL.GLenum;
+      Buffer_Id    : OpenGL.GLuint;
    end record;
 
    procedure Reference (Self : in out not null Buffer_Shared_Data_Access);
@@ -42,6 +44,20 @@ package body OpenGL.Generic_Buffers is
          Reference (Self.Data);
       end if;
    end Adjust;
+
+   --------------
+   -- Allocate --
+   --------------
+
+   procedure Allocate
+    (Self : in out OpenGL_Buffer'Class; Data : Element_Array) is
+   begin
+      Self.Data.Context.Functions.gl_Buffer_Data
+       (Self.Data.Buffer_Type,
+        Data'Size / System.Storage_Unit,
+        Data (Data'First)'Address,
+        Self.Data.Buffer_Usage);
+   end Allocate;
 
    ----------
    -- Bind --
@@ -117,16 +133,16 @@ package body OpenGL.Generic_Buffers is
          raise Program_Error;
       end if;
 
---      Functions := OpenGL.Contexts.Current_Context.Functions;
       Self.Data :=
         new Buffer_Shared_Data'
-             (Counter     => <>,
-              Context     => OpenGL.Contexts.Current_Context,
-              Buffer_Type =>
+             (Counter      => <>,
+              Context      => OpenGL.Contexts.Current_Context,
+              Buffer_Type  =>
                (if Buffer_Type = Vertex_Buffer
                   then GL_ARRAY_BUFFER
                   else GL_ELEMENT_ARRAY_BUFFER),
-              Buffer_Id   => 0);
+              Buffer_Usage => GL_STATIC_DRAW,
+              Buffer_Id    => 0);
    end Initialize;
 
    ---------------

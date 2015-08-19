@@ -23,8 +23,8 @@ package OpenGL.Generic_Buffers is
 
    type OpenGL_Buffer is tagged private;
 
---   procedure Allocate
---    (Self : in out OpenGL_Buffer'Class; Data : Element_Array);
+   procedure Allocate
+    (Self : in out OpenGL_Buffer'Class; Data : Element_Array);
    --  Allocates necessary space to the buffer, initialized to the contents of
    --  data. Any previous contents will be removed.
    --

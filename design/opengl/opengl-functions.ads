@@ -40,7 +40,14 @@ package OpenGL.Functions is
 --                        void    glBlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
 --                        void    glBlendFunc(GLenum sfactor, GLenum dfactor)
 --                        void    glBlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
---                        void    glBufferData(GLenum target, qopengl_GLsizeiptr size, const void * data, GLenum usage)
+
+   not overriding procedure gl_Buffer_Data
+    (Self   : in out OpenGL_Functions;
+     Target : OpenGL.GLenum;
+     Size   : OpenGL.GLsizeiptr;
+     Data   : System.Address;
+     Usage  : OpenGL.GLenum) is abstract;
+
 --                        void    glBufferSubData(GLenum target, qopengl_GLintptr offset, qopengl_GLsizeiptr size, const void * data)
 --                        GLenum  glCheckFramebufferStatus(GLenum target)
 --                        void    glClear(GLbitfield mask)
