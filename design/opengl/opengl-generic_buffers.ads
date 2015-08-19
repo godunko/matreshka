@@ -39,11 +39,11 @@ package OpenGL.Generic_Buffers is
    --  Binds the buffer associated with this object to the current OpenGL
    --  context. Raises Program_Error when error occurs.
 
-   procedure Create (Self : in out OpenGL_Buffer'Class);
-
-   procedure Initialize
+   procedure Create
     (Self        : in out OpenGL_Buffer'Class;
      Buffer_Type : OpenGL.Buffer_Type);
+   --  Creates the buffer object in the OpenGL server. Returns True if the
+   --  object was created; False otherwise.
 
 private
 

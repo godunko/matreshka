@@ -10,16 +10,32 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with "matreshka/league.gpr";
+with League.Strings;
 
-project OpenGL is
+package OpenGL.Shaders is
 
-   for Object_Dir use "../.objs";
+   pragma Preelaborate;
 
-   package Compiler is
+   type OpenGL_Shader is tagged private;
 
-      for Default_Switches ("Ada") use ("-g");
+   procedure Create
+    (Self        : in out OpenGL_Shader'Class;
+     Shader_Type : OpenGL.Shader_Type);
+   --  Creates shader of specified type.
 
-   end Compiler;
+   procedure Compile_Source_Code
+    (Self : in out OpenGL_Shader'Class;
+     Code : League.Strings.Universal_String);
+   --  Sets the source code for this shader and compiles it. Returns True if
+   --  the source was successfully compiled, False otherwise.
 
-end OpenGL;
+private
+
+   type Shader_Shared_Data;
+   type Shader_Shared_Data_Access is access all Shader_Shared_Data;
+
+   type OpenGL_Shader is tagged record
+      Data : Shader_Shared_Data_Access;
+   end record;
+
+end OpenGL.Shaders;

@@ -58,11 +58,18 @@ package OpenGL is
    GL_TRIANGLE_FAN   : constant GLenum;
 
    GL_ARRAY_BUFFER         : constant GLenum;
+   GL_COMPILE_STATUS       : constant GLenum;
+   GL_DELETE_STATUS        : constant GLenum;
    GL_DEPTH_TEST           : constant GLenum;
+   GL_DYNAMIC_DRAW         : constant GLenum;
    GL_ELEMENT_ARRAY_BUFFER : constant GLenum;
+   GL_FRAGMENT_SHADER      : constant GLenum;
+   GL_INFO_LOG_LENGTH      : constant GLenum;
+   GL_SHADER_SOURCE_LENGTH : constant GLenum;
+   GL_SHADER_TYPE          : constant GLenum;
    GL_STATIC_DRAW          : constant GLenum;
    GL_STREAM_DRAW          : constant GLenum;
-   GL_DYNAMIC_DRAW         : constant GLenum;
+   GL_VERTEX_SHADER        : constant GLenum;
 
    subtype Clear_Buffer_Mask_Bits is GLbitfield
      with Static_Predicate =>
@@ -210,8 +217,6 @@ package OpenGL is
    --       <enum name="GL_UNSIGNED_SHORT_4_4_4_4"/>
    --       <enum name="GL_UNSIGNED_SHORT_5_5_5_1"/>
    --       <enum name="GL_UNSIGNED_SHORT_5_6_5"/>
-   --       <enum name="GL_FRAGMENT_SHADER"/>
-   --       <enum name="GL_VERTEX_SHADER"/>
    --       <enum name="GL_MAX_VERTEX_ATTRIBS"/>
    --       <enum name="GL_MAX_VERTEX_UNIFORM_VECTORS"/>
    --       <enum name="GL_MAX_VARYING_VECTORS"/>
@@ -219,8 +224,6 @@ package OpenGL is
    --       <enum name="GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS"/>
    --       <enum name="GL_MAX_TEXTURE_IMAGE_UNITS"/>
    --       <enum name="GL_MAX_FRAGMENT_UNIFORM_VECTORS"/>
-   --       <enum name="GL_SHADER_TYPE"/>
-   --       <enum name="GL_DELETE_STATUS"/>
    --       <enum name="GL_LINK_STATUS"/>
    --       <enum name="GL_VALIDATE_STATUS"/>
    --       <enum name="GL_ATTACHED_SHADERS"/>
@@ -329,9 +332,6 @@ package OpenGL is
    --       <enum name="GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING"/>
    --       <enum name="GL_IMPLEMENTATION_COLOR_READ_TYPE"/>
    --       <enum name="GL_IMPLEMENTATION_COLOR_READ_FORMAT"/>
-   --       <enum name="GL_COMPILE_STATUS"/>
-   --       <enum name="GL_INFO_LOG_LENGTH"/>
-   --       <enum name="GL_SHADER_SOURCE_LENGTH"/>
    --       <enum name="GL_SHADER_COMPILER"/>
    --       <enum name="GL_SHADER_BINARY_FORMATS"/>
    --       <enum name="GL_NUM_SHADER_BINARY_FORMATS"/>
@@ -390,7 +390,6 @@ package OpenGL is
    --       <command name="glClearDepthf"/>
    --       <command name="glClearStencil"/>
    --       <command name="glColorMask"/>
-   --       <command name="glCompileShader"/>
    --       <command name="glCompressedTexImage2D"/>
    --       <command name="glCompressedTexSubImage2D"/>
    --       <command name="glCopyTexImage2D"/>
@@ -434,7 +433,6 @@ package OpenGL is
    --       <command name="glGetProgramiv"/>
    --       <command name="glGetProgramInfoLog"/>
    --       <command name="glGetRenderbufferParameteriv"/>
-   --       <command name="glGetShaderiv"/>
    --       <command name="glGetShaderInfoLog"/>
    --       <command name="glGetShaderPrecisionFormat"/>
    --       <command name="glGetShaderSource"/>
@@ -465,7 +463,6 @@ package OpenGL is
    --       <command name="glSampleCoverage"/>
    --       <command name="glScissor"/>
    --       <command name="glShaderBinary"/>
-   --       <command name="glShaderSource"/>
    --       <command name="glStencilFunc"/>
    --       <command name="glStencilFuncSeparate"/>
    --       <command name="glStencilMask"/>
@@ -513,6 +510,8 @@ package OpenGL is
 
    type Buffer_Type is (Vertex_Buffer, Index_Buffer);
 
+   type Shader_Type is (Vertex_Shader, Fragment_Shader);
+
 private
 
    type GLbitfield is new Interfaces.Unsigned_32;
@@ -542,6 +541,14 @@ private
    GL_STREAM_DRAW          : constant GLenum := 16#88E0#;
    GL_STATIC_DRAW          : constant GLenum := 16#88E4#;
    GL_DYNAMIC_DRAW         : constant GLenum := 16#88E8#;
+
+   GL_FRAGMENT_SHADER      : constant GLenum := 16#8B30#;
+   GL_VERTEX_SHADER        : constant GLenum := 16#8B31#;
+   GL_SHADER_TYPE          : constant GLenum := 16#8B4F#;
+   GL_DELETE_STATUS        : constant GLenum := 16#8B80#;
+   GL_COMPILE_STATUS       : constant GLenum := 16#8B81#;
+   GL_INFO_LOG_LENGTH      : constant GLenum := 16#8B84#;
+   GL_SHADER_SOURCE_LENGTH : constant GLenum := 16#8B88#;
 
    type Clear_Buffer_Mask is new GLbitfield;
 

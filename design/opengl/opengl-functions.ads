@@ -10,6 +10,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.String_Vectors;
 
 package OpenGL.Functions is
 
@@ -70,13 +71,23 @@ package OpenGL.Functions is
 --                        void    glClearDepthf(GLclampf depth)
 --                        void    glClearStencil(GLint s)
 --                        void    glColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha)
---                        void    glCompileShader(GLuint shader)
+
+   not overriding procedure gl_Compile_Shader
+    (Self   : in out OpenGL_Functions;
+     Shader : OpenGL.GLuint) is abstract;
+   --  Compile a shader object.
+
 --                        void    glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void * data)
 --                        void    glCompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void * data)
 --                        void    glCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
 --                        void    glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 --                        GLuint  glCreateProgram()
---                        GLuint  glCreateShader(GLenum type)
+
+   not overriding function gl_Create_Shader
+    (Self        : in out OpenGL_Functions;
+     Shader_Type : OpenGL.GLenum) return OpenGL.GLuint is abstract;
+   --  Creates a shader object.
+
 --                        void    glCullFace(GLenum mode)
 
    not overriding procedure gl_Delete_Buffers
@@ -135,7 +146,14 @@ package OpenGL.Functions is
 --                        void    glGetShaderInfoLog(GLuint shader, GLsizei bufsize, GLsizei * length, char * infolog)
 --                        void    glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint * range, GLint * precision)
 --                        void    glGetShaderSource(GLuint shader, GLsizei bufsize, GLsizei * length, char * source)
---                        void    glGetShaderiv(GLuint shader, GLenum pname, GLint * params)
+
+   not overriding procedure gl_Get_Shaderiv
+    (Self   : in out OpenGL_Functions;
+     Shader : OpenGL.GLuint;
+     Pname  : OpenGL.GLenum;
+     Param  : out OpenGL.GLint) is abstract;
+   --  Return a parameter from a shader object.
+
 --                        const GLubyte *         glGetString(GLenum name)
 --                        void    glGetTexParameterfv(GLenum target, GLenum pname, GLfloat * params)
 --                        void    glGetTexParameteriv(GLenum target, GLenum pname, GLint * params)
@@ -163,7 +181,13 @@ package OpenGL.Functions is
 --                        void    glSampleCoverage(GLclampf value, GLboolean invert)
 --                        void    glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 --                        void    glShaderBinary(GLint n, const GLuint * shaders, GLenum binaryformat, const void * binary, GLint length)
---                        void    glShaderSource(GLuint shader, GLsizei count, const char ** string, const GLint * length)
+
+   not overriding procedure gl_Shader_Source
+    (Self   : in out OpenGL_Functions;
+     Shader : OpenGL.GLuint;
+     Code   : League.String_Vectors.Universal_String_Vector) is abstract;
+   --  Replace the source code in a shader object.
+
 --                        void    glStencilFunc(GLenum func, GLint ref, GLuint mask)
 --                        void    glStencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
 --                        void    glStencilMask(GLuint mask)

@@ -96,18 +96,28 @@ package body OpenGL.Generic_Buffers is
    -- Create --
    ------------
 
-   procedure Create (Self : in out OpenGL_Buffer'Class) is
+   procedure Create
+    (Self        : in out OpenGL_Buffer'Class;
+     Buffer_Type : OpenGL.Buffer_Type)
+   is
       Buffers : OpenGL.GLuint_Array (1 .. 1);
 
    begin
-      if Self.Data = null then
-         --  Initialize buffer as vertex buffer when it was not be initialized.
-
-         Self.Initialize (OpenGL.Vertex_Buffer);
+      if OpenGL.Contexts.Current_Context = null then
+         raise Program_Error;
       end if;
 
-      Self.Data.Context.Functions.gl_Gen_Buffers (Buffers);
-      Self.Data.Buffer_Id := Buffers (Buffers'First);
+      OpenGL.Contexts.Current_Context.Functions.gl_Gen_Buffers (Buffers);
+      Self.Data :=
+        new Buffer_Shared_Data'
+             (Counter      => <>,
+              Context      => OpenGL.Contexts.Current_Context,
+              Buffer_Type  =>
+               (if Buffer_Type = Vertex_Buffer
+                  then GL_ARRAY_BUFFER
+                  else GL_ELEMENT_ARRAY_BUFFER),
+              Buffer_Usage => GL_STATIC_DRAW,
+              Buffer_Id    => Buffers (Buffers'First));
    end Create;
 
    --------------
