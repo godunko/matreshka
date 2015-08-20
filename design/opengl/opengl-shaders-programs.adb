@@ -34,6 +34,15 @@ package body OpenGL.Shaders.Programs is
        (Self.Data.Program_Id, Shader.Shader_Id);
    end Add_Shader;
 
+   ----------
+   -- Bind --
+   ----------
+
+   procedure Bind (Self : in out OpenGL_Shader_Program'Class) is
+   begin
+      Self.Data.Context.Functions.gl_Use_Program (Self.Data.Program_Id);
+   end Bind;
+
    ------------
    -- Create --
    ------------

@@ -32,6 +32,10 @@ package OpenGL.Shaders.Programs is
    --  Add_Shader. Returns True if the link was successful or False otherwise.
    --  If the link failed, the error messages can be retrieved with Log.
 
+   procedure Bind (Self : in out OpenGL_Shader_Program'Class);
+   --  Binds this shader program to the active OpenGL_Context and makes it the
+   --  current shader program. Any previously bound shader program is released.
+
 private
 
    type Program_Shared_Data;

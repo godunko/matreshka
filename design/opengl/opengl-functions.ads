@@ -241,7 +241,12 @@ package OpenGL.Functions is
 --                        void    glUniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
 --                        void    glUniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
 --                        void    glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
---                        void    glUseProgram(GLuint program)
+
+   not overriding procedure gl_Use_Program
+    (Self    : in out OpenGL_Functions;
+     Program : OpenGL.GLuint) is abstract;
+   --  Install a program object as part of current rendering state.
+
 --                        void    glValidateProgram(GLuint program)
 --                        void    glVertexAttrib1f(GLuint indx, GLfloat x)
 --                        void    glVertexAttrib1fv(GLuint indx, const GLfloat * values)

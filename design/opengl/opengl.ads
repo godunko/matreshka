@@ -486,7 +486,6 @@ package OpenGL is
    --       <command name="glUniformMatrix2fv"/>
    --       <command name="glUniformMatrix3fv"/>
    --       <command name="glUniformMatrix4fv"/>
-   --       <command name="glUseProgram"/>
    --       <command name="glValidateProgram"/>
    --       <command name="glVertexAttrib1f"/>
    --       <command name="glVertexAttrib1fv"/>
