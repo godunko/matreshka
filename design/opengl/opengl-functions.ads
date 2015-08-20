@@ -24,7 +24,13 @@ package OpenGL.Functions is
 --                QOpenGLFunctions(QOpenGLContext * context)
 --                        ~QOpenGLFunctions()
 --                        void    glActiveTexture(GLenum texture)
---                        void    glAttachShader(GLuint program, GLuint shader)
+
+   not overriding procedure gl_Attach_Shader
+    (Self    : in out OpenGL_Functions;
+     Program : OpenGL.GLuint;
+     Shader  : OpenGL.GLuint) is abstract;
+   --  Attaches a shader object to a program object.
+
 --                        void    glBindAttribLocation(GLuint program, GLuint index, const char * name)
 
    not overriding procedure gl_Bind_Buffer
@@ -81,7 +87,12 @@ package OpenGL.Functions is
 --                        void    glCompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void * data)
 --                        void    glCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
 --                        void    glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+
 --                        GLuint  glCreateProgram()
+
+   not overriding function gl_Create_Program
+    (Self : in out OpenGL_Functions) return OpenGL.GLuint is abstract;
+   --  Creates a program object.
 
    not overriding function gl_Create_Shader
     (Self        : in out OpenGL_Functions;
@@ -141,7 +152,14 @@ package OpenGL.Functions is
 --                        void    glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint * params)
 --                        void    glGetIntegerv(GLenum pname, GLint * params)
 --                        void    glGetProgramInfoLog(GLuint program, GLsizei bufsize, GLsizei * length, char * infolog)
---                        void    glGetProgramiv(GLuint program, GLenum pname, GLint * params)
+
+   not overriding procedure gl_Get_Programiv
+    (Self    : in out OpenGL_Functions;
+     Program : OpenGL.GLuint;
+     Pname   : OpenGL.GLenum;
+     Param   : out OpenGL.GLint) is abstract;
+   --  Return a parameter from a program object.
+
 --                        void    glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint * params)
 --                        void    glGetShaderInfoLog(GLuint shader, GLsizei bufsize, GLsizei * length, char * infolog)
 --                        void    glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint * range, GLint * precision)
@@ -172,7 +190,11 @@ package OpenGL.Functions is
 --                        GLboolean       glIsShader(GLuint shader)
 --                        GLboolean       glIsTexture(GLuint texture)
 --                        void    glLineWidth(GLfloat width)
---                        void    glLinkProgram(GLuint program)
+
+   not overriding procedure gl_Link_Program
+    (Self    : in out OpenGL_Functions;
+     Program : OpenGL.GLuint) is abstract;
+
 --                        void    glPixelStorei(GLenum pname, GLint param)
 --                        void    glPolygonOffset(GLfloat factor, GLfloat units)
 --                        void    glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid * pixels)

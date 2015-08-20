@@ -79,4 +79,13 @@ package body OpenGL.Shaders is
               Shader_Id => Shader_Id);
    end Create;
 
+   ---------------
+   -- Shader_Id --
+   ---------------
+
+   function Shader_Id (Self : OpenGL_Shader'Class) return OpenGL.GLuint is
+   begin
+      return Self.Data.Shader_Id;
+   end Shader_Id;
+
 end OpenGL.Shaders;

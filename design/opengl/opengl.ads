@@ -57,19 +57,23 @@ package OpenGL is
    GL_TRIANGLE_STRIP : constant GLenum;
    GL_TRIANGLE_FAN   : constant GLenum;
 
-   GL_ARRAY_BUFFER         : constant GLenum;
-   GL_COMPILE_STATUS       : constant GLenum;
-   GL_DELETE_STATUS        : constant GLenum;
-   GL_DEPTH_TEST           : constant GLenum;
-   GL_DYNAMIC_DRAW         : constant GLenum;
-   GL_ELEMENT_ARRAY_BUFFER : constant GLenum;
-   GL_FRAGMENT_SHADER      : constant GLenum;
-   GL_INFO_LOG_LENGTH      : constant GLenum;
-   GL_SHADER_SOURCE_LENGTH : constant GLenum;
-   GL_SHADER_TYPE          : constant GLenum;
-   GL_STATIC_DRAW          : constant GLenum;
-   GL_STREAM_DRAW          : constant GLenum;
-   GL_VERTEX_SHADER        : constant GLenum;
+   GL_ACTIVE_ATTRIBUTE_MAX_LENGTH : constant GLenum;
+   GL_ACTIVE_ATTRIBUTES           : constant GLenum;
+   GL_ARRAY_BUFFER                : constant GLenum;
+   GL_COMPILE_STATUS              : constant GLenum;
+   GL_DELETE_STATUS               : constant GLenum;
+   GL_DEPTH_TEST                  : constant GLenum;
+   GL_DYNAMIC_DRAW                : constant GLenum;
+   GL_ELEMENT_ARRAY_BUFFER        : constant GLenum;
+   GL_FRAGMENT_SHADER             : constant GLenum;
+   GL_INFO_LOG_LENGTH             : constant GLenum;
+   GL_LINK_STATUS                 : constant GLenum;
+   GL_SHADER_SOURCE_LENGTH        : constant GLenum;
+   GL_SHADER_TYPE                 : constant GLenum;
+   GL_STATIC_DRAW                 : constant GLenum;
+   GL_STREAM_DRAW                 : constant GLenum;
+   GL_VALIDATE_STATUS             : constant GLenum;
+   GL_VERTEX_SHADER               : constant GLenum;
 
    subtype Clear_Buffer_Mask_Bits is GLbitfield
      with Static_Predicate =>
@@ -224,13 +228,6 @@ package OpenGL is
    --       <enum name="GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS"/>
    --       <enum name="GL_MAX_TEXTURE_IMAGE_UNITS"/>
    --       <enum name="GL_MAX_FRAGMENT_UNIFORM_VECTORS"/>
-   --       <enum name="GL_LINK_STATUS"/>
-   --       <enum name="GL_VALIDATE_STATUS"/>
-   --       <enum name="GL_ATTACHED_SHADERS"/>
-   --       <enum name="GL_ACTIVE_UNIFORMS"/>
-   --       <enum name="GL_ACTIVE_UNIFORM_MAX_LENGTH"/>
-   --       <enum name="GL_ACTIVE_ATTRIBUTES"/>
-   --       <enum name="GL_ACTIVE_ATTRIBUTE_MAX_LENGTH"/>
    --       <enum name="GL_SHADING_LANGUAGE_VERSION"/>
    --       <enum name="GL_CURRENT_PROGRAM"/>
    --       <enum name="GL_NEVER"/>
@@ -375,7 +372,6 @@ package OpenGL is
    --       <enum name="GL_MAX_RENDERBUFFER_SIZE"/>
    --       <enum name="GL_INVALID_FRAMEBUFFER_OPERATION"/>
    --       <command name="glActiveTexture"/>
-   --       <command name="glAttachShader"/>
    --       <command name="glBindAttribLocation"/>
    --       <command name="glBindFramebuffer"/>
    --       <command name="glBindRenderbuffer"/>
@@ -394,8 +390,6 @@ package OpenGL is
    --       <command name="glCompressedTexSubImage2D"/>
    --       <command name="glCopyTexImage2D"/>
    --       <command name="glCopyTexSubImage2D"/>
-   --       <command name="glCreateProgram"/>
-   --       <command name="glCreateShader"/>
    --       <command name="glCullFace"/>
    --       <command name="glDeleteFramebuffers"/>
    --       <command name="glDeleteProgram"/>
@@ -430,7 +424,6 @@ package OpenGL is
    --       <command name="glGetFloatv"/>
    --       <command name="glGetFramebufferAttachmentParameteriv"/>
    --       <command name="glGetIntegerv"/>
-   --       <command name="glGetProgramiv"/>
    --       <command name="glGetProgramInfoLog"/>
    --       <command name="glGetRenderbufferParameteriv"/>
    --       <command name="glGetShaderInfoLog"/>
@@ -454,7 +447,6 @@ package OpenGL is
    --       <command name="glIsShader"/>
    --       <command name="glIsTexture"/>
    --       <command name="glLineWidth"/>
-   --       <command name="glLinkProgram"/>
    --       <command name="glPixelStorei"/>
    --       <command name="glPolygonOffset"/>
    --       <command name="glReadPixels"/>
@@ -533,22 +525,26 @@ private
    GL_TRIANGLE_STRIP : constant GLenum := 16#0005#;
    GL_TRIANGLE_FAN   : constant GLenum := 16#0006#;
 
-   GL_DEPTH_TEST           : constant GLenum := 16#0B71#;
+   GL_DEPTH_TEST                  : constant GLenum := 16#0B71#;
 
-   GL_ARRAY_BUFFER         : constant GLenum := 16#8892#;
-   GL_ELEMENT_ARRAY_BUFFER : constant GLenum := 16#8893#;
+   GL_ARRAY_BUFFER                : constant GLenum := 16#8892#;
+   GL_ELEMENT_ARRAY_BUFFER        : constant GLenum := 16#8893#;
 
-   GL_STREAM_DRAW          : constant GLenum := 16#88E0#;
-   GL_STATIC_DRAW          : constant GLenum := 16#88E4#;
-   GL_DYNAMIC_DRAW         : constant GLenum := 16#88E8#;
+   GL_STREAM_DRAW                 : constant GLenum := 16#88E0#;
+   GL_STATIC_DRAW                 : constant GLenum := 16#88E4#;
+   GL_DYNAMIC_DRAW                : constant GLenum := 16#88E8#;
 
-   GL_FRAGMENT_SHADER      : constant GLenum := 16#8B30#;
-   GL_VERTEX_SHADER        : constant GLenum := 16#8B31#;
-   GL_SHADER_TYPE          : constant GLenum := 16#8B4F#;
-   GL_DELETE_STATUS        : constant GLenum := 16#8B80#;
-   GL_COMPILE_STATUS       : constant GLenum := 16#8B81#;
-   GL_INFO_LOG_LENGTH      : constant GLenum := 16#8B84#;
-   GL_SHADER_SOURCE_LENGTH : constant GLenum := 16#8B88#;
+   GL_FRAGMENT_SHADER             : constant GLenum := 16#8B30#;
+   GL_VERTEX_SHADER               : constant GLenum := 16#8B31#;
+   GL_SHADER_TYPE                 : constant GLenum := 16#8B4F#;
+   GL_DELETE_STATUS               : constant GLenum := 16#8B80#;
+   GL_COMPILE_STATUS              : constant GLenum := 16#8B81#;
+   GL_LINK_STATUS                 : constant GLenum := 16#8B82#;
+   GL_VALIDATE_STATUS             : constant GLenum := 16#8B83#;
+   GL_INFO_LOG_LENGTH             : constant GLenum := 16#8B84#;
+   GL_SHADER_SOURCE_LENGTH        : constant GLenum := 16#8B88#;
+   GL_ACTIVE_ATTRIBUTES           : constant GLenum := 16#8B89#;
+   GL_ACTIVE_ATTRIBUTE_MAX_LENGTH : constant GLenum := 16#8B8A#;
 
    type Clear_Buffer_Mask is new GLbitfield;
 

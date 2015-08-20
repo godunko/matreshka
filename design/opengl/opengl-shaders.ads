@@ -10,6 +10,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Finalization;
+
 with League.Strings;
 
 package OpenGL.Shaders is
@@ -29,12 +31,15 @@ package OpenGL.Shaders is
    --  Sets the source code for this shader and compiles it. Returns True if
    --  the source was successfully compiled, False otherwise.
 
+   function Shader_Id (Self : OpenGL_Shader'Class) return OpenGL.GLuint;
+   --  Returns the OpenGL identifier associated with this shader.
+
 private
 
    type Shader_Shared_Data;
    type Shader_Shared_Data_Access is access all Shader_Shared_Data;
 
-   type OpenGL_Shader is tagged record
+   type OpenGL_Shader is new Ada.Finalization.Controlled with record
       Data : Shader_Shared_Data_Access;
    end record;
 
