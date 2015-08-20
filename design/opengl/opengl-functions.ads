@@ -117,7 +117,14 @@ package OpenGL.Functions is
 --                        void    glDetachShader(GLuint program, GLuint shader)
 --                        void    glDisable(GLenum cap)
 --                        void    glDisableVertexAttribArray(GLuint index)
---                        void    glDrawArrays(GLenum mode, GLint first, GLsizei count)
+
+   not overriding procedure gl_Draw_Arrays
+    (Self  : in out OpenGL_Functions;
+     Mode  : OpenGL.GLenum;
+     First : OpenGL.GLint;
+     Count : OpenGL.GLsizei) is abstract;
+   --  Render primitives from array data.
+
 --                        void    glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid * indices)
 
    not overriding procedure gl_Enable

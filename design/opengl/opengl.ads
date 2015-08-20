@@ -402,7 +402,6 @@ package OpenGL is
    --       <command name="glDetachShader"/>
    --       <command name="glDisable"/>
    --       <command name="glDisableVertexAttribArray"/>
-   --       <command name="glDrawArrays"/>
    --       <command name="glDrawElements"/>
    --       <command name="glEnableVertexAttribArray"/>
    --       <command name="glFinish"/>
