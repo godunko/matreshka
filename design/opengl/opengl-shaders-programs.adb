@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Unchecked_Conversion;
+
 with OpenGL.Contexts;
 
 package body OpenGL.Shaders.Programs is
@@ -64,6 +66,26 @@ package body OpenGL.Shaders.Programs is
       Self.Data.Context.Functions.gl_Attach_Shader
        (Self.Data.Program_Id, Shader.Shader_Id);
    end Add_Shader;
+
+   ------------------------
+   -- Attribute_Location --
+   ------------------------
+
+   function Attribute_Location
+    (Self : OpenGL_Shader_Program'Class;
+     Name : League.Strings.Universal_String) return OpenGL.GLuint
+   is
+      Aux : constant OpenGL.GLint
+        := Self.Data.Context.Functions.gl_Get_Attrib_Location
+            (Self.Data.Program_Id, Name);
+
+   begin
+      if Aux = -1 then
+         raise Program_Error;
+      end if;
+
+      return OpenGL.GLuint (Aux);
+   end Attribute_Location;
 
    ----------
    -- Bind --
@@ -100,6 +122,28 @@ package body OpenGL.Shaders.Programs is
               Program_Id => Program);
    end Create;
 
+   ----------------------------
+   -- Enable_Attribute_Array --
+   ----------------------------
+
+   procedure Enable_Attribute_Array
+    (Self     : OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint) is
+   begin
+      Self.Data.Context.Functions.gl_Enable_Vertex_Attrib_Array (Location);
+   end Enable_Attribute_Array;
+
+   ----------------------------
+   -- Enable_Attribute_Array --
+   ----------------------------
+
+   procedure Enable_Attribute_Array
+    (Self : OpenGL_Shader_Program'Class;
+     Name : League.Strings.Universal_String) is
+   begin
+      Self.Enable_Attribute_Array (Self.Attribute_Location (Name));
+   end Enable_Attribute_Array;
+
    ----------
    -- Link --
    ----------
@@ -112,9 +156,52 @@ package body OpenGL.Shaders.Programs is
       Self.Data.Context.Functions.gl_Get_Programiv
        (Self.Data.Program_Id, GL_LINK_STATUS, Status);
 
-      if GLenum (Status) = GL_FALSE then
+      if GLboolean (Status) = GL_FALSE then
          raise Program_Error;
       end if;
    end Link;
+
+   --------------------------
+   -- Set_Attribute_Buffer --
+   --------------------------
+
+   procedure Set_Attribute_Buffer
+    (Self       : in out OpenGL_Shader_Program'Class;
+     Location   : OpenGL.GLuint;
+     Tuple_Size : OpenGL.GLint;
+     Item_Type  : OpenGL.GLenum;
+     Normalized : Boolean        := False;
+     Stride     : OpenGL.GLsizei := 0;
+     Offset     : Natural        := 0)
+   is
+      function Convert is
+        new Ada.Unchecked_Conversion (Natural, System.Address);
+
+   begin
+      Self.Data.Context.Functions.gl_Vertex_Attrib_Pointer
+       (Location, Tuple_Size, Item_Type, Normalized, Stride, Convert (Offset));
+   end Set_Attribute_Buffer;
+
+   --------------------------
+   -- Set_Attribute_Buffer --
+   --------------------------
+
+   procedure Set_Attribute_Buffer
+    (Self       : in out OpenGL_Shader_Program'Class;
+     Name       : League.Strings.Universal_String;
+     Tuple_Size : OpenGL.GLint;
+     Item_Type  : OpenGL.GLenum;
+     Normalized : Boolean        := False;
+     Stride     : OpenGL.GLsizei := 0;
+     Offset     : Natural        := 0) is
+   begin
+      Self.Set_Attribute_Buffer
+       (Self.Attribute_Location (Name),
+        Tuple_Size,
+        Item_Type,
+        Normalized,
+        Stride,
+        Offset);
+   end Set_Attribute_Buffer;
 
 end OpenGL.Shaders.Programs;

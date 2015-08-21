@@ -52,6 +52,8 @@ package OpenGL is
 
    subtype GLclampf is GLfloat range 0.0 .. 1.0;
 
+   type GLboolean is private;
+
    type GLint is new Interfaces.Integer_32;
 
    type GLuint is new Interfaces.Unsigned_32;
@@ -75,8 +77,8 @@ package OpenGL is
 
    --  Boolean
 
-   GL_FALSE : constant GLenum;
-   GL_TRUE  : constant GLenum;
+   GL_FALSE : constant GLboolean;
+   GL_TRUE  : constant GLboolean;
 
    --  PrimitiveType
 
@@ -91,18 +93,26 @@ package OpenGL is
    GL_ACTIVE_ATTRIBUTE_MAX_LENGTH : constant GLenum;
    GL_ACTIVE_ATTRIBUTES           : constant GLenum;
    GL_ARRAY_BUFFER                : constant GLenum;
+   GL_BYTE                        : constant Glenum;
    GL_COMPILE_STATUS              : constant GLenum;
    GL_DELETE_STATUS               : constant GLenum;
    GL_DEPTH_TEST                  : constant GLenum;
    GL_DYNAMIC_DRAW                : constant GLenum;
    GL_ELEMENT_ARRAY_BUFFER        : constant GLenum;
+   GL_FIXED                       : constant GLenum;
+   GL_FLOAT                       : constant GLenum;
    GL_FRAGMENT_SHADER             : constant GLenum;
    GL_INFO_LOG_LENGTH             : constant GLenum;
+   GL_INT                         : constant GLenum;
    GL_LINK_STATUS                 : constant GLenum;
    GL_SHADER_SOURCE_LENGTH        : constant GLenum;
    GL_SHADER_TYPE                 : constant GLenum;
+   GL_SHORT                       : constant GLenum;
    GL_STATIC_DRAW                 : constant GLenum;
    GL_STREAM_DRAW                 : constant GLenum;
+   GL_UNSIGNED_BYTE               : constant GLenum;
+   GL_UNSIGNED_INT                : constant GLenum;
+   GL_UNSIGNED_SHORT              : constant GLenum;
    GL_VALIDATE_STATUS             : constant GLenum;
    GL_VERTEX_SHADER               : constant GLenum;
 
@@ -235,14 +245,6 @@ package OpenGL is
    --       <enum name="GL_FASTEST"/>
    --       <enum name="GL_NICEST"/>
    --       <enum name="GL_GENERATE_MIPMAP_HINT"/>
-   --       <enum name="GL_BYTE"/>
-   --       <enum name="GL_UNSIGNED_BYTE"/>
-   --       <enum name="GL_SHORT"/>
-   --       <enum name="GL_UNSIGNED_SHORT"/>
-   --       <enum name="GL_INT"/>
-   --       <enum name="GL_UNSIGNED_INT"/>
-   --       <enum name="GL_FLOAT"/>
-   --       <enum name="GL_FIXED"/>
    --       <enum name="GL_DEPTH_COMPONENT"/>
    --       <enum name="GL_ALPHA"/>
    --       <enum name="GL_RGB"/>
@@ -434,7 +436,6 @@ package OpenGL is
    --       <command name="glDisable"/>
    --       <command name="glDisableVertexAttribArray"/>
    --       <command name="glDrawElements"/>
-   --       <command name="glEnableVertexAttribArray"/>
    --       <command name="glFinish"/>
    --       <command name="glFlush"/>
    --       <command name="glFramebufferRenderbuffer"/>
@@ -447,7 +448,6 @@ package OpenGL is
    --       <command name="glGetActiveAttrib"/>
    --       <command name="glGetActiveUniform"/>
    --       <command name="glGetAttachedShaders"/>
-   --       <command name="glGetAttribLocation"/>
    --       <command name="glGetBooleanv"/>
    --       <command name="glGetBufferParameteriv"/>
    --       <command name="glGetError"/>
@@ -525,7 +525,6 @@ package OpenGL is
    --       <command name="glVertexAttrib3fv"/>
    --       <command name="glVertexAttrib4f"/>
    --       <command name="glVertexAttrib4fv"/>
-   --       <command name="glVertexAttribPointer"/>
    --     </require>
    --   </feature>
 
@@ -537,14 +536,16 @@ private
 
    type GLbitfield is new Interfaces.Unsigned_32;
 
+   type GLboolean is new Interfaces.Unsigned_8;
+
    type GLenum is new Interfaces.Unsigned_32;
 
    GL_DEPTH_BUFFER_BIT   : constant GLbitfield := 16#0000_0100#;
    GL_STENCIL_BUFFER_BIT : constant GLbitfield := 16#0000_0400#;
    GL_COLOR_BUFFER_BIT   : constant GLbitfield := 16#0000_4000#;
 
-   GL_FALSE : constant GLenum := 0;
-   GL_TRUE  : constant GLenum := 1;
+   GL_FALSE : constant GLboolean := 0;
+   GL_TRUE  : constant GLboolean := 1;
 
    GL_POINTS         : constant GLenum := 16#0000#;
    GL_LINES          : constant GLenum := 16#0001#;
@@ -555,6 +556,15 @@ private
    GL_TRIANGLE_FAN   : constant GLenum := 16#0006#;
 
    GL_DEPTH_TEST                  : constant GLenum := 16#0B71#;
+
+   GL_BYTE                        : constant Glenum := 16#1400#;
+   GL_UNSIGNED_BYTE               : constant GLenum := 16#1401#;
+   GL_SHORT                       : constant GLenum := 16#1402#;
+   GL_UNSIGNED_SHORT              : constant GLenum := 16#1403#;
+   GL_INT                         : constant GLenum := 16#1404#;
+   GL_UNSIGNED_INT                : constant GLenum := 16#1405#;
+   GL_FLOAT                       : constant GLenum := 16#1406#;
+   GL_FIXED                       : constant GLenum := 16#140C#;
 
    GL_ARRAY_BUFFER                : constant GLenum := 16#8892#;
    GL_ELEMENT_ARRAY_BUFFER        : constant GLenum := 16#8893#;

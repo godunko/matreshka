@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.String_Vectors;
+with League.Strings;
 
 package OpenGL.Functions is
 
@@ -147,7 +148,11 @@ package OpenGL.Functions is
 --                        void    glDepthRangef(GLclampf zNear, GLclampf zFar)
 --                        void    glDetachShader(GLuint program, GLuint shader)
 --                        void    glDisable(GLenum cap)
---                        void    glDisableVertexAttribArray(GLuint index)
+
+   not overriding procedure gl_Disable_Vertex_Attrib_Array
+    (Self  : in out OpenGL_Functions;
+     Index : OpenGL.GLuint) is abstract;
+   --  Disable a generic vertex attribute array.
 
    not overriding procedure gl_Draw_Arrays
     (Self  : in out OpenGL_Functions;
@@ -163,7 +168,11 @@ package OpenGL.Functions is
      Cap  : OpenGL.GLenum) is abstract;
    --  glEnable and glDisable enable and disable various capabilities.
 
---                        void    glEnableVertexAttribArray(GLuint index)
+   not overriding procedure gl_Enable_Vertex_Attrib_Array
+    (Self  : in out OpenGL_Functions;
+     Index : OpenGL.GLuint) is abstract;
+   --  Enable a generic vertex attribute array.
+
 --                        void    glFinish()
 --                        void    glFlush()
 --                        void    glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
@@ -182,7 +191,14 @@ package OpenGL.Functions is
 --                        void    glGetActiveAttrib(GLuint program, GLuint index, GLsizei bufsize, GLsizei * length, GLint * size, GLenum * type, char * name)
 --                        void    glGetActiveUniform(GLuint program, GLuint index, GLsizei bufsize, GLsizei * length, GLint * size, GLenum * type, char * name)
 --                        void    glGetAttachedShaders(GLuint program, GLsizei maxcount, GLsizei * count, GLuint * shaders)
---                        GLint   glGetAttribLocation(GLuint program, const char * name)
+
+   not overriding function gl_Get_Attrib_Location
+    (Self    : in out OpenGL_Functions;
+     Program : OpenGL.GLuint;
+     Name    : League.Strings.Universal_String)
+       return OpenGL.GLint is abstract;
+   --  Returns the location of an attribute variable.
+
 --                        void    glGetBooleanv(GLenum pname, GLboolean * params)
 --                        void    glGetBufferParameteriv(GLenum target, GLenum pname, GLint * params)
 --                        GLenum  glGetError()
@@ -294,7 +310,16 @@ package OpenGL.Functions is
 --                        void    glVertexAttrib3fv(GLuint indx, const GLfloat * values)
 --                        void    glVertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 --                        void    glVertexAttrib4fv(GLuint indx, const GLfloat * values)
---                        void    glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * ptr)
+
+   not overriding procedure gl_Vertex_Attrib_Pointer
+    (Self       : in out OpenGL_Functions;
+     Index      : OpenGL.GLuint;
+     Size       : OpenGL.GLint;
+     Data_Type  : OpenGL.GLenum;
+     Normalized : Boolean;
+     Stride     : OpenGL.GLsizei;
+     Pointer    : System.Address) is abstract;
+   --  Define an array of generic vertex attribute data.
 
    not overriding procedure gl_Viewport
     (Self   : in out OpenGL_Functions;

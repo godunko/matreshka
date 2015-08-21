@@ -54,18 +54,55 @@ package OpenGL.Shaders.Programs is
    --  Adds a compiled shader to this shader program. Returns True if the
    --  shader could be added, or False otherwise.
 
+   function Attribute_Location
+    (Self : OpenGL_Shader_Program'Class;
+     Name : League.Strings.Universal_String) return OpenGL.GLuint;
+   --  Returns the location of the attribute name within this shader program's
+   --  parameter list. Raise exception if Name is not a valid attribute for
+   --  this shader program.
+
+   procedure Bind (Self : in out OpenGL_Shader_Program'Class);
+   --  Binds this shader program to the active OpenGL_Context and makes it the
+   --  current shader program. Any previously bound shader program is released.
+
    procedure Create (Self : in out OpenGL_Shader_Program'Class);
    --  Requests the shader program's id to be created immediately. Returns True
    --  if successful; False otherwise.
+
+   procedure Enable_Attribute_Array
+    (Self     : OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint);
+   procedure Enable_Attribute_Array
+    (Self : OpenGL_Shader_Program'Class;
+     Name : League.Strings.Universal_String);
+   --  Enables the vertex array at location in this shader program.
 
    procedure Link (Self : in out OpenGL_Shader_Program'Class);
    --  Links together the shaders that were added to this program with
    --  Add_Shader. Returns True if the link was successful or False otherwise.
    --  If the link failed, the error messages can be retrieved with Log.
 
-   procedure Bind (Self : in out OpenGL_Shader_Program'Class);
-   --  Binds this shader program to the active OpenGL_Context and makes it the
-   --  current shader program. Any previously bound shader program is released.
+   procedure Set_Attribute_Buffer
+    (Self       : in out OpenGL_Shader_Program'Class;
+     Location   : OpenGL.GLuint;
+     Tuple_Size : OpenGL.GLint;
+     Item_Type  : OpenGL.GLenum;
+     Normalized : Boolean        := False;
+     Stride     : OpenGL.GLsizei := 0;
+     Offset     : Natural        := 0);
+   procedure Set_Attribute_Buffer
+    (Self       : in out OpenGL_Shader_Program'Class;
+     Name       : League.Strings.Universal_String;
+     Tuple_Size : OpenGL.GLint;
+     Item_Type  : OpenGL.GLenum;
+     Normalized : Boolean        := False;
+     Stride     : OpenGL.GLsizei := 0;
+     Offset     : Natural        := 0);
+   --  Sets an array of vertex values on the attribute at location in this
+   --  shader program, starting at a specific offset in the currently bound
+   --  vertex buffer. The stride indicates the number of bytes between
+   --  vertices. A default stride value of zero indicates that the vertices are
+   --  densely packed in the value array.
 
 private
 
