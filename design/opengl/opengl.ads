@@ -110,6 +110,8 @@ package OpenGL is
    GL_SHORT                       : constant GLenum;
    GL_STATIC_DRAW                 : constant GLenum;
    GL_STREAM_DRAW                 : constant GLenum;
+   GL_TEXTURE_2D                  : constant GLenum;
+   GL_TEXTURE_CUBE_MAP            : constant GLenum;
    GL_UNSIGNED_BYTE               : constant GLenum;
    GL_UNSIGNED_INT                : constant GLenum;
    GL_UNSIGNED_SHORT              : constant GLenum;
@@ -177,7 +179,6 @@ package OpenGL is
    --       <enum name="GL_FRONT"/>
    --       <enum name="GL_BACK"/>
    --       <enum name="GL_FRONT_AND_BACK"/>
-   --       <enum name="GL_TEXTURE_2D"/>
    --       <enum name="GL_CULL_FACE"/>
    --       <enum name="GL_BLEND"/>
    --       <enum name="GL_DITHER"/>
@@ -293,7 +294,6 @@ package OpenGL is
    --       <enum name="GL_TEXTURE_WRAP_S"/>
    --       <enum name="GL_TEXTURE_WRAP_T"/>
    --       <enum name="GL_TEXTURE"/>
-   --       <enum name="GL_TEXTURE_CUBE_MAP"/>
    --       <enum name="GL_TEXTURE_BINDING_CUBE_MAP"/>
    --       <enum name="GL_TEXTURE_CUBE_MAP_POSITIVE_X"/>
    --       <enum name="GL_TEXTURE_CUBE_MAP_NEGATIVE_X"/>
@@ -442,9 +442,6 @@ package OpenGL is
    --       <command name="glFramebufferTexture2D"/>
    --       <command name="glFrontFace"/>
    --       <command name="glGenerateMipmap"/>
-   --       <command name="glGenFramebuffers"/>
-   --       <command name="glGenRenderbuffers"/>
-   --       <command name="glGenTextures"/>
    --       <command name="glGetActiveAttrib"/>
    --       <command name="glGetActiveUniform"/>
    --       <command name="glGetAttachedShaders"/>
@@ -557,6 +554,8 @@ private
 
    GL_DEPTH_TEST                  : constant GLenum := 16#0B71#;
 
+   GL_TEXTURE_2D                  : constant GLenum := 16#0DE1#;
+
    GL_BYTE                        : constant Glenum := 16#1400#;
    GL_UNSIGNED_BYTE               : constant GLenum := 16#1401#;
    GL_SHORT                       : constant GLenum := 16#1402#;
@@ -565,6 +564,8 @@ private
    GL_UNSIGNED_INT                : constant GLenum := 16#1405#;
    GL_FLOAT                       : constant GLenum := 16#1406#;
    GL_FIXED                       : constant GLenum := 16#140C#;
+
+   GL_TEXTURE_CUBE_MAP            : constant GLenum := 16#8513#;
 
    GL_ARRAY_BUFFER                : constant GLenum := 16#8892#;
    GL_ELEMENT_ARRAY_BUFFER        : constant GLenum := 16#8893#;

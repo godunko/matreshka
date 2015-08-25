@@ -180,9 +180,21 @@ package OpenGL.Functions is
      Buffers : in out OpenGL.GLuint_Array) is abstract;
    --  Generate buffer object names.
 
---                        void    glGenFramebuffers(GLsizei n, GLuint * framebuffers)
---                        void    glGenRenderbuffers(GLsizei n, GLuint * renderbuffers)
---                        void    glGenTextures(GLsizei n, GLuint * textures)
+   not overriding procedure gl_Gen_Framebuffers
+    (Self         : in out OpenGL_Functions;
+     Framebuffers : in out OpenGL.GLuint_Array) is abstract;
+   --  Generate framebuffer object names.
+
+   not overriding procedure gl_Gen_Renderbuffers
+    (Self          : in out OpenGL_Functions;
+     Renderbuffers : in out OpenGL.GLuint_Array) is abstract;
+   --  Generate renderbuffer object names.
+
+   not overriding procedure gl_Gen_Textures
+    (Self     : in out OpenGL_Functions;
+     Textures : in out OpenGL.GLuint_Array) is abstract;
+   --  Generate texture names.
+
 --                        void    glGenerateMipmap(GLenum target)
 --                        void    glGetActiveAttrib(GLuint program, GLuint index, GLsizei bufsize, GLsizei * length, GLint * size, GLenum * type, char * name)
 --                        void    glGetActiveUniform(GLuint program, GLuint index, GLsizei bufsize, GLsizei * length, GLint * size, GLenum * type, char * name)
