@@ -52,9 +52,6 @@ package OpenGL.Functions is
 
    type OpenGL_Functions_Access is access all OpenGL_Functions'Class;
 
---        QOpenGLFunctions()
---                QOpenGLFunctions(QOpenGLContext * context)
---                        ~QOpenGLFunctions()
 --                        void    glActiveTexture(GLenum texture)
 
    not overriding procedure gl_Attach_Shader
@@ -86,6 +83,7 @@ package OpenGL.Functions is
      Size   : OpenGL.GLsizeiptr;
      Data   : System.Address;
      Usage  : OpenGL.GLenum) is abstract;
+   --  Creates and initializes a buffer object's data store.
 
 --                        void    glBufferSubData(GLenum target, qopengl_GLintptr offset, qopengl_GLsizeiptr size, const void * data)
 --                        GLenum  glCheckFramebufferStatus(GLenum target)
@@ -102,9 +100,7 @@ package OpenGL.Functions is
      Green : OpenGL.GLclampf;
      Blue  : OpenGL.GLclampf;
      Alpha : OpenGL.GLclampf) is abstract;
-   --  glClearColor specifies the red, green, blue, and alpha values used by
-   --  glClear to clear the color buffers. Values specified by glClearColor
-   --  are clamped to the range 0.0 .. 1.0.
+   --  Specify clear values for the color buffers.
 
 --                        void    glClearDepthf(GLclampf depth)
 --                        void    glClearStencil(GLint s)
@@ -248,6 +244,7 @@ package OpenGL.Functions is
    not overriding procedure gl_Link_Program
     (Self    : in out OpenGL_Functions;
      Program : OpenGL.GLuint) is abstract;
+   --  Links a program object.
 
 --                        void    glPixelStorei(GLenum pname, GLint param)
 --                        void    glPolygonOffset(GLfloat factor, GLfloat units)
