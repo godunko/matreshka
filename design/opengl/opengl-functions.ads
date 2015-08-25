@@ -87,7 +87,6 @@ package OpenGL.Functions is
 
 --                        void    glBufferSubData(GLenum target, qopengl_GLintptr offset, qopengl_GLsizeiptr size, const void * data)
 --                        GLenum  glCheckFramebufferStatus(GLenum target)
---                        void    glClear(GLbitfield mask)
 
    not overriding procedure gl_Clear
     (Self : in out OpenGL_Functions;
