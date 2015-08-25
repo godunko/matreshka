@@ -406,9 +406,6 @@ package OpenGL is
    --       <enum name="GL_INVALID_FRAMEBUFFER_OPERATION"/>
    --       <command name="glActiveTexture"/>
    --       <command name="glBindAttribLocation"/>
-   --       <command name="glBindFramebuffer"/>
-   --       <command name="glBindRenderbuffer"/>
-   --       <command name="glBindTexture"/>
    --       <command name="glBlendColor"/>
    --       <command name="glBlendEquation"/>
    --       <command name="glBlendEquationSeparate"/>

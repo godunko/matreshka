@@ -68,9 +68,24 @@ package OpenGL.Functions is
      Buffer : OpenGL.GLuint) is abstract;
    --  Bind a named buffer object.
 
---                        void    glBindFramebuffer(GLenum target, GLuint framebuffer)
---                        void    glBindRenderbuffer(GLenum target, GLuint renderbuffer)
---                        void    glBindTexture(GLenum target, GLuint texture)
+   not overriding procedure gl_Bind_Framebuffer
+    (Self        : in out OpenGL_Functions;
+     Target      : OpenGL.GLenum;
+     Framebuffer : OpenGL.GLuint) is abstract;
+   --  Bind a framebuffer to a framebuffer target.
+
+   not overriding procedure gl_Bind_Renderbuffer
+    (Self         : in out OpenGL_Functions;
+     Target       : OpenGL.GLenum;
+     Renderbuffer : OpenGL.GLuint) is abstract;
+   --  Bind a renderbuffer to a renderbuffer target.
+
+   not overriding procedure gl_Bind_Texture
+    (Self    : in out OpenGL_Functions;
+     Target  : OpenGL.GLenum;
+     Texture : OpenGL.GLuint) is abstract;
+   --  Bind a named texture to a texturing target.
+
 --                        void    glBlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 --                        void    glBlendEquation(GLenum mode)
 --                        void    glBlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
