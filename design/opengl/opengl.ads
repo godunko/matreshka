@@ -94,17 +94,31 @@ package OpenGL is
    GL_ACTIVE_ATTRIBUTES           : constant GLenum;
    GL_ARRAY_BUFFER                : constant GLenum;
    GL_BYTE                        : constant Glenum;
+   GL_CLAMP_TO_EDGE               : constant GLenum;
    GL_COMPILE_STATUS              : constant GLenum;
    GL_DELETE_STATUS               : constant GLenum;
+   GL_DEPTH_COMPONENT             : constant GLenum;
    GL_DEPTH_TEST                  : constant GLenum;
    GL_DYNAMIC_DRAW                : constant GLenum;
    GL_ELEMENT_ARRAY_BUFFER        : constant GLenum;
    GL_FIXED                       : constant GLenum;
    GL_FLOAT                       : constant GLenum;
    GL_FRAGMENT_SHADER             : constant GLenum;
+   GL_FRAMEBUFFER                 : constant GLenum;
    GL_INFO_LOG_LENGTH             : constant GLenum;
    GL_INT                         : constant GLenum;
+   GL_LINEAR                      : constant GLenum;
+   GL_LINEAR_MIPMAP_LINEAR        : constant GLenum;
+   GL_LINEAR_MIPMAP_NEAREST       : constant GLenum;
    GL_LINK_STATUS                 : constant GLenum;
+   GL_MIRRORED_REPEAT             : constant GLenum;
+   GL_NEAREST                     : constant GLenum;
+   GL_NEAREST_MIPMAP_LINEAR       : constant GLenum;
+   GL_NEAREST_MIPMAP_NEAREST      : constant GLenum;
+   GL_REPEAT                      : constant GLenum;
+   GL_RENDERBUFFER                : constant GLenum;
+   GL_RGB                         : constant GLenum;
+   GL_RGBA                        : constant GLenum;
    GL_SHADER_SOURCE_LENGTH        : constant GLenum;
    GL_SHADER_TYPE                 : constant GLenum;
    GL_SHORT                       : constant GLenum;
@@ -112,6 +126,16 @@ package OpenGL is
    GL_STREAM_DRAW                 : constant GLenum;
    GL_TEXTURE_2D                  : constant GLenum;
    GL_TEXTURE_CUBE_MAP            : constant GLenum;
+   GL_TEXTURE_CUBE_MAP_NEGATIVE_X : constant GLenum;
+   GL_TEXTURE_CUBE_MAP_NEGATIVE_Y : constant GLenum;
+   GL_TEXTURE_CUBE_MAP_NEGATIVE_Z : constant GLenum;
+   GL_TEXTURE_CUBE_MAP_POSITIVE_X : constant GLenum;
+   GL_TEXTURE_CUBE_MAP_POSITIVE_Y : constant GLenum;
+   GL_TEXTURE_CUBE_MAP_POSITIVE_Z : constant GLenum;
+   GL_TEXTURE_MAG_FILTER          : constant GLenum;
+   GL_TEXTURE_MIN_FILTER          : constant GLenum;
+   GL_TEXTURE_WRAP_S              : constant GLenum;
+   GL_TEXTURE_WRAP_T              : constant GLenum;
    GL_UNSIGNED_BYTE               : constant GLenum;
    GL_UNSIGNED_INT                : constant GLenum;
    GL_UNSIGNED_SHORT              : constant GLenum;
@@ -246,10 +270,7 @@ package OpenGL is
    --       <enum name="GL_FASTEST"/>
    --       <enum name="GL_NICEST"/>
    --       <enum name="GL_GENERATE_MIPMAP_HINT"/>
-   --       <enum name="GL_DEPTH_COMPONENT"/>
    --       <enum name="GL_ALPHA"/>
-   --       <enum name="GL_RGB"/>
-   --       <enum name="GL_RGBA"/>
    --       <enum name="GL_LUMINANCE"/>
    --       <enum name="GL_LUMINANCE_ALPHA"/>
    --       <enum name="GL_UNSIGNED_SHORT_4_4_4_4"/>
@@ -283,24 +304,8 @@ package OpenGL is
    --       <enum name="GL_RENDERER"/>
    --       <enum name="GL_VERSION"/>
    --       <enum name="GL_EXTENSIONS"/>
-   --       <enum name="GL_NEAREST"/>
-   --       <enum name="GL_LINEAR"/>
-   --       <enum name="GL_NEAREST_MIPMAP_NEAREST"/>
-   --       <enum name="GL_LINEAR_MIPMAP_NEAREST"/>
-   --       <enum name="GL_NEAREST_MIPMAP_LINEAR"/>
-   --       <enum name="GL_LINEAR_MIPMAP_LINEAR"/>
-   --       <enum name="GL_TEXTURE_MAG_FILTER"/>
-   --       <enum name="GL_TEXTURE_MIN_FILTER"/>
-   --       <enum name="GL_TEXTURE_WRAP_S"/>
-   --       <enum name="GL_TEXTURE_WRAP_T"/>
    --       <enum name="GL_TEXTURE"/>
    --       <enum name="GL_TEXTURE_BINDING_CUBE_MAP"/>
-   --       <enum name="GL_TEXTURE_CUBE_MAP_POSITIVE_X"/>
-   --       <enum name="GL_TEXTURE_CUBE_MAP_NEGATIVE_X"/>
-   --       <enum name="GL_TEXTURE_CUBE_MAP_POSITIVE_Y"/>
-   --       <enum name="GL_TEXTURE_CUBE_MAP_NEGATIVE_Y"/>
-   --       <enum name="GL_TEXTURE_CUBE_MAP_POSITIVE_Z"/>
-   --       <enum name="GL_TEXTURE_CUBE_MAP_NEGATIVE_Z"/>
    --       <enum name="GL_MAX_CUBE_MAP_TEXTURE_SIZE"/>
    --       <enum name="GL_TEXTURE0"/>
    --       <enum name="GL_TEXTURE1"/>
@@ -335,9 +340,6 @@ package OpenGL is
    --       <enum name="GL_TEXTURE30"/>
    --       <enum name="GL_TEXTURE31"/>
    --       <enum name="GL_ACTIVE_TEXTURE"/>
-   --       <enum name="GL_REPEAT"/>
-   --       <enum name="GL_CLAMP_TO_EDGE"/>
-   --       <enum name="GL_MIRRORED_REPEAT"/>
    --       <enum name="GL_FLOAT_VEC2"/>
    --       <enum name="GL_FLOAT_VEC3"/>
    --       <enum name="GL_FLOAT_VEC4"/>
@@ -371,8 +373,6 @@ package OpenGL is
    --       <enum name="GL_LOW_INT"/>
    --       <enum name="GL_MEDIUM_INT"/>
    --       <enum name="GL_HIGH_INT"/>
-   --       <enum name="GL_FRAMEBUFFER"/>
-   --       <enum name="GL_RENDERBUFFER"/>
    --       <enum name="GL_RGBA4"/>
    --       <enum name="GL_RGB5_A1"/>
    --       <enum name="GL_RGB565"/>
@@ -565,7 +565,36 @@ private
    GL_FLOAT                       : constant GLenum := 16#1406#;
    GL_FIXED                       : constant GLenum := 16#140C#;
 
+   GL_DEPTH_COMPONENT             : constant GLenum := 16#1902#;
+   GL_RGB                         : constant GLenum := 16#1907#;
+   GL_RGBA                        : constant GLenum := 16#1908#;
+
+   GL_NEAREST                     : constant GLenum := 16#2600#;
+   GL_LINEAR                      : constant GLenum := 16#2601#;
+
+   GL_NEAREST_MIPMAP_NEAREST      : constant GLenum := 16#2700#;
+   GL_LINEAR_MIPMAP_NEAREST       : constant GLenum := 16#2701#;
+   GL_NEAREST_MIPMAP_LINEAR       : constant GLenum := 16#2702#;
+   GL_LINEAR_MIPMAP_LINEAR        : constant GLenum := 16#2703#;
+
+   GL_TEXTURE_MAG_FILTER          : constant GLenum := 16#2800#;
+   GL_TEXTURE_MIN_FILTER          : constant GLenum := 16#2801#;
+   GL_TEXTURE_WRAP_S              : constant GLenum := 16#2802#;
+   GL_TEXTURE_WRAP_T              : constant GLenum := 16#2803#;
+
+   GL_REPEAT                      : constant GLenum := 16#2901#;
+
+   GL_CLAMP_TO_EDGE               : constant GLenum := 16#812F#;
+
+   GL_MIRRORED_REPEAT             : constant GLenum := 16#8370#;
+
    GL_TEXTURE_CUBE_MAP            : constant GLenum := 16#8513#;
+   GL_TEXTURE_CUBE_MAP_POSITIVE_X : constant GLenum := 16#8515#;
+   GL_TEXTURE_CUBE_MAP_NEGATIVE_X : constant GLenum := 16#8516#;
+   GL_TEXTURE_CUBE_MAP_POSITIVE_Y : constant GLenum := 16#8517#;
+   GL_TEXTURE_CUBE_MAP_NEGATIVE_Y : constant GLenum := 16#8518#;
+   GL_TEXTURE_CUBE_MAP_POSITIVE_Z : constant GLenum := 16#8519#;
+   GL_TEXTURE_CUBE_MAP_NEGATIVE_Z : constant GLenum := 16#851A#;
 
    GL_ARRAY_BUFFER                : constant GLenum := 16#8892#;
    GL_ELEMENT_ARRAY_BUFFER        : constant GLenum := 16#8893#;
@@ -585,6 +614,9 @@ private
    GL_SHADER_SOURCE_LENGTH        : constant GLenum := 16#8B88#;
    GL_ACTIVE_ATTRIBUTES           : constant GLenum := 16#8B89#;
    GL_ACTIVE_ATTRIBUTE_MAX_LENGTH : constant GLenum := 16#8B8A#;
+
+   GL_FRAMEBUFFER                 : constant GLenum := 16#8D40#;
+   GL_RENDERBUFFER                : constant GLenum := 16#8D41#;
 
    type Clear_Buffer_Mask is new GLbitfield;
 
