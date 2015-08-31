@@ -479,7 +479,6 @@ package OpenGL is
    --       <command name="glGetTexParameteriv"/>
    --       <command name="glGetUniformfv"/>
    --       <command name="glGetUniformiv"/>
-   --       <command name="glGetUniformLocation"/>
    --       <command name="glGetVertexAttribfv"/>
    --       <command name="glGetVertexAttribiv"/>
    --       <command name="glGetVertexAttribPointerv"/>

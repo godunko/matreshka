@@ -251,7 +251,14 @@ package OpenGL.Functions is
 --                        const GLubyte *         glGetString(GLenum name)
 --                        void    glGetTexParameterfv(GLenum target, GLenum pname, GLfloat * params)
 --                        void    glGetTexParameteriv(GLenum target, GLenum pname, GLint * params)
---                        GLint   glGetUniformLocation(GLuint program, const char * name)
+
+   not overriding function glGetUniformLocation
+    (Self    : in out OpenGL_Functions;
+     Program : OpenGL.GLuint;
+     Name    : League.Strings.Universal_String)
+       return OpenGL.GLint is abstract;
+   --  Return the location of a uniform variable.
+
 --                        void    glGetUniformfv(GLuint program, GLint location, GLfloat * params)
 --                        void    glGetUniformiv(GLuint program, GLint location, GLint * params)
 --                        void    glGetVertexAttribPointerv(GLuint index, GLenum pname, void ** pointer)
