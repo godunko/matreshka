@@ -54,7 +54,7 @@ package OpenGL.Functions is
 
 --                        void    glActiveTexture(GLenum texture)
 
-   not overriding procedure gl_Attach_Shader
+   not overriding procedure glAttachShader
     (Self    : in out OpenGL_Functions;
      Program : OpenGL.GLuint;
      Shader  : OpenGL.GLuint) is abstract;
@@ -62,25 +62,25 @@ package OpenGL.Functions is
 
 --                        void    glBindAttribLocation(GLuint program, GLuint index, const char * name)
 
-   not overriding procedure gl_Bind_Buffer
+   not overriding procedure glBindBuffer
     (Self   : in out OpenGL_Functions;
      Target : OpenGL.GLenum;
      Buffer : OpenGL.GLuint) is abstract;
    --  Bind a named buffer object.
 
-   not overriding procedure gl_Bind_Framebuffer
+   not overriding procedure glBindFramebuffer
     (Self        : in out OpenGL_Functions;
      Target      : OpenGL.GLenum;
      Framebuffer : OpenGL.GLuint) is abstract;
    --  Bind a framebuffer to a framebuffer target.
 
-   not overriding procedure gl_Bind_Renderbuffer
+   not overriding procedure glBindRenderbuffer
     (Self         : in out OpenGL_Functions;
      Target       : OpenGL.GLenum;
      Renderbuffer : OpenGL.GLuint) is abstract;
    --  Bind a renderbuffer to a renderbuffer target.
 
-   not overriding procedure gl_Bind_Texture
+   not overriding procedure glBindTexture
     (Self    : in out OpenGL_Functions;
      Target  : OpenGL.GLenum;
      Texture : OpenGL.GLuint) is abstract;
@@ -92,7 +92,7 @@ package OpenGL.Functions is
 --                        void    glBlendFunc(GLenum sfactor, GLenum dfactor)
 --                        void    glBlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
 
-   not overriding procedure gl_Buffer_Data
+   not overriding procedure glBufferData
     (Self   : in out OpenGL_Functions;
      Target : OpenGL.GLenum;
      Size   : OpenGL.GLsizeiptr;
@@ -103,12 +103,12 @@ package OpenGL.Functions is
 --                        void    glBufferSubData(GLenum target, qopengl_GLintptr offset, qopengl_GLsizeiptr size, const void * data)
 --                        GLenum  glCheckFramebufferStatus(GLenum target)
 
-   not overriding procedure gl_Clear
+   not overriding procedure glClear
     (Self : in out OpenGL_Functions;
      Mask : OpenGL.Clear_Buffer_Mask) is abstract;
    --  Clear buffers to preset values.
 
-   not overriding procedure gl_Clear_Color
+   not overriding procedure glClearColor
     (Self  : in out OpenGL_Functions;
      Red   : OpenGL.GLclampf;
      Green : OpenGL.GLclampf;
@@ -120,7 +120,7 @@ package OpenGL.Functions is
 --                        void    glClearStencil(GLint s)
 --                        void    glColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha)
 
-   not overriding procedure gl_Compile_Shader
+   not overriding procedure glCompileShader
     (Self   : in out OpenGL_Functions;
      Shader : OpenGL.GLuint) is abstract;
    --  Compile a shader object.
@@ -132,18 +132,18 @@ package OpenGL.Functions is
 
 --                        GLuint  glCreateProgram()
 
-   not overriding function gl_Create_Program
+   not overriding function glCreateProgram
     (Self : in out OpenGL_Functions) return OpenGL.GLuint is abstract;
    --  Creates a program object.
 
-   not overriding function gl_Create_Shader
+   not overriding function glCreateShader
     (Self        : in out OpenGL_Functions;
      Shader_Type : OpenGL.GLenum) return OpenGL.GLuint is abstract;
    --  Creates a shader object.
 
 --                        void    glCullFace(GLenum mode)
 
-   not overriding procedure gl_Delete_Buffers
+   not overriding procedure glDeleteBuffers
     (Self    : in out OpenGL_Functions;
      Buffers : in out OpenGL.GLuint_Array) is abstract;
    --  Delete named buffer objects.
@@ -159,12 +159,12 @@ package OpenGL.Functions is
 --                        void    glDetachShader(GLuint program, GLuint shader)
 --                        void    glDisable(GLenum cap)
 
-   not overriding procedure gl_Disable_Vertex_Attrib_Array
+   not overriding procedure glDisableVertexAttribArray
     (Self  : in out OpenGL_Functions;
      Index : OpenGL.GLuint) is abstract;
    --  Disable a generic vertex attribute array.
 
-   not overriding procedure gl_Draw_Arrays
+   not overriding procedure glDrawArrays
     (Self  : in out OpenGL_Functions;
      Mode  : OpenGL.GLenum;
      First : OpenGL.GLint;
@@ -173,12 +173,12 @@ package OpenGL.Functions is
 
 --                        void    glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid * indices)
 
-   not overriding procedure gl_Enable
+   not overriding procedure glEnable
     (Self : in out OpenGL_Functions;
      Cap  : OpenGL.GLenum) is abstract;
    --  glEnable and glDisable enable and disable various capabilities.
 
-   not overriding procedure gl_Enable_Vertex_Attrib_Array
+   not overriding procedure glEnableVertexAttribArray
     (Self  : in out OpenGL_Functions;
      Index : OpenGL.GLuint) is abstract;
    --  Enable a generic vertex attribute array.
@@ -189,22 +189,22 @@ package OpenGL.Functions is
 --                        void    glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 --                        void    glFrontFace(GLenum mode)
 
-   not overriding procedure gl_Gen_Buffers
+   not overriding procedure glGenBuffers
     (Self    : in out OpenGL_Functions;
      Buffers : in out OpenGL.GLuint_Array) is abstract;
    --  Generate buffer object names.
 
-   not overriding procedure gl_Gen_Framebuffers
+   not overriding procedure glGenFramebuffers
     (Self         : in out OpenGL_Functions;
      Framebuffers : in out OpenGL.GLuint_Array) is abstract;
    --  Generate framebuffer object names.
 
-   not overriding procedure gl_Gen_Renderbuffers
+   not overriding procedure glGenRenderbuffers
     (Self          : in out OpenGL_Functions;
      Renderbuffers : in out OpenGL.GLuint_Array) is abstract;
    --  Generate renderbuffer object names.
 
-   not overriding procedure gl_Gen_Textures
+   not overriding procedure glGenTextures
     (Self     : in out OpenGL_Functions;
      Textures : in out OpenGL.GLuint_Array) is abstract;
    --  Generate texture names.
@@ -214,7 +214,7 @@ package OpenGL.Functions is
 --                        void    glGetActiveUniform(GLuint program, GLuint index, GLsizei bufsize, GLsizei * length, GLint * size, GLenum * type, char * name)
 --                        void    glGetAttachedShaders(GLuint program, GLsizei maxcount, GLsizei * count, GLuint * shaders)
 
-   not overriding function gl_Get_Attrib_Location
+   not overriding function glGetAttribLocation
     (Self    : in out OpenGL_Functions;
      Program : OpenGL.GLuint;
      Name    : League.Strings.Universal_String)
@@ -229,7 +229,7 @@ package OpenGL.Functions is
 --                        void    glGetIntegerv(GLenum pname, GLint * params)
 --                        void    glGetProgramInfoLog(GLuint program, GLsizei bufsize, GLsizei * length, char * infolog)
 
-   not overriding procedure gl_Get_Programiv
+   not overriding procedure glGetProgramiv
     (Self    : in out OpenGL_Functions;
      Program : OpenGL.GLuint;
      Pname   : OpenGL.GLenum;
@@ -241,7 +241,7 @@ package OpenGL.Functions is
 --                        void    glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint * range, GLint * precision)
 --                        void    glGetShaderSource(GLuint shader, GLsizei bufsize, GLsizei * length, char * source)
 
-   not overriding procedure gl_Get_Shaderiv
+   not overriding procedure glGetShaderiv
     (Self   : in out OpenGL_Functions;
      Shader : OpenGL.GLuint;
      Pname  : OpenGL.GLenum;
@@ -267,7 +267,7 @@ package OpenGL.Functions is
 --                        GLboolean       glIsTexture(GLuint texture)
 --                        void    glLineWidth(GLfloat width)
 
-   not overriding procedure gl_Link_Program
+   not overriding procedure glLinkProgram
     (Self    : in out OpenGL_Functions;
      Program : OpenGL.GLuint) is abstract;
    --  Links a program object.
@@ -281,7 +281,7 @@ package OpenGL.Functions is
 --                        void    glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 --                        void    glShaderBinary(GLint n, const GLuint * shaders, GLenum binaryformat, const void * binary, GLint length)
 
-   not overriding procedure gl_Shader_Source
+   not overriding procedure glShaderSource
     (Self   : in out OpenGL_Functions;
      Shader : OpenGL.GLuint;
      Code   : League.String_Vectors.Universal_String_Vector) is abstract;
@@ -319,7 +319,7 @@ package OpenGL.Functions is
 --                        void    glUniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
 --                        void    glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
 
-   not overriding procedure gl_Use_Program
+   not overriding procedure glUseProgram
     (Self    : in out OpenGL_Functions;
      Program : OpenGL.GLuint) is abstract;
    --  Install a program object as part of current rendering state.
@@ -334,7 +334,7 @@ package OpenGL.Functions is
 --                        void    glVertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 --                        void    glVertexAttrib4fv(GLuint indx, const GLfloat * values)
 
-   not overriding procedure gl_Vertex_Attrib_Pointer
+   not overriding procedure glVertexAttribPointer
     (Self       : in out OpenGL_Functions;
      Index      : OpenGL.GLuint;
      Size       : OpenGL.GLint;
@@ -344,7 +344,7 @@ package OpenGL.Functions is
      Pointer    : System.Address) is abstract;
    --  Define an array of generic vertex attribute data.
 
-   not overriding procedure gl_Viewport
+   not overriding procedure glViewport
     (Self   : in out OpenGL_Functions;
      X      : OpenGL.GLint;
      Y      : OpenGL.GLint;

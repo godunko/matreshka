@@ -71,9 +71,9 @@ package body OpenGL.Shaders is
          raise Program_Error;
       end if;
 
-      Self.Data.Context.Functions.gl_Shader_Source (Self.Data.Shader_Id, Aux);
-      Self.Data.Context.Functions.gl_Compile_Shader (Self.Data.Shader_Id);
-      Self.Data.Context.Functions.gl_Get_Shaderiv
+      Self.Data.Context.Functions.glShaderSource (Self.Data.Shader_Id, Aux);
+      Self.Data.Context.Functions.glCompileShader (Self.Data.Shader_Id);
+      Self.Data.Context.Functions.glGetShaderiv
        (Self.Data.Shader_Id, OpenGL.GL_COMPILE_STATUS, Status);
 
       if Status = GLint (GL_FALSE) then
@@ -99,7 +99,7 @@ package body OpenGL.Shaders is
       end if;
 
       Shader_Id :=
-        OpenGL.Contexts.Current_Context.Functions.gl_Create_Shader
+        OpenGL.Contexts.Current_Context.Functions.glCreateShader
          ((case Shader_Type is
              when OpenGL.Vertex_Shader   => OpenGL.GL_VERTEX_SHADER,
              when OpenGL.Fragment_Shader => OpenGL.GL_FRAGMENT_SHADER));

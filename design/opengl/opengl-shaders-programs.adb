@@ -63,7 +63,7 @@ package body OpenGL.Shaders.Programs is
    begin
       --  Self.Context /= Shader.Context => error
 
-      Self.Data.Context.Functions.gl_Attach_Shader
+      Self.Data.Context.Functions.glAttachShader
        (Self.Data.Program_Id, Shader.Shader_Id);
    end Add_Shader;
 
@@ -76,7 +76,7 @@ package body OpenGL.Shaders.Programs is
      Name : League.Strings.Universal_String) return OpenGL.GLuint
    is
       Aux : constant OpenGL.GLint
-        := Self.Data.Context.Functions.gl_Get_Attrib_Location
+        := Self.Data.Context.Functions.glGetAttribLocation
             (Self.Data.Program_Id, Name);
 
    begin
@@ -93,7 +93,7 @@ package body OpenGL.Shaders.Programs is
 
    procedure Bind (Self : in out OpenGL_Shader_Program'Class) is
    begin
-      Self.Data.Context.Functions.gl_Use_Program (Self.Data.Program_Id);
+      Self.Data.Context.Functions.glUseProgram (Self.Data.Program_Id);
    end Bind;
 
    ------------
@@ -110,7 +110,7 @@ package body OpenGL.Shaders.Programs is
          raise Program_Error;
       end if;
 
-      Program := OpenGL.Contexts.Current_Context.Functions.gl_Create_Program;
+      Program := OpenGL.Contexts.Current_Context.Functions.glCreateProgram;
 
       if Program = 0 then
          raise Program_Error;
@@ -130,7 +130,7 @@ package body OpenGL.Shaders.Programs is
     (Self     : OpenGL_Shader_Program'Class;
      Location : OpenGL.GLuint) is
    begin
-      Self.Data.Context.Functions.gl_Enable_Vertex_Attrib_Array (Location);
+      Self.Data.Context.Functions.glEnableVertexAttribArray (Location);
    end Enable_Attribute_Array;
 
    ----------------------------
@@ -152,8 +152,8 @@ package body OpenGL.Shaders.Programs is
       Status : GLint;
 
    begin
-      Self.Data.Context.Functions.gl_Link_Program (Self.Data.Program_Id);
-      Self.Data.Context.Functions.gl_Get_Programiv
+      Self.Data.Context.Functions.glLinkProgram (Self.Data.Program_Id);
+      Self.Data.Context.Functions.glGetProgramiv
        (Self.Data.Program_Id, GL_LINK_STATUS, Status);
 
       if GLboolean (Status) = GL_FALSE then
@@ -178,7 +178,7 @@ package body OpenGL.Shaders.Programs is
         new Ada.Unchecked_Conversion (Natural, System.Address);
 
    begin
-      Self.Data.Context.Functions.gl_Vertex_Attrib_Pointer
+      Self.Data.Context.Functions.glVertexAttribPointer
        (Location, Tuple_Size, Item_Type, Normalized, Stride, Convert (Offset));
    end Set_Attribute_Buffer;
 

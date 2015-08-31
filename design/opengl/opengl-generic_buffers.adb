@@ -83,7 +83,7 @@ package body OpenGL.Generic_Buffers is
    procedure Allocate
     (Self : in out OpenGL_Buffer'Class; Data : Element_Array) is
    begin
-      Self.Data.Context.Functions.gl_Buffer_Data
+      Self.Data.Context.Functions.glBufferData
        (Self.Data.Buffer_Type,
         Data'Size / System.Storage_Unit,
         Data (Data'First)'Address,
@@ -106,7 +106,7 @@ package body OpenGL.Generic_Buffers is
          return False;
       end if;
 
-      Self.Data.Context.Functions.gl_Bind_Buffer
+      Self.Data.Context.Functions.glBindBuffer
        (Self.Data.Buffer_Type, Self.Data.Buffer_Id);
 
       return True;
@@ -138,7 +138,7 @@ package body OpenGL.Generic_Buffers is
          raise Program_Error;
       end if;
 
-      OpenGL.Contexts.Current_Context.Functions.gl_Gen_Buffers (Buffers);
+      OpenGL.Contexts.Current_Context.Functions.glGenBuffers (Buffers);
       Self.Data :=
         new Buffer_Shared_Data'
              (Counter      => <>,
@@ -211,7 +211,7 @@ package body OpenGL.Generic_Buffers is
             Buffers : OpenGL.GLuint_Array (1 .. 1) := (1 => Self.Buffer_Id);
 
          begin
-            Self.Context.Functions.gl_Delete_Buffers (Buffers);
+            Self.Context.Functions.glDeleteBuffers (Buffers);
             Free (Self);
          end;
       end if;
