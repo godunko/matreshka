@@ -50,6 +50,27 @@ package OpenGL is
 
    type GLfloat is new Interfaces.IEEE_Float_32;
 
+   type GLfloat_Matrix_2x2 is
+     array (Positive range 1 .. 2, Positive range 1 .. 2) of aliased GLfloat
+       with Convention => Fortran;
+
+   type GLfloat_Matrix_3x3 is
+     array (Positive range 1 .. 3, Positive range 1 .. 3) of aliased GLfloat
+       with Convention => Fortran;
+
+   type GLfloat_Matrix_4x4 is
+     array (Positive range 1 .. 4, Positive range 1 .. 4) of aliased GLfloat
+       with Convention => Fortran;
+
+   type GLfloat_Matrix_2x2_Array is
+     array (Positive range <>) of GLfloat_Matrix_2x2;
+
+   type GLfloat_Matrix_3x3_Array is
+     array (Positive range <>) of GLfloat_Matrix_3x3;
+
+   type GLfloat_Matrix_4x4_Array is
+     array (Positive range <>) of GLfloat_Matrix_4x4;
+
    subtype GLclampf is GLfloat range 0.0 .. 1.0;
 
    type GLboolean is private;
@@ -507,9 +528,6 @@ package OpenGL is
    --       <command name="glUniform4fv"/>
    --       <command name="glUniform4i"/>
    --       <command name="glUniform4iv"/>
-   --       <command name="glUniformMatrix2fv"/>
-   --       <command name="glUniformMatrix3fv"/>
-   --       <command name="glUniformMatrix4fv"/>
    --       <command name="glValidateProgram"/>
    --       <command name="glVertexAttrib1f"/>
    --       <command name="glVertexAttrib1fv"/>

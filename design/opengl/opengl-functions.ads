@@ -315,9 +315,27 @@ package OpenGL.Functions is
 --                        void    glUniform4fv(GLint location, GLsizei count, const GLfloat * v)
 --                        void    glUniform4i(GLint location, GLint x, GLint y, GLint z, GLint w)
 --                        void    glUniform4iv(GLint location, GLsizei count, const GLint * v)
---                        void    glUniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
---                        void    glUniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
---                        void    glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
+
+   not overriding procedure glUniformMatrix2fv
+    (Self      : in out OpenGL_Functions;
+     Location  : OpenGL.GLuint;
+     Transpose : Boolean;
+     Value     : OpenGL.GLfloat_Matrix_2x2_Array) is abstract;
+   --  Specify the value of a uniform variable for the current program object.
+
+   not overriding procedure glUniformMatrix3fv
+    (Self      : in out OpenGL_Functions;
+     Location  : OpenGL.GLuint;
+     Transpose : Boolean;
+     Value     : OpenGL.GLfloat_Matrix_3x3_Array) is abstract;
+   --  Specify the value of a uniform variable for the current program object.
+
+   not overriding procedure glUniformMatrix4fv
+    (Self      : in out OpenGL_Functions;
+     Location  : OpenGL.GLuint;
+     Transpose : Boolean;
+     Value     : OpenGL.GLfloat_Matrix_4x4_Array) is abstract;
+   --  Specify the value of a uniform variable for the current program object.
 
    not overriding procedure glUseProgram
     (Self    : in out OpenGL_Functions;
