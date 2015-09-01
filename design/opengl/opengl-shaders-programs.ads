@@ -104,6 +104,39 @@ package OpenGL.Shaders.Programs is
    --  vertices. A default stride value of zero indicates that the vertices are
    --  densely packed in the value array.
 
+   procedure Set_Uniform_Value
+    (Self     : in out OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint;
+     Value    : OpenGL.GLfloat_Matrix_2x2);
+   procedure Set_Uniform_Value
+    (Self  : in out OpenGL_Shader_Program'Class;
+     Name  : League.Strings.Universal_String;
+     Value : OpenGL.GLfloat_Matrix_2x2);
+   procedure Set_Uniform_Value
+    (Self     : in out OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint;
+     Value    : OpenGL.GLfloat_Matrix_3x3);
+   procedure Set_Uniform_Value
+    (Self  : in out OpenGL_Shader_Program'Class;
+     Name  : League.Strings.Universal_String;
+     Value : OpenGL.GLfloat_Matrix_3x3);
+   procedure Set_Uniform_Value
+    (Self     : in out OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint;
+     Value    : OpenGL.GLfloat_Matrix_4x4);
+   procedure Set_Uniform_Value
+    (Self  : in out OpenGL_Shader_Program'Class;
+     Name  : League.Strings.Universal_String;
+     Value : OpenGL.GLfloat_Matrix_4x4);
+   --  Sets the uniform variable at location in the current context to value.
+
+   function Uniform_Location
+    (Self : OpenGL_Shader_Program'Class;
+     Name : League.Strings.Universal_String) return OpenGL.GLuint;
+   --  Returns the location of the uniform variable name within this shader
+   --  program's parameter list. Raise exception if name is not a valid uniform
+   --  variable for this shader program.
+
 private
 
    type Program_Shared_Data;

@@ -204,4 +204,99 @@ package body OpenGL.Shaders.Programs is
         Offset);
    end Set_Attribute_Buffer;
 
+   -----------------------
+   -- Set_Uniform_Value --
+   -----------------------
+
+   procedure Set_Uniform_Value
+    (Self     : in out OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint;
+     Value    : OpenGL.GLfloat_Matrix_2x2) is
+   begin
+      Self.Data.Context.Functions.glUniformMatrix2fv
+       (Location, False, (1 => Value));
+   end Set_Uniform_Value;
+
+   -----------------------
+   -- Set_Uniform_Value --
+   -----------------------
+
+   procedure Set_Uniform_Value
+    (Self  : in out OpenGL_Shader_Program'Class;
+     Name  : League.Strings.Universal_String;
+     Value : OpenGL.GLfloat_Matrix_2x2) is
+   begin
+      Self.Set_Uniform_Value (Self.Uniform_Location (Name), Value);
+   end Set_Uniform_Value;
+
+   -----------------------
+   -- Set_Uniform_Value --
+   -----------------------
+
+   procedure Set_Uniform_Value
+    (Self     : in out OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint;
+     Value    : OpenGL.GLfloat_Matrix_3x3) is
+   begin
+      Self.Data.Context.Functions.glUniformMatrix3fv
+       (Location, False, (1 => Value));
+   end Set_Uniform_Value;
+
+   -----------------------
+   -- Set_Uniform_Value --
+   -----------------------
+
+   procedure Set_Uniform_Value
+    (Self  : in out OpenGL_Shader_Program'Class;
+     Name  : League.Strings.Universal_String;
+     Value : OpenGL.GLfloat_Matrix_3x3) is
+   begin
+      Self.Set_Uniform_Value (Self.Uniform_Location (Name), Value);
+   end Set_Uniform_Value;
+
+   -----------------------
+   -- Set_Uniform_Value --
+   -----------------------
+
+   procedure Set_Uniform_Value
+    (Self     : in out OpenGL_Shader_Program'Class;
+     Location : OpenGL.GLuint;
+     Value    : OpenGL.GLfloat_Matrix_4x4) is
+   begin
+      Self.Data.Context.Functions.glUniformMatrix4fv
+       (Location, False, (1 => Value));
+   end Set_Uniform_Value;
+
+   -----------------------
+   -- Set_Uniform_Value --
+   -----------------------
+
+   procedure Set_Uniform_Value
+    (Self  : in out OpenGL_Shader_Program'Class;
+     Name  : League.Strings.Universal_String;
+     Value : OpenGL.GLfloat_Matrix_4x4) is
+   begin
+      Self.Set_Uniform_Value (Self.Uniform_Location (Name), Value);
+   end Set_Uniform_Value;
+
+   ----------------------
+   -- Uniform_Location --
+   ----------------------
+
+   function Uniform_Location
+    (Self : OpenGL_Shader_Program'Class;
+     Name : League.Strings.Universal_String) return OpenGL.GLuint
+   is
+      Aux : constant OpenGL.GLint
+        := Self.Data.Context.Functions.glGetUniformLocation
+            (Self.Data.Program_Id, Name);
+
+   begin
+      if Aux = -1 then
+         raise Program_Error;
+      end if;
+
+      return OpenGL.GLuint (Aux);
+   end Uniform_Location;
+
 end OpenGL.Shaders.Programs;
