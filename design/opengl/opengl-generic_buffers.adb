@@ -195,6 +195,15 @@ package body OpenGL.Generic_Buffers is
       Matreshka.Atomics.Counters.Increment (Self.Counter);
    end Reference;
 
+   ------------
+   -- Stride --
+   ------------
+
+   function Stride return OpenGL.GLsizei is
+   begin
+      return Element_Array'Component_Size / System.Storage_Unit;
+   end Stride;
+
    -----------------
    -- Unreference --
    -----------------

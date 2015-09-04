@@ -76,6 +76,9 @@ package OpenGL.Generic_Buffers is
    --  Creates the buffer object in the OpenGL server. Returns True if the
    --  object was created; False otherwise.
 
+   function Stride return OpenGL.GLsizei;
+   --  Returns offset between two elements in element array in storage units.
+
 private
 
    type Buffer_Shared_Data;
