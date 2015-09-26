@@ -46,7 +46,6 @@
 ------------------------------------------------------------------------------
 with League.Strings;
 with Servlet.Contexts;
-with Servlet.HTTP_Sessions;
 with XML.Templates.Processors;
 private with XML.Templates.Streams;
 
@@ -62,8 +61,7 @@ package AWFC.Page_Generators is
      Content_Template : League.Strings.Universal_String);
 
    function Render
-    (Self    : in out Abstract_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+    (Self : in out Abstract_Page_Generator'Class)
        return League.Strings.Universal_String;
 
    not overriding procedure Bind_Parameters

@@ -165,8 +165,7 @@ package body AWFC.Page_Generators is
    ------------
 
    function Render
-    (Self    : in out Abstract_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+    (Self : in out Abstract_Page_Generator'Class)
        return League.Strings.Universal_String
    is
       Reader       : XML.SAX.Event_Readers.Event_Reader;
