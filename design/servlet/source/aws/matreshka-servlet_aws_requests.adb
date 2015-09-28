@@ -168,6 +168,28 @@ package body Matreshka.Servlet_AWS_Requests is
       end case;
    end Get_Method;
 
+   -------------------------
+   -- Get_Parameter_Names --
+   -------------------------
+
+   overriding function Get_Parameter_Names
+    (Self : AWS_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector
+   is
+      Names  : constant AWS.Parameters.VString_Array
+        := AWS.Parameters.Get_Names (AWS.Status.Parameters (Self.Request));
+      Result : League.String_Vectors.Universal_String_Vector;
+
+   begin
+      for Name of Names loop
+         Result.Append
+          (League.Strings.From_UTF_8_String
+            (Ada.Strings.Unbounded.To_String (Name)));
+      end loop;
+
+      return Result;
+   end Get_Parameter_Names;
+
    --------------------------
    -- Get_Parameter_Values --
    --------------------------

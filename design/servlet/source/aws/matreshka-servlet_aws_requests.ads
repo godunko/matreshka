@@ -105,6 +105,13 @@ private
    --  for example, GET, POST, or PUT. Same as the value of the CGI variable
    --  REQUEST_METHOD.
 
+   overriding function Get_Parameter_Names
+    (Self : AWS_Servlet_Request)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Returns an vector of String containing the names of the parameters
+   --  contained in this request. If the request has no parameters, the method
+   --  returns an empty vector.
+
    overriding function Get_Parameter_Values
     (Self : AWS_Servlet_Request;
      Name : League.Strings.Universal_String)
