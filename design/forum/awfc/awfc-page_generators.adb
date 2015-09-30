@@ -79,6 +79,15 @@ package body AWFC.Page_Generators is
      Occurrence : XML.SAX.Parse_Exceptions.SAX_Parse_Exception);
    --  Process fatal error in XML data. Outputs message to standard error.
 
+   package Constants is
+      Head_Tag  : League.Strings.Universal_String := +"head";
+      Title_Tag : League.Strings.Universal_String := +"title";
+      Base_Tag  : League.Strings.Universal_String := +"base";
+      Body_Tag  : League.Strings.Universal_String := +"body";
+      Target    : League.Strings.Universal_String
+        := +"matreshka-page-content";
+   end Constants;
+
    ------------------
    -- Error_String --
    ------------------
@@ -154,10 +163,275 @@ package body AWFC.Page_Generators is
      Context          :
        not null access constant Servlet.Contexts.Servlet_Context'Class;
      Page_Template    : League.Strings.Universal_String;
-     Content_Template : League.Strings.Universal_String) is
+     Content_Template : League.Strings.Universal_String)
+   is
+      use XML.Templates.Streams;
+
+      Content : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector
+        := Get_Stream (Context, Content_Template);
+      Page    : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector
+        := Get_Stream (Context, Page_Template);
+
+      procedure Append_Content_Body;
+
+      procedure Append_Content_Head
+        (Title_Item : in out XML.Templates.Streams.XML_Stream_Element;
+         Title_Text : League.Strings.Universal_String;
+         Base_Item  : in out XML.Templates.Streams.XML_Stream_Element);
+
+      procedure Process_Title
+        (Title_Text : out League.Strings.Universal_String);
+
+      procedure Process_Body;
+      procedure Process_Head;
+
+      -------------------------
+      -- Append_Content_Body --
+      -------------------------
+
+      procedure Append_Content_Body is
+      begin
+         --  Look for <body> in Content
+         while not Content.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Content.First_Element;
+            begin
+               Content.Delete_First;
+
+               if Item.Kind = Start_Element
+                 and then Item.Local_Name in Constants.Body_Tag
+               then
+                  exit;
+               end if;
+            end;
+         end loop;
+
+         --  Look for </body> in Content
+         while not Content.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Content.First_Element;
+            begin
+               Content.Delete_First;
+
+               if Item.Kind = End_Element
+                 and then Item.Local_Name in Constants.Body_Tag
+               then
+                  exit;
+               else
+                  --  Copy everething else
+                  Self.Page.Append (Item);
+               end if;
+            end;
+         end loop;
+      end Append_Content_Body;
+
+      -------------------------
+      -- Append_Content_Head --
+      -------------------------
+
+      procedure Append_Content_Head
+        (Title_Item : in out XML.Templates.Streams.XML_Stream_Element;
+         Title_Text : League.Strings.Universal_String;
+         Base_Item  : in out XML.Templates.Streams.XML_Stream_Element) is
+      begin
+         --  Look for <head> in Content
+         while not Content.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Content.First_Element;
+            begin
+               Content.Delete_First;
+
+               if Item.Kind = Start_Element
+                 and then Item.Local_Name in Constants.Head_Tag
+               then
+                  exit;
+               end if;
+            end;
+         end loop;
+
+         while not Content.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Content.First_Element;
+            begin
+               Content.Delete_First;
+
+               if Item.Kind = End_Element
+                 and then Item.Local_Name in Constants.Head_Tag
+               then
+                  exit;
+               elsif Item.Kind = Start_Element
+                 and then Item.Local_Name in Constants.Title_Tag
+               then
+                  Title_Item := (Kind => Empty);
+               elsif Item.Kind = Start_Element
+                 and then Item.Local_Name in Constants.Base_Tag
+               then
+                  Base_Item := (Kind => Empty);
+               end if;
+
+               --  Copy everething else
+               Self.Page.Append (Item);
+            end;
+         end loop;
+
+         if Base_Item.Kind = Start_Element then
+            Self.Page.Append (Base_Item);
+            Self.Page.Append
+              ((Kind           => End_Element,
+                Location       => Base_Item.Location,
+                Namespace_URI  => Base_Item.Namespace_URI,
+                Local_Name     => Base_Item.Local_Name,
+                Qualified_Name => Base_Item.Qualified_Name));
+         end if;
+
+         if Title_Item.Kind = Start_Element then
+            Self.Page.Append (Title_Item);
+
+            if not Title_Text.Is_Empty then
+               Self.Page.Append
+                 ((Kind     => Text,
+                   Location => Title_Item.Location,
+                   Text     => Title_Text));
+            end if;
+
+            Self.Page.Append
+              ((Kind           => End_Element,
+                Location       => Title_Item.Location,
+                Namespace_URI  => Title_Item.Namespace_URI,
+                Local_Name     => Title_Item.Local_Name,
+                Qualified_Name => Title_Item.Qualified_Name));
+         end if;
+      end Append_Content_Head;
+
+      ------------------
+      -- Process_Body --
+      ------------------
+
+      procedure Process_Body is
+         use XML.Templates.Streams;
+      begin
+         --  Copy <body> of Page
+         while not Page.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Page.First_Element;
+            begin
+               Page.Delete_First;
+
+               if Item.Kind = Processing_Instruction
+                 and then Item.Target in Constants.Target
+               then
+                  Append_Content_Body;
+               else
+                  Self.Page.Append (Item);
+               end if;
+            end;
+         end loop;
+      end Process_Body;
+
+      ------------------
+      -- Process_Head --
+      ------------------
+
+      procedure Process_Head is
+         use Constants;
+         use XML.Templates.Streams;
+         use type League.Strings.Universal_String;
+
+         Title_Item : XML_Stream_Element;
+         Title_Text : League.Strings.Universal_String;
+         Base_Item  : XML_Stream_Element;
+      begin
+         --  Look for <head> in Page and copy any element until we find it
+         while not Page.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Page.First_Element;
+            begin
+               Page.Delete_First;
+               Self.Page.Append (Item);
+
+               if Item.Kind = Start_Element
+                 and then Item.Local_Name = Head_Tag
+               then
+                  exit;
+               end if;
+            end;
+         end loop;
+
+         --  Process all elemnts in <head> of Page
+         while not Page.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Page.First_Element;
+            begin
+               Page.Delete_First;
+
+               if Item.Kind = End_Element
+                 and then Item.Local_Name = Head_Tag
+               then
+                  Append_Content_Head (Title_Item, Title_Text, Base_Item);
+
+                  Self.Page.Append (Item);
+                  exit;
+               elsif Item.Kind = Start_Element
+                 and then Item.Local_Name = Title_Tag
+               then
+                  --  Remember <title> if found
+                  Title_Item := Item;
+                  Process_Title (Title_Text);
+               elsif Item.Kind = Start_Element
+                 and then Item.Local_Name = Base_Tag
+               then
+                  --  Remember <base> if found
+                  Base_Item := Item;
+               elsif Item.Kind = End_Element
+                 and then Item.Local_Name = Base_Tag
+               then
+                  --  Ignore </base> if found
+                  null;
+               else
+                  --  Copy everething else
+                  Self.Page.Append (Item);
+               end if;
+            end;
+         end loop;
+      end Process_Head;
+
+      -------------------
+      -- Process_Title --
+      -------------------
+
+      procedure Process_Title
+        (Title_Text : out League.Strings.Universal_String) is
+      begin
+         while not Page.Is_Empty loop
+            declare
+               Item : XML.Templates.Streams.XML_Stream_Element
+                 := Page.First_Element;
+            begin
+               Page.Delete_First;
+
+               if Item.Kind = End_Element
+                 and then Item.Local_Name in Constants.Title_Tag
+               then
+                  exit;
+               elsif Item.Kind = Text then
+                  Title_Text.Append (Item.Text);
+               end if;
+            end;
+         end loop;
+      end Process_Title;
+
    begin
-      Self.Page    := Get_Stream (Context, Page_Template);
-      Self.Content := Get_Stream (Context, Content_Template);
+      Self.Page.Clear;
+
+      Process_Head;
+      Process_Body;
    end Initialize;
 
    ------------
@@ -192,7 +466,7 @@ package body AWFC.Page_Generators is
       Filter.Set_Content_Handler (Event_Writer'Unchecked_Access);
       Filter.Set_Lexical_Handler (Event_Writer'Unchecked_Access);
 
-      Reader.Parse (Self.Content);
+--      Reader.Parse (Self.Content);
 
       --  Bind generated content to parameter.
 
