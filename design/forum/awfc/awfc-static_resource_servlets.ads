@@ -41,19 +41,27 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with League.Strings;
+--  This servlet can be used to return static resources - content of files
+--  in deployment directory.
+------------------------------------------------------------------------------
+private with League.Strings;
 
-with Servlet.HTTP_Requests;
-with Servlet.HTTP_Responses;
+private with Servlet.HTTP_Requests;
+private with Servlet.HTTP_Responses;
 with Servlet.HTTP_Servlets;
 
 package AWFC.Static_Resource_Servlets is
 
    type Static_Resource_Servlet is
-     new Servlet.HTTP_Servlets.HTTP_Servlet with null record;
+     new Servlet.HTTP_Servlets.HTTP_Servlet with private;
 
    type Static_Resource_Servlet_Access is
      access all Static_Resource_Servlet'Class;
+
+private
+
+   type Static_Resource_Servlet is
+     new Servlet.HTTP_Servlets.HTTP_Servlet with null record;
 
    overriding procedure Do_Get
     (Self     : in out Static_Resource_Servlet;
