@@ -74,7 +74,7 @@ package AWFC.Page_Generators is
 private
 
    type Abstract_Page_Generator is abstract tagged limited record
-      Page    : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+      Page : XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
    end record;
 
 end AWFC.Page_Generators;

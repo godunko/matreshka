@@ -51,7 +51,6 @@ with XML.SAX.HTML5_Writers;
 with XML.SAX.Parse_Exceptions;
 with XML.SAX.Simple_Readers;
 with XML.SAX.String_Output_Destinations;
-with XML.Templates.Streams.Holders;
 
 package body AWFC.Page_Generators is
 
@@ -444,7 +443,6 @@ package body AWFC.Page_Generators is
    is
       Reader       : XML.SAX.Event_Readers.Event_Reader;
       Filter       : aliased XML.Templates.Processors.Template_Processor;
-      Event_Writer : aliased XML.SAX.Event_Writers.Event_Writer;
       Error        : aliased Error_Handler;
       HTML_Writer  : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
       Output       : aliased
@@ -456,29 +454,15 @@ package body AWFC.Page_Generators is
       Reader.Set_Content_Handler (Filter'Unchecked_Access);
       Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
       Reader.Set_Error_Handler (Error'Unchecked_Access);
+      Filter.Set_Content_Handler (HTML_Writer'Unchecked_Access);
+      Filter.Set_Lexical_Handler (HTML_Writer'Unchecked_Access);
+      HTML_Writer.Set_Output_Destination (Output'Unchecked_Access);
 
       --  Bind template parameters.
 
       Self.Bind_Parameters (Filter);
 
-      --  Connect template processor to event stream writer.
-
-      Filter.Set_Content_Handler (Event_Writer'Unchecked_Access);
-      Filter.Set_Lexical_Handler (Event_Writer'Unchecked_Access);
-
---      Reader.Parse (Self.Content);
-
-      --  Bind generated content to parameter.
-
-      Filter.Set_Parameter
-       (+"pageContent",
-        XML.Templates.Streams.Holders.To_Holder (Event_Writer.Get_Stream));
-
-      --  Connect template processor to HTML5 writer.
-
-      Filter.Set_Content_Handler (HTML_Writer'Unchecked_Access);
-      Filter.Set_Lexical_Handler (HTML_Writer'Unchecked_Access);
-      HTML_Writer.Set_Output_Destination (Output'Unchecked_Access);
+      --  Process template.
 
       Reader.Parse (Self.Page);
 
