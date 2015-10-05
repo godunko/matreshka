@@ -41,10 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Strings.Unbounded;
+
+with AWS.Containers.Tables;
 with AWS.Cookie;
+with AWS.Headers;
 with AWS.Messages;
 with AWS.Resources.Streams.Memory;
 with AWS.Response.Set;
+
+with Matreshka.RFC2616_Dates;
 
 package body Matreshka.Servlet_AWS_Responses is
 
@@ -137,10 +143,13 @@ package body Matreshka.Servlet_AWS_Responses is
    overriding procedure Add_Date_Header
     (Self  : in out AWS_Servlet_Response;
      Name  : League.Strings.Universal_String;
-     Value : League.Calendars.Date_Time) is
+     Value : League.Calendars.Date_Time)
+   is
+      Image : constant League.Strings.Universal_String :=
+        Matreshka.RFC2616_Dates.To_String (Value);
    begin
-      raise Program_Error;
-      --  XXX Not implemented.
+      AWS.Response.Set.Add_Header
+        (Self.Data, Name.To_UTF_8_String, Image.To_UTF_8_String);
    end Add_Date_Header;
 
    ----------------
@@ -152,8 +161,8 @@ package body Matreshka.Servlet_AWS_Responses is
      Name  : League.Strings.Universal_String;
      Value : League.Strings.Universal_String) is
    begin
-      raise Program_Error;
-      --  XXX Not implemented.
+      AWS.Response.Set.Add_Header
+        (Self.Data, Name.To_UTF_8_String, Value.To_UTF_8_String);
    end Add_Header;
 
    ------------------------
@@ -186,11 +195,11 @@ package body Matreshka.Servlet_AWS_Responses is
 
    overriding function Contains_Header
     (Self : in out AWS_Servlet_Response;
-     Name : League.Strings.Universal_String) return Boolean is
+     Name : League.Strings.Universal_String) return Boolean
+   is
+      List : constant AWS.Headers.List := Aws.Response.Header (Self.Data);
    begin
-      raise Program_Error;
-      return False;
-      --  XXX Not implemented.
+      return List.Exist (Name.To_UTF_8_String);
    end Contains_Header;
 
    ----------------------
@@ -199,11 +208,19 @@ package body Matreshka.Servlet_AWS_Responses is
 
    overriding function Get_Header_Names
     (Self : in out AWS_Servlet_Response)
-       return League.String_Vectors.Universal_String_Vector is
+       return League.String_Vectors.Universal_String_Vector
+   is
+      List   : constant AWS.Headers.List := Aws.Response.Header (Self.Data);
+      Names  : constant AWS.Containers.Tables.VString_Array := List.Get_Names;
+      Result : League.String_Vectors.Universal_String_Vector;
    begin
-      raise Program_Error;
-      return League.String_Vectors.Empty_Universal_String_Vector;
-      --  XXX Not implemented.
+      for J in Names'Range loop
+         Result.Append
+           (League.Strings.From_UTF_8_String
+              (Ada.Strings.Unbounded.To_String (Names (J))));
+      end loop;
+
+      return Result;
    end Get_Header_Names;
 
    -----------------
@@ -213,11 +230,20 @@ package body Matreshka.Servlet_AWS_Responses is
    overriding function Get_Headers
     (Self : in out AWS_Servlet_Response;
      Name : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector is
+       return League.String_Vectors.Universal_String_Vector
+   is
+      List   : constant AWS.Headers.List := Aws.Response.Header (Self.Data);
+      Values : constant AWS.Containers.Tables.VString_Array
+        := List.Get_Values (Name.To_UTF_8_String);
+      Result : League.String_Vectors.Universal_String_Vector;
    begin
-      raise Program_Error;
-      return League.String_Vectors.Empty_Universal_String_Vector;
-      --  XXX Not implemented.
+      for J in Values'Range loop
+         Result.Append
+           (League.Strings.From_UTF_8_String
+              (Ada.Strings.Unbounded.To_String (Values (J))));
+      end loop;
+
+      return Result;
    end Get_Headers;
 
    -----------------------
@@ -336,10 +362,13 @@ package body Matreshka.Servlet_AWS_Responses is
    overriding procedure Set_Date_Header
     (Self  : in out AWS_Servlet_Response;
      Name  : League.Strings.Universal_String;
-     Value : League.Calendars.Date_Time) is
+     Value : League.Calendars.Date_Time)
+   is
+      Image : constant League.Strings.Universal_String :=
+        Matreshka.RFC2616_Dates.To_String (Value);
    begin
-      raise Program_Error;
-      --  XXX Not implemented.
+      AWS.Response.Set.Update_Header
+        (Self.Data, Name.To_UTF_8_String, Image.To_UTF_8_String);
    end Set_Date_Header;
 
    ----------------
@@ -351,8 +380,8 @@ package body Matreshka.Servlet_AWS_Responses is
      Name  : League.Strings.Universal_String;
      Value : League.Strings.Universal_String) is
    begin
-      raise Program_Error;
-      --  XXX Not implemented.
+      AWS.Response.Set.Update_Header
+        (Self.Data, Name.To_UTF_8_String, Value.To_UTF_8_String);
    end Set_Header;
 
    ------------------------
