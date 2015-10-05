@@ -46,8 +46,11 @@ private with Ada.Streams;
 private with AWS.Resources.Streams.Memory;
 with AWS.Response;
 
+private with League.Calendars;
+private with League.Holders;
 private with League.IRIs;
 private with League.Strings;
+private with League.String_Vectors;
 private with League.Text_Codecs;
 
 with Matreshka.Servlet_HTTP_Responses;
@@ -90,13 +93,51 @@ private
       Stream       : Stream_Access;
       Codec        : Text_Codec_Access;
       Output       : access Servlet.Output_Streams.Servlet_Output_Stream'Class;
-   end  record;
+   end record;
 
    overriding procedure Add_Cookie
     (Self   : in out AWS_Servlet_Response;
      Cookie : Servlet.HTTP_Cookies.Cookie);
    --  Adds the specified cookie to the response. This method can be called
    --  multiple times to set more than one cookie.
+
+   overriding procedure Add_Date_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Calendars.Date_Time);
+   --  Adds a response header with the given name and date-value. This method
+   --  allows response headers to have multiple values.
+
+   overriding procedure Add_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Strings.Universal_String);
+   --  Adds a response header with the given name and value. This method allows
+   --  response headers to have multiple values.
+
+   overriding procedure Add_Integer_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Holders.Universal_Integer);
+   --  Adds a response header with the given name and integer value. This
+   --  method allows response headers to have multiple values.
+
+   overriding function Contains_Header
+    (Self : in out AWS_Servlet_Response;
+     Name : League.Strings.Universal_String) return Boolean;
+   --  Returns a boolean indicating whether the named response header has
+   --  already been set.
+
+   overriding function Get_Header_Names
+    (Self : in out AWS_Servlet_Response)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Return all the header names set for this response.
+
+   overriding function Get_Headers
+    (Self : in out AWS_Servlet_Response;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector;
+   --  Return all the header values associated with the specified header name.
 
    overriding procedure Send_Redirect
     (Self     : in out AWS_Servlet_Response;
@@ -124,6 +165,33 @@ private
    --  text/html;charset=UTF-8. The response's character encoding is only set
    --  from the given content type if this method is called before getWriter is
    --  called.
+
+   overriding procedure Set_Date_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Calendars.Date_Time);
+   --  Sets a response header with the given name and date-value. If the header
+   --  had already been set, the new value overwrites the previous one. The
+   --  Contains_Header method can be used to test for the presence of a header
+   --  before setting its value.
+
+   overriding procedure Set_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Strings.Universal_String);
+   --  Sets a response header with the given name and value. If the header had
+   --  already been set, the new value overwrites the previous one. The
+   --  Contains_Header method can be used to test for the presence of a header
+   --  before setting its value.
+
+   overriding procedure Set_Integer_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Holders.Universal_Integer);
+   --  Sets a response header with the given name and integer value. If the
+   --  header had already been set, the new value overwrites the previous one.
+   --  The Contains_Header method can be used to test for the presence of a
+   --  header before setting its value.
 
    overriding procedure Set_Status
     (Self   : in out AWS_Servlet_Response;

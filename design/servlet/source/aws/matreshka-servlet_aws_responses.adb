@@ -130,6 +130,45 @@ package body Matreshka.Servlet_AWS_Responses is
         Secure  => Cookie.Get_Secure);
    end Add_Cookie;
 
+   ---------------------
+   -- Add_Date_Header --
+   ---------------------
+
+   overriding procedure Add_Date_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Calendars.Date_Time) is
+   begin
+      raise Program_Error;
+      --  XXX Not implemented.
+   end Add_Date_Header;
+
+   ----------------
+   -- Add_Header --
+   ----------------
+
+   overriding procedure Add_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Strings.Universal_String) is
+   begin
+      raise Program_Error;
+      --  XXX Not implemented.
+   end Add_Header;
+
+   ------------------------
+   -- Add_Integer_Header --
+   ------------------------
+
+   overriding procedure Add_Integer_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Holders.Universal_Integer) is
+   begin
+      raise Program_Error;
+      --  XXX Not implemented.
+   end Add_Integer_Header;
+
    -----------
    -- Build --
    -----------
@@ -140,6 +179,46 @@ package body Matreshka.Servlet_AWS_Responses is
       Self.Set_Session_Cookie;
       return Self.Data;
    end Build;
+
+   ---------------------
+   -- Contains_Header --
+   ---------------------
+
+   overriding function Contains_Header
+    (Self : in out AWS_Servlet_Response;
+     Name : League.Strings.Universal_String) return Boolean is
+   begin
+      raise Program_Error;
+      return False;
+      --  XXX Not implemented.
+   end Contains_Header;
+
+   ----------------------
+   -- Get_Header_Names --
+   ----------------------
+
+   overriding function Get_Header_Names
+    (Self : in out AWS_Servlet_Response)
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      raise Program_Error;
+      return League.String_Vectors.Empty_Universal_String_Vector;
+      --  XXX Not implemented.
+   end Get_Header_Names;
+
+   -----------------
+   -- Get_Headers --
+   -----------------
+
+   overriding function Get_Headers
+    (Self : in out AWS_Servlet_Response;
+     Name : League.Strings.Universal_String)
+       return League.String_Vectors.Universal_String_Vector is
+   begin
+      raise Program_Error;
+      return League.String_Vectors.Empty_Universal_String_Vector;
+      --  XXX Not implemented.
+   end Get_Headers;
 
    -----------------------
    -- Get_Output_Stream --
@@ -249,6 +328,45 @@ package body Matreshka.Servlet_AWS_Responses is
              & Self.Encoding.To_UTF_8_String);
       end if;
    end Set_Content_Type;
+
+   ---------------------
+   -- Set_Date_Header --
+   ---------------------
+
+   overriding procedure Set_Date_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Calendars.Date_Time) is
+   begin
+      raise Program_Error;
+      --  XXX Not implemented.
+   end Set_Date_Header;
+
+   ----------------
+   -- Set_Header --
+   ----------------
+
+   overriding procedure Set_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Strings.Universal_String) is
+   begin
+      raise Program_Error;
+      --  XXX Not implemented.
+   end Set_Header;
+
+   ------------------------
+   -- Set_Integer_Header --
+   ------------------------
+
+   overriding procedure Set_Integer_Header
+    (Self  : in out AWS_Servlet_Response;
+     Name  : League.Strings.Universal_String;
+     Value : League.Holders.Universal_Integer) is
+   begin
+      raise Program_Error;
+      --  XXX Not implemented.
+   end Set_Integer_Header;
 
    ----------------
    -- Set_Status --
