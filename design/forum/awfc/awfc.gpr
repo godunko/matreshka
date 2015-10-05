@@ -42,6 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with "../../../gnat/matreshka_spikedog_api.gpr";
+with "../../../gnat/matreshka_spikedog_core.gpr";
 with "../../../gnat/matreshka_xml.gpr";
 
 with "../opm/opm.gpr";
