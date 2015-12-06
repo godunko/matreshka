@@ -431,8 +431,10 @@ package body Matreshka.Filters.LZMA.XZ_Unpack is
          end case;
       end loop;
 
-      if Self.To_Write = 0 then  --  Left_Bytes = 0 or
+      if Self.To_Write = 0 then
+         --  We need normalize because it could affect input stream
          Normalize_Range_Coder (Self.Decoder.Range_Decoder, Input, Index);
+         Reset (Self.Decoder.Range_Decoder);
 
          Self.Count := 1;
          Ok := True;
