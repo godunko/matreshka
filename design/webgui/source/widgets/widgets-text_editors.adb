@@ -72,4 +72,17 @@ package body Widgets.Text_Editors is
 
    end Constructors;
 
+   ------------------------
+   -- On_Key_Press_Event --
+   ------------------------
+
+   overriding procedure On_Key_Press_Event
+    (Self  : in out Text_Editor;
+     Event : in out WebAPI.UI_Events.Keyboard.Keyboard_Event'Class) is
+   begin
+      if Event.Get_Key_Code = 38 then
+         raise Program_Error;
+      end if;
+   end On_Key_Press_Event;
+
 end Widgets.Text_Editors;

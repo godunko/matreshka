@@ -46,6 +46,7 @@ private with League.Strings;
 with WebAPI.DOM.Elements;
 private with WebAPI.DOM.Event_Listeners;
 with WebAPI.DOM.Events;
+with WebAPI.UI_Events.Keyboard;
 
 with Core.Objects;
 
@@ -59,6 +60,14 @@ package Widgets is
    not overriding procedure On_Click
     (Self  : in out Abstract_Widget;
      Event : not null access WebAPI.DOM.Events.Event'Class) is null;
+
+   not overriding procedure On_Key_Press_Event
+    (Self  : in out Abstract_Widget;
+     Event : in out WebAPI.UI_Events.Keyboard.Keyboard_Event'Class) is null;
+
+   not overriding procedure On_Key_Release_Event
+    (Self  : in out Abstract_Widget;
+     Event : in out WebAPI.UI_Events.Keyboard.Keyboard_Event'Class) is null;
 
    package Constructors is
 
@@ -81,10 +90,29 @@ private
     (Self  : not null access On_Click_Dispatcher;
      Event : access WebAPI.DOM.Events.Event'Class);
 
+   type On_Keydown_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access On_Keydown_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type On_Keyup_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access On_Keyup_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
    type Abstract_Widget is
      abstract new Core.Objects.Abstract_Object with record
       Root             : WebAPI.DOM.Elements.Element_Access;
       Click_Dispatcher : aliased On_Click_Dispatcher (Abstract_Widget'Access);
+      Keyup_Dispatcher : aliased On_Keyup_Dispatcher (Abstract_Widget'Access);
+      Keydown_Dispatcher :
+        aliased On_Keydown_Dispatcher (Abstract_Widget'Access);
    end record;
 
 --   type Event_Dispatcher is

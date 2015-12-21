@@ -71,4 +71,8 @@ private
 --      Root : WebAPI.HTML.Elements.HTML_Element_Access;
    end record;
 
+   overriding procedure On_Key_Press_Event
+    (Self  : in out Text_Editor;
+     Event : in out WebAPI.UI_Events.Keyboard.Keyboard_Event'Class);
+
 end Widgets.Text_Editors;

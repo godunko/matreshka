@@ -66,6 +66,10 @@ package body Widgets is
          Self.Root := Root;
          WebAPI.DOM.Event_Targets.Add_Event_Listener
           (Self.Root, +"click", Self.Click_Dispatcher'Access, False);
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Self.Root, +"keydown", Self.Keydown_Dispatcher'Access, False);
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Self.Root, +"keyup", Self.Keyup_Dispatcher'Access, False);
       end Initialize;
 
    end Constructors;
@@ -79,6 +83,30 @@ package body Widgets is
      Event : access WebAPI.DOM.Events.Event'Class) is
    begin
       Self.Owner.On_Click (Event);
+   end Handle_Event;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access On_Keydown_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.On_Key_Press_Event
+       (WebAPI.UI_Events.Keyboard.Keyboard_Event'Class (Event.all));
+   end Handle_Event;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access On_Keyup_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.On_Key_Release_Event
+       (WebAPI.UI_Events.Keyboard.Keyboard_Event'Class (Event.all));
    end Handle_Event;
 
 end Widgets;
