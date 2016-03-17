@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -61,11 +61,14 @@ package SQL.Databases.Pools is
 
    function Get
      (Self    : aliased in out SQL_Connection_Pool'Class;
-      Options : SQL.Options.SQL_Options;
-      Error   : out League.Strings.Universal_String)
+      Options : SQL.Options.SQL_Options)
      return SQL_Database;
    --  Open new database connection or reuse some if it's already in the pool.
    --  If connection fails return not empty Error message
+
+   function Options
+     (Self : SQL_Connection_Pool'Class) return SQL.Options.SQL_Options;
+   --  Return Default option set - see Create function
 
 private
 

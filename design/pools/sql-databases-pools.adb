@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -101,8 +101,7 @@ package body SQL.Databases.Pools is
 
    function Get
      (Self    : aliased in out SQL_Connection_Pool'Class;
-      Options : SQL.Options.SQL_Options;
-      Error   : out League.Strings.Universal_String)
+      Options : SQL.Options.SQL_Options)
       return SQL_Database
    is
       use type SQL.Options.SQL_Options;
@@ -117,19 +116,17 @@ package body SQL.Databases.Pools is
 
       if Present /= Options then
          declare
-            Be : Matreshka.Internals.SQL_Drivers.Database_Access :=
+            Be : constant Matreshka.Internals.SQL_Drivers.Database_Access :=
               Matreshka.Internals.SQL_Drivers.Create (Self.Driver);
          begin
             if not Be.Open (Options) then
-               Error := Be.Error_Message;
-               Matreshka.Internals.SQL_Drivers.Dereference (Be);
                Self.Items (Index).Release_Connection (Result, Present);
                Self.Index_Map.Release_Unused_Index (Present, Index);
 
                return
                  (Ada.Finalization.Limited_Controlled with
                   Self'Access,
-                  Matreshka.Internals.SQL_Drivers.Dummy.Empty_Database'Access,
+                  Be,
                   Options,
                   Index => 0);
             end if;
@@ -145,11 +142,21 @@ package body SQL.Databases.Pools is
 
       return
         (Ada.Finalization.Limited_Controlled with
+           Pool    => Self'Access,
            Data    => Result,
            Options => Options,
-           Pool    => Self'Access,
            Index   => Index);
    end Get;
+
+   -------------
+   -- Options --
+   -------------
+
+   function Options
+     (Self : SQL_Connection_Pool'Class) return SQL.Options.SQL_Options is
+   begin
+      return Self.Options;
+   end Options;
 
    -----------------------
    -- Locked_Hashed_Map --
@@ -169,6 +176,7 @@ package body SQL.Databases.Pools is
       begin
          if Free = 0 then
             Free_List (Index) := (Prev => Index, Next => Index);
+            Free := Index;
          else
             Last := Free_List (Free).Prev;
 
@@ -323,7 +331,7 @@ package body SQL.Databases.Pools is
          Options : SQL.Options.SQL_Options)
       is
       begin
-         Busy := True;
+         Busy := False;
          Pool_Item.Options := Options;
          Connect := Value;
       end Release_Connection;

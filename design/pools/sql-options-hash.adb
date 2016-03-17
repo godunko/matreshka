@@ -44,7 +44,23 @@
 --  This is hash function compatible with standard containers.
 ------------------------------------------------------------------------------
 
-with Ada.Containers;
+with League.Strings.Hash;
 
 function SQL.Options.Hash
-  (Self : SQL_Options) return Ada.Containers.Hash_Type;
+  (Self : SQL_Options)
+   return Ada.Containers.Hash_Type
+is
+   use type Ada.Containers.Hash_Type;
+
+   Cursor : String_Maps.Cursor := Self.Set.First;
+   Result : Ada.Containers.Hash_Type := 0;
+begin
+   while String_Maps.Has_Element (Cursor) loop
+      Result := Result + League.Strings.Hash (String_Maps.Key (Cursor));
+      Result := Result
+        + League.Strings.Hash (String_Maps.Element (Cursor));
+      String_Maps.Next (Cursor);
+   end loop;
+
+   return Result;
+end SQL.Options.Hash;
