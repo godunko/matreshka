@@ -44,26 +44,30 @@
 
 package body SQL.Databases.Pools is
 
-   ------------
-   -- Create --
-   ------------
+   package body Constructors is
 
-   function Create
-     (Driver   : League.Strings.Universal_String;
-      Options  : SQL.Options.SQL_Options;
-      Max_Size : Positive)
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+        (Driver   : League.Strings.Universal_String;
+         Options  : SQL.Options.SQL_Options;
+         Max_Size : Positive)
       return SQL_Connection_Pool
-   is
-      Size    : constant Idem_Index := Idem_Index (Max_Size);
-      Modulus : constant Ada.Containers.Hash_Type :=
-        Hashed_Maps.Default_Modulus (Size);
-   begin
-      return Value : SQL_Connection_Pool (Size, Modulus) do
-         Value.Driver := Driver;
-         Value.Options := Options;
-         Value.Index_Map.Initialize;
-      end return;
-   end Create;
+      is
+         Size    : constant Idem_Index := Idem_Index (Max_Size);
+         Modulus : constant Ada.Containers.Hash_Type :=
+           Hashed_Maps.Default_Modulus (Size);
+      begin
+         return Value : SQL_Connection_Pool (Size, Modulus) do
+            Value.Driver := Driver;
+            Value.Options := Options;
+            Value.Index_Map.Initialize;
+         end return;
+      end Create;
+
+   end Constructors;
 
    ------------
    -- Create --

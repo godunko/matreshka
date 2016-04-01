@@ -53,12 +53,6 @@ package SQL.Databases.Pools is
    type SQL_Connection_Pool (<>) is tagged limited private;
    --  Connection pool aggregates several DB connection
 
-   function Create
-    (Driver   : League.Strings.Universal_String;
-     Options  : SQL.Options.SQL_Options;
-     Max_Size : Positive) return SQL_Connection_Pool;
-   --  Create new connection pool of given size
-
    function Get
      (Self    : aliased in out SQL_Connection_Pool'Class;
       Options : SQL.Options.SQL_Options)
@@ -69,6 +63,15 @@ package SQL.Databases.Pools is
    function Options
      (Self : SQL_Connection_Pool'Class) return SQL.Options.SQL_Options;
    --  Return Default option set - see Create function
+
+   package Constructors is
+
+      function Create
+        (Driver   : League.Strings.Universal_String;
+         Options  : SQL.Options.SQL_Options;
+         Max_Size : Positive) return SQL_Connection_Pool;
+      --  Create new connection pool of given size
+   end Constructors;
 
 private
 
