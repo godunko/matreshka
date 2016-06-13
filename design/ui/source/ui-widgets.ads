@@ -1,0 +1,141 @@
+------------------------------------------------------------------------------
+--                                                                          --
+--                            Matreshka Project                             --
+--                                                                          --
+--                               Web Framework                              --
+--                                                                          --
+--                        Runtime Library Component                         --
+--                                                                          --
+------------------------------------------------------------------------------
+--                                                                          --
+-- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- All rights reserved.                                                     --
+--                                                                          --
+-- Redistribution and use in source and binary forms, with or without       --
+-- modification, are permitted provided that the following conditions       --
+-- are met:                                                                 --
+--                                                                          --
+--  * Redistributions of source code must retain the above copyright        --
+--    notice, this list of conditions and the following disclaimer.         --
+--                                                                          --
+--  * Redistributions in binary form must reproduce the above copyright     --
+--    notice, this list of conditions and the following disclaimer in the   --
+--    documentation and/or other materials provided with the distribution.  --
+--                                                                          --
+--  * Neither the name of the Vadim Godunko, IE nor the names of its        --
+--    contributors may be used to endorse or promote products derived from  --
+--    this software without specific prior written permission.              --
+--                                                                          --
+-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      --
+-- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        --
+-- LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    --
+-- A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     --
+-- HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,   --
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED --
+-- TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR   --
+-- PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF   --
+-- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     --
+-- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS       --
+-- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
+--                                                                          --
+------------------------------------------------------------------------------
+--  $Revision$ $Date$
+------------------------------------------------------------------------------
+
+private with WebAPI.DOM.Events;
+private with WebAPI.DOM.Event_Listeners;
+with WebAPI.HTML.Elements;
+
+with UI.Events.Mouse.Button;
+with UI.Events.Mouse.Click;
+with UI.Events.Mouse.Move;
+with UI.Events.Mouse.Wheel;
+
+package UI.Widgets is
+
+   type Abstract_Widget is abstract tagged limited private;
+
+   not overriding procedure Click_Event
+    (Self  : in out Abstract_Widget;
+     Event : in out UI.Events.Mouse.Click.Click_Event'Class) is null;
+
+   not overriding procedure Mouse_Move_Event
+    (Self  : in out Abstract_Widget;
+     Event : in out UI.Events.Mouse.Move.Mouse_Move_Event'Class) is null;
+
+   not overriding procedure Mouse_Press_Event
+    (Self  : in out Abstract_Widget;
+     Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class) is null;
+
+   not overriding procedure Mouse_Release_Event
+    (Self  : in out Abstract_Widget;
+     Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class) is null;
+
+   not overriding procedure Mouse_Wheel_Event
+    (Self  : in out Abstract_Widget;
+     Event : in out UI.Events.Mouse.Wheel.Mouse_Wheel_Event'Class) is null;
+
+   package Constructors is
+
+      procedure Initialize
+       (Self    : in out Abstract_Widget'Class;
+        Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
+
+   end Constructors;
+
+private
+
+   type Mouse_Click_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Mouse_Click_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type Mouse_Move_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Mouse_Move_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type Mouse_Down_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Mouse_Down_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type Mouse_Up_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Mouse_Up_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type Wheel_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Wheel_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type Abstract_Widget is abstract tagged limited record
+      Element    : WebAPI.HTML.Elements.HTML_Element_Access;
+      Click      :
+        aliased Mouse_CLick_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Mouse_Move :
+        aliased Mouse_Move_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Mouse_Down :
+        aliased Mouse_Down_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Mouse_Up   :
+        aliased Mouse_Up_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Wheel      : aliased Wheel_Dispatcher (Abstract_Widget'Unchecked_Access);
+   end record;
+
+end UI.Widgets;

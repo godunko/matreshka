@@ -1,0 +1,70 @@
+/* CSS Menu. See
+http://medialoot.com/blog/how-to-create-a-responsive-navigation-menu-using-only-css/
+*/
+
+/*Strip the ul of padding and list styling*/
+ul.menu-bar, ul.menu {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+    position: absolute;
+}
+
+/*Create a horizontal list with spacing*/
+ul.menu-bar li {
+    display:inline-block;
+    float: left;
+    margin-right: 1px;
+}
+
+/*Style for menu links*/
+ul.menu-bar li a, ul.menu li a {
+    display:block;
+    min-width:140px;
+    text-align: left;
+    padding-left: 20px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #fff;
+    background: #2f3036;
+    text-decoration: none;
+}
+
+/*Hover state for top level links*/
+ul.menu-bar li:hover a {
+    background: #19c589;
+}
+
+/*Style for dropdown links*/
+li:hover ul.menu li a {
+    background: #f3f3f3;
+    color: #2f3036;
+}
+
+/*Hover state for dropdown links*/
+li:hover ul.menu li a:hover {
+    background: #19c589;
+    color: #fff;
+}
+
+/*Hide dropdown links until they are needed*/
+ul.menu {
+    display: none;
+}
+
+/*Make dropdown links vertical*/
+ul.menu li {
+    display: block;
+    float: none;
+}
+
+/*Prevent text wrapping*/
+ul.menu li a {
+    width: auto;
+    min-width: 100px;
+    padding: 0 20px;
+}
+
+/*Display the dropdown on hover*/
+ul.menu-bar li a:hover + ul.menu, ul.menu:hover {
+    display: block;
+}
