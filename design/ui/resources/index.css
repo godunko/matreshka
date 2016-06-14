@@ -86,3 +86,14 @@ div.window-title {
     text-align: center;
     cursor:move;
 }
+
+div.window-corner {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    bottom: 0px;
+    right: 0px;
+    background: grey;
+    border-bottom: 1px solid black;
+    cursor:se-resize;
+}

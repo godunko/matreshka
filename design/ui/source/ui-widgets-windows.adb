@@ -82,6 +82,8 @@ package body UI.Widgets.Windows is
            Document.Create_Element (+"div");
          Head      : constant not null WebAPI.DOM.Elements.Element_Access :=
            Document.Create_Element (+"div");
+         Corner    : constant not null WebAPI.DOM.Elements.Element_Access :=
+           Document.Create_Element (+"div");
          Content   : constant not null WebAPI.DOM.Elements.Element_Access :=
            Document.Create_Element (+"div");
       begin
@@ -94,12 +96,17 @@ package body UI.Widgets.Windows is
          Enclosing.Append_Child (Head);
          Content.Set_Class_Name (+"window-body");
          Enclosing.Append_Child (Content);
+         Corner.Set_Class_Name (+"window-corner");
+         Enclosing.Append_Child (Corner);
 
          UI.Widgets.Constructors.Initialize
            (Self, WebAPI.HTML.Elements.HTML_Element_Access (Content));
          UI.Widgets.Constructors.Initialize
-           (Self.Title_Slider,
+           (Self.Slider,
             WebAPI.HTML.Elements.HTML_Element_Access (Head));
+         UI.Widgets.Constructors.Initialize
+           (Self.Resizer,
+            WebAPI.HTML.Elements.HTML_Element_Access (Corner));
 
          Parent.Element.Append_Child (Enclosing);
       end Initialize;
@@ -120,11 +127,28 @@ package body UI.Widgets.Windows is
         Event : in out UI.Events.Mouse.Move.Mouse_Move_Event'Class) is
       begin
          if Self.Active then
-            Self.Top := Self.Top + Integer (Event.Y - Self.Y);
-            Self.Left := Self.Left + Integer (Event.X - Self.X);
-            Self.Parent.Set_Position (Self.Top, Self.Left);
-            Self.X := Event.X;
-            Self.Y := Event.Y;
+            Self.Win_X := Self.Win_X + Integer (Event.X - Self.Prev_X);
+            Self.Win_Y := Self.Win_Y + Integer (Event.Y - Self.Prev_Y);
+            Self.Parent.Set_Position (Self.Win_Y, Self.Win_X);
+            Self.Prev_X := Event.X;
+            Self.Prev_Y := Event.Y;
+         end if;
+      end Mouse_Move_Event;
+
+      ----------------------
+      -- Mouse_Move_Event --
+      ----------------------
+
+      overriding procedure Mouse_Move_Event
+       (Self  : in out Resizer;
+        Event : in out UI.Events.Mouse.Move.Mouse_Move_Event'Class) is
+      begin
+         if Self.Active then
+            Self.Win_X := Self.Win_X + Integer (Event.X - Self.Prev_X);
+            Self.Win_Y := Self.Win_Y + Integer (Event.Y - Self.Prev_Y);
+            Self.Parent.Set_Size (Self.Win_Y, Self.Win_X);
+            Self.Prev_X := Event.X;
+            Self.Prev_Y := Event.Y;
          end if;
       end Mouse_Move_Event;
 
@@ -137,10 +161,25 @@ package body UI.Widgets.Windows is
         Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class) is
       begin
          Self.Active := True;
-         Self.X := Event.X;
-         Self.Y := Event.Y;
-         Self.Top := Self.Parent.Top;
-         Self.Left := Self.Parent.Left;
+         Self.Prev_X := Event.X;
+         Self.Prev_Y := Event.Y;
+         Self.Win_X := Self.Parent.Left;
+         Self.Win_Y := Self.Parent.Top;
+      end Mouse_Press_Event;
+
+      -----------------------
+      -- Mouse_Press_Event --
+      -----------------------
+
+      overriding procedure Mouse_Press_Event
+       (Self  : in out Resizer;
+        Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class) is
+      begin
+         Self.Active := True;
+         Self.Prev_X := Event.X;
+         Self.Prev_Y := Event.Y;
+         Self.Win_X := Self.Parent.Width;
+         Self.Win_Y := Self.Parent.Height;
       end Mouse_Press_Event;
 
       -------------------------

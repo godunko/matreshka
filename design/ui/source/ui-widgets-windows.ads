@@ -89,10 +89,10 @@ private
         new UI.Widgets.Abstract_Widget with
       record
          Active : Boolean := False;
-         X      : Long_Float;
-         Y      : Long_Float;
-         Top    : Integer;
-         Left   : Integer;
+         Prev_X : Long_Float;
+         Prev_Y : Long_Float;
+         Win_X  : Integer;
+         Win_Y  : Integer;
       end record;
 
       overriding procedure Mouse_Move_Event
@@ -107,11 +107,22 @@ private
        (Self  : in out Slider;
         Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class);
 
+      type Resizer is new Slider with null record;
+
+      overriding procedure Mouse_Move_Event
+       (Self  : in out Resizer;
+        Event : in out UI.Events.Mouse.Move.Mouse_Move_Event'Class);
+
+      overriding procedure Mouse_Press_Event
+       (Self  : in out Resizer;
+        Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class);
+
    end Sliders;
 
    type Window is new UI.Widgets.Abstract_Widget with record
       Enclosing_Div : WebAPI.HTML.Elements.HTML_Element_Access;
-      Title_Slider  : Sliders.Slider (Window'Unchecked_Access);
+      Slider        : Sliders.Slider (Window'Unchecked_Access);
+      Resizer       : Sliders.Resizer (Window'Unchecked_Access);
    end record;
 
    not overriding procedure Set_Style
