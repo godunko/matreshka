@@ -83,8 +83,35 @@ package UI.Widgets.Windows is
 
 private
 
+   package Sliders is
+
+      type Slider (Parent : not null Window_Access) is
+        new UI.Widgets.Abstract_Widget with
+      record
+         Active : Boolean := False;
+         X      : Long_Float;
+         Y      : Long_Float;
+         Top    : Integer;
+         Left   : Integer;
+      end record;
+
+      overriding procedure Mouse_Move_Event
+       (Self  : in out Slider;
+        Event : in out UI.Events.Mouse.Move.Mouse_Move_Event'Class);
+
+      overriding procedure Mouse_Press_Event
+       (Self  : in out Slider;
+        Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class);
+
+      overriding procedure Mouse_Release_Event
+       (Self  : in out Slider;
+        Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class);
+
+   end Sliders;
+
    type Window is new UI.Widgets.Abstract_Widget with record
       Enclosing_Div : WebAPI.HTML.Elements.HTML_Element_Access;
+      Title_Slider  : Sliders.Slider (Window'Unchecked_Access);
    end record;
 
    not overriding procedure Set_Style

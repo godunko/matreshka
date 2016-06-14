@@ -97,10 +97,64 @@ package body UI.Widgets.Windows is
 
          UI.Widgets.Constructors.Initialize
            (Self, WebAPI.HTML.Elements.HTML_Element_Access (Content));
+         UI.Widgets.Constructors.Initialize
+           (Self.Title_Slider,
+            WebAPI.HTML.Elements.HTML_Element_Access (Head));
 
          Parent.Element.Append_Child (Enclosing);
       end Initialize;
    end Constructors;
+
+   -------------
+   -- Sliders --
+   -------------
+
+   package body Sliders is
+
+      ----------------------
+      -- Mouse_Move_Event --
+      ----------------------
+
+      overriding procedure Mouse_Move_Event
+       (Self  : in out Slider;
+        Event : in out UI.Events.Mouse.Move.Mouse_Move_Event'Class) is
+      begin
+         if Self.Active then
+            Self.Top := Self.Top + Integer (Event.Y - Self.Y);
+            Self.Left := Self.Left + Integer (Event.X - Self.X);
+            Self.Parent.Set_Position (Self.Top, Self.Left);
+            Self.X := Event.X;
+            Self.Y := Event.Y;
+         end if;
+      end Mouse_Move_Event;
+
+      -----------------------
+      -- Mouse_Press_Event --
+      -----------------------
+
+      overriding procedure Mouse_Press_Event
+       (Self  : in out Slider;
+        Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class) is
+      begin
+         Self.Active := True;
+         Self.X := Event.X;
+         Self.Y := Event.Y;
+         Self.Top := Self.Parent.Top;
+         Self.Left := Self.Parent.Left;
+      end Mouse_Press_Event;
+
+      -------------------------
+      -- Mouse_Release_Event --
+      -------------------------
+
+      overriding procedure Mouse_Release_Event
+       (Self  : in out Slider;
+        Event : in out UI.Events.Mouse.Button.Mouse_Button_Event'Class) is
+      begin
+         Self.Active := False;
+      end Mouse_Release_Event;
+
+   end Sliders;
 
    ------------
    -- Height --

@@ -72,6 +72,7 @@ ul.menu-bar li a:hover + ul.menu, ul.menu:hover {
 
 /* Window */
 div.window {
+    box-sizing: border-box;
     border: 1px solid black;
     position: absolute;
     top: 200px;
@@ -80,7 +81,7 @@ div.window {
 }
 
 div.window-title {
-    border-down: 1px solid black;
+    border-bottom: 1px solid black;
     background: grey;
     text-align: center;
     cursor:move;
