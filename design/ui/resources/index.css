@@ -68,3 +68,20 @@ ul.menu li a {
 ul.menu-bar li a:hover + ul.menu, ul.menu:hover {
     display: block;
 }
+
+
+/* Window */
+div.window {
+    border: 1px solid black;
+    position: absolute;
+    top: 200px;
+    width: 400px;
+    height: 200px;
+}
+
+div.window-title {
+    border-down: 1px solid black;
+    background: grey;
+    text-align: center;
+    cursor:move;
+}

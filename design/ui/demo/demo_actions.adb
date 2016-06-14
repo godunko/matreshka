@@ -42,56 +42,18 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-with WebAPI.HTML.Elements;
+package body Demo_Actions is
 
-package UI.Widgets.Windows is
+   ---------------------
+   -- Triggered_Event --
+   ---------------------
 
-   type Window is new UI.Widgets.Abstract_Widget with private;
+   overriding procedure Triggered_Event
+    (Self  : in out Demo_Action;
+     Event : in out UI.Events.Mouse.Click.Click_Event'Class)
+   is
+   begin
+      Self.Window.Set_Position (300, 300);
+   end Triggered_Event;
 
-   type Window_Access is access all Window'Class;
---     with Storage_Size => 0;
-
-   not overriding function Top    (Self : Window) return Integer;
-   not overriding function Left   (Self : Window) return Integer;
-   not overriding function Height (Self : Window) return Integer;
-   not overriding function Width  (Self : Window) return Integer;
-
-   not overriding procedure Set_Position
-     (Self : in out Window;
-      Top  : Integer;
-      Left : Integer);
-
-   not overriding procedure Set_Size
-     (Self   : in out Window;
-      Height : Integer;
-      Width  : Integer);
-
-   package Constructors is
-
-      procedure Initialize
-       (Self    : in out Window'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
-      --  Initialize top level HTML element as root window
-
-      procedure Initialize
-       (Self    : in out Window'Class;
-        Parent  : not null access UI.Widgets.Abstract_Widget'Class;
-        Title   : League.Strings.Universal_String);
-      --  Initialize nested window with given title
-
-   end Constructors;
-
-private
-
-   type Window is new UI.Widgets.Abstract_Widget with record
-      Enclosing_Div : WebAPI.HTML.Elements.HTML_Element_Access;
-   end record;
-
-   not overriding procedure Set_Style
-     (Self   : in out Window;
-      Top    : Integer;
-      Left   : Integer;
-      Height : Integer;
-      Width  : Integer);
-
-end UI.Widgets.Windows;
+end Demo_Actions;

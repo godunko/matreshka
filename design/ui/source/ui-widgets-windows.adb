@@ -42,6 +42,9 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
+with WebAPI.DOM.Documents;
+with WebAPI.DOM.Elements;
+
 package body UI.Widgets.Windows is
 
    ------------------
@@ -58,9 +61,134 @@ package body UI.Widgets.Windows is
        (Self    : in out Window'Class;
         Element : not null WebAPI.HTML.Elements.HTML_Element_Access) is
       begin
+         Self.Enclosing_Div :=
+           WebAPI.HTML.Elements.HTML_Element_Access (Element);
+
          UI.Widgets.Constructors.Initialize (Self, Element);
       end Initialize;
 
+      ----------------
+      -- Initialize --
+      ----------------
+
+      procedure Initialize
+       (Self    : in out Window'Class;
+        Parent  : not null access UI.Widgets.Abstract_Widget'Class;
+        Title   : League.Strings.Universal_String)
+      is
+         Document  : constant WebAPI.DOM.Documents.Document_Access :=
+           Parent.Element.Get_Owner_Document;
+         Enclosing : constant not null WebAPI.DOM.Elements.Element_Access :=
+           Document.Create_Element (+"div");
+         Head      : constant not null WebAPI.DOM.Elements.Element_Access :=
+           Document.Create_Element (+"div");
+         Content   : constant not null WebAPI.DOM.Elements.Element_Access :=
+           Document.Create_Element (+"div");
+      begin
+         Self.Enclosing_Div :=
+           WebAPI.HTML.Elements.HTML_Element_Access (Enclosing);
+
+         Head.Set_Text_Content (Title);
+         Head.Set_Class_Name (+"window-title");
+         Enclosing.Set_Class_Name (+"window");
+         Enclosing.Append_Child (Head);
+         Content.Set_Class_Name (+"window-body");
+         Enclosing.Append_Child (Content);
+
+         UI.Widgets.Constructors.Initialize
+           (Self, WebAPI.HTML.Elements.HTML_Element_Access (Content));
+
+         Parent.Element.Append_Child (Enclosing);
+      end Initialize;
    end Constructors;
+
+   ------------
+   -- Height --
+   ------------
+
+   not overriding function Height (Self : Window) return Integer is
+   begin
+      return Integer (Self.Enclosing_Div.Get_Offset_Height);
+   end Height;
+
+   ----------
+   -- Left --
+   ----------
+
+   not overriding function Left (Self : Window) return Integer is
+   begin
+      return Integer (Self.Enclosing_Div.Get_Offset_Left);
+   end Left;
+
+   -----------
+   -- Width --
+   -----------
+
+   not overriding function Width (Self : Window) return Integer is
+   begin
+      return Integer (Self.Enclosing_Div.Get_Offset_Width);
+   end Width;
+
+   ------------------
+   -- Set_Position --
+   ------------------
+
+   not overriding procedure Set_Position
+    (Self : in out Window;
+     Top  : Integer;
+     Left : Integer) is
+   begin
+      Self.Set_Style (Top, Left, Self.Height, Self.Width);
+   end Set_Position;
+
+   --------------
+   -- Set_Size --
+   --------------
+
+   not overriding procedure Set_Size
+    (Self   : in out Window;
+     Height : Integer;
+     Width  : Integer) is
+   begin
+      Self.Set_Style (Self.Top, Self.Left, Height, Width);
+   end Set_Size;
+
+   ---------------
+   -- Set_Style --
+   ---------------
+
+   not overriding procedure Set_Style
+     (Self   : in out Window;
+      Top    : Integer;
+      Left   : Integer;
+      Height : Integer;
+      Width  : Integer)
+   is
+      use type League.Strings.Universal_String;
+
+      Top_Image : constant Wide_Wide_String :=
+        Integer'Wide_Wide_Image (Top);
+      Left_Image : constant Wide_Wide_String :=
+        Integer'Wide_Wide_Image (Left);
+      Height_Image : constant Wide_Wide_String :=
+        Integer'Wide_Wide_Image (Height);
+      Width_Image : constant Wide_Wide_String :=
+        Integer'Wide_Wide_Image (Width);
+      Style : League.Strings.Universal_String := +"top:";
+   begin
+      Style := Style & Top_Image & "px; left:" & Left_Image & "px;"
+        & "height:" & Height_Image & "px; width:" & Width_Image & "px;";
+
+      Self.Enclosing_Div.Set_Attribute (+"style", Style);
+   end Set_Style;
+
+   ---------
+   -- Top --
+   ---------
+
+   not overriding function Top (Self : Window) return Integer is
+   begin
+      return Integer (Self.Enclosing_Div.Get_Offset_Top);
+   end Top;
 
 end UI.Widgets.Windows;

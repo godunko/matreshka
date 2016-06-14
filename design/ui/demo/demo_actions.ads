@@ -44,6 +44,18 @@
 
 with UI.Actions;
 
+with UI.Widgets.Windows;
+with UI.Events.Mouse.Click;
+
 package Demo_Actions is
-   type Demo_Action is new UI.Actions.Action with null record;
+   type Demo_Action is new UI.Actions.Action with record
+      Window : UI.Widgets.Windows.Window_Access;
+   end record;
+
+   type Demo_Action_Access is access all Demo_Action;
+
+   overriding procedure Triggered_Event
+    (Self  : in out Demo_Action;
+     Event : in out UI.Events.Mouse.Click.Click_Event'Class);
+
 end Demo_Actions;

@@ -55,52 +55,72 @@ with UI.Widgets.Windows;
 with Demo_Actions;
 
 procedure Demo is
-   procedure Add_Menu_Item
-     (Menu : UI.Widgets.Menus.Menu_Access;
-      Text : Wide_Wide_String);
 
-   procedure Add_Menu_Item
-     (Menu : UI.Widgets.Menus.Menu_Access;
-      Text : Wide_Wide_String)
-   is
-      Action : UI.Actions.Action_Access :=
-        new Demo_Actions.Demo_Action;
+   procedure Create_Menu (Top  : UI.Widgets.Windows.Window_Access);
+
+   procedure Create_Menu (Top  : UI.Widgets.Windows.Window_Access) is
+
+      procedure Add_Menu_Item
+        (Top  : UI.Widgets.Windows.Window_Access;
+         Menu : UI.Widgets.Menus.Menu_Access;
+         Text : Wide_Wide_String);
+
+      procedure Add_Menu_Item
+        (Top  : UI.Widgets.Windows.Window_Access;
+         Menu : UI.Widgets.Menus.Menu_Access;
+         Text : Wide_Wide_String)
+      is
+         Action : Demo_Actions.Demo_Action_Access :=
+           new Demo_Actions.Demo_Action;
+      begin
+         Action.Window := Top;
+         UI.Actions.Constructors.Initialize
+           (Action.all, League.Strings.To_Universal_String (Text));
+         Menu.Add_Action (UI.Actions.Action_Access (Action));
+      end Add_Menu_Item;
+
+      Menu_Bar : UI.Widgets.Menu_Bars.Menu_Bar_Access :=
+        new UI.Widgets.Menu_Bars.Menu_Bar;
+      Menu_1 : UI.Widgets.Menus.Menu_Access :=
+        new UI.Widgets.Menus.Menu;
+      Menu_2 : UI.Widgets.Menus.Menu_Access :=
+        new UI.Widgets.Menus.Menu;
    begin
-      UI.Actions.Constructors.Initialize
-        (Action.all, League.Strings.To_Universal_String (Text));
-      Menu.Add_Action (Action);
-   end Add_Menu_Item;
+      UI.Widgets.Menu_Bars.Constructors.Initialize
+        (Menu_Bar.all, Top);
+      UI.Widgets.Menus.Constructors.Initialize
+        (Menu_1.all, Menu_Bar, League.Strings.To_Universal_String ("test"));
+      UI.Widgets.Menus.Constructors.Initialize
+        (Menu_2.all, Menu_Bar, League.Strings.To_Universal_String ("test 2"));
+
+      Add_Menu_Item (Top, Menu_1, "Item 1");
+      Add_Menu_Item (Top, Menu_1, "Item 2");
+      Add_Menu_Item (Top, Menu_1, "Item 3");
+
+      Add_Menu_Item (Top, Menu_2, "Item 21");
+      Add_Menu_Item (Top, Menu_2, "Item 22");
+      Add_Menu_Item (Top, Menu_2, "Item 23");
+
+      Menu_Bar.Add_Menu (Menu_1);
+      Menu_Bar.Add_Menu (Menu_2);
+   end Create_Menu;
 
    Element : constant WebAPI.HTML.Elements.HTML_Element_Access
      := WebAPI.HTML.Elements.HTML_Element_Access
        (WebAPI.HTML.Globals.Window.Get_Document.Get_Element_By_Id
           (League.Strings.To_Universal_String ("top")));
-   Top  : UI.Widgets.Windows.Window_Access :=
+   Top : UI.Widgets.Windows.Window_Access :=
      new UI.Widgets.Windows.Window;
-   Menu_Bar : UI.Widgets.Menu_Bars.Menu_Bar_Access :=
-     new UI.Widgets.Menu_Bars.Menu_Bar;
-   Menu_1 : UI.Widgets.Menus.Menu_Access :=
-     new UI.Widgets.Menus.Menu;
-   Menu_2 : UI.Widgets.Menus.Menu_Access :=
-     new UI.Widgets.Menus.Menu;
+   Win_1 : UI.Widgets.Windows.Window_Access :=
+     new UI.Widgets.Windows.Window;
 begin
    UI.Widgets.Windows.Constructors.Initialize
      (Top.all, Element);
-   UI.Widgets.Menu_Bars.Constructors.Initialize
-     (Menu_Bar.all, Top);
-   UI.Widgets.Menus.Constructors.Initialize
-     (Menu_1.all, Menu_Bar, League.Strings.To_Universal_String ("test"));
-   UI.Widgets.Menus.Constructors.Initialize
-     (Menu_2.all, Menu_Bar, League.Strings.To_Universal_String ("test 2"));
 
-   Add_Menu_Item (Menu_1, "Item 1");
-   Add_Menu_Item (Menu_1, "Item 2");
-   Add_Menu_Item (Menu_1, "Item 3");
+   Create_Menu (Top);
 
-   Add_Menu_Item (Menu_2, "Item 21");
-   Add_Menu_Item (Menu_2, "Item 22");
-   Add_Menu_Item (Menu_2, "Item 23");
+   UI.Widgets.Windows.Constructors.Initialize
+     (Win_1.all, Top, League.Strings.To_Universal_String ("Window one"));
 
-   Menu_Bar.Add_Menu (Menu_1);
-   Menu_Bar.Add_Menu (Menu_2);
+   Create_Menu (Win_1);
 end Demo;
