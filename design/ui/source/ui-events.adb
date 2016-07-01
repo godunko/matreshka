@@ -65,7 +65,7 @@ package body UI.Events is
 
       procedure Initialize
        (Self  : in out Abstract_Event'Class;
-        Event : not null access WebAPI.UI_Events.Events.UI_Event'Class) is
+        Event : not null access WebAPI.UI_Events.UI_Event'Class) is
       begin
          Self.Event := UI_Event_Access (Event);
       end Initialize;

@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-with WebAPI.UI_Events.Events;
+with WebAPI.UI_Events;
 
 package UI.Events is
 
@@ -56,13 +56,13 @@ package UI.Events is
 
       procedure Initialize
        (Self  : in out Abstract_Event'Class;
-        Event : not null access WebAPI.UI_Events.Events.UI_Event'Class);
+        Event : not null access WebAPI.UI_Events.UI_Event'Class);
 
    end Constructors;
 
 private
 
-   type UI_Event_Access is access all WebAPI.UI_Events.Events.UI_Event'Class
+   type UI_Event_Access is access all WebAPI.UI_Events.UI_Event'Class
      with Storage_Size => 0;
 
    type Abstract_Event is abstract tagged limited record
