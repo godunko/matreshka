@@ -58,7 +58,8 @@ package body AWFC.Accounts.Users is
    -- Disable --
    -------------
 
-   overriding procedure Disable (Self : not null access Non_Anonymous_User_Type) is
+   overriding procedure Disable
+     (Self : not null access Non_Anonymous_User_Type) is
    begin
       if Self.Enabled then
          Self.Enabled := False;

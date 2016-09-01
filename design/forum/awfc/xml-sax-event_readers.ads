@@ -105,7 +105,7 @@ private
    record
       Error_Handler   : XML.SAX.Readers.SAX_Error_Handler_Access;
       Content_Handler : XML.SAX.Readers.SAX_Content_Handler_Access;
-      Lexical_handler : XML.SAX.Readers.SAX_Lexical_Handler_Access;
+      Lexical_Handler : XML.SAX.Readers.SAX_Lexical_Handler_Access;
       Locator         : Event_Reader_Shared_Locator_Access
         := new Event_Reader_Shared_Locator;
    end record;

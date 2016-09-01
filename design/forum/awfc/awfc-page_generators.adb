@@ -193,7 +193,7 @@ package body AWFC.Page_Generators is
          --  Look for <body> in Content
          while not Content.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Content.First_Element;
             begin
                Content.Delete_First;
@@ -209,7 +209,7 @@ package body AWFC.Page_Generators is
          --  Look for </body> in Content
          while not Content.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Content.First_Element;
             begin
                Content.Delete_First;
@@ -238,7 +238,7 @@ package body AWFC.Page_Generators is
          --  Look for <head> in Content
          while not Content.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Content.First_Element;
             begin
                Content.Delete_First;
@@ -253,7 +253,7 @@ package body AWFC.Page_Generators is
 
          while not Content.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Content.First_Element;
             begin
                Content.Delete_First;
@@ -311,12 +311,11 @@ package body AWFC.Page_Generators is
       ------------------
 
       procedure Process_Body is
-         use XML.Templates.Streams;
       begin
          --  Copy <body> of Page
          while not Page.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Page.First_Element;
             begin
                Page.Delete_First;
@@ -338,7 +337,6 @@ package body AWFC.Page_Generators is
 
       procedure Process_Head is
          use Constants;
-         use XML.Templates.Streams;
          use type League.Strings.Universal_String;
 
          Title_Item : XML_Stream_Element;
@@ -348,7 +346,7 @@ package body AWFC.Page_Generators is
          --  Look for <head> in Page and copy any element until we find it
          while not Page.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Page.First_Element;
             begin
                Page.Delete_First;
@@ -365,7 +363,7 @@ package body AWFC.Page_Generators is
          --  Process all elemnts in <head> of Page
          while not Page.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Page.First_Element;
             begin
                Page.Delete_First;
@@ -410,7 +408,7 @@ package body AWFC.Page_Generators is
       begin
          while not Page.Is_Empty loop
             declare
-               Item : XML.Templates.Streams.XML_Stream_Element
+               Item : constant XML.Templates.Streams.XML_Stream_Element
                  := Page.First_Element;
             begin
                Page.Delete_First;

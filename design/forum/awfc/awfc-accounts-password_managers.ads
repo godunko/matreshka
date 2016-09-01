@@ -45,10 +45,10 @@
 ------------------------------------------------------------------------------
 private with Interfaces;
 
---with League.Strings;
+--  with League.Strings;
 with OPM.Engines;
 
---with AWFC.Accounts.Users;
+--  with AWFC.Accounts.Users;
 
 package AWFC.Accounts.Password_Managers is
 
@@ -68,7 +68,7 @@ package AWFC.Accounts.Password_Managers is
      tagged limited private;
 
 --   function Assign_Confirmation_Code
---    (User : not null AWFC.Accounts.Users.User_Access) return Confirmation_Code;
+--  (User : not null AWFC.Accounts.Users.User_Access) return Confirmation_Code;
 --   --  Generates random confirmation code for user and assign it. Removes
 --   --  previous confirmation code assigned for user.
 --

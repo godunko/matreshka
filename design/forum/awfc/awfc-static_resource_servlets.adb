@@ -89,8 +89,9 @@ package body AWFC.Static_Resource_Servlets is
       is
          use type League.Calendars.Date_Time;
 
-         If_Modified_Since : League.String_Vectors.Universal_String_Vector
-           := Request.Get_Headers (Constants.If_Modified_Since);
+         If_Modified_Since :
+           constant League.String_Vectors.Universal_String_Vector
+             := Request.Get_Headers (Constants.If_Modified_Since);
 
          Value   : League.Calendars.Date_Time;
          Success : Boolean;
@@ -148,7 +149,7 @@ package body AWFC.Static_Resource_Servlets is
               (Constants.Last_Modified, Last_Modified);
             --                 Response.Set_Header
             --                   (Constants.Last_Modified,
-            --                    Matreshka.RFC2616_Dates.To_String (Last_Modified));
+            --             Matreshka.RFC2616_Dates.To_String (Last_Modified));
          end if;
       else
          Response.Set_Status (Servlet.HTTP_Responses.Not_Found);

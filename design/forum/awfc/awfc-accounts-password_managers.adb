@@ -131,7 +131,7 @@ package body AWFC.Accounts.Password_Managers is
 --        := League.Base_Codecs.From_Base_64_URL (Image);
 --
 --   begin
---      if Decoded.Length /= Confirmation_Code'Max_Size_In_Storage_Elements then
+--     if Decoded.Length /= Confirmation_Code'Max_Size_In_Storage_Elements then
 --         raise Constraint_Error with "Mailformed SID";
 --      end if;
 --
@@ -214,7 +214,7 @@ package body AWFC.Accounts.Password_Managers is
 --
 --   begin
 --      Query.Prepare
---       (+"DELETE FROM confirmations WHERE user_identifier = :user_identifier");
+--     (+"DELETE FROM confirmations WHERE user_identifier = :user_identifier");
 --      Query.Bind_Value
 --       (+":user_identifier",
 --        ESAPI.Users.User_Identifier_Holders.To_Holder
@@ -283,6 +283,6 @@ package body AWFC.Accounts.Password_Managers is
 --         (League.Stream_Element_Vectors.To_Stream_Element_Vector (Aux));
 --   end To_Universal_String;
 --
---begin
+--  begin
 --   Unsigned_64_Random.Reset (Generator);
 end AWFC.Accounts.Password_Managers;

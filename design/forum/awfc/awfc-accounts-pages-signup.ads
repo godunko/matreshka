@@ -76,27 +76,23 @@ package AWFC.Accounts.Pages.Signup is
      new AWFC.Page_Generators.Abstract_Page_Generator with private;
 
    function Render_Form
-    (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+    (Self    : in out Signup_Page_Generator'Class)
        return League.Strings.Universal_String;
 
    function Render_Error
     (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      Email   : League.Strings.Universal_String;
      Errors  : Signup_Errors)
        return League.Strings.Universal_String;
 
    function Render_Error
     (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      User    : not null AWFC.Accounts.Users.User_Access;
      Errors  : Signup_Errors)
        return League.Strings.Universal_String;
 
    function Render_Done
     (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      User    : not null AWFC.Accounts.Users.User_Access)
        return League.Strings.Universal_String;
 

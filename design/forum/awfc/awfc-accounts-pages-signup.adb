@@ -113,7 +113,6 @@ package body AWFC.Accounts.Pages.Signup is
 
    function Render_Done
     (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      User    : not null AWFC.Accounts.Users.User_Access)
        return League.Strings.Universal_String is
    begin
@@ -122,7 +121,7 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Errors := No_Signup_Errors;
       Self.Done   := True;
 
-      return Self.Render (Session);
+      return Self.Render;
    end Render_Done;
 
    ------------------
@@ -131,7 +130,6 @@ package body AWFC.Accounts.Pages.Signup is
 
    function Render_Error
     (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      Email   : League.Strings.Universal_String;
      Errors  : Signup_Errors)
        return League.Strings.Universal_String is
@@ -141,7 +139,7 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Errors := Errors;
       Self.Done   := False;
 
-      return Self.Render (Session);
+      return Self.Render;
    end Render_Error;
 
    ------------------
@@ -150,7 +148,6 @@ package body AWFC.Accounts.Pages.Signup is
 
    function Render_Error
     (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class;
      User    : not null AWFC.Accounts.Users.User_Access;
      Errors  : Signup_Errors)
        return League.Strings.Universal_String is
@@ -160,7 +157,7 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Errors := Errors;
       Self.Done   := False;
 
-      return Self.Render (Session);
+      return Self.Render;
    end Render_Error;
 
    -----------------
@@ -168,8 +165,7 @@ package body AWFC.Accounts.Pages.Signup is
    -----------------
 
    function Render_Form
-    (Self    : in out Signup_Page_Generator'Class;
-     Session : Servlet.HTTP_Sessions.HTTP_Session'Class)
+    (Self    : in out Signup_Page_Generator'Class)
        return League.Strings.Universal_String is
    begin
       Self.Email  := League.Strings.Empty_Universal_String;
@@ -177,7 +173,7 @@ package body AWFC.Accounts.Pages.Signup is
       Self.Errors := No_Signup_Errors;
       Self.Done   := False;
 
-      return Self.Render (Session);
+      return Self.Render;
    end Render_Form;
 
 end AWFC.Accounts.Pages.Signup;

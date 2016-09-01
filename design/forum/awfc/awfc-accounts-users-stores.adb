@@ -135,7 +135,8 @@ package body AWFC.Accounts.Users.Stores is
    ------------------------
 
    overriding function Get_Anonymous_User
-    (Self : in out User_Store) return not null AWFC.Accounts.Users.User_Access is
+    (Self : in out User_Store)
+     return not null AWFC.Accounts.Users.User_Access is
    begin
       return
         Self.Identifier_Cache (AWFC.Accounts.Users.Anonymous_User_Identifier);

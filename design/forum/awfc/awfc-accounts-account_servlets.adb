@@ -42,17 +42,17 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with League.String_Vectors;
---with League.IRIs;
+--  with League.IRIs;
 --
---with Servlet.Contexts;
+--  with Servlet.Contexts;
 --
 with Servlet.HTTP_Sessions;
 ----  with Server.Pages.Account;
 ----  with Server.Sessions;
 ----  with Server.Users.Passwords;
 ----  with Security.Users;
---with AWFC.Accounts.Password_Managers;
---with AWFC.Accounts.Sessions;
+--  with AWFC.Accounts.Password_Managers;
+--  with AWFC.Accounts.Sessions;
 with AWFC.Accounts.Users.Stores;
 
 package body AWFC.Accounts.Account_Servlets is
@@ -169,8 +169,7 @@ package body AWFC.Accounts.Account_Servlets is
          Response.Set_Status (Servlet.HTTP_Responses.OK);
          Response.Set_Content_Type (+"text/html");
          Response.Set_Character_Encoding (+"UTF-8");
-         Response.Get_Output_Stream.Write
-          (Self.Signup_Page.Render_Form (Request.Get_Session.all));
+         Response.Get_Output_Stream.Write (Self.Signup_Page.Render_Form);
 
          return;
       end if;
@@ -227,7 +226,7 @@ package body AWFC.Accounts.Account_Servlets is
 --      elsif Path.Length = 1 and then Path (1) = +"activate"
 --        and then Emails.Length = 1
 --      then
---         --  '/activate' is used to force send of new account activation e-mail
+--       --  '/activate' is used to force send of new account activation e-mail
 --         --  to user.
 --
 --         Response.Set_Status (Servlet.HTTP_Responses.OK);
@@ -374,12 +373,12 @@ package body AWFC.Accounts.Account_Servlets is
 
             Errors (Email_Used) := True;
 
-            return Self.Signup_Page.Render_Error (Session, User, Errors);
+            return Self.Signup_Page.Render_Error (User, Errors);
          end if;
       end if;
 
       if Errors /= No_Signup_Errors then
-         return Self.Signup_Page.Render_Error (Session, Email, Errors);
+         return Self.Signup_Page.Render_Error (Email, Errors);
       end if;
 
       --  Create new account and assign confirmation code to it.
@@ -387,7 +386,7 @@ package body AWFC.Accounts.Account_Servlets is
       User := User_Store.Create (Email);
 
 --      return Activate (Context, Session, User, True);
-      return Self.Signup_Page.Render_Done (Session, User);
+      return Self.Signup_Page.Render_Done (User);
    end Signup;
 
 --   -----------------------
@@ -401,7 +400,7 @@ package body AWFC.Accounts.Account_Servlets is
 --      if Server.Sessions.Session_Access
 --          (Request.Get_Session).Get_User.Is_Anonymous
 --      then
---         --  XXX Security event should be reported: there is no menu entry for
+--       --  XXX Security event should be reported: there is no menu entry for
 --         --  access to account of anonymous user.
 --
 --         Page_Not_Found (Request, Response);
@@ -422,14 +421,14 @@ package body AWFC.Accounts.Account_Servlets is
 --   end Send_Account_Page;
 
 --   function Activate
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Email   : League.Strings.Universal_String)
 --       return League.Strings.Universal_String;
 --   --  Sent activation e-mail to user.
 --
 --   function Logon
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access)
 --       return League.Strings.Universal_String;
 --   --  Returns content of logon page.
@@ -444,9 +443,6 @@ package body AWFC.Accounts.Account_Servlets is
 --       return League.Strings.Universal_String;
 --   --  Check email/password
 --   --  This function returns empty string to redirect browser to Referer
-
-
-
 
 --   use type Security.Users.User_Access;
 --
@@ -531,7 +527,7 @@ package body AWFC.Accounts.Account_Servlets is
 --           Not_Active         => +"notActive");
 --
 --   function Process_Signup_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Email   : League.Strings.Universal_String;
 --     Errors  : Signup_Errors)
@@ -539,30 +535,30 @@ package body AWFC.Accounts.Account_Servlets is
 --   --  Parses page's and signup's templates and returns result.
 --
 --   function Process_Activate_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Errors  : Activate_Errors)
 --       return League.Strings.Universal_String;
 --   --  Parses page's and activate's templates and returns result.
 --
 --   function Process_Recovery_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Email   : League.Strings.Universal_String)
 --       return League.Strings.Universal_String;
 --   --  Parses page's and recovery's templates and returns result.
 --
 --   function Activate
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     User    : Security.Users.User_Access;
 --     Is_New  : Boolean)
 --       return League.Strings.Universal_String;
---   --  Send activation e-mail to user. Is_New means that account just have been
+--  Send activation e-mail to user. Is_New means that account just have been
 --   --  created.
 --
 --   function Process_Mail_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Code    : Server.Users.Passwords.Confirmation_Code)
 --       return League.Strings.Universal_String;
 --   --  Process activation e-mail content and return text.
@@ -572,7 +568,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   --------------
 --
 --   function Activate
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     User    : Security.Users.User_Access;
 --     Is_New  : Boolean)
@@ -599,7 +595,7 @@ package body AWFC.Accounts.Account_Servlets is
 --
 --      Parameters.Insert
 --        (+"newAccount", League.Holders.Booleans.To_Holder (Is_New));
---      Parameters.Insert (+"email", League.Holders.To_Holder (User.Get_Email));
+--     Parameters.Insert (+"email", League.Holders.To_Holder (User.Get_Email));
 --
 --      return
 --        Process_Page
@@ -615,7 +611,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   --------------
 --
 --   function Activate
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Email   : League.Strings.Universal_String)
 --       return League.Strings.Universal_String
@@ -639,7 +635,7 @@ package body AWFC.Accounts.Account_Servlets is
 --     Confirmation : Server.Users.Passwords.Confirmation_Code)
 --       return League.Strings.Universal_String is
 --   begin
---      return Process_Activate_Template (Context, Session, No_Activate_Errors);
+--     return Process_Activate_Template (Context, Session, No_Activate_Errors);
 --   end Activate_By_Confirmation;
 --
 --   ------------------------------
@@ -745,7 +741,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   -----------
 --
 --   function Logon
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access)
 --       return League.Strings.Universal_String is
 --   begin
@@ -844,7 +840,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   -------------------------------
 --
 --   function Process_Activate_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Errors  : Activate_Errors)
 --       return League.Strings.Universal_String
@@ -876,14 +872,14 @@ package body AWFC.Accounts.Account_Servlets is
 --   ---------------------------
 --
 --   function Process_Mail_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Code    : Server.Users.Passwords.Confirmation_Code)
 --       return League.Strings.Universal_String
 --   is
 --      function Escape_HTTP_URL
 --       (Source : League.Strings.Universal_String)
 --          return League.Strings.Universal_String;
---      --  Replace each occurrence of '+' by its encoded form "%2B" because HTTP
+--    --  Replace each occurrence of '+' by its encoded form "%2B" because HTTP
 --      --  uses '+' to represent space in URL.
 --
 --      ---------------------
@@ -910,12 +906,12 @@ package body AWFC.Accounts.Account_Servlets is
 --         return Result;
 --      end Escape_HTTP_URL;
 --
---      Input    : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
+--    Input    : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
 --      Reader   : XML.SAX.Simple_Readers.Simple_Reader;
 --      Filter   : aliased XML.Templates.Processors.Template_Processor;
 --      Writer   : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
 --      Output   :
---        aliased XML.SAX.Output_Destinations.Strings.String_Output_Destination;
+--       aliased XML.SAX.Output_Destinations.Strings.String_Output_Destination;
 --      Error    : aliased Error_Handler;
 --      URL      : League.IRIs.IRI;
 --      Settings : League.Settings.Settings;
@@ -942,7 +938,7 @@ package body AWFC.Accounts.Account_Servlets is
 --
 --      Filter.Set_Parameter
 --        (+"activateURL",
---         League.Holders.To_Holder (Escape_HTTP_URL (URL.To_Universal_String)));
+--       League.Holders.To_Holder (Escape_HTTP_URL (URL.To_Universal_String)));
 --      --  XXX URI must be constructed properly because text representation of
 --      --  confirmation code uses restricted characters in URL.
 --
@@ -960,7 +956,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   -------------------------------
 --
 --   function Process_Recovery_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Email   : League.Strings.Universal_String)
 --       return League.Strings.Universal_String
@@ -984,7 +980,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   -----------------------------
 --
 --   function Process_Signup_Template
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Email   : League.Strings.Universal_String;
 --     Errors  : Signup_Errors)
@@ -1018,7 +1014,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   ------------
 --
 --   function Signup
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access)
 --       return League.Strings.Universal_String is
 --   begin
@@ -1035,7 +1031,7 @@ package body AWFC.Accounts.Account_Servlets is
 --   ------------
 --
 --   function Signup
---    (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
+--  (Context : not null access constant Servlet.Contexts.Servlet_Context'Class;
 --     Session : not null Server.Sessions.Session_Access;
 --     Email   : League.Strings.Universal_String)
 --       return League.Strings.Universal_String
@@ -1052,7 +1048,7 @@ package body AWFC.Accounts.Account_Servlets is
 --         User := Server.Globals.User_Store.Incarnate (Email);
 --
 --         if User /= null then
---            --  User exists, suggest to activate account or to logon depending
+--          --  User exists, suggest to activate account or to logon depending
 --            --  of whether account was enabled or not.
 --
 --            Parameters.Insert (+"email", League.Holders.To_Holder (Email));
