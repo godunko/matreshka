@@ -107,6 +107,8 @@ package body Matreshka.Servlet_AWS_Responses is
            Servlet.HTTP_Responses.HTTP_Version_Not_Supported =>
                                                             AWS.Messages.S505);
 
+   Format : Matreshka.RFC2616_Dates.Format;
+
    ----------------
    -- Add_Cookie --
    ----------------
@@ -146,7 +148,7 @@ package body Matreshka.Servlet_AWS_Responses is
      Value : League.Calendars.Date_Time)
    is
       Image : constant League.Strings.Universal_String :=
-        Matreshka.RFC2616_Dates.To_String (Value);
+        Matreshka.RFC2616_Dates.To_String (Format, Value);
    begin
       AWS.Response.Set.Add_Header
         (Self.Data, Name.To_UTF_8_String, Image.To_UTF_8_String);
@@ -365,7 +367,7 @@ package body Matreshka.Servlet_AWS_Responses is
      Value : League.Calendars.Date_Time)
    is
       Image : constant League.Strings.Universal_String :=
-        Matreshka.RFC2616_Dates.To_String (Value);
+        Matreshka.RFC2616_Dates.To_String (Format, Value);
    begin
       AWS.Response.Set.Update_Header
         (Self.Data, Name.To_UTF_8_String, Image.To_UTF_8_String);
