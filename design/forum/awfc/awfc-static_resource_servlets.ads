@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015-2016, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -46,6 +46,7 @@
 ------------------------------------------------------------------------------
 private with League.Strings;
 
+private with Servlet.Generic_Servlets;
 private with Servlet.HTTP_Requests;
 private with Servlet.HTTP_Responses;
 with Servlet.HTTP_Servlets;
@@ -70,5 +71,10 @@ private
 
    overriding function Get_Servlet_Info
     (Self : Static_Resource_Servlet) return League.Strings.Universal_String;
+
+   overriding function Instantiate
+    (Parameters : not null access
+       Servlet.Generic_Servlets.Instantiation_Parameters'Class)
+         return Static_Resource_Servlet;
 
 end AWFC.Static_Resource_Servlets;

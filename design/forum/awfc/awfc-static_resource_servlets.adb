@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015-2016, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -93,6 +93,7 @@ package body AWFC.Static_Resource_Servlets is
            constant League.String_Vectors.Universal_String_Vector
              := Request.Get_Headers (Constants.If_Modified_Since);
 
+         Format  : Matreshka.RFC2616_Dates.Format;
          Value   : League.Calendars.Date_Time;
          Success : Boolean;
       begin
@@ -101,7 +102,8 @@ package body AWFC.Static_Resource_Servlets is
          end if;
 
          Matreshka.RFC2616_Dates.From_String
-           (Text    => If_Modified_Since.Element (1),
+           (Self    => Format,
+            Text    => If_Modified_Since.Element (1),
             Value   => Value,
             Success => Success);
 
@@ -185,5 +187,17 @@ package body AWFC.Static_Resource_Servlets is
    begin
       return League.Strings.To_Universal_String ("Static Resources Servlet");
    end Get_Servlet_Info;
+
+   -----------------
+   -- Instantiate --
+   -----------------
+
+   overriding function Instantiate
+    (Parameters : not null access
+       Servlet.Generic_Servlets.Instantiation_Parameters'Class)
+         return Static_Resource_Servlet is
+   begin
+      return (Servlet.HTTP_Servlets.HTTP_Servlet with null record);
+   end Instantiate;
 
 end AWFC.Static_Resource_Servlets;
