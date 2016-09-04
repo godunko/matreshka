@@ -157,4 +157,18 @@ package body AWFC.Static_Resource_Servlets is
       return League.Strings.To_Universal_String ("Static Resources Servlet");
    end Get_Servlet_Info;
 
+   -----------------
+   -- Instantiate --
+   -----------------
+
+   overriding function Instantiate
+    (Parameters : not null access
+       Servlet.Generic_Servlets.Instantiation_Parameters'Class)
+         return Static_Resource_Servlet
+   is
+      pragma Unreferenced (Parameters);
+   begin
+      return (Servlet.HTTP_Servlets.HTTP_Servlet with null record);
+   end Instantiate;
+
 end AWFC.Static_Resource_Servlets;
