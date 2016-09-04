@@ -355,8 +355,7 @@ package body Server.Servlets.Forum_Servlets is
       Response.Set_Status (Servlet.HTTP_Responses.OK);
       Response.Set_Content_Type (+"text/html");
       Response.Set_Character_Encoding (+"UTF-8");
-      Response.Get_Output_Stream.Write
-       (Self.Post_List.Render (Request.Get_Session.all));
+      Response.Get_Output_Stream.Write (Self.Post_List.Render);
    end Get_Posts;
 
    ----------------------
@@ -406,8 +405,7 @@ package body Server.Servlets.Forum_Servlets is
       Response.Set_Status (Servlet.HTTP_Responses.OK);
       Response.Set_Content_Type (+"text/html");
       Response.Set_Character_Encoding (+"UTF-8");
-      Response.Get_Output_Stream.Write
-       (Self.Topic_List.Render (Request.Get_Session.all));
+      Response.Get_Output_Stream.Write (Self.Topic_List.Render);
    end Get_Topics;
 
    ----------------
@@ -518,7 +516,7 @@ package body Server.Servlets.Forum_Servlets is
       Self.Categories := Categories;
       Self.Base.Set_Absolute_Path (Path);
 
-      return Self.Render (Session);
+      return Self.Render;
    end Render;
 
    -------------------

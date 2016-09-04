@@ -44,6 +44,7 @@
 --  This servlet can be used to return static resources - content of files
 --  in deployment directory.
 ------------------------------------------------------------------------------
+private with League.Calendars;
 private with League.Strings;
 
 private with Servlet.Generic_Servlets;
@@ -68,6 +69,11 @@ private
     (Self     : in out Static_Resource_Servlet;
      Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class;
      Response : in out Servlet.HTTP_Responses.HTTP_Servlet_Response'Class);
+
+   overriding function Get_Last_Modified
+    (Self     : in out Static_Resource_Servlet;
+     Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
+      return League.Calendars.Date_Time;
 
    overriding function Get_Servlet_Info
     (Self : Static_Resource_Servlet) return League.Strings.Universal_String;

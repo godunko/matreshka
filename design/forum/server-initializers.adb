@@ -49,8 +49,8 @@ with Servlet.Servlet_Registrations;
 with Spikedog.Servlet_Contexts;
 
 with AWFC.Accounts.Account_Servlets;
+with AWFC.Static_Resource_Servlets;
 with Forum.Forums.Servers;
-with Server.Servlets.Static;
 with Server.Servlets.Forum_Servlets;
 
 with Matreshka.Internals.SQL_Drivers.PostgreSQL.Factory;
@@ -100,7 +100,9 @@ package body Server.Initializers is
 
       Registry := Context.Add_Servlet
         (+"StaticResources",
-         Servlet_Access'(new Server.Servlets.Static.Resource_Servlet));
+         Servlet_Access'
+           (new AWFC.Static_Resource_Servlets.Static_Resource_Servlet));
+
       Registry.Add_Mapping (+"/css/*");
       Registry.Add_Mapping (+"/images/*");
 
