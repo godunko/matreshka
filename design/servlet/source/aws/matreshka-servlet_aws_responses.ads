@@ -212,8 +212,8 @@ private
    overriding procedure Set_Write_Listener
     (Self     : in out AWS_Servlet_Response;
      Listener : not null access Servlet.Write_Listeners.Write_Listener'Class);
-   -- Instructs the ServletOutputStream to invoke the provided WriteListener
-   -- when it is possible to write.
+   --  Instructs the ServletOutputStream to invoke the provided WriteListener
+   --  when it is possible to write.
 
    overriding procedure Write
     (Self : in out AWS_Servlet_Response;

@@ -84,21 +84,6 @@ package body Web_Socket.Handlers.AWS_Handlers is
               with Handler => Handler);
    end Create;
 
-   ----------------
-   -- On_Message --
-   ----------------
-
-   overriding procedure On_Message
-    (Self    : in out AWS_Web_Socket;
-     Message : Ada.Strings.Unbounded.Unbounded_String) is
-   begin
-      if Self.Handler.Listener /= null then
-         Self.Handler.Listener.On_Text
-          (League.Strings.From_UTF_8_String
-            (Ada.Strings.Unbounded.To_String (Message)));
-      end if;
-   end On_Message;
-
    --------------
    -- On_Close --
    --------------
@@ -167,6 +152,21 @@ package body Web_Socket.Handlers.AWS_Handlers is
          Self.Handler.Listener.On_Error;
       end if;
    end On_Error;
+
+   ----------------
+   -- On_Message --
+   ----------------
+
+   overriding procedure On_Message
+    (Self    : in out AWS_Web_Socket;
+     Message : Ada.Strings.Unbounded.Unbounded_String) is
+   begin
+      if Self.Handler.Listener /= null then
+         Self.Handler.Listener.On_Text
+          (League.Strings.From_UTF_8_String
+            (Ada.Strings.Unbounded.To_String (Message)));
+      end if;
+   end On_Message;
 
    -------------
    -- On_Open --

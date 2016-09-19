@@ -47,7 +47,6 @@ with AWS.Containers.Tables;
 with AWS.Cookie;
 with AWS.Headers;
 with AWS.Messages;
-with AWS.Resources.Streams.Memory;
 with AWS.Response.Set;
 
 with Matreshka.RFC2616_Dates;
@@ -199,7 +198,7 @@ package body Matreshka.Servlet_AWS_Responses is
     (Self : in out AWS_Servlet_Response;
      Name : League.Strings.Universal_String) return Boolean
    is
-      List : constant AWS.Headers.List := Aws.Response.Header (Self.Data);
+      List : constant AWS.Headers.List := AWS.Response.Header (Self.Data);
    begin
       return List.Exist (Name.To_UTF_8_String);
    end Contains_Header;
@@ -212,7 +211,7 @@ package body Matreshka.Servlet_AWS_Responses is
     (Self : in out AWS_Servlet_Response)
        return League.String_Vectors.Universal_String_Vector
    is
-      List   : constant AWS.Headers.List := Aws.Response.Header (Self.Data);
+      List   : constant AWS.Headers.List := AWS.Response.Header (Self.Data);
       Names  : constant AWS.Containers.Tables.VString_Array := List.Get_Names;
       Result : League.String_Vectors.Universal_String_Vector;
    begin
@@ -234,7 +233,7 @@ package body Matreshka.Servlet_AWS_Responses is
      Name : League.Strings.Universal_String)
        return League.String_Vectors.Universal_String_Vector
    is
-      List   : constant AWS.Headers.List := Aws.Response.Header (Self.Data);
+      List   : constant AWS.Headers.List := AWS.Response.Header (Self.Data);
       Values : constant AWS.Containers.Tables.VString_Array
         := List.Get_Values (Name.To_UTF_8_String);
       Result : League.String_Vectors.Universal_String_Vector;
@@ -349,7 +348,7 @@ package body Matreshka.Servlet_AWS_Responses is
           (Self.Data, Self.Content_Type.To_UTF_8_String);
 
       else
-         AWS.Response.Set.Content_TYpe
+         AWS.Response.Set.Content_Type
           (Self.Data,
            Self.Content_Type.To_UTF_8_String
              & ";charset="
@@ -419,7 +418,8 @@ package body Matreshka.Servlet_AWS_Responses is
 
    overriding procedure Set_Write_Listener
     (Self     : in out AWS_Servlet_Response;
-     Listener : not null access Servlet.Write_Listeners.Write_Listener'Class) is
+     Listener : not null access Servlet.Write_Listeners.Write_Listener'Class)
+   is
    begin
       null;
    end Set_Write_Listener;

@@ -49,7 +49,6 @@ with AWS.Parameters;
 with AWS.URL;
 
 with League.IRIs;
-with League.Strings;
 
 with Servlet.HTTP_Cookies;
 
