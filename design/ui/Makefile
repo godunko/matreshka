@@ -1,4 +1,4 @@
-GPRBUILDDB = /home/max/net/adalib.20160325/share/gprconfig
+GPRBUILDDB = /home/max/net/adalib.20160726/share/gprconfig
 
 all:
 	gprbuild -j0 -p -P gnat/ui_demo.gpr --db $(GPRBUILDDB) --target=javascript

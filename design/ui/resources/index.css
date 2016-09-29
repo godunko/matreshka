@@ -85,6 +85,23 @@ div.window-title {
     background: grey;
     text-align: center;
     cursor:move;
+/* row */
+    overflow: hidden;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    height: 24px;
+}
+
+div.window-body {
+/* row */
+    overflow: hidden;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 24px;
+    bottom: 0px;
 }
 
 div.window-corner {
@@ -96,4 +113,40 @@ div.window-corner {
     background: grey;
     border-bottom: 1px solid black;
     cursor:se-resize;
+}
+
+/*
+http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/
+*/
+body { margin: 0px }
+.row, .col { overflow: hidden; position: absolute; }
+.row { left: 0px; right: 0px; }
+.col { top: 0px; bottom: 0px; }
+.scroll-x { overflow-x: auto; }
+.scroll-y { overflow-y: auto; }
+
+
+.grid.row {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+.grid.row { top: 26px; bottom: 0px; }
+.grid-header.row { height: 30px; top: 0px; }
+.grid-data.row { top: 30px; bottom: 0px; }
+
+.grid-head table, .grid-data table {
+    border-spacing: 0px;
+}
+
+.grid-head th, .grid-data td {
+    border-left: solid 1px;
+    border-bottom: solid 1px;
+}
+
+.grid-data :focus {
+    background: green;
 }

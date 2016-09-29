@@ -43,97 +43,84 @@
 ------------------------------------------------------------------------------
 
 with League.Strings;
+with League.Calendars;
 
-with WebAPI.HTML.Elements;
-with WebAPI.HTML.Globals;
+package UI.Grid_Models is
 
-with UI.Actions;
-with UI.Widgets.Grid_Views;
-with UI.Widgets.Menu_Bars;
-with UI.Widgets.Menus;
-with UI.Widgets.Windows;
+   type Grid_Model is limited interface;
+   type Grid_Model_Access is access all Grid_Model'Class
+     with Storage_Size => 0;
 
-with Demo_Actions;
-with Grid;
+   type Abstract_Row is limited interface;
+   type Row_Access is access all Abstract_Row'Class
+     with Storage_Size => 0;
 
-procedure Demo is
+   not overriding function Column_Count
+     (Self   : not null access Grid_Model) return Natural is abstract;
+   --  Return number of columns inside given Parent row
 
-   procedure Create_Menu (Top  : UI.Widgets.Windows.Window_Access);
-   procedure Create_Grid (Top  : UI.Widgets.Windows.Window_Access);
+   not overriding function Row_Count
+     (Self   : not null access Grid_Model;
+      Parent : UI.Grid_Models.Row_Access := null) return Natural is abstract;
+   --  Return number of rows inside given Parent row
 
-   procedure Create_Grid (Top  : UI.Widgets.Windows.Window_Access) is
-      Grid_View : UI.Widgets.Grid_Views.Grid_View_Access :=
-        new UI.Widgets.Grid_Views.Grid_View;
-   begin
-      Grid.Initialize (Grid.Model);
-      UI.Widgets.Grid_Views.Constructors.Initialize (Grid_View.all, Top);
-      Grid_View.Set_Model (Grid.Header'Access, Grid.Model'Access);
-   end Create_Grid;
+   not overriding function Row
+     (Self   : not null access Grid_Model;
+      Index  : Positive;
+      Parent : UI.Grid_Models.Row_Access := null)
+      return not null UI.Grid_Models.Row_Access is abstract;
+   --  Return Index of row inside given Parent row with given row number
 
-   procedure Create_Menu (Top  : UI.Widgets.Windows.Window_Access) is
+   not overriding function Row_Index
+     (Self   : not null access Grid_Model;
+      Index  : UI.Grid_Models.Row_Access)
+      return Positive is abstract;
+   --  Return row number with given row Index
 
-      procedure Add_Menu_Item
-        (Top  : UI.Widgets.Windows.Window_Access;
-         Menu : UI.Widgets.Menus.Menu_Access;
-         Text : Wide_Wide_String);
+   not overriding function Parent
+     (Self  : not null access Grid_Model;
+      Index : not null UI.Grid_Models.Row_Access)
+      return UI.Grid_Models.Row_Access is abstract;
+   --  Return index of parent row
 
-      procedure Add_Menu_Item
-        (Top  : UI.Widgets.Windows.Window_Access;
-         Menu : UI.Widgets.Menus.Menu_Access;
-         Text : Wide_Wide_String)
-      is
-         Action : Demo_Actions.Demo_Action_Access :=
-           new Demo_Actions.Demo_Action;
-      begin
-         Action.Window := Top;
-         UI.Actions.Constructors.Initialize
-           (Action.all, League.Strings.To_Universal_String (Text));
-         Menu.Add_Action (UI.Actions.Action_Access (Action));
-      end Add_Menu_Item;
+   type Cell_Visiter is limited interface;
 
-      Menu_Bar : UI.Widgets.Menu_Bars.Menu_Bar_Access :=
-        new UI.Widgets.Menu_Bars.Menu_Bar;
-      Menu_1 : UI.Widgets.Menus.Menu_Access :=
-        new UI.Widgets.Menus.Menu;
-      Menu_2 : UI.Widgets.Menus.Menu_Access :=
-        new UI.Widgets.Menus.Menu;
-   begin
-      UI.Widgets.Menu_Bars.Constructors.Initialize
-        (Menu_Bar.all, Top);
-      UI.Widgets.Menus.Constructors.Initialize
-        (Menu_1.all, Menu_Bar, League.Strings.To_Universal_String ("test"));
-      UI.Widgets.Menus.Constructors.Initialize
-        (Menu_2.all, Menu_Bar, League.Strings.To_Universal_String ("test 2"));
+   not overriding procedure String_Cell
+     (Self  : not null access Cell_Visiter;
+      Value : League.Strings.Universal_String) is abstract;
 
-      Add_Menu_Item (Top, Menu_1, "Item 1");
-      Add_Menu_Item (Top, Menu_1, "Item 2");
-      Add_Menu_Item (Top, Menu_1, "Item 3");
+   not overriding procedure Integer_Cell
+     (Self  : not null access Cell_Visiter;
+      Value : Integer) is abstract;
 
-      Add_Menu_Item (Top, Menu_2, "Item 21");
-      Add_Menu_Item (Top, Menu_2, "Item 22");
-      Add_Menu_Item (Top, Menu_2, "Item 23");
+   not overriding procedure Date_Time_Cell
+     (Self  : not null access Cell_Visiter;
+      Value : League.Calendars.Date_Time) is abstract;
 
-      Menu_Bar.Add_Menu (Menu_1);
-      Menu_Bar.Add_Menu (Menu_2);
-   end Create_Menu;
+   not overriding procedure Visit_Cell
+     (Self    : not null access Grid_Model;
+      Index   : not null UI.Grid_Models.Row_Access;
+      Column  : Positive;
+      Visiter : not null access UI.Grid_Models.Cell_Visiter'Class)
+        is abstract;
 
-   Element : constant WebAPI.HTML.Elements.HTML_Element_Access
-     := WebAPI.HTML.Elements.HTML_Element_Access
-       (WebAPI.HTML.Globals.Window.Get_Document.Get_Element_By_Id
-          (League.Strings.To_Universal_String ("top")));
-   Top : UI.Widgets.Windows.Window_Access :=
-     new UI.Widgets.Windows.Window;
-   Win_1 : UI.Widgets.Windows.Window_Access :=
-     new UI.Widgets.Windows.Window;
-begin
-   UI.Widgets.Windows.Constructors.Initialize
-     (Top.all, Element);
+   type Listener is limited interface;
+   type Listener_Access is access all Listener'Class
+     with Storage_Size => 0;
 
-   Create_Menu (Top);
+   not overriding procedure On_Row_Inserted
+     (Self    : not null access Listener;
+      Model   : not null access Grid_Model'Class;
+      Index   : not null UI.Grid_Models.Row_Access) is abstract;
 
-   UI.Widgets.Windows.Constructors.Initialize
-     (Win_1.all, Top, League.Strings.To_Universal_String ("Window one"));
+   not overriding procedure On_Row_Deleted
+     (Self    : not null access Listener;
+      Model   : not null access Grid_Model'Class;
+      Index   : not null UI.Grid_Models.Row_Access) is abstract;
 
-   Create_Grid (Win_1);
-   Create_Menu (Win_1);
-end Demo;
+   not overriding procedure On_Row_Updated
+     (Self    : not null access Listener;
+      Model   : not null access Grid_Model'Class;
+      Index   : not null UI.Grid_Models.Row_Access) is abstract;
+
+end UI.Grid_Models;
