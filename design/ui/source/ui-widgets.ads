@@ -41,11 +41,11 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-
 private with WebAPI.DOM.Events;
 private with WebAPI.DOM.Event_Listeners;
 with WebAPI.HTML.Elements;
 
+private with Core.Connectables;
 with UI.Events.Mouse.Button;
 with UI.Events.Mouse.Click;
 with UI.Events.Mouse.Move;
@@ -125,7 +125,9 @@ private
     (Self  : not null access Wheel_Dispatcher;
      Event : access WebAPI.DOM.Events.Event'Class);
 
-   type Abstract_Widget is abstract tagged limited record
+   type Abstract_Widget is
+     abstract limited new Core.Connectables.Connectable_Object with
+   record
       Element    : WebAPI.HTML.Elements.HTML_Element_Access;
       Click      :
         aliased Mouse_CLick_Dispatcher (Abstract_Widget'Unchecked_Access);

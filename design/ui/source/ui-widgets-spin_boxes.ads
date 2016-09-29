@@ -41,10 +41,31 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Core.Connectables.Slots;
+private with Core.Connectables.Slots.Generic_Slots;
+private with Core.Connectables.Slots.Signals;
 
 package UI.Widgets.Spin_Boxes is
 
    type Abstract_Spin_Box is abstract new Abstract_Widget with private;
+
+   not overriding function Editing_Finished_Signal
+    (Self : in out Abstract_Spin_Box)
+       return not null access Core.Connectables.Slots.Connection_Manager'Class;
+
+   not overriding procedure Step_Down
+    (Self : in out Abstract_Spin_Box) is abstract;
+
+   function Step_Down_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return Core.Connectables.Slots.Slot'Class;
+
+   not overriding procedure Step_Up
+    (Self : in out Abstract_Spin_Box) is abstract;
+
+   function Step_Up_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return Core.Connectables.Slots.Slot'Class;
 
    package Constructors is
 
@@ -56,6 +77,25 @@ package UI.Widgets.Spin_Boxes is
 
 private
 
-   type Abstract_Spin_Box is abstract new Abstract_Widget with null record;
+   type Abstract_Spin_Box is abstract new Abstract_Widget with record
+      Editing_Finished : aliased Core.Connectables.Slots.Signals.Signal
+                                  (Abstract_Spin_Box'Unchecked_Access);
+   end record;
+
+   package Step_Down_Slots is
+     new Core.Connectables.Slots.Generic_Slots (Abstract_Spin_Box, Step_Down);
+
+   function Step_Down_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return Core.Connectables.Slots.Slot'Class
+         renames Step_Down_Slots.To_Slot;
+
+   package Step_Up_Slots is
+     new Core.Connectables.Slots.Generic_Slots (Abstract_Spin_Box, Step_Up);
+
+   function Step_Up_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return Core.Connectables.Slots.Slot'Class
+         renames Step_Down_Slots.To_Slot;
 
 end UI.Widgets.Spin_Boxes;
