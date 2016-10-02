@@ -94,7 +94,7 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    procedure Initialize (Self : not null access AWS_Server'Class) is
    begin
       AWS.Config.Set.Reuse_Address (Config, True);
-      AWS.Config.Set_Max_POST_Parameters (Config, Positive'Last);
+      AWS.Config.Set.Max_POST_Parameters (Config, Positive'Last);
       --  Default number of POST parameters limited to 100, too small.
 
       AWS.Server.Log.Start (Server);
