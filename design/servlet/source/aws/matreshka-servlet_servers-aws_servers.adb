@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014-2016, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -94,6 +94,8 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    procedure Initialize (Self : not null access AWS_Server'Class) is
    begin
       AWS.Config.Set.Reuse_Address (Config, True);
+      AWS.Config.Set_Max_POST_Parameters (Config, Positive'Last);
+      --  Default number of POST parameters limited to 100, too small.
 
       AWS.Server.Log.Start (Server);
       AWS.Server.Log.Start_Error (Server);
