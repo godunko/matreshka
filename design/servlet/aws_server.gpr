@@ -96,7 +96,7 @@ project AWS_Server is
    end Compiler;
 
    package Builder is
-      for Executable ("aws_driver.adb") use "ass";  --  ;)
+      for Executable ("aws_driver.adb") use "asdd";  --  AWS Spikedog driver
    end Builder;
 
    package Binder is
