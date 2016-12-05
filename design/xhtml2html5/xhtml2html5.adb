@@ -46,6 +46,7 @@ with Ada.Command_Line;
 with Ada.Wide_Wide_Text_IO;
 
 with League.Application;
+with League.Holders;
 with League.String_Vectors;
 with League.Strings;
 
@@ -55,8 +56,15 @@ with XML.SAX.Input_Sources.Streams.Files;
 with XML.SAX.Output_Destinations.Strings;
 with XML.SAX.Parse_Exceptions;
 with XML.SAX.Simple_Readers;
+with XML.Templates.Processors;
 
 procedure XHTML2HTML5 is
+   use type League.Strings.Universal_String;
+
+   function "+"
+    (Text : Wide_Wide_String) return League.Strings.Universal_String
+      renames League.Strings.To_Universal_String;
+
    package Error_Handlers is
       type Error_Handler is new XML.SAX.Error_Handlers.SAX_Error_Handler with
          record
@@ -134,16 +142,27 @@ procedure XHTML2HTML5 is
         League.Application.Arguments;
    Input  : aliased XML.SAX.Input_Sources.Streams.Files.File_Input_Source;
    Reader : aliased XML.SAX.Simple_Readers.Simple_Reader;
+   Filter : aliased XML.Templates.Processors.Template_Processor;
    Writer : aliased XML.SAX.HTML5_Writers.HTML5_Writer;
    Output : aliased XML.SAX.Output_Destinations.Strings
      .String_Output_Destination;
    Error  : aliased Error_Handlers.Error_Handler;
 
 begin
-   Input.Open_By_File_Name (Args.Element (1));
+   for J in 1 .. (Args.Length - 1) / 3 loop
+      if Args.Element (J * 3 - 2) = +"--bind-string" then
+         Filter.Set_Parameter
+           (Args.Element (J * 3 - 1),
+            League.Holders.To_Holder (Args.Element (J * 3)));
+      end if;
+   end loop;
+
+   Input.Open_By_File_Name (Args.Element (Args.Length));
    Reader.Set_Input_Source (Input'Unchecked_Access);
-   Reader.Set_Content_Handler (Writer'Unchecked_Access);
-   Reader.Set_Lexical_Handler (Writer'Unchecked_Access);
+   Reader.Set_Content_Handler (Filter'Unchecked_Access);
+   Reader.Set_Lexical_Handler (Filter'Unchecked_Access);
+   Filter.Set_Content_Handler (Writer'Unchecked_Access);
+   Filter.Set_Lexical_Handler (Writer'Unchecked_Access);
    Reader.Set_Error_Handler (Error'Unchecked_Access);
    Writer.Set_Output_Destination (Output'Unchecked_Access);
 --   Writer.Set_Error_Handler (Error'Unchecked_Access);
