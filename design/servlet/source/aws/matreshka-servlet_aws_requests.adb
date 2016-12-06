@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014-2016, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with Ada.Strings.Unbounded;
 
+with AWS.Attachments;
 with AWS.Headers.Values;
 with AWS.Messages;
 with AWS.Parameters;
@@ -51,6 +52,7 @@ with AWS.URL;
 with League.IRIs;
 
 with Servlet.HTTP_Cookies;
+with Servlet.HTTP_Parameters.AWS_Parameters;
 
 package body Matreshka.Servlet_AWS_Requests is
 
@@ -188,6 +190,58 @@ package body Matreshka.Servlet_AWS_Requests is
 
       return Result;
    end Get_Parameter_Names;
+
+   --------------------------
+   -- Get_Parameter_Values --
+   --------------------------
+
+   overriding function Get_Parameter_Values
+    (Self : AWS_Servlet_Request;
+     Name : League.Strings.Universal_String)
+       return Servlet.HTTP_Parameter_Vectors.HTTP_Parameter_Vector
+   is
+      N      : constant String := Name.To_UTF_8_String;
+      Result : Servlet.HTTP_Parameter_Vectors.HTTP_Parameter_Vector;
+
+      procedure Process_Attachment_Element
+       (Attachment : AWS.Attachments.Element;
+        Index      : Positive;
+        Quit       : in out Boolean);
+      --  Process each attachment element.
+
+      --------------------------------
+      -- Process_Attachment_Element --
+      --------------------------------
+
+      procedure Process_Attachment_Element
+       (Attachment : AWS.Attachments.Element;
+        Index      : Positive;
+        Quit       : in out Boolean)
+      is
+         Headers : constant AWS.Headers.List
+           := AWS.Attachments.Headers (Attachment);
+
+      begin
+         if AWS.Headers.Exist
+             (Headers, AWS.Messages.Content_Disposition_Token)
+           and then AWS.Headers.Values.Search
+                     (AWS.Headers.Get
+                       (Headers, AWS.Messages.Content_Disposition_Token),
+                      "name") = N
+         then
+            Result.Append
+             (Servlet.HTTP_Parameters.AWS_Parameters.Create (Attachment));
+         end if;
+      end Process_Attachment_Element;
+
+      procedure Process_Attachments is
+        new AWS.Attachments.For_Every_Attachment (Process_Attachment_Element);
+
+   begin
+      Process_Attachments (AWS.Status.Attachments (Self.Request));
+
+      return Result;
+   end Get_Parameter_Values;
 
    --------------------------
    -- Get_Parameter_Values --

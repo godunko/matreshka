@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2016, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,98 +41,46 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with AWS.Status;
+private with Ada.Streams.Stream_IO;
 
-private with League.String_Vectors;
-private with League.Strings;
+with AWS.Attachments;
 
-with Matreshka.Servlet_HTTP_Requests;
-private with Servlet.HTTP_Cookie_Sets;
-private with Servlet.HTTP_Parameter_Vectors;
-with Servlet.HTTP_Requests;
-with Servlet.HTTP_Upgrade_Handlers;
+package Servlet.HTTP_Parameters.AWS_Parameters is
 
-package Matreshka.Servlet_AWS_Requests is
-
-   type AWS_Servlet_Request is
-     new Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request
-       with private;
-
-   procedure Initialize
-    (Self : in out AWS_Servlet_Request'Class;
-     Data : AWS.Status.Data);
-   --  Initialize object to obtain information from given data object of AWS.
-
-   procedure Finalize (Self : in out AWS_Servlet_Request'Class);
-   --  Deallocate internal data.
-
-   function Get_Upgrade_Handler
-    (Self : AWS_Servlet_Request'Class)
-       return Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access;
+   function Create
+    (Attachment : AWS.Attachments.Element) return HTTP_Parameter;
+   --  Creates HTTP_Parameter to access to given AWS attachment element.
 
 private
 
-   type Internal_Cache is record
-      Cookies          : Servlet.HTTP_Cookie_Sets.Cookie_Set;
-      Cookies_Computed : Boolean := False;
-      Upgrade          :
-        Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access;
+   type AWS_Attachment_Parameter is new Abstract_Parameter with record
+      Attachment : AWS.Attachments.Element;
+      Input      : Ada.Streams.Stream_IO.File_Type;
    end record;
 
-   type AWS_Servlet_Request is
-     new Matreshka.Servlet_HTTP_Requests.Abstract_HTTP_Servlet_Request with
-   record
-      Request      : AWS.Status.Data;
-      Data         : access Internal_Cache;
-      Data_Storage : aliased Internal_Cache;
-   end record;
-
-   overriding function Get_Cookies
-    (Self : AWS_Servlet_Request)
-       return Servlet.HTTP_Cookie_Sets.Cookie_Set;
-   --  Returns an array containing all of the Cookie objects the client sent
-   --  with this request. This method returns null if no cookies were sent.
+   overriding function Get_Content_Type
+    (Self : AWS_Attachment_Parameter) return League.Strings.Universal_String;
 
    overriding function Get_Headers
-    (Self : AWS_Servlet_Request;
+    (Self : AWS_Attachment_Parameter;
      Name : League.Strings.Universal_String)
        return League.String_Vectors.Universal_String_Vector;
-   --  Returns all the values of the specified request header as an Enumeration
-   --  of String objects.
 
-   overriding function Get_Method
-    (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method;
-   --  Returns the name of the HTTP method with which this request was made,
-   --  for example, GET, POST, or PUT. Same as the value of the CGI variable
-   --  REQUEST_METHOD.
-
-   overriding function Get_Parameter_Names
-    (Self : AWS_Servlet_Request)
+   overriding function Get_Header_Names
+    (Self : AWS_Attachment_Parameter)
        return League.String_Vectors.Universal_String_Vector;
-   --  Returns an vector of String containing the names of the parameters
-   --  contained in this request. If the request has no parameters, the method
-   --  returns an empty vector.
 
-   overriding function Get_Parameter_Values
-    (Self : AWS_Servlet_Request;
-     Name : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector;
-   --  Returns an array of String objects containing all of the values the
-   --  given request parameter has, or null if the parameter does not exist.
+   overriding function Get_Input_Stream
+    (Self : AWS_Attachment_Parameter)
+       return access Ada.Streams.Root_Stream_Type'Class;
 
-   overriding function Get_Parameter_Values
-    (Self : AWS_Servlet_Request;
-     Name : League.Strings.Universal_String)
-       return Servlet.HTTP_Parameter_Vectors.HTTP_Parameter_Vector;
+   overriding function Get_Name
+    (Self : AWS_Attachment_Parameter) return League.Strings.Universal_String;
 
-   overriding function Is_Async_Supported
-    (Self : not null access AWS_Servlet_Request) return Boolean;
-   --  Checks if this request supports asynchronous operation.
+   overriding function Get_Size
+    (Self : AWS_Attachment_Parameter) return Ada.Streams.Stream_Element_Count;
 
-   overriding procedure Upgrade
-    (Self    : AWS_Servlet_Request;
-     Handler :
-       not null Servlet.HTTP_Upgrade_Handlers.HTTP_Upgrade_Handler_Access);
-   --  Uses given upgrade handler for the http protocol upgrade processing.
+   overriding function Get_Submitted_File_Name
+    (Self : AWS_Attachment_Parameter) return League.Strings.Universal_String;
 
-end Matreshka.Servlet_AWS_Requests;
+end Servlet.HTTP_Parameters.AWS_Parameters;
