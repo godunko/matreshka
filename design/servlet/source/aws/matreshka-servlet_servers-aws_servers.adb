@@ -66,7 +66,8 @@ with Web_Socket.Handlers.AWS_Handlers;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
 
-   Config           : AWS.Config.Object;
+   Config           : AWS.Config.Object := AWS.Config.Get_Current;
+   --  Initialize config from .ini file
    Server           : AWS.Server.HTTP;
    Shutdown_Request : Ada.Synchronous_Task_Control.Suspension_Object;
    Container        : Matreshka.Servlet_Containers.Servlet_Container_Access;
@@ -96,6 +97,11 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
       AWS.Config.Set.Reuse_Address (Config, True);
       AWS.Config.Set.Max_POST_Parameters (Config, Positive'Last);
       --  Default number of POST parameters limited to 100, too small.
+
+      if AWS.Config.Upload_Directory (Config) = "" then
+         AWS.Config.Set.Upload_Directory (Config, ".");
+         --  Upload_Directory is required to process files in POST parameters.
+      end if;
 
       AWS.Server.Log.Start (Server);
       AWS.Server.Log.Start_Error (Server);
