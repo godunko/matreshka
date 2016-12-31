@@ -41,6 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+private with Ada.Streams;
+
 with AWS.Status;
 
 private with League.String_Vectors;
@@ -72,6 +74,29 @@ package Matreshka.Servlet_AWS_Requests is
 
 private
 
+   ----------------------
+   -- Body_Stream_Type --
+   ----------------------
+
+   type Body_Stream_Type
+         (Request : not null access AWS_Servlet_Request'Class) is
+     new Ada.Streams.Root_Stream_Type with record
+      null;
+   end record;
+
+   overriding procedure Read
+    (Self : in out Body_Stream_Type;
+     Item : out Ada.Streams.Stream_Element_Array;
+     Last : out Ada.Streams.Stream_Element_Offset);
+
+   overriding procedure Write
+    (Self : in out Body_Stream_Type;
+     Item : Ada.Streams.Stream_Element_Array);
+
+   -------------------------
+   -- AWS_Servlet_Request --
+   -------------------------
+
    type Internal_Cache is record
       Cookies          : Servlet.HTTP_Cookie_Sets.Cookie_Set;
       Cookies_Computed : Boolean := False;
@@ -85,6 +110,7 @@ private
       Request      : AWS.Status.Data;
       Data         : access Internal_Cache;
       Data_Storage : aliased Internal_Cache;
+      Body_Stream  : aliased Body_Stream_Type (AWS_Servlet_Request'Access);
    end record;
 
    overriding function Get_Cookies
@@ -99,6 +125,11 @@ private
        return League.String_Vectors.Universal_String_Vector;
    --  Returns all the values of the specified request header as an Enumeration
    --  of String objects.
+
+   overriding function Get_Input_Stream
+    (Self : AWS_Servlet_Request)
+       return not null access Ada.Streams.Root_Stream_Type'Class;
+   --  Retrieves the body of the request as binary data using a stream.
 
    overriding function Get_Method
     (Self : AWS_Servlet_Request) return Servlet.HTTP_Requests.HTTP_Method;

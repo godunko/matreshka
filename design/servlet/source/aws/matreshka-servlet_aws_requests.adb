@@ -47,6 +47,7 @@ with AWS.Attachments;
 with AWS.Headers.Values;
 with AWS.Messages;
 with AWS.Parameters;
+with AWS.Server;
 with AWS.URL;
 
 with League.IRIs;
@@ -131,6 +132,23 @@ package body Matreshka.Servlet_AWS_Requests is
 
       return Result;
    end Get_Headers;
+
+   ----------------------
+   -- Get_Input_Stream --
+   ----------------------
+
+   overriding function Get_Input_Stream
+    (Self : AWS_Servlet_Request)
+       return not null access Ada.Streams.Root_Stream_Type'Class is
+   begin
+      --  XXX Should it be done before starting of request processing?
+
+      if not AWS.Status.Is_Body_Uploaded (Self.Request) then
+         AWS.Server.Get_Message_Body;
+      end if;
+
+      return Self.Body_Stream'Unrestricted_Access;
+   end Get_Input_Stream;
 
    ----------------
    -- Get_Method --
@@ -371,6 +389,18 @@ package body Matreshka.Servlet_AWS_Requests is
       return False;
    end Is_Async_Supported;
 
+   ----------
+   -- Read --
+   ----------
+
+   overriding procedure Read
+    (Self : in out Body_Stream_Type;
+     Item : out Ada.Streams.Stream_Element_Array;
+     Last : out Ada.Streams.Stream_Element_Offset) is
+   begin
+      AWS.Status.Read_Body (Self.Request.Request, Item, Last);
+   end Read;
+
    -------------
    -- Upgrade --
    -------------
@@ -382,5 +412,17 @@ package body Matreshka.Servlet_AWS_Requests is
    begin
       Self.Data.Upgrade := Handler;
    end Upgrade;
+
+   -----------
+   -- Write --
+   -----------
+
+   overriding procedure Write
+    (Self : in out Body_Stream_Type;
+     Item : Ada.Streams.Stream_Element_Array) is
+   begin
+      raise Program_Error
+        with "Servlet input stream doesn't allow write operations";
+   end Write;
 
 end Matreshka.Servlet_AWS_Requests;
