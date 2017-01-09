@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,9 +42,75 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with WebAPI.DOM.Event_Targets;
+with WebAPI.HTML.Globals;
 with WebAPI.HTML.Elements;
 
 package body UI.GL_Widgets is
+
+   procedure Animation_Frame (Self : in out Abstract_GL_Widget'Class);
+   --  Handles animation frame and requests next animation frame. Animation
+   --  frames is used to do most of GL related processing, including:
+   --   - finish of initialization of widget's GL code;
+   --   - detection of resize of canvas;
+   --   - redrawing after finish of initialization, on detected resize of the
+   --     canvas and on request.
+
+   ---------------------
+   -- Animation_Frame --
+   ---------------------
+
+   procedure Animation_Frame (Self : in out Abstract_GL_Widget'Class) is
+
+      use type WebAPI.DOM_Long;
+
+      Resize_Needed : constant Boolean
+        := not Self.Initialized
+             or WebAPI.DOM_Long (Self.Canvas.Get_Width)
+                  /= Self.Canvas.Get_Client_Width
+             or WebAPI.DOM_Long (Self.Canvas.Get_Height)
+                  /= Self.Canvas.Get_Client_Height;
+      --  Whether Resize_GL should be called due to change of canvas size.
+
+   begin
+      Self.Context.Make_Current;
+
+      --  Finish initialization of the widget's GL code.
+
+      if not Self.Initialized then
+         Self.Initialized := True;
+         Abstract_GL_Widget'Class (Self).Initialize_GL;
+      end if;
+
+      --  Complete resize of canvas and notify widget.
+
+      if Resize_Needed then
+         Self.Canvas.Set_Width
+          (WebAPI.DOM_Unsigned_Long (Self.Canvas.Get_Client_Width));
+         Self.Canvas.Set_Height
+          (WebAPI.DOM_Unsigned_Long (Self.Canvas.Get_Client_Height));
+
+         Self.Functions.Viewport
+          (X      => 0,
+           Y      => 0,
+           Width  => OpenGL.GLsizei (Self.Canvas.Get_Width),
+           Height => OpenGL.GLsizei (Self.Canvas.Get_Height));
+
+         Abstract_GL_Widget'Class (Self).Resize_GL
+          (Integer (Self.Canvas.Get_Width), Integer (Self.Canvas.Get_Height));
+      end if;
+
+      --  Redraw content of canvas when necessary.
+
+      if Resize_Needed or Self.Redraw_Needed then
+         Self.Redraw_Needed := False;
+         Abstract_GL_Widget'Class (Self).Paint_GL;
+         Self.Functions.Flush;
+      end if;
+
+      WebAPI.HTML.Globals.Window.Request_Animation_Frame
+       (Self.Animation'Access);
+      --  Request next animation frame.
+   end Animation_Frame;
 
    ------------------
    -- Constructors --
@@ -75,9 +141,11 @@ package body UI.GL_Widgets is
          Self.Context.Create (Canvas);
          Self.Context.Make_Current;
 
---         Self.Update;
-         --  XXX A2JS: Update must use requestAnimationFrame to draw content of
-         --  GL_Widget.
+         WebAPI.HTML.Globals.Window.Request_Animation_Frame
+          (Self.Animation'Access);
+         --  Register request of animation frame. Initialization of the GL
+         --  related features will be continued durin handling of the
+         --  requested animation frame.
       end Initialize;
 
    end Constructors;
@@ -92,6 +160,17 @@ package body UI.GL_Widgets is
    begin
       return Self.Context.Functions;
    end Functions;
+
+   ----------------------------
+   -- Handle_Animation_Frame --
+   ----------------------------
+
+   overriding procedure Handle_Animation_Frame
+    (Self : in out Frame_Request_Dispatcher;
+     Time : WebAPI.DOM_High_Res_Time_Stamp) is
+   begin
+      Self.Owner.Animation_Frame;
+   end Handle_Animation_Frame;
 
    ------------------
    -- Handle_Event --
@@ -120,44 +199,10 @@ package body UI.GL_Widgets is
    ------------
 
    procedure Update (Self : in out Abstract_GL_Widget) is
-
-      use type WebAPI.DOM_Long;
-
-      Call_Resize : constant Boolean
-        := not Self.Initialized
-             or WebAPI.DOM_Long (Self.Canvas.Get_Width)
-                  /= Self.Canvas.Get_Client_Width
-             or WebAPI.DOM_Long (Self.Canvas.Get_Height)
-                  /= Self.Canvas.Get_Client_Height;
-      --  Whether Resize_GL should be called due to change of canvas size.
-
    begin
-      Self.Context.Make_Current;
+      --  Request redraw on processing of next animation frame.
 
-      if not Self.Initialized then
-         Self.Initialized := True;
-         Abstract_GL_Widget'Class (Self).Initialize_GL;
-      end if;
-
-      Self.Canvas.Set_Width
-       (WebAPI.DOM_Unsigned_Long (Self.Canvas.Get_Client_Width));
-      Self.Canvas.Set_Height
-       (WebAPI.DOM_Unsigned_Long (Self.Canvas.Get_Client_Height));
-
-      Self.Functions.Viewport
-       (X      => 0,
-        Y      => 0,
-        Width  => OpenGL.GLsizei (Self.Canvas.Get_Width),
-        Height => OpenGL.GLsizei (Self.Canvas.Get_Height));
-
-      if Call_Resize then
-         Abstract_GL_Widget'Class (Self).Resize_GL
-          (Integer (Self.Canvas.Get_Width), Integer (Self.Canvas.Get_Height));
-      end if;
-
-      Abstract_GL_Widget'Class (Self).Paint_GL;
-
-      Self.Functions.Flush;
+      Self.Redraw_Needed := True;
    end Update;
 
 end UI.GL_Widgets;

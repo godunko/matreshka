@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,12 +41,16 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Abstract_GL_Widget provides integration between implementation of OpenGL
+--  API and application.
+------------------------------------------------------------------------------
 private with OpenGL.Contexts;
 with OpenGL.Functions;
 
 private with WebAPI.DOM.Event_Listeners;
 private with WebAPI.DOM.Events;
 with WebAPI.HTML.Canvas_Elements;
+private with WebAPI.HTML.Frame_Request_Callbacks;
 
 with UI.Widgets;
 
@@ -125,15 +129,28 @@ private
     (Self  : not null access Context_Restored_Dispatcher;
      Event : access WebAPI.DOM.Events.Event'Class);
 
+   type Frame_Request_Dispatcher
+    (Owner : not null access Abstract_GL_Widget'Class) is
+      limited new WebAPI.HTML.Frame_Request_Callbacks.Frame_Request_Callback
+        with null record;
+
+   overriding procedure Handle_Animation_Frame
+    (Self : in out Frame_Request_Dispatcher;
+     Time : WebAPI.DOM_High_Res_Time_Stamp);
+
    type Abstract_GL_Widget is
      abstract new UI.Widgets.Abstract_Widget with record
-      Canvas      : WebAPI.HTML.Canvas_Elements.HTML_Canvas_Element_Access;
-      Context     : OpenGL.Contexts.OpenGL_Context_Access;
-      Lost        : aliased
+      Canvas        : WebAPI.HTML.Canvas_Elements.HTML_Canvas_Element_Access;
+      Context       : OpenGL.Contexts.OpenGL_Context_Access;
+      Lost          : aliased
         Context_Lost_Dispatcher (Abstract_GL_Widget'Unchecked_Access);
-      Restored    : aliased
+      Restored      : aliased
         Context_Restored_Dispatcher (Abstract_GL_Widget'Unchecked_Access);
-      Initialized : Boolean := False;
+      Animation     : aliased
+        Frame_Request_Dispatcher (Abstract_GL_Widget'Unchecked_Access);
+      Initialized   : Boolean := False;
+      Redraw_Needed : Boolean := True;
+      --  Redraw should be done on next handling of animation frame.
    end record;
 
 end UI.GL_Widgets;
