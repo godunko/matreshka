@@ -49,7 +49,7 @@ package body Core.Connectables is
    ------------
 
    procedure Attach (Self : Slot_End_Base'Class) is
-      Owner : constant not null Object_Access := Self.Object;
+--      Owner : constant not null Object_Access := Self.Object;
 
    begin
       null;
