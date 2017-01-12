@@ -61,14 +61,26 @@ package body WUI.Widgets.GL_Widgets is
 
    procedure Animation_Frame (Self : in out Abstract_GL_Widget'Class) is
 
-      use type WebAPI.DOM_Long;
+      use type WebAPI.DOM_Double;
+      use type WebAPI.DOM_Unsigned_Long;
+
+      Ratio          : constant WebAPI.DOM_Double
+        := WebAPI.HTML.Globals.Window.Get_Device_Pixel_Ratio;
+      Display_Width  : constant WebAPI.DOM_Unsigned_Long
+        := WebAPI.DOM_Unsigned_Long
+--            (WebAPI.DOM_Double'Floor
+--  XXX A2JS doesn't support 'Floor attribute
+              (WebAPI.DOM_Double (Self.Canvas.Get_Client_Width) * Ratio);
+      Display_Height : constant WebAPI.DOM_Unsigned_Long
+        := WebAPI.DOM_Unsigned_Long
+--            (WebAPI.DOM_Double'Floor
+--  XXX A2JS doesn't support 'Floor attribute
+              (WebAPI.DOM_Double (Self.Canvas.Get_Client_Height) * Ratio);
 
       Resize_Needed : constant Boolean
         := not Self.Initialized
-             or WebAPI.DOM_Long (Self.Canvas.Get_Width)
-                  /= Self.Canvas.Get_Client_Width
-             or WebAPI.DOM_Long (Self.Canvas.Get_Height)
-                  /= Self.Canvas.Get_Client_Height;
+             or Self.Canvas.Get_Width /= Display_Width
+             or Self.Canvas.Get_Height /= Display_Height;
       --  Whether Resize_GL should be called due to change of canvas size.
 
    begin
@@ -84,10 +96,8 @@ package body WUI.Widgets.GL_Widgets is
       --  Complete resize of canvas and notify widget.
 
       if Resize_Needed then
-         Self.Canvas.Set_Width
-          (WebAPI.DOM_Unsigned_Long (Self.Canvas.Get_Client_Width));
-         Self.Canvas.Set_Height
-          (WebAPI.DOM_Unsigned_Long (Self.Canvas.Get_Client_Height));
+         Self.Canvas.Set_Width (Display_Width);
+         Self.Canvas.Set_Height (Display_Height);
 
          Self.Functions.Viewport
           (X      => 0,
