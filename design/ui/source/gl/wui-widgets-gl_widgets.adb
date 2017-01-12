@@ -68,14 +68,12 @@ package body WUI.Widgets.GL_Widgets is
         := WebAPI.HTML.Globals.Window.Get_Device_Pixel_Ratio;
       Display_Width  : constant WebAPI.DOM_Unsigned_Long
         := WebAPI.DOM_Unsigned_Long
---            (WebAPI.DOM_Double'Floor
---  XXX A2JS doesn't support 'Floor attribute
-              (WebAPI.DOM_Double (Self.Canvas.Get_Client_Width) * Ratio);
+            (WebAPI.DOM_Double'Floor
+              (WebAPI.DOM_Double (Self.Canvas.Get_Client_Width) * Ratio));
       Display_Height : constant WebAPI.DOM_Unsigned_Long
         := WebAPI.DOM_Unsigned_Long
---            (WebAPI.DOM_Double'Floor
---  XXX A2JS doesn't support 'Floor attribute
-              (WebAPI.DOM_Double (Self.Canvas.Get_Client_Height) * Ratio);
+            (WebAPI.DOM_Double'Floor
+              (WebAPI.DOM_Double (Self.Canvas.Get_Client_Height) * Ratio));
 
       Resize_Needed : constant Boolean
         := not Self.Initialized
