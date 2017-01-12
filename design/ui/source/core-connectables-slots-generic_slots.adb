@@ -51,11 +51,18 @@ package body Core.Connectables.Slots.Generic_Slots is
    overriding function Create_Slot_End
     (Self : Slot) return not null Slot_End_Access is
    begin
-      return
-        new Slot_End'
-             (Next     => null,
-              Previous => null,
-              Object   => Self.Object.all'Unchecked_Access);
+--      return
+--        new Slot_End'
+--             (Next     => null,
+--              Previous => null,
+--              Object   => Self.Object.all'Unchecked_Access);
+--  XXX A2JS: invalid code generated
+      return Result : not null Slot_End_Access
+               := new Slot_End (Self.Object.all'Unchecked_Access)
+      do
+         Result.Next     := null;
+         Result.Previous := null;
+      end return;
    end Create_Slot_End;
 
    ------------
@@ -87,7 +94,9 @@ package body Core.Connectables.Slots.Generic_Slots is
     (Self : in out Abstract_Object'Class)
        return Core.Connectables.Slots.Slot'Class is
    begin
-      return Slot'(Object => Self'Unchecked_Access);
+--      return Slot'(Object => Self'Unchecked_Access);
+--  XXX A2JS: invalid code generated
+      return Result : Slot (Self'Unchecked_Access);
    end To_Slot;
 
 end Core.Connectables.Slots.Generic_Slots;
