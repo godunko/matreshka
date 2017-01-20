@@ -58,8 +58,6 @@ private
 
    type Slot_End_0 is abstract new Slot_End_Base with null record;
 
-   type Slot_End_0_Access is access all Slot_End_0'Class;
-
    not overriding procedure Invoke (Self : in out Slot_End_0) is abstract;
 
    type Slot is abstract tagged limited null record;

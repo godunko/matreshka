@@ -61,15 +61,13 @@ package Core.Connectables.Slots_0.Slots_1 is
 
 private
 
-   type Slot is abstract tagged limited null record;
-
    type Slot_End_1 is abstract new Slot_End_Base with null record;
 
    not overriding procedure Invoke
     (Self        : in out Slot_End_1;
      Parameter_1 : Parameter_1_Type) is abstract;
 
-   type Slot_End_1_Access is access all Slot_End_1'Class;
+   type Slot is abstract tagged limited null record;
 
    not overriding function Create_Slot_End
     (Self : Slot) return not null Slot_End_Access;
