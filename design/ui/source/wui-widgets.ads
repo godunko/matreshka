@@ -45,7 +45,7 @@ private with WebAPI.DOM.Events;
 private with WebAPI.DOM.Event_Listeners;
 with WebAPI.HTML.Elements;
 
-private with Core.Connectables;
+with Core.Connectables;
 with WUI.Events.Mouse.Button;
 with WUI.Events.Mouse.Click;
 with WUI.Events.Mouse.Move;
@@ -53,7 +53,8 @@ with WUI.Events.Mouse.Wheel;
 
 package WUI.Widgets is
 
-   type Abstract_Widget is abstract tagged limited private;
+   type Abstract_Widget is
+     abstract limited new Core.Connectables.Connectable_Object with private;
 
    not overriding procedure Click_Event
     (Self  : in out Abstract_Widget;
