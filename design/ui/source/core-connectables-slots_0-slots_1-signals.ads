@@ -57,20 +57,6 @@ package Core.Connectables.Slots_0.Slots_1.Signals is
 
 private
 
-   type Signal_End_Base is tagged;
-   type Signal_End_Access is access all Signal_End_Base'Class;
-
-   type Signal_End_Base
-    (Signal : not null access Slots_1.Signals.Signal'Class) is
-     abstract tagged limited
-   record
-      Slot_End : Slot_End_Access;
-      Next     : Signal_End_Access;
-      Previous : Signal_End_Access;
-   end record;
-
-   procedure Attach (Self : in out Signal_End_Base'Class);
-
    type Signal_End is new Signal_End_Base with null record;
 
    procedure Invoke
@@ -78,11 +64,7 @@ private
      Parameter_1 : Parameter_1_Type);
 
    type Signal (Owner : not null access Connectable_Object'Class) is
-     limited new Slots_1.Emitter with
-   record
-      Head : Signal_End_Access;
-      Tail : Signal_End_Access;
-   end record;
+     limited new Emitter_Base and Slots_1.Emitter with null record;
 
    overriding procedure Connect
     (Self : in out Signal;

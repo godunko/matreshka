@@ -48,6 +48,16 @@ package body Core.Connectables is
    -- Attach --
    ------------
 
+   procedure Attach (Self : in out Signal_End_Base'Class) is
+   begin
+      Self.Emitter.Head := Self'Unchecked_Access;
+      Self.Emitter.Tail := Self'Unchecked_Access;
+   end Attach;
+
+   ------------
+   -- Attach --
+   ------------
+
    procedure Attach (Self : Slot_End_Base'Class) is
 --      Owner : constant not null Object_Access := Self.Object;
 

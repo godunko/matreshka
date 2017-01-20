@@ -44,16 +44,6 @@
 
 package body Core.Connectables.Slots_0.Slots_1.Signals is
 
-   ------------
-   -- Attach --
-   ------------
-
-   procedure Attach (Self : in out Signal_End_Base'Class) is
-   begin
-      Self.Signal.Head := Self'Unchecked_Access;
-      Self.Signal.Tail := Self'Unchecked_Access;
-   end Attach;
-
    -------------
    -- Connect --
    -------------
