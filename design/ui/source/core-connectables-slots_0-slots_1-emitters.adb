@@ -49,7 +49,7 @@ package body Core.Connectables.Slots_0.Slots_1.Emitters is
    -------------
 
    overriding procedure Connect
-    (Self : in out Signal;
+    (Self : in out Emitter;
      Slot : Slots_0.Slot'Class)
    is
       Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
@@ -67,7 +67,7 @@ package body Core.Connectables.Slots_0.Slots_1.Emitters is
    -------------
 
    overriding procedure Connect
-    (Self : in out Signal;
+    (Self : in out Emitter;
      Slot : Slots_1.Slot'Class)
    is
       Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
@@ -85,7 +85,7 @@ package body Core.Connectables.Slots_0.Slots_1.Emitters is
    ----------
 
    procedure Emit
-    (Self        : in out Signal;
+    (Self        : in out Emitter'Class;
      Parameter_1 : Parameter_1_Type)
    is
       Current : Signal_End_Access := Self.Head;

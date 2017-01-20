@@ -52,7 +52,7 @@ package WUI.Widgets.Spin_Boxes is
 
    not overriding function Editing_Finished_Signal
     (Self : in out Abstract_Spin_Box)
-       return not null access Core.Slots_0.Emitter'Class;
+       return not null access Core.Slots_0.Signal'Class;
 
    not overriding procedure Step_Down
     (Self : in out Abstract_Spin_Box) is abstract;
@@ -82,7 +82,7 @@ private
      abstract new WUI.Widgets.Abstract_Widget with
    record
       Editing_Finished : aliased
-        Core.Slots_0.Emitters.Signal (Abstract_Spin_Box'Unchecked_Access);
+        Core.Slots_0.Emitters.Emitter (Abstract_Spin_Box'Unchecked_Access);
    end record;
 
    package Step_Down_Slots is

@@ -46,10 +46,10 @@ package Core.Connectables.Slots_0.Emitters is
 
    pragma Preelaborate;
 
-   type Signal (Owner : not null access Connectable_Object'Class) is
-     limited new Slots_0.Emitter with private;
+   type Emitter (Owner : not null access Connectable_Object'Class) is
+     limited new Slots_0.Signal with private;
 
-   procedure Emit (Self : in out Signal);
+   procedure Emit (Self : in out Emitter'Class);
 
 private
 
@@ -57,11 +57,11 @@ private
 
    procedure Invoke (Self : in out Signal_End'Class);
 
-   type Signal (Owner : not null access Connectable_Object'Class) is
-     limited new Emitter_Base and Slots_0.Emitter with null record;
+   type Emitter (Owner : not null access Connectable_Object'Class) is
+     limited new Emitter_Base and Slots_0.Signal with null record;
 
    overriding procedure Connect
-    (Self : in out Signal;
+    (Self : in out Emitter;
      Slot : Slots_0.Slot'Class);
 
 end Core.Connectables.Slots_0.Emitters;

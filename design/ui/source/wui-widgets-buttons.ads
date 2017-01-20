@@ -51,7 +51,7 @@ package WUI.Widgets.Buttons is
 
    not overriding function Clicked_Signal
     (Self : in out Abstract_Button)
-       return not null access Core.Slots_0.Emitter'Class;
+       return not null access Core.Slots_0.Signal'Class;
 
    package Constructors is
 
@@ -65,7 +65,7 @@ private
 
    type Abstract_Button is
      abstract new WUI.Widgets.Abstract_Widget with record
-      Clicked : aliased Core.Slots_0.Emitters.Signal
+      Clicked : aliased Core.Slots_0.Emitters.Emitter
                          (Abstract_Button'Unchecked_Access);
    end record;
 

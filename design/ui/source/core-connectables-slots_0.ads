@@ -48,10 +48,10 @@ package Core.Connectables.Slots_0 is
 
    type Slot (<>) is abstract tagged limited private;
 
-   type Emitter is limited interface;
+   type Signal is limited interface;
 
    not overriding procedure Connect
-    (Self : in out Emitter;
+    (Self : in out Signal;
      Slot : Core.Connectables.Slots_0.Slot'Class) is abstract;
 
 private
