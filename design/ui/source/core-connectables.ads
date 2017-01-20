@@ -50,6 +50,9 @@ package Core.Connectables is
 
    type Object_Access is access all Connectable_Object'Class;
 
+   not overriding procedure Finalize (Self : in out Connectable_Object);
+   --  Release all object's connections.
+
 private
 
    type Slot_End_Base is tagged;
@@ -63,16 +66,20 @@ private
    -------------------
 
    type Slot_End_Base is abstract tagged limited record
-      Next     : Slot_End_Access;
-      Previous : Slot_End_Access;
+      Signal_End : Signal_End_Access;
+      Next       : Slot_End_Access;
+      Previous   : Slot_End_Access;
    end record;
 
    not overriding function Object
     (Self : Slot_End_Base) return not null Connectables.Object_Access
        is abstract;
 
-   procedure Attach (Self : Slot_End_Base'Class);
+   procedure Attach (Self : in out Slot_End_Base'Class);
    --  Attaches slot end object to list of slot ends of referenced object.
+
+   procedure Detach (Self : in out Slot_End_Base'Class);
+   --  Detaches slot end from the list of slot ends of the referenced object.
 
    ------------------
    -- Emitter_Base --
@@ -96,6 +103,8 @@ private
    end record;
 
    procedure Attach (Self : in out Signal_End_Base'Class);
+
+   procedure Detach (Self : in out Signal_End_Base'Class);
 
    ------------------------
    -- Connectable_Object --

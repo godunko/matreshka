@@ -41,8 +41,13 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Ada.Unchecked_Deallocation;
 
 package body Core.Connectables is
+
+   procedure Disconnect
+    (Signal : Signal_End_Access;
+     Slot   : Slot_End_Access);
 
    ------------
    -- Attach --
@@ -50,19 +55,114 @@ package body Core.Connectables is
 
    procedure Attach (Self : in out Signal_End_Base'Class) is
    begin
-      Self.Emitter.Head := Self'Unchecked_Access;
-      Self.Emitter.Tail := Self'Unchecked_Access;
+      if Self.Emitter.Head = null then
+         Self.Emitter.Head := Self'Unchecked_Access;
+         Self.Emitter.Tail := Self'Unchecked_Access;
+
+      else
+         raise Program_Error;
+      end if;
    end Attach;
 
    ------------
    -- Attach --
    ------------
 
-   procedure Attach (Self : Slot_End_Base'Class) is
---      Owner : constant not null Object_Access := Self.Object;
+   procedure Attach (Self : in out Slot_End_Base'Class) is
+      Owner : constant not null Object_Access := Self.Object;
 
    begin
-      null;
+      if Owner.Head = null then
+         Owner.Head := Self'Unchecked_Access;
+         Owner.Tail := Self'Unchecked_Access;
+
+      else
+         raise Program_Error;
+      end if;
    end Attach;
+
+   ------------
+   -- Detach --
+   ------------
+
+   procedure Detach (Self : in out Signal_End_Base'Class) is
+   begin
+      if Self.Emitter.Head = Self'Unchecked_Access then
+         Self.Emitter.Head := Self.Next;
+      end if;
+
+      if Self.Emitter.Tail = Self'Unchecked_Access then
+         Self.Emitter.Tail := Self.Previous;
+      end if;
+
+      if Self.Next /= null then
+         Self.Next.Previous := Self.Previous;
+      end if;
+
+      if Self.Previous /= null then
+         Self.Previous.Next := Self.Next;
+      end if;
+   end Detach;
+
+   ------------
+   -- Detach --
+   ------------
+
+   procedure Detach (Self : in out Slot_End_Base'Class) is
+      Owner : constant not null Object_Access := Self.Object;
+
+   begin
+      if Owner.Head = Self'Unchecked_Access then
+         Owner.Head := Self.Next;
+      end if;
+
+      if Owner.Tail = Self'Unchecked_Access then
+         Owner.Tail := Self.Previous;
+      end if;
+
+      if Self.Next /= null then
+         Self.Next.Previous := Self.Previous;
+      end if;
+
+      if Self.Previous /= null then
+         Self.Previous.Next := Self.Next;
+      end if;
+   end Detach;
+
+   ----------------
+   -- Disconnect --
+   ----------------
+
+   procedure Disconnect
+    (Signal : Signal_End_Access;
+     Slot   : Slot_End_Access)
+   is
+      procedure Free is
+        new Ada.Unchecked_Deallocation
+             (Signal_End_Base'Class, Signal_End_Access);
+
+      procedure Free is
+        new Ada.Unchecked_Deallocation (Slot_End_Base'Class, Slot_End_Access);
+
+     Aux_Signal : Signal_End_Access := Signal;
+     Aux_Slot   : Slot_End_Access   := Slot;
+
+   begin
+      Aux_Signal.Detach;
+      Aux_Slot.Detach;
+      Free (Aux_Signal);
+      Free (Aux_Slot);
+   end Disconnect;
+
+   --------------
+   -- Finalize --
+   --------------
+
+   not overriding procedure Finalize (Self : in out Connectable_Object) is
+   begin
+      while Self.Head /= null loop
+         Disconnect (Self.Head.Signal_End, Self.Head);
+      end loop;
+   end Finalize;
 
 end Core.Connectables;
