@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,29 +42,17 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package Core.Connectables.Slots is
+package body Core.Connectables.Slots_0.Slots_1 is
 
-   pragma Preelaborate;
-
-   type Slot (<>) is abstract tagged limited private;
-
-   type Connection_Manager is limited interface;
-
-   not overriding procedure Connect
-    (Self : in out Connection_Manager;
-     Slot : Connectables.Slots.Slot'Class) is abstract;
-
-private
-
-   type Slot is abstract tagged limited null record;
-
-   type Slot_End is abstract new Connectables.Slot_End_Base with null record;
-
-   not overriding procedure Invoke (Self : in out Slot_End) is abstract;
-
-   type Slot_End_Access is access all Slot_End'Class;
+   ---------------------
+   -- Create_Slot_End --
+   ---------------------
 
    not overriding function Create_Slot_End
-    (Self : Slot) return not null Slot_End_Access;
+    (Self : Slot) return not null Slot_End_Access is
+   begin
+      raise Program_Error with "Slot.Create_Slot_End must be overrided";
+      return null;
+   end Create_Slot_End;
 
-end Core.Connectables.Slots;
+end Core.Connectables.Slots_0.Slots_1;

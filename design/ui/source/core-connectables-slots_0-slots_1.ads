@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2017, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,46 +41,37 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+--  Generic slot with one parameter.
+------------------------------------------------------------------------------
 
-package Core.Connectables.Slots.Signals is
+generic
+   type Parameter_1_Type (<>) is limited private;
+
+package Core.Connectables.Slots_0.Slots_1 is
 
    pragma Preelaborate;
 
-   type Signal (Owner : not null access Connectables.Connectable_Object'Class) is
-     limited new Connectables.Slots.Connection_Manager with private;
+   type Slot (<>) is abstract tagged limited private;
 
-   procedure Emit (Self : in out Signal);
+   type Emitter is limited interface and Slots_0.Emitter;
+
+   not overriding procedure Connect
+    (Self : in out Emitter;
+     Slot : Slots_1.Slot'Class) is abstract;
 
 private
 
-   type Signal_End_Base is tagged;
-   type Signal_End_Access is access all Signal_End_Base'Class;
+   type Slot is abstract tagged limited null record;
 
-   type Signal_End_Base (Signal : not null access Connectables.Slots.Signals.Signal'Class) is
-     abstract tagged limited
-   record
-      Slot_End : Slot_End_Access;
-      Next     : Signal_End_Access;
-      Previous : Signal_End_Access;
-   end record;
+   type Slot_End_1 is abstract new Slot_End_Base with null record;
 
-   not overriding procedure Invoke (Self : in out Signal_End_Base) is abstract;
+   not overriding procedure Invoke
+    (Self        : in out Slot_End_1;
+     Parameter_1 : Parameter_1_Type) is abstract;
 
-   procedure Attach (Self : in out Signal_End_Base'Class);
+   type Slot_End_1_Access is access all Slot_End_1'Class;
 
-   type Signal_End is new Signal_End_Base with null record;
+   not overriding function Create_Slot_End
+    (Self : Slot) return not null Slot_End_Access;
 
-   overriding procedure Invoke (Self : in out Signal_End);
-
-   type Signal (Owner : not null access Connectables.Connectable_Object'Class) is
-     limited new Connectables.Slots.Connection_Manager with
-   record
-      Head : Signal_End_Access;
-      Tail : Signal_End_Access;
-   end record;
-
-   overriding procedure Connect
-    (Self : in out Signal;
-     Slot : Connectables.Slots.Slot'Class);
-
-end Core.Connectables.Slots.Signals;
+end Core.Connectables.Slots_0.Slots_1;

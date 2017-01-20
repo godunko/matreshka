@@ -62,8 +62,7 @@ package body WUI.Widgets.Buttons is
 
    not overriding function Clicked_Signal
     (Self : in out Abstract_Button)
-       return not null access Core.Connectables.Slots.Connection_Manager'Class
-   is
+       return not null access Core.Slots_0.Emitter'Class is
    begin
       return Self.Clicked'Unchecked_Access;
    end Clicked_Signal;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2017, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,36 +41,30 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Core.Slots_0;
-private with Core.Slots_0.Signals;
 
-package WUI.Widgets.Buttons is
+package Core.Connectables.Slots_0 is
 
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with private;
+   pragma Preelaborate;
 
-   not overriding function Clicked_Signal
-    (Self : in out Abstract_Button)
-       return not null access Core.Slots_0.Emitter'Class;
+   type Slot (<>) is abstract tagged limited private;
 
-   package Constructors is
+   type Emitter is limited interface;
 
-      procedure Initialize
-       (Self    : in out Abstract_Button'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
-
-   end Constructors;
+   not overriding procedure Connect
+    (Self : in out Emitter;
+     Slot : Core.Connectables.Slots_0.Slot'Class) is abstract;
 
 private
 
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with record
-      Clicked : aliased Core.Slots_0.Signals.Signal
-                         (Abstract_Button'Unchecked_Access);
-   end record;
+   type Slot_End_0 is abstract new Slot_End_Base with null record;
 
-   overriding procedure Click_Event
-    (Self  : in out Abstract_Button;
-     Event : in out WUI.Events.Mouse.Click.Click_Event'Class);
+   type Slot_End_0_Access is access all Slot_End_0'Class;
 
-end WUI.Widgets.Buttons;
+   not overriding procedure Invoke (Self : in out Slot_End_0) is abstract;
+
+   type Slot is abstract tagged limited null record;
+
+   not overriding function Create_Slot_End
+    (Self : Slot) return not null Slot_End_Access;
+
+end Core.Connectables.Slots_0;

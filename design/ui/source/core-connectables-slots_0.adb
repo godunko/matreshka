@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2017, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,36 +41,18 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Core.Slots_0;
-private with Core.Slots_0.Signals;
 
-package WUI.Widgets.Buttons is
+package body Core.Connectables.Slots_0 is
 
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with private;
+   ---------------------
+   -- Create_Slot_End --
+   ---------------------
 
-   not overriding function Clicked_Signal
-    (Self : in out Abstract_Button)
-       return not null access Core.Slots_0.Emitter'Class;
+   not overriding function Create_Slot_End
+    (Self : Slot) return not null Slot_End_Access is
+   begin
+      raise Program_Error with "Slot.Create_Slot_End must be overrided";
+      return null;
+   end Create_Slot_End;
 
-   package Constructors is
-
-      procedure Initialize
-       (Self    : in out Abstract_Button'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
-
-   end Constructors;
-
-private
-
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with record
-      Clicked : aliased Core.Slots_0.Signals.Signal
-                         (Abstract_Button'Unchecked_Access);
-   end record;
-
-   overriding procedure Click_Event
-    (Self  : in out Abstract_Button;
-     Event : in out WUI.Events.Mouse.Click.Click_Event'Class);
-
-end WUI.Widgets.Buttons;
+end Core.Connectables.Slots_0;

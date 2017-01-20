@@ -41,36 +41,55 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Core.Slots_0;
-private with Core.Slots_0.Signals;
 
-package WUI.Widgets.Buttons is
+generic
 
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with private;
+package Core.Connectables.Slots_0.Slots_1.Signals is
 
-   not overriding function Clicked_Signal
-    (Self : in out Abstract_Button)
-       return not null access Core.Slots_0.Emitter'Class;
+   pragma Preelaborate;
 
-   package Constructors is
+   type Signal (Owner : not null access Connectable_Object'Class) is
+     limited new Slots_1.Emitter with private;
 
-      procedure Initialize
-       (Self    : in out Abstract_Button'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
-
-   end Constructors;
+   procedure Emit
+    (Self        : in out Signal;
+     Parameter_1 : Parameter_1_Type);
 
 private
 
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with record
-      Clicked : aliased Core.Slots_0.Signals.Signal
-                         (Abstract_Button'Unchecked_Access);
+   type Signal_End_Base is tagged;
+   type Signal_End_Access is access all Signal_End_Base'Class;
+
+   type Signal_End_Base
+    (Signal : not null access Slots_1.Signals.Signal'Class) is
+     abstract tagged limited
+   record
+      Slot_End : Slot_End_Access;
+      Next     : Signal_End_Access;
+      Previous : Signal_End_Access;
    end record;
 
-   overriding procedure Click_Event
-    (Self  : in out Abstract_Button;
-     Event : in out WUI.Events.Mouse.Click.Click_Event'Class);
+   procedure Attach (Self : in out Signal_End_Base'Class);
 
-end WUI.Widgets.Buttons;
+   type Signal_End is new Signal_End_Base with null record;
+
+   procedure Invoke
+    (Self        : in out Signal_End'Class;
+     Parameter_1 : Parameter_1_Type);
+
+   type Signal (Owner : not null access Connectable_Object'Class) is
+     limited new Slots_1.Emitter with
+   record
+      Head : Signal_End_Access;
+      Tail : Signal_End_Access;
+   end record;
+
+   overriding procedure Connect
+    (Self : in out Signal;
+     Slot : Slots_0.Slot'Class);
+
+   overriding procedure Connect
+    (Self : in out Signal;
+     Slot : Slots_1.Slot'Class);
+
+end Core.Connectables.Slots_0.Slots_1.Signals;

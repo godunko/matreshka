@@ -41,36 +41,6 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Core.Slots_0;
-private with Core.Slots_0.Signals;
+with Core.Connectables.Slots_0;
 
-package WUI.Widgets.Buttons is
-
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with private;
-
-   not overriding function Clicked_Signal
-    (Self : in out Abstract_Button)
-       return not null access Core.Slots_0.Emitter'Class;
-
-   package Constructors is
-
-      procedure Initialize
-       (Self    : in out Abstract_Button'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
-
-   end Constructors;
-
-private
-
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with record
-      Clicked : aliased Core.Slots_0.Signals.Signal
-                         (Abstract_Button'Unchecked_Access);
-   end record;
-
-   overriding procedure Click_Event
-    (Self  : in out Abstract_Button;
-     Event : in out WUI.Events.Mouse.Click.Click_Event'Class);
-
-end WUI.Widgets.Buttons;
+package Core.Slots_0 renames Core.Connectables.Slots_0;

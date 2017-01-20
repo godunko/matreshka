@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2017, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,61 +42,92 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Core.Connectables.Slots.Generic_Slots is
+package body Core.Connectables.Slots_0.Slots_1.Signals is
 
-   ---------------------
-   -- Create_Slot_End --
-   ---------------------
+   ------------
+   -- Attach --
+   ------------
 
-   overriding function Create_Slot_End
-    (Self : Slot) return not null Slot_End_Access is
+   procedure Attach (Self : in out Signal_End_Base'Class) is
    begin
---      return
---        new Slot_End'
---             (Next     => null,
---              Previous => null,
---              Object   => Self.Object.all'Unchecked_Access);
---  XXX A2JS: invalid code generated
-      return Result : not null Slot_End_Access
-               := new Slot_End (Self.Object.all'Unchecked_Access)
-      do
-         Result.Next     := null;
-         Result.Previous := null;
-      end return;
-   end Create_Slot_End;
+      Self.Signal.Head := Self'Unchecked_Access;
+      Self.Signal.Tail := Self'Unchecked_Access;
+   end Attach;
+
+   -------------
+   -- Connect --
+   -------------
+
+   overriding procedure Connect
+    (Self : in out Signal;
+     Slot : Slots_0.Slot'Class)
+   is
+      Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
+      Signal_End : Signal_End_Access
+        := new Signals.Signal_End (Self'Unchecked_Access);
+
+   begin
+      Slot_End.Attach;
+      Signal_End.Attach;
+      Signal_End.Slot_End := Slot_End;
+   end Connect;
+
+   -------------
+   -- Connect --
+   -------------
+
+   overriding procedure Connect
+    (Self : in out Signal;
+     Slot : Slots_1.Slot'Class)
+   is
+      Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
+      Signal_End : Signal_End_Access
+        := new Signals.Signal_End (Self'Unchecked_Access);
+
+   begin
+      Slot_End.Attach;
+      Signal_End.Attach;
+      Signal_End.Slot_End := Slot_End;
+   end Connect;
+
+   ----------
+   -- Emit --
+   ----------
+
+   procedure Emit
+    (Self        : in out Signal;
+     Parameter_1 : Parameter_1_Type)
+   is
+      Current : Signal_End_Access := Self.Head;
+
+   begin
+      while Current /= null loop
+         begin
+            Signal_End'Class (Current.all).Invoke (Parameter_1);
+
+         exception
+            when others =>
+               null;
+         end;
+
+         Current := Current.Next;
+      end loop;
+   end Emit;
 
    ------------
    -- Invoke --
    ------------
 
-   overriding procedure Invoke (Self : in out Slot_End) is
+   procedure Invoke
+    (Self        : in out Signal_End'Class;
+     Parameter_1 : Parameter_1_Type) is
    begin
-      Subprogram (Self.Object.all);
+      if Self.Slot_End.all in Slot_End_1'Class then
+         Slot_End_1'Class (Self.Slot_End.all).Invoke (Parameter_1);
+
+      elsif Self.Slot_End.all in Slot_End_0'Class then
+         Slot_End_0'Class (Self.Slot_End.all).Invoke;
+      end if;
    end Invoke;
 
-   ------------
-   -- Object --
-   ------------
-
-   overriding function Object
-    (Self : Slot_End) return not null Core.Connectables.Object_Access is
-   begin
-      return
-        Core.Connectables.Connectable_Object'Class
-         (Self.Object.all)'Unchecked_Access;
-   end Object;
-
-   -------------
-   -- To_Slot --
-   -------------
-
-   function To_Slot
-    (Self : in out Abstract_Object'Class)
-       return Core.Connectables.Slots.Slot'Class is
-   begin
---      return Slot'(Object => Self'Unchecked_Access);
---  XXX A2JS: invalid code generated
-      return Result : Slot (Self'Unchecked_Access);
-   end To_Slot;
-
-end Core.Connectables.Slots.Generic_Slots;
+end Core.Connectables.Slots_0.Slots_1.Signals;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2017, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,36 +41,61 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Core.Slots_0;
-private with Core.Slots_0.Signals;
 
-package WUI.Widgets.Buttons is
+package body Core.Connectables.Slots_0.Generic_Slots is
 
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with private;
+   ---------------------
+   -- Create_Slot_End --
+   ---------------------
 
-   not overriding function Clicked_Signal
-    (Self : in out Abstract_Button)
-       return not null access Core.Slots_0.Emitter'Class;
+   overriding function Create_Slot_End
+    (Self : Slot) return not null Slot_End_Access is
+   begin
+--      return
+--        new Slot_End'
+--             (Next     => null,
+--              Previous => null,
+--              Object   => Self.Object.all'Unchecked_Access);
+--  XXX A2JS: invalid code generated
+      return Result : not null Slot_End_Access
+               := new Slot_End (Self.Object.all'Unchecked_Access)
+      do
+         Result.Next     := null;
+         Result.Previous := null;
+      end return;
+   end Create_Slot_End;
 
-   package Constructors is
+   ------------
+   -- Invoke --
+   ------------
 
-      procedure Initialize
-       (Self    : in out Abstract_Button'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
+   overriding procedure Invoke (Self : in out Slot_End) is
+   begin
+      Subprogram (Self.Object.all);
+   end Invoke;
 
-   end Constructors;
+   ------------
+   -- Object --
+   ------------
 
-private
+   overriding function Object
+    (Self : Slot_End) return not null Core.Connectables.Object_Access is
+   begin
+      return
+        Core.Connectables.Connectable_Object'Class
+         (Self.Object.all)'Unchecked_Access;
+   end Object;
 
-   type Abstract_Button is
-     abstract new WUI.Widgets.Abstract_Widget with record
-      Clicked : aliased Core.Slots_0.Signals.Signal
-                         (Abstract_Button'Unchecked_Access);
-   end record;
+   -------------
+   -- To_Slot --
+   -------------
 
-   overriding procedure Click_Event
-    (Self  : in out Abstract_Button;
-     Event : in out WUI.Events.Mouse.Click.Click_Event'Class);
+   function To_Slot
+    (Self : in out Abstract_Object'Class) return Slots_0.Slot'Class is
+   begin
+--      return Slot'(Object => Self'Unchecked_Access);
+--  XXX A2JS: invalid code generated
+      return Result : Slot (Self'Unchecked_Access);
+   end To_Slot;
 
-end WUI.Widgets.Buttons;
+end Core.Connectables.Slots_0.Generic_Slots;

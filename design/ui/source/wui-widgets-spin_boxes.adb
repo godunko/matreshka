@@ -69,7 +69,7 @@ package body WUI.Widgets.Spin_Boxes is
 
    not overriding function Editing_Finished_Signal
     (Self : in out Abstract_Spin_Box)
-       return not null access Core.Connectables.Slots.Connection_Manager'Class
+       return not null access Core.Slots_0.Emitter'Class
    is
    begin
       return Self.Editing_Finished'Unchecked_Access;

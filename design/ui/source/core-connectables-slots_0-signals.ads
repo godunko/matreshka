@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,17 +42,44 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Core.Connectables.Slots is
+package Core.Connectables.Slots_0.Signals is
 
-   ---------------------
-   -- Create_Slot_End --
-   ---------------------
+   pragma Preelaborate;
 
-   not overriding function Create_Slot_End
-    (Self : Slot) return not null Slot_End_Access is
-   begin
-      raise Program_Error with "Slot.Create_Slot_End must be overrided";
-      return null;
-   end Create_Slot_End;
+   type Signal (Owner : not null access Connectable_Object'Class) is
+     limited new Slots_0.Emitter with private;
 
-end Core.Connectables.Slots;
+   procedure Emit (Self : in out Signal);
+
+private
+
+   type Signal_End_Base is tagged;
+   type Signal_End_Access is access all Signal_End_Base'Class;
+
+   type Signal_End_Base
+    (Signal : not null access Slots_0.Signals.Signal'Class) is
+       abstract tagged limited
+   record
+      Slot_End : Slot_End_Access;
+      Next     : Signal_End_Access;
+      Previous : Signal_End_Access;
+   end record;
+
+   procedure Attach (Self : in out Signal_End_Base'Class);
+
+   type Signal_End is new Signal_End_Base with null record;
+
+   procedure Invoke (Self : in out Signal_End'Class);
+
+   type Signal (Owner : not null access Connectable_Object'Class) is
+     limited new Slots_0.Emitter with
+   record
+      Head : Signal_End_Access;
+      Tail : Signal_End_Access;
+   end record;
+
+   overriding procedure Connect
+    (Self : in out Signal;
+     Slot : Slots_0.Slot'Class);
+
+end Core.Connectables.Slots_0.Signals;

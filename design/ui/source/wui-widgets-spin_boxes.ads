@@ -41,9 +41,9 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with Core.Connectables.Slots;
-private with Core.Connectables.Slots.Generic_Slots;
-private with Core.Connectables.Slots.Signals;
+with Core.Slots_0;
+private with Core.Slots_0.Generic_Slots;
+private with Core.Slots_0.Signals;
 
 package WUI.Widgets.Spin_Boxes is
 
@@ -52,21 +52,21 @@ package WUI.Widgets.Spin_Boxes is
 
    not overriding function Editing_Finished_Signal
     (Self : in out Abstract_Spin_Box)
-       return not null access Core.Connectables.Slots.Connection_Manager'Class;
+       return not null access Core.Slots_0.Emitter'Class;
 
    not overriding procedure Step_Down
     (Self : in out Abstract_Spin_Box) is abstract;
 
    function Step_Down_Slot
     (Self : in out Abstract_Spin_Box'Class)
-       return Core.Connectables.Slots.Slot'Class;
+       return Core.Slots_0.Slot'Class;
 
    not overriding procedure Step_Up
     (Self : in out Abstract_Spin_Box) is abstract;
 
    function Step_Up_Slot
     (Self : in out Abstract_Spin_Box'Class)
-       return Core.Connectables.Slots.Slot'Class;
+       return Core.Slots_0.Slot'Class;
 
    package Constructors is
 
@@ -81,24 +81,22 @@ private
    type Abstract_Spin_Box is
      abstract new WUI.Widgets.Abstract_Widget with
    record
-      Editing_Finished : aliased Core.Connectables.Slots.Signals.Signal
-                                  (Abstract_Spin_Box'Unchecked_Access);
+      Editing_Finished : aliased
+        Core.Slots_0.Signals.Signal (Abstract_Spin_Box'Unchecked_Access);
    end record;
 
    package Step_Down_Slots is
-     new Core.Connectables.Slots.Generic_Slots (Abstract_Spin_Box, Step_Down);
+     new Core.Slots_0.Generic_Slots (Abstract_Spin_Box, Step_Down);
 
    function Step_Down_Slot
-    (Self : in out Abstract_Spin_Box'Class)
-       return Core.Connectables.Slots.Slot'Class
-         renames Step_Down_Slots.To_Slot;
+    (Self : in out Abstract_Spin_Box'Class) return Core.Slots_0.Slot'Class
+       renames Step_Down_Slots.To_Slot;
 
    package Step_Up_Slots is
-     new Core.Connectables.Slots.Generic_Slots (Abstract_Spin_Box, Step_Up);
+     new Core.Slots_0.Generic_Slots (Abstract_Spin_Box, Step_Up);
 
    function Step_Up_Slot
-    (Self : in out Abstract_Spin_Box'Class)
-       return Core.Connectables.Slots.Slot'Class
-         renames Step_Down_Slots.To_Slot;
+    (Self : in out Abstract_Spin_Box'Class) return Core.Slots_0.Slot'Class
+       renames Step_Down_Slots.To_Slot;
 
 end WUI.Widgets.Spin_Boxes;

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Core.Connectables.Slots.Signals is
+package body Core.Connectables.Slots_0.Signals is
 
    ------------
    -- Attach --
@@ -60,11 +60,11 @@ package body Core.Connectables.Slots.Signals is
 
    overriding procedure Connect
     (Self : in out Signal;
-     Slot : Connectables.Slots.Slot'Class)
+     Slot : Slots_0.Slot'Class)
    is
       Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
       Signal_End : Signal_End_Access
-        := new Connectables.Slots.Signals.Signal_End (Self'Unchecked_Access);
+        := new Signals.Signal_End (Self'Unchecked_Access);
 
    begin
       Slot_End.Attach;
@@ -82,7 +82,7 @@ package body Core.Connectables.Slots.Signals is
    begin
       while Current /= null loop
          begin
-            Current.Invoke;
+            Signal_End'Class (Current.all).Invoke;
 
          exception
             when others =>
@@ -97,9 +97,11 @@ package body Core.Connectables.Slots.Signals is
    -- Invoke --
    ------------
 
-   overriding procedure Invoke (Self : in out Signal_End) is
+   procedure Invoke (Self : in out Signal_End'Class) is
    begin
-      Self.Slot_End.Invoke;
+      if Self.Slot_End.all in Slot_End_0'Class then
+         Slot_End_0'Class (Self.Slot_End.all).Invoke;
+      end if;
    end Invoke;
 
-end Core.Connectables.Slots.Signals;
+end Core.Connectables.Slots_0.Signals;

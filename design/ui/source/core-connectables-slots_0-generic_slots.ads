@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -45,31 +45,32 @@
 generic
 --   type Abstract_Object is limited interface;
 --   type Abstract_Object is abstract tagged limited private;
-   type Abstract_Object is abstract new Core.Connectables.Connectable_Object with private;
+   type Abstract_Object is
+     abstract new Core.Connectables.Connectable_Object with private;
 
    with procedure Subprogram (Self : in out Abstract_Object) is abstract;
 
-package Core.Connectables.Slots.Generic_Slots is
+package Core.Connectables.Slots_0.Generic_Slots is
 
    pragma Preelaborate;
 
    function To_Slot
-    (Self : in out Abstract_Object'Class) return Connectables.Slots.Slot'Class;
+    (Self : in out Abstract_Object'Class) return Slots_0.Slot'Class;
 
 private
 
    type Slot (Object : not null access Abstract_Object'Class) is
-     new Connectables.Slots.Slot with null record;
+     new Slots_0.Slot with null record;
 
    overriding function Create_Slot_End
     (Self : Slot) return not null Slot_End_Access;
 
    type Slot_End (Object : not null access Abstract_Object'Class) is
-     new Connectables.Slots.Slot_End with null record;
+     new Slot_End_0 with null record;
 
    overriding procedure Invoke (Self : in out Slot_End);
 
    overriding function Object
     (Self : Slot_End) return not null Connectables.Object_Access;
 
-end Core.Connectables.Slots.Generic_Slots;
+end Core.Connectables.Slots_0.Generic_Slots;
