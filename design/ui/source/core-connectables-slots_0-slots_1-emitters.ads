@@ -44,7 +44,7 @@
 
 generic
 
-package Core.Connectables.Slots_0.Slots_1.Signals is
+package Core.Connectables.Slots_0.Slots_1.Emitters is
 
    pragma Preelaborate;
 
@@ -74,4 +74,4 @@ private
     (Self : in out Signal;
      Slot : Slots_1.Slot'Class);
 
-end Core.Connectables.Slots_0.Slots_1.Signals;
+end Core.Connectables.Slots_0.Slots_1.Emitters;

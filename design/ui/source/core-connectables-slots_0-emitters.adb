@@ -42,26 +42,56 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package Core.Connectables.Slots_0.Signals is
+package body Core.Connectables.Slots_0.Emitters is
 
-   pragma Preelaborate;
-
-   type Signal (Owner : not null access Connectable_Object'Class) is
-     limited new Slots_0.Emitter with private;
-
-   procedure Emit (Self : in out Signal);
-
-private
-
-   type Signal_End is new Signal_End_Base with null record;
-
-   procedure Invoke (Self : in out Signal_End'Class);
-
-   type Signal (Owner : not null access Connectable_Object'Class) is
-     limited new Emitter_Base and Slots_0.Emitter with null record;
+   -------------
+   -- Connect --
+   -------------
 
    overriding procedure Connect
     (Self : in out Signal;
-     Slot : Slots_0.Slot'Class);
+     Slot : Slots_0.Slot'Class)
+   is
+      Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
+      Signal_End : Signal_End_Access
+        := new Emitters.Signal_End (Self'Unchecked_Access);
 
-end Core.Connectables.Slots_0.Signals;
+   begin
+      Slot_End.Attach;
+      Signal_End.Attach;
+      Signal_End.Slot_End := Slot_End;
+   end Connect;
+
+   ----------
+   -- Emit --
+   ----------
+
+   procedure Emit (Self : in out Signal) is
+      Current : Signal_End_Access := Self.Head;
+
+   begin
+      while Current /= null loop
+         begin
+            Signal_End'Class (Current.all).Invoke;
+
+         exception
+            when others =>
+               null;
+         end;
+
+         Current := Current.Next;
+      end loop;
+   end Emit;
+
+   ------------
+   -- Invoke --
+   ------------
+
+   procedure Invoke (Self : in out Signal_End'Class) is
+   begin
+      if Self.Slot_End.all in Slot_End_0'Class then
+         Slot_End_0'Class (Self.Slot_End.all).Invoke;
+      end if;
+   end Invoke;
+
+end Core.Connectables.Slots_0.Emitters;

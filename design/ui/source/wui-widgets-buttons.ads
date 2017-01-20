@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 with Core.Slots_0;
-private with Core.Slots_0.Signals;
+private with Core.Slots_0.Emitters;
 
 package WUI.Widgets.Buttons is
 
@@ -65,7 +65,7 @@ private
 
    type Abstract_Button is
      abstract new WUI.Widgets.Abstract_Widget with record
-      Clicked : aliased Core.Slots_0.Signals.Signal
+      Clicked : aliased Core.Slots_0.Emitters.Signal
                          (Abstract_Button'Unchecked_Access);
    end record;
 

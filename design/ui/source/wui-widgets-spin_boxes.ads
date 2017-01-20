@@ -43,7 +43,7 @@
 ------------------------------------------------------------------------------
 with Core.Slots_0;
 private with Core.Slots_0.Generic_Slots;
-private with Core.Slots_0.Signals;
+private with Core.Slots_0.Emitters;
 
 package WUI.Widgets.Spin_Boxes is
 
@@ -82,7 +82,7 @@ private
      abstract new WUI.Widgets.Abstract_Widget with
    record
       Editing_Finished : aliased
-        Core.Slots_0.Signals.Signal (Abstract_Spin_Box'Unchecked_Access);
+        Core.Slots_0.Emitters.Signal (Abstract_Spin_Box'Unchecked_Access);
    end record;
 
    package Step_Down_Slots is

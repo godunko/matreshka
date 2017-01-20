@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Core.Connectables.Slots_0.Slots_1.Signals is
+package body Core.Connectables.Slots_0.Slots_1.Emitters is
 
    -------------
    -- Connect --
@@ -54,7 +54,7 @@ package body Core.Connectables.Slots_0.Slots_1.Signals is
    is
       Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
       Signal_End : Signal_End_Access
-        := new Signals.Signal_End (Self'Unchecked_Access);
+        := new Emitters.Signal_End (Self'Unchecked_Access);
 
    begin
       Slot_End.Attach;
@@ -72,7 +72,7 @@ package body Core.Connectables.Slots_0.Slots_1.Signals is
    is
       Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
       Signal_End : Signal_End_Access
-        := new Signals.Signal_End (Self'Unchecked_Access);
+        := new Emitters.Signal_End (Self'Unchecked_Access);
 
    begin
       Slot_End.Attach;
@@ -120,4 +120,4 @@ package body Core.Connectables.Slots_0.Slots_1.Signals is
       end if;
    end Invoke;
 
-end Core.Connectables.Slots_0.Slots_1.Signals;
+end Core.Connectables.Slots_0.Slots_1.Emitters;
