@@ -89,9 +89,7 @@ package body Core.Connectables.Slots_0.Emitters is
 
    procedure Invoke (Self : in out Signal_End'Class) is
    begin
-      if Self.Slot_End.all in Slot_End_0'Class then
-         Slot_End_0'Class (Self.Slot_End.all).Invoke;
-      end if;
+      Slot_End_0'Class (Self.Slot_End.all).Invoke;
    end Invoke;
 
 end Core.Connectables.Slots_0.Emitters;

@@ -54,7 +54,7 @@ package body Core.Connectables.Slots_0.Slots_1.Emitters is
    is
       Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
       Signal_End : Signal_End_Access
-        := new Emitters.Signal_End (Self'Unchecked_Access);
+        := new Signal_End_0 (Self'Unchecked_Access);
 
    begin
       Slot_End.Attach;
@@ -72,7 +72,7 @@ package body Core.Connectables.Slots_0.Slots_1.Emitters is
    is
       Slot_End   : Slot_End_Access := Slot.Create_Slot_End;
       Signal_End : Signal_End_Access
-        := new Emitters.Signal_End (Self'Unchecked_Access);
+        := new Signal_End_1 (Self'Unchecked_Access);
 
    begin
       Slot_End.Attach;
@@ -108,16 +108,25 @@ package body Core.Connectables.Slots_0.Slots_1.Emitters is
    -- Invoke --
    ------------
 
-   procedure Invoke
-    (Self        : in out Signal_End'Class;
+   overriding procedure Invoke
+    (Self        : in out Signal_End_0;
+     Parameter_1 : Parameter_1_Type)
+   is
+      pragma Unreferenced (Parameter_1);
+
+   begin
+      Slot_End_0'Class (Self.Slot_End.all).Invoke;
+   end Invoke;
+
+   ------------
+   -- Invoke --
+   ------------
+
+   overriding procedure Invoke
+    (Self        : in out Signal_End_1;
      Parameter_1 : Parameter_1_Type) is
    begin
-      if Self.Slot_End.all in Slot_End_1'Class then
-         Slot_End_1'Class (Self.Slot_End.all).Invoke (Parameter_1);
-
-      elsif Self.Slot_End.all in Slot_End_0'Class then
-         Slot_End_0'Class (Self.Slot_End.all).Invoke;
-      end if;
+      Slot_End_1'Class (Self.Slot_End.all).Invoke (Parameter_1);
    end Invoke;
 
 end Core.Connectables.Slots_0.Slots_1.Emitters;

@@ -57,10 +57,22 @@ package Core.Connectables.Slots_0.Slots_1.Emitters is
 
 private
 
-   type Signal_End is new Signal_End_Base with null record;
+   type Signal_End is abstract new Signal_End_Base with null record;
 
-   procedure Invoke
-    (Self        : in out Signal_End'Class;
+   not overriding procedure Invoke
+    (Self        : in out Signal_End;
+     Parameter_1 : Parameter_1_Type) is abstract;
+
+   type Signal_End_0 is new Signal_End with null record;
+
+   overriding procedure Invoke
+    (Self        : in out Signal_End_0;
+     Parameter_1 : Parameter_1_Type);
+
+   type Signal_End_1 is new Signal_End with null record;
+
+   overriding procedure Invoke
+    (Self        : in out Signal_End_1;
      Parameter_1 : Parameter_1_Type);
 
    -------------
