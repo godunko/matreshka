@@ -77,7 +77,9 @@ package body Core.Connectables is
          Owner.Tail := Self'Unchecked_Access;
 
       else
-         raise Program_Error;
+         Self.Previous := Owner.Tail;
+         Owner.Tail.Next := Self'Unchecked_Access;
+         Owner.Tail := Self'Unchecked_Access;
       end if;
    end Attach;
 
