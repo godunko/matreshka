@@ -74,17 +74,17 @@ package body Core.Connectables.Slots_0.Generic_Slots is
       Subprogram (Self.Object.all);
    end Invoke;
 
-   ------------
-   -- Object --
-   ------------
+   -----------
+   -- Owner --
+   -----------
 
-   overriding function Object
+   overriding function Owner
     (Self : Slot_End) return not null Core.Connectables.Object_Access is
    begin
       return
         Core.Connectables.Connectable_Object'Class
          (Self.Object.all)'Unchecked_Access;
-   end Object;
+   end Owner;
 
    -------------
    -- To_Slot --

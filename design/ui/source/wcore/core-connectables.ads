@@ -71,7 +71,7 @@ private
       Previous   : Slot_End_Access;
    end record;
 
-   not overriding function Object
+   not overriding function Owner
     (Self : Slot_End_Base) return not null Connectables.Object_Access
        is abstract;
 

@@ -69,7 +69,7 @@ package body Core.Connectables is
    ------------
 
    procedure Attach (Self : in out Slot_End_Base'Class) is
-      Owner : constant not null Object_Access := Self.Object;
+      Owner : constant not null Object_Access := Self.Owner;
 
    begin
       if Owner.Head = null then
@@ -109,7 +109,7 @@ package body Core.Connectables is
    ------------
 
    procedure Detach (Self : in out Slot_End_Base'Class) is
-      Owner : constant not null Object_Access := Self.Object;
+      Owner : constant not null Object_Access := Self.Owner;
 
    begin
       if Owner.Head = Self'Unchecked_Access then

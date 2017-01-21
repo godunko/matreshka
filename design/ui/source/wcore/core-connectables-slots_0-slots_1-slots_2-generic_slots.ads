@@ -74,7 +74,7 @@ private
      Parameter_1 : Parameter_1_Type;
      Parameter_2 : Parameter_2_Type);
 
-   overriding function Object
+   overriding function Owner
     (Self : Slot_End) return not null Connectables.Object_Access;
 
 end Core.Connectables.Slots_0.Slots_1.Slots_2.Generic_Slots;

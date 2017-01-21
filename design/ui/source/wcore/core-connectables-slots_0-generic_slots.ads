@@ -70,7 +70,7 @@ private
 
    overriding procedure Invoke (Self : in out Slot_End);
 
-   overriding function Object
+   overriding function Owner
     (Self : Slot_End) return not null Connectables.Object_Access;
 
 end Core.Connectables.Slots_0.Generic_Slots;
