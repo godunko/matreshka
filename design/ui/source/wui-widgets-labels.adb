@@ -52,6 +52,24 @@ package body WUI.Widgets.Labels is
 
    package body Constructors is
 
+      type Label_Internal_Access is access all Label'Class;
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Element : not null WebAPI.HTML.Elements.HTML_Element_Access)
+          return not null Label_Access
+      is
+         Result : not null Label_Internal_Access := new Label;
+
+      begin
+         Initialize (Result.all, Element);
+
+         return Label_Access (Result);
+      end Create;
+
       ----------------
       -- Initialize --
       ----------------

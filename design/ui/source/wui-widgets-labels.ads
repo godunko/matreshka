@@ -45,13 +45,20 @@ with League.Strings;
 
 package WUI.Widgets.Labels is
 
-   type Label is abstract new WUI.Widgets.Abstract_Widget with private;
+   type Label is new WUI.Widgets.Abstract_Widget with private;
+
+   type Label_Access is access all Label'Class
+     with Storage_Size => 0;
 
    procedure Set_Text
     (Self : in out Label'Class;
      To   : League.Strings.Universal_String);
 
    package Constructors is
+
+      function Create
+       (Element : not null WebAPI.HTML.Elements.HTML_Element_Access)
+          return not null Label_Access;
 
       procedure Initialize
        (Self    : in out Label'Class;
@@ -61,6 +68,6 @@ package WUI.Widgets.Labels is
 
 private
 
-   type Label is abstract new WUI.Widgets.Abstract_Widget with null record;
+   type Label is new WUI.Widgets.Abstract_Widget with null record;
 
 end WUI.Widgets.Labels;
