@@ -42,7 +42,7 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-package body Core.Connectables.Slots_0.Slots_1.Emitters is
+package body Core.Connectables.Slots_0.Slots_1.Generic_Emitters is
 
    -------------
    -- Connect --
@@ -129,4 +129,4 @@ package body Core.Connectables.Slots_0.Slots_1.Emitters is
       Slot_End_1'Class (Self.Slot_End.all).Invoke (Parameter_1);
    end Invoke;
 
-end Core.Connectables.Slots_0.Slots_1.Emitters;
+end Core.Connectables.Slots_0.Slots_1.Generic_Emitters;
