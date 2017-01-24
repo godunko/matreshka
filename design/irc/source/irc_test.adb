@@ -4,25 +4,26 @@ with League.Strings;
 
 with GNAT.Sockets;
 
-with IRC;
+with IRC.Sessions;
+with IRC.Listeners;
 
 procedure IRC_Test is
    function "+" (Text : Wide_Wide_String)
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
 
-   type Listener is new IRC.Listener with null record;
+   type Listener is new IRC.Listeners.Listener with null record;
 
    overriding procedure On_Message
      (Self    : access Listener;
-      Session : access IRC.Session'Class;
+      Session : access IRC.Sessions.Session'Class;
       Target  : League.Strings.Universal_String;
       Source  : League.Strings.Universal_String;
       Text    : League.Strings.Universal_String);
 
    overriding procedure On_Ping
      (Self    : access Listener;
-      Session : access IRC.Session'Class;
+      Session : access IRC.Sessions.Session'Class;
       Source  : League.Strings.Universal_String);
 
    ----------------
@@ -31,7 +32,7 @@ procedure IRC_Test is
 
    overriding procedure On_Message
      (Self    : access Listener;
-      Session : access IRC.Session'Class;
+      Session : access IRC.Sessions.Session'Class;
       Target  : League.Strings.Universal_String;
       Source  : League.Strings.Universal_String;
       Text    : League.Strings.Universal_String) is
@@ -48,7 +49,7 @@ procedure IRC_Test is
 
    overriding procedure On_Ping
      (Self    : access Listener;
-      Session : access IRC.Session'Class;
+      Session : access IRC.Sessions.Session'Class;
       Source  : League.Strings.Universal_String) is
    begin
       Ada.Wide_Wide_Text_IO.Put (Source.To_Wide_Wide_String);
@@ -56,7 +57,7 @@ procedure IRC_Test is
    end On_Ping;
 
    Handler  : aliased Listener;
-   Session  : IRC.Session (Handler'Access);
+   Session  : IRC.Sessions.Session (Handler'Access);
    Socket   : GNAT.Sockets.Socket_Type;
    Selector : GNAT.Sockets.Selector_Type;
    Read     : GNAT.Sockets.Socket_Set_Type;

@@ -4,7 +4,8 @@ with Ada.Wide_Wide_Text_IO;
 with League.Characters;
 with League.String_Vectors;
 
-package body IRC is
+package body IRC.Sessions is
+
    LF   : constant Wide_Wide_String :=
      (1 => Ada.Characters.Wide_Wide_Latin_1.LF);
    CR   : constant Wide_Wide_String :=
@@ -65,7 +66,7 @@ package body IRC is
 
          if List.Length > 3
            and then List.Element (1).Starts_With (":")
-           and then List.Element (2) = +"PRIVMSG"
+           and then List.Element (2) in +"PRIVMSG" | +"NOTICE"
          then
             declare
                Text : League.Strings.Universal_String;
@@ -77,8 +78,13 @@ package body IRC is
                List := List.Slice (4, List.Length);
                Text := List.Join (" ");
 
-               Self.Listener.On_Message
-                 (Self'Unchecked_Access, To, From, Text);
+               if List.Element (2) = +"PRIVMSG" then
+                  Self.Listener.On_Message
+                    (Self'Unchecked_Access, To, From, Text);
+               else
+                  Self.Listener.On_Notice
+                    (Self'Unchecked_Access, To, From, Text);
+               end if;
             end;
          elsif List.Length > 1 and then List.Element (1) = +"PING" then
             Self.Listener.On_Ping
@@ -164,7 +170,7 @@ package body IRC is
       Value.Append (Real_Name);
       Value.Append (New_Line);
 
-      Vector.Append (Self.Codec.Encode (Value));
+      Vector := Self.Codec.Encode (Value);
 
       GNAT.Sockets.Send_Socket (Socket, Vector.To_Stream_Element_Array, Last);
    end Connect;
@@ -184,7 +190,7 @@ package body IRC is
       Value.Append ("JOIN ");
       Value.Append (Channel);
       Value.Append (New_Line);
-      Vector.Append (Self.Codec.Encode (Value));
+      Vector := Self.Codec.Encode (Value);
 
       GNAT.Sockets.Send_Socket
         (Self.Socket, Vector.To_Stream_Element_Array, Last);
@@ -205,7 +211,7 @@ package body IRC is
       Value.Append ("PONG ");
       Value.Append (Target);
       Value.Append (New_Line);
-      Vector.Append (Self.Codec.Encode (Value));
+      Vector := Self.Codec.Encode (Value);
 
       GNAT.Sockets.Send_Socket
         (Self.Socket, Vector.To_Stream_Element_Array, Last);
@@ -229,10 +235,11 @@ package body IRC is
       Value.Append (" :");
       Value.Append (Text);
       Value.Append (New_Line);
-      Vector.Append (Self.Codec.Encode (Value));
+      Vector := Self.Codec.Encode (Value);
 
       GNAT.Sockets.Send_Socket
         (Self.Socket, Vector.To_Stream_Element_Array, Last);
    end Send_Message;
 
-end IRC;
+
+end IRC.Sessions;
