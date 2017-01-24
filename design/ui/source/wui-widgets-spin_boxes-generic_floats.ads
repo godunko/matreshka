@@ -65,6 +65,8 @@ package WUI.Widgets.Spin_Boxes.Generic_Floats is
     (Self : in out Float_Spin_Box)
        return not null access Float_Slots.Signal'Class;
 
+   not overriding function Value (Self : Float_Spin_Box) return Data_Type;
+
    package Constructors is
 
       procedure Initialize

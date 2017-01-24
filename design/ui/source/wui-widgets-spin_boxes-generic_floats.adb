@@ -107,11 +107,7 @@ package body WUI.Widgets.Spin_Boxes.Generic_Floats is
 
    overriding procedure Input_Event (Self  : in out Float_Spin_Box) is
    begin
-      Self.Value_Changed.Emit
-       (Data_Type'Wide_Wide_Value
-         (League.Strings.To_Wide_Wide_String
-           (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
-             (Self.Element).Get_Value)));
+      Self.Value_Changed.Emit (Self.Value);
    end Input_Event;
 
    ---------------
@@ -131,6 +127,19 @@ package body WUI.Widgets.Spin_Boxes.Generic_Floats is
    begin
       raise Program_Error;
    end Step_Up;
+
+   -----------
+   -- Value --
+   -----------
+
+   not overriding function Value (Self : Float_Spin_Box) return Data_Type is
+   begin
+      return
+        Data_Type'Wide_Wide_Value
+         (League.Strings.To_Wide_Wide_String
+           (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+             (Self.Element).Get_Value));
+   end Value;
 
    --------------------------
    -- Value_Changed_Signal --
