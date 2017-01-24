@@ -73,6 +73,10 @@ package WUI.Widgets.Spin_Boxes is
    not overriding procedure Input_Event
     (Self  : in out Abstract_Spin_Box) is abstract;
 
+   procedure Set_Enabled
+    (Self    : in out Abstract_Spin_Box'Class;
+     Enabled : Boolean);
+
    package Constructors is
 
       procedure Initialize
