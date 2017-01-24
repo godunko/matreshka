@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------------
 with WebAPI.DOM.Nodes;
 with WebAPI.DOM.Texts;
+with WebAPI.HTML.Globals;
 
 package body WUI.Widgets.Labels is
 
@@ -68,6 +69,20 @@ package body WUI.Widgets.Labels is
          Initialize (Result.all, Element);
 
          return Label_Access (Result);
+      end Create;
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Id : League.Strings.Universal_String) return not null Label_Access is
+      begin
+         return
+           Create
+            (WebAPI.HTML.Elements.HTML_Element_Access
+              (WebAPI.HTML.Globals.Window.Get_Document.Get_Element_By_Id
+                (Id)));
       end Create;
 
       ----------------

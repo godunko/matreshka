@@ -60,6 +60,9 @@ package WUI.Widgets.Labels is
        (Element : not null WebAPI.HTML.Elements.HTML_Element_Access)
           return not null Label_Access;
 
+      function Create
+       (Id : League.Strings.Universal_String) return not null Label_Access;
+
       procedure Initialize
        (Self    : in out Label'Class;
         Element : not null WebAPI.HTML.Elements.HTML_Element_Access);
