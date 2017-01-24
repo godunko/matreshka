@@ -41,78 +41,106 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with WebAPI.HTML.Input_Elements;
+with WebAPI.HTML.Globals;
 
-with Core.Slots_0;
-private with Core.Slots_0.Generic_Slots;
-private with Core.Slots_0.Emitters;
+package body WUI.Widgets.Spin_Boxes.Generic_Floats is
 
-package WUI.Widgets.Spin_Boxes is
+   ------------------
+   -- Constructors --
+   ------------------
 
-   type Abstract_Spin_Box is
-     abstract new WUI.Widgets.Abstract_Widget with private;
+   package body Constructors is
 
-   not overriding function Editing_Finished_Signal
-    (Self : in out Abstract_Spin_Box)
-       return not null access Core.Slots_0.Signal'Class;
+      type Float_Spin_Box_Internal_Access is access all Float_Spin_Box'Class;
 
-   not overriding procedure Step_Down
-    (Self : in out Abstract_Spin_Box) is abstract;
+      ------------
+      -- Create --
+      ------------
 
-   function Step_Down_Slot
-    (Self : in out Abstract_Spin_Box'Class)
-       return Core.Slots_0.Slot'Class;
+      function Create
+       (Element :
+          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access)
+            return not null Float_Spin_Box_Access
+      is
+         Result : constant not null Float_Spin_Box_Internal_Access
+           := new Float_Spin_Box;
 
-   not overriding procedure Step_Up
-    (Self : in out Abstract_Spin_Box) is abstract;
+      begin
+         Initialize (Result.all, Element);
 
-   function Step_Up_Slot
-    (Self : in out Abstract_Spin_Box'Class)
-       return Core.Slots_0.Slot'Class;
+         return Float_Spin_Box_Access (Result);
+      end Create;
 
-   not overriding procedure Input_Event
-    (Self  : in out Abstract_Spin_Box) is abstract;
+      ------------
+      -- Create --
+      ------------
 
-   package Constructors is
+      function Create
+       (Id : League.Strings.Universal_String)
+          return not null Float_Spin_Box_Access is
+      begin
+         return
+           Create
+            (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+              (WebAPI.HTML.Globals.Window.Get_Document.Get_Element_By_Id
+                (Id)));
+      end Create;
+
+      ----------------
+      -- Initialize --
+      ----------------
 
       procedure Initialize
-       (Self    : in out Abstract_Spin_Box'Class;
+       (Self    : in out Float_Spin_Box'Class;
         Element :
-          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access);
+          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access) is
+      begin
+         WUI.Widgets.Spin_Boxes.Constructors.Initialize
+          (Self, Element);
+      end Initialize;
 
    end Constructors;
 
-private
+   -----------------
+   -- Input_Event --
+   -----------------
 
-   type Input_Dispatcher
-    (Owner : not null access Abstract_Spin_Box'Class) is
-       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+   overriding procedure Input_Event (Self  : in out Float_Spin_Box) is
+   begin
+      Self.Value_Changed.Emit
+       (Data_Type'Wide_Wide_Value
+         (League.Strings.To_Wide_Wide_String
+           (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+             (Self.Element).Get_Value)));
+   end Input_Event;
 
-   overriding procedure Handle_Event
-    (Self  : not null access Input_Dispatcher;
-     Event : access WebAPI.DOM.Events.Event'Class);
+   ---------------
+   -- Step_Down --
+   ---------------
 
-   type Abstract_Spin_Box is
-     abstract new WUI.Widgets.Abstract_Widget with
-   record
-      Input            : aliased
-        Input_Dispatcher (Abstract_Spin_Box'Unchecked_Access);
-      Editing_Finished : aliased
-        Core.Slots_0.Emitters.Emitter (Abstract_Spin_Box'Unchecked_Access);
-   end record;
+   overriding procedure Step_Down (Self : in out Float_Spin_Box) is
+   begin
+      raise Program_Error;
+   end Step_Down;
 
-   package Step_Down_Slots is
-     new Core.Slots_0.Generic_Slots (Abstract_Spin_Box, Step_Down);
+   -------------
+   -- Step_Up --
+   -------------
 
-   function Step_Down_Slot
-    (Self : in out Abstract_Spin_Box'Class) return Core.Slots_0.Slot'Class
-       renames Step_Down_Slots.To_Slot;
+   overriding procedure Step_Up (Self : in out Float_Spin_Box) is
+   begin
+      raise Program_Error;
+   end Step_Up;
 
-   package Step_Up_Slots is
-     new Core.Slots_0.Generic_Slots (Abstract_Spin_Box, Step_Up);
+   --------------------------
+   -- Value_Changed_Signal --
+   --------------------------
 
-   function Step_Up_Slot
-    (Self : in out Abstract_Spin_Box'Class) return Core.Slots_0.Slot'Class
-       renames Step_Down_Slots.To_Slot;
+   not overriding function Value_Changed_Signal
+    (Self : in out Float_Spin_Box)
+       return not null access Float_Slots.Signal'Class is
+   begin
+      return Self.Value_Changed'Unchecked_Access;
+   end Value_Changed_Signal;
 
-end WUI.Widgets.Spin_Boxes;
+end WUI.Widgets.Spin_Boxes.Generic_Floats;

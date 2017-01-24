@@ -56,7 +56,8 @@ package body WUI.Widgets.Spin_Boxes.Generic_Integers is
 
       procedure Initialize
        (Self    : in out Integer_Spin_Box'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access) is
+        Element :
+          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access) is
       begin
          WUI.Widgets.Spin_Boxes.Constructors.Initialize (Self, Element);
       end Initialize;

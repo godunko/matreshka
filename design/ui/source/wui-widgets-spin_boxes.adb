@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with WebAPI.DOM.Event_Targets;
 
 package body WUI.Widgets.Spin_Boxes is
 
@@ -56,9 +57,14 @@ package body WUI.Widgets.Spin_Boxes is
 
       procedure Initialize
        (Self    : in out Abstract_Spin_Box'Class;
-        Element : not null WebAPI.HTML.Elements.HTML_Element_Access) is
+        Element :
+          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access) is
       begin
-         WUI.Widgets.Constructors.Initialize (Self, Element);
+         WUI.Widgets.Constructors.Initialize
+          (Self, WebAPI.HTML.Elements.HTML_Element_Access (Element));
+
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Element, +"input", Self.Input'Access, False);
       end Initialize;
 
    end Constructors;
@@ -74,5 +80,16 @@ package body WUI.Widgets.Spin_Boxes is
    begin
       return Self.Editing_Finished'Unchecked_Access;
    end Editing_Finished_Signal;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access Input_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.Input_Event;
+   end Handle_Event;
 
 end WUI.Widgets.Spin_Boxes;
