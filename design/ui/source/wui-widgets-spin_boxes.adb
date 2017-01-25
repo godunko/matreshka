@@ -96,8 +96,8 @@ package body WUI.Widgets.Spin_Boxes is
    -- Set_Enabled --
    -----------------
 
-   procedure Set_Enabled
-    (Self    : in out Abstract_Spin_Box'Class;
+   not overriding procedure Set_Enabled
+    (Self    : in out Abstract_Spin_Box;
      Enabled : Boolean) is
    begin
       WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
