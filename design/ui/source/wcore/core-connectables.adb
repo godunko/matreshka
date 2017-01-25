@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -60,7 +60,9 @@ package body Core.Connectables is
          Self.Emitter.Tail := Self'Unchecked_Access;
 
       else
-         raise Program_Error;
+         Self.Previous := Self.Emitter.Tail;
+         Self.Emitter.Tail.Next := Self'Unchecked_Access;
+         Self.Emitter.Tail := Self'Unchecked_Access;
       end if;
    end Attach;
 
