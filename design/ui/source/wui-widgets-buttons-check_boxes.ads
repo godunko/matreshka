@@ -41,52 +41,62 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
+with WebAPI.HTML.Input_Elements;
 
-package body WUI.Widgets.Buttons.Pushs is
+with WUI.Boolean_Slots;
+private with WUI.Boolean_Slots.Emitters;
 
-   -----------------
-   -- Click_Event --
-   -----------------
+package WUI.Widgets.Buttons.Check_Boxes is
 
-   overriding procedure Click_Event
-    (Self  : in out Push_Button;
-     Event : in out WUI.Events.Mouse.Click.Click_Event'Class) is
-   begin
-      Abstract_Button (Self).Click_Event (Event);
-      Event.Accept_Event;
-   end Click_Event;
+   type Check_Box is new WUI.Widgets.Buttons.Abstract_Button with private;
 
-   ------------------
-   -- Constructors --
-   ------------------
+   type Check_Box_Access is access all Check_Box'Class
+     with Storage_Size => 0;
 
-   package body Constructors is
+   not overriding function State_Changed_Signal
+    (Self : in out Check_Box)
+       return not null access WUI.Boolean_Slots.Signal'Class;
 
-      ----------------
-      -- Initialize --
-      ----------------
+   not overriding procedure Change_Event (Self  : in out Check_Box);
+
+   package Constructors is
+
+      function Create
+       (Element :
+          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access)
+            return not null Check_Box_Access;
+
+      function Create
+       (Id : League.Strings.Universal_String)
+          return not null Check_Box_Access;
 
       procedure Initialize
-       (Self    : in out Push_Button'Class;
+       (Self    : in out Check_Box'Class;
         Element :
-          not null WebAPI.HTML.Button_Elements.HTML_Button_Element_Access) is
-      begin
-         WUI.Widgets.Buttons.Constructors.Initialize
-          (Self, WebAPI.HTML.Elements.HTML_Element_Access (Element));
-      end Initialize;
+          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access);
 
    end Constructors;
 
-   -----------------
-   -- Set_Enabled --
-   -----------------
+private
+
+   type Change_Dispatcher
+    (Owner : not null access Check_Box'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Change_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type Check_Box is new WUI.Widgets.Buttons.Abstract_Button with record
+      Change           : aliased
+        Change_Dispatcher (Check_Box'Unchecked_Access);
+      State_Changed : aliased
+        WUI.Boolean_Slots.Emitters.Emitter (Check_Box'Unchecked_Access);
+   end record;
 
    overriding procedure Set_Enabled
-    (Self    : in out Push_Button;
-     Enabled : Boolean) is
-   begin
-      WebAPI.HTML.Button_Elements.HTML_Button_Element_Access
-       (Self.Element).Set_Disabled (not Enabled);
-   end Set_Enabled;
+    (Self    : in out Check_Box;
+     Enabled : Boolean);
 
-end WUI.Widgets.Buttons.Pushs;
+end WUI.Widgets.Buttons.Check_Boxes;

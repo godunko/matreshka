@@ -41,52 +41,8 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with Core.Connectables.Slots_0.Slots_1.Generic_Emitters;
 
-package body WUI.Widgets.Buttons.Pushs is
-
-   -----------------
-   -- Click_Event --
-   -----------------
-
-   overriding procedure Click_Event
-    (Self  : in out Push_Button;
-     Event : in out WUI.Events.Mouse.Click.Click_Event'Class) is
-   begin
-      Abstract_Button (Self).Click_Event (Event);
-      Event.Accept_Event;
-   end Click_Event;
-
-   ------------------
-   -- Constructors --
-   ------------------
-
-   package body Constructors is
-
-      ----------------
-      -- Initialize --
-      ----------------
-
-      procedure Initialize
-       (Self    : in out Push_Button'Class;
-        Element :
-          not null WebAPI.HTML.Button_Elements.HTML_Button_Element_Access) is
-      begin
-         WUI.Widgets.Buttons.Constructors.Initialize
-          (Self, WebAPI.HTML.Elements.HTML_Element_Access (Element));
-      end Initialize;
-
-   end Constructors;
-
-   -----------------
-   -- Set_Enabled --
-   -----------------
-
-   overriding procedure Set_Enabled
-    (Self    : in out Push_Button;
-     Enabled : Boolean) is
-   begin
-      WebAPI.HTML.Button_Elements.HTML_Button_Element_Access
-       (Self.Element).Set_Disabled (not Enabled);
-   end Set_Enabled;
-
-end WUI.Widgets.Buttons.Pushs;
+package WUI.Slots.Booleans.Emitters is
+  new WUI.Slots.Booleans.Generic_Emitters;
+pragma Preelaborate (WUI.Slots.Booleans.Emitters);

@@ -47,8 +47,8 @@ package WUI.Widgets.Buttons.Pushs is
 
    type Push_Button is new WUI.Widgets.Buttons.Abstract_Button with private;
 
-   type Push_Button_Access is access all Push_Button'Class;
---     with Storage_Size => 0;
+   type Push_Button_Access is access all Push_Button'Class
+     with Storage_Size => 0;
 
    package Constructors is
 
@@ -63,5 +63,13 @@ private
 
    type Push_Button is
      new WUI.Widgets.Buttons.Abstract_Button with null record;
+
+   overriding procedure Click_Event
+    (Self  : in out Push_Button;
+     Event : in out WUI.Events.Mouse.Click.Click_Event'Class);
+
+   overriding procedure Set_Enabled
+    (Self    : in out Push_Button;
+     Enabled : Boolean);
 
 end WUI.Widgets.Buttons.Pushs;

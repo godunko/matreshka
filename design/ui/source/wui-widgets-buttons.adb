@@ -53,7 +53,6 @@ package body WUI.Widgets.Buttons is
      Event : in out WUI.Events.Mouse.Click.Click_Event'Class) is
    begin
       Self.Clicked.Emit;
-      Event.Accept_Event;
    end Click_Event;
 
    --------------------
