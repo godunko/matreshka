@@ -164,4 +164,15 @@ package body WUI.Widgets is
       Self.Owner.Mouse_Wheel_Event (E);
    end Handle_Event;
 
+   -----------------
+   -- Set_Visible --
+   -----------------
+
+   not overriding procedure Set_Visible
+    (Self : in out Abstract_Widget;
+     To   : Boolean) is
+   begin
+      Self.Element.Set_Hidden (not To);
+   end Set_Visible;
+
 end WUI.Widgets;

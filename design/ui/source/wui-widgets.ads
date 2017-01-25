@@ -46,6 +46,8 @@ private with WebAPI.DOM.Event_Listeners;
 with WebAPI.HTML.Elements;
 
 with Core.Connectables;
+private with Core.Connectables.Slots_0.Slots_1.Generic_Slots;
+with WUI.Boolean_Slots;
 with WUI.Events.Mouse.Button;
 with WUI.Events.Mouse.Click;
 with WUI.Events.Mouse.Move;
@@ -55,6 +57,14 @@ package WUI.Widgets is
 
    type Abstract_Widget is
      abstract limited new Core.Connectables.Connectable_Object with private;
+
+   not overriding procedure Set_Visible
+    (Self : in out Abstract_Widget;
+     To   : Boolean);
+
+   function Set_Visible_Slot
+    (Self : in out Abstract_Widget'Class)
+       return WUI.Boolean_Slots.Slot'Class;
 
    not overriding procedure Click_Event
     (Self  : in out Abstract_Widget;
@@ -140,5 +150,12 @@ private
         aliased Mouse_Up_Dispatcher (Abstract_Widget'Unchecked_Access);
       Wheel      : aliased Wheel_Dispatcher (Abstract_Widget'Unchecked_Access);
    end record;
+
+   package Set_Visible_Slots is
+     new WUI.Boolean_Slots.Generic_Slots (Abstract_Widget, Set_Visible);
+
+   function Set_Visible_Slot
+    (Self : in out Abstract_Widget'Class) return WUI.Boolean_Slots.Slot'Class
+       renames Set_Visible_Slots.To_Slot;
 
 end WUI.Widgets;
