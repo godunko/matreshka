@@ -46,11 +46,14 @@ with Ada.Synchronous_Task_Control;
 with GNAT.Ctrl_C;
 
 with AWS.Config.Set;
+with AWS.Default;
 with AWS.Net.WebSocket.Registry.Control;
 with AWS.Response;
 with AWS.Server.Log;
 with AWS.Status;
 
+with League.Holders;
+with League.Settings;
 with League.String_Vectors;
 with League.Strings;
 
@@ -88,20 +91,32 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
      Request : AWS.Status.Data) return AWS.Net.WebSocket.Object'Class;
    --  Handles request of WebSocket connection.
 
+   procedure Read_Setting
+    (Config   : in out AWS.Config.Object;
+     Settings : League.Settings.Settings;
+     Name     : Wide_Wide_String;
+     Default  : String);
+   --  Read setting with given Name or set Default if no such setting.
+
    ----------------
    -- Initialize --
    ----------------
 
    procedure Initialize (Self : not null access AWS_Server'Class) is
+      function "+"
+        (Text : Wide_Wide_String) return League.Strings.Universal_String
+           renames League.Strings.To_Universal_String;
+      Settings : League.Settings.Settings;
+      Holder   : League.Holders.Holder;
    begin
       AWS.Config.Set.Reuse_Address (Config, True);
-      AWS.Config.Set.Max_POST_Parameters (Config, Positive'Last);
+      Read_Setting (Config, Settings, "max_post_parameters", "1_000_000");
       --  Default number of POST parameters limited to 100, too small.
-
-      if AWS.Config.Upload_Directory (Config) = "" then
-         AWS.Config.Set.Upload_Directory (Config, ".");
-         --  Upload_Directory is required to process files in POST parameters.
-      end if;
+      Read_Setting (Config, Settings, "upload_size_limit", "1_000_000_000");
+      Read_Setting (Config, Settings, "server_port", "8080");
+      Read_Setting (Config, Settings, "upload_directory", ".");
+      --  Upload_Directory is required to process files in POST parameters.
+      Read_Setting (Config, Settings, "log_file_directory", ".");
 
       AWS.Server.Log.Start (Server);
       AWS.Server.Log.Start_Error (Server);
@@ -113,6 +128,48 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
 
       Shutdown_Controller.Start;
    end Initialize;
+
+   ------------------
+   -- Read_Setting --
+   ------------------
+
+   procedure Read_Setting
+    (Config   : in out AWS.Config.Object;
+     Settings : League.Settings.Settings;
+     Name     : Wide_Wide_String;
+     Default  : String)
+   is
+      use type League.Strings.Universal_String;
+      Holder   : League.Holders.Holder;
+      Setting  : constant League.Strings.Universal_String :=
+        League.Strings.To_Universal_String (Name);
+      Key      : constant League.Strings.Universal_String := "/aws/" & Setting;
+   begin
+      if Settings.Contains (Key) then
+
+         Holder := Settings.Value (Key);
+
+         if League.Holders.Has_Tag
+           (Holder, League.Holders.Universal_Integer_Tag)
+         then
+
+            AWS.Config.Set.Parameter
+              (Config,
+               Setting.To_UTF_8_String,
+               League.Holders.Universal_Integer'Image
+                 (League.Holders.Element (Holder)));
+         else
+
+            AWS.Config.Set.Parameter
+              (Config,
+               Setting.To_UTF_8_String,
+               League.Holders.Element (Holder).To_UTF_8_String);
+         end if;
+      else
+
+         AWS.Config.Set.Parameter (Config, Setting.To_UTF_8_String, Default);
+      end if;
+   end Read_Setting;
 
    ----------------------
    -- Request_Callback --
