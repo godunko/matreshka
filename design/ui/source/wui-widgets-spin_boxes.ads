@@ -56,27 +56,43 @@ package WUI.Widgets.Spin_Boxes is
     (Self : in out Abstract_Spin_Box)
        return not null access Core.Slots_0.Signal'Class;
 
+   not overriding procedure Set_Disabled
+    (Self     : in out Abstract_Spin_Box;
+     Disabled : Boolean);
+   --  Available as slot.
+
+   not overriding procedure Set_Enabled
+    (Self    : in out Abstract_Spin_Box;
+     Enabled : Boolean);
+   --  Available as slot.
+
    not overriding procedure Step_Down
     (Self : in out Abstract_Spin_Box) is abstract;
+   --  Available as slot.
+
+   not overriding procedure Step_Up
+    (Self : in out Abstract_Spin_Box) is abstract;
+   --  Available as slot.
+
+   -----------
+   -- Slots --
+   -----------
+
+   function Set_Disabled_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class;
+
+   function Set_Enabled_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class;
 
    function Step_Down_Slot
     (Self : in out Abstract_Spin_Box'Class)
        return Core.Slots_0.Slot'Class;
 
-   not overriding procedure Step_Up
-    (Self : in out Abstract_Spin_Box) is abstract;
-
    function Step_Up_Slot
     (Self : in out Abstract_Spin_Box'Class)
        return Core.Slots_0.Slot'Class;
-
-   not overriding procedure Set_Enabled
-    (Self    : in out Abstract_Spin_Box;
-     Enabled : Boolean);
-
-   function Set_Enabled_Slot
-    (Self : in out Abstract_Spin_Box'Class)
-       return WUI.Boolean_Slots.Slot'Class;
 
    not overriding procedure Input_Event
     (Self  : in out Abstract_Spin_Box) is abstract;
@@ -109,6 +125,26 @@ private
         Core.Slots_0.Emitters.Emitter (Abstract_Spin_Box'Unchecked_Access);
    end record;
 
+   -----------
+   -- Slots --
+   -----------
+
+   package Set_Disabled_Slots is
+     new WUI.Boolean_Slots.Generic_Slots (Abstract_Spin_Box, Set_Disabled);
+
+   function Set_Disabled_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class
+         renames Set_Disabled_Slots.To_Slot;
+
+   package Set_Enabled_Slots is
+     new WUI.Boolean_Slots.Generic_Slots (Abstract_Spin_Box, Set_Enabled);
+
+   function Set_Enabled_Slot
+    (Self : in out Abstract_Spin_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class
+         renames Set_Enabled_Slots.To_Slot;
+
    package Step_Down_Slots is
      new Core.Slots_0.Generic_Slots (Abstract_Spin_Box, Step_Down);
 
@@ -122,12 +158,5 @@ private
    function Step_Up_Slot
     (Self : in out Abstract_Spin_Box'Class) return Core.Slots_0.Slot'Class
        renames Step_Down_Slots.To_Slot;
-
-   package Set_Enabled_Slots is
-     new WUI.Boolean_Slots.Generic_Slots (Abstract_Spin_Box, Set_Enabled);
-
-   function Set_Enabled_Slot
-    (Self : in out Abstract_Spin_Box'Class) return WUI.Boolean_Slots.Slot'Class
-       renames Set_Enabled_Slots.To_Slot;
 
 end WUI.Widgets.Spin_Boxes;

@@ -92,6 +92,18 @@ package body WUI.Widgets.Spin_Boxes is
       Self.Owner.Input_Event;
    end Handle_Event;
 
+   ------------------
+   -- Set_Disabled --
+   ------------------
+
+   not overriding procedure Set_Disabled
+    (Self     : in out Abstract_Spin_Box;
+     Disabled : Boolean) is
+   begin
+      WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+       (Self.Element).Set_Disabled (Disabled);
+   end Set_Disabled;
+
    -----------------
    -- Set_Enabled --
    -----------------
@@ -100,8 +112,7 @@ package body WUI.Widgets.Spin_Boxes is
     (Self    : in out Abstract_Spin_Box;
      Enabled : Boolean) is
    begin
-      WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
-       (Self.Element).Set_Disabled (not Enabled);
+      Self.Set_Disabled (not Enabled);
    end Set_Enabled;
 
 end WUI.Widgets.Spin_Boxes;
