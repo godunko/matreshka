@@ -61,11 +61,27 @@ package WUI.Widgets.Spin_Boxes.Generic_Floats is
    type Float_Spin_Box_Access is access all Float_Spin_Box'Class
      with Storage_Size => 0;
 
+   not overriding function Value (Self : Float_Spin_Box) return Data_Type;
+
+   not overriding procedure Set_Value
+    (Self : in out Float_Spin_Box;
+     To   : Data_Type);
+   --  Available as slot.
+
+   -------------
+   -- Signals --
+   -------------
+
    not overriding function Value_Changed_Signal
     (Self : in out Float_Spin_Box)
        return not null access Float_Slots.Signal'Class;
 
-   not overriding function Value (Self : Float_Spin_Box) return Data_Type;
+   -----------
+   -- Slots --
+   -----------
+
+   function Set_Value_Slot
+    (Self : in out Float_Spin_Box'Class) return Float_Slots.Slot'Class;
 
    package Constructors is
 
@@ -99,5 +115,16 @@ private
    overriding procedure Step_Up (Self : in out Float_Spin_Box);
 
    overriding procedure Input_Event (Self  : in out Float_Spin_Box);
+
+   -----------
+   -- Slots --
+   -----------
+
+   package Set_Value_Slots is
+     new Float_Slots.Generic_Slots (Float_Spin_Box, Set_Value);
+
+   function Set_Value_Slot
+    (Self : in out Float_Spin_Box'Class) return Float_Slots.Slot'Class
+       renames Set_Value_Slots.To_Slot;
 
 end WUI.Widgets.Spin_Boxes.Generic_Floats;

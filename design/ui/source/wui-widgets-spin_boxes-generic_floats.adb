@@ -111,6 +111,31 @@ package body WUI.Widgets.Spin_Boxes.Generic_Floats is
    end Input_Event;
 
    ---------------
+   -- Set_Value --
+   ---------------
+
+   not overriding procedure Set_Value
+    (Self : in out Float_Spin_Box;
+     To   : Data_Type)
+   is
+      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+            (Self.Element);
+      Old   : constant Data_Type := Self.Value;
+
+
+   begin
+      if Old /= To then
+         WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+          (Self.Element).Set_Value
+            (League.Strings.To_Universal_String
+              (Data_Type'Wide_Wide_Image (To)));
+         Self.Value_Changed.Emit (To);
+         --  'input' event is not send when value is changed programmatically.
+      end if;
+   end Set_Value;
+
+   ---------------
    -- Step_Down --
    ---------------
 
