@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2014-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,46 +41,38 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-private with Ada.Streams.Stream_IO;
+with League.Strings;
 
-with AWS.Attachments;
+with Servlet.Contexts;
+with Servlet.Context_Listeners;
 
-package Servlet.HTTP_Parameters.AWS_Parameters is
+package Servlet.Application is
 
-   function Create
-    (Attachment : AWS.Attachments.Element) return HTTP_Parameter;
-   --  Creates HTTP_Parameter to access to given AWS attachment element.
+   procedure Initialize
+    (Application_Name    : League.Strings.Universal_String;
+     Application_Version : League.Strings.Universal_String;
+     Organization_Name   : League.Strings.Universal_String;
+     Organization_Domain : League.Strings.Universal_String);
+   --  Initialize servlet container. It detects run of application under
+   --  FastCGI environment and use it when possible, or fallback to start as
+   --  standalone AWS server when it supports was enabled at build time.
 
-private
+   procedure Execute;
 
-   type AWS_Attachment_Parameter is new Abstract_Parameter with record
-      Attachment : AWS.Attachments.Element;
-      Input      : Ada.Streams.Stream_IO.File_Type;
-   end record;
+   procedure Finalize;
 
-   overriding function Get_Content_Type
-    (Self : AWS_Attachment_Parameter) return League.Strings.Universal_String;
+   procedure Add_Listener
+    (Listener : not null
+       Servlet.Context_Listeners.Servlet_Context_Listener_Access);
+   --  Adds Servlet_Context_Listener. Context_Initialized subprogram of this
+   --  interface will be called during execution of Initialize subprogram; and
+   --  Context_Destoyed subprogram will be called during execution of Finalize
+   --  subprogram.
 
-   overriding function Get_Headers
-    (Self : AWS_Attachment_Parameter;
-     Name : League.Strings.Universal_String)
-       return League.String_Vectors.Universal_String_Vector;
+   function Get_Servlet_Context return
+     not null Servlet.Contexts.Servlet_Context_Access;
+   --  Returns servlet context of the initialized servlet container.
+   --  Application should use this context to add and configure servlets and
+   --  filters.
 
-   overriding function Get_Header_Names
-    (Self : AWS_Attachment_Parameter)
-       return League.String_Vectors.Universal_String_Vector;
-
-   overriding function Get_Input_Stream
-    (Self : AWS_Attachment_Parameter)
-       return access Ada.Streams.Root_Stream_Type'Class;
-
-   overriding function Get_Name
-    (Self : AWS_Attachment_Parameter) return League.Strings.Universal_String;
-
-   overriding function Get_Size
-    (Self : AWS_Attachment_Parameter) return Ada.Streams.Stream_Element_Count;
-
-   overriding function Get_Submitted_File_Name
-    (Self : AWS_Attachment_Parameter) return League.Strings.Universal_String;
-
-end Servlet.HTTP_Parameters.AWS_Parameters;
+end Servlet.Application;

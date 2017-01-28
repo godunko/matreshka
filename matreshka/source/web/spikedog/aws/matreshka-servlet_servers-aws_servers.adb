@@ -69,8 +69,7 @@ with Web_Socket.Handlers.AWS_Handlers;
 
 package body Matreshka.Servlet_Servers.AWS_Servers is
 
-   Config           : AWS.Config.Object := AWS.Config.Get_Current;
-   --  Initialize config from .ini file
+   Config           : AWS.Config.Object;
    Server           : AWS.Server.HTTP;
    Shutdown_Request : Ada.Synchronous_Task_Control.Suspension_Object;
    Container        : Matreshka.Servlet_Containers.Servlet_Container_Access;
@@ -103,11 +102,14 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
    ----------------
 
    procedure Initialize (Self : not null access AWS_Server'Class) is
+
       function "+"
         (Text : Wide_Wide_String) return League.Strings.Universal_String
            renames League.Strings.To_Universal_String;
+
       Settings : League.Settings.Settings;
       Holder   : League.Holders.Holder;
+
    begin
       AWS.Config.Set.Reuse_Address (Config, True);
       Read_Setting (Config, Settings, "max_post_parameters", "1_000_000");
@@ -117,7 +119,7 @@ package body Matreshka.Servlet_Servers.AWS_Servers is
       Read_Setting (Config, Settings, "upload_directory", ".");
       --  Upload_Directory is required to process files in POST parameters.
       Read_Setting (Config, Settings, "log_file_directory", ".");
-
+ 
       AWS.Server.Log.Start (Server);
       AWS.Server.Log.Start_Error (Server);
       AWS.Server.Start (Server, Request_Callback'Access, Config);

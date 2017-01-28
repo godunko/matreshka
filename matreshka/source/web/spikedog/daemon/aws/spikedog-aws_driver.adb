@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2015, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,98 +41,26 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with AWS.Server;
+
 with League.Application;
+with League.Strings;
 
-with Matreshka.Servlet_Containers;
-with Matreshka.Servlet_Servers.AWS_Servers;
-with Matreshka.Servlet_Servers.FastCGI_Servers;
-with Servlet.Event_Listeners;
+with Servlet.Application;
 
-package body Servlet.Application is
+procedure Spikedog.AWS_Driver is
+begin
+   Servlet.Application.Initialize
+    (Application_Name =>
+       League.Strings.To_Universal_String ("Spikedog Application Server"),
+     Application_Version =>
+       League.Strings.To_Universal_String ("0.1"),
+     Organization_Name =>
+       League.Strings.To_Universal_String ("Matreshka Project"),
+     Organization_Domain =>
+       League.Strings.To_Universal_String ("forge.ada-ru.org"));
 
-   AWS_Server  : aliased Matreshka.Servlet_Servers.AWS_Servers.AWS_Server;
-   --  Global object of AWS server.
-   FCGI_Server :
-     aliased Matreshka.Servlet_Servers.FastCGI_Servers.FastCGI_Server;
-   --  Global object of FastCGI server.
-   Container   : aliased Matreshka.Servlet_Containers.Servlet_Container;
-   --  Global object of servlet container.
+   --  Wait till built-in HTTP server is running.
 
-   ------------------
-   -- Add_Listener --
-   ------------------
-
-   procedure Add_Listener
-    (Listener : not null
-       Servlet.Context_Listeners.Servlet_Context_Listener_Access) is
-   begin
-      Container.Add_Listener
-       (Servlet.Event_Listeners.Event_Listener_Access (Listener));
-   end Add_Listener;
-
-   -------------
-   -- Execute --
-   -------------
-
-   procedure Execute is
-   begin
-      null;
-   end Execute;
-
-   --------------
-   -- Finalize --
-   --------------
-
-   procedure Finalize is
-   begin
-      null;
-   end Finalize;
-
-   -------------------------
-   -- Get_Servlet_Context --
-   -------------------------
-
-   function Get_Servlet_Context
-     return not null Servlet.Contexts.Servlet_Context_Access is
-   begin
-      return Container'Access;
-   end Get_Servlet_Context;
-
-   ----------------
-   -- Initialize --
-   ----------------
-
-   procedure Initialize
-    (Application_Name    : League.Strings.Universal_String;
-     Application_Version : League.Strings.Universal_String;
-     Organization_Name   : League.Strings.Universal_String;
-     Organization_Domain : League.Strings.Universal_String)
-   is
-      Server  : Matreshka.Servlet_Servers.Server_Access;
-      Success : Boolean;
-
-   begin
-      League.Application.Set_Application_Name (Application_Name);
-      League.Application.Set_Application_Version (Application_Version);
-      League.Application.Set_Organization_Name (Organization_Name);
-      League.Application.Set_Organization_Domain (Organization_Domain);
-
-      --  Check whether application is run in FastCGI environment.
-
-      FCGI_Server.Initialize (Success);
-
-      if Success then
-         Server := FCGI_Server'Access;
-      end if;
-
-      --  Fallback to use AWS server.
-
-      if not Success then
-         AWS_Server.Initialize;
-         Server := AWS_Server'Access;
-      end if;
-
-      Container.Initialize (Server);
-   end Initialize;
-
-end Servlet.Application;
+   AWS.Server.Wait (AWS.Server.No_Server);
+end Spikedog.AWS_Driver;

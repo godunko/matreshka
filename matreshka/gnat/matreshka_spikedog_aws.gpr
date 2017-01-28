@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2017, Vadim Godunko <vgodunko@gmail.com>                     --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -41,26 +41,51 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
-with AWS.Server;
+with "aws";
 
-with League.Application;
-with League.Strings;
+with "matreshka_common";
+with "matreshka_config";
+with "matreshka_league";
+with "matreshka_spikedog_core";
 
-with Servlet.Application;
+library project Matreshka_Spikedog_AWS is
 
-procedure AWS_Driver is
-begin
-   Servlet.Application.Initialize
-    (Application_Name =>
-       League.Strings.To_Universal_String ("Ada Servlet Server"),
-     Application_Version =>
-       League.Strings.To_Universal_String ("0.1"),
-     Organization_Name =>
-       League.Strings.To_Universal_String ("Matreshka Project"),
-     Organization_Domain =>
-       League.Strings.To_Universal_String ("forge.ada-ru.org"));
+   Library_Name := "spikedog-aws" & Matreshka_Config.RTL_Version_Suffix;
 
-   --  Wait till built-in HTTP server is running.
+   case Matreshka_Config.Operating_System is
+      when "POSIX" | "Windows" =>
+         null;
 
-   AWS.Server.Wait (AWS.Server.No_Server);
-end AWS_Driver;
+      when "MacOS" =>
+        Library_Name := Library_Name & "." & Matreshka_Config.Version;
+   end case;
+
+   for Source_Dirs use ("../source/web/spikedog/aws");
+   for Object_Dir use "../.objs/web/spikedog/aws";
+   for Library_Kind use "dynamic";
+   for Library_Name use Library_Name;
+   for Library_Dir use "../.libs";
+   for Library_ALI_Dir use "../.libs/matreshka";
+
+   case Matreshka_Config.Operating_System is
+      when "POSIX" =>
+         for Library_Version use
+           "lib" & Library_Name & ".so." & Matreshka_Config.Version;
+
+      when "MacOS" | "Windows" =>
+         null;
+   end case;
+
+   -------------
+   -- Builder --
+   -------------
+
+   package Builder renames Matreshka_Common.Builder;
+
+   --------------
+   -- Compiler --
+   --------------
+
+   package Compiler renames Matreshka_Common.Compiler;
+
+end Matreshka_Spikedog_AWS;
