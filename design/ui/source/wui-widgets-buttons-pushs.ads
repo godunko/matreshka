@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with League.Strings;
 with WebAPI.HTML.Button_Elements;
 
 package WUI.Widgets.Buttons.Pushs is
@@ -51,6 +52,15 @@ package WUI.Widgets.Buttons.Pushs is
      with Storage_Size => 0;
 
    package Constructors is
+
+      function Create
+       (Element :
+          not null WebAPI.HTML.Button_Elements.HTML_Button_Element_Access)
+            return not null Push_Button_Access;
+
+      function Create
+       (Id : League.Strings.Universal_String)
+          return not null Push_Button_Access;
 
       procedure Initialize
        (Self    : in out Push_Button'Class;

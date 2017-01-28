@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with WebAPI.HTML.Globals;
 
 package body WUI.Widgets.Buttons.Pushs is
 
@@ -61,6 +62,42 @@ package body WUI.Widgets.Buttons.Pushs is
    ------------------
 
    package body Constructors is
+
+      type Push_Button_Internal_Access is access all Push_Button'Class;
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Element :
+          not null WebAPI.HTML.Button_Elements.HTML_Button_Element_Access)
+            return not null Push_Button_Access
+      is
+         Result : constant not null Push_Button_Internal_Access
+           := new Push_Button;
+
+      begin
+         Initialize (Result.all, Element);
+
+         return Push_Button_Access (Result);
+      end Create;
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Id : League.Strings.Universal_String)
+          return not null Push_Button_Access is
+      begin
+         return
+           Create
+            (WebAPI.HTML.Button_Elements.HTML_Button_Element_Access
+              (WebAPI.HTML.Globals.Window.Get_Document.Get_Element_By_Id
+                (Id)));
+      end Create;
+
 
       ----------------
       -- Initialize --
