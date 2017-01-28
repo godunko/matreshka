@@ -45,6 +45,49 @@ with WebAPI.HTML.Globals;
 
 package body WUI.Widgets.Spin_Boxes.Generic_Floats is
 
+   procedure Internal_Set_Value
+    (Self   : in out Float_Spin_Box'Class;
+     To     : Data_Type;
+     Update : Boolean);
+   --  Sets value, emit signal when value was modified, and update value of
+   --  input element when Update is True.
+
+   ------------------
+   -- Change_Event --
+   ------------------
+
+   overriding procedure Change_Event (Self : in out Float_Spin_Box) is
+      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+            (Self.Element);
+
+   begin
+      if not Input.Get_Validity.Get_Valid then
+         if Input.Get_Validity.Get_Bad_Input then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Min)), True);
+
+         elsif Input.Get_Validity.Get_Range_Overflow then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Max)), True);
+
+         elsif Input.Get_Validity.Get_Range_Underflow then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Min)), True);
+
+         elsif Input.Get_Validity.Get_Value_Missing then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Min)), True);
+         end if;
+      end if;
+
+      Self.Editing_Finished.Emit;
+   end Change_Event;
+
    ------------------
    -- Constructors --
    ------------------
@@ -95,8 +138,13 @@ package body WUI.Widgets.Spin_Boxes.Generic_Floats is
         Element :
           not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access) is
       begin
-         WUI.Widgets.Spin_Boxes.Constructors.Initialize
-          (Self, Element);
+         WUI.Widgets.Spin_Boxes.Constructors.Initialize (Self, Element);
+
+         --  Extract properties value from HTML element.
+
+         Self.Last_Value :=
+           Data_Type'Wide_Wide_Value
+            (League.Strings.To_Wide_Wide_String (Element.Get_Value));
       end Initialize;
 
    end Constructors;
@@ -106,9 +154,49 @@ package body WUI.Widgets.Spin_Boxes.Generic_Floats is
    -----------------
 
    overriding procedure Input_Event (Self  : in out Float_Spin_Box) is
+      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+            (Self.Element);
+
    begin
-      Self.Value_Changed.Emit (Self.Value);
+      if Input.Get_Validity.Get_Valid then
+         Self.Last_Value := 
+           Data_Type'Wide_Wide_Value
+            (League.Strings.To_Wide_Wide_String
+              (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+                (Self.Element).Get_Value));
+         Self.Value_Changed.Emit (Self.Last_Value);
+      end if;
    end Input_Event;
+
+   ------------------------
+   -- Internal_Set_Value --
+   ------------------------
+
+   procedure Internal_Set_Value
+    (Self   : in out Float_Spin_Box'Class;
+     To     : Data_Type;
+     Update : Boolean)
+   is
+      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+            (Self.Element);
+
+   begin
+      if Self.Last_Value /= To then
+         Self.Last_Value := To;
+         Input.Set_Value
+          (League.Strings.To_Universal_String
+            (Data_Type'Wide_Wide_Image (To)));
+         Self.Value_Changed.Emit (To);
+         --  'input' event is not send when value is changed programmatically.
+
+      elsif Update then
+         Input.Set_Value
+          (League.Strings.To_Universal_String
+            (Data_Type'Wide_Wide_Image (To)));
+      end if;
+   end Internal_Set_Value;
 
    ---------------
    -- Set_Value --
@@ -116,23 +204,9 @@ package body WUI.Widgets.Spin_Boxes.Generic_Floats is
 
    not overriding procedure Set_Value
     (Self : in out Float_Spin_Box;
-     To   : Data_Type)
-   is
-      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
-        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
-            (Self.Element);
-      Old   : constant Data_Type := Self.Value;
-
-
+     To   : Data_Type) is
    begin
-      if Old /= To then
-         WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
-          (Self.Element).Set_Value
-            (League.Strings.To_Universal_String
-              (Data_Type'Wide_Wide_Image (To)));
-         Self.Value_Changed.Emit (To);
-         --  'input' event is not send when value is changed programmatically.
-      end if;
+      Self.Internal_Set_Value (To, False);
    end Set_Value;
 
    ---------------
@@ -159,11 +233,7 @@ package body WUI.Widgets.Spin_Boxes.Generic_Floats is
 
    not overriding function Value (Self : Float_Spin_Box) return Data_Type is
    begin
-      return
-        Data_Type'Wide_Wide_Value
-         (League.Strings.To_Wide_Wide_String
-           (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
-             (Self.Element).Get_Value));
+      return Self.Last_Value;
    end Value;
 
    --------------------------

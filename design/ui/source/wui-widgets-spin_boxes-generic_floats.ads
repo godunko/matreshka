@@ -106,6 +106,8 @@ private
    type Float_Spin_Box is
      new WUI.Widgets.Spin_Boxes.Abstract_Spin_Box with
    record
+      Last_Value    : Data_Type;
+      --  Last valid value.
       Value_Changed : aliased
         Float_Emitters.Emitter (Float_Spin_Box'Unchecked_Access);
    end record;
@@ -114,7 +116,9 @@ private
 
    overriding procedure Step_Up (Self : in out Float_Spin_Box);
 
-   overriding procedure Input_Event (Self  : in out Float_Spin_Box);
+   overriding procedure Input_Event (Self : in out Float_Spin_Box);
+
+   overriding procedure Change_Event (Self : in out Float_Spin_Box);
 
    -----------
    -- Slots --

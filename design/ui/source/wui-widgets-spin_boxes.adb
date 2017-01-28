@@ -64,6 +64,8 @@ package body WUI.Widgets.Spin_Boxes is
           (Self, WebAPI.HTML.Elements.HTML_Element_Access (Element));
 
          WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Element, +"change", Self.Change'Access, False);
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
           (Element, +"input", Self.Input'Access, False);
       end Initialize;
 
@@ -80,6 +82,17 @@ package body WUI.Widgets.Spin_Boxes is
    begin
       return Self.Editing_Finished'Unchecked_Access;
    end Editing_Finished_Signal;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access Change_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.Change_Event;
+   end Handle_Event;
 
    ------------------
    -- Handle_Event --
