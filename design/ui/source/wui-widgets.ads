@@ -96,6 +96,26 @@ package WUI.Widgets is
 
 private
 
+   -----------------------
+   -- Event Dispatchers --
+   -----------------------
+
+   type Change_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Change_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
+   type Input_Dispatcher
+    (Owner : not null access Abstract_Widget'Class) is
+       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
+
+   overriding procedure Handle_Event
+    (Self  : not null access Input_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class);
+
    type Mouse_Click_Dispatcher
     (Owner : not null access Abstract_Widget'Class) is
        limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
@@ -136,20 +156,34 @@ private
     (Self  : not null access Wheel_Dispatcher;
      Event : access WebAPI.DOM.Events.Event'Class);
 
+   ---------------------
+   -- Abstract_Widget --
+   ---------------------
+
    type Abstract_Widget is
      abstract limited new Core.Connectables.Connectable_Object with
    record
       Element    : WebAPI.HTML.Elements.HTML_Element_Access;
-      Click      :
-        aliased Mouse_CLick_Dispatcher (Abstract_Widget'Unchecked_Access);
-      Mouse_Move :
-        aliased Mouse_Move_Dispatcher (Abstract_Widget'Unchecked_Access);
-      Mouse_Down :
-        aliased Mouse_Down_Dispatcher (Abstract_Widget'Unchecked_Access);
-      Mouse_Up   :
-        aliased Mouse_Up_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Click      : aliased
+        Mouse_CLick_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Mouse_Move : aliased
+        Mouse_Move_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Mouse_Down : aliased
+        Mouse_Down_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Mouse_Up   : aliased
+        Mouse_Up_Dispatcher (Abstract_Widget'Unchecked_Access);
       Wheel      : aliased Wheel_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Change     : aliased
+        Change_Dispatcher (Abstract_Widget'Unchecked_Access);
+      Input      : aliased
+        Input_Dispatcher (Abstract_Widget'Unchecked_Access);
    end record;
+
+   not overriding procedure Input_Event
+    (Self : in out Abstract_Widget) is null;
+
+   not overriding procedure Change_Event
+    (Self : in out Abstract_Widget) is null;
 
    package Set_Visible_Slots is
      new WUI.Boolean_Slots.Generic_Slots (Abstract_Widget, Set_Visible);

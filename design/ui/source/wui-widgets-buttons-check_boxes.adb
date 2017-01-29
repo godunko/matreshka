@@ -98,29 +98,15 @@ package body WUI.Widgets.Buttons.Check_Boxes is
       begin
          WUI.Widgets.Buttons.Constructors.Initialize
           (Self, WebAPI.HTML.Elements.HTML_Element_Access (Element));
-
-         WebAPI.DOM.Event_Targets.Add_Event_Listener
-          (Element, +"change", Self.Change'Access, False);
       end Initialize;
 
    end Constructors;
 
    ------------------
-   -- Handle_Event --
-   ------------------
-
-   overriding procedure Handle_Event
-    (Self  : not null access Change_Dispatcher;
-     Event : access WebAPI.DOM.Events.Event'Class) is
-   begin
-      Self.Owner.Change_Event;
-   end Handle_Event;
-
-   ------------------
    -- Change_Event --
    ------------------
 
-   not overriding procedure Change_Event (Self  : in out Check_Box) is
+   overriding procedure Change_Event (Self  : in out Check_Box) is
    begin
       Self.State_Changed.Emit
        (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access

@@ -58,8 +58,6 @@ package WUI.Widgets.Buttons.Check_Boxes is
     (Self : in out Check_Box)
        return not null access WUI.Boolean_Slots.Signal'Class;
 
-   not overriding procedure Change_Event (Self  : in out Check_Box);
-
    package Constructors is
 
       function Create
@@ -80,20 +78,12 @@ package WUI.Widgets.Buttons.Check_Boxes is
 
 private
 
-   type Change_Dispatcher
-    (Owner : not null access Check_Box'Class) is
-       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
-
-   overriding procedure Handle_Event
-    (Self  : not null access Change_Dispatcher;
-     Event : access WebAPI.DOM.Events.Event'Class);
-
    type Check_Box is new WUI.Widgets.Buttons.Abstract_Button with record
-      Change           : aliased
-        Change_Dispatcher (Check_Box'Unchecked_Access);
       State_Changed : aliased
         WUI.Boolean_Slots.Emitters.Emitter (Check_Box'Unchecked_Access);
    end record;
+
+   overriding procedure Change_Event (Self : in out Check_Box);
 
    overriding procedure Set_Enabled
     (Self    : in out Check_Box;

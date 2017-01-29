@@ -66,7 +66,11 @@ package body WUI.Widgets is
          --  Connect event dispatchers.
 
          WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Element, +"change", Self.Change'Access, False);
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
           (Element, +"click", Self.Click'Access, False);
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Element, +"input", Self.Input'Access, False);
          WebAPI.DOM.Event_Targets.Add_Event_Listener
           (Element, +"mousemove", Self.Mouse_Move'Access, False);
          WebAPI.DOM.Event_Targets.Add_Event_Listener
@@ -78,6 +82,28 @@ package body WUI.Widgets is
       end Initialize;
 
    end Constructors;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access Change_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.Change_Event;
+   end Handle_Event;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access Input_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.Input_Event;
+   end Handle_Event;
 
    ------------------
    -- Handle_Event --

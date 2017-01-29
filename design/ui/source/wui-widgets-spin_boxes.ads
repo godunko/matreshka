@@ -94,12 +94,6 @@ package WUI.Widgets.Spin_Boxes is
     (Self : in out Abstract_Spin_Box'Class)
        return Core.Slots_0.Slot'Class;
 
-   not overriding procedure Input_Event
-    (Self : in out Abstract_Spin_Box) is abstract;
-
-   not overriding procedure Change_Event
-    (Self : in out Abstract_Spin_Box) is abstract;
-
    package Constructors is
 
       procedure Initialize
@@ -111,29 +105,9 @@ package WUI.Widgets.Spin_Boxes is
 
 private
 
-   type Change_Dispatcher
-    (Owner : not null access Abstract_Spin_Box'Class) is
-       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
-
-   overriding procedure Handle_Event
-    (Self  : not null access Change_Dispatcher;
-     Event : access WebAPI.DOM.Events.Event'Class);
-
-   type Input_Dispatcher
-    (Owner : not null access Abstract_Spin_Box'Class) is
-       limited new WebAPI.DOM.Event_Listeners.Event_Listener with null record;
-
-   overriding procedure Handle_Event
-    (Self  : not null access Input_Dispatcher;
-     Event : access WebAPI.DOM.Events.Event'Class);
-
    type Abstract_Spin_Box is
      abstract new WUI.Widgets.Abstract_Widget with
    record
-      Change           : aliased
-        Change_Dispatcher (Abstract_Spin_Box'Unchecked_Access);
-      Input            : aliased
-        Input_Dispatcher (Abstract_Spin_Box'Unchecked_Access);
       Editing_Finished : aliased
         Core.Slots_0.Emitters.Emitter (Abstract_Spin_Box'Unchecked_Access);
    end record;
