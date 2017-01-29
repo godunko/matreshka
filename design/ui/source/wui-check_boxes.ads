@@ -43,4 +43,4 @@
 ------------------------------------------------------------------------------
 with WUI.Widgets.Buttons.Check_Boxes;
 
-package WUI.Widgets.Check_Boxes renames WUI.Widgets.Buttons.Check_Boxes;
+package WUI.Check_Boxes renames WUI.Widgets.Buttons.Check_Boxes;
