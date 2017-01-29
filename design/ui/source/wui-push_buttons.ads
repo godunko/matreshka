@@ -43,4 +43,4 @@
 ------------------------------------------------------------------------------
 with WUI.Widgets.Buttons.Pushs;
 
-package WUI.Widgets.Push_Buttons renames WUI.Widgets.Buttons.Pushs;
+package WUI.Push_Buttons renames WUI.Widgets.Buttons.Pushs;
