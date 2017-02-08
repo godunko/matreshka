@@ -12,9 +12,18 @@ procedure IRC_Test is
      return League.Strings.Universal_String
         renames League.Strings.To_Universal_String;
 
-   type Listener is new IRC.Listeners.Listener with null record;
+   type Listener is new IRC.Listeners.Listener with record
+      Identified : Boolean := False;
+   end record;
 
    overriding procedure On_Message
+     (Self    : access Listener;
+      Session : access IRC.Sessions.Session'Class;
+      Target  : League.Strings.Universal_String;
+      Source  : League.Strings.Universal_String;
+      Text    : League.Strings.Universal_String);
+
+   overriding procedure On_Notice
      (Self    : access Listener;
       Session : access IRC.Sessions.Session'Class;
       Target  : League.Strings.Universal_String;
@@ -43,6 +52,28 @@ procedure IRC_Test is
       Session.Send_Message (Source, Text);
    end On_Message;
 
+   ---------------
+   -- On_Notice --
+   ---------------
+
+   overriding procedure On_Notice
+     (Self    : access Listener;
+      Session : access IRC.Sessions.Session'Class;
+      Target  : League.Strings.Universal_String;
+      Source  : League.Strings.Universal_String;
+      Text    : League.Strings.Universal_String) is
+   begin
+      if Source.Starts_With ("NickServ") and not Self.Identified then
+         Ada.Wide_Wide_Text_IO.Put (Source.To_Wide_Wide_String);
+         Ada.Wide_Wide_Text_IO.Put (" : ");
+         Ada.Wide_Wide_Text_IO.Put_Line (Text.To_Wide_Wide_String);
+         Session.Raw_Command (+"NickServ IDENTIFY password");
+         Self.Identified := True;
+
+         Session.Join (+"#ada");
+      end if;
+   end On_Notice;
+
    -------------
    -- On_Ping --
    -------------
@@ -52,7 +83,7 @@ procedure IRC_Test is
       Session : access IRC.Sessions.Session'Class;
       Source  : League.Strings.Universal_String) is
    begin
-      Ada.Wide_Wide_Text_IO.Put (Source.To_Wide_Wide_String);
+      Ada.Wide_Wide_Text_IO.Put_Line (Source.To_Wide_Wide_String);
       Session.Pong (Source);
    end On_Ping;
 
@@ -69,7 +100,7 @@ begin
      (Socket    => Socket,
       Host      => +"irc.odessa.ua",
       Port      => 7777,
-      Nick      => +"test12",
+      Nick      => +"test",
       Password  => +"",
       User      => +"test",
       Real_Name => +"Test Name");

@@ -22,6 +22,11 @@ package IRC.Sessions is
    --  Initialize new session with given IRC server:port. Return Socket
    --  to monitor input/output data.
 
+   not overriding procedure Raw_Command
+     (Self    : in out Session;
+      Command : League.Strings.Universal_String);
+   --  Send the raw command to the server.
+
    not overriding procedure Send_Message
      (Self   : in out Session;
       Target : League.Strings.Universal_String;

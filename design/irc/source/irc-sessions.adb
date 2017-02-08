@@ -66,7 +66,7 @@ package body IRC.Sessions is
 
          if List.Length > 3
            and then List.Element (1).Starts_With (":")
-           and then List.Element (2) in +"PRIVMSG" | +"NOTICE"
+           and then List.Element (2) = +"PRIVMSG"
          then
             declare
                Text : League.Strings.Universal_String;
@@ -78,13 +78,25 @@ package body IRC.Sessions is
                List := List.Slice (4, List.Length);
                Text := List.Join (" ");
 
-               if List.Element (2) = +"PRIVMSG" then
-                  Self.Listener.On_Message
-                    (Self'Unchecked_Access, To, From, Text);
-               else
-                  Self.Listener.On_Notice
-                    (Self'Unchecked_Access, To, From, Text);
-               end if;
+               Self.Listener.On_Message
+                 (Self'Unchecked_Access, To, From, Text);
+            end;
+         elsif List.Length > 3
+           and then List.Element (1).Starts_With (":")
+           and then List.Element (2) = +"NOTICE"
+         then
+            declare
+               Text : League.Strings.Universal_String;
+               From : constant League.Strings.Universal_String :=
+                 List.Element (1).Tail_From (2); --  Drop leading ':'
+               To   : League.Strings.Universal_String :=
+                 List.Element (3);
+            begin
+               List := List.Slice (4, List.Length);
+               Text := List.Join (" ");
+
+               Self.Listener.On_Notice
+                 (Self'Unchecked_Access, To, From, Text);
             end;
          elsif List.Length > 1 and then List.Element (1) = +"PING" then
             Self.Listener.On_Ping
@@ -216,6 +228,26 @@ package body IRC.Sessions is
       GNAT.Sockets.Send_Socket
         (Self.Socket, Vector.To_Stream_Element_Array, Last);
    end Pong;
+
+   -----------------
+   -- Raw_Command --
+   -----------------
+
+   not overriding procedure Raw_Command
+     (Self    : in out Session;
+      Command : League.Strings.Universal_String)
+   is
+      Last   : Ada.Streams.Stream_Element_Offset;
+      Value  : League.Strings.Universal_String;
+      Vector : League.Stream_Element_Vectors.Stream_Element_Vector;
+   begin
+      Value.Append (Command);
+      Value.Append (New_Line);
+      Vector := Self.Codec.Encode (Value);
+
+      GNAT.Sockets.Send_Socket
+        (Self.Socket, Vector.To_Stream_Element_Array, Last);
+   end Raw_Command;
 
    ------------------
    -- Send_Message --
