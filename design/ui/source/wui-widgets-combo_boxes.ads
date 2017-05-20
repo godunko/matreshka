@@ -57,6 +57,28 @@ package WUI.Widgets.Combo_Boxes is
 
    type Combo_Box_Access is access all Combo_Box'Class with Storage_Size => 0;
 
+   not overriding procedure Set_Disabled
+    (Self     : in out Combo_Box;
+     Disabled : Boolean);
+   --  Available as slot.
+
+   not overriding procedure Set_Enabled
+    (Self    : in out Combo_Box;
+     Enabled : Boolean);
+   --  Available as slot.
+
+   -----------
+   -- Slots --
+   -----------
+
+   function Set_Disabled_Slot
+    (Self : in out Combo_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class;
+
+   function Set_Enabled_Slot
+    (Self : in out Combo_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class;
+
    -------------
    -- Signals --
    -------------
@@ -91,5 +113,25 @@ private
    end record;
 
    overriding procedure Input_Event (Self : in out Combo_Box);
+
+   -----------
+   -- Slots --
+   -----------
+
+   package Set_Disabled_Slots is
+     new WUI.Boolean_Slots.Generic_Slots (Combo_Box, Set_Disabled);
+
+   function Set_Disabled_Slot
+    (Self : in out Combo_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class
+         renames Set_Disabled_Slots.To_Slot;
+
+   package Set_Enabled_Slots is
+     new WUI.Boolean_Slots.Generic_Slots (Combo_Box, Set_Enabled);
+
+   function Set_Enabled_Slot
+    (Self : in out Combo_Box'Class)
+       return WUI.Boolean_Slots.Slot'Class
+         renames Set_Enabled_Slots.To_Slot;
 
 end WUI.Widgets.Combo_Boxes;

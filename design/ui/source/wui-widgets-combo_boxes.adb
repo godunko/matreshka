@@ -126,4 +126,27 @@ package body WUI.Widgets.Combo_Boxes is
       Self.Current_Index_Changed.Emit (Input.Get_Value);
    end Input_Event;
 
+   ------------------
+   -- Set_Disabled --
+   ------------------
+
+   not overriding procedure Set_Disabled
+    (Self     : in out Combo_Box;
+     Disabled : Boolean) is
+   begin
+      WebAPI.HTML.Select_Elements.HTML_Select_Element_Access
+       (Self.Element).Set_Disabled (Disabled);
+   end Set_Disabled;
+
+   -----------------
+   -- Set_Enabled --
+   -----------------
+
+   not overriding procedure Set_Enabled
+    (Self    : in out Combo_Box;
+     Enabled : Boolean) is
+   begin
+      Self.Set_Disabled (not Enabled);
+   end Set_Enabled;
+
 end WUI.Widgets.Combo_Boxes;
