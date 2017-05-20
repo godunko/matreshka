@@ -53,6 +53,8 @@ private with WUI.String_Slots.Emitters;
 
 package WUI.Widgets.Combo_Boxes is
 
+   --  XXX Type of Index should be changed to Integer.
+
    type Combo_Box is new WUI.Widgets.Abstract_Widget with private;
 
    type Combo_Box_Access is access all Combo_Box'Class with Storage_Size => 0;
@@ -65,6 +67,15 @@ package WUI.Widgets.Combo_Boxes is
    not overriding procedure Set_Enabled
     (Self    : in out Combo_Box;
      Enabled : Boolean);
+   --  Available as slot.
+
+   function Current_Index
+    (Self : in out Combo_Box'Class)
+       return League.Strings.Universal_String;
+
+   not overriding procedure Set_Current_Index
+    (Self : in out Combo_Box;
+     To   : League.Strings.Universal_String);
    --  Available as slot.
 
    -----------

@@ -102,6 +102,22 @@ package body WUI.Widgets.Combo_Boxes is
 
    end Constructors;
 
+   -------------------
+   -- Current_Index --
+   -------------------
+
+   function Current_Index
+    (Self : in out Combo_Box'Class)
+       return League.Strings.Universal_String
+   is
+      Input : constant WebAPI.HTML.Select_Elements.HTML_Select_Element_Access
+        := WebAPI.HTML.Select_Elements.HTML_Select_Element_Access
+            (Self.Element);
+
+   begin
+      return Input.Get_Value;
+   end Current_Index;
+
    ----------------------------------
    -- Current_Index_Changed_Signal --
    ----------------------------------
@@ -125,6 +141,28 @@ package body WUI.Widgets.Combo_Boxes is
    begin
       Self.Current_Index_Changed.Emit (Input.Get_Value);
    end Input_Event;
+
+   -----------------------
+   -- Set_Current_Index --
+   -----------------------
+
+   not overriding procedure Set_Current_Index
+    (Self : in out Combo_Box;
+     To   : League.Strings.Universal_String)
+   is
+      use type League.Strings.Universal_String;
+
+      Input : constant WebAPI.HTML.Select_Elements.HTML_Select_Element_Access
+        := WebAPI.HTML.Select_Elements.HTML_Select_Element_Access
+            (Self.Element);
+
+   begin
+      if Input.Get_Value /= To then
+         Input.Set_Value (To);
+         Self.Current_Index_Changed.Emit (Input.Get_Value);
+         --  'input' event is not send when value is updated programmatically.
+      end if;
+   end Set_Current_Index;
 
    ------------------
    -- Set_Disabled --
