@@ -16,6 +16,7 @@ procedure Main2 is
    Output : aliased Zip.Archives.Output;
    Data   : League.Stream_Element_Vectors.Stream_Element_Vector;
 begin
+   Zip.Archives.Initialize;
    Input.Open (+"/tmp/table.ods");
    Output.Create (+"/tmp/copy.zip");
 
@@ -31,7 +32,7 @@ begin
      (Path     => +"aaa.txt",
       Data     => Data,
       Modified => League.Calendars.Clock,
-      Method   => Zip.None);
+      Method   => Zip.Deflate);
 
    Output.Close;
 end Main2;

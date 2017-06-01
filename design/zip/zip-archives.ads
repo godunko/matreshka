@@ -10,6 +10,8 @@ private with Zip.Metadata;
 
 package Zip.Archives is
 
+   procedure Initialize;
+
    type Input is tagged limited private;
    --  Zip archive opened for reading
 

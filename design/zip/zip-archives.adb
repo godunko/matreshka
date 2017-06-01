@@ -1,4 +1,5 @@
 with GNAT.CRC32;
+with Matreshka.Filters.Deflate.Pack;
 
 package body Zip.Archives is
 
@@ -22,9 +23,14 @@ package body Zip.Archives is
       ---------------
 
       function Complress
-        return League.Stream_Element_Vectors.Stream_Element_Vector is
+        return League.Stream_Element_Vectors.Stream_Element_Vector
+      is
+         Result : League.Stream_Element_Vectors.Stream_Element_Vector;
+         Filter : Matreshka.Filters.Deflate.Pack.Filter;
       begin
-         return Data;  --  FIXME
+         Filter.Read (Data, Result);
+         Filter.Flush (Result);
+         return Result;
       end Complress;
 
       ---------------
@@ -151,6 +157,15 @@ package body Zip.Archives is
    begin
       return Positive (Self.Directory.Files.Length);
    end Entry_Count;
+
+   ----------------
+   -- Initialize --
+   ----------------
+
+   procedure Initialize is
+   begin
+      Matreshka.Filters.Deflate.Pack.Initialize;
+   end Initialize;
 
    ----------
    -- Open --

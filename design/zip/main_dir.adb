@@ -6,7 +6,7 @@ with League.String_Vectors;
 with League.Files;
 with Matreshka.Zip_File_System_Engines;
 
-procedure Main is
+procedure Main_Dir is
 
    procedure List
     (Directory : League.Directories.Directory_Information;
@@ -53,4 +53,4 @@ procedure Main is
 begin
    Ada.Wide_Wide_Text_IO.Put_Line ("tree of archive");
    List (D, 0);
-end Main;
+end Main_Dir;
