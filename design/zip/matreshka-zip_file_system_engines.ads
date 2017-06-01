@@ -58,7 +58,7 @@ private
 
    type Zip_File_System_Engine is
      new Matreshka.File_System_Engines.Abstract_File_System_Engine with record
-      File              : Zip.IO.File_Type;
+      File              : aliased Zip.IO.File_Type;
       Central_Directory : Zip.Metadata.Central_Directory;
    end record;
 

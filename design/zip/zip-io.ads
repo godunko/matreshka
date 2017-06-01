@@ -3,7 +3,7 @@ with Ada.Streams;
 
 package Zip.IO is
 
-   type File_Type is limited private;
+   type File_Type is limited new Ada.Streams.Root_Stream_Type with private;
 
    procedure Open (File : out File_Type; Name : String);
 
@@ -21,6 +21,17 @@ private
 
    package Stream_Element_IO is new Ada.Direct_IO (Ada.Streams.Stream_Element);
 
-   type File_Type is new Stream_Element_IO.File_Type;
+   type File_Type is limited new Ada.Streams.Root_Stream_Type with record
+      File : Stream_Element_IO.File_Type;
+   end record;
+
+   overriding procedure Read
+     (Self   : in out File_Type;
+      Item   : out Ada.Streams.Stream_Element_Array;
+      Last   : out Ada.Streams.Stream_Element_Offset);
+
+   procedure Write
+     (Stream : in out File_Type;
+      Item   : Ada.Streams.Stream_Element_Array) is null;
 
 end Zip.IO;

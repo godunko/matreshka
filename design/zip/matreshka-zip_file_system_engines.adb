@@ -185,7 +185,7 @@ package body Matreshka.Zip_File_System_Engines is
      Path : League.Strings.Universal_String) is
    begin
       Zip.IO.Open (Self.File, Path.To_UTF_8_String);
-      Self.Central_Directory := Zip.Metadata.Read (Self.File);
+      Self.Central_Directory := Zip.Metadata.Read (Self.File'Access);
       Zip.IO.Close (Self.File);
    end Initialize;
 

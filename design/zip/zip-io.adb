@@ -9,7 +9,7 @@ package body Zip.IO is
 
    procedure Close (File : in out File_Type) is
    begin
-      Stream_Element_IO.Close (Stream_Element_IO.File_Type (File));
+      Stream_Element_IO.Close (File.File);
    end Close;
 
    ------------------
@@ -20,7 +20,7 @@ package body Zip.IO is
    begin
       return
         Zip_File_Offset
-         (Stream_Element_IO.Index (Stream_Element_IO.File_Type (File)) - 1);
+         (Stream_Element_IO.Index (File.File) - 1);
    end Get_Position;
 
    --------------
@@ -31,7 +31,7 @@ package body Zip.IO is
    begin
       return
         Zip_File_Offset
-         (Stream_Element_IO.Size (Stream_Element_IO.File_Type (File)));
+         (Stream_Element_IO.Size (File.File));
    end Get_Size;
 
    ----------
@@ -41,7 +41,7 @@ package body Zip.IO is
    procedure Open (File : out File_Type; Name : String) is
    begin
       Stream_Element_IO.Open
-       (Stream_Element_IO.File_Type (File),
+       (File.File,
         Stream_Element_IO.In_File,
         Name);
    end Open;
@@ -53,8 +53,21 @@ package body Zip.IO is
    procedure Read (File : File_Type; Data : out Ada.Streams.Stream_Element_Array) is
    begin
       for J in Data'Range loop
-         Stream_Element_IO.Read (Stream_Element_IO.File_Type (File), Data (J));
+         Stream_Element_IO.Read (File.File, Data (J));
       end loop;
+   end Read;
+
+   ----------
+   -- Read --
+   ----------
+
+   overriding procedure Read
+     (Self : in out File_Type;
+      Item : out Ada.Streams.Stream_Element_Array;
+      Last : out Ada.Streams.Stream_Element_Offset) is
+   begin
+      Self.Read (Item);
+      Last := Item'Last;
    end Read;
 
    ------------------
@@ -64,7 +77,7 @@ package body Zip.IO is
    procedure Set_Position (File : File_Type; Position : Zip_File_Offset) is
    begin
       Stream_Element_IO.Set_Index
-       (Stream_Element_IO.File_Type (File),
+       (File.File,
         Stream_Element_IO.Count (Position) + 1);
    end Set_Position;
 

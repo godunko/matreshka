@@ -4,12 +4,12 @@ with "../dirs/dirs.gpr";
 
 project ZIP is
 
-   for Main use ("main.adb");
+   for Main use ("main.adb", "main2.adb");
    for Object_Dir use ".objs";
    for Source_Dirs use (".");
 
    package Compiler is
-      for Default_Switches ("Ada") use ("-g", "-gnat12");
+      for Default_Switches ("Ada") use ("-g", "-gnat12", "-gnata");
    end Compiler;
 
 --   package Naming is
