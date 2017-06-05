@@ -28,6 +28,8 @@ package Zip.Archives is
       Index : Positive) return League.Strings.Universal_String;
    --  Return path of given entry.
 
+   not overriding procedure Close (Self : in out Input);
+
    type Output is tagged limited private;
    --  Zip archive opened for writing
 

@@ -75,12 +75,23 @@ package body Zip.Archives is
    -- Close --
    -----------
 
+   not overriding procedure Close (Self : in out Input) is
+   begin
+      Zip.IO.Close (Self.File);
+   end Close;
+
+   -----------
+   -- Close --
+   -----------
+
    not overriding procedure Close (Self : in out Output) is
    begin
       Zip.Metadata.Write
         (Self.Stream'Access,
          Zip.Zip_File_Offset (Self.Stream.Offset),
          Self.Directory);
+
+      Ada.Streams.Stream_IO.Close (Self.File);
    end Close;
 
    ----------
