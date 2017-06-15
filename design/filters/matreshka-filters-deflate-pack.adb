@@ -336,7 +336,7 @@ package body Matreshka.Filters.Deflate.Pack is
       else
          for J in Buf.Data'Range loop
             Buf.Data (J) :=
-              Input.Element (Ada.Streams.Stream_Element_Offset (J + 1));
+              Input.Element (Ada.Streams.Stream_Element_Offset (J) + 1);
          end loop;
 
          Buf.Last := Cycle_Index'Last;
@@ -394,6 +394,9 @@ package body Matreshka.Filters.Deflate.Pack is
 
       if M <= Max_Look_Ahead_Count then
          goto Incomplete_Search_Label;
+      else
+         C := Length_Step (B - A);
+         Advance_Last_Buffer_Index (C);
       end if;
       --  end loop Over;
 

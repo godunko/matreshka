@@ -12,19 +12,24 @@ procedure Defl2 is
    Name : constant League.Strings.Universal_String :=
      League.Application.Arguments.Element (1);
 
-   function Read return League.Stream_Element_Vectors.Stream_Element_Vector is
+   function Read (Skip : Ada.Streams.Stream_Element_Count)
+     return League.Stream_Element_Vectors.Stream_Element_Vector is
       File : Ada.Streams.Stream_IO.File_Type;
    begin
       Ada.Streams.Stream_IO.Open
         (File, Ada.Streams.Stream_IO.In_File, Name.To_UTF_8_String);
 
       declare
+         use type Ada.Streams.Stream_Element_Count;
+
+         Head : Ada.Streams.Stream_Element_Array (1 .. Skip);
          Size : constant Ada.Streams.Stream_IO.Count :=
            Ada.Streams.Stream_IO.Size (File);
          Data : Ada.Streams.Stream_Element_Array
-           (1 .. Ada.Streams.Stream_Element_Count (Size));
+           (1 .. Ada.Streams.Stream_Element_Count (Size) - Head'Length);
          Last : Ada.Streams.Stream_Element_Count;
       begin
+         Ada.Streams.Stream_IO.Read (File, Head, Last);
          Ada.Streams.Stream_IO.Read (File, Data, Last);
          Ada.Streams.Stream_IO.Close (File);
          return League.Stream_Element_Vectors.To_Stream_Element_Vector
@@ -32,8 +37,7 @@ procedure Defl2 is
       end;
    end Read;
 
-   Input  : constant League.Stream_Element_Vectors.Stream_Element_Vector :=
-     Read;
+   Input  : League.Stream_Element_Vectors.Stream_Element_Vector;
    Output : League.Stream_Element_Vectors.Stream_Element_Vector;
 
 begin
@@ -44,7 +48,7 @@ begin
       declare
          Filter : D.Filter;
       begin
-         --  FIXME: Skip gzip header here from Input
+         Input := Read (Skip => 10);
          Filter.Read (Input, Output);
          Filter.Flush (Output);
       end;
@@ -54,11 +58,12 @@ begin
          Filter : P.Filter;
 --         Length : Ada.Streams.Stream_Element_Count;
       begin
+         Input := Read (Skip => 0);
          Output.Append (16#1F#);
          Output.Append (16#8B#);
-         Output.Append (16#08#);
+         Output.Append (16#08#);  --  Compression method
          Output.Append (Ada.Streams.Stream_Element_Array'(1 .. 6 => 16#00#));
-         Output.Append (16#FF#);
+         Output.Append (16#FF#);  --  OS
          Filter.Read (Input, Output);
          Filter.Flush (Output);
 --         Length := Output.Length - 10;
