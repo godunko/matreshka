@@ -7,7 +7,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -102,7 +102,8 @@ private
      array (Look_Ahead_Count, Look_Ahead_Kinds) of Look_Ahead_Data;
 
    type Look_Ahead_Context is record
-      Skipped    : Ada.Streams.Stream_Element;  --  Skipped literal
+--      Skipped    : Ada.Streams.Stream_Element;  --  Skipped literal
+      Skipped    : Cycle_Index;
       A          : Look_Ahead_Position := 0;
       B          : Look_Ahead_Position := 1;
       M          : Look_Ahead_Count'Base;

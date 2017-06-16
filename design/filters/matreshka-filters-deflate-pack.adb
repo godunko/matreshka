@@ -7,7 +7,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -355,7 +355,7 @@ package body Matreshka.Filters.Deflate.Pack is
       A      := 0;  --  How long search prev-prev search went
       B      := 1;  --  How long search prev search went
       --  Remember literal for case when we will decide to skip it
-      Self.Context.Skipped := Buf.Data (Buf.Index);
+      Self.Context.Skipped := Buf.Index;
 
       --  Over: for M in LA'Range (1) loop
       M := 1;
@@ -403,7 +403,7 @@ package body Matreshka.Filters.Deflate.Pack is
       <<Break>>
       case K is
          when Use_Current =>
-            Send_Literal (Self.Context.Skipped);
+            Send_Literal (Buf.Data (Self.Context.Skipped));
 
             for J in 1 .. M - 1 loop
                Send_Back_Reference (LA (J, Skip_Current));
