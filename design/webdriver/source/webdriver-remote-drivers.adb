@@ -49,6 +49,8 @@ package body Drivers is
      (Text : Wide_Wide_String) return League.Strings.Universal_String
       renames League.Strings.To_Universal_String;
 
+   Capabilities_Key : constant Wide_Wide_String := "desiredCapabilities";
+
    -----------------
    -- New_Session --
    -----------------
@@ -63,7 +65,7 @@ package body Drivers is
       Command.Method := Post;
       Command.Path.Append ("/session");
       Command.Parameters.Insert
-        (+"desiredCapabilities",
+        (+Capabilities_Key,
          League.JSON.Objects.Empty_JSON_Object.To_JSON_Value);
       Response := Self.Executor.Execute (Command);
 

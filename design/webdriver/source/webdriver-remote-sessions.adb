@@ -41,6 +41,7 @@
 ------------------------------------------------------------------------------
 
 with League.JSON.Values;
+with League.String_Vectors;
 
 separate (WebDriver.Remote)
 package body Sessions is
@@ -48,6 +49,44 @@ package body Sessions is
    function "+"
      (Text : Wide_Wide_String) return League.Strings.Universal_String
       renames League.Strings.To_Universal_String;
+
+   function To_String
+     (Strategy : WebDriver.Location_Strategy)
+      return League.Strings.Universal_String;
+
+   ------------------
+   -- Find_Element --
+   ------------------
+
+   overriding function Find_Element
+     (Self     : access Session;
+      Strategy : WebDriver.Location_Strategy;
+      Selector : League.Strings.Universal_String)
+        return WebDriver.Elements.Element_Access
+   is
+      Result    : constant access Elements.Element := new Elements.Element;
+      Command   : WebDriver.Remote.Command;
+      Response  : WebDriver.Remote.Response;
+      Using     : constant League.JSON.Values.JSON_Value :=
+        League.JSON.Values.To_JSON_Value (To_String (Strategy));
+      Value     : constant League.JSON.Values.JSON_Value :=
+        League.JSON.Values.To_JSON_Value (Selector);
+      Element   : League.JSON.Objects.JSON_Object;
+   begin
+      Command.Method := Post;
+      Command.Path.Append ("/session/");
+      Command.Path.Append (Self.Session_Id);
+      Command.Path.Append ("/element");
+      Command.Parameters.Insert (+"using", Using);
+      Command.Parameters.Insert (+"value", Value);
+      Response := Self.Executor.Execute (Command);
+      Element := Response.Value (+"value").To_Object;
+      Result.Session_Id := Self.Session_Id;
+      Result.Element_Id := Element (+"ELEMENT").To_String;
+      Result.Executor := Self.Executor;
+
+      return Result;
+   end Find_Element;
 
    ---------------------
    -- Get_Current_URL --
@@ -90,5 +129,22 @@ package body Sessions is
       Command.Session_Id := Self.Session_Id;
       Response := Self.Executor.Execute (Command);
    end Go;
+
+   ---------------
+   -- To_String --
+   ---------------
+
+   function To_String
+     (Strategy : WebDriver.Location_Strategy)
+      return League.Strings.Universal_String
+   is
+      Image : constant Wide_Wide_String :=
+        WebDriver.Location_Strategy'Wide_Wide_Image (Strategy);
+      Text  : constant League.Strings.Universal_String := +Image;
+      List  : constant League.String_Vectors.Universal_String_Vector :=
+        Text.To_Lowercase.Split ('_');
+   begin
+      return List.Join (" ");
+   end To_String;
 
 end Sessions;

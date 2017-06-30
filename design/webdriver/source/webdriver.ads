@@ -47,4 +47,14 @@
 package WebDriver is
    pragma Pure;
 
+   type Location_Strategy is
+     (CSS_Selector,
+      Link_Text,
+      Partial_Link_Text,
+      Tag_Name,
+      XPath);
+   --  An element location strategy is an enumerated attribute deciding what
+   --  technique should be used to search for elements in the current browsing
+   --  context.
+
 end WebDriver;

@@ -40,30 +40,20 @@
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
 
-with League.Strings;
-with WebDriver.Elements;
+package body WebDriver.Elements is
 
-package WebDriver.Sessions is
+   ---------------
+   -- Send_Keys --
+   ---------------
 
-   type Session is limited interface;
+   procedure Send_Keys
+     (Self : access Element'Class;
+      Text : League.Strings.Universal_String)
+   is
+      List : League.String_Vectors.Universal_String_Vector;
+   begin
+      List.Append (Text);
+      Self.Send_Keys (List);
+   end Send_Keys;
 
-   type Session_Access is access all Session'Class
-     with Storage_Size => 0;
-
-   not overriding procedure Go
-     (Self : access Session;
-      URL  : League.Strings.Universal_String) is abstract;
-   --  Load a new web page in the current browser window.
-
-   not overriding function Get_Current_URL
-    (Self : access Session) return League.Strings.Universal_String
-       is abstract;
-   --  Gets the URL the browser is currently displaying.
-
-   not overriding function Find_Element
-     (Self     : access Session;
-      Strategy : WebDriver.Location_Strategy;
-      Selector : League.Strings.Universal_String)
-      return WebDriver.Elements.Element_Access is abstract;
-
-end WebDriver.Sessions;
+end WebDriver.Elements;

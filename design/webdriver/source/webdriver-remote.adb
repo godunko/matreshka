@@ -43,7 +43,9 @@
 with AWS.Client;
 
 with League.JSON.Objects;
+with League.String_Vectors;
 
+with WebDriver.Elements;
 with WebDriver.Sessions;
 
 package body WebDriver.Remote is
@@ -66,7 +68,6 @@ package body WebDriver.Remote is
 
    package Executors is
       type HTTP_Command_Executor is tagged limited record
---         Server_URL : League.Strings.Universal_String;
          Server : AWS.Client.HTTP_Connection;
       end record;
 
@@ -76,6 +77,49 @@ package body WebDriver.Remote is
    end Executors;
 
    package body Executors is separate;
+
+   package Elements is
+      type Element is new WebDriver.Elements.Element with record
+         Session_Id : League.Strings.Universal_String;
+         Element_Id : League.Strings.Universal_String;
+         Executor   : access Executors.HTTP_Command_Executor;
+      end record;
+
+      overriding function Is_Selected (Self : access Element) return Boolean;
+
+      overriding function Is_Enabled (Self : access Element) return Boolean;
+
+      overriding function Get_Attribute
+        (Self : access Element;
+         Name : League.Strings.Universal_String)
+           return League.Strings.Universal_String;
+
+      overriding function Get_Property
+        (Self : access Element;
+         Name : League.Strings.Universal_String)
+           return League.Strings.Universal_String;
+
+      overriding function Get_CSS_Value
+        (Self : access Element;
+         Name : League.Strings.Universal_String)
+           return League.Strings.Universal_String;
+
+      overriding function Get_Text
+        (Self : access Element) return League.Strings.Universal_String;
+
+      overriding function Get_Tag_Name
+        (Self : access Element) return League.Strings.Universal_String;
+
+      overriding procedure Click (Self : access Element);
+      overriding procedure Clear (Self : access Element);
+
+      overriding procedure Send_Keys
+        (Self : access Element;
+         Text : League.String_Vectors.Universal_String_Vector);
+
+   end Elements;
+
+   package body Elements is separate;
 
    package Sessions is
 
@@ -90,6 +134,12 @@ package body WebDriver.Remote is
 
       overriding function Get_Current_URL
         (Self : access Session) return League.Strings.Universal_String;
+
+      overriding function Find_Element
+        (Self     : access Session;
+         Strategy : WebDriver.Location_Strategy;
+         Selector : League.Strings.Universal_String)
+         return WebDriver.Elements.Element_Access;
 
    end Sessions;
 
