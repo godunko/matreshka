@@ -50,8 +50,6 @@ with League.String_Vectors;
 
 package body AWFC.Static_Resource_Servlets is
 
-   use type League.Strings.Universal_String;
-
    function Get_File_Name
      (Request  : Servlet.HTTP_Requests.HTTP_Servlet_Request'Class)
        return League.Strings.Universal_String;
