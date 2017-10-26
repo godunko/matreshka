@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015-2016, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -66,11 +66,11 @@ package body AWFC.Static_Resource_Servlets is
    is
       pragma Unreferenced (Self);
 
-      Context      : constant access Servlet.Contexts.Servlet_Context'Class
+      Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
-      File_Name    : constant League.Strings.Universal_String
+      File_Name : constant League.Strings.Universal_String
         := Get_File_Name (Request);
-      Real_Name    : constant League.Strings.Universal_String
+      Real_Name : constant League.Strings.Universal_String
         := Context.Get_Real_Path (File_Name);
       Name      : constant String := Real_Name.To_UTF_8_String;
       File      : Ada.Streams.Stream_IO.File_Type;
@@ -80,6 +80,7 @@ package body AWFC.Static_Resource_Servlets is
    begin
       if not Ada.Directories.Exists (Name) then
          Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
+
          return;
       end if;
 
@@ -113,7 +114,20 @@ package body AWFC.Static_Resource_Servlets is
       --  Add empty string to have leading '/'
       Path.Append (League.Strings.Empty_Universal_String);
       Path.Append (Servlet_Path);
-      Path.Append (Path_Info);
+
+      if not Path_Info.Is_Empty
+        and then Path_Info (Path_Info.Length).Is_Empty
+      then
+	 --  By convention, last element is empty string when directory content
+         --  is requested. It is expected to be in 'index.html' file.
+
+         Path.Append (Path_Info.Slice (1, Path_Info.Length - 1));
+         Path.Append (League.Strings.To_Universal_String ("index.html"));
+
+      else
+         Path.Append (Path_Info);
+      end if;
+
       return Path.Join ('/');
    end Get_File_Name;
 
