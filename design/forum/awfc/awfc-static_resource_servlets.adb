@@ -44,9 +44,10 @@
 with Ada.Directories;
 with Ada.Streams.Stream_IO;
 
-with Servlet.Contexts;
 with League.Calendars.Ada_Conversions;
+with League.IRIs;
 with League.String_Vectors;
+with Servlet.Contexts;
 
 package body AWFC.Static_Resource_Servlets is
 
@@ -66,6 +67,8 @@ package body AWFC.Static_Resource_Servlets is
    is
       pragma Unreferenced (Self);
 
+      use type Ada.Directories.File_Kind;
+
       Context   : constant access Servlet.Contexts.Servlet_Context'Class
         := Request.Get_Servlet_Context;
       File_Name : constant League.Strings.Universal_String
@@ -76,10 +79,23 @@ package body AWFC.Static_Resource_Servlets is
       File      : Ada.Streams.Stream_IO.File_Type;
       Buffer    : Ada.Streams.Stream_Element_Array (1 .. 512);
       Last      : Ada.Streams.Stream_Element_Offset;
+      Location  : League.IRIs.IRI;
+      Path      : League.String_Vectors.Universal_String_Vector;
 
    begin
       if not Ada.Directories.Exists (Name) then
          Response.Set_Status (Servlet.HTTP_Responses.Not_Found);
+
+         return;
+
+      elsif Ada.Directories.Kind (Name) = Ada.Directories.Directory then
+         --  Redirect browser to retrieve directory content.
+
+         Location := Request.Get_Request_URL;
+         Path     := Location.Get_Path;
+         Path.Append (League.Strings.Empty_Universal_String);
+         Location.Set_Absolute_Path (Path);
+         Response.Send_Redirect (Location);
 
          return;
       end if;
