@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -51,6 +51,10 @@ private with XML.Templates.Streams;
 
 package AWFC.Page_Generators is
 
+   type Abstract_Rendering_Context is abstract tagged limited null record;
+   --  Rendering context is a set of application specific data to bind
+   --  parameters of templates processor.
+
    type Abstract_Page_Generator is abstract tagged limited private;
 
    procedure Initialize
@@ -61,12 +65,14 @@ package AWFC.Page_Generators is
      Content_Template : League.Strings.Universal_String);
 
    function Render
-    (Self : in out Abstract_Page_Generator'Class)
+    (Self    : in out Abstract_Page_Generator'Class;
+     Context : Abstract_Rendering_Context'Class)
        return League.Strings.Universal_String;
 
    not overriding procedure Bind_Parameters
-    (Self   : in out Abstract_Page_Generator;
-     Writer : in out XML.Templates.Processors.Template_Processor'Class)
+    (Self    : in out Abstract_Page_Generator;
+     Context : Abstract_Rendering_Context'Class;
+     Writer  : in out XML.Templates.Processors.Template_Processor'Class)
        is null;
    --  Derived type can override this subprogram to bind own parameters for
    --  template parser.

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015-2017, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -436,7 +436,8 @@ package body AWFC.Page_Generators is
    ------------
 
    function Render
-    (Self : in out Abstract_Page_Generator'Class)
+    (Self    : in out Abstract_Page_Generator'Class;
+     Context : Abstract_Rendering_Context'Class)
        return League.Strings.Universal_String
    is
       Reader       : XML.SAX.Event_Readers.Event_Reader;
@@ -458,7 +459,7 @@ package body AWFC.Page_Generators is
 
       --  Bind template parameters.
 
-      Self.Bind_Parameters (Filter);
+      Self.Bind_Parameters (Context, Filter);
 
       --  Process template.
 
