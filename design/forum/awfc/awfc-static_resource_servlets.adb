@@ -103,7 +103,9 @@ package body AWFC.Static_Resource_Servlets is
       Response.Set_Status (Servlet.HTTP_Responses.OK);
       Response.Set_Content_Type (Context.Get_MIME_Type (File_Name));
 
-      Ada.Streams.Stream_IO.Open (File, Ada.Streams.Stream_IO.In_File, Name);
+      Ada.Streams.Stream_IO.Open
+       (File, Ada.Streams.Stream_IO.In_File, Name, "SHARED=NO");
+      --  Disable GNAT check to prevent open of file multiple times.
 
       while not Ada.Streams.Stream_IO.End_Of_File (File) loop
          Ada.Streams.Stream_IO.Read (File, Buffer, Last);
