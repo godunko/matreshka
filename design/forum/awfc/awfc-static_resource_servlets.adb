@@ -136,7 +136,7 @@ package body AWFC.Static_Resource_Servlets is
       if not Path_Info.Is_Empty
         and then Path_Info (Path_Info.Length).Is_Empty
       then
-	 --  By convention, last element is empty string when directory content
+         --  By convention, last element is empty string when directory content
          --  is requested. It is expected to be in 'index.html' file.
 
          Path.Append (Path_Info.Slice (1, Path_Info.Length - 1));
