@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<web-app xmlns='http://forge.ada-ru.org/matreshka/xml/ns/spikedogdd'>
+  <library-name>@_Library_Name_@</library-name>
+
+  <servlet>
+    <servlet-name>StaticResource</servlet-name>
+    <servlet-tag>AWFC.STATIC_RESOURCE_SERVLETS.STATIC_RESOURCE_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StaticResource</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>MyServlet</servlet-name>
+    <servlet-tag>MY_SERVLETS.MY_SERVLET</servlet-tag>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MyServlet</servlet-name>
+    <url-pattern>/my</url-pattern>
+  </servlet-mapping>
+</web-app>

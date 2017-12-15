@@ -1,0 +1,18 @@
+with "matreshka_spikedog_api.gpr";
+
+library project @_Project_Name_@ is
+
+   for Source_Dirs use ("source");
+   for Object_Dir use ".objs";
+   for Library_ALI_Dir use ".libs";
+   for Library_Name use "@_Library_Name_@";
+   for Library_Kind use "dynamic";
+   for Library_Dir use "install/WEB-INF/lib/x86_64-linux/";
+   for Library_Interface use
+    ("Initializer",
+     "Initializers",
+     "My_Servlets",
+     "AWFC",
+     "AWFC.Static_Resource_Servlets");
+
+end @_Project_Name_@;
