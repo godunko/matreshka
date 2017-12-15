@@ -9,12 +9,13 @@ Library_Name: servlet: The name of the library file.
 
 # Description
 [Description]
-Matreshka provides server-independent implementation of Servlet API.
-Web-application based on this module can be executed by Spikedog application
-server.
+Matreshka provides server-independent implementation of
+the Servlet API. Web-application based on this module
+can be executed by Spikedog application server.
 
-Use /Build/Run/Custom... with 'spikedog_awsd' to launch it and point your
-browser at http://localhost:8080/
+Use /Build/Run/Custom... with 'spikedog_awsd' and
+[x] 'Run in executables dir' to launch it, then
+point your browser at http://localhost:8080/
 
 More details at
 http://forge.ada-ru.org/matreshka/wiki/Web/Servlet
