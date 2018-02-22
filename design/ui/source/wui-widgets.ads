@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2016-2018, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -57,6 +57,9 @@ package WUI.Widgets is
 
    type Abstract_Widget is
      abstract limited new Core.Connectables.Connectable_Object with private;
+
+   type Widget_Access is access all Abstract_Widget'Class
+     with Storage_Size => 0;
 
    not overriding procedure Set_Visible
     (Self : in out Abstract_Widget;
