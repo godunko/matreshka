@@ -45,6 +45,8 @@ with WebAPI.DOM.Event_Targets;
 with WebAPI.UI_Events.Mouse;
 with WebAPI.UI_Events.Wheel;
 
+with WUI.Applications.Internals;
+
 package body WUI.Widgets is
 
    ------------------
@@ -66,9 +68,13 @@ package body WUI.Widgets is
          --  Connect event dispatchers.
 
          WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Element, +"blur", Self.Blur'Access, False);
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
           (Element, +"change", Self.Change'Access, False);
          WebAPI.DOM.Event_Targets.Add_Event_Listener
           (Element, +"click", Self.Click'Access, False);
+         WebAPI.DOM.Event_Targets.Add_Event_Listener
+          (Element, +"focus", Self.Focus'Access, False);
          WebAPI.DOM.Event_Targets.Add_Event_Listener
           (Element, +"input", Self.Input'Access, False);
          WebAPI.DOM.Event_Targets.Add_Event_Listener
@@ -83,6 +89,40 @@ package body WUI.Widgets is
 
    end Constructors;
 
+   procedure Log (Item : League.Strings.Universal_String)
+     with Import     => True,
+          Convention => JavaScript_Function,
+          Link_Name  => "console.log";
+
+   --------------------
+   -- Focus_In_Event --
+   --------------------
+
+   not overriding procedure Focus_In_Event (Self : in out Abstract_Widget) is
+   begin
+      WUI.Applications.Internals.Focus_In (Self'Unchecked_Access);
+   end Focus_In_Event;
+
+   ---------------------
+   -- Focus_Out_Event --
+   ---------------------
+
+   not overriding procedure Focus_Out_Event (Self : in out Abstract_Widget) is
+   begin
+      WUI.Applications.Internals.Focus_Out (Self'Unchecked_Access);
+   end Focus_Out_Event;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access Blur_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.Focus_Out_Event;
+   end Handle_Event;
+
    ------------------
    -- Handle_Event --
    ------------------
@@ -92,6 +132,17 @@ package body WUI.Widgets is
      Event : access WebAPI.DOM.Events.Event'Class) is
    begin
       Self.Owner.Change_Event;
+   end Handle_Event;
+
+   ------------------
+   -- Handle_Event --
+   ------------------
+
+   overriding procedure Handle_Event
+    (Self  : not null access Focus_Dispatcher;
+     Event : access WebAPI.DOM.Events.Event'Class) is
+   begin
+      Self.Owner.Focus_In_Event;
    end Handle_Event;
 
    ------------------
