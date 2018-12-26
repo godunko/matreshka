@@ -41,14 +41,94 @@
 ------------------------------------------------------------------------------
 --  $Revision$ $Date$
 ------------------------------------------------------------------------------
+with WebAPI.HTML.Globals;
 
 package body WUI.Widgets.Spin_Boxes.Generic_Integers is
+
+   procedure Internal_Set_Value
+    (Self   : in out Integer_Spin_Box'Class;
+     To     : Data_Type;
+     Update : Boolean);
+   --  Sets value, emit signal when value was modified, and update value of
+   --  input element when Update is True.
+
+   ------------------
+   -- Change_Event --
+   ------------------
+
+   overriding procedure Change_Event (Self : in out Integer_Spin_Box) is
+      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+            (Self.Element);
+
+   begin
+      if not Input.Get_Validity.Get_Valid then
+         if Input.Get_Validity.Get_Bad_Input then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Min)), True);
+
+         elsif Input.Get_Validity.Get_Range_Overflow then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Max)), True);
+
+         elsif Input.Get_Validity.Get_Range_Underflow then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Min)), True);
+
+         elsif Input.Get_Validity.Get_Value_Missing then
+            Self.Internal_Set_Value
+             (Data_Type'Wide_Wide_Value
+               (League.Strings.To_Wide_Wide_String (Input.Get_Min)), True);
+         end if;
+      end if;
+
+      Self.Editing_Finished.Emit;
+   end Change_Event;
 
    ------------------
    -- Constructors --
    ------------------
 
    package body Constructors is
+
+      type Integer_Spin_Box_Internal_Access is
+        access all Integer_Spin_Box'Class;
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Element :
+          not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access)
+            return not null Integer_Spin_Box_Access
+      is
+         Result : constant not null Integer_Spin_Box_Internal_Access
+           := new Integer_Spin_Box;
+
+      begin
+         Initialize (Result.all, Element);
+
+         return Integer_Spin_Box_Access (Result);
+      end Create;
+
+      ------------
+      -- Create --
+      ------------
+
+      function Create
+       (Id : League.Strings.Universal_String)
+          return not null Integer_Spin_Box_Access is
+      begin
+         return
+           Create
+            (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+              (WebAPI.HTML.Globals.Window.Get_Document.Get_Element_By_Id
+                (Id)));
+      end Create;
 
       ----------------
       -- Initialize --
@@ -60,8 +140,112 @@ package body WUI.Widgets.Spin_Boxes.Generic_Integers is
           not null WebAPI.HTML.Input_Elements.HTML_Input_Element_Access) is
       begin
          WUI.Widgets.Spin_Boxes.Constructors.Initialize (Self, Element);
+
+         --  Extract properties value from HTML element.
+
+         Self.Last_Value :=
+           Data_Type'Wide_Wide_Value
+            (League.Strings.To_Wide_Wide_String (Element.Get_Value));
       end Initialize;
 
    end Constructors;
+
+   -----------------
+   -- Input_Event --
+   -----------------
+
+   overriding procedure Input_Event (Self  : in out Integer_Spin_Box) is
+      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+            (Self.Element);
+
+   begin
+      if Input.Get_Validity.Get_Valid then
+         Self.Last_Value := 
+           Data_Type'Wide_Wide_Value
+            (League.Strings.To_Wide_Wide_String
+              (WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+                (Self.Element).Get_Value));
+         Self.Value_Changed.Emit (Self.Last_Value);
+      end if;
+   end Input_Event;
+
+   ------------------------
+   -- Internal_Set_Value --
+   ------------------------
+
+   procedure Internal_Set_Value
+    (Self   : in out Integer_Spin_Box'Class;
+     To     : Data_Type;
+     Update : Boolean)
+   is
+      Input : constant WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+        := WebAPI.HTML.Input_Elements.HTML_Input_Element_Access
+            (Self.Element);
+
+   begin
+      if Self.Last_Value /= To then
+         Self.Last_Value := To;
+         Input.Set_Value
+          (League.Strings.To_Universal_String
+            (Data_Type'Wide_Wide_Image (To)));
+         Self.Value_Changed.Emit (To);
+         --  'input' event is not send when value is changed programmatically.
+
+      elsif Update then
+         Input.Set_Value
+          (League.Strings.To_Universal_String
+            (Data_Type'Wide_Wide_Image (To)));
+      end if;
+   end Internal_Set_Value;
+
+   ---------------
+   -- Step_Down --
+   ---------------
+
+   overriding procedure Step_Down (Self : in out Integer_Spin_Box) is
+   begin
+      raise Program_Error;
+   end Step_Down;
+
+   -------------
+   -- Step_Up --
+   -------------
+
+   overriding procedure Step_Up (Self : in out Integer_Spin_Box) is
+   begin
+      raise Program_Error;
+   end Step_Up;
+
+   ---------------
+   -- Set_Value --
+   ---------------
+
+   not overriding procedure Set_Value
+    (Self : in out Integer_Spin_Box;
+     To   : Data_Type) is
+   begin
+      Self.Internal_Set_Value (To, False);
+   end Set_Value;
+
+   -----------
+   -- Value --
+   -----------
+
+   not overriding function Value (Self : Integer_Spin_Box) return Data_Type is
+   begin
+      return Self.Last_Value;
+   end Value;
+
+   --------------------------
+   -- Value_Changed_Signal --
+   --------------------------
+
+   not overriding function Value_Changed_Signal
+    (Self : in out Integer_Spin_Box)
+       return not null access Integer_Slots.Signal'Class is
+   begin
+      return Self.Value_Changed'Unchecked_Access;
+   end Value_Changed_Signal;
 
 end WUI.Widgets.Spin_Boxes.Generic_Integers;
