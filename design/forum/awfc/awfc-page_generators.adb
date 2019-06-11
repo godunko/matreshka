@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015-2017, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015-2019, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -189,40 +189,31 @@ package body AWFC.Page_Generators is
       -------------------------
 
       procedure Append_Content_Body is
+         Item : XML.Templates.Streams.XML_Stream_Element;
+
       begin
-         --  Look for <body> in Content
-         while not Content.Is_Empty loop
-            declare
-               Item : constant XML.Templates.Streams.XML_Stream_Element
-                 := Content.First_Element;
-            begin
-               Content.Delete_First;
+         for Body_Start in Content.First_Index .. Content.Last_Index loop
+            --  Look for <body> in Content
 
-               if Item.Kind = Start_Element
-                 and then Item.Local_Name in Constants.Body_Tag
-               then
-                  exit;
-               end if;
-            end;
-         end loop;
+            Item := Content.Element (Body_Start);
 
-         --  Look for </body> in Content
-         while not Content.Is_Empty loop
-            declare
-               Item : constant XML.Templates.Streams.XML_Stream_Element
-                 := Content.First_Element;
-            begin
-               Content.Delete_First;
+            if Item.Kind = Start_Element
+              and then Item.Local_Name in Constants.Body_Tag
+            then
+               --  Look for </body> in Content
 
-               if Item.Kind = End_Element
-                 and then Item.Local_Name in Constants.Body_Tag
-               then
-                  exit;
-               else
+               for Index in Body_Start + 1 .. Content.Last_Index loop
+                  Item := Content.Element (Index);
+
+                  exit when Item.Kind = End_Element
+                    and then Item.Local_Name in Constants.Body_Tag;
+
                   --  Copy everething else
                   Self.Page.Append (Item);
-               end if;
-            end;
+               end loop;
+
+               exit;
+            end if;
          end loop;
       end Append_Content_Body;
 
