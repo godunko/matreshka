@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2016-2020, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -52,13 +52,13 @@ package WUI.Events.Mouse is
      Button_2,
      Button_3);
 
-   type Mouse_Buttons is array (Mouse_Button) of Boolean;
+--   type Mouse_Buttons is array (Mouse_Button) of Boolean;
 
    type Abstract_Mouse_Event is
      abstract new WUI.Events.Abstract_Event with private;
 
-   function Buttons
-    (Self : Abstract_Mouse_Event'Class) return Mouse_Buttons;
+--   function Buttons
+--    (Self : Abstract_Mouse_Event'Class) return Mouse_Buttons;
 
    function X (Self : Abstract_Mouse_Event'Class) return Long_Float;
 

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016-2017, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2016-2020, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -65,35 +65,35 @@ package body WUI.Events.Mouse is
 
    end Constructors;
 
-   -------------
-   -- Buttons --
-   -------------
-
-   function Buttons
-    (Self : Abstract_Mouse_Event'Class) return Mouse_Buttons
-   is
-      use type WebAPI.DOM_Unsigned_Short;
-
-      Buttons : constant WebAPI.DOM_Unsigned_Short
-        := WebAPI.UI_Events.Mouse.Mouse_Event'Class
-            (Self.Event.all).Get_Buttons;
-      Result  : Mouse_Buttons := (others => False);
-
-   begin
-      if (Buttons and 2#0001#) /= 0 then
-         Result (Button_1) := True;
-      end if;
-
-      if (Buttons and 2#0010#) /= 0 then
-         Result (Button_2) := True;
-      end if;
-
-      if (Buttons and 2#0100#) /= 0 then
-         Result (Button_3) := True;
-      end if;
-
-      return Result;
-   end Buttons;
+--   -------------
+--   -- Buttons --
+--   -------------
+--
+--   function Buttons
+--    (Self : Abstract_Mouse_Event'Class) return Mouse_Buttons
+--   is
+--      use type WebAPI.DOM_Unsigned_Short;
+--
+--      Buttons : constant WebAPI.DOM_Unsigned_Short
+--        := WebAPI.UI_Events.Mouse.Mouse_Event'Class
+--            (Self.Event.all).Get_Buttons;
+--      Result  : Mouse_Buttons := (others => False);
+--
+--   begin
+--      if (Buttons and 2#0001#) /= 0 then
+--         Result (Button_1) := True;
+--      end if;
+--
+--      if (Buttons and 2#0010#) /= 0 then
+--         Result (Button_2) := True;
+--      end if;
+--
+--      if (Buttons and 2#0100#) /= 0 then
+--         Result (Button_3) := True;
+--      end if;
+--
+--      return Result;
+--   end Buttons;
 
    -------
    -- X --
