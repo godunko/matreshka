@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015-2019, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015-2021, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -53,6 +53,8 @@ with XML.SAX.Simple_Readers;
 with XML.SAX.String_Output_Destinations;
 
 package body AWFC.Page_Generators is
+
+   use type League.Strings.Universal_String;
 
    function "+"
     (Item : Wide_Wide_String) return League.Strings.Universal_String
@@ -328,7 +330,6 @@ package body AWFC.Page_Generators is
 
       procedure Process_Head is
          use Constants;
-         use type League.Strings.Universal_String;
 
          Title_Item : XML_Stream_Element;
          Title_Text : League.Strings.Universal_String;
