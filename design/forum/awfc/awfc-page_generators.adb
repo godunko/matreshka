@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015-2021, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,8 +39,7 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
+
 with Ada.Wide_Wide_Text_IO;
 
 with XML.SAX.Error_Handlers;
@@ -123,6 +122,17 @@ package body AWFC.Page_Generators is
           & ": "
           & Occurrence.Message.To_Wide_Wide_String);
    end Fatal_Error;
+
+   ------------------------------
+   -- Get_Page_Template_Stream --
+   ------------------------------
+
+   function Get_Page_Template_Stream
+     (Self : Abstract_Page_Generator'Class)
+      return XML.Templates.Streams.XML_Stream_Element_Vectors.Vector is
+   begin
+      return Self.Page;
+   end Get_Page_Template_Stream;
 
    ----------------
    -- Get_Stream --

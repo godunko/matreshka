@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015-2017, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2015-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,15 +39,14 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
+
 --  Base type to generate HTML page using two templates: page template and
 --  content template.
-------------------------------------------------------------------------------
+
 with League.Strings;
 with Servlet.Contexts;
 with XML.Templates.Processors;
-private with XML.Templates.Streams;
+with XML.Templates.Streams;
 
 package AWFC.Page_Generators is
 
@@ -76,6 +75,11 @@ package AWFC.Page_Generators is
        is null;
    --  Derived type can override this subprogram to bind own parameters for
    --  template parser.
+
+   function Get_Page_Template_Stream
+     (Self : Abstract_Page_Generator'Class)
+      return XML.Templates.Streams.XML_Stream_Element_Vectors.Vector;
+   --  Return XML event stream of the page template.
 
 private
 
