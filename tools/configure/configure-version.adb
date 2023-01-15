@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013-2020, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2013-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,14 +39,12 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
 --  Define substitution variable for the version of configured package.
 ------------------------------------------------------------------------------
 
 procedure Configure.Version is
    Version_Name  : constant Unbounded_String := +"VERSION";
-   Version_Value : constant Unbounded_String := +"20.0";
+   Version_Value : constant Unbounded_String := +"23.0";
 
 begin
    Substitutions.Insert (Version_Name, Version_Value);
