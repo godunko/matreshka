@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2013, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2013-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,15 +39,13 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
 
 package body Matreshka.Internals.Strings.Handlers.X86_Utilities is
 
    use type Interfaces.Unsigned_32;
 
    function popcount
-    (X : Interfaces.Unsigned_32) return Interfaces.Unsigned_32;
+    (X : Interfaces.Unsigned_32) return Interfaces.Integer_32;
    pragma Import (Intrinsic, popcount, "__builtin_popcount");
 
    -----------------------------------
@@ -99,7 +97,7 @@ package body Matreshka.Internals.Strings.Handlers.X86_Utilities is
     (Mask  : Interfaces.Unsigned_32;
      Index : in out Positive) is
    begin
-      Index := Index - 8 + Integer (popcount (Mask) / 2);
+      Index := Index - 8 + Integer (popcount (Mask)) / 2;
    end Update_Index_Backward_POPCNT;
 
    ----------------------------------
@@ -151,7 +149,7 @@ package body Matreshka.Internals.Strings.Handlers.X86_Utilities is
     (Mask  : Interfaces.Unsigned_32;
      Index : in out Positive) is
    begin
-      Index := Index + 8 - Integer (popcount (Mask) / 2);
+      Index := Index + 8 - Integer (popcount (Mask)) / 2;
    end Update_Index_Forward_POPCNT;
 
 end Matreshka.Internals.Strings.Handlers.X86_Utilities;

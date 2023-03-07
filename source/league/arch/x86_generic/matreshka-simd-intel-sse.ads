@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2010-2013, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2010-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,10 +39,8 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
+
 --  This package provides access to Intel x86 SSE instructions set.
-------------------------------------------------------------------------------
 
 package Matreshka.SIMD.Intel.SSE is
 
@@ -448,7 +446,6 @@ package Matreshka.SIMD.Intel.SSE is
 
    procedure mm_stream_pi
     (P : access Interfaces.Integer_64; A : Interfaces.Integer_64);
-   pragma Import (Intrinsic, mm_stream_pi, "__builtin_ia32_movntq");
 
    procedure mm_stream_ps (P : access Interfaces.IEEE_Float_32; A : v4sf);
    pragma Import (Intrinsic, mm_stream_ps, "__builtin_ia32_movntps");

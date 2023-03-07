@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2010-2013, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2010-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,8 +39,7 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
+
 with Ada.Unchecked_Conversion;
 with System.Address_To_Access_Conversions;
 with System.Storage_Elements;
@@ -59,10 +58,13 @@ package body Matreshka.Internals.Strings.Handlers.Generic_X86_SSE2 is
    use type System.Address;
    use type System.Storage_Elements.Storage_Offset;
 
-   function ffs (A : Interfaces.Unsigned_32) return Interfaces.Unsigned_32;
-   pragma Import (Intrinsic, ffs, "__builtin_ffs");
+   function builtin_ffs (A : Interfaces.Integer_32) return Interfaces.Integer_32;
+   pragma Import (Intrinsic, builtin_ffs, "__builtin_ffs");
 
-   function clz (X : Interfaces.Unsigned_32) return Interfaces.Unsigned_32;
+   function ffs (A : Interfaces.Unsigned_32) return Interfaces.Unsigned_32;
+   pragma Inline (ffs);
+
+   function clz (X : Interfaces.Unsigned_32) return Interfaces.Integer_32;
    pragma Import (Intrinsic, clz, "__builtin_clz");
 
    package v8hi_Conversions is new System.Address_To_Access_Conversions (v8hi);
@@ -71,6 +73,10 @@ package body Matreshka.Internals.Strings.Handlers.Generic_X86_SSE2 is
    function To_Unsigned_32 is
      new Ada.Unchecked_Conversion
           (Interfaces.Integer_32, Interfaces.Unsigned_32);
+
+   function To_Integer_32 is
+     new Ada.Unchecked_Conversion
+          (Interfaces.Unsigned_32, Interfaces.Integer_32);
 
    type v8hi_Unrestricted_Array is array (Utf16_String_Index) of v8hi;
 
@@ -146,6 +152,15 @@ package body Matreshka.Internals.Strings.Handlers.Generic_X86_SSE2 is
       Value (Index) :=
         mm_and_si128 (Value (Index), Terminator_Mask_x86_64 (Offset));
    end Fill_Null_Terminator;
+
+   ---------
+   -- ffs --
+   ---------
+
+   function ffs (A : Interfaces.Unsigned_32) return Interfaces.Unsigned_32 is
+   begin
+      return To_Unsigned_32 (builtin_ffs (To_Integer_32 (A)));
+   end ffs;
 
    -----------
    -- Index --

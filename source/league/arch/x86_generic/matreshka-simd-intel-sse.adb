@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2010-2013, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2010-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,8 +39,7 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
+
 with Matreshka.SIMD.Intel.MMX;
 
 package body Matreshka.SIMD.Intel.SSE is
@@ -234,5 +233,28 @@ package body Matreshka.SIMD.Intel.SSE is
    begin
       return (0.0, 0.0, 0.0, 0.0);
    end mm_setzero_ps;
+
+   ------------------
+   -- mm_stream_pi --
+   ------------------
+
+   procedure mm_stream_pi
+    (P : access Interfaces.Integer_64; A : Interfaces.Integer_64)
+   is
+      type I64_Access is access all Interfaces.Integer_64;
+      type U64_Access is access all Interfaces.Unsigned_64;
+
+      function U64 is new Ada.Unchecked_Conversion
+       (Interfaces.Integer_64, Interfaces.Unsigned_64);
+
+      function U64P is new Ada.Unchecked_Conversion (I64_Access, U64_Access);
+
+      procedure builtin_ia32_movntq
+       (P : access Interfaces.Unsigned_64; A : Interfaces.Unsigned_64);
+      pragma Import (Intrinsic, builtin_ia32_movntq, "__builtin_ia32_movntq");
+
+   begin
+      builtin_ia32_movntq (U64P (I64_Access (P)), U64 (A));
+   end mm_stream_pi;
 
 end Matreshka.SIMD.Intel.SSE;
