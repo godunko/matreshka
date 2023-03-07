@@ -1,0 +1,8 @@
+.libs
+.objs
+config.log
+configure
+gnat/install/matreshka_config.gpr
+gnat/matreshka_config.gpr
+Makefile.config
+source/league/matreshka-config.ads
