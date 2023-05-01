@@ -283,11 +283,12 @@ package body AWFC.Page_Generators is
          if Base_Item.Kind = Start_Element then
             Self.Page.Append (Base_Item);
             Self.Page.Append
-              ((Kind           => End_Element,
-                Location       => Base_Item.Location,
-                Namespace_URI  => Base_Item.Namespace_URI,
-                Local_Name     => Base_Item.Local_Name,
-                Qualified_Name => Base_Item.Qualified_Name));
+              (XML_Stream_Element'
+                 (Kind           => End_Element,
+                  Location       => Base_Item.Location,
+                  Namespace_URI  => Base_Item.Namespace_URI,
+                  Local_Name     => Base_Item.Local_Name,
+                  Qualified_Name => Base_Item.Qualified_Name));
          end if;
 
          if Title_Item.Kind = Start_Element then
@@ -295,17 +296,19 @@ package body AWFC.Page_Generators is
 
             if not Title_Text.Is_Empty then
                Self.Page.Append
-                 ((Kind     => Text,
-                   Location => Title_Item.Location,
-                   Text     => Title_Text));
+                 (XML_Stream_Element'
+                    (Kind     => Text,
+                     Location => Title_Item.Location,
+                     Text     => Title_Text));
             end if;
 
             Self.Page.Append
-              ((Kind           => End_Element,
-                Location       => Title_Item.Location,
-                Namespace_URI  => Title_Item.Namespace_URI,
-                Local_Name     => Title_Item.Local_Name,
-                Qualified_Name => Title_Item.Qualified_Name));
+              (XML_Stream_Element'
+                 (Kind           => End_Element,
+                  Location       => Title_Item.Location,
+                  Namespace_URI  => Title_Item.Namespace_URI,
+                  Local_Name     => Title_Item.Local_Name,
+                  Qualified_Name => Title_Item.Qualified_Name));
          end if;
       end Append_Content_Head;
 

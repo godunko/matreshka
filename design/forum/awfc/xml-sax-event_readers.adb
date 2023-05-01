@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2015, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2015-2023, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -39,8 +39,7 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.             --
 --                                                                          --
 ------------------------------------------------------------------------------
---  $Revision$ $Date$
-------------------------------------------------------------------------------
+
 with XML.SAX.Locators.Internals;
 with XML.SAX.Parse_Exceptions.Internals;
 
@@ -551,7 +550,7 @@ package body XML.SAX.Event_Readers is
     (Self : not null access constant Event_Reader_Shared_Locator)
        return League.Strings.Universal_String is
    begin
-       return League.Strings.Empty_Universal_String;
+      return League.Strings.Empty_Universal_String;
    end Version;
 
 end XML.SAX.Event_Readers;
