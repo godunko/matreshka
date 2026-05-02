@@ -140,8 +140,8 @@ package body Matreshka.JSON_Generator is
                when Wide_Wide_Character'Val (16#0008#) =>  --  backspace
                   Result.Append ("\b");
 
-               when Wide_Wide_Character'Val (16#0009#) =>  --  carriage return
-                  Result.Append ("\r");
+               when Wide_Wide_Character'Val (16#0009#) =>  --  horizontal tab
+                  Result.Append ("\t");
 
                when Wide_Wide_Character'Val (16#000A#) =>  --  line feed
                   Result.Append ("\n");
@@ -149,8 +149,8 @@ package body Matreshka.JSON_Generator is
                when Wide_Wide_Character'Val (16#000C#) =>  --  form feed
                   Result.Append ("\f");
 
-               when Wide_Wide_Character'Val (16#000D#) =>  --  tab
-                  Result.Append ("\t");
+               when Wide_Wide_Character'Val (16#000D#) =>  --  carriage return
+                  Result.Append ("\r");
 
                when '"' =>
                   Result.Append ("\""");
