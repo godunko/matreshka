@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2009-2011, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2009-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -266,7 +266,7 @@ private
    --  Sets Is_Empty to True, derived types should override it to do cleanup.
 
    not overriding function First
-    (Self : not null access Abstract_Container)
+    (Self : aliased in out Abstract_Container)
       return Iterable_Holder_Cursors.Cursor'Class;
    --  Returns cursor to iterate over nested elements if supported.
 

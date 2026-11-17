@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2016, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2016-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -74,7 +74,7 @@ private
     (Is_Empty : not null access Boolean) return Element_Container;
 
    overriding function First
-    (Self : not null access Element_Container)
+    (Self : aliased in out Element_Container)
       return Iterable_Holder_Cursors.Cursor'Class;
 
    Value_Tag : constant Tag := Tag (Element_Container'Tag);
