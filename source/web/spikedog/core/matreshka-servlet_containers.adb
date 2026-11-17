@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2020, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -201,7 +201,7 @@ package body Matreshka.Servlet_Containers is
    begin
       Self.Dispatch (Request.all, Request.Get_Path, 1, Servlet);
       Request.Set_Session_Manager (Self.Session_Manager);
-      Request.Set_Servlet_Context (Self);
+      Request.Set_Servlet_Context (Self.all'Unchecked_Access);
       Servlet.Servlet.Service (Request.all, Response.all);
    end Dispatch;
 

@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2014-2020, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2014-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -79,7 +79,7 @@ package body Matreshka.Servlet_Registrations is
     (Self : Servlet_Registration)
       return not null access Servlet.Contexts.Servlet_Context'Class is
    begin
-      return Self.Context;
+      return Self.Context.all'Unchecked_Access;
    end Get_Servlet_Context;
 
    ----------------------
