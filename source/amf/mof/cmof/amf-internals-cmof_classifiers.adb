@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -75,7 +75,7 @@ package body AMF.Internals.CMOF_Classifiers is
       General  : AMF.CMOF.Classifiers.CMOF_Classifier_Access;
 
    begin
-      if AMF.CMOF.Types.CMOF_Type_Access (Self) = Other then
+      if Self.all'Unrestricted_Access = Other then
          --  Class always conforms to itself.
 
          return True;

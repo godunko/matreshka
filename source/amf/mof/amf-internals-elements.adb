@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011-2012, Vadim Godunko <vgodunko@gmail.com>                --
+-- Copyright © 2011-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -62,7 +62,7 @@ package body AMF.Internals.Elements is
       use type AMF.Elements.Element_Access;
 
       Model_Extent       : constant AMF.Extents.Extent_Access
-        := AMF.Elements.Element_Access (Self).Extent;
+        := AMF.Elements.Element_Access'(Self.all'Unrestricted_Access).Extent;
       Meta_Class         : constant AMF.CMOF.Classes.CMOF_Class_Access
         := Element_Base'Class (Self.all).Get_Meta_Class;
       Metamodel_Extent   : constant AMF.Extents.Extent_Access
@@ -111,7 +111,8 @@ package body AMF.Internals.Elements is
 
                for K in 1 .. Integer (Links.Length) loop
                   if Links.Element (K).Get_First_End
-                       = AMF.Elements.Element_Access (Self)
+                       = AMF.Elements.Element_Access'
+                          (Self.all'Unrestricted_Access)
                   then
                      return Links.Element (K).Get_Second_End;
                   end if;
@@ -128,7 +129,8 @@ package body AMF.Internals.Elements is
 
                for K in 1 .. Integer (Links.Length) loop
                   if Links.Element (K).Get_Second_End
-                       = AMF.Elements.Element_Access (Self)
+                       = AMF.Elements.Element_Access'
+                          (Self.all'Unrestricted_Access)
                   then
                      return Links.Element (K).Get_First_End;
                   end if;

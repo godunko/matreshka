@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2011, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2011-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -218,7 +218,8 @@ package body AMF.Internals.AMF_URI_Extents is
    begin
       return
         AMF.Internals.Extents.URI
-         (Self.Id, AMF.Internals.Helpers.To_Element (Element));
+         (Self.Id,
+          AMF.Internals.Helpers.To_Element (Element.all'Unrestricted_Access));
    end URI;
 
    ---------------------
