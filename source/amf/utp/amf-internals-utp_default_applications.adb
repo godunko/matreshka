@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -111,7 +111,7 @@ package body AMF.Internals.Utp_Default_Applications is
    -------------------
 
    overriding procedure Enter_Element
-    (Self    : not null access constant Utp_Default_Application_Proxy;
+    (Self    : not null access Utp_Default_Application_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control) is
    begin
@@ -128,7 +128,7 @@ package body AMF.Internals.Utp_Default_Applications is
    -------------------
 
    overriding procedure Leave_Element
-    (Self    : not null access constant Utp_Default_Application_Proxy;
+    (Self    : not null access Utp_Default_Application_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control) is
    begin
@@ -145,7 +145,7 @@ package body AMF.Internals.Utp_Default_Applications is
    -------------------
 
    overriding procedure Visit_Element
-    (Self     : not null access constant Utp_Default_Application_Proxy;
+    (Self     : not null access Utp_Default_Application_Proxy;
      Iterator : in out AMF.Visitors.Abstract_Iterator'Class;
      Visitor  : in out AMF.Visitors.Abstract_Visitor'Class;
      Control  : in out AMF.Visitors.Traverse_Control) is
