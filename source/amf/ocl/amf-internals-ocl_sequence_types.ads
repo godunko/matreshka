@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -847,17 +847,17 @@ package AMF.Internals.OCL_Sequence_Types is
    --  at least one of the redefinition contexts of the specified element.
 
    overriding procedure Enter_Element
-    (Self    : not null access constant OCL_Sequence_Type_Proxy;
+    (Self    : not null access OCL_Sequence_Type_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control);
 
    overriding procedure Leave_Element
-    (Self    : not null access constant OCL_Sequence_Type_Proxy;
+    (Self    : not null access OCL_Sequence_Type_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control);
 
    overriding procedure Visit_Element
-    (Self     : not null access constant OCL_Sequence_Type_Proxy;
+    (Self     : not null access OCL_Sequence_Type_Proxy;
      Iterator : in out AMF.Visitors.Abstract_Iterator'Class;
      Visitor  : in out AMF.Visitors.Abstract_Visitor'Class;
      Control  : in out AMF.Visitors.Traverse_Control);

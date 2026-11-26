@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -281,17 +281,17 @@ package AMF.Internals.OCL_Association_Class_Call_Exps is
    --  override this operation.
 
    overriding procedure Enter_Element
-    (Self    : not null access constant OCL_Association_Class_Call_Exp_Proxy;
+    (Self    : not null access OCL_Association_Class_Call_Exp_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control);
 
    overriding procedure Leave_Element
-    (Self    : not null access constant OCL_Association_Class_Call_Exp_Proxy;
+    (Self    : not null access OCL_Association_Class_Call_Exp_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control);
 
    overriding procedure Visit_Element
-    (Self     : not null access constant OCL_Association_Class_Call_Exp_Proxy;
+    (Self     : not null access OCL_Association_Class_Call_Exp_Proxy;
      Iterator : in out AMF.Visitors.Abstract_Iterator'Class;
      Visitor  : in out AMF.Visitors.Abstract_Visitor'Class;
      Control  : in out AMF.Visitors.Traverse_Control);
