@@ -8,7 +8,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 --                                                                          --
--- Copyright © 2012, Vadim Godunko <vgodunko@gmail.com>                     --
+-- Copyright © 2012-2026, Vadim Godunko <vgodunko@gmail.com>                --
 -- All rights reserved.                                                     --
 --                                                                          --
 -- Redistribution and use in source and binary forms, with or without       --
@@ -151,17 +151,17 @@ package AMF.Internals.UMLDI_UML_State_Shapes is
    --  a reference to an optional locally-owned style for this diagram element.
 
    overriding procedure Enter_Element
-    (Self    : not null access constant UMLDI_UML_State_Shape_Proxy;
+    (Self    : not null access UMLDI_UML_State_Shape_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control);
 
    overriding procedure Leave_Element
-    (Self    : not null access constant UMLDI_UML_State_Shape_Proxy;
+    (Self    : not null access UMLDI_UML_State_Shape_Proxy;
      Visitor : in out AMF.Visitors.Abstract_Visitor'Class;
      Control : in out AMF.Visitors.Traverse_Control);
 
    overriding procedure Visit_Element
-    (Self     : not null access constant UMLDI_UML_State_Shape_Proxy;
+    (Self     : not null access UMLDI_UML_State_Shape_Proxy;
      Iterator : in out AMF.Visitors.Abstract_Iterator'Class;
      Visitor  : in out AMF.Visitors.Abstract_Visitor'Class;
      Control  : in out AMF.Visitors.Traverse_Control);
